@@ -67,65 +67,68 @@ function Invoke-Forensics {
             # Output timestamped message to console
             Write-Host "[$($Falcon.Rfc3339(0))] $Value"
         }
-        try {
-            Write-Log "Checking cloud for existing file..."
+        if (-not $Help) {
+            try {
+                Write-Log "Checking cloud for existing file..."
 
-            # Check for existing file in cloud
-            $CloudFile = foreach ($Item in ((Get-FalconPutFile -Filter "name:'$Filename'" -Detailed).resources |
-            Select-Object id, name, created_timestamp, modified_timestamp, sha256)) {
-                # Capture relevant fields into hashtable
-                [ordered] @{
-                    id = $Item.id
-                    name = $Item.name
-                    created_timestamp = [datetime] $Item.created_timestamp
-                    modified_timestamp = [datetime] $Item.modified_timestamp
-                    sha256 = $Item.sha256
-                }
-            }
-            if ($CloudFile) {
-                # Capture detail about local file to compare with cloud file
-                $LocalFile = foreach ($Item in (Get-ChildItem $Dynamic.Path.Value |
-                Select-Object CreationTime, Name, LastWriteTime)) {
+                # Check for existing file in cloud
+                $CloudFile = foreach ($Item in (
+                (Get-FalconPutFile -Filter "name:'$Filename'" -Detailed).resources |
+                Select-Object id, name, created_timestamp, modified_timestamp, sha256)) {
                     # Capture relevant fields into hashtable
                     [ordered] @{
+                        id = $Item.id
                         name = $Item.name
-                        created_timestamp = [datetime] $Item.CreationTime
-                        modified_timestamp = [datetime] $Item.LastWriteTime
-                        sha256 = ((Get-FileHash -Algorithm SHA256 -Path $Dynamic.Path.Value).Hash).ToLower()
+                        created_timestamp = [datetime] $Item.created_timestamp
+                        modified_timestamp = [datetime] $Item.modified_timestamp
+                        sha256 = $Item.sha256
                     }
                 }
-                if ($LocalFile.sha256 -eq $CloudFile.sha256) {
-                    Write-Log "Hash match: $($LocalFile.sha256)"
-                } else {
-                    # Prompt user to choose between local file and cloud file
-                    foreach ($Item in @('CloudFile', 'LocalFile')) {
-                        Write-Host "[$($Item -replace 'File', $null)]"
-
-                        (Get-Variable $Item).Value | Select-Object name, created_timestamp,
-                        modified_timestamp, sha256 | Format-List | Out-Host
-                    }
-                    $FileChoice = $host.UI.PromptForChoice(
-                    "$Filename exists in your 'Put Files'. Use the existing version?", $null,
-                    [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No"), 0)
-
-                    if ($FileChoice -eq 0) {
-                        # Use cloud file instead of uploading
-                        Write-Log "Proceeding with $($CloudFile.id)..."
-                    } else {
-                        # Remove existing cloud file
-                        $RemovePut = Remove-FalconPutFile -FileId $CloudFile.id
-
-                        if ($RemovePut.meta.writes.resources_affected -ne 1) {
-                            # Error if remove fails
-                            throw "$($RemovePut.errors.code): $($RemovePut.errors.message)"
+                if ($CloudFile) {
+                    # Capture detail about local file to compare with cloud file
+                    $LocalFile = foreach ($Item in (Get-ChildItem $Dynamic.Path.Value |
+                    Select-Object CreationTime, Name, LastWriteTime)) {
+                        # Capture relevant fields into hashtable
+                        [ordered] @{
+                            name = $Item.name
+                            created_timestamp = [datetime] $Item.CreationTime
+                            modified_timestamp = [datetime] $Item.LastWriteTime
+                            sha256 = ((Get-FileHash -Algorithm SHA256 -Path $Dynamic.Path.Value).Hash).ToLower()
                         }
-                        Write-Log "Removed cloud file $($CloudFile.id)"
+                    }
+                    if ($LocalFile.sha256 -eq $CloudFile.sha256) {
+                        Write-Log "Hash match: $($LocalFile.sha256)"
+                    } else {
+                        # Prompt user to choose between local file and cloud file
+                        foreach ($Item in @('CloudFile', 'LocalFile')) {
+                            Write-Host "[$($Item -replace 'File', $null)]"
+
+                            (Get-Variable $Item).Value | Select-Object name, created_timestamp,
+                            modified_timestamp, sha256 | Format-List | Out-Host
+                        }
+                        $FileChoice = $host.UI.PromptForChoice(
+                        "$Filename exists in your 'Put Files'. Use the existing version?", $null,
+                        [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No"), 0)
+
+                        if ($FileChoice -eq 0) {
+                            # Use cloud file instead of uploading
+                            Write-Log "Proceeding with $($CloudFile.id)..."
+                        } else {
+                            # Remove existing cloud file
+                            $RemovePut = Remove-FalconPutFile -FileId $CloudFile.id
+
+                            if ($RemovePut.meta.writes.resources_affected -ne 1) {
+                                # Error if remove fails
+                                throw "$($RemovePut.errors.code): $($RemovePut.errors.message)"
+                            }
+                            Write-Log "Removed cloud file $($CloudFile.id)"
+                        }
                     }
                 }
+            } catch {
+                # Output error
+                Write-Error "$($_.Exception.Message)"
             }
-        } catch {
-            # Output error
-            Write-Error "$($_.Exception.Message)"
         }
     }
     process {
