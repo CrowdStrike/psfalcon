@@ -74,7 +74,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Audit event identifiers"
+        "Description": "One or more event identifiers"
       }
     ]
   },
@@ -868,7 +868,7 @@
           "body"
         ],
         "Required": false,
-        "Description": "Number of days before expiration (for types 'domain', 'ipv4', and 'ipv6')"
+        "Description": "Number of days before expiration (for 'domain', 'ipv4', and 'ipv6')"
       },
       {
         "Dynamic": "Policy",
@@ -882,7 +882,7 @@
           "detect",
           "none"
         ],
-        "Description": "Action to take when a host observes the custom IOC ['detect', 'none']"
+        "Description": "Action to take when a host observes the custom IOC"
       },
       {
         "Dynamic": "ShareLevel",
@@ -895,7 +895,7 @@
         "Enum": [
           "red"
         ],
-        "Description": "Custom IOC visibility level ['red']"
+        "Description": "Custom IOC visibility level"
       },
       {
         "Dynamic": "Source",
@@ -924,7 +924,7 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']"
+        "Description": "Custom IOC type"
       },
       {
         "Dynamic": "Value",
@@ -938,6 +938,24 @@
         "Max": 200,
         "Description": "Custom IOC value"
       }
+    ]
+  },
+  {
+    "Name": "CreateIOCArray",
+    "Path": "/indicators/entities/iocs/v1",
+    "Method": "POST",
+    "Permission": "iocs:write",
+    "Description": "Create up to 200 custom IOCs in a single request",
+    "Parameters": [
+      {
+          "Dynamic": "Array",
+          "Type": "array",
+          "In": [
+            "body"
+          ],
+          "Required": true,
+          "Description": "One or more hashtables of custom IOCs"
+        }
     ]
   },
   {
@@ -1351,7 +1369,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "IDs of accounts to remove"
+        "Description": "One or more AWS account identifiers"
       }
     ]
   },
@@ -1374,7 +1392,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Device Control policy identifiers"
+        "Description": "One or more policy identifiers"
       }
     ]
   },
@@ -1397,7 +1415,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Firewall policy identifiers"
+        "Description": "One or more policy identifiers"
       }
     ]
   },
@@ -1420,7 +1438,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Host Group identifiers"
+        "Description": "One or more group identifiers"
       }
     ]
   },
@@ -1450,7 +1468,7 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']"
+        "Description": "Custom IOC type"
       },
       {
         "Dynamic": "Value",
@@ -1485,7 +1503,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Prevention policy identifiers"
+        "Description": "One or more policy identifiers"
       }
     ]
   },
@@ -1507,7 +1525,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "Sandbox report identifiers"
+        "Description": "Sandbox report identifier"
       }
     ]
   },
@@ -1540,7 +1558,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "Firewall Rule Group identifiers"
+        "Description": "One or more rule group identifiers"
       },
       {
         "Dynamic": "Comment",
@@ -1584,7 +1602,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "The file SHA256."
+        "Description": "SHA256 hash value of the file"
       }
     ]
   },
@@ -1607,7 +1625,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Sensor Update policy identifiers"
+        "Description": "One or more policy identifiers"
       }
     ]
   },
@@ -1661,7 +1679,7 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']"
+        "Description": "Custom IOC type"
       },
       {
         "Dynamic": "Value",
@@ -1703,7 +1721,7 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']"
+        "Description": "Custom IOC type"
       },
       {
         "Dynamic": "Value",
@@ -1796,7 +1814,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "Process identifier"
+        "Description": "One or more process identifiers"
       }
     ]
   },
@@ -1864,7 +1882,7 @@
         ],
         "Required": true,
         "Pattern": "\\d{12}",
-        "Description": "IDs of accounts to retrieve details"
+        "Description": "One or more AWS account identifiers"
       }
     ]
   },
@@ -1899,7 +1917,8 @@
         ],
         "Required": true,
         "Min": 1,
-        "Max": 500
+        "Max": 500,
+        "Description": "One or more behavior identifiers"
       }
     ]
   },
@@ -3206,6 +3225,7 @@
   {
     "Name": "InvokeForensics",
     "Description": "Deploy and execute Falcon Forensics using Real-time Response",
+    "Permission": "real-time-response:read, real-time-response-admin:write",
     "Parameters": [
       {
         "Dynamic": "Path",
@@ -4081,7 +4101,7 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']"
+        "Description": "Custom IOC type"
       },
       {
         "Dynamic": "Value",
@@ -4103,8 +4123,6 @@
           "query"
         ],
         "Required": true,
-        "Min": 32,
-        "Max": 32,
         "Pattern": "\\w{32}",
         "Description": "Target Host identifier"
       },
@@ -7548,7 +7566,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "One or more user identifiers"
       }
     ]
   },
@@ -7652,7 +7670,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more roles to revoke"
+        "Description": "One or more roles"
       }
     ]
   },
@@ -7912,7 +7930,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "Identifier of the file"
+        "Description": "File identifier"
       },
       {
         "Dynamic": "SessionId",
@@ -7945,7 +7963,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "File id"
+        "Description": "File identifier"
       }
     ]
   },
@@ -8001,7 +8019,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "File id"
+        "Description": "Script identifier"
       }
     ]
   },
@@ -8326,7 +8344,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "File IDs"
+        "Description": "One or more file identifiers"
       }
     ]
   },
@@ -8348,7 +8366,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "File IDs"
+        "Description": "One or more script identifiers"
       }
     ]
   },
@@ -8544,7 +8562,8 @@
         "In": [
           "body"
         ],
-        "Required": true
+        "Required": true,
+        "Description": "One or more session identifiers"
       }
     ]
   },
@@ -8618,7 +8637,8 @@
         "In": [
           "body"
         ],
-        "Required": true
+        "Required": true,
+        "Description": "One or more session identifiers"
       }
     ]
   },
@@ -8762,7 +8782,7 @@
           "body"
         ],
         "Required": true,
-        "Description": "The ids of all current prevention policies for the platform specified. The precedence will be set in the order the ids are specified"
+        "Description": "All of the policy identifiers for the specified platform"
       },
       {
         "Dynamic": "PlatformName",
@@ -8800,7 +8820,7 @@
           "body"
         ],
         "Required": true,
-        "Description": "The ids of all current prevention policies for the platform specified. The precedence will be set in the order the ids are specified"
+        "Description": "All of the policy identifiers for the specified platform"
       },
       {
         "Dynamic": "PlatformName",
@@ -8838,7 +8858,7 @@
           "body"
         ],
         "Required": true,
-        "Description": "The ids of all current prevention policies for the platform specified. The precedence will be set in the order the ids are specified"
+        "Description": "All of the policy identifiers for the specified platform"
       },
       {
         "Dynamic": "PlatformName",
@@ -8876,7 +8896,7 @@
           "body"
         ],
         "Required": true,
-        "Description": "The ids of all current prevention policies for the platform specified. The precedence will be set in the order the ids are specified"
+        "Description": "All of the policy identifiers for the specified platform"
       },
       {
         "Dynamic": "PlatformName",
@@ -9110,7 +9130,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "The token ids to delete."
+        "Description": "One or more token identifiers"
       }
     ]
   },
@@ -9190,7 +9210,7 @@
         ],
         "Required": false,
         "Pattern": "\\w{32}",
-        "Description": "IDs of tokens to retrieve details for"
+        "Description": "One or more token identifiers"
       }
     ]
   },
@@ -9214,7 +9234,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "The token ids to update."
+        "Description": "One or more token identifiers"
       },
       {
         "Dynamic": "ExpiresTimestamp",
@@ -9402,9 +9422,9 @@
           "body"
         ],
         "Required": false,
-        "Description": "Detection identifiers",
+        "Pattern": "ldt:\\w{32}:\\w+",
         "Max": 1000,
-        "Pattern": "ldt:\\w{32}:\\w+"
+        "Description": "One or more detection identifiers"
       },
       {
         "Dynamic": "ShowInUi",
@@ -9615,7 +9635,7 @@
           "body"
         ],
         "Required": false,
-        "Description": "Number of days before expiration (for types 'domain', 'ipv4', and 'ipv6')"
+        "Description": "Number of days before expiration (for 'domain', 'ipv4', and 'ipv6')"
       },
       {
         "Dynamic": "Policy",
@@ -9629,7 +9649,7 @@
           "detect",
           "none"
         ],
-        "Description": "Action to take when a host observes the custom IOC ['detect', 'none']"
+        "Description": "Action to take when a host observes the custom IOC"
       },
       {
         "Dynamic": "ShareLevel",
@@ -9672,7 +9692,7 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']"
+        "Description": "Custom IOC type"
       },
       {
         "Dynamic": "Value",
@@ -10137,7 +10157,7 @@
         ],
         "Required": true,
         "Pattern": "\\d{12}",
-        "Description": "IDs of accounts to verify access on"
+        "Description": "One or more AWS account identifiers"
       }
     ]
   }

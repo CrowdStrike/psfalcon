@@ -23,40 +23,28 @@ function Get-Dictionary {
             foreach ($Param in $Endpoint.parameters) {
                 # Convert 'type' to PowerShell type
                 $PSType = switch ($Param.Type) {
-                    'array' {
-                        [array]
-                    }
-                    'bool' {
-                        [bool]
-                    }
-                    'hashtable' {
-                        [hashtable]
-                    }
-                    'int' {
-                        [int]
-                    }
-                    'switch' {
-                        [switch]
-                    }
-                    default {
-                        [string]
-                    }
+                    'array' { [array] }
+                    'bool' { [bool] }
+                    'hashtable' { [hashtable] }
+                    'int' { [int] }
+                    'switch' { [switch] }
+                    default { [string] }
                 }
-                if (-not($Dynamic.($Param.Dynamic))) {
+                # Create parameter
+                $Attribute = New-Object System.Management.Automation.ParameterAttribute
+
+                # Set base parameter attributes
+                $Attribute.ParameterSetName = $Endpoint.Name
+                $Attribute.Mandatory = $Param.Required
+                $Attribute.HelpMessage = $Param.Description
+
+                if ($Dynamic.($Param.Dynamic)) {
+                    # Add attribute to existing collection
+                    $Dynamic.($Param.Dynamic).Attributes.add($Attribute)
+                } else {
                     # Create collection
                     $Collection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
 
-                    # Create parameter
-                    $Attribute = New-Object System.Management.Automation.ParameterAttribute
-
-                    # Set base parameter attributes
-                    $Attribute.ParameterSetName = $Endpoint.Name
-                    $Attribute.Mandatory = $Param.Required
-
-                    if ($Param.Description) {
-                        # Set description
-                        $Attribute.HelpMessage = $Param.Description
-                    }
                     # Add attribute to collection
                     $Collection.Add($Attribute)
 
@@ -72,12 +60,12 @@ function Get-Dictionary {
                         $Collection.Add($ValidSet)
                     }
                     if (($PSType -eq [int]) -and ($Param.Min -and $Param.Max)) {
-                        # Set ValidateRange when min/max is populated and parameter type is 'int'
+                        # Set ValidateRange when min/max is populated and parameter type is [int]
                         $ValidRange = New-Object Management.Automation.ValidateRangeAttribute(
                             $Param.Min, $Param.Max)
                         $Collection.Add($ValidRange)
                     } elseif (($PSType -eq [string]) -and ($Param.Min -and $Param.Max)) {
-                        # Set ValidateLength when min/max is populated and parameter type is 'string'
+                        # Set ValidateLength when min/max is populated and parameter type is [string]
                         $ValidLength = New-Object System.Management.Automation.ValidateLengthAttribute(
                             $Param.Min, $Param.Max)
                         $Collection.Add($ValidLength)
@@ -94,13 +82,6 @@ function Get-Dictionary {
 
                     # Add runtime parameter to dictionary
                     $Dynamic.Add($Param.Dynamic, $RunParam)
-                } else {
-                    # Add duplicate parameter as new attribute within existing dictionary
-                    $Attribute = New-Object System.Management.Automation.ParameterAttribute
-                    $Attribute.ParameterSetName = $Endpoint.Name
-                    $Attribute.Mandatory = $Param.Required
-
-                    $Dynamic.($Param.Dynamic).Attributes.add($Attribute)
                 }
             }
         }

@@ -3,7 +3,7 @@ function Get-DynamicHelp {
 .SYNOPSIS
     Outputs documentation about commands
 .PARAMETER COMMAND
-    PSFalcon Command name(s)
+    PSFalcon command name(s)
 .PARAMETER EXCLUSIONS
     Falcon endpoint names to exclude from results
 #>
@@ -19,63 +19,78 @@ function Get-DynamicHelp {
         [array] $Exclusions
     )
     begin {
-        # List of PowerShell function parameters names (plus Help) to exclude from results
+        # PowerShell default parameter names (plus Help) to exclude from results
         $Defaults = @('Help', 'Verbose', 'Debug', 'ErrorAction', 'WarningAction', 'InformationAction',
-            'ErrorVariable', 'WarningVariable', 'InformationVariable', 'OutVariable',
-            'OutBuffer', 'PipelineVariable')
+        'ErrorVariable', 'WarningVariable', 'InformationVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable')
 
-        # Capture parameter details
-        $ParamDetail = (Get-Command $Command).ParameterSets.Parameters | Where-Object Name -notin $Defaults |
-            Select-Object Name, ParameterType, IsMandatory, Attributes | Sort-Object { $_.Attributes.Position }
-    }
-    process {
-        # Description for each endpoint, except those defined by $Exclusions
-        foreach ($Endpoint in (($ParamDetail.Attributes.ParameterSetName | Group-Object).Name |
-            Where-Object { $_ -notin $Exclusions })) {
-
-            # Build example header text
-            $HeaderText = "`n"
-
-            if ($Falcon.Endpoint($Endpoint).Description) {
-                # Add endpoint description
-                $HeaderText += "  $($Falcon.Endpoint($Endpoint).Description)"
-            }
-            if ($Falcon.Endpoint($Endpoint).Permission) {
-                # Add permission
-                $HeaderText += "`n    Requires $((($Falcon.Endpoint($Endpoint)).Permission))"
-            }
-            # Output header text
-            $HeaderText
-
-            # Collect parameters for each endpoint
-            $EndpointParam = $ParamDetail | Where-Object { $_.Attributes.ParameterSetName -eq $Endpoint } |
-                Group-Object Name | ForEach-Object { $_.Group | Select-Object -First 1 } |
-                Sort-Object { $_.Attributes.Position }
-
-            $EndpointParam | Sort-Object IsMandatory -Descending | ForEach-Object {
-                # Collect parameter name and type
-                $ParamText = "`n    -$($_.Name) [$($_.ParameterType.Name)]"
-
-                if ($_.IsMandatory) {
-                    # Add required status
-                    $ParamText += " (Required)"
+        # Capture parameter set information
+        $ParamSets = foreach ($Set in ((Get-Command $Command).ParameterSets | Where-Object {
+        ($_.name -ne 'DynamicHelp') -and ($Exclusions -notcontains $_.name)})) {
+            $Endpoint = $Falcon.Endpoint($Set.Name)
+            @{
+                $Set.name = @{
+                    Endpoint = "$($Endpoint.Method.ToUpper()) $($Endpoint.Path)"
+                    Description = "$($Endpoint.Description)"
+                    Permission = "$($Endpoint.Permission)"
+                    Parameters = ($Set.parameters | Where-Object { $Defaults -notcontains $_.name }).foreach{
+                        # Include parameters not listed in $Defaults
+                        $Parameter = [ordered] @{
+                            Name = $_.name
+                            Type = $_.ParameterType.name
+                            Required = $_.IsMandatory
+                            Description = $_.HelpMessage
+                        }
+                        # Add ValidateSet, ValidateLength and ValidateRange values
+                        foreach ($Attribute in @('ValidValues', 'RegexPattern', 'MinLength', 'MaxLength',
+                        'MinRange', 'MaxRange')) {
+                            $Name = switch -Regex ($Attribute) {
+                                # Convert field names into friendly descriptors
+                                'ValidValues' { 'Accepted' }
+                                'RegexPattern' { 'Pattern' }
+                                '(MinLength|MinRange)' { 'Minimum' }
+                                '(MaxLength|MaxRange)' { 'Maximum' }
+                            }
+                            if ($_.Attributes.$Attribute) {
+                                $Value = if ($_.Attributes.$Attribute -is [array]) {
+                                    # Convert [array] to [string]
+                                    $_.Attributes.$Attribute -join ', '
+                                } else {
+                                    $_.Attributes.$Attribute
+                                }
+                                $Parameter[$Name] = $Value
+                            }
+                        }
+                        # Add parameter to array
+                        $Parameter
+                    }
                 }
-                if ($_.Attributes.ValidValues) {
-                    # Add possible input values
-                    $ParamText += " <$($_.Attributes.ValidValues -join ', ')>"
-                }
-                if ($_.Attributes.MinRange -and $_.Attributes.MaxRange) {
-                    # Add range values
-                    $ParamText += " <$($_.Attributes.MinRange)-$($_.Attributes.MaxRange)>"
-                }
-                if ($_.Attributes.HelpMessage) {
-                    # Add description
-                    $ParamText += "`n    $($_.Attributes.HelpMessage)"
-                }
-                # Output parameter text
-                $ParamText
             }
         }
-        ""
     }
+    process {
+        foreach ($Set in $ParamSets.Keys) {
+            # Output a basic description of each endpoint in $Command
+            "`n$($ParamSets.$Set.Description)" +
+            "`n  Endpoint   : $($ParamSets.$Set.Endpoint)" +
+            "`n  Permission : $($ParamSets.$Set.Permission)"
+            
+            if ($ParamSets.$Set.Parameters) {
+                # Output a description of each parameter involved with each endpoint
+                foreach ($Parameter in $ParamSets.$Set.Parameters) {
+                    $Label = "`n  -$($Parameter.Name) [$($Parameter.Type)]"
+
+                    if ($Parameter.Required -eq $true) {
+                        $Label += " <Required>"
+                    }
+                    $Label + "`n    $($Parameter.Description)"
+
+                    foreach ($Pair in ($Parameter.GetEnumerator() | Where-Object { $_.Key -notmatch
+                    '(Name|Type|Required|Description)'})) {
+                        "      $($Pair.Key) : $($Pair.Value)"
+                    }
+                }
+            }
+        }
+        "`n"
+   }
 }

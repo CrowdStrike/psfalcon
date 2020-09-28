@@ -4,8 +4,6 @@ function New-IOC {
     Create custom IOCs
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER ARRAY
-    An array of custom IOCs to create
 .PARAMETER HELP
     Output dynamic help information
 .LINK
@@ -15,19 +13,13 @@ function New-IOC {
     [OutputType()]
     param(
         [Parameter(
-            ParameterSetName = 'Array',
-            HelpMessage = 'An array of custom IOCs to create',
-            Mandatory = $true)]
-        [array] $Array,
-
-        [Parameter(
             ParameterSetName = 'DynamicHelp',
             Mandatory = $true)]
         [switch] $Help
     )
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('CreateIOC')
+        $Endpoints = @('CreateIOC', 'CreateIOCArray')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -40,12 +32,12 @@ function New-IOC {
         if ($Help) {
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
-            if ($Array) {
-                for ($i = 0; $i -lt $Array.count; $i += $Max) {
+            if ($Dynamic.Array.Value) {
+                for ($i = 0; $i -lt ($Dynamic.Array.Value).count; $i += $Max) {
                     # Build body from array
                     $Param = @{
                         Endpoint = $Endpoints[0]
-                        Body = $Array[$i..($i + ($Max -1))]
+                        Body = $Dynamic.Array.Value[$i..($i + ($Max -1))]
                     }
                     # Convert Body to Json
                     Format-Param $Param

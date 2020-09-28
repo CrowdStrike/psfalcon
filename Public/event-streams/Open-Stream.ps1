@@ -10,12 +10,12 @@ function Open-Stream {
     param()
     process {
         if (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
-            $Stream = Get-FalconStream -AppId 'PSFalcon' -Format Json
+            $Stream = Get-FalconStream -AppId 'PSFalcon' -Format json
 
             if ($Stream.resources) {
                 # Create parameters from initialization of stream
-                $ArgumentList = "`$FilePath = '$($pwd)\Stream_$(Get-Date -Format FileDateTime).json'
-                try {
+                $ArgumentList =
+                "try {
                     `$Param = @{
                         Uri = '$($Stream.resources.datafeedURL)'
                         Method = 'get'
@@ -23,7 +23,7 @@ function Open-Stream {
                             accept = 'application/json'
                             authorization = 'Token $($Stream.resources.sessionToken.token)'
                         }
-                        OutFile = `$FilePath
+                        OutFile = '$($pwd)\Stream_$(Get-Date -Format FileDateTime).json'
                     }
                     Invoke-WebRequest @Param
                 } catch {
