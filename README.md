@@ -77,10 +77,12 @@ Once exported, this token will be automatically loaded with PSFalcon, which enab
 PowerShell scripts. If the token has expired it will be ignored.
 
 # Commands
+
 ## /cloud-connect-aws/
 
 ### Add-FalconAwsSettings
 ```
+
 Create or update Global Settings which are applicable to all provisioned AWS accounts
   Endpoint   : POST /cloud-connect-aws/entities/settings/v1
   Permission : cloud-connect-aws:write
@@ -92,9 +94,12 @@ Create or update Global Settings which are applicable to all provisioned AWS acc
   -StaticExternalId [String]
     By setting this value, all subsequent accounts that are provisioned will default to using this value as their external ID.
 
+
 ```
+
 ### Confirm-FalconAwsAccess
 ```
+
 Performs an Access Verification check on the specified AWS Account IDs
   Endpoint   : POST /cloud-connect-aws/entities/verify-account-access/v1
   Permission : cloud-connect-aws:write
@@ -103,9 +108,12 @@ Performs an Access Verification check on the specified AWS Account IDs
     One or more AWS account identifiers
       Pattern : \d{12}
 
+
 ```
+
 ### Edit-FalconAwsAccount
 ```
+
 Update AWS Accounts by specifying the ID of the account and details to update
   Endpoint   : PATCH /cloud-connect-aws/entities/accounts/v1
   Permission : cloud-connect-aws:write
@@ -131,9 +139,12 @@ Update AWS Accounts by specifying the ID of the account and details to update
   -RateLimitTime [Int32]
     Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.
 
+
 ```
+
 ### Get-FalconAwsAccount
 ```
+
 Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS account IDs which match the filter criteria
   Endpoint   : GET /cloud-connect-aws/queries/accounts/v1
   Permission : cloud-connect-aws:read
@@ -176,16 +187,22 @@ Search for provisioned AWS Accounts by providing an FQL filter and paging detail
   -Filter [String]
     An FQL filter expression
 
+
 ```
+
 ### Get-FalconAwsSettings
 ```
+
 Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts
   Endpoint   : GET /cloud-connect-aws/combined/settings/v1
   Permission : cloud-connect-aws:read
 
+
 ```
+
 ### New-FalconAwsAccount
 ```
+
 Provision AWS Accounts by specifying details about the accounts to provision
   Endpoint   : POST /cloud-connect-aws/entities/accounts/v1
   Permission : cloud-connect-aws:write
@@ -215,9 +232,12 @@ Provision AWS Accounts by specifying details about the accounts to provision
   -RateLimitTime [Int32]
     Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.
 
+
 ```
+
 ### Remove-FalconAwsAccount
 ```
+
 Delete a set of AWS Accounts by specifying their IDs
   Endpoint   : DELETE /cloud-connect-aws/entities/accounts/v1
   Permission : cloud-connect-aws:write
@@ -225,11 +245,14 @@ Delete a set of AWS Accounts by specifying their IDs
   -AccountIds [Array] <Required>
     One or more AWS account identifiers
 
+
 ```
+
 ## /d4c-registration/
 
 ### Edit-FalconAzureAccount
 ```
+
 Update an Azure service account
   Endpoint   : PATCH /cloud-connect-azure/entities/client-id/v1
   Permission : d4c-registration:write
@@ -238,9 +261,12 @@ Update an Azure service account
     Client identifier to use for the Service Principal associated with the Azure account
       Pattern : ^[0-9a-z-]{36}$
 
+
 ```
+
 ### Get-FalconAzureAccount
 ```
+
 Return information about Azure account registration
   Endpoint   : GET /cloud-connect-azure/entities/account/v1
   Permission : d4c-registration:read
@@ -253,16 +279,22 @@ Return information about Azure account registration
     Type of scan, dry or full, to perform on selected accounts
       Accepted : dry, full
 
+
 ```
+
 ### Get-FalconAzureScript
 ```
+
 Outputs a script to run in an Azure environment to grant access to the Falcon platform
   Endpoint   : GET /cloud-connect-azure/entities/user-scripts/v1
   Permission : d4c-registration:read
 
+
 ```
+
 ### Get-FalconGcpAccount
 ```
+
 Returns information about the current status of an GCP account.
   Endpoint   : GET /cloud-connect-gcp/entities/account/v1
   Permission : d4c-registration:read
@@ -275,16 +307,22 @@ Returns information about the current status of an GCP account.
     Parent IDs of accounts
       Pattern : \d{10,}
 
+
 ```
+
 ### Get-FalconGcpScript
 ```
+
 Return a script for customer to run in their cloud environment to grant us access to their GCP environment
   Endpoint   : GET /cloud-connect-gcp/entities/user-scripts/v1
   Permission : d4c-registration:read
 
+
 ```
+
 ### New-FalconAzureAccount
 ```
+
 Creates a new Azure account and generates a script to grant access to the Falcon platform
   Endpoint   : POST /cloud-connect-azure/entities/account/v1
   Permission : d4c-registration:write
@@ -296,9 +334,12 @@ Creates a new Azure account and generates a script to grant access to the Falcon
   -TenantId [String]
     Azure tenant identifier
 
+
 ```
+
 ### New-FalconGcpAccount
 ```
+
 Creates a new GCP account and generates a script to grant access to the Falcon platform
   Endpoint   : POST /cloud-connect-gcp/entities/account/v1
   Permission : d4c-registration:write
@@ -306,11 +347,14 @@ Creates a new GCP account and generates a script to grant access to the Falcon p
   -ParentId [String] <Required>
     GCP parent identifier
 
+
 ```
+
 ## /detects/
 
 ### Edit-FalconDetection
 ```
+
 Modify the state, assignee, and visibility of detections
   Endpoint   : PATCH /detects/entities/detects/v2
   Permission : detects:write
@@ -333,9 +377,12 @@ Modify the state, assignee, and visibility of detections
     Detection status
       Accepted : new, in_progress, true_positive, false_positive, ignored
 
+
 ```
+
 ### Get-FalconDetection
 ```
+
 Search for detection IDs that match a given query
   Endpoint   : GET /detects/queries/detects/v1
   Permission : detects:read
@@ -371,11 +418,14 @@ List detailed detection information
   -DetectionIds [Array] <Required>
     One or more detection identifiers
 
+
 ```
+
 ## /device-control-policies/
 
 ### Edit-FalconDeviceControlPolicy
 ```
+
 Update Device Control Policies by specifying the ID of the policy and details to update
   Endpoint   : PATCH /policy/entities/device-control/v1
   Permission : device-control-policies:write
@@ -399,9 +449,12 @@ Update Device Control Policies by specifying the ID of the policy and details to
   -Array [Array] <Required>
     An array containing multiple policies to update using a single request
 
+
 ```
+
 ### Get-FalconDeviceControlPolicy
 ```
+
 Search for Device Control Policies in your environment by providing an FQL filter and paging details. Returns a set of Device Control Policy IDs which match the filter criteria
   Endpoint   : GET /policy/queries/device-control/v1
   Permission : device-control-policies:read
@@ -459,9 +512,12 @@ List detailed Device Control Policy information
   -PolicyIds [Array] <Required>
     The IDs of the Device Control Policies to return
 
+
 ```
+
 ### Invoke-FalconDeviceControlPolicyAction
 ```
+
 Perform actions on Device Control Policies
   Endpoint   : POST /policy/entities/device-control-actions/v1
   Permission : device-control-policies:write
@@ -478,9 +534,12 @@ Perform actions on Device Control Policies
     Host Group identifier, used when adding or removing host groups
       Pattern : \w{32}
 
+
 ```
+
 ### New-FalconDeviceControlPolicy
 ```
+
 Create Device Control Policies
   Endpoint   : POST /policy/entities/device-control/v1
   Permission : device-control-policies:write
@@ -509,9 +568,12 @@ Create Device Control Policies
   -Array [Array] <Required>
     An array containing multiple policies to create using a single request
 
+
 ```
+
 ### Remove-FalconDeviceControlPolicy
 ```
+
 Delete Device Control policies
   Endpoint   : DELETE /policy/entities/device-control/v1
   Permission : device-control-policies:write
@@ -520,9 +582,12 @@ Delete Device Control policies
     One or more policy identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Set-FalconDeviceControlPrecedence
 ```
+
 Sets the precedence of Device Control Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
   Endpoint   : POST /policy/entities/device-control-precedence/v1
   Permission : device-control-policies:write
@@ -534,11 +599,14 @@ Sets the precedence of Device Control Policies based on the order of IDs specifi
     Platform name
       Accepted : Windows, Mac, Linux
 
+
 ```
+
 ## /event-streams/
 
 ### Get-FalconStream
 ```
+
 Discover all event streams in your environment
   Endpoint   : GET /sensors/entities/datafeed/v2
   Permission : streaming:read
@@ -553,11 +621,16 @@ Discover all event streams in your environment
     Format for streaming events
       Accepted : json, flatjson
 
+
 ```
+
 ### Open-FalconStream
-``````
+```
+```
+
 ### Update-FalconStream
 ```
+
 Refresh an active event stream. Use the URL shown in a GET /sensors/entities/datafeed/v2 response.
   Endpoint   : POST /sensors/entities/datafeed-actions/v1/<partition>
   Permission : streaming:read
@@ -574,11 +647,14 @@ Refresh an active event stream. Use the URL shown in a GET /sensors/entities/dat
   -Partition [Int32] <Required>
     Partition to request data for.
 
+
 ```
+
 ## /falconx-sandbox/
 
 ### Get-FalconReport
 ```
+
 Find sandbox reports by providing an FQL filter and paging details. Returns a set of report IDs that match your criteria.
   Endpoint   : GET /falconx/queries/reports/v1
   Permission : falconx-sandbox:read
@@ -620,9 +696,12 @@ Get a full sandbox report.
   -ReportIds [Array] <Required>
     ID of a report. Find a report ID from the response when submitting a malware sample or search with `/falconx/queries/reports/v1`.
 
+
 ```
+
 ### Get-FalconSample
 ```
+
 Retrieve information about sandbox submission files
   Endpoint   : POST /samples/queries/samples/GET/v1
   Permission : falconx-sandbox:write
@@ -634,9 +713,12 @@ Retrieve information about sandbox submission files
   -Sha256s [Array]
     
 
+
 ```
+
 ### Get-FalconSubmission
 ```
+
 Find submission IDs for uploaded files by providing an FQL filter and paging details. Returns a set of submission IDs that match your criteria.
   Endpoint   : GET /falconx/queries/submissions/v1
   Permission : falconx-sandbox:read
@@ -668,9 +750,12 @@ Check the status of a sandbox analysis. Time required for analysis varies but is
   -SubmissionIds [Array] <Required>
     ID of a submitted malware sample. Find a submission ID from the response when submitting a malware sample or search with `/falconx/queries/submissions/v1`.
 
+
 ```
+
 ### New-FalconSubmission
 ```
+
 Submit an uploaded file or a URL for sandbox analysis. Time required for analysis varies but is usually less than 15 minutes.
   Endpoint   : POST /falconx/entities/submissions/v1
   Permission : falconx-sandbox:write
@@ -719,9 +804,12 @@ Submit an uploaded file or a URL for sandbox analysis. Time required for analysi
   -UserTags [Array]
     
 
+
 ```
+
 ### Receive-FalconArtifact
 ```
+
 Download IOC packs, PCAP files, and other analysis artifacts
   Endpoint   : GET /falconx/entities/artifacts/v1
   Permission : falconx-sandbox:read
@@ -732,9 +820,12 @@ Download IOC packs, PCAP files, and other analysis artifacts
   -Path [String] <Required>
     Destination Path
 
+
 ```
+
 ### Receive-FalconSample
 ```
+
 Retrieves the file associated with the given ID (SHA256)
   Endpoint   : GET /samples/entities/samples/v2
   Permission : falconx-sandbox:read
@@ -750,9 +841,12 @@ Retrieves the file associated with the given ID (SHA256)
   -PasswordProtected [String]
     Flag whether the sample should be zipped and password protected with pass='infected'
 
+
 ```
+
 ### Remove-FalconReport
 ```
+
 Delete sandbox reports
   Endpoint   : DELETE /falconx/entities/reports/v1
   Permission : falconx-sandbox:write
@@ -760,9 +854,12 @@ Delete sandbox reports
   -ReportId [String] <Required>
     Sandbox report identifier
 
+
 ```
+
 ### Remove-FalconSample
 ```
+
 Removes a sample, including file, meta and submissions from the collection
   Endpoint   : DELETE /samples/entities/samples/v2
   Permission : falconx-sandbox:write
@@ -774,9 +871,12 @@ Removes a sample, including file, meta and submissions from the collection
   -FileId [String] <Required>
     SHA256 hash value of the file
 
+
 ```
+
 ### Send-FalconSample
 ```
+
 Upload a file to add to a sandbox submission
   Endpoint   : POST /samples/entities/samples/v2
   Permission : falconx-sandbox:write
@@ -798,11 +898,14 @@ Upload a file to add to a sandbox submission
   -IsConfidential [Boolean]
     Defines visibility of the sample in Falcon MalQuery [$true (default): File is only shown to users within your account, $false: File can be seen by other CrowdStrike customers]
 
+
 ```
+
 ## /firewall-management/
 
 ### Edit-FalconFirewallGroup
 ```
+
 Update name, description, or enabled status of a rule group, or create, edit, delete, or reorder rules
   Endpoint   : PATCH /fwmgr/entities/rule-groups/v1
   Permission : firewall-management:write
@@ -832,9 +935,12 @@ Update name, description, or enabled status of a rule group, or create, edit, de
   -Tracking [String]
     
 
+
 ```
+
 ### Edit-FalconFirewallSetting
 ```
+
 Update an identified policy container
   Endpoint   : PUT /fwmgr/entities/policies/v1
   Permission : firewall-management:write
@@ -870,9 +976,12 @@ Update an identified policy container
   -Tracking [String]
     
 
+
 ```
+
 ### Get-FalconFirewallEvent
 ```
+
 Find all event IDs matching the query with filter
   Endpoint   : GET /fwmgr/queries/events/v1
   Permission : firewall-management:read
@@ -909,9 +1018,12 @@ List Firewall Management events
     The events to retrieve, identified by ID
       Pattern : [\w-]{20}
 
+
 ```
+
 ### Get-FalconFirewallField
 ```
+
 Get the firewall field specification IDs for the provided platform
   Endpoint   : GET /fwmgr/queries/firewall-fields/v1
   Permission : firewall-management:read
@@ -938,9 +1050,12 @@ List detailed information about Firewall Management fields
   -FieldIds [Array] <Required>
     The field identifiers to retrieve
 
+
 ```
+
 ### Get-FalconFirewallGroup
 ```
+
 Find all rule group IDs matching the query with filter
   Endpoint   : GET /fwmgr/queries/rule-groups/v1
   Permission : firewall-management:read
@@ -976,9 +1091,12 @@ Get rule group entities by ID. These groups do not contain their rule entites, j
   -GroupIds [Array] <Required>
     The IDs of the rule groups to retrieve
 
+
 ```
+
 ### Get-FalconFirewallPlatform
 ```
+
 Get the list of platform names
   Endpoint   : GET /fwmgr/queries/platforms/v1
   Permission : firewall-management:read
@@ -999,9 +1117,12 @@ Get platforms by ID, e.g., windows or mac or droid
   -PlatformIds [Array] <Required>
     The IDs of the platforms to retrieve
 
+
 ```
+
 ### Get-FalconFirewallRule
 ```
+
 Find all rule IDs matching the query with filter
   Endpoint   : GET /fwmgr/queries/rules/v1
   Permission : firewall-management:read
@@ -1062,9 +1183,12 @@ Get rule entities by ID (64-bit unsigned int as decimal string) or Family ID (32
   -RuleIds [Array] <Required>
     The rules to retrieve, identified by ID
 
+
 ```
+
 ### Get-FalconFirewallSetting
 ```
+
 Get policy container entities by policy ID
   Endpoint   : GET /fwmgr/entities/policies/v1
   Permission : firewall-management:read
@@ -1073,9 +1197,12 @@ Get policy container entities by policy ID
     The policy container(s) to retrieve, identified by policy ID
       Pattern : \w{32}
 
+
 ```
+
 ### New-FalconFirewallGroup
 ```
+
 Create new rule group on a platform for a customer with a name and description, and return the ID
   Endpoint   : POST /fwmgr/entities/rule-groups/v1
   Permission : firewall-management:write
@@ -1106,9 +1233,12 @@ Create new rule group on a platform for a customer with a name and description, 
   -Rules [Array]
     An array of hashtables containing rule properties
 
+
 ```
+
 ### Remove-FalconFirewallGroup
 ```
+
 Delete Firewall Rule Groups
   Endpoint   : DELETE /fwmgr/entities/rule-groups/v1
   Permission : firewall-management:write
@@ -1123,11 +1253,14 @@ Delete Firewall Rule Groups
   -Comment [String]
     Audit log comment for this action
 
+
 ```
+
 ## /firewall-policies/
 
 ### Edit-FalconFirewallPolicy
 ```
+
 Update Firewall Policies by specifying the ID of the policy and details to update
   Endpoint   : PATCH /policy/entities/firewall/v1
   Permission : firewall-management:write
@@ -1148,9 +1281,12 @@ Update Firewall Policies by specifying the ID of the policy and details to updat
   -Array [Array] <Required>
     An array containing multiple policies to update using a single request
 
+
 ```
+
 ### Get-FalconFirewallPolicy
 ```
+
 Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a set of Firewall Policy IDs which match the filter criteria
   Endpoint   : GET /policy/queries/firewall/v1
   Permission : firewall-management:read
@@ -1208,9 +1344,12 @@ List detailed information about Firewall Policies
   -PolicyIds [Array] <Required>
     The IDs of the Firewall Policies to return
 
+
 ```
+
 ### Invoke-FalconFirewallPolicyAction
 ```
+
 Perform actions on Firewall Policies
   Endpoint   : POST /policy/entities/firewall-actions/v1
   Permission : firewall-management:write
@@ -1227,9 +1366,12 @@ Perform actions on Firewall Policies
     Host Group identifier, used when adding or removing host groups
       Pattern : \w{32}
 
+
 ```
+
 ### New-FalconFirewallPolicy
 ```
+
 Create Firewall Policies
   Endpoint   : POST /policy/entities/firewall/v1
   Permission : firewall-management:write
@@ -1255,9 +1397,12 @@ Create Firewall Policies
   -Array [Array] <Required>
     An array containing multiple policies to create using a single request
 
+
 ```
+
 ### Remove-FalconFirewallPolicy
 ```
+
 Delete Firewall policies
   Endpoint   : DELETE /policy/entities/firewall/v1
   Permission : firewall-management:write
@@ -1266,9 +1411,12 @@ Delete Firewall policies
     One or more policy identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Set-FalconFirewallPrecedence
 ```
+
 Sets the precedence of Firewall Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
   Endpoint   : POST /policy/entities/firewall-precedence/v1
   Permission : firewall-management:write
@@ -1280,11 +1428,14 @@ Sets the precedence of Firewall Policies based on the order of IDs specified in 
     Platform name
       Accepted : Windows, Mac, Linux
 
+
 ```
+
 ## /host-group/
 
 ### Edit-FalconHostGroup
 ```
+
 Update Host Groups by specifying the ID of the group and details to update
   Endpoint   : PATCH /devices/entities/host-groups/v1
   Permission : host-group:write
@@ -1309,9 +1460,12 @@ Update Host Groups by specifying the ID of the group and details to update
   -Array [Array] <Required>
     An array containing multiple groups to update in a single request
 
+
 ```
+
 ### Get-FalconHostGroup
 ```
+
 Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set of Host Group IDs which match the filter criteria
   Endpoint   : GET /devices/queries/host-groups/v1
   Permission : host-group:read
@@ -1371,9 +1525,12 @@ List detailed information about Host Groups
     The IDs of the Host Groups to return
       Pattern : \w{32}
 
+
 ```
+
 ### Invoke-FalconHostGroupAction
 ```
+
 Perform the specified action on the Host Groups specified in the request
   Endpoint   : POST /devices/entities/host-group-actions/v1
   Permission : host-group:write
@@ -1395,9 +1552,12 @@ Perform the specified action on the Host Groups specified in the request
   -FilterValue [Array] <Required>
     One or more values for use with the FQL filter
 
+
 ```
+
 ### New-FalconHostGroup
 ```
+
 Create Host Groups
   Endpoint   : POST /devices/entities/host-groups/v1
   Permission : host-group:write
@@ -1422,9 +1582,12 @@ Create Host Groups
   -Array [Array] <Required>
     An array containing multiple groups to create using a single request
 
+
 ```
+
 ### Remove-FalconHostGroup
 ```
+
 Delete Host Groups
   Endpoint   : DELETE /devices/entities/host-groups/v1
   Permission : host-group:write
@@ -1433,11 +1596,14 @@ Delete Host Groups
     One or more group identifiers
       Pattern : \w{32}
 
+
 ```
+
 ## /hosts/
 
 ### Get-FalconHost
 ```
+
 Search for hosts
   Endpoint   : GET /devices/queries/devices-scroll/v1
   Permission : devices:read
@@ -1497,9 +1663,12 @@ List detailed Host information
     The host agentIDs used to get details on
       Pattern : \w{32}
 
+
 ```
+
 ### Invoke-FalconHostAction
 ```
+
 Perform actions on Hosts
   Endpoint   : POST /devices/entities/devices-actions/v2
   Permission : devices:write
@@ -1512,11 +1681,14 @@ Perform actions on Hosts
     Host identifiers
       Pattern : \w{32}
 
+
 ```
+
 ## /incidents/
 
 ### Get-FalconBehavior
 ```
+
 Search for behaviors by providing an FQL filter, sorting, and paging details
   Endpoint   : GET /incidents/queries/behaviors/v1
   Permission : incidents:read
@@ -1549,9 +1721,12 @@ List detailed information about behaviors
   -BehaviorIds [Array] <Required>
     One or more behavior identifiers
 
+
 ```
+
 ### Get-FalconIncident
 ```
+
 Search for incidents by providing an FQL filter, sorting, and paging details
   Endpoint   : GET /incidents/queries/incidents/v1
   Permission : incidents:read
@@ -1584,9 +1759,12 @@ List detailed information about Incidents
   -IncidentIds [Array] <Required>
     
 
+
 ```
+
 ### Get-FalconScore
 ```
+
 List CrowdScore values
   Endpoint   : GET /incidents/combined/crowdscores/v1
   Permission : incidents:read
@@ -1609,9 +1787,12 @@ List CrowdScore values
     Property and direction to sort results
       Accepted : score|asc, score|desc, timestamp|asc, timestamp|desc
 
+
 ```
+
 ### Invoke-FalconIncidentAction
 ```
+
 Perform a set of actions on one or more incidents, such as adding tags or comments or updating the incident name or description
   Endpoint   : POST /incidents/entities/incident-actions/v1
   Permission : incidents:write
@@ -1633,11 +1814,14 @@ Perform a set of actions on one or more incidents, such as adding tags or commen
   -OverwriteDetects [String]
     Replace existing status for related detections
 
+
 ```
+
 ## /installation-tokens/
 
 ### Edit-FalconInstallToken
 ```
+
 Updates one or more tokens. Use this endpoint to edit labels, change expiration, revoke, or restore.
   Endpoint   : PATCH /installation-tokens/entities/tokens/v1
   Permission : installation-tokens:write
@@ -1655,9 +1839,12 @@ Updates one or more tokens. Use this endpoint to edit labels, change expiration,
   -Revoked [Boolean]
     Set to true to revoke the token, false to un-revoked it.
 
+
 ```
+
 ### Get-FalconInstallToken
 ```
+
 Search for tokens by providing an FQL filter and paging details.
   Endpoint   : GET /installation-tokens/queries/tokens/v1
   Permission : installation-tokens:read
@@ -1690,9 +1877,12 @@ Gets the details of one or more tokens by id.
     One or more token identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Get-FalconTokenEvent
 ```
+
 Search for installation token audit events
   Endpoint   : GET /installation-tokens/queries/audit-events/v1
   Permission : installation-tokens:read
@@ -1724,16 +1914,22 @@ Retrieve installation token audit events
   -EventIds [Array]
     One or more event identifiers
 
+
 ```
+
 ### Get-FalconTokenSettings
 ```
+
 List installation token settings
   Endpoint   : GET /installation-tokens/entities/customer-settings/v1
   Permission : installation-tokens:read
 
+
 ```
+
 ### New-FalconInstallToken
 ```
+
 Creates a token.
   Endpoint   : POST /installation-tokens/entities/tokens/v1
   Permission : installation-tokens:write
@@ -1744,9 +1940,12 @@ Creates a token.
   -Label [String]
     The token label.
 
+
 ```
+
 ### Remove-FalconInstallToken
 ```
+
 Deletes a token immediately. To revoke a token, use PATCH /installation-tokens/entities/tokens/v1 instead.
   Endpoint   : DELETE /installation-tokens/entities/tokens/v1
   Permission : installation-tokens:write
@@ -1755,11 +1954,14 @@ Deletes a token immediately. To revoke a token, use PATCH /installation-tokens/e
     One or more token identifiers
       Pattern : \w{32}
 
+
 ```
+
 ## /intel/
 
 ### Get-FalconActor
 ```
+
 Get actor IDs that match provided FQL filters.
   Endpoint   : GET /intel/queries/actors/v1
   Permission : falconx-actors:read
@@ -1794,9 +1996,12 @@ List detailed information about Actors
   -Fields [Array]
     The fields to return, or a predefined collection name surrounded by two underscores
 
+
 ```
+
 ### Get-FalconIndicator
 ```
+
 Get indicators IDs that match provided FQL filters.
   Endpoint   : GET /intel/queries/indicators/v1
   Permission : falconx-indicators:read
@@ -1831,9 +2036,12 @@ List detailed information about Indicators
   -IndicatorIds [Array] <Required>
     
 
+
 ```
+
 ### Get-FalconIntel
 ```
+
 Get report IDs that match provided FQL filters.
   Endpoint   : GET /intel/queries/reports/v1
   Permission : falconx-reports:read
@@ -1868,9 +2076,12 @@ List detailed information about Intel Reports
   -Fields [Array]
     The fields to return, or a predefined collection name surrounded by two underscores
 
+
 ```
+
 ### Get-FalconRule
 ```
+
 Search for rule IDs that match provided filter criteria.
   Endpoint   : GET /intel/queries/rules/v1
   Permission : falconx-rules:read
@@ -1935,9 +2146,12 @@ List detailed information about Intel Rules
   -RuleIds [Array] <Required>
     The ids of rules to return.
 
+
 ```
+
 ### Receive-FalconIntel
 ```
+
 Download an Intel Report PDF
   Endpoint   : GET /intel/entities/report-files/v1
   Permission : falconx-reports:read
@@ -1949,9 +2163,12 @@ Download an Intel Report PDF
     Destination Path
       Pattern : \.pdf$
 
+
 ```
+
 ### Receive-FalconRule
 ```
+
 Download a specific threat intelligence ruleset zip file
   Endpoint   : GET /intel/entities/rules-files/v1
   Permission : falconx-rules:read
@@ -1975,11 +2192,14 @@ Download the latest threat intelligence ruleset zip file
     Rule news report type
       Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog, yara-master, yara-update, yara-changelog, common-event-format, netwitness
 
+
 ```
+
 ## /iocs/
 
 ### Edit-FalconIOC
 ```
+
 Update a custom IOC
   Endpoint   : PATCH /indicators/entities/iocs/v1
   Permission : iocs:write
@@ -2012,9 +2232,12 @@ Update a custom IOC
   -Description [String]
     Custom IOC description
 
+
 ```
+
 ### Get-FalconIOC
 ```
+
 Search the custom IOCs in your customer account
   Endpoint   : GET /indicators/queries/iocs/v1
   Permission : iocs:read
@@ -2149,9 +2372,12 @@ Get detailed information about an IOC
       Minimum : 1
       Maximum : 200
 
+
 ```
+
 ### Get-FalconProcess
 ```
+
 Search for processes associated with a custom IOC
   Endpoint   : GET /indicators/queries/processes/v1
   Permission : iocs:read
@@ -2163,9 +2389,12 @@ Retrieve detail about a process
   -ProcessIds [Array] <Required>
     One or more process identifiers
 
+
 ```
+
 ### New-FalconIOC
 ```
+
 Create custom IOCs
   Endpoint   : POST /indicators/entities/iocs/v1
   Permission : iocs:write
@@ -2205,9 +2434,12 @@ Create up to 200 custom IOCs in a single request
   -Array [Array] <Required>
     One or more hashtables of custom IOCs
 
+
 ```
+
 ### Remove-FalconIOC
 ```
+
 Delete a custom IOC
   Endpoint   : DELETE /indicators/entities/iocs/v1
   Permission : iocs:write
@@ -2221,9 +2453,12 @@ Delete a custom IOC
       Minimum : 1
       Maximum : 200
 
+
 ```
+
 ### Show-FalconMap
 ```
+
 Graph Indicators
   Endpoint   : POST /intelligence/graph?indicators=
   Permission : 
@@ -2232,11 +2467,14 @@ Graph Indicators
     Indicators to graph
       Pattern : (sha256|md5|domain|ipv4|ipv6):.*
 
+
 ```
+
 ## /malquery/
 
 ### Get-FalconMalQuery
 ```
+
 Check the status and results of a MalQuery request
   Endpoint   : GET /malquery/entities/requests/v1
   Permission : malquery:read
@@ -2245,9 +2483,12 @@ Check the status and results of a MalQuery request
     MalQuery request identifier
       Pattern : \w{8}-\w{4}-\w{4}-\w{4}-\w{12}
 
+
 ```
+
 ### Get-FalconMalQueryFile
 ```
+
 Retrieve indexed files metadata by their hash
   Endpoint   : GET /malquery/entities/metadata/v1
   Permission : malquery:read
@@ -2255,16 +2496,22 @@ Retrieve indexed files metadata by their hash
   -FileIds [Array] <Required>
     The file SHA256.
 
+
 ```
+
 ### Get-FalconQuota
 ```
+
 Get information about search and download quotas in your environment
   Endpoint   : GET /malquery/aggregates/quotas/v1
   Permission : malquery:read
 
+
 ```
+
 ### Invoke-FalconMalQuery
 ```
+
 Search MalQuery for a combination of hex patterns and strings
   Endpoint   : POST /malquery/queries/exact-search/v1
   Permission : malquery:write
@@ -2357,9 +2604,12 @@ Schedule a YARA-based search for execution
   -YaraRule [String] <Required>
     A YARA rule that defines your search
 
+
 ```
+
 ### Invoke-FalconMalQueryJob
 ```
+
 Schedule samples for download from MalQuery
   Endpoint   : POST /malquery/entities/samples-multidownload/v1
   Permission : malquery:write
@@ -2367,9 +2617,12 @@ Schedule samples for download from MalQuery
   -SampleIds [Array] <Required>
     List of sample sha256 ids
 
+
 ```
+
 ### Receive-FalconMalQueryFile
 ```
+
 Download a file indexed by MalQuery using its SHA256 value
   Endpoint   : GET /malquery/entities/download-files/v1
   Permission : malquery:read
@@ -2392,11 +2645,14 @@ Download a zip containing Malquery samples (password: infected)
   -JobId [String] <Required>
     Sample job identifier
 
+
 ```
+
 ## /oauth2/
 
 ### Request-FalconToken
 ```
+
 Generate an OAuth2 access token
   Endpoint   : POST /oauth2/token
   Permission : 
@@ -2420,13 +2676,18 @@ Generate an OAuth2 access token
       Minimum : 32
       Maximum : 32
 
+
 ```
+
 ### Revoke-FalconToken
 ```
+```
+
 ## /prevention-policies/
 
 ### Edit-FalconPreventionPolicy
 ```
+
 Update Prevention Policies by specifying the ID of the policy and details to update
   Endpoint   : PATCH /policy/entities/prevention/v1
   Permission : prevention-policies:write
@@ -2450,9 +2711,12 @@ Update Prevention Policies by specifying the ID of the policy and details to upd
   -Array [Array] <Required>
     An array containing multiple policies to update using a single request
 
+
 ```
+
 ### Get-FalconPreventionPolicy
 ```
+
 Search for Prevention Policies in your environment by providing an FQL filter and paging details. Returns a set of Prevention Policy IDs which match the filter criteria
   Endpoint   : GET /policy/queries/prevention/v1
   Permission : prevention-policies:read
@@ -2510,9 +2774,12 @@ Retrieve a set of Prevention policies
   -PolicyIds [Array] <Required>
     Prevention policy identifiers
 
+
 ```
+
 ### Invoke-FalconPreventionPolicyAction
 ```
+
 Perform actions on Prevention Policies
   Endpoint   : POST /policy/entities/prevention-actions/v1
   Permission : prevention-policies:write
@@ -2529,9 +2796,12 @@ Perform actions on Prevention Policies
     Host Group identifier, used when adding or removing host groups
       Pattern : \w{32}
 
+
 ```
+
 ### New-FalconPreventionPolicy
 ```
+
 Create Prevention Policies
   Endpoint   : POST /policy/entities/prevention/v1
   Permission : prevention-policies:write
@@ -2560,9 +2830,12 @@ Create Prevention Policies
   -Array [Array] <Required>
     An array containing multiple policies to create using a single request
 
+
 ```
+
 ### Remove-FalconPreventionPolicy
 ```
+
 Delete Prevention policies
   Endpoint   : DELETE /policy/entities/prevention/v1
   Permission : prevention-policies:write
@@ -2571,9 +2844,12 @@ Delete Prevention policies
     One or more policy identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Set-FalconPreventionPrecedence
 ```
+
 Sets the precedence of Prevention Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
   Endpoint   : POST /policy/entities/prevention-precedence/v1
   Permission : prevention-policies:write
@@ -2584,11 +2860,15 @@ Sets the precedence of Prevention Policies based on the order of IDs specified i
   -PlatformName [String] <Required>
     Platform name
       Accepted : Windows, Mac, Linux
+
+
 ```
+
 ## /real-time-response/
 
 ### Confirm-FalconCommand
 ```
+
 Get status of an executed command on a single host.
   Endpoint   : GET /real-time-response/entities/command/v1
   Permission : real-time-response:read
@@ -2603,9 +2883,12 @@ Get status of an executed command on a single host.
   -SequenceId [Int32]
     Sequence identifier [default: 0]
 
+
 ```
+
 ### Confirm-FalconGetFile
 ```
+
 Get a list of files for the specified RTR session.
   Endpoint   : GET /real-time-response/entities/file/v1
   Permission : real-time-response:write
@@ -2632,9 +2915,12 @@ Retrieve the status of a 'get' command issued to a batch Real-time Response sess
   -BatchGetCmdReqId [String] <Required>
     Batch 'get' command request identifier
 
+
 ```
+
 ### Confirm-FalconResponderCommand
 ```
+
 Check the status of an Active Responder Real-time Response command
   Endpoint   : GET /real-time-response/entities/active-responder-command/v1
   Permission : real-time-response:write
@@ -2649,9 +2935,12 @@ Check the status of an Active Responder Real-time Response command
   -SequenceId [Int32]
     Sequence identifier [default: 0]
 
+
 ```
+
 ### Get-FalconSession
 ```
+
 Get a list of session_ids.
   Endpoint   : GET /real-time-response/queries/sessions/v1
   Permission : real-time-response:read
@@ -2691,9 +2980,12 @@ Get session metadata by session id.
   -SessionIds [Array] <Required>
     One or more session identifiers
 
+
 ```
+
 ### Invoke-FalconBatchGet
 ```
+
 Send a 'get' request to a batch Real-time Response session
   Endpoint   : POST /real-time-response/combined/batch-get-command/v1
   Permission : real-time-response:write
@@ -2714,9 +3006,12 @@ Send a 'get' request to a batch Real-time Response session
     Restrict the request to specific host identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Invoke-FalconCommand
 ```
+
 Issue a Real-time Response command to a session
   Endpoint   : POST /real-time-response/entities/command/v1
   Permission : real-time-response:read
@@ -2756,9 +3051,12 @@ Issue a Real-time Response command to a batch session
     Restrict the request to specific host identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Invoke-FalconResponderCommand
 ```
+
 Issue a Real-time Response command to a session using Active Responder permissions
   Endpoint   : POST /real-time-response/entities/active-responder-command/v1
   Permission : real-time-response:write
@@ -2798,9 +3096,12 @@ Issue a Real-time Response command to a batch session using Active Responder per
     Restrict the request to specific host identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Receive-FalconGetFile
 ```
+
 Download a file extracted through a Real-time Response 'get' request
   Endpoint   : GET /real-time-response/entities/extracted-file-contents/v1
   Permission : real-time-response:write
@@ -2818,9 +3119,12 @@ Download a file extracted through a Real-time Response 'get' request
     Full destination path for .7z file
       Pattern : \.7z$
 
+
 ```
+
 ### Remove-FalconCommand
 ```
+
 Delete a queued session command
   Endpoint   : DELETE /real-time-response/entities/queued-sessions/command/v1
   Permission : real-time-response:read
@@ -2833,9 +3137,12 @@ Delete a queued session command
     Cloud request identifier of the executed command
       Pattern : \w{8}-\w{4}-\w{4}-\w{4}-\w{12}
 
+
 ```
+
 ### Remove-FalconGetFile
 ```
+
 Delete a RTR session file.
   Endpoint   : DELETE /real-time-response/entities/file/v1
   Permission : real-time-response:write
@@ -2847,9 +3154,12 @@ Delete a RTR session file.
     Real-time Response session identifier
       Pattern : \w{8}-\w{4}-\w{4}-\w{4}-\w{12}
 
+
 ```
+
 ### Remove-FalconSession
 ```
+
 Delete a session.
   Endpoint   : DELETE /real-time-response/entities/sessions/v1
   Permission : real-time-response:read
@@ -2858,9 +3168,12 @@ Delete a session.
     Real-time Response session identifier
       Pattern : \w{8}-\w{4}-\w{4}-\w{4}-\w{12}
 
+
 ```
+
 ### Start-FalconSession
 ```
+
 Initialize a Real-time Response session
   Endpoint   : POST /real-time-response/entities/sessions/v1
   Permission : real-time-response:read
@@ -2897,9 +3210,12 @@ Initialize a Real-time Response session on multiple hosts
   -QueueOffline [Boolean]
     Add sessions in this batch to the offline queue if the hosts do not initialize
 
+
 ```
+
 ### Update-FalconSession
 ```
+
 Refresh a session timeout on a single host.
   Endpoint   : POST /real-time-response/entities/refresh-session/v1
   Permission : real-time-response:read
@@ -2930,11 +3246,14 @@ Refresh a batch Real-time Response session, to avoid hitting the default timeout
     Host identifiers to remove from the batch session
       Pattern : \w{32}
 
+
 ```
+
 ## /real-time-response-admin/
 
 ### Confirm-FalconAdminCommand
 ```
+
 Get status of an executed RTR administrator command on a single host.
   Endpoint   : GET /real-time-response/entities/admin-command/v1
   Permission : real-time-response-admin:write
@@ -2949,9 +3268,12 @@ Get status of an executed RTR administrator command on a single host.
   -SequenceId [Int32]
     Sequence identifier [default: 0]
 
+
 ```
+
 ### Get-FalconPutFile
 ```
+
 Get a list of put-file ID's that are available to the user for the `put` command.
   Endpoint   : GET /real-time-response/queries/put-files/v1
   Permission : real-time-response-admin:write
@@ -2981,9 +3303,12 @@ Get put-files based on the ID's given. These are used for the RTR `put` command.
   -FileIds [Array] <Required>
     One or more file identifiers
 
+
 ```
+
 ### Get-FalconScript
 ```
+
 Get a list of custom-script ID's that are available to the user for the `runscript` command.
   Endpoint   : GET /real-time-response/queries/scripts/v1
   Permission : real-time-response-admin:write
@@ -3013,9 +3338,12 @@ Get custom-scripts based on the ID's given. These are used for the RTR `runscrip
   -ScriptIds [Array] <Required>
     One or more script identifiers
 
+
 ```
+
 ### Invoke-FalconAdminCommand
 ```
+
 Issue a Real-time Response command to a session using Admin permissions
   Endpoint   : POST /real-time-response/entities/admin-command/v1
   Permission : real-time-response-admin:write
@@ -3055,9 +3383,12 @@ Issue a Real-time Response command to a batch session using Admin permissions
     Restrict the request to specific host identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Invoke-FalconForensics
 ```
+
 Deploy and execute Falcon Forensics using Real-time Response
   Endpoint   :  
   Permission : real-time-response:read, real-time-response-admin:write
@@ -3077,9 +3408,12 @@ Deploy and execute Falcon Forensics using Real-time Response
   -QueueOffline [Boolean]
     Add this session to the offline queue if the host does not initialize
 
+
 ```
+
 ### Remove-FalconPutFile
 ```
+
 Delete a put-file based on the ID given.  Can only delete one file at a time.
   Endpoint   : DELETE /real-time-response/entities/put-files/v1
   Permission : real-time-response-admin:write
@@ -3087,9 +3421,12 @@ Delete a put-file based on the ID given.  Can only delete one file at a time.
   -FileId [String] <Required>
     File identifier
 
+
 ```
+
 ### Remove-FalconScript
 ```
+
 Delete a custom-script based on the ID given.  Can only delete one script at a time.
   Endpoint   : DELETE /real-time-response/entities/scripts/v1
   Permission : real-time-response-admin:write
@@ -3097,9 +3434,12 @@ Delete a custom-script based on the ID given.  Can only delete one script at a t
   -FileId [String] <Required>
     Script identifier
 
+
 ```
+
 ### Send-FalconPutFile
 ```
+
 Upload a new put-file to use for the RTR `put` command.
   Endpoint   : POST /real-time-response/entities/put-files/v1
   Permission : real-time-response-admin:write
@@ -3116,9 +3456,12 @@ Upload a new put-file to use for the RTR `put` command.
   -Comment [String]
     A comment for the audit log
 
+
 ```
+
 ### Send-FalconScript
 ```
+
 Upload a new custom-script to use for the RTR `runscript` command.
   Endpoint   : POST /real-time-response/entities/scripts/v1
   Permission : real-time-response-admin:write
@@ -3143,18 +3486,24 @@ Upload a new custom-script to use for the RTR `runscript` command.
     Operating system platform [default: windows]
       Accepted : windows, mac
 
+
 ```
+
 ## /sensor-download/
 
 ### Get-FalconCCID
 ```
+
 Get CCID to use with sensor installers
   Endpoint   : GET /sensors/queries/installers/ccid/v1
   Permission : sensor-installers:read
 
+
 ```
+
 ### Get-FalconInstaller
 ```
+
 Get sensor installer IDs by provided query
   Endpoint   : GET /sensors/queries/installers/v1
   Permission : sensor-installers:read
@@ -3184,9 +3533,12 @@ Get sensor installer details by provided SHA256 IDs
   -FileIds [Array] <Required>
     The IDs of the installers
 
+
 ```
+
 ### Receive-FalconInstaller
 ```
+
 Download a sensor installer
   Endpoint   : GET /sensors/entities/download-installer/v1
   Permission : sensor-installers:read
@@ -3201,11 +3553,14 @@ Download a sensor installer
     Destination path
       Pattern : \.(deb|exe|html|pkg|rpm)+$
 
+
 ```
+
 ## /sensor-update-policies/
 
 ### Edit-FalconSensorUpdatePolicy
 ```
+
 Update Sensor Update Policies by specifying the ID of the policy and details to update
   Endpoint   : PATCH /policy/entities/sensor-update/v2
   Permission : sensor-update-policies:write
@@ -3230,9 +3585,12 @@ Update Sensor Update Policies by specifying the ID of the policy and details to 
   -Array [Array] <Required>
     An array containing multiple policies to update using a single request
 
+
 ```
+
 ### Get-FalconBuild
 ```
+
 Retrieve available builds for use with Sensor Update Policies
   Endpoint   : GET /policy/combined/sensor-update-builds/v1
   Permission : sensor-update-policies:read
@@ -3241,9 +3599,12 @@ Retrieve available builds for use with Sensor Update Policies
     The platform to return builds for
       Accepted : linux, mac, windows
 
+
 ```
+
 ### Get-FalconSensorUpdatePolicy
 ```
+
 Search for Sensor Update Policies in your environment by providing an FQL filter and paging details. Returns a set of Sensor Update Policy IDs which match the filter criteria
   Endpoint   : GET /policy/queries/sensor-update/v1
   Permission : sensor-update-policies:read
@@ -3327,9 +3688,12 @@ Retrieve a set of Sensor Update Policies with additional support for uninstall p
   -PolicyIds [Array] <Required>
     The IDs of the Sensor Update Policies to return
 
+
 ```
+
 ### Get-FalconUninstallToken
 ```
+
 Reveal an uninstall token for a specific device, or use 'MAINTENANCE' to reveal the bulk token
   Endpoint   : POST /policy/combined/reveal-uninstall-token/v1
   Permission : sensor-update-policies:write
@@ -3343,9 +3707,12 @@ Reveal an uninstall token for a specific device, or use 'MAINTENANCE' to reveal 
       Minimum : 32
       Maximum : 32
 
+
 ```
+
 ### Invoke-FalconSensorUpdatePolicyAction
 ```
+
 Perform actions on Sensor Update Policies
   Endpoint   : POST /policy/entities/sensor-update-actions/v1
   Permission : sensor-update-policies:write
@@ -3362,9 +3729,12 @@ Perform actions on Sensor Update Policies
     Host Group identifier, used when adding or removing host groups
       Pattern : \w{32}
 
+
 ```
+
 ### New-FalconSensorUpdatePolicy
 ```
+
 Create Sensor Update Policies
   Endpoint   : POST /policy/entities/sensor-update/v2
   Permission : sensor-update-policies:write
@@ -3389,9 +3759,12 @@ Create Sensor Update Policies
   -Array [Array] <Required>
     An array containing multiple policies to create using a single request
 
+
 ```
+
 ### Remove-FalconSensorUpdatePolicy
 ```
+
 Delete Sensor Update policies
   Endpoint   : DELETE /policy/entities/sensor-update/v1
   Permission : sensor-update-policies:write
@@ -3400,9 +3773,12 @@ Delete Sensor Update policies
     One or more policy identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Set-FalconSensorUpdatePrecedence
 ```
+
 Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
   Endpoint   : POST /policy/entities/sensor-update-precedence/v1
   Permission : sensor-update-policies:write
@@ -3414,11 +3790,14 @@ Sets the precedence of Sensor Update Policies based on the order of IDs specifie
     Platform name
       Accepted : Windows, Mac, Linux
 
+
 ```
+
 ## /spotlight-vulnerabilities/
 
 ### Get-FalconRemediation
 ```
+
 Get information about remediations
   Endpoint   : GET /spotlight/entities/remediations/v2
   Permission : spotlight-vulnerabilities:read
@@ -3427,9 +3806,12 @@ Get information about remediations
     Remediation identifiers
       Pattern : \w{32}
 
+
 ```
+
 ### Get-FalconVulnerability
 ```
+
 Search for vulnerability identifiers
   Endpoint   : GET /spotlight/queries/vulnerabilities/v1
   Permission : spotlight-vulnerabilities:read
@@ -3462,11 +3844,14 @@ Get details on vulnerabilities by providing one or more IDs
   -VulnerabilityIds [Array] <Required>
     One or more vulnerability IDs. Find vulnerability IDs with GET /spotlight/queries/vulnerabilities/v2
 
+
 ```
+
 ## /user-management/
 
 ### Add-FalconRole
 ```
+
 Assign one or more roles to a user
   Endpoint   : POST /user-roles/entities/user-roles/v1
   Permission : usermgmt:write
@@ -3478,9 +3863,12 @@ Assign one or more roles to a user
   -RoleIds [Array] <Required>
     One or more roles to assign
 
+
 ```
+
 ### Edit-FalconUser
 ```
+
 Modify an existing user's first or last name
   Endpoint   : PATCH /users/entities/users/v1
   Permission : usermgmt:write
@@ -3495,9 +3883,12 @@ Modify an existing user's first or last name
   -LastName [String]
     User's last name
 
+
 ```
+
 ### Get-FalconRole
 ```
+
 List user role identifiers
   Endpoint   : GET /user-roles/queries/user-role-ids-by-cid/v1
   Permission : usermgmt:read
@@ -3523,9 +3914,12 @@ Show role IDs of roles assigned to a user. For more information on each role, pr
     User identifier
       Pattern : \w{8}-\w{4}-\w{4}-\w{4}-\w{12}
 
+
 ```
+
 ### Get-FalconUser
 ```
+
 List all user identifiers
   Endpoint   : GET /users/queries/user-uuids-by-cid/v1
   Permission : usermgmt:read
@@ -3558,9 +3952,12 @@ Retrieve a user identifier by providing a username (typically an email address)
   -Username [Array] <Required>
     Email address or username
 
+
 ```
+
 ### New-FalconUser
 ```
+
 Create a user
   Endpoint   : POST /users/entities/users/v1
   Permission : usermgmt:write
@@ -3577,9 +3974,12 @@ Create a user
   -Username [String] <Required>
     A username; typically an email address
 
+
 ```
+
 ### Remove-FalconRole
 ```
+
 Revoke one or more roles from a user
   Endpoint   : DELETE /user-roles/entities/user-roles/v1
   Permission : usermgmt:write
@@ -3591,9 +3991,12 @@ Revoke one or more roles from a user
   -RoleIds [Array] <Required>
     One or more roles
 
+
 ```
+
 ### Remove-FalconUser
 ```
+
 Delete a user
   Endpoint   : DELETE /users/entities/users/v1
   Permission : usermgmt:write
@@ -3601,5 +4004,6 @@ Delete a user
   -UserUuid [String] <Required>
     User identifier
       Pattern : \w{8}-\w{4}-\w{4}-\w{4}-\w{12}
+
 
 ```
