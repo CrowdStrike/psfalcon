@@ -82,24 +82,21 @@ PowerShell scripts. If the token has expired it will be ignored.
 
 ### Add-FalconAwsSettings
 ```
-
 Create or update Global Settings which are applicable to all provisioned AWS accounts
   Endpoint   : POST /cloud-connect-aws/entities/settings/v1
   Permission : cloud-connect-aws:write
 
-  -CloudtrailBucketOwnerId [String]
-    The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs from multiple accounts.
+  -CloudtrailId [String]
+    The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs from 
+    multiple accounts.
       Pattern : \d{12}
 
-  -StaticExternalId [String]
-    By setting this value, all subsequent accounts that are provisioned will default to using this value as their external ID.
-
-
+  -ExternalId [String]
+    By setting this value, all subsequent accounts that are provisioned will default to
+    using this value as their external ID.
 ```
-
 ### Confirm-FalconAwsAccess
 ```
-
 Performs an Access Verification check on the specified AWS Account IDs
   Endpoint   : POST /cloud-connect-aws/entities/verify-account-access/v1
   Permission : cloud-connect-aws:write
@@ -107,21 +104,18 @@ Performs an Access Verification check on the specified AWS Account IDs
   -AccountIds [Array] <Required>
     One or more AWS account identifiers
       Pattern : \d{12}
-
-
 ```
-
 ### Edit-FalconAwsAccount
 ```
-
 Update AWS Accounts by specifying the ID of the account and details to update
   Endpoint   : PATCH /cloud-connect-aws/entities/accounts/v1
   Permission : cloud-connect-aws:write
 
-  -CloudtrailBucketOwnerId [String]
-    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this field is set, it takes precedence of the settings level field.
+  -CloudtrailId [String]
+    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If
+    this field is set, it takes precedence of the settings level field.
 
-  -CloudtrailBucketRegion [String]
+  -CloudtrailRegion [String]
     Region where the S3 bucket containing cloudtrail logs resides.
 
   -ExternalId [String]
@@ -134,18 +128,16 @@ Update AWS Accounts by specifying the ID of the account and details to update
     12 digit AWS provided unique identifier for the account.
 
   -RateLimitReqs [Int32]
-    Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time threshold.
+    Rate limiting setting to control the maximum number of requests that can be made within the
+    rate_limit_time threshold.
 
   -RateLimitTime [Int32]
     Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.
-
-
 ```
-
 ### Get-FalconAwsAccount
 ```
-
-Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS account IDs which match the filter criteria
+Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS
+account IDs which match the filter criteria
   Endpoint   : GET /cloud-connect-aws/queries/accounts/v1
   Permission : cloud-connect-aws:read
 
@@ -168,41 +160,15 @@ Search for provisioned AWS Accounts by providing an FQL filter and paging detail
 
   -Filter [String]
     An FQL filter expression
-
-Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS accounts which match the filter criteria
-  Endpoint   : GET /cloud-connect-aws/combined/accounts/v1
-  Permission : cloud-connect-aws:read
-
-  -Limit [Int32]
-    Maximum number of results
-      Minimum : 1
-      Maximum : 500
-
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
-
-
 ```
-
 ### Get-FalconAwsSettings
 ```
-
 Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts
   Endpoint   : GET /cloud-connect-aws/combined/settings/v1
   Permission : cloud-connect-aws:read
-
-
 ```
-
 ### New-FalconAwsAccount
 ```
-
 Provision AWS Accounts by specifying details about the accounts to provision
   Endpoint   : POST /cloud-connect-aws/entities/accounts/v1
   Permission : cloud-connect-aws:write
@@ -211,10 +177,11 @@ Provision AWS Accounts by specifying details about the accounts to provision
     Provisioning mode
       Accepted : cloudformation, manual
 
-  -CloudtrailBucketOwnerId [String]
-    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this field is set, it takes precedence of the settings level field.
+  -CloudtrailId [String]
+    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If
+    this field is set, it takes precedence of the settings level field.
 
-  -CloudtrailBucketRegion [String]
+  -CloudtrailRegion [String]
     Region where the S3 bucket containing cloudtrail logs resides.
 
   -ExternalId [String]
@@ -227,32 +194,26 @@ Provision AWS Accounts by specifying details about the accounts to provision
     12 digit AWS provided unique identifier for the account.
 
   -RateLimitReqs [Int32]
-    Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time threshold.
+    Rate limiting setting to control the maximum number of requests that can be made within the
+    rate_limit_time threshold.
 
   -RateLimitTime [Int32]
     Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.
-
-
 ```
-
 ### Remove-FalconAwsAccount
 ```
-
 Delete a set of AWS Accounts by specifying their IDs
   Endpoint   : DELETE /cloud-connect-aws/entities/accounts/v1
   Permission : cloud-connect-aws:write
 
   -AccountIds [Array] <Required>
     One or more AWS account identifiers
-
-
 ```
 
 ## /d4c-registration/
 
 ### Edit-FalconAzureAccount
 ```
-
 Update an Azure service account
   Endpoint   : PATCH /cloud-connect-azure/entities/client-id/v1
   Permission : d4c-registration:write
@@ -260,41 +221,30 @@ Update an Azure service account
   -ClientId [String] <Required>
     Client identifier to use for the Service Principal associated with the Azure account
       Pattern : ^[0-9a-z-]{36}$
-
-
 ```
-
 ### Get-FalconAzureAccount
 ```
-
 Return information about Azure account registration
   Endpoint   : GET /cloud-connect-azure/entities/account/v1
   Permission : d4c-registration:read
 
   -SubscriptionIds [Array]
-    SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts are returned.
+    SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts
+    are returned.
       Pattern : ^[0-9a-z-]{36}$
 
   -ScanType [String]
     Type of scan, dry or full, to perform on selected accounts
       Accepted : dry, full
-
-
 ```
-
 ### Get-FalconAzureScript
 ```
-
 Outputs a script to run in an Azure environment to grant access to the Falcon platform
   Endpoint   : GET /cloud-connect-azure/entities/user-scripts/v1
   Permission : d4c-registration:read
-
-
 ```
-
 ### Get-FalconGcpAccount
 ```
-
 Returns information about the current status of an GCP account.
   Endpoint   : GET /cloud-connect-gcp/entities/account/v1
   Permission : d4c-registration:read
@@ -306,23 +256,16 @@ Returns information about the current status of an GCP account.
   -ParentIds [Array]
     Parent IDs of accounts
       Pattern : \d{10,}
-
-
 ```
-
 ### Get-FalconGcpScript
 ```
-
 Return a script for customer to run in their cloud environment to grant us access to their GCP environment
   Endpoint   : GET /cloud-connect-gcp/entities/user-scripts/v1
   Permission : d4c-registration:read
-
-
 ```
 
 ### New-FalconAzureAccount
 ```
-
 Creates a new Azure account and generates a script to grant access to the Falcon platform
   Endpoint   : POST /cloud-connect-azure/entities/account/v1
   Permission : d4c-registration:write
@@ -333,33 +276,26 @@ Creates a new Azure account and generates a script to grant access to the Falcon
 
   -TenantId [String]
     Azure tenant identifier
-
-
 ```
-
 ### New-FalconGcpAccount
 ```
-
 Creates a new GCP account and generates a script to grant access to the Falcon platform
   Endpoint   : POST /cloud-connect-gcp/entities/account/v1
   Permission : d4c-registration:write
 
   -ParentId [String] <Required>
     GCP parent identifier
-
-
 ```
 
 ## /detects/
 
 ### Edit-FalconDetection
 ```
-
 Modify the state, assignee, and visibility of detections
   Endpoint   : PATCH /detects/entities/detects/v2
   Permission : detects:write
 
-  -AssignedToUuid [String]
+  -AssignedUuid [String]
     A user identifier to use to assign the detection
       Pattern : \w{8}-\w{4}-\w{4}-\w{4}-\w{12}
 
@@ -376,13 +312,9 @@ Modify the state, assignee, and visibility of detections
   -Status [String]
     Detection status
       Accepted : new, in_progress, true_positive, false_positive, ignored
-
-
 ```
-
 ### Get-FalconDetection
 ```
-
 Search for detection IDs that match a given query
   Endpoint   : GET /detects/queries/detects/v1
   Permission : detects:read
@@ -403,7 +335,9 @@ Search for detection IDs that match a given query
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : adversary.id|asc, adversary.id|desc, devices.hostname|asc, devices.hostname|desc, first_behavior|asc, last_behavior|asc, last_behavior|desc, max_confidence|asc, max_confidence|desc, max_severity|asc, max_severity|desc
+      Accepted : adversary.id|asc, adversary.id|desc, devices.hostname|asc, devices.hostname|desc,
+      first_behavior|asc, last_behavior|asc, last_behavior|desc, max_confidence|asc, max_confidence|desc,
+      max_severity|asc, max_severity|desc
 
   -Filter [String]
     An FQL filter expression
@@ -417,15 +351,12 @@ List detailed detection information
 
   -DetectionIds [Array] <Required>
     One or more detection identifiers
-
-
 ```
 
 ## /device-control-policies/
 
 ### Edit-FalconDeviceControlPolicy
 ```
-
 Update Device Control Policies by specifying the ID of the policy and details to update
   Endpoint   : PATCH /policy/entities/device-control/v1
   Permission : device-control-policies:write
@@ -442,20 +373,17 @@ Update Device Control Policies by specifying the ID of the policy and details to
   -Settings [Hashtable]
     A hashtable defining policy settings
 
-
-  Endpoint   :  
-  Permission : 
+An array containing multiple policies to update using a single request
+  Endpoint   : PATCH /policy/entities/device-control/v1
+  Permission : device-control-policies:write
 
   -Array [Array] <Required>
-    An array containing multiple policies to update using a single request
-
-
+    One or more hashtables of policy properties
 ```
-
 ### Get-FalconDeviceControlPolicy
 ```
-
-Search for Device Control Policies in your environment by providing an FQL filter and paging details. Returns a set of Device Control Policy IDs which match the filter criteria
+Search for Device Control Policies in your environment by providing an FQL filter and paging details. Returns
+a set of Device Control Policy IDs which match the filter criteria
   Endpoint   : GET /policy/queries/device-control/v1
   Permission : device-control-policies:read
 
@@ -475,9 +403,12 @@ Search for Device Control Policies in your environment by providing an FQL filte
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
+      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
-Search for members of a Device Control Policy in your environment by providing an FQL filter and paging details. Returns a set of Agent IDs which match the filter criteria
+Search for members of a Device Control Policy in your environment by providing an FQL filter and paging
+details. Returns a set of Agent IDs which match the filter criteria
   Endpoint   : GET /policy/queries/device-control-members/v1
   Permission : device-control-policies:read
 
@@ -500,7 +431,9 @@ Search for members of a Device Control Policy in your environment by providing a
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
+      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -PolicyId [String]
     The ID of the Device Control Policy to search for members of
