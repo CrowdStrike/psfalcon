@@ -2,50 +2,14 @@ function Get-SensorUpdatePolicy {
 <#
 .SYNOPSIS
     Search for Sensor Update policies and their members
-.PARAMETER MEMBERS
-    Retrieve members assigned to policies
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
+.DESCRIPTION
+    Additional information is available with the -Help parameter
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'querySensorUpdatePolicies')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'querySensorUpdatePolicyMembers',
-            Mandatory = $true)]
-        [Parameter(
-            ParameterSetName = 'queryCombinedSensorUpdatePolicyMembers',
-            Mandatory = $true)]
-        [switch] $Members,
-
-        [Parameter(
-            ParameterSetName = 'queryCombinedSensorUpdatePoliciesV2',
-            Mandatory = $true)]
-        [Parameter(
-            ParameterSetName = 'queryCombinedSensorUpdatePolicyMembers',
-            HelpMessage = 'Retrieve detailed information',
-            Mandatory = $true)]
-        [switch] $Detailed,
-
-        [Parameter(ParameterSetName = 'querySensorUpdatePolicies')]
-        [Parameter(ParameterSetName = 'queryCombinedSensorUpdatePoliciesV2')]
-        [Parameter(ParameterSetName = 'querySensorUpdatePolicyMembers')]
-        [Parameter(
-            ParameterSetName = 'queryCombinedSensorUpdatePolicyMembers',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('querySensorUpdatePolicies', 'getSensorUpdatePoliciesV2',
@@ -56,33 +20,34 @@ function Get-SensorUpdatePolicy {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedSensorUpdatePolicies',
                 'queryCombinedSensorUpdatePolicyMembers')
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
                 Entity = $Endpoints[1]
                 Dynamic = $Dynamic
             }
-            if ($All) {
+            if ($PSBoundParameters.All) {
                 $Param['All'] = $true
             }
-            if ($Detailed) {
+            if ($PSBoundParameters.Detailed) {
                 $Param['Detailed'] = 'Combined'
                 $Param.Query = $Endpoints[2]
             }
-            if ($Members) {
+            if ($PSBoundParameters.Members) {
                 $Param['Modifier'] = 'Members'
 
-                if ($Detailed) {
+                if ($PSBoundParameters.Detailed) {
                     $Param.Query = $Endpoints[4]
                 } else {
                     $Param.Query = $Endpoints[3]
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

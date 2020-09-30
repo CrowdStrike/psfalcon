@@ -4,19 +4,12 @@ function Send-PutFile {
     Upload a file to use with the Real-time Response 'put' command
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'RTR-CreatePut-Files')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('RTR-CreatePut-Files')
@@ -31,10 +24,12 @@ function Send-PutFile {
         }
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             if ((Test-Path $Dynamic.Path.Value) -eq $false) {
+                # Output exception for invalid file path
                 throw "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
             }
             # Evaluate input and make request

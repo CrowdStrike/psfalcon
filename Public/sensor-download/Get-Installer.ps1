@@ -2,35 +2,14 @@ function Get-Installer {
 <#
 .SYNOPSIS
     Search for sensor installer packages
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
+.DESCRIPTION
+    Additional information is available with the -Help parameter
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'GetSensorInstallersByQuery')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'GetCombinedSensorInstallersByQuery',
-            HelpMessage = 'Retrieve detailed information',
-            Mandatory = $true)]
-        [switch] $Detailed,
-
-        [Parameter(ParameterSetName = 'GetCombinedSensorInstallersByQuery')]
-        [Parameter(
-            ParameterSetName = 'GetSensorInstallersByQuery',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('GetSensorInstallersByQuery', 'GetSensorInstallersEntities',
@@ -40,9 +19,11 @@ function Get-Installer {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name @('GetCombinedSensorInstallersByQuery')
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -58,7 +39,6 @@ function Get-Installer {
                     $Param.Query = $Endpoints[2]
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

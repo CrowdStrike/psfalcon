@@ -4,19 +4,12 @@ function Show-Map {
     Launch the Indicator Graph in a browser window
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'ShowMap')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('ShowMap')
@@ -29,7 +22,8 @@ function Show-Map {
         $FalconUI = "$($Falcon.Hostname -replace 'api', 'falcon')"
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input

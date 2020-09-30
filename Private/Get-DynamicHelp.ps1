@@ -26,16 +26,18 @@ function Get-DynamicHelp {
         # Capture parameter set information
         $ParamSets = foreach ($Set in ((Get-Command $Command).ParameterSets | Where-Object {
         ($_.name -ne 'DynamicHelp') -and ($Exclusions -notcontains $_.name)})) {
+            # Set target endpoint
             $Endpoint = $Falcon.Endpoint($Set.Name)
+
             @{
-                $Set.name = @{
-                    Endpoint = "$($Endpoint.Method.ToUpper()) $($Endpoint.Path)"
+                # Create ParameterSet hashtable
+                $Set.Name = @{
                     Description = "$($Endpoint.Description)"
                     Permission = "$($Endpoint.Permission)"
-                    Parameters = ($Set.parameters | Where-Object { $Defaults -notcontains $_.name }).foreach{
+                    Parameters = ($Set.Parameters | Where-Object { $Defaults -notcontains $_.name }).foreach{
                         # Include parameters not listed in $Defaults
                         $Parameter = [ordered] @{
-                            Name = $_.name
+                            Name = $_.Name
                             Type = $_.ParameterType.name
                             Required = $_.IsMandatory
                             Description = $_.HelpMessage
@@ -69,28 +71,37 @@ function Get-DynamicHelp {
     }
     process {
         foreach ($Set in $ParamSets.Keys) {
-            # Output a basic description of each endpoint in $Command
-            "`n$($ParamSets.$Set.Description)" +
-            "`n  Endpoint   : $($ParamSets.$Set.Endpoint)" +
-            "`n  Permission : $($ParamSets.$Set.Permission)"
-            
+            # Capture permissions for endpoint
+            $Permission = if ($ParamSets.$Set.Permission) {
+                "Requires $($ParamSets.$Set.Permission)"
+            } else {
+                "No permissions required"
+            }
+            # Output description and permission
+            "`n# $($ParamSets.$Set.Description)" +
+            "`n  $($Permission)"
+
             if ($ParamSets.$Set.Parameters) {
-                # Output a description of each parameter involved with each endpoint
+                # Output parameters
                 foreach ($Parameter in $ParamSets.$Set.Parameters) {
-                    $Label = "`n  -$($Parameter.Name) [$($Parameter.Type)]"
+                    if ($Parameter.Name) {
+                        # Output name, type, required status and description
+                        $Label = "`n  -$($Parameter.Name) [$($Parameter.Type)]"
 
-                    if ($Parameter.Required -eq $true) {
-                        $Label += " <Required>"
+                        if ($Parameter.Required -eq $true) {
+                            $Label += " <Required>"
+                        }
+                        $Label + "`n    $($Parameter.Description)"
                     }
-                    $Label + "`n    $($Parameter.Description)"
-
                     foreach ($Pair in ($Parameter.GetEnumerator() | Where-Object { $_.Key -notmatch
                     '(Name|Type|Required|Description)'})) {
+                        # Output parameter attributes
                         "      $($Pair.Key) : $($Pair.Value)"
                     }
                 }
             }
         }
+        # Output blank line
         "`n"
-   }
+    }
 }

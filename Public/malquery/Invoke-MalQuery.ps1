@@ -4,35 +4,12 @@ function Invoke-MalQuery {
     Perform a MalQuery search
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER FUZZY
-    Perform a fuzzy search
-.PARAMETER HUNT
-    Schedule a YARA-based search
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'PostMalQueryExactSearchV1')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'PostMalQueryFuzzySearchV1',
-            Mandatory = $true)]
-        [switch] $Fuzzy,
-
-        [Parameter(
-            ParameterSetName = 'PostMalQueryHuntV1',
-            Mandatory = $true)]
-        [switch] $Hunt,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('PostMalQueryExactSearchV1', 'PostMalQueryFuzzySearchV1', 'PostMalQueryHuntV1')
@@ -41,7 +18,8 @@ function Invoke-MalQuery {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input

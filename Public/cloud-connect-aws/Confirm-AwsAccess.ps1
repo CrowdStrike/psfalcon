@@ -4,19 +4,12 @@ function Confirm-AwsAccess {
     Perform an access verification check on AWS accounts
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'VerifyAWSAccountAccess')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('VerifyAWSAccountAccess')
@@ -25,7 +18,8 @@ function Confirm-AwsAccess {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input and make request

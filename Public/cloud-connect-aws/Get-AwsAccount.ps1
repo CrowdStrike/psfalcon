@@ -4,33 +4,12 @@ function Get-AwsAccount {
     Search for provisioned AWS accounts
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'QueryAWSAccountsForIDs')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'QueryAWSAccountsForIDs',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(
-            ParameterSetName = 'QueryAWSAccountsForIDs',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('QueryAWSAccountsForIDs', 'QueryAWSAccounts')
@@ -39,9 +18,11 @@ function Get-AwsAccount {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
-            Get-DynamicHelp $MyInvocation.MyCommand.Name
+        if ($PSBoundParameters.Help) {
+            # Output help information
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('QueryAWSAccounts')
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -56,7 +37,6 @@ function Get-AwsAccount {
                     $Param.Query = $Endpoints[1]
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

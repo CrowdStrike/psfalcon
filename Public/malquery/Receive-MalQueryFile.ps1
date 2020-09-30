@@ -2,19 +2,14 @@ function Receive-MalQueryFile {
 <#
 .SYNOPSIS
     Download a sample file or archive from MalQuery
-.PARAMETER HELP
-    Output dynamic help information
+.DESCRIPTION
+    Additional information is available with the -Help parameter
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'GetMalQueryDownloadV1')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('GetMalQueryDownloadV1', 'GetMalQueryEntitiesSamplesFetchV1')
@@ -23,7 +18,8 @@ function Receive-MalQueryFile {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input and make request

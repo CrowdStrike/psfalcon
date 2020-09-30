@@ -4,19 +4,12 @@ function Invoke-Forensics {
     Deploy and execute Falcon Forensics using Real-time Response
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'InvokeForensics')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('InvokeForensics')
@@ -31,7 +24,7 @@ function Invoke-Forensics {
         # Output CSV filename
         $OutputFile = "$pwd\Invoke-FalconForensics_$(Get-Date -Format FileDateTime).csv"
 
-        if ($PSBoundParameters.Debug -eq $true) {
+        if ($Dynamic.Debug -eq $true) {
             # Filename for debug logging
             $LogFile = "$pwd\Invoke-FalconForensics_$(Get-Date -Format FileDateTime).log"
         }
@@ -46,14 +39,17 @@ function Invoke-Forensics {
         function Get-Result ($Object, $Output) {
             foreach ($Result in @($Object.resources, $Object.combined.resources)) {
                 foreach ($Item in $Result.psobject.properties.value) {
+                    # Add fields from result to existing output object
                     $Target = ($Output | Where-Object { $_.aid -eq $Item.aid })
 
                     if ($Object.batch_id) {
+                        # Add 'batch_id'
                         Add-Field $Target 'batch_id' $Object.batch_id
                     }
                     foreach ($Property in (($Item | Select-Object session_id, task_id, complete, stdout,
                     stderr, errors, offline_queued).psobject.properties)) {
                         $Value = if (($Property.name -eq 'errors') -and $Property.value) {
+                            # Combine 'errors' to display code and message as a string
                             "$($Property.value.code): $($Property.value.message)"
                         } else {
                             $Property.value
@@ -67,7 +63,7 @@ function Invoke-Forensics {
             # Output timestamped message to console
             Write-Host "[$($Falcon.Rfc3339(0))] $Value"
         }
-        if (-not $Help) {
+        if (-not $PSBoundParameters.Help) {
             try {
                 Write-Log "Checking cloud for existing file..."
 
@@ -132,7 +128,7 @@ function Invoke-Forensics {
         }
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             try {
@@ -260,7 +256,7 @@ function Invoke-Forensics {
                             throw "$($CmdRun.errors.code): $($CmdRun.errors.message)"
                         }
                     }
-                    if ($PSBoundParameters.Debug -eq $true) {
+                    if ($Dynamic.Debug -eq $true) {
                         foreach ($Item in @('RemovePut', 'AddPut', 'Session', 'CmdScript', 'CmdPut', 'CmdRun')) {
                             # Capture full responses in $LogFile
                             if (Get-Variable $Item -ErrorAction SilentlyContinue) {

@@ -4,49 +4,12 @@ function Get-IOC {
     Search for Custom IOCs
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER COUNT
-    Retrieve the total number of hosts that have observed a custom IOC
-.PARAMETER HOSTS
-    Retrieve host identifiers for hosts that have observed a custom IOC
-.PARAMETER PROCESSES
-    Retrieve process identifiers for a host that has observed a custom IOC
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'QueryIOCs')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DevicesCount',
-            Mandatory = $true)]
-        [switch] $Count,
-
-        [Parameter(
-            ParameterSetName = 'DevicesRanOn',
-            Mandatory = $true)]
-        [switch] $Hosts,
-
-        [Parameter(
-            ParameterSetName = 'ProcessesRanOn',
-            Mandatory = $true)]
-        [switch] $Processes,
-
-        [Parameter(ParameterSetName = 'ProcessesRanOn')]
-        [Parameter(ParameterSetName = 'DevicesRanOn')]
-        [Parameter(
-            ParameterSetName = 'QueryIOCs',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('QueryIOCs', 'GetIOC', 'DevicesCount', 'DevicesRanOn', 'ProcessesRanOn')
@@ -55,9 +18,11 @@ function Get-IOC {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -84,7 +49,6 @@ function Get-IOC {
                 # Switch from 'QueryIOCs' to 'GetIOC' if Type and Value are input
                 $Param.Query = $Endpoints[1]
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

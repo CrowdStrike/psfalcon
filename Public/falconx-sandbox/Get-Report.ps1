@@ -4,40 +4,12 @@ function Get-Report {
     Search for sandbox submission analysis reports
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER SUMMARY
-    Retrieve summary information
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'QueryReports')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'GetSummaryReports',
-            Mandatory = $true)]
-        [switch] $Summary,
-
-        [Parameter(
-            ParameterSetName = 'QueryReports',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(
-            ParameterSetName = 'QueryReports',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('QueryReports', 'GetReports', 'GetSummaryReports')
@@ -46,9 +18,11 @@ function Get-Report {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -67,7 +41,6 @@ function Get-Report {
                     $Param['Modifier'] = 'Summary'
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

@@ -4,26 +4,12 @@ function Confirm-Command {
     Check the status of an executed Real-time Response command
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'RTR-CheckCommandStatus')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'RTR-CheckCommandStatus',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('RTR-CheckCommandStatus')
@@ -38,20 +24,19 @@ function Confirm-Command {
         }
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $PSCmdlet.ParameterSetName
                 Dynamic = $Dynamic
             }
-            switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
+            if ($PSBoundParameters.All) {
+                $Param['All'] = $true
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

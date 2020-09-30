@@ -4,26 +4,12 @@ function Get-FirewallPlatform {
     Search for firewall platforms
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'query-platforms')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'query-platforms',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('query-platforms', 'get-platforms')
@@ -32,9 +18,11 @@ function Get-FirewallPlatform {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -46,7 +34,6 @@ function Get-FirewallPlatform {
                     $Param['Detailed'] = 'PlatformIds'
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

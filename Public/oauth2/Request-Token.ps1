@@ -4,27 +4,12 @@ function Request-Token {
     Generate an OAuth2 access token
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER CLOUD
-    Destination CrowdStrike cloud [default: 'us-1']
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'oauth2AccessToken')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'oauth2AccessToken',
-            HelpMessage = 'Destination CrowdStrike cloud')]
-        [ValidateSet('eu-1', 'us-gov-1', 'us-1', 'us-2')]
-        [string] $Cloud,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('oauth2AccessToken')
@@ -33,24 +18,17 @@ function Request-Token {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
-            if ($Cloud) {
+            if ($PSBoundParameters.Cloud) {
                 # Set hostname
-                $Falcon.Hostname = switch ($Cloud) {
-                    'eu-1' {
-                        'https://api.eu-1.crowdstrike.com'
-                    }
-                    'us-gov-1' {
-                        'https://api.laggar.gcw.crowdstrike.com'
-                    }
-                    'us-1' {
-                        'https://api.crowdstrike.com'
-                    }
-                    'us-2' {
-                        'https://api.us-2.crowdstrike.com'
-                    }
+                $Falcon.Hostname = switch ($PSBoundParameters.Cloud) {
+                    'eu-1' { 'https://api.eu-1.crowdstrike.com' }
+                    'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+                    'us-1' { 'https://api.crowdstrike.com' }
+                    'us-2' { 'https://api.us-2.crowdstrike.com' }
                 }
                 Write-Debug "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
             }
@@ -111,10 +89,10 @@ function Request-Token {
                     ConvertTo-SecureString -AsPlainText -Force
 
                 if (Test-Path "$Home\Falcon.token") {
-                    Write-Verbose "[$($MyInvocation.MyCommand.Name)] token saved as $Home\Falcon.token"
-
                     # Update cached token
                     $Falcon.ExportToken()
+
+                    Write-Verbose "[$($MyInvocation.MyCommand.Name)] token saved as $Home\Falcon.token"
                 }
             } else {
                 # Clear cached authentication information

@@ -2,19 +2,14 @@ function Receive-GetFile {
 <#
 .SYNOPSIS
     Download a file extracted through a Real-time Response 'get' request in an encrypted .7z archive
-.PARAMETER HELP
-    Output dynamic help information
+.DESCRIPTION
+    Additional information is available with the -Help parameter
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'RTR-GetExtractedFileContents')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('RTR-GetExtractedFileContents')
@@ -23,7 +18,8 @@ function Receive-GetFile {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input and make request

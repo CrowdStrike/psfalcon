@@ -4,40 +4,12 @@ function Get-User {
     Retrieve user identifiers or usernames
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER NAMES
-    Retrieve usernames (typically email addresses) rather than user identifiers
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'RetrieveUserUUIDsByCID')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'RetrieveEmailsByCID',
-            Mandatory = $true)]
-        [switch] $Names,
-
-        [Parameter(
-            ParameterSetName = 'RetrieveUserUUIDsByCID',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(
-            ParameterSetName = 'RetrieveUserUUIDsByCID',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('RetrieveUserUUIDsByCID', 'RetrieveUser', 'RetrieveUserUUID', 'RetrieveEmailsByCID')
@@ -46,9 +18,11 @@ function Get-User {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
-            Get-DynamicHelp $MyInvocation.MyCommand.Name
+        if ($PSBoundParameters.Help) {
+            # Output help information
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('RetrieveEmailsByCID')
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $PSCmdlet.ParameterSetName
@@ -62,8 +36,10 @@ function Get-User {
                 'Detailed' {
                     $Param['Detailed'] = 'UserIds'
                 }
+                'Names' {
+                    $Param['Query'] = 'RetrieveEmailsByCID'
+                }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

@@ -4,21 +4,12 @@ function Update-Session {
     Refresh an existing Real-time Response session
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER BATCH
-    Refresh a Real-time Response batch session
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'RTR-PulseSession')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('RTR-PulseSession', 'BatchRefreshSessions')
@@ -27,7 +18,8 @@ function Update-Session {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input and make request

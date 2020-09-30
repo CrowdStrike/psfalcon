@@ -2,19 +2,14 @@ function Remove-Report {
 <#
 .SYNOPSIS
     Remove sandbox reports
-.PARAMETER HELP
-    Output dynamic help information
+.DESCRIPTION
+    Additional information is available with the -Help parameter
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'DeleteReport')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('DeleteReport')
@@ -23,7 +18,8 @@ function Remove-Report {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input and make request

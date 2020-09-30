@@ -4,33 +4,12 @@ function Get-Script {
     Search for scripts that are available to use with the Real-time Response 'runscript' command
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'RTR-ListScripts')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'RTR-ListScripts',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(
-            ParameterSetName = 'RTR-ListScripts',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('RTR-ListScripts', 'RTR-GetScripts')
@@ -39,9 +18,11 @@ function Get-Script {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -56,7 +37,6 @@ function Get-Script {
                     $Param['Detailed'] = 'ScriptIds'
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

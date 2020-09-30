@@ -4,33 +4,12 @@ function Get-TokenEvent {
     Search for installation token audit events
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'audit-events-query')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'audit-events-query',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(
-            ParameterSetName = 'audit-events-query',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('audit-events-query', 'audit-events-read')
@@ -39,9 +18,11 @@ function Get-TokenEvent {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -56,7 +37,6 @@ function Get-TokenEvent {
                     $Param['Detailed'] = 'EventIds'
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

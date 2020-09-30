@@ -2,20 +2,28 @@ function Revoke-Token {
 <#
 .SYNOPSIS
     Revoke your current OAuth2 access token before the end of its standard lifespan
-.DESCRIPTION
-    Additional information is available with the -Help parameter
+.LINK
+    https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'oauth2RevokeToken')]
     [OutputType()]
     param()
-    begin {
+    DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('oauth2RevokeToken')
+
+        # Create runtime dictionary
+        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            if (-not $Falcon.Token) {
+                # Output exception if a token is not present
+                throw "No token available to be revoked"
+            }
             # Base request parameters
             $Param = @{
                 Endpoint = $Endpoints[0]
@@ -27,7 +35,6 @@ function Revoke-Token {
             if ($Request.meta) {
                 # Clear cached token and credential information
                 @('id', 'secret', 'CID', 'token').foreach{
-                    # Clear cached authentication information
                     if ($Falcon.$_) {
                         $Falcon.$_ = $null
                         Write-Debug "[$($MyInvocation.MyCommand.Name)] cleared $_"

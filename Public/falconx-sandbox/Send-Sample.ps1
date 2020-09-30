@@ -4,19 +4,12 @@ function Send-Sample {
     Upload a sample to submit to the sandbox
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'UploadSampleV2')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('UploadSampleV2')
@@ -35,10 +28,12 @@ function Send-Sample {
         }
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             if ((Test-Path $Dynamic.Path.Value) -eq $false) {
+                # Output exception for invalid file path
                 throw "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
             }
             # Evaluate input and make request

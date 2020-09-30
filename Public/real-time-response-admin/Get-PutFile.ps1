@@ -4,33 +4,12 @@ function Get-PutFile {
     Search for files that are available to use with the Real-time Response 'put' command
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'RTR-ListPut-Files')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'RTR-ListPut-Files',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(
-            ParameterSetName = 'RTR-ListPut-Files',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('RTR-ListPut-Files', 'RTR-GetPut-Files')
@@ -39,9 +18,11 @@ function Get-PutFile {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -56,7 +37,6 @@ function Get-PutFile {
                     $Param['Detailed'] = 'FileIds'
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }

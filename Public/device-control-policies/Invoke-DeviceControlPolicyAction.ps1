@@ -4,19 +4,12 @@ function Invoke-DeviceControlPolicyAction {
     Perform actions on Device Control policies
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'performDeviceControlPoliciesAction')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('performDeviceControlPoliciesAction')
@@ -25,7 +18,8 @@ function Invoke-DeviceControlPolicyAction {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input
@@ -38,7 +32,6 @@ function Invoke-DeviceControlPolicyAction {
                 # Add 'name' to action_parameters
                 $Param.Body.action_parameters[0].Add('name', 'group_id')
             }
-
             # Convert body to Json
             Format-Param $Param
 

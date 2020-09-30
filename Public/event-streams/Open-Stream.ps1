@@ -2,18 +2,24 @@ function Open-Stream {
 <#
 .SYNOPSIS
     Open an Event Stream and output to a Json file
+.DESCRIPTION
+    Additional information is available with the -Help parameter
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding()]
     [OutputType()]
     param()
     process {
-        if (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
+            Get-DynamicHelp $MyInvocation.MyCommand.Name
+        } elseif (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
+            # Open stream
             $Stream = Get-FalconStream -AppId 'PSFalcon' -Format json
 
             if ($Stream.resources) {
-                # Create parameters from initialization of stream
+                # Create parameters from stream
                 $ArgumentList =
                 "try {
                     `$Param = @{
@@ -35,6 +41,7 @@ function Open-Stream {
                 $Stream
             }
         } else {
+            # Output exception if run on non-Windows devices
             throw "This command is only compatible with PowerShell on Windows"
         }
     }

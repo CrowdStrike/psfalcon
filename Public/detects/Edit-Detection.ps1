@@ -4,19 +4,12 @@ function Edit-Detection {
     Modify the state, assignee, and visibility of detections
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'UpdateDetectsByIdsV2')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('UpdateDetectsByIdsV2')
@@ -24,14 +17,14 @@ function Edit-Detection {
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
-    begin {
-        if ($Dynamic.Comment.Value -and (-not($Dynamic.AssignedToUuid.Value -or $Dynamic.ShowInUi.Value -or
-            $Dynamic.Status.Value))) {
-            throw 'Must define AssignedToUuid, ShowInUi or Status when adding a Comment'
-        }
-    }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Comment -and (-not($PSBoundParameters.AssignedUuid -or
+        $PSBoundParameters.ShowInUi -or $PSBoundParameters.Status))) {
+            # Output exception if 'Comment' is provided without other required field
+            throw 'Must provide AssignedUuid, ShowInUi or Status when adding a Comment'
+        }
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input and make request

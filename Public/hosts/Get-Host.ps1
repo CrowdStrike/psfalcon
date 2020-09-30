@@ -4,43 +4,12 @@ function Get-Host {
     Search for hosts
 .DESCRIPTION
     Additional information is available with the -Help parameter
-.PARAMETER HIDDEN
-    Search for hidden hosts
-.PARAMETER DETAILED
-    Retrieve detailed information
-.PARAMETER ALL
-    Repeat requests until all available results are retrieved
-.PARAMETER HELP
-    Output dynamic help information
 .LINK
-    https://github.com/bk-CS/PSFalcon
+    https://github.com/CrowdStrike/psfalcon
 #>
     [CmdletBinding(DefaultParameterSetName = 'QueryDevicesByFilterScroll')]
     [OutputType()]
-    param(
-        [Parameter(
-            ParameterSetName = 'QueryHiddenDevices',
-            HelpMessage = 'Search for hidden hosts',
-            Mandatory = $true)]
-        [switch] $Hidden,
-
-        [Parameter(ParameterSetName = 'QueryDevicesByFilterScroll')]
-        [Parameter(
-            ParameterSetName = 'QueryHiddenDevices',
-            HelpMessage = 'Retrieve detailed information')]
-        [switch] $Detailed,
-
-        [Parameter(ParameterSetName = 'QueryDevicesByFilterScroll')]
-        [Parameter(
-            ParameterSetName = 'QueryHiddenDevices',
-            HelpMessage = 'Repeat requests until all available results are retrieved')]
-        [switch] $All,
-
-        [Parameter(
-            ParameterSetName = 'DynamicHelp',
-            Mandatory = $true)]
-        [switch] $Help
-    )
+    param()
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('QueryDevicesByFilterScroll', 'GetDeviceDetails', 'QueryHiddenDevices')
@@ -49,9 +18,11 @@ function Get-Host {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($Help) {
+        if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
+            # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query = $Endpoints[0]
@@ -70,7 +41,6 @@ function Get-Host {
                     $Param['Modifier'] = 'Hidden'
                 }
             }
-            # Evaluate input and make request
             Invoke-Request @Param
         }
     }
