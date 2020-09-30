@@ -31,13 +31,11 @@ function Confirm-AdminCommand {
             # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
-                Query = $PSCmdlet.ParameterSetName
+                Query = $Endpoints[0]
                 Dynamic = $Dynamic
             }
-            switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
+            if ($PSBoundParameters.All) {
+                $Param['All'] = $true
             }
             Invoke-Request @Param
         }

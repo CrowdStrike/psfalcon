@@ -31,7 +31,7 @@ function Confirm-Command {
             # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
-                Query = $PSCmdlet.ParameterSetName
+                Query = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             if ($PSBoundParameters.All) {
