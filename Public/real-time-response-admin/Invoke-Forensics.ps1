@@ -129,6 +129,7 @@ function Invoke-Forensics {
     }
     process {
         if ($PSBoundParameters.Help) {
+            # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             try {
