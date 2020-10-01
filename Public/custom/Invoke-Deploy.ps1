@@ -53,20 +53,20 @@ function Invoke-Deploy {
                             $null
                         }
                     }
-                    foreach ($Property in ($Item | Select-Object aid, session_id, task_id, complete, stdout,
+                    (($Item | Select-Object aid, session_id, task_id, complete, stdout,
                     stderr, errors, offline_queued).psobject.properties | Where-Object { $_.Value -or
-                    $_.TypeNameOfValue -eq 'System.Boolean' }) {
-                        $Value = if (($Property.Name -eq 'errors') -and $Property.Value) {
+                    $_.TypeNameOfValue -eq 'System.Boolean' }).foreach{
+                        $Value = if (($_.Name -eq 'errors') -and $_.Value) {
                             # Combine 'errors' to display code and message as a string
-                            "$($Property.Value.code): $($Property.Value.message)"
+                            "$($_.Value.code): $($_.Value.message)"
                         } else {
-                            $Property.Value
+                            $_.Value
                         }
-                        $Name = if ($Property.Name -eq 'task_id') {
+                        $Name = if ($_.Name -eq 'task_id') {
                             # Add task_id as cloud_request_id
                             'cloud_request_id'
                         } else {
-                            $Property.Name
+                            $_.Name
                         }
                         Add-Field $Output $Name $Value
                     }

@@ -94,17 +94,20 @@ function Get-Queue {
                             # Create object for each command with common session fields
                             $Object = [PSCustomObject] @{
                                 aid = $Session.aid
-                                session_id = $Session.id
                                 user_id = $Session.user_id
                                 user_uuid = $Session.user_uuid
+                                session_id = $Session.id
                                 session_created_at = [datetime] $Session.created_at
-                                session_updated_at = [datetime] $Session.updated_at
                                 session_deleted_at = if ($Session.deleted_at) {
                                     [datetime] $Session.deleted_at
                                 } else {
                                     $null
                                 }
+                                session_updated_at = [datetime] $Session.updated_at
                                 session_status = $Session.status
+                                command_complete = $false
+                                command_stdout = $null
+                                command_stderr = $null
                             }
                             ($_.psobject.properties).foreach{
                                 if ($_.name -eq 'status') {
@@ -119,12 +122,6 @@ function Get-Queue {
                                     }
                                 } else {
                                     Add-Field $Object $_.name $_.value
-                                }
-                            }
-                            @('command', 'session').foreach{
-                                # Update 'status' if 'session_deleted_at' or 'command_deleted_at' is populated
-                                if ($Object."$($_)_deleted_at") {
-                                    $Object."$($_)_status" = 'DELETED'
                                 }
                             }
                             if ($Object.command_status -eq 'FINISHED') {
@@ -151,15 +148,17 @@ function Get-Queue {
                                 if ($CmdResult.resources) {
                                     Write-Log "Capturing cloud_request_id $($Object.cloud_request_id)..."
 
-                                    foreach ($Command in ($CmdResult.resources | Select-Object stdout,
-                                    stderr, complete)) {
-                                        ($Command).foreach{
-                                            ($_.psobject.properties).foreach{
-                                                # Add fields from 'FINISHED' command
-                                                Add-Field $Object $_.name $_.value
-                                            }
-                                        }
+                                    (($CmdResult.resources | Select-Object stdout, stderr,
+                                    complete).psobject.properties).foreach{
+                                        # Update object with complete, stderr and stdout results
+                                        $Object."command_$($_.Name)" = $_.Value
                                     }
+                                }
+                            }
+                            @('command', 'session').foreach{
+                                # Update 'status' if 'session_deleted_at' or 'command_deleted_at' is populated
+                                if ($Object."$($_)_deleted_at") {
+                                    $Object."$($_)_status" = 'DELETED'
                                 }
                             }
                             # Output object to CSV
