@@ -1,18 +1,18 @@
-function Invoke-Forensics {
+function Invoke-Deploy {
 <#
 .SYNOPSIS
-    Deploy and execute Falcon Forensics using Real-time Response
+    Deploy and run an executable using Real-time Response
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'InvokeForensics')]
+    [CmdletBinding(DefaultParameterSetName = 'InvokeDeploy')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('InvokeForensics')
+        $Endpoints = @('InvokeDeploy')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -25,11 +25,11 @@ function Invoke-Forensics {
         $FileDateTime = Get-Date -Format FileDateTime
 
         # Output CSV filename
-        $OutputFile = "$pwd\FalconForensics_$FileDateTime.csv"
+        $OutputFile = "$pwd\FalconDeploy_$FileDateTime.csv"
 
         if ($PSBoundParameters.Debug -eq $true) {
             # Filename for debug logging
-            $LogFile = "$pwd\FalconForensics_$FileDateTime.log"
+            $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
         }
         # Capture filename and process name from input
         $Filename = "$([System.IO.Path]::GetFileName($PSBoundParameters.Path))"
@@ -41,30 +41,32 @@ function Invoke-Forensics {
         }
         function Write-Result ($Object, $Step) {
             foreach ($Result in @($Object.resources, $Object.combined.resources)) {
-                foreach ($Item in $Result.psobject.properties.value) {
+                foreach ($Item in $Result.psobject.properties.Value) {
                     $Output = [PSCustomObject] @{
-                        # Add batch id from new request, or existing $Session
                         batch_id = if ($Object.batch_id) {
+                            # Add batch_id from existing object
                             $Object.batch_id
                         } elseif ($Session.batch_id) {
+                            # Add batch_id from initial session creation
                             $Session.batch_id
                         } else {
                             $null
                         }
                     }
                     foreach ($Property in ($Item | Select-Object aid, session_id, task_id, complete, stdout,
-                    stderr, errors, offline_queued).psobject.properties) {
-                        $Value = if (($Property.name -eq 'errors') -and $Property.value) {
+                    stderr, errors, offline_queued).psobject.properties | Where-Object { $_.Value -or
+                    $_.TypeNameOfValue -eq 'System.Boolean' }) {
+                        $Value = if (($Property.Name -eq 'errors') -and $Property.Value) {
                             # Combine 'errors' to display code and message as a string
-                            "$($Property.value.code): $($Property.value.message)"
+                            "$($Property.Value.code): $($Property.Value.message)"
                         } else {
-                            $Property.value
+                            $Property.Value
                         }
-                        $Name = if ($Property.name -eq 'task_id') {
+                        $Name = if ($Property.Name -eq 'task_id') {
                             # Add task_id as cloud_request_id
                             'cloud_request_id'
                         } else {
-                            $Property.name
+                            $Property.Name
                         }
                         Add-Field $Output $Name $Value
                     }
@@ -91,7 +93,7 @@ function Invoke-Forensics {
                     # Capture relevant fields into hashtable
                     [ordered] @{
                         id = $Item.id
-                        name = $Item.name
+                        name = $Item.Name
                         created_timestamp = [datetime] $Item.created_timestamp
                         modified_timestamp = [datetime] $Item.modified_timestamp
                         sha256 = $Item.sha256
@@ -103,7 +105,7 @@ function Invoke-Forensics {
                     Select-Object CreationTime, Name, LastWriteTime)) {
                         # Capture relevant fields into hashtable
                         [ordered] @{
-                            name = $Item.name
+                            name = $Item.Name
                             created_timestamp = [datetime] $Item.CreationTime
                             modified_timestamp = [datetime] $Item.LastWriteTime
                             sha256 = ((Get-FileHash -Algorithm SHA256 -Path $PSBoundParameters.Path).Hash).ToLower()
@@ -157,8 +159,8 @@ function Invoke-Forensics {
                     $Param = @{
                         Path = $PSBoundParameters.Path
                         Name = $Filename
-                        Description = "Falcon Forensics Data Collection Tool"
-                        Comment = "PSFalcon: Invoke-FalconForensics"
+                        Description = "$ProcessName"
+                        Comment = "PSFalcon: Invoke-FalconDeploy"
                     }
                     $AddPut = Send-FalconPutFile @Param
 
@@ -189,18 +191,18 @@ function Invoke-Forensics {
                         Write-Result $Session "session_start"
 
                         # Capture identifiers for hosts in batch session
-                        $SessionHosts = ($Session.resources.psobject.properties.value |
+                        $SessionHosts = ($Session.resources.psobject.properties.Value |
                             Where-Object { ($_.complete -eq $true) -or ($_.offline_queued -eq $true) }).aid
                     }
                     if ($SessionHosts) {
-                        Write-Log "Initiated batch session with $($SessionHosts.count) host(s)"
+                        Write-Log "Initiated batch session with $($SessionHosts.count) host(s)..."
 
-                        # Verify forensics collector is not currently running
+                        # Verify file is not currently running
                         $Param = @{
                             BatchId = $Session.batch_id
                             Command = 'runscript'
                             Arguments = "-Raw='(Get-Process | Where-Object { `$_.ProcessName -eq " +
-                            "`"$ProcessName`" }).foreach{ if (`$_.path -match `"$Filename`") { `"IN_PROGRESS`"}}'"
+                            "`"$ProcessName`" }).foreach{ if (`$_.path -match `"$Filename`") { `"IN_PROGRESS`"} }'"
                         }
                         if ($PSBoundParameters.Timeout) {
                             $Param['Timeout'] = $PSBoundParameters.Timeout
@@ -214,8 +216,8 @@ function Invoke-Forensics {
                             # Capture 'runscript' results
                             Write-Result $CmdScript "running_process_check"
 
-                            # Capture identifiers for hosts that do not have a running FFC process
-                            $ScriptHosts = ($CmdScript.combined.resources.psobject.properties.value |
+                            # Capture identifiers for hosts that do not have a running process
+                            $ScriptHosts = ($CmdScript.combined.resources.psobject.properties.Value |
                                 Where-Object {(($_.stdout -ne 'IN_PROGRESS') -or
                                 ($_.offline_queued -eq $true)) -and ((-not $_.stderr) -or
                                 ($_.errors))}).aid
@@ -224,7 +226,7 @@ function Invoke-Forensics {
                     if ($ScriptHosts) {
                         Write-Log "Putting $Filename on $($ScriptHosts.count) host(s)..."
 
-                        # Push forensics collector to target hosts
+                        # Push file to target hosts
                         $Param = @{
                             BatchId = $Session.batch_id
                             Command = 'put'
@@ -244,18 +246,25 @@ function Invoke-Forensics {
                             Write-Result $CmdPut "put_file"
 
                             # Capture identifiers for hosts that had a successful 'put'
-                            $PutHosts = ($CmdPut.combined.resources.psobject.properties.value |
+                            $PutHosts = ($CmdPut.combined.resources.psobject.properties.Value |
                             Where-Object { ($_.complete -eq $true) -or ($_.offline_queued -eq $true) }).aid
                         }
                     }
                     if ($PutHosts) {
                         Write-Log "Starting $Filename on $($PutHosts.count) host(s)..."
 
-                        # Run forensics collector
+                        # Set 'run' arguments
+                        $Arguments = "\$Filename"
+                        
+                        if ($PSBoundParameters.Arguments) {
+                            # Add input arguments
+                            $Arguments += " -CommandLine=`"$($PSBoundParameters.Arguments)`""
+                        }
+                        # Issue 'run' command
                         $Param = @{
                             BatchId = $Session.batch_id
                             Command = 'run'
-                            Arguments = "\$Filename"
+                            Arguments = $Arguments
                             OptionalHostIds = $PutHosts
                         }
                         if ($PSBoundParameters.Timeout) {

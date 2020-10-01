@@ -3236,15 +3236,15 @@
     ]
   },
   {
-    "Name": "InvokeForensics",
-    "Description": "Deploy and execute Falcon Forensics using Real-time Response",
+    "Name": "InvokeDeploy",
+    "Description": "Deploy and run an executable using Real-time Response",
     "Permission": "real-time-response:read, real-time-response-admin:write",
     "Parameters": [
       {
         "Dynamic": "Path",
         "Type": "string",
         "Required": true,
-        "Description": "Path to the Falcon Forensics executable"
+        "Description": "Path to the executable"
       },
       {
         "Dynamic": "HostIds",
@@ -3252,6 +3252,12 @@
         "Required": true,
         "Pattern": "\\w{32}",
         "Description": "Host identifiers"
+      },
+      {
+        "Dynamic": "Arguments",
+        "Type": "string",
+        "Required": false,
+        "Description": "Command line arguments to include upon execution"
       },
       {
         "Dynamic": "Timeout",
@@ -3265,7 +3271,7 @@
         "Dynamic": "QueueOffline",
         "Type": "bool",
         "Required": false,
-        "Description": "Add this session to the offline queue if the host does not initialize"
+        "Description": "Add session to the offline queue if the host does not initialize"
       }
     ]
   },
@@ -8457,7 +8463,7 @@
           "body"
         ],
         "Required": false,
-        "Description": "Add this session to the offline queue if the host does not initialize"
+        "Description": "Add session to the offline queue if the host does not initialize"
       }
     ]
   },

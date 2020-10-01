@@ -67,7 +67,7 @@ function Get-Queue {
                     "SessionIds:`n $($SessionIds | ConvertTo-Json -Depth 8)`n" | Out-File $LogFile -Append
                 }
                 if ($SessionIds.resources) {
-                    Write-Log "Found $($SessionIds.resources.count) session(s) with queued commands"
+                    Write-Log "Found $($SessionIds.resources.count) session(s) with queued commands..."
 
                     # Retrieve detail about sessions with queued commands
                     $Param = @{
@@ -127,7 +127,7 @@ function Get-Queue {
                                     $Object."$($_)_status" = 'DELETED'
                                 }
                             }
-                            if ($Object.command_status -eq 'FINISHED' -and (-not $Object.session_deleted_at)) {
+                            if ($Object.command_status -eq 'FINISHED') {
                                 # Set permission from 'base_command'
                                 $Permission = if ($RequiresAdmin -contains $Object.base_command) {
                                     'Admin'
@@ -151,10 +151,13 @@ function Get-Queue {
                                 if ($CmdResult.resources) {
                                     Write-Log "Capturing cloud_request_id $($Object.cloud_request_id)..."
 
-                                    foreach ($Command in $CmdResult.resources) {
-                                        # Add fields from 'FINISHED' command
-                                        ($Command.psobject.properties).foreach{
-                                            Add-Field $Object $_.name $_.value
+                                    foreach ($Command in ($CmdResult.resources | Select-Object stdout,
+                                    stderr, complete)) {
+                                        ($Command).foreach{
+                                            ($_.psobject.properties).foreach{
+                                                # Add fields from 'FINISHED' command
+                                                Add-Field $Object $_.name $_.value
+                                            }
                                         }
                                     }
                                 }

@@ -82,6 +82,10 @@ FunctionsToExport = @(
     'New-AwsAccount',
     'Remove-AwsAccount',
 
+    # custom
+    'Get-Queue',
+    'Invoke-Deploy',
+
     # d4c-registration
     'Edit-AzureAccount',
     'Get-AzureAccount',
@@ -204,7 +208,6 @@ FunctionsToExport = @(
     'Confirm-Command',
     'Confirm-GetFile',
     'Confirm-ResponderCommand',
-    'Get-Queue',
     'Get-Session',
     'Invoke-BatchGet',
     'Invoke-Command',
@@ -221,7 +224,6 @@ FunctionsToExport = @(
     'Get-PutFile',
     'Get-Script',
     'Invoke-AdminCommand',
-    'Invoke-Forensics',
     'Remove-PutFile',
     'Remove-Script',
     'Send-PutFile',
