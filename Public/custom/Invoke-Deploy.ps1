@@ -54,8 +54,7 @@ function Invoke-Deploy {
                         }
                     }
                     (($Item | Select-Object aid, session_id, task_id, complete, stdout,
-                    stderr, errors, offline_queued).psobject.properties | Where-Object { $_.Value -or
-                    $_.TypeNameOfValue -eq 'System.Boolean' }).foreach{
+                    stderr, errors, offline_queued).psobject.properties).foreach{
                         $Value = if (($_.Name -eq 'errors') -and $_.Value) {
                             # Combine 'errors' to display code and message as a string
                             "$($_.Value.code): $($_.Value.message)"
@@ -218,9 +217,8 @@ function Invoke-Deploy {
 
                             # Capture identifiers for hosts that do not have a running process
                             $ScriptHosts = ($CmdScript.combined.resources.psobject.properties.Value |
-                                Where-Object {(($_.stdout -ne 'IN_PROGRESS') -or
-                                ($_.offline_queued -eq $true)) -and ((-not $_.stderr) -or
-                                ($_.errors))}).aid
+                            Where-Object {(($_.stdout -ne 'IN_PROGRESS') -or ($_.offline_queued -eq $true)) -and
+                            ((-not $_.stderr) -or $_.errors)}).aid
                         }
                     }
                     if ($ScriptHosts) {
