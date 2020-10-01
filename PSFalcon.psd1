@@ -204,6 +204,7 @@ FunctionsToExport = @(
     'Confirm-Command',
     'Confirm-GetFile',
     'Confirm-ResponderCommand',
+    'Get-Queue',
     'Get-Session',
     'Invoke-BatchGet',
     'Invoke-Command',

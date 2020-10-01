@@ -21,41 +21,58 @@ function Invoke-Forensics {
         # Maximum number of hosts in each request group
         $Max = 500
 
-        # Output CSV filename
-        $OutputFile = "$pwd\Invoke-FalconForensics_$(Get-Date -Format FileDateTime).csv"
+        # Set file date for output
+        $FileDateTime = Get-Date -Format FileDateTime
 
-        if ($Dynamic.Debug -eq $true) {
+        # Output CSV filename
+        $OutputFile = "$pwd\FalconForensics_$FileDateTime.csv"
+
+        if ($PSBoundParameters.Debug -eq $true) {
             # Filename for debug logging
-            $LogFile = "$pwd\Invoke-FalconForensics_$(Get-Date -Format FileDateTime).log"
+            $LogFile = "$pwd\FalconForensics_$FileDateTime.log"
         }
         # Capture filename and process name from input
-        $Filename = "$([System.IO.Path]::GetFileName($Dynamic.Path.Value))"
-        $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($Dynamic.Path.Value))"
+        $Filename = "$([System.IO.Path]::GetFileName($PSBoundParameters.Path))"
+        $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($PSBoundParameters.Path))"
 
         function Add-Field ($Object, $Name, $Value) {
             # Add NoteProperty to PSCustomObject
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
         }
-        function Get-Result ($Object, $Output) {
+        function Write-Result ($Object, $Step) {
             foreach ($Result in @($Object.resources, $Object.combined.resources)) {
                 foreach ($Item in $Result.psobject.properties.value) {
-                    # Add fields from result to existing output object
-                    $Target = ($Output | Where-Object { $_.aid -eq $Item.aid })
-
-                    if ($Object.batch_id) {
-                        # Add 'batch_id'
-                        Add-Field $Target 'batch_id' $Object.batch_id
+                    $Output = [PSCustomObject] @{
+                        # Add batch id from new request, or existing $Session
+                        batch_id = if ($Object.batch_id) {
+                            $Object.batch_id
+                        } elseif ($Session.batch_id) {
+                            $Session.batch_id
+                        } else {
+                            $null
+                        }
                     }
-                    foreach ($Property in (($Item | Select-Object session_id, task_id, complete, stdout,
-                    stderr, errors, offline_queued).psobject.properties)) {
+                    foreach ($Property in ($Item | Select-Object aid, session_id, task_id, complete, stdout,
+                    stderr, errors, offline_queued).psobject.properties) {
                         $Value = if (($Property.name -eq 'errors') -and $Property.value) {
                             # Combine 'errors' to display code and message as a string
                             "$($Property.value.code): $($Property.value.message)"
                         } else {
                             $Property.value
                         }
-                        Add-Field $Target $Property.name $Value
+                        $Name = if ($Property.name -eq 'task_id') {
+                            # Add task_id as cloud_request_id
+                            'cloud_request_id'
+                        } else {
+                            $Property.name
+                        }
+                        Add-Field $Output $Name $Value
                     }
+                    # Add the deployment step field
+                    Add-Field $Output "deployment_step" $Step
+
+                    # Output result to CSV
+                    $Output | Export-Csv $OutputFile -Append -NoTypeInformation -Force
                 }
             }
         }
@@ -82,14 +99,14 @@ function Invoke-Forensics {
                 }
                 if ($CloudFile) {
                     # Capture detail about local file to compare with cloud file
-                    $LocalFile = foreach ($Item in (Get-ChildItem $Dynamic.Path.Value |
+                    $LocalFile = foreach ($Item in (Get-ChildItem $PSBoundParameters.Path |
                     Select-Object CreationTime, Name, LastWriteTime)) {
                         # Capture relevant fields into hashtable
                         [ordered] @{
                             name = $Item.name
                             created_timestamp = [datetime] $Item.CreationTime
                             modified_timestamp = [datetime] $Item.LastWriteTime
-                            sha256 = ((Get-FileHash -Algorithm SHA256 -Path $Dynamic.Path.Value).Hash).ToLower()
+                            sha256 = ((Get-FileHash -Algorithm SHA256 -Path $PSBoundParameters.Path).Hash).ToLower()
                         }
                     }
                     if ($LocalFile.sha256 -eq $CloudFile.sha256) {
@@ -138,7 +155,7 @@ function Invoke-Forensics {
 
                     # Upload local file to cloud
                     $Param = @{
-                        Path = $Dynamic.Path.Value
+                        Path = $PSBoundParameters.Path
                         Name = $Filename
                         Description = "Falcon Forensics Data Collection Tool"
                         Comment = "PSFalcon: Invoke-FalconForensics"
@@ -150,21 +167,15 @@ function Invoke-Forensics {
                         throw "$($RemovePut.errors.code): $($RemovePut.errors.message)"
                     }
                 }
-                for ($i = 0; $i -lt ($Dynamic.HostIds.Value).count; $i += $Max) {
-                    # Create output objects for each identifier
-                    $Group = foreach ($Item in $Dynamic.HostIds.Value[$i..($i + ($Max - 1))]) {
-                        [PSCustomObject] @{
-                            aid = $Item
-                        }
-                    }
+                for ($i = 0; $i -lt ($PSBoundParameters.HostIds).count; $i += $Max) {
                     # Start Real-time Response session
                     $Param = @{
-                        HostIds = $Group.aid
+                        HostIds = $PSBoundParameters.HostIds[$i..($i + ($Max - 1))]
                     }
-                    switch -Regex ($Dynamic.Keys) {
+                    switch -Regex ($PSBoundParameters.Keys) {
                         '(QueueOffline|Timeout)' {
-                            if ($Dynamic.$_.Value) {
-                                $Param[$_] = $Dynamic.$_.Value
+                            if ($PSBoundParameters.$_) {
+                                $Param[$_] = $PSBoundParameters.$_
                             }
                         }
                     }
@@ -175,7 +186,7 @@ function Invoke-Forensics {
                         throw "$($Session.errors.code): $($Session.errors.message)"
                     } else {
                         # Capture results
-                        Get-Result $Session $Group
+                        Write-Result $Session "session_start"
 
                         # Capture identifiers for hosts in batch session
                         $SessionHosts = ($Session.resources.psobject.properties.value |
@@ -189,10 +200,10 @@ function Invoke-Forensics {
                             BatchId = $Session.batch_id
                             Command = 'runscript'
                             Arguments = "-Raw='(Get-Process | Where-Object { `$_.ProcessName -eq " +
-                            "`"$ProcessName`" }).foreach{ if (`$_.path -match `"$Filename`") { `"IN_PROGRESS`"} }'"
+                            "`"$ProcessName`" }).foreach{ if (`$_.path -match `"$Filename`") { `"IN_PROGRESS`"}}'"
                         }
-                        if ($Dynamic.Timeout.Value) {
-                            $Param['Timeout'] = $Dynamic.Timeout.Value
+                        if ($PSBoundParameters.Timeout) {
+                            $Param['Timeout'] = $PSBoundParameters.Timeout
                         }
                         $CmdScript = Invoke-FalconAdminCommand @Param
 
@@ -200,8 +211,8 @@ function Invoke-Forensics {
                             # Error if 'runscript' command fails
                             throw "$($CmdScript.errors.code): $($CmdScript.errors.message)"
                         } else {
-                            # Capture results
-                            Get-Result $CmdScript $Group
+                            # Capture 'runscript' results
+                            Write-Result $CmdScript "running_process_check"
 
                             # Capture identifiers for hosts that do not have a running FFC process
                             $ScriptHosts = ($CmdScript.combined.resources.psobject.properties.value |
@@ -220,8 +231,8 @@ function Invoke-Forensics {
                             Arguments = "$Filename"
                             OptionalHostIds = $ScriptHosts
                         }
-                        if ($Dynamic.Timeout.Value) {
-                            $Param['Timeout'] = $Dynamic.Timeout.Value
+                        if ($PSBoundParameters.Timeout) {
+                            $Param['Timeout'] = $PSBoundParameters.Timeout
                         }
                         $CmdPut = Invoke-FalconAdminCommand @Param
 
@@ -229,8 +240,8 @@ function Invoke-Forensics {
                             # Error if 'put' command fails
                             throw "$($CmdPut.errors.code): $($CmdPut.errors.message)"
                         } else {
-                            # Capture results
-                            Get-Result $CmdPut $Group
+                            # Capture 'put' results
+                            Write-Result $CmdPut "put_file"
 
                             # Capture identifiers for hosts that had a successful 'put'
                             $PutHosts = ($CmdPut.combined.resources.psobject.properties.value |
@@ -247,17 +258,20 @@ function Invoke-Forensics {
                             Arguments = "\$Filename"
                             OptionalHostIds = $PutHosts
                         }
-                        if ($Dynamic.Timeout.Value) {
-                            $Param['Timeout'] = $Dynamic.Timeout.Value
+                        if ($PSBoundParameters.Timeout) {
+                            $Param['Timeout'] = $PSBoundParameters.Timeout
                         }
                         $CmdRun = Invoke-FalconAdminCommand @Param
 
                         if (-not $CmdRun.combined.resources) {
                             # Error if 'run' command fails
                             throw "$($CmdRun.errors.code): $($CmdRun.errors.message)"
+                        } else {
+                             # Capture 'run' results
+                             Write-Result $CmdRun "run_file"
                         }
                     }
-                    if ($Dynamic.Debug -eq $true) {
+                    if ($PSBoundParameters.Debug -eq $true) {
                         foreach ($Item in @('RemovePut', 'AddPut', 'Session', 'CmdScript', 'CmdPut', 'CmdRun')) {
                             # Capture full responses in $LogFile
                             if (Get-Variable $Item -ErrorAction SilentlyContinue) {
@@ -266,8 +280,6 @@ function Invoke-Forensics {
                             }
                         }
                     }
-                    # Output results to CSV
-                    $Group | Export-Csv $OutputFile -Append -NoTypeInformation -Force
                 }
             } catch {
                 # Output error
