@@ -229,6 +229,10 @@ FunctionsToExport = @(
     'Send-PutFile',
     'Send-Script',
 
+    # scanner
+    'Get-Scan',
+    'New-Volume',
+
     # sensor-download
     'Get-CCID',
     'Get-Installer',

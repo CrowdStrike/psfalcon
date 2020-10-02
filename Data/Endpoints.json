@@ -1577,14 +1577,15 @@
         "Description": "User identifier"
       },
       {
-        "Dynamic": "FileId",
+        "Dynamic": "Sha256",
         "Name": "ids",
         "Type": "string",
         "In": [
           "query"
         ],
         "Required": true,
-        "Description": "SHA256 hash value of the file"
+        "Pattern": "\\w{64}",
+        "Description": "SHA256 hash value of the file to remove"
       }
     ]
   },
@@ -2763,6 +2764,19 @@
     ]
   },
   {
+    "Name": "GetQueue",
+    "Description": "Create a report of with status of queued Real-time Response sessions",
+    "Permission": "real-time-response:read, real-time-response:write, real-time-response-admin:write",
+    "Parameters": [
+      {
+        "Dynamic": "Days",
+        "Type": "int",
+        "Required": false,
+        "Description": "Number of days worth of results to retrieve [Default: 7]"
+      }
+    ]
+  },
+  {
     "Name": "getRemediations",
     "Path": "/spotlight/entities/remediations/v2",
     "Method": "GET",
@@ -2904,7 +2918,7 @@
         ],
         "Pattern": "\\w{64}",
         "Required": true,
-        "Description": "SHA256 hash value of the target file"
+        "Description": "SHA256 hash value of the file"
       },
       {
         "Dynamic": "PasswordProtected",
@@ -2915,6 +2929,29 @@
         ],
         "Required": false,
         "Description": "Flag whether the sample should be zipped and password protected with pass='infected'"
+      }
+    ]
+  },
+  {
+    "Name": "GetScan",
+    "Path": "/scanner/entities/scans/v1",
+    "Method": "GET",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "quick-scan:read",
+    "Description": "Check the status of a submitted scan",
+    "Parameters": [
+      {
+        "Dynamic": "ScanIds",
+        "Name": "ids",
+        "Type": "array",
+        "In": [
+          "query"
+        ],
+        "Required": true,
+        "Pattern": "\\w{32}_\\w{32}",
+        "Description": "One or more volume scan identifiers"
       }
     ]
   },
@@ -3055,19 +3092,6 @@
         ],
         "Required": true,
         "Description": "The IDs of the Sensor Update Policies to return"
-      }
-    ]
-  },
-  {
-    "Name": "GetQueue",
-    "Description": "Create a report of with status of queued Real-time Response sessions",
-    "Permission": "real-time-response:read, real-time-response:write, real-time-response-admin:write",
-    "Parameters": [
-      {
-        "Dynamic": "Days",
-        "Type": "int",
-        "Required": false,
-        "Description": "Number of days worth of results to retrieve [Default: 7]"
       }
     ]
   },
@@ -7231,7 +7255,67 @@
           "body"
         ],
         "Max": 500,
-        "Required": false
+        "Required": false,
+        "Pattern": "\\w{64}",
+        "Description": "One or more SHA256 hash values"
+      }
+    ]
+  },
+  {
+    "Name": "QueryScan",
+    "Path": "/scanner/queries/scans/v1",
+    "Method": "GET",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "devices:read",
+    "Description": "Find the volume identifiers for submitted scans",
+    "Parameters": [
+      {
+        "Dynamic": "Offset",
+        "Name": "offset",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Description": "The position to begin retrieving results"
+      },
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 5000,
+        "Description": "Maximum number of results"
+      },
+      {
+        "Dynamic": "Sort",
+        "Name": "sort",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Enum": [
+          "asc",
+          "desc"
+        ],
+        "Required": false,
+        "Description": "Property and direction to sort results"
+      },
+      {
+        "Dynamic": "Filter",
+        "Name": "filter",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Description": "An FQL filter expression"
       }
     ]
   },
@@ -9083,7 +9167,8 @@
           "GetSensorInstallersByQuery",
           "RTR-ListAllSessions",
           "RTR-ListPut-Files",
-          "RTR-ListScripts"
+          "RTR-ListScripts",
+          "QueryScan"
         ]
       },
       {
@@ -9278,6 +9363,29 @@
           "body"
         ],
         "Required": false
+      }
+    ]
+  },
+  {
+    "Name": "SubmitVolume",
+    "Path": "/scanner/entities/scans/v1",
+    "Method": "POST",
+    "Headers": {
+      "Accept": "application/json",
+      "ContentType": "application/json"
+    },
+    "Permission": "quick-scan:write",
+    "Description": "Submit a volume of files for scanning",
+    "Parameters": [
+      {
+        "Dynamic": "Sha256s",
+        "Name": "samples",
+        "Type": "array",
+        "In": [
+          "body"
+        ],
+        "Required": true,
+        "Description": "One or more SHA256 hash values to submit as a volume scan"
       }
     ]
   },
@@ -10283,7 +10391,7 @@
       "ContentType": "application/octet-stream"
     },
     "Permission": "falconx-sandbox:write",
-    "Description": "Upload a file to add to a sandbox submission",
+    "Description": "Upload a sample file",
     "Parameters": [
       {
         "Dynamic": "UserUuid",
@@ -10308,7 +10416,7 @@
         "Description": "Path to the file"
       },
       {
-        "Dynamic": "FileName",
+        "Dynamic": "Filename",
         "Name": "file_name",
         "Type": "string",
         "In": [
@@ -10336,7 +10444,7 @@
         ],
         "Required": false,
         "Default": "True",
-        "Description": "Defines visibility of the sample in Falcon MalQuery [$true (default): File is only shown to users within your account, $false: File can be seen by other CrowdStrike customers]"
+        "Description": "Visibility of the sample in Falcon MalQuery"
       }
     ]
   },
