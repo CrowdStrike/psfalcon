@@ -7268,7 +7268,7 @@
     "Headers": {
       "Accept": "application/json"
     },
-    "Permission": "devices:read",
+    "Permission": "quick-scan:read",
     "Description": "Find the volume identifiers for submitted scans",
     "Parameters": [
       {
