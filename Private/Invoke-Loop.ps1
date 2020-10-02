@@ -25,6 +25,12 @@ function Invoke-Loop {
         [Parameter()]
         [string] $Detailed
     )
+    begin {
+        if ($Param.All) {
+            # Remove -All from input to prevent infinite loop
+            $Param.Remove('All')
+        }
+    }
     process {
         # Request identifiers
         $Loop = & $Command @Param
