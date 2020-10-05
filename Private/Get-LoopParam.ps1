@@ -18,8 +18,9 @@ function Get-LoopParam {
         $Output = @{ }
     }
     process {
-        # Evaluate dynamic parameter input (excluding pagination)
-        foreach ($Item in ($Dynamic.Values | Where-Object IsSet | Where-Object Name -notmatch '(offset|after)')) {
+        # Evaluate dynamic parameter input (excluding pagination and common dynamic switches)
+        foreach ($Item in ($Dynamic.Values | Where-Object IsSet |
+        Where-Object Name -notmatch '(offset|after|detailed|all)')) {
             # Add key/value to output
             $Output[$Item.Name] = $Item.Value
         }

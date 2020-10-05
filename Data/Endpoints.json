@@ -31,7 +31,7 @@
         "Min": 1,
         "Max": 1000,
         "Default": "50",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -521,7 +521,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Host identifiers"
+        "Description": "One or more host identifiers"
       },
       {
         "Dynamic": "QueueOffline",
@@ -579,7 +579,7 @@
         ],
         "Required": false,
         "Pattern": "\\w{32}",
-        "Description": "Host identifiers to remove from the batch session"
+        "Description": "One or more Host identifiers to remove from the batch session"
       }
     ]
   },
@@ -1301,7 +1301,7 @@
         "Required": false,
         "Min": 1,
         "Max": 2500,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -1740,7 +1740,7 @@
         "Required": false,
         "Min": 1,
         "Max": 100,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Offset",
@@ -1949,7 +1949,7 @@
         "Min": 1,
         "Max": 500,
         "Default": "100",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -2987,7 +2987,7 @@
         "Min": 1,
         "Max": 500,
         "Default": "100",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -3275,7 +3275,7 @@
         "Type": "array",
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Host identifiers"
+        "Description": "One or more Host identifiers"
       },
       {
         "Dynamic": "Arguments",
@@ -3445,7 +3445,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Host identifiers"
+        "Description": "One or more Host identifiers"
       }
     ]
   },
@@ -3679,7 +3679,7 @@
         ],
         "Required": true,
         "Pattern": "inc:\\w{32}:\\w{32}",
-        "Description": "Incident identifiers"
+        "Description": "One or more Incident identifiers"
       },
       {
         "Dynamic": "UpdateDetects",
@@ -3874,7 +3874,7 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "MaxDate",
@@ -3989,7 +3989,7 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "PatternType",
@@ -4070,7 +4070,7 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "MaxDate",
@@ -4197,7 +4197,7 @@
         "Required": false,
         "Min": 1,
         "Max": 100,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Offset",
@@ -4339,7 +4339,7 @@
         "Min": 1,
         "Max": 500,
         "Default": "100",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Offset",
@@ -4395,7 +4395,7 @@
         "Min": 1,
         "Max": 500,
         "Default": "100",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Offset",
@@ -4470,7 +4470,7 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -4528,7 +4528,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -4610,7 +4610,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -4664,7 +4664,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -4746,7 +4746,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -4813,7 +4813,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -4867,7 +4867,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -4935,7 +4935,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5017,7 +5017,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5098,7 +5098,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5170,7 +5170,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5253,7 +5253,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5297,7 +5297,7 @@
         "Required": false,
         "Min": 1,
         "Max": 9999,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5384,7 +5384,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5466,7 +5466,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5510,7 +5510,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5602,7 +5602,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -5644,7 +5644,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -5688,7 +5688,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5770,7 +5770,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5837,7 +5837,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5887,7 +5887,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -5951,7 +5951,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6050,7 +6050,7 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -6085,7 +6085,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6161,7 +6161,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6226,7 +6226,7 @@
         "Required": false,
         "Min": 1,
         "Max": 50000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6302,7 +6302,7 @@
         "Required": false,
         "Min": 1,
         "Max": 50000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6378,7 +6378,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6454,7 +6454,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6518,7 +6518,7 @@
         ],
         "Required": false,
         "Default": "10",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -6815,7 +6815,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -6887,7 +6887,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -6931,7 +6931,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -7013,7 +7013,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -7067,7 +7067,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -7149,7 +7149,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -7221,7 +7221,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -7291,7 +7291,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -7359,7 +7359,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -7441,7 +7441,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -7495,7 +7495,7 @@
         "Required": false,
         "Min": 1,
         "Max": 5000,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -7549,7 +7549,7 @@
         ],
         "Required": false,
         "Default": "200",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       }
     ]
   },
@@ -7584,7 +7584,7 @@
         "Min": 1,
         "Max": 400,
         "Default": "100",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -8580,7 +8580,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -8665,7 +8665,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -8746,7 +8746,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
@@ -9477,7 +9477,7 @@
         "Min": 1,
         "Max": 1000,
         "Default": "50",
-        "Description": "Maximum number of results"
+        "Description": "Maximum number of results per request"
       },
       {
         "Dynamic": "Sort",
