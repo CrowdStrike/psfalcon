@@ -53,7 +53,15 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "audit-events-read",
@@ -76,7 +84,15 @@
         "Required": false,
         "Description": "One or more event identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.auditEventDetailsResponseV1",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "api.auditEventDetailsResponseV1"
+    }
   },
   {
     "Name": "BatchActiveResponderCmd",
@@ -184,7 +200,14 @@
         "Pattern": "\\w{32}",
         "Description": "Restrict the request to specific host identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.MultiCommandExecuteResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "BatchAdminCmd",
@@ -294,7 +317,14 @@
         "Pattern": "\\w{32}",
         "Description": "Restrict the request to specific host identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.MultiCommandExecuteResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "BatchCmd",
@@ -382,7 +412,14 @@
         "Pattern": "\\w{32}",
         "Description": "Restrict the request to specific host identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.MultiCommandExecuteResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "BatchGetCmd",
@@ -440,7 +477,14 @@
         "Required": false,
         "Description": "Restrict the request to specific host identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.BatchGetCommandResponse",
+      "400": "domain.APIError",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "BatchGetCmdStatus",
@@ -475,7 +519,16 @@
         "Required": true,
         "Description": "Batch 'get' command request identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.BatchGetCmdStatusResponse",
+      "400": "domain.APIError",
+      "403": "msa.ErrorsOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError",
+      "default": "domain.BatchGetCmdStatusResponse"
+    }
   },
   {
     "Name": "BatchInitSessions",
@@ -533,7 +586,14 @@
         "Required": false,
         "Description": "Add sessions in this batch to the offline queue if the hosts do not initialize"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.BatchInitSessionResponse",
+      "400": "domain.APIError",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "BatchRefreshSessions",
@@ -581,7 +641,14 @@
         "Pattern": "\\w{32}",
         "Description": "One or more Host identifiers to remove from the batch session"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.BatchRefreshSessionResponse",
+      "400": "domain.APIError",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "CreateCSPMAzureAccount",
@@ -615,7 +682,15 @@
         "Required": false,
         "Description": "Azure tenant identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "registration.AzureAccountResponseV1",
+      "207": "registration.AzureAccountResponseV1",
+      "400": "registration.AzureAccountResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.AzureAccountResponseV1"
+    }
   },
   {
     "Name": "CreateCSPMGCPAccount",
@@ -639,7 +714,15 @@
         "Required": true,
         "Description": "GCP parent identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "registration.GCPAccountResponseV1",
+      "207": "registration.GCPAccountResponseV1",
+      "400": "registration.GCPAccountResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.GCPAccountResponseV1"
+    }
   },
   {
     "Name": "createDeviceControlPolicies",
@@ -713,7 +796,15 @@
         "Required": false,
         "Description": "A hashtable defining policy settings"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "responses.DeviceControlPoliciesV1",
+      "400": "responses.DeviceControlPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.DeviceControlPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.DeviceControlPoliciesV1"
+    }
   },
   {
     "Name": "createFirewallPolicies",
@@ -776,7 +867,15 @@
         ],
         "Description": "Platform name"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "responses.FirewallPoliciesV1",
+      "400": "responses.FirewallPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.FirewallPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.FirewallPoliciesV1"
+    }
   },
   {
     "Name": "createHostGroups",
@@ -837,7 +936,14 @@
         "Required": true,
         "Description": "Group name"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "responses.HostGroupsV1",
+      "400": "responses.HostGroupsV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.HostGroupsV1"
+    }
   },
   {
     "Name": "CreateIOC",
@@ -938,7 +1044,13 @@
         "Max": 200,
         "Description": "Custom IOC value"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyIOC",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyIOC"
+    }
   },
   {
     "Name": "CreateOrUpdateAWSSettings",
@@ -974,7 +1086,14 @@
         "Required": false,
         "Description": "By setting this value, all subsequent accounts that are provisioned will default to using this value as their external ID."
       }
-    ]
+    ],
+    "Responses": {
+      "201": "models.CustomerConfigurationsV1",
+      "400": "models.CustomerConfigurationsV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.CustomerConfigurationsV1"
+    }
   },
   {
     "Name": "createPreventionPolicies",
@@ -1048,7 +1167,15 @@
         "Required": false,
         "Description": "An array of hashtables defining policy settings"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "responses.PreventionPoliciesV1",
+      "400": "responses.PreventionPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PreventionPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PreventionPoliciesV1"
+    }
   },
   {
     "Name": "create-rule-group",
@@ -1143,7 +1270,13 @@
         "Description": "An array of hashtables containing rule properties",
         "Required": false
       }
-    ]
+    ],
+    "Responses": {
+      "201": "fwmgr.api.QueryResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "createSensorUpdatePoliciesV2",
@@ -1205,7 +1338,15 @@
         "Required": false,
         "Description": "A hashtable defining policy settings"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "responses.SensorUpdatePoliciesV2",
+      "400": "responses.SensorUpdatePoliciesV2",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.SensorUpdatePoliciesV2",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdatePoliciesV2"
+    }
   },
   {
     "Name": "CreateUser",
@@ -1258,7 +1399,13 @@
         "Required": true,
         "Description": "A username; typically an email address"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.UserMetaDataResponse",
+      "400": "msa.EntitiesResponse",
+      "403": "msa.EntitiesResponse",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "CrowdScore",
@@ -1319,7 +1466,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaEnvironmentScoreResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "api.MsaEnvironmentScoreResponse"
+    }
   },
   {
     "Name": "customer-settings-read",
@@ -1330,7 +1485,15 @@
       "ContentType": "application/json"
     },
     "Permission": "installation-tokens:read",
-    "Description": "List installation token settings"
+    "Description": "List installation token settings",
+    "Responses": {
+      "200": "api.customerSettingsResponseV1",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "api.customerSettingsResponseV1"
+    }
   },
   {
     "Name": "DeleteAWSAccounts",
@@ -1353,7 +1516,15 @@
         "Required": true,
         "Description": "One or more AWS account identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "models.BaseResponseV1",
+      "400": "models.BaseResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.BaseResponseV1",
+      "default": "models.BaseResponseV1"
+    }
   },
   {
     "Name": "deleteDeviceControlPolicies",
@@ -1376,7 +1547,15 @@
         "Pattern": "\\w{32}",
         "Description": "One or more policy identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "deleteFirewallPolicies",
@@ -1399,7 +1578,15 @@
         "Pattern": "\\w{32}",
         "Description": "One or more policy identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "deleteHostGroups",
@@ -1422,7 +1609,15 @@
         "Pattern": "\\w{32}",
         "Description": "One or more group identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "DeleteIOC",
@@ -1464,7 +1659,13 @@
         "Max": 200,
         "Description": "Custom IOC value"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyIOC",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyIOC"
+    }
   },
   {
     "Name": "deletePreventionPolicies",
@@ -1487,7 +1688,15 @@
         "Pattern": "\\w{32}",
         "Description": "One or more policy identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "DeleteReport",
@@ -1509,7 +1718,15 @@
         "Required": true,
         "Description": "Sandbox report identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "202": "falconx.QueryResponse",
+      "400": "falconx.ErrorsOnly",
+      "403": "falconx.ErrorsOnly",
+      "404": "falconx.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "falconx.ErrorsOnly"
+    }
   },
   {
     "Name": "delete-rule-groups",
@@ -1552,7 +1769,14 @@
         "Required": false,
         "Description": "Audit log comment for this action"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.QueryResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.QueryResponse"
+    }
   },
   {
     "Name": "DeleteSampleV2",
@@ -1587,7 +1811,16 @@
         "Pattern": "\\w{64}",
         "Description": "SHA256 hash value of the file to remove"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.QueryResponse",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "deleteSensorUpdatePolicies",
@@ -1610,7 +1843,15 @@
         "Pattern": "\\w{32}",
         "Description": "One or more policy identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "DeleteUser",
@@ -1634,7 +1875,15 @@
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "User identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "DevicesCount",
@@ -1682,7 +1931,13 @@
         "Max": 200,
         "Description": "Custom IOC value"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyIOCDevicesCount",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyIOCDevicesCount"
+    }
   },
   {
     "Name": "DevicesRanOn",
@@ -1752,7 +2007,13 @@
         "Required": false,
         "Description": "The position to begin retrieving results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyDevicesRanOn",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyDevicesRanOn"
+    }
   },
   {
     "Name": "DownloadSensorInstallerById",
@@ -1789,7 +2050,15 @@
         "Pattern": "\\.(deb|exe|html|pkg|rpm)+$",
         "Description": "Destination path"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.DownloadItem",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.DownloadItem"
+    }
   },
   {
     "Name": "entities.processes",
@@ -1811,7 +2080,13 @@
         "Required": true,
         "Description": "One or more process identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaProcessDetailResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaProcessDetailResponse"
+    }
   },
   {
     "Name": "GetArtifacts",
@@ -1844,7 +2119,14 @@
         "Required": true,
         "Description": "Destination Path"
       }
-    ]
+    ],
+    "Responses": {
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "GetAvailableRoleIds",
@@ -1855,7 +2137,15 @@
       "ContentType": "application/json"
     },
     "Permission": "usermgmt:read",
-    "Description": "List user role identifiers"
+    "Description": "List user role identifiers",
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "403": "msa.QueryResponse",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "GetAWSAccounts",
@@ -1879,7 +2169,16 @@
         "Pattern": "\\d{12}",
         "Description": "One or more AWS account identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "models.AWSAccountsV1",
+      "400": "models.AWSAccountsV1",
+      "403": "msa.ReplyMetaOnly",
+      "404": "models.AWSAccountsV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.AWSAccountsV1",
+      "default": "models.AWSAccountsV1"
+    }
   },
   {
     "Name": "GetAWSSettings",
@@ -1890,7 +2189,15 @@
       "ContentType": "application/json"
     },
     "Permission": "cloud-connect-aws:read",
-    "Description": "Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts"
+    "Description": "Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts",
+    "Responses": {
+      "200": "models.CustomerConfigurationsV1",
+      "400": "models.CustomerConfigurationsV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.CustomerConfigurationsV1",
+      "default": "models.CustomerConfigurationsV1"
+    }
   },
   {
     "Name": "GetBehaviors",
@@ -1915,7 +2222,15 @@
         "Max": 500,
         "Description": "One or more behavior identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaExternalBehaviorResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "api.MsaExternalBehaviorResponse"
+    }
   },
   {
     "Name": "GetCombinedSensorInstallersByQuery",
@@ -1977,7 +2292,14 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.SensorInstallersV1",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.SensorInstallersV1"
+    }
   },
   {
     "Name": "GetCSPMAzureAccount",
@@ -2017,7 +2339,16 @@
         ],
         "Description": "Type of scan, dry or full, to perform on selected accounts"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "registration.AzureAccountResponseV1",
+      "207": "registration.AzureAccountResponseV1",
+      "400": "registration.AzureAccountResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.AzureAccountResponseV1",
+      "default": "registration.AzureAccountResponseV1"
+    }
   },
   {
     "Name": "GetCSPMAzureUserScripts",
@@ -2028,7 +2359,16 @@
       "ContentType": "application/json"
     },
     "Permission": "d4c-registration:read",
-    "Description": "Outputs a script to run in an Azure environment to grant access to the Falcon platform"
+    "Description": "Outputs a script to run in an Azure environment to grant access to the Falcon platform",
+    "Responses": {
+      "200": "registration.AzureProvisionGetUserScriptResponseV1",
+      "207": "registration.AzureProvisionGetUserScriptResponseV1",
+      "400": "registration.AzureProvisionGetUserScriptResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.AzureProvisionGetUserScriptResponseV1",
+      "default": "registration.AzureProvisionGetUserScriptResponseV1"
+    }
   },
   {
     "Name": "GetCSPMAzureUserScriptsAttachment",
@@ -2038,7 +2378,15 @@
       "Accept": "application/json"
     },
     "Permission": "d4c-registration:read",
-    "Description": "Download a script to run in their cloud environment to grant us access to their Azure environment as a downloadable attachment"
+    "Description": "Download a script to run in their cloud environment to grant us access to their Azure environment as a downloadable attachment",
+    "Responses": {
+      "200": "registration.AzureProvisionGetUserScriptResponseV1",
+      "400": "registration.AzureProvisionGetUserScriptResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.AzureProvisionGetUserScriptResponseV1",
+      "default": "registration.AzureProvisionGetUserScriptResponseV1"
+    }
   },
   {
     "Name": "GetCSPMCGPAccount",
@@ -2076,7 +2424,16 @@
         "Pattern": "\\d{10,}",
         "Description": "Parent IDs of accounts"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "registration.GCPAccountResponseV1",
+      "207": "registration.GCPAccountResponseV1",
+      "400": "registration.GCPAccountResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.GCPAccountResponseV1",
+      "default": "registration.GCPAccountResponseV1"
+    }
   },
   {
     "Name": "GetCSPMGCPUserScripts",
@@ -2087,7 +2444,16 @@
       "ContentType": "application/json"
     },
     "Permission": "d4c-registration:read",
-    "Description": "Return a script for customer to run in their cloud environment to grant us access to their GCP environment"
+    "Description": "Return a script for customer to run in their cloud environment to grant us access to their GCP environment",
+    "Responses": {
+      "200": "registration.GCPProvisionGetUserScriptResponseV1",
+      "207": "registration.GCPProvisionGetUserScriptResponseV1",
+      "400": "registration.GCPProvisionGetUserScriptResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.GCPProvisionGetUserScriptResponseV1",
+      "default": "registration.GCPProvisionGetUserScriptResponseV1"
+    }
   },
   {
     "Name": "GetCSPMGCPUserScriptsAttachment",
@@ -2097,7 +2463,15 @@
       "Accept": "application/json"
     },
     "Permission": "d4c-registration:read",
-    "Description": "Return a script for customer to run in their cloud environment to grant us access to their GCP environment as a downloadable attachment"
+    "Description": "Return a script for customer to run in their cloud environment to grant us access to their GCP environment as a downloadable attachment",
+    "Responses": {
+      "200": "registration.GCPProvisionGetUserScriptResponseV1",
+      "400": "registration.GCPProvisionGetUserScriptResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.GCPProvisionGetUserScriptResponseV1",
+      "default": "registration.GCPProvisionGetUserScriptResponseV1"
+    }
   },
   {
     "Name": "GetDetectSummaries",
@@ -2122,7 +2496,15 @@
         "Max": 1000,
         "Description": "One or more detection identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.MsaDetectSummariesResponse",
+      "400": "domain.MsaDetectSummariesResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.MsaDetectSummariesResponse",
+      "default": "domain.MsaDetectSummariesResponse"
+    }
   },
   {
     "Name": "getDeviceControlPolicies",
@@ -2144,7 +2526,15 @@
         "Required": true,
         "Description": "The IDs of the Device Control Policies to return"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.DeviceControlPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.DeviceControlPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.DeviceControlPoliciesV1",
+      "default": "responses.DeviceControlPoliciesV1"
+    }
   },
   {
     "Name": "GetDeviceDetails",
@@ -2167,7 +2557,13 @@
         "Pattern": "\\w{32}",
         "Description": "The host agentIDs used to get details on"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.DeviceDetailsResponseSwagger",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.DeviceDetailsResponseSwagger"
+    }
   },
   {
     "Name": "get-events",
@@ -2190,7 +2586,14 @@
         "Pattern": "[\\w-]{20}",
         "Description": "The events to retrieve, identified by ID"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.EventsResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.EventsResponse"
+    }
   },
   {
     "Name": "get-firewall-fields",
@@ -2212,7 +2615,13 @@
         "Required": true,
         "Description": "The field identifiers to retrieve"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.FirewallFieldsResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.FirewallFieldsResponse"
+    }
   },
   {
     "Name": "getFirewallPolicies",
@@ -2234,7 +2643,15 @@
         "Required": true,
         "Description": "The IDs of the Firewall Policies to return"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.FirewallPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.FirewallPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.FirewallPoliciesV1",
+      "default": "responses.FirewallPoliciesV1"
+    }
   },
   {
     "Name": "getHostGroups",
@@ -2257,7 +2674,16 @@
         "Pattern": "\\w{32}",
         "Description": "The IDs of the Host Groups to return"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.HostGroupsV1",
+      "400": "responses.HostGroupsV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.HostGroupsV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.HostGroupsV1",
+      "default": "responses.HostGroupsV1"
+    }
   },
   {
     "Name": "GetIncidents",
@@ -2280,7 +2706,15 @@
         "Required": true,
         "Max": 500
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaExternalIncidentResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "api.MsaExternalIncidentResponse"
+    }
   },
   {
     "Name": "GetIntelActorEntities",
@@ -2313,7 +2747,14 @@
         "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.ActorsResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "domain.ActorsResponse"
+    }
   },
   {
     "Name": "GetIntelIndicatorEntities",
@@ -2335,7 +2776,14 @@
         ],
         "Required": true
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.PublicIndicatorsV3Response",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "domain.PublicIndicatorsV3Response"
+    }
   },
   {
     "Name": "GetIntelReportEntities",
@@ -2368,7 +2816,14 @@
         "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.NewsResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "domain.NewsResponse"
+    }
   },
   {
     "Name": "GetIntelReportPDF",
@@ -2401,7 +2856,15 @@
         "Pattern": "\\.pdf$",
         "Description": "Destination Path"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": ""
+    }
   },
   {
     "Name": "GetIntelRuleEntities",
@@ -2423,7 +2886,14 @@
         "Required": true,
         "Description": "The ids of rules to return."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.RulesResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "domain.RulesResponse"
+    }
   },
   {
     "Name": "GetIntelRuleFile",
@@ -2456,7 +2926,16 @@
         "Pattern": "\\.zip$",
         "Description": "Destination Path"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": ""
+    }
   },
   {
     "Name": "GetIOC",
@@ -2496,7 +2975,13 @@
         "Required": true,
         "Description": "Indicator value"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyIOC",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyIOC"
+    }
   },
   {
     "Name": "GetLatestIntelRuleFile",
@@ -2539,7 +3024,16 @@
         "Pattern": "\\.zip$",
         "Description": "Destination Path"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": ""
+    }
   },
   {
     "Name": "GetMalQueryDownloadV1",
@@ -2573,7 +3067,17 @@
         "Required": true,
         "Description": "Destination Path"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "",
+      "400": "msa.ReplyMetaOnly",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": ""
+    }
   },
   {
     "Name": "GetMalQueryEntitiesSamplesFetchV1",
@@ -2605,7 +3109,15 @@
         "Required": true,
         "Description": "Destination Path"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "malquery.ExternalQueryResponse",
+      "default": ""
+    }
   },
   {
     "Name": "GetMalQueryMetadataV1",
@@ -2627,7 +3139,16 @@
         "Required": true,
         "Description": "The file SHA256."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "malquery.SampleMetadataResponse",
+      "400": "malquery.SampleMetadataResponse",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "malquery.SampleMetadataResponse",
+      "default": "malquery.SampleMetadataResponse"
+    }
   },
   {
     "Name": "GetMalQueryQuotasV1",
@@ -2637,7 +3158,17 @@
       "Accept": "application/json"
     },
     "Permission": "malquery:read",
-    "Description": "Get information about search and download quotas in your environment"
+    "Description": "Get information about search and download quotas in your environment",
+    "Responses": {
+      "200": "malquery.RateLimitsResponse",
+      "400": "msa.ErrorsOnly",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "404": "malquery.RateLimitsResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "malquery.RateLimitsResponse",
+      "default": "malquery.RateLimitsResponse"
+    }
   },
   {
     "Name": "GetMalQueryRequestV1",
@@ -2660,7 +3191,16 @@
         "Required": true,
         "Description": "MalQuery request identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "malquery.RequestResponse",
+      "400": "malquery.RequestResponse",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "malquery.RequestResponse",
+      "default": "malquery.RequestResponse"
+    }
   },
   {
     "Name": "GetMetadataV2",
@@ -2716,7 +3256,13 @@
         "Required": true,
         "Description": "The IDs of the platforms to retrieve"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.PlatformsResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.PlatformsResponse"
+    }
   },
   {
     "Name": "get-policy-containers",
@@ -2739,7 +3285,14 @@
         "Pattern": "\\w{32}",
         "Description": "The policy container(s) to retrieve, identified by policy ID"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.PolicyContainersResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.PolicyContainersResponse"
+    }
   },
   {
     "Name": "getPreventionPolicies",
@@ -2761,7 +3314,15 @@
         "Required": true,
         "Description": "Prevention policy identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PreventionPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PreventionPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PreventionPoliciesV1",
+      "default": "responses.PreventionPoliciesV1"
+    }
   },
   {
     "Name": "GetQueue",
@@ -2819,7 +3380,15 @@
         "Required": true,
         "Description": "ID of a report. Find a report ID from the response when submitting a malware sample or search with `/falconx/queries/reports/v1`."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "falconx.ReportV1Response",
+      "400": "falconx.ReportV1Response",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "falconx.ReportV1Response",
+      "default": "falconx.ReportV1Response"
+    }
   },
   {
     "Name": "GetRoles",
@@ -2842,7 +3411,16 @@
         "Required": true,
         "Description": "ID of a role. Find a role ID from `/customer/queries/roles/v1` or `/users/queries/roles/v1`."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.UserRoleResponse",
+      "400": "msa.EntitiesResponse",
+      "403": "msa.EntitiesResponse",
+      "404": "msa.EntitiesResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.EntitiesResponse",
+      "default": "domain.UserRoleResponse"
+    }
   },
   {
     "Name": "get-rule-groups",
@@ -2864,7 +3442,14 @@
         "Required": true,
         "Description": "The IDs of the rule groups to retrieve"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.RuleGroupsResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.RuleGroupsResponse"
+    }
   },
   {
     "Name": "get-rules",
@@ -2886,7 +3471,14 @@
         "Required": true,
         "Description": "The rules to retrieve, identified by ID"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.RulesResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.RulesResponse"
+    }
   },
   {
     "Name": "GetSampleV2",
@@ -2930,7 +3522,16 @@
         "Required": false,
         "Description": "Flag whether the sample should be zipped and password protected with pass='infected'"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": ""
+    }
   },
   {
     "Name": "GetScan",
@@ -3015,7 +3616,14 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "GetSensorInstallersCCIDByQuery",
@@ -3026,7 +3634,14 @@
       "ContentType": "application/json"
     },
     "Permission": "sensor-installers:read",
-    "Description": "Get CCID to use with sensor installers"
+    "Description": "Get CCID to use with sensor installers",
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "GetSensorInstallersEntities",
@@ -3049,7 +3664,16 @@
         "Required": true,
         "Description": "The IDs of the installers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.SensorInstallersV1",
+      "207": "domain.SensorInstallersV1",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.SensorInstallersV1"
+    }
   },
   {
     "Name": "getSensorUpdatePolicies",
@@ -3071,7 +3695,15 @@
         "Required": true,
         "Description": "The IDs of the Sensor Update Policies to return"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.SensorUpdatePoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.SensorUpdatePoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdatePoliciesV1",
+      "default": "responses.SensorUpdatePoliciesV1"
+    }
   },
   {
     "Name": "getSensorUpdatePoliciesV2",
@@ -3093,7 +3725,15 @@
         "Required": true,
         "Description": "The IDs of the Sensor Update Policies to return"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.SensorUpdatePoliciesV2",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.SensorUpdatePoliciesV2",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdatePoliciesV2",
+      "default": "responses.SensorUpdatePoliciesV2"
+    }
   },
   {
     "Name": "GetSubmissions",
@@ -3115,7 +3755,15 @@
         "Required": true,
         "Description": "ID of a submitted malware sample. Find a submission ID from the response when submitting a malware sample or search with `/falconx/queries/submissions/v1`."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "falconx.SubmissionV1Response",
+      "400": "falconx.SubmissionV1Response",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "falconx.SubmissionV1Response",
+      "default": "falconx.SubmissionV1Response"
+    }
   },
   {
     "Name": "GetSubmissionV2",
@@ -3177,7 +3825,15 @@
         "Required": true,
         "Description": "ID of a summary. Find a summary ID from the response when submitting a malware sample or search with `/falconx/queries/reports/v1`."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "falconx.SummaryReportV1Response",
+      "400": "falconx.SummaryReportV1Response",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "falconx.SummaryReportV1Response",
+      "default": "falconx.SummaryReportV1Response"
+    }
   },
   {
     "Name": "GetUserRoleIds",
@@ -3201,7 +3857,15 @@
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "User identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "getVulnerabilities",
@@ -3223,7 +3887,13 @@
         "Required": true,
         "Description": "One or more vulnerability IDs. Find vulnerability IDs with GET /spotlight/queries/vulnerabilities/v2"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.SPAPIVulnerabilitiesEntitiesResponseV2",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.SPAPIVulnerabilitiesEntitiesResponseV2"
+    }
   },
   {
     "Name": "GrantUserRoleIds",
@@ -3257,7 +3927,14 @@
         "Required": true,
         "Description": "One or more roles to assign"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.UserRoleIDsResponse",
+      "400": "msa.EntitiesResponse",
+      "403": "msa.EntitiesResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.UserRoleIDsResponse"
+    }
   },
   {
     "Name": "InvokeDeploy",
@@ -3337,7 +4014,15 @@
         ],
         "Description": "Format for streaming events"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "main.discoveryResponseV2",
+      "400": "main.discoveryResponseV2",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "main.discoveryResponseV2",
+      "default": "main.discoveryResponseV2"
+    }
   },
   {
     "Name": "oauth2AccessToken",
@@ -3397,7 +4082,13 @@
         ],
         "Description": "Destination CrowdStrike cloud"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.AccessTokenResponseV1",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "oauth2RevokeToken",
@@ -3407,7 +4098,15 @@
       "Accept": "application/json",
       "ContentType": "application/x-www-form-urlencoded"
     },
-    "Description": "Revoke your current OAuth2 access token before the end of its standard lifespan"
+    "Description": "Revoke your current OAuth2 access token before the end of its standard lifespan",
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "PerformActionV2",
@@ -3447,7 +4146,15 @@
         "Pattern": "\\w{32}",
         "Description": "One or more Host identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "202": "msa.ReplyAffectedEntities",
+      "400": "msa.ReplyAffectedEntities",
+      "403": "msa.ReplyMetaOnly",
+      "409": "msa.ReplyAffectedEntities",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyAffectedEntities"
+    }
   },
   {
     "Name": "performDeviceControlPoliciesAction",
@@ -3499,7 +4206,16 @@
         "Required": false,
         "Description": "Host Group identifier, used when adding or removing host groups"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.DeviceControlPoliciesV1",
+      "400": "responses.DeviceControlPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.DeviceControlPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.DeviceControlPoliciesV1",
+      "default": "responses.DeviceControlPoliciesV1"
+    }
   },
   {
     "Name": "performFirewallPoliciesAction",
@@ -3551,7 +4267,16 @@
         "Required": false,
         "Description": "Host Group identifier, used when adding or removing host groups"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.FirewallPoliciesV1",
+      "400": "responses.FirewallPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.FirewallPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.FirewallPoliciesV1",
+      "default": "responses.FirewallPoliciesV1"
+    }
   },
   {
     "Name": "performGroupAction",
@@ -3628,7 +4353,16 @@
         "Max": 500,
         "Description": "One or more values for use with the FQL filter"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.HostGroupsV1",
+      "400": "responses.HostGroupsV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.HostGroupsV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.HostGroupsV1",
+      "default": "responses.HostGroupsV1"
+    }
   },
   {
     "Name": "PerformIncidentAction",
@@ -3701,7 +4435,16 @@
         "Required": false,
         "Description": "Replace existing status for related detections"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "409": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "performPreventionPoliciesAction",
@@ -3753,7 +4496,16 @@
         "Required": false,
         "Description": "Host Group identifier, used when adding or removing host groups"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PreventionPoliciesV1",
+      "400": "responses.PreventionPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PreventionPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PreventionPoliciesV1",
+      "default": "responses.PreventionPoliciesV1"
+    }
   },
   {
     "Name": "performSensorUpdatePoliciesAction",
@@ -3805,7 +4557,16 @@
         "Required": false,
         "Description": "Host Group identifier, used when adding or removing host groups"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.SensorUpdatePoliciesV1",
+      "400": "responses.SensorUpdatePoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.SensorUpdatePoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdatePoliciesV1",
+      "default": "responses.SensorUpdatePoliciesV1"
+    }
   },
   {
     "Name": "PostMalQueryEntitiesSamplesMultidownloadV1",
@@ -3828,7 +4589,17 @@
         "Required": true,
         "Description": "List of sample sha256 ids"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "malquery.ExternalQueryResponse",
+      "400": "malquery.ExternalQueryResponse",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "404": "malquery.ExternalQueryResponse",
+      "429": "malquery.ExternalQueryResponse",
+      "500": "malquery.ExternalQueryResponse",
+      "default": "malquery.ExternalQueryResponse"
+    }
   },
   {
     "Name": "PostMalQueryExactSearchV1",
@@ -3949,7 +4720,16 @@
         "Required": true,
         "Description": "Pattern value"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "malquery.ExternalQueryResponse",
+      "400": "malquery.ExternalQueryResponse",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "429": "malquery.ExternalQueryResponse",
+      "500": "malquery.ExternalQueryResponse",
+      "default": "malquery.ExternalQueryResponse"
+    }
   },
   {
     "Name": "PostMalQueryFuzzySearchV1",
@@ -4018,7 +4798,16 @@
         "Required": true,
         "Description": "Pattern value"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "malquery.FuzzySearchResponse",
+      "400": "malquery.FuzzySearchResponse",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "malquery.FuzzySearchResponse",
+      "default": "malquery.FuzzySearchResponse"
+    }
   },
   {
     "Name": "PostMalQueryHuntV1",
@@ -4128,7 +4917,16 @@
         "Required": true,
         "Description": "A YARA rule that defines your search"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "malquery.ExternalQueryResponse",
+      "400": "malquery.ExternalQueryResponse",
+      "401": "msa.ErrorsOnly",
+      "403": "msa.ErrorsOnly",
+      "429": "malquery.ExternalQueryResponse",
+      "500": "malquery.ExternalQueryResponse",
+      "default": "malquery.ExternalQueryResponse"
+    }
   },
   {
     "Name": "ProcessesRanOn",
@@ -4209,7 +5007,13 @@
         "Required": false,
         "Description": "The position to begin retrieving results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyProcessesRanOn",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyProcessesRanOn"
+    }
   },
   {
     "Name": "ProvisionAWSAccounts",
@@ -4315,7 +5119,14 @@
         "Required": false,
         "Description": "Rate limiting setting to control the number of seconds for which -RateLimitReqs applies."
       }
-    ]
+    ],
+    "Responses": {
+      "201": "models.AWSAccountsV1",
+      "400": "models.AWSAccountsV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.AWSAccountsV1"
+    }
   },
   {
     "Name": "QueryAWSAccounts",
@@ -4371,7 +5182,15 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "models.AWSAccountsV1",
+      "400": "models.AWSAccountsV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.AWSAccountsV1",
+      "default": "models.AWSAccountsV1"
+    }
   },
   {
     "Name": "QueryAWSAccountsForIDs",
@@ -4427,7 +5246,15 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryBehaviors",
@@ -4486,7 +5313,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "queryCombinedDeviceControlPolicies",
@@ -4558,7 +5393,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.DeviceControlPoliciesV1",
+      "400": "responses.DeviceControlPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.DeviceControlPoliciesV1",
+      "default": "responses.DeviceControlPoliciesV1"
+    }
   },
   {
     "Name": "queryCombinedDeviceControlPolicyMembers",
@@ -4622,7 +5465,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PolicyMembersRespV1",
+      "400": "responses.PolicyMembersRespV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PolicyMembersRespV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PolicyMembersRespV1",
+      "default": "responses.PolicyMembersRespV1"
+    }
   },
   {
     "Name": "queryCombinedFirewallPolicies",
@@ -4694,7 +5546,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.FirewallPoliciesV1",
+      "400": "responses.FirewallPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.FirewallPoliciesV1",
+      "default": "responses.FirewallPoliciesV1"
+    }
   },
   {
     "Name": "queryCombinedFirewallPolicyMembers",
@@ -4758,7 +5618,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PolicyMembersRespV1",
+      "400": "responses.PolicyMembersRespV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PolicyMembersRespV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PolicyMembersRespV1",
+      "default": "responses.PolicyMembersRespV1"
+    }
   },
   {
     "Name": "queryCombinedGroupMembers",
@@ -4825,7 +5694,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.HostGroupMembersV1",
+      "400": "responses.HostGroupMembersV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.HostGroupMembersV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.HostGroupMembersV1",
+      "default": "responses.HostGroupMembersV1"
+    }
   },
   {
     "Name": "queryCombinedHostGroups",
@@ -4893,7 +5771,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.HostGroupsV1",
+      "400": "responses.HostGroupsV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.HostGroupsV1",
+      "default": "responses.HostGroupsV1"
+    }
   },
   {
     "Name": "queryCombinedPreventionPolicies",
@@ -4965,7 +5851,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PreventionPoliciesV1",
+      "400": "responses.PreventionPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PreventionPoliciesV1",
+      "default": "responses.PreventionPoliciesV1"
+    }
   },
   {
     "Name": "queryCombinedPreventionPolicyMembers",
@@ -5029,7 +5923,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PolicyMembersRespV1",
+      "400": "responses.PolicyMembersRespV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PolicyMembersRespV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PolicyMembersRespV1",
+      "default": "responses.PolicyMembersRespV1"
+    }
   },
   {
     "Name": "queryCombinedSensorUpdateBuilds",
@@ -5056,7 +5959,15 @@
         ],
         "Description": "The platform to return builds for"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.SensorUpdateBuildsV1",
+      "400": "responses.SensorUpdateBuildsV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdateBuildsV1",
+      "default": "responses.SensorUpdateBuildsV1"
+    }
   },
   {
     "Name": "queryCombinedSensorUpdatePolicies",
@@ -5128,7 +6039,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.SensorUpdatePoliciesV1",
+      "400": "responses.SensorUpdatePoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdatePoliciesV1",
+      "default": "responses.SensorUpdatePoliciesV1"
+    }
   },
   {
     "Name": "queryCombinedSensorUpdatePoliciesV2",
@@ -5200,7 +6119,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.SensorUpdatePoliciesV2",
+      "400": "responses.SensorUpdatePoliciesV2",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdatePoliciesV2",
+      "default": "responses.SensorUpdatePoliciesV2"
+    }
   },
   {
     "Name": "queryCombinedSensorUpdatePolicyMembers",
@@ -5265,7 +6192,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PolicyMembersRespV1",
+      "400": "responses.PolicyMembersRespV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PolicyMembersRespV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PolicyMembersRespV1",
+      "default": "responses.PolicyMembersRespV1"
+    }
   },
   {
     "Name": "QueryDetects",
@@ -5342,7 +6278,15 @@
         "Required": false,
         "Description": "Search all detection metadata for the provided string"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "queryDeviceControlPolicies",
@@ -5414,7 +6358,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "queryDeviceControlPolicyMembers",
@@ -5478,7 +6430,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryDevicesByFilterScroll",
@@ -5532,7 +6493,13 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.DeviceResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.DeviceResponse"
+    }
   },
   {
     "Name": "query-events",
@@ -5604,7 +6571,14 @@
         "Required": false,
         "Description": "Maximum number of results per request"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.QueryResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.QueryResponse"
+    }
   },
   {
     "Name": "query-firewall-fields",
@@ -5646,7 +6620,13 @@
         "Required": false,
         "Description": "Maximum number of results per request"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.msa.QueryResponse"
+    }
   },
   {
     "Name": "queryFirewallPolicies",
@@ -5718,7 +6698,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "queryFirewallPolicyMembers",
@@ -5782,7 +6770,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "queryGroupMembers",
@@ -5849,7 +6846,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryHiddenDevices",
@@ -5909,7 +6915,13 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "queryHostGroups",
@@ -5977,7 +6989,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryIncidents",
@@ -6052,7 +7072,15 @@
         "Max": 500,
         "Description": "Maximum number of results per request"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaIncidentQueryResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "api.MsaIncidentQueryResponse"
+    }
   },
   {
     "Name": "QueryIntelActorEntities",
@@ -6128,7 +7156,15 @@
         "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.ActorsResponse",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "domain.ActorsResponse"
+    }
   },
   {
     "Name": "QueryIntelActorIds",
@@ -6193,7 +7229,15 @@
         "Required": false,
         "Description": "Perform a generic substring search across all fields."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryIntelIndicatorEntities",
@@ -6269,7 +7313,15 @@
         "Default": "False",
         "Description": "Include both published and deleted indicators"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.PublicIndicatorsV3Response",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "domain.PublicIndicatorsV3Response"
+    }
   },
   {
     "Name": "QueryIntelIndicatorIds",
@@ -6345,7 +7397,15 @@
         "Default": "False",
         "Description": "Include both published and deleted indicators"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryIntelReportEntities",
@@ -6421,7 +7481,15 @@
         "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.NewsResponse",
+      "400": "",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "domain.NewsResponse"
+    }
   },
   {
     "Name": "QueryIntelReportIds",
@@ -6486,7 +7554,15 @@
         "Required": false,
         "Description": "Perform a generic substring search across all fields."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryIntelRuleIds",
@@ -6610,7 +7686,15 @@
         "Required": false,
         "Description": "Perform a generic substring search across all fields."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ErrorsOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ErrorsOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryIOCs",
@@ -6752,7 +7836,13 @@
         "Required": false,
         "Description": "Position to begin retrieving results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyIOCIDs",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyIOCIDs"
+    }
   },
   {
     "Name": "QueryMetadataV2",
@@ -6817,7 +7907,13 @@
         "Required": false,
         "Description": "Maximum number of results per request"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.msa.QueryResponse"
+    }
   },
   {
     "Name": "query-policy-rules",
@@ -6889,7 +7985,14 @@
         "Required": false,
         "Description": "Maximum number of results per request"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.QueryResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.QueryResponse"
+    }
   },
   {
     "Name": "queryPreventionPolicies",
@@ -6961,7 +8064,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "queryPreventionPolicyMembers",
@@ -7025,7 +8136,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryReports",
@@ -7079,7 +8199,15 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "query-rule-groups",
@@ -7151,7 +8279,14 @@
         "Required": false,
         "Description": "Maximum number of results per request"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.QueryResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.QueryResponse"
+    }
   },
   {
     "Name": "query-rules",
@@ -7223,7 +8358,14 @@
         "Required": false,
         "Description": "Maximum number of results per request"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.QueryResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.QueryResponse"
+    }
   },
   {
     "Name": "QuerySampleV1",
@@ -7259,7 +8401,15 @@
         "Pattern": "\\w{64}",
         "Description": "One or more SHA256 hash values"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QueryScan",
@@ -7389,7 +8539,15 @@
         ],
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "querySensorUpdatePolicyMembers",
@@ -7453,7 +8611,16 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QuerySubmissions",
@@ -7507,7 +8674,15 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "QuerySubmissionV2",
@@ -7612,7 +8787,15 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.SPAPIQueryVulnerabilitiesResponse",
+      "400": "domain.SPAPIQueryVulnerabilitiesResponse",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.SPAPIQueryVulnerabilitiesResponse",
+      "default": "domain.SPAPIQueryVulnerabilitiesResponse"
+    }
   },
   {
     "Name": "refreshActiveStreamSession",
@@ -7660,7 +8843,15 @@
         "Required": true,
         "Description": "Partition to request data for."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RetrieveEmailsByCID",
@@ -7671,7 +8862,14 @@
       "ContentType": "application/json"
     },
     "Permission": "usermgmt:read",
-    "Description": "List all usernames (typically an email address)"
+    "Description": "List all usernames (typically an email address)",
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "RetrieveUser",
@@ -7695,7 +8893,15 @@
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "One or more user identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.UserMetaDataResponse",
+      "400": "msa.EntitiesResponse",
+      "403": "msa.EntitiesResponse",
+      "404": "msa.EntitiesResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.UserMetaDataResponse"
+    }
   },
   {
     "Name": "RetrieveUserUUID",
@@ -7718,7 +8924,15 @@
         "Required": true,
         "Description": "Email address or username"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.QueryResponse",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "RetrieveUserUUIDsByCID",
@@ -7737,7 +8951,14 @@
         "Required": false,
         "Description": "Retrieve usernames (typically email addresses) rather than user identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "revealUninstallToken",
@@ -7773,7 +8994,15 @@
         "Pattern": "\\w{32}",
         "Description": "Host identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.RevealUninstallTokenRespV1",
+      "400": "responses.RevealUninstallTokenRespV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.RevealUninstallTokenRespV1",
+      "default": "responses.RevealUninstallTokenRespV1"
+    }
   },
   {
     "Name": "RevokeUserRoleIds",
@@ -7807,7 +9036,14 @@
         "Required": true,
         "Description": "One or more roles"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.UserRoleIDsResponse",
+      "400": "msa.EntitiesResponse",
+      "403": "msa.EntitiesResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.UserRoleIDsResponse"
+    }
   },
   {
     "Name": "RTR-CheckActiveResponderCommandStatus",
@@ -7840,7 +9076,14 @@
         "Required": false,
         "Description": "Sequence identifier [default: 0]"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.StatusResponseWrapper",
+      "401": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.StatusResponseWrapper"
+    }
   },
   {
     "Name": "RTR-CheckAdminCommandStatus",
@@ -7873,7 +9116,14 @@
         "Required": false,
         "Description": "Sequence identifier [default: 0]"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.StatusResponseWrapper",
+      "401": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.StatusResponseWrapper"
+    }
   },
   {
     "Name": "RTR-CheckCommandStatus",
@@ -7906,7 +9156,14 @@
         "Required": false,
         "Description": "Sequence identifier [default: 0]"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.StatusResponseWrapper",
+      "401": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.StatusResponseWrapper"
+    }
   },
   {
     "Name": "RTR-CreatePut-Files",
@@ -7960,7 +9217,14 @@
         "Max": 4096,
         "Description": "A comment for the audit log"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-CreateScripts",
@@ -8045,7 +9309,14 @@
         ],
         "Description": "Operating system platform [default: windows]"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-DeleteFile",
@@ -8078,7 +9349,14 @@
         "Description": "Real-time Response session identifier",
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
       }
-    ]
+    ],
+    "Responses": {
+      "204": "msa.ReplyMetaOnly",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-DeletePut-Files",
@@ -8100,7 +9378,15 @@
         "Required": true,
         "Description": "File identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-DeleteQueuedSession",
@@ -8134,7 +9420,14 @@
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "Cloud request identifier of the executed command"
       }
-    ]
+    ],
+    "Responses": {
+      "204": "msa.ReplyMetaOnly",
+      "400": "domain.APIError",
+      "401": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-DeleteScripts",
@@ -8156,7 +9449,15 @@
         "Required": true,
         "Description": "Script identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-DeleteSession",
@@ -8179,7 +9480,14 @@
         "Description": "Real-time Response session identifier",
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
       }
-    ]
+    ],
+    "Responses": {
+      "204": "msa.ReplyMetaOnly",
+      "400": "domain.APIError",
+      "401": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-ExecuteActiveResponderCommand",
@@ -8263,7 +9571,13 @@
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "Real-time Response session identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.CommandExecuteResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-ExecuteAdminCommand",
@@ -8349,7 +9663,13 @@
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "Real-time Response session identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.CommandExecuteResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-ExecuteCommand",
@@ -8413,7 +9733,13 @@
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "Real-time Response session identifier"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.CommandExecuteResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "RTR-GetExtractedFileContents",
@@ -8459,7 +9785,16 @@
         "Pattern": "\\.7z$",
         "Description": "Full destination path for .7z file"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError",
+      "default": ""
+    }
   },
   {
     "Name": "RTR-GetPut-Files",
@@ -8481,7 +9816,15 @@
         "Required": true,
         "Description": "One or more file identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "binservclient.MsaPFResponse",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "binservclient.MsaPFResponse"
+    }
   },
   {
     "Name": "RTR-GetScripts",
@@ -8503,7 +9846,15 @@
         "Required": true,
         "Description": "One or more script identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "binservclient.MsaPFResponse",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "binservclient.MsaPFResponse"
+    }
   },
   {
     "Name": "RTR-InitSession",
@@ -8549,7 +9900,14 @@
         "Required": false,
         "Description": "Add session to the offline queue if the host does not initialize"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.InitResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "RTR-ListAllSessions",
@@ -8602,7 +9960,15 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.ListSessionsResponseMsa",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.ListSessionsResponseMsa"
+    }
   },
   {
     "Name": "RTR-ListFiles",
@@ -8625,7 +9991,15 @@
         "Description": "Real-time Response session identifier",
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.ListFilesResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.ListFilesResponseWrapper"
+    }
   },
   {
     "Name": "RTR-ListPut-Files",
@@ -8677,7 +10051,15 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "binservclient.MsaPutFileResponse",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "binservclient.MsaPutFileResponse"
+    }
   },
   {
     "Name": "RTR-ListQueuedSessions",
@@ -8706,7 +10088,16 @@
         "Required": true,
         "Description": "Lists information about sessions in the offline queue"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.QueuedSessionResponseWrapper",
+      "400": "domain.APIError",
+      "401": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.QueuedSessionResponseWrapper"
+    }
   },
   {
     "Name": "RTR-ListScripts",
@@ -8758,7 +10149,15 @@
         "Required": false,
         "Description": "Property and direction to sort results"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "binservclient.MsaPutFileResponse",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "binservclient.MsaPutFileResponse"
+    }
   },
   {
     "Name": "RTR-ListSessions",
@@ -8781,7 +10180,15 @@
         "Required": true,
         "Description": "One or more session identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.SessionResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "404": "domain.APIError",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.SessionResponseWrapper"
+    }
   },
   {
     "Name": "RTR-PulseSession",
@@ -8817,7 +10224,14 @@
         "Required": false,
         "Description": "Add session to the offline queue"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "domain.InitResponseWrapper",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "domain.APIError"
+    }
   },
   {
     "Name": "RTR-UpdateScripts",
@@ -8902,7 +10316,14 @@
         "Required": false,
         "Description": "Operating system platform [default: windows]"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "domain.APIError",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "setDeviceControlPoliciesPrecedence",
@@ -8940,7 +10361,15 @@
         ],
         "Description": "Platform name"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "setFirewallPoliciesPrecedence",
@@ -8978,7 +10407,15 @@
         ],
         "Description": "Platform name"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "setPreventionPoliciesPrecedence",
@@ -9016,7 +10453,15 @@
         ],
         "Description": "Platform name"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "setSensorUpdatePoliciesPrecedence",
@@ -9054,7 +10499,15 @@
         ],
         "Description": "Platform name"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "SharedParameters",
@@ -9364,7 +10817,15 @@
         ],
         "Required": false
       }
-    ]
+    ],
+    "Responses": {
+      "200": "falconx.SubmissionV1Response",
+      "400": "falconx.SubmissionV1Response",
+      "403": "msa.ReplyMetaOnly",
+      "429": "falconx.SubmissionV1Response",
+      "500": "falconx.SubmissionV1Response",
+      "default": "falconx.SubmissionV1Response"
+    }
   },
   {
     "Name": "SubmitVolume",
@@ -9420,7 +10881,14 @@
         "Required": false,
         "Description": "The token label."
       }
-    ]
+    ],
+    "Responses": {
+      "201": "api.tokenDetailsResponseV1",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "tokens-delete",
@@ -9443,7 +10911,16 @@
         "Pattern": "\\w{32}",
         "Description": "One or more token identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "tokens-query",
@@ -9499,7 +10976,15 @@
         "Required": false,
         "Description": "An FQL filter expression"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "tokens-read",
@@ -9523,7 +11008,15 @@
         "Pattern": "\\w{32}",
         "Description": "One or more token identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.tokenDetailsResponseV1",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "api.tokenDetailsResponseV1"
+    }
   },
   {
     "Name": "tokens-update",
@@ -9577,7 +11070,16 @@
         "Required": false,
         "Description": "Set to true to revoke the token, false to un-revoked it."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.QueryResponse"
+    }
   },
   {
     "Name": "UpdateAWSAccounts",
@@ -9667,7 +11169,16 @@
         "Required": false,
         "Description": "Rate limiting setting to control the number of seconds for which -RateLimitReqs applies."
       }
-    ]
+    ],
+    "Responses": {
+      "200": "models.AWSAccountsV1",
+      "400": "models.AWSAccountsV1",
+      "403": "msa.ReplyMetaOnly",
+      "404": "models.AWSAccountsV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.AWSAccountsV1",
+      "default": "models.AWSAccountsV1"
+    }
   },
   {
     "Name": "UpdateCSPMAzureAccountClientID",
@@ -9691,7 +11202,14 @@
         "Pattern": "^[0-9a-z-]{36}$",
         "Description": "Client identifier to use for the Service Principal associated with the Azure account"
       }
-    ]
+    ],
+    "Responses": {
+      "201": "registration.AzureServicePrincipalResponseV1",
+      "400": "registration.AzureServicePrincipalResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.AzureServicePrincipalResponseV1"
+    }
   },
   {
     "Name": "UpdateDetectsByIdsV2",
@@ -9764,7 +11282,15 @@
         ],
         "Description": "Detection status"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "msa.ReplyMetaOnly",
+      "400": "msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.ReplyMetaOnly",
+      "default": "msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "updateDeviceControlPolicies",
@@ -9821,7 +11347,16 @@
         "Required": false,
         "Description": "A hashtable defining policy settings"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.DeviceControlPoliciesV1",
+      "400": "responses.DeviceControlPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.DeviceControlPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.DeviceControlPoliciesV1",
+      "default": "responses.DeviceControlPoliciesV1"
+    }
   },
   {
     "Name": "updateFirewallPolicies",
@@ -9867,7 +11402,16 @@
         "Required": false,
         "Description": "The new name to assign to the policy"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.FirewallPoliciesV1",
+      "400": "responses.FirewallPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.FirewallPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.FirewallPoliciesV1",
+      "default": "responses.FirewallPoliciesV1"
+    }
   },
   {
     "Name": "updateHostGroups",
@@ -9925,7 +11469,16 @@
         "Required": false,
         "Description": "The new name of the group"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.HostGroupsV1",
+      "400": "responses.HostGroupsV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.HostGroupsV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.HostGroupsV1",
+      "default": "responses.HostGroupsV1"
+    }
   },
   {
     "Name": "UpdateIOC",
@@ -10028,7 +11581,13 @@
         "Required": false,
         "Description": "Custom IOC description"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "api.MsaReplyIOC",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "api.MsaReplyIOC"
+    }
   },
   {
     "Name": "update-policy-container",
@@ -10133,7 +11692,15 @@
         ],
         "Required": false
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.msa.ReplyMetaOnly",
+      "201": "fwmgr.msa.ReplyMetaOnly",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.msa.ReplyMetaOnly"
+    }
   },
   {
     "Name": "updatePreventionPolicies",
@@ -10190,7 +11757,16 @@
         "Required": false,
         "Description": "An array of hashtables defining policy settings"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.PreventionPoliciesV1",
+      "400": "responses.PreventionPoliciesV1",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.PreventionPoliciesV1",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.PreventionPoliciesV1",
+      "default": "responses.PreventionPoliciesV1"
+    }
   },
   {
     "Name": "update-rule-group",
@@ -10278,7 +11854,14 @@
         ],
         "Required": false
       }
-    ]
+    ],
+    "Responses": {
+      "200": "fwmgr.api.QueryResponse",
+      "400": "fwmgr.msa.ReplyMetaOnly",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "default": "fwmgr.api.QueryResponse"
+    }
   },
   {
     "Name": "updateSensorUpdatePoliciesV2",
@@ -10336,7 +11919,16 @@
         "Required": false,
         "Description": "A hashtable defining policy settings"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "responses.SensorUpdatePoliciesV2",
+      "400": "responses.SensorUpdatePoliciesV2",
+      "403": "msa.ErrorsOnly",
+      "404": "responses.SensorUpdatePoliciesV2",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SensorUpdatePoliciesV2",
+      "default": "responses.SensorUpdatePoliciesV2"
+    }
   },
   {
     "Name": "UpdateUser",
@@ -10380,7 +11972,15 @@
         "Required": false,
         "Description": "User's last name"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "domain.UserMetaDataResponse",
+      "400": "msa.EntitiesResponse",
+      "403": "msa.EntitiesResponse",
+      "404": "msa.EntitiesResponse",
+      "429": "msa.ReplyMetaOnly",
+      "default": "domain.UserMetaDataResponse"
+    }
   },
   {
     "Name": "UploadSampleV2",
@@ -10446,7 +12046,15 @@
         "Default": "True",
         "Description": "Visibility of the sample in Falcon MalQuery"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "samplestore.SampleMetadataResponseV2",
+      "400": "samplestore.SampleMetadataResponseV2",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "samplestore.SampleMetadataResponseV2",
+      "default": "samplestore.SampleMetadataResponseV2"
+    }
   },
   {
     "Name": "VerifyAWSAccountAccess",
@@ -10470,6 +12078,14 @@
         "Pattern": "\\d{12}",
         "Description": "One or more AWS account identifiers"
       }
-    ]
+    ],
+    "Responses": {
+      "200": "models.VerifyAccessResponseV1",
+      "400": "models.VerifyAccessResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "models.VerifyAccessResponseV1",
+      "default": "models.VerifyAccessResponseV1"
+    }
   }
 ]

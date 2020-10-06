@@ -135,7 +135,7 @@ function Invoke-Endpoint {
                 }
             } else {
                 # Format output
-                Format-Result $Response
+                Format-Result $Response $Endpoint
             }
         } catch {
             # Output error

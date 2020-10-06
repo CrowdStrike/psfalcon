@@ -4,6 +4,8 @@ function Format-Result {
     Formats a response from the Falcon API
 .PARAMETER RESPONSE
     Response object from a Falcon API request
+.PARAMETER ENDPOINT
+    Falcon endpoint
 #>
     [CmdletBinding()]
     [OutputType()]
@@ -11,10 +13,15 @@ function Format-Result {
         [Parameter(
             Mandatory = $true,
             Position = 1)]
-        [object] $Response
+        [object] $Response,
+
+        [Parameter(
+            Mandatory = $true,
+            Position = 2)]
+        [string] $Endpoint
     )
     process {
-        if ($Response.Result.Content) {
+        $Output = if ($Response.Result.Content) {
             if ($Response.Result.Content -match '^<') {
                 # Output HTML
                 ($Response.Result.Content).ReadAsStringAsync().Result
@@ -22,6 +29,17 @@ function Format-Result {
                 # Convert from Json
                 ConvertFrom-Json ($Response.Result.Content).ReadAsStringAsync().Result
             }
+        }
+        if ($Output) {
+            # Set TypeName from response
+            $TypeName = $Falcon.Endpoint($Endpoint).Responses.($Response.result.StatusCode.GetHashCode())
+
+            if ($TypeName) {
+                # Add TypeName to Output
+                $Output.PSObject.TypeNames.Insert(0, "$TypeName")
+            }
+            # Output result
+            $Output
         } else {
             # Output exception
             $Response.Result.EnsureSuccessStatusCode()
