@@ -2704,7 +2704,8 @@
           "body"
         ],
         "Required": true,
-        "Max": 500
+        "Max": 500,
+        "Description": "One or more Incident identifiers"
       }
     ],
     "Responses": {
@@ -2774,7 +2775,8 @@
         "In": [
           "body"
         ],
-        "Required": true
+        "Required": true,
+        "Description": "One or more indicator identifiers"
       }
     ],
     "Responses": {
@@ -3378,7 +3380,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "ID of a report. Find a report ID from the response when submitting a malware sample or search with `/falconx/queries/reports/v1`."
+        "Description": "One or more report identifiers"
       }
     ],
     "Responses": {
@@ -10683,7 +10685,7 @@
       "ContentType": "application/json"
     },
     "Permission": "falconx-sandbox:write",
-    "Description": "Submit an uploaded file or a URL for sandbox analysis. Time required for analysis varies but is usually less than 15 minutes.",
+    "Description": "Submit an uploaded file or a URL for sandbox analysis",
     "Parameters": [
       {
         "Dynamic": "ActionScript",
@@ -10700,7 +10702,8 @@
           "default_openie"
         ],
         "Parent": "sandbox",
-        "Required": false
+        "Required": false,
+        "Description": "Runtime script for sandbox analysis"
       },
       {
         "Dynamic": "CommandLine",
@@ -10712,7 +10715,8 @@
         "Min": 1,
         "Max": 2048,
         "Parent": "sandbox",
-        "Required": false
+        "Required": false,
+        "Description": "Command line script passed to the submitted file at runtime"
       },
       {
         "Dynamic": "DocumentPassword",
@@ -10724,7 +10728,8 @@
         "Min": 1,
         "Max": 32,
         "Parent": "sandbox",
-        "Required": false
+        "Required": false,
+        "Description": "Auto-filled for Adobe or Office files that prompt for a password"
       },
       {
         "Dynamic": "EnableTor",
@@ -10734,7 +10739,8 @@
           "body"
         ],
         "Parent": "sandbox",
-        "Required": false
+        "Required": false,
+        "Description": "Route traffic via TOR"
       },
       {
         "Dynamic": "EnvironmentId",
@@ -10751,7 +10757,8 @@
           "Win10_x64"
         ],
         "Parent": "sandbox",
-        "Required": true
+        "Required": true,
+        "Description": "Specific environment to use for analysis"
       },
       {
         "Dynamic": "Sha256",
@@ -10764,7 +10771,8 @@
         "Max": 64,
         "Pattern": "\\w{64}",
         "Parent": "sandbox",
-        "Required": false
+        "Required": false,
+        "Description": "SHA256 hash value of the sample to analyze"
       },
       {
         "Dynamic": "SubmitName",
@@ -10774,7 +10782,8 @@
           "body"
         ],
         "Parent": "sandbox",
-        "Required": false
+        "Required": false,
+        "Description": "A name for the submission file"
       },
       {
         "Dynamic": "SystemDate",
@@ -10785,7 +10794,8 @@
         ],
         "Parent": "sandbox",
         "Pattern": "\\d{4}-\\d{2}-\\d{2}",
-        "Required": false
+        "Required": false,
+        "Description": "A custom date to use in the sandbox environment"
       },
       {
         "Dynamic": "SystemTime",
@@ -10796,7 +10806,8 @@
         ],
         "Parent": "sandbox",
         "Pattern": "\\d{2}:\\d{2}",
-        "Required": false
+        "Required": false,
+        "Description": "A custom time to use in the sandbox environment"
       },
       {
         "Dynamic": "Url",
@@ -10806,7 +10817,8 @@
           "body"
         ],
         "Parent": "sandbox",
-        "Required": false
+        "Required": false,
+        "Description": "A web page or file URL"
       },
       {
         "Dynamic": "UserTags",
@@ -10815,7 +10827,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "Tags to categorize the submission"
       }
     ],
     "Responses": {
@@ -11618,7 +11631,12 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Enum": [
+          "ALLOW",
+          "DENY"
+        ],
+        "Required": false,
+        "Description": "Default action for inbound traffic"
       },
       {
         "Dynamic": "DefaultOutbound",
@@ -11627,7 +11645,12 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Enum": [
+          "ALLOW",
+          "DENY"
+        ],
+        "Required": false,
+        "Description": "Default action for outbound traffic"
       },
       {
         "Dynamic": "Enforce",
@@ -11636,7 +11659,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "Enforce this policy's rules and override the firewall settings on each assigned host"
       },
       {
         "Dynamic": "IsDefaultPolicy",
@@ -11645,7 +11669,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "Set as default policy"
       },
       {
         "Dynamic": "PlatformId",
@@ -11654,7 +11679,11 @@
         "In": [
           "body"
         ],
-        "Required": true
+        "Enum": [
+          "0"
+        ],
+        "Required": true,
+        "Description": "Platform identifier"
       },
       {
         "Dynamic": "PolicyId",
@@ -11663,7 +11692,8 @@
         "In": [
           "body"
         ],
-        "Required": true
+        "Required": true,
+        "Description": "Policy identifier to update"
       },
       {
         "Dynamic": "RuleGroupIds",
@@ -11672,16 +11702,18 @@
         "In": [
           "body"
         ],
-        "Required": true
+        "Required": true,
+        "Description": "One or more rule group identifiers"
       },
       {
-        "Dynamic": "TestMode",
+        "Dynamic": "MonitorMode",
         "Name": "test_mode",
         "Type": "bool",
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "Override all block rules in this policy and turn on monitoring"
       },
       {
         "Dynamic": "Tracking",
@@ -11690,7 +11722,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "Tracking identifier"
       }
     ],
     "Responses": {
@@ -11807,16 +11840,8 @@
         "In": [
           "body"
         ],
-        "Required": false
-      },
-      {
-        "Dynamic": "DiffType",
-        "Name": "diff_type",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false
+        "Required": true,
+        "Description": "An array of hashtables containing rule or rule group changes"
       },
       {
         "Dynamic": "GroupId",
@@ -11825,7 +11850,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "A firewall rule group identifier"
       },
       {
         "Dynamic": "RuleIds",
@@ -11834,7 +11860,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "One or more firewall rule identifiers"
       },
       {
         "Dynamic": "RuleVersions",
@@ -11843,7 +11870,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "Rule version value"
       },
       {
         "Dynamic": "Tracking",
@@ -11852,7 +11880,8 @@
         "In": [
           "body"
         ],
-        "Required": false
+        "Required": false,
+        "Description": "Tracking value"
       }
     ],
     "Responses": {

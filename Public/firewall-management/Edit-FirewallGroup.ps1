@@ -22,8 +22,17 @@ function Edit-FirewallGroup {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
-            # Evaluate input and make request
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            # Evaluate input
+            $Param = Get-Param $Endpoints[0] $Dynamic
+
+            # Force 'diff_type' into request body
+            $Param.Body['diff_type'] = 'application/json-patch+json'
+
+            # Convert to Json
+            Format-Param $Param
+
+            # Make request
+            $Param # Invoke-Endpoint @Param
         }
     }
 }
