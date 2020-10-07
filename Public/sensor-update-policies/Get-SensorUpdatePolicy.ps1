@@ -13,8 +13,7 @@ function Get-SensorUpdatePolicy {
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('querySensorUpdatePolicies', 'getSensorUpdatePoliciesV2',
-            'queryCombinedSensorUpdatePoliciesV2', 'querySensorUpdatePolicyMembers',
-            'queryCombinedSensorUpdatePolicyMembers')
+        'queryCombinedSensorUpdatePoliciesV2')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -22,8 +21,7 @@ function Get-SensorUpdatePolicy {
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedSensorUpdatePolicies',
-                'queryCombinedSensorUpdatePolicyMembers')
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedSensorUpdatePolicies')
         } else {
             # Evaluate input and make request
             $Param = @{
@@ -38,15 +36,6 @@ function Get-SensorUpdatePolicy {
             if ($PSBoundParameters.Detailed) {
                 $Param['Detailed'] = 'Combined'
                 $Param.Query = $Endpoints[2]
-            }
-            if ($PSBoundParameters.Members) {
-                $Param['Modifier'] = 'Members'
-
-                if ($PSBoundParameters.Detailed) {
-                    $Param.Query = $Endpoints[4]
-                } else {
-                    $Param.Query = $Endpoints[3]
-                }
             }
             Invoke-Request @Param
         }

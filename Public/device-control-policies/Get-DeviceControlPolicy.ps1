@@ -1,7 +1,7 @@
 function Get-DeviceControlPolicy {
 <#
 .SYNOPSIS
-    Search for Device Control policies and their members
+    Search for Device Control policies
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
@@ -13,8 +13,7 @@ function Get-DeviceControlPolicy {
     DynamicParam {
         # Endpoint(s) used by function
         $Endpoints = @('queryDeviceControlPolicies', 'getDeviceControlPolicies',
-            'queryCombinedDeviceControlPolicies', 'queryDeviceControlPolicyMembers',
-            'queryCombinedDeviceControlPolicyMembers')
+            'queryCombinedDeviceControlPolicies')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -22,8 +21,7 @@ function Get-DeviceControlPolicy {
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedDeviceControlPolicies',
-                'queryCombinedDeviceControlPolicyMembers')
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedDeviceControlPolicies')
         } else {
             # Evaluate input and make request
             $Param = @{
@@ -38,15 +36,6 @@ function Get-DeviceControlPolicy {
             if ($PSBoundParameters.Detailed) {
                 $Param['Detailed'] = 'Combined'
                 $Param.Query = $Endpoints[2]
-            }
-            if ($PSBoundParameters.Members) {
-                $Param['Modifier'] = 'Members'
-
-                if ($PSBoundParameters.Detailed) {
-                    $Param.Query = $Endpoints[4]
-                } else {
-                    $Param.Query = $Endpoints[3]
-                }
             }
             Invoke-Request @Param
         }

@@ -10632,24 +10632,6 @@
         ]
       },
       {
-        "Dynamic": "Members",
-        "Type": "switch",
-        "Required": true,
-        "Description": "List assigned host members",
-        "ParameterSets": [
-          "queryDeviceControlPolicyMembers",
-          "queryCombinedDeviceControlPolicyMembers",
-          "queryFirewallPolicyMembers",
-          "queryCombinedFirewallPolicyMembers",
-          "queryGroupMembers",
-          "queryCombinedGroupMembers",
-          "queryPreventionPolicyMembers",
-          "queryCombinedPreventionPolicyMembers",
-          "querySensorUpdatePolicyMembers",
-          "queryCombinedSensorUpdatePolicyMembers"
-        ]
-      },
-      {
         "Dynamic": "Array",
         "Type": "array",
         "In": [

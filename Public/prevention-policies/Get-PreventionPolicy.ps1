@@ -1,7 +1,7 @@
 function Get-PreventionPolicy {
 <#
 .SYNOPSIS
-    Search for Prevention policies and their members
+    Search for Prevention policies
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
@@ -12,8 +12,7 @@ function Get-PreventionPolicy {
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('queryPreventionPolicies', 'getPreventionPolicies', 'queryCombinedPreventionPolicies',
-            'queryPreventionPolicyMembers', 'queryCombinedPreventionPolicyMembers')
+        $Endpoints = @('queryPreventionPolicies', 'getPreventionPolicies', 'queryCombinedPreventionPolicies')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -21,8 +20,7 @@ function Get-PreventionPolicy {
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedPreventionPolicies',
-                'queryCombinedPreventionPolicyMembers')
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedPreventionPolicies')
         } else {
             # Evaluate input and make request
             $Param = @{
@@ -37,15 +35,6 @@ function Get-PreventionPolicy {
             if ($PSBoundParameters.Detailed) {
                 $Param['Detailed'] = 'Combined'
                 $Param.Query = $Endpoints[2]
-            }
-            if ($PSBoundParameters.Members) {
-                $Param['Modifier'] = 'Members'
-
-                if ($PSBoundParameters.Detailed) {
-                    $Param.Query = $Endpoints[4]
-                } else {
-                    $Param.Query = $Endpoints[3]
-                }
             }
             Invoke-Request @Param
         }

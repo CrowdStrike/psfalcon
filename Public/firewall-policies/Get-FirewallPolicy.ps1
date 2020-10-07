@@ -1,7 +1,7 @@
 function Get-FirewallPolicy {
 <#
 .SYNOPSIS
-    Search for Firewall policies and their members
+    Search for Firewall policies
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
@@ -12,8 +12,7 @@ function Get-FirewallPolicy {
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('queryFirewallPolicies', 'getFirewallPolicies', 'queryCombinedFirewallPolicies',
-            'queryFirewallPolicyMembers', 'queryCombinedFirewallPolicyMembers')
+        $Endpoints = @('queryFirewallPolicies', 'getFirewallPolicies', 'queryCombinedFirewallPolicies')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -21,8 +20,7 @@ function Get-FirewallPolicy {
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedFirewallPolicies',
-                'queryCombinedFirewallPolicyMembers')
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('queryCombinedFirewallPolicies')
         } else {
             # Evaluate input and make request
             $Param = @{
@@ -37,15 +35,6 @@ function Get-FirewallPolicy {
             if ($PSBoundParameters.Detailed) {
                 $Param['Detailed'] = 'Combined'
                 $Param.Query = $Endpoints[2]
-            }
-            if ($PSBoundParameters.Members) {
-                $Param['Modifier'] = 'Members'
-
-                if ($PSBoundParameters.Detailed) {
-                    $Param.Query = $Endpoints[4]
-                } else {
-                    $Param.Query = $Endpoints[3]
-                }
             }
             Invoke-Request @Param
         }
