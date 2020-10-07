@@ -78,9 +78,10 @@ function Get-DynamicHelp {
                 "No permissions required"
             }
             # Output description and permission
-            "`n# $($ParamSets.$Set.Description)" +
-            "`n  $($Permission)"
-
+            if ($ParamSets.$Set.Description) {
+                "`n# $($ParamSets.$Set.Description)" +
+                "`n  $($Permission)"
+            }
             if ($ParamSets.$Set.Parameters) {
                 # Output parameters
                 foreach ($Parameter in $ParamSets.$Set.Parameters) {

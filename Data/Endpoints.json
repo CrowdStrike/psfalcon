@@ -3745,7 +3745,7 @@
       "Accept": "application/json"
     },
     "Permission": "falconx-sandbox:read",
-    "Description": "Check the status of a sandbox analysis. Time required for analysis varies but is usually less than 15 minutes.",
+    "Description": "Check the status of a sandbox analysis",
     "Parameters": [
       {
         "Dynamic": "SubmissionIds",
@@ -3755,7 +3755,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "ID of a submitted malware sample. Find a submission ID from the response when submitting a malware sample or search with `/falconx/queries/submissions/v1`."
+        "Description": "One or more submission identifiers"
       }
     ],
     "Responses": {
@@ -4109,6 +4109,11 @@
       "500": "msa.ReplyMetaOnly",
       "default": "msa.ReplyMetaOnly"
     }
+  },
+  {
+    "Name": "OpenStream",
+    "Description": "Export recent Stream events to Json",
+    "Permission": "streaming:read"
   },
   {
     "Name": "PerformActionV2",
@@ -6278,7 +6283,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Search all detection metadata for the provided string"
+        "Description": "Perform a generic substring search across all fields"
       }
     ],
     "Responses": {
@@ -6541,7 +6546,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Match query criteria, which includes all the filter string fields, plus TODO"
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "Offset",
@@ -6561,7 +6566,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the `limit` parameter to manage pagination of results. On your first request, don't provide an `after` token. On subsequent requests, provide the `after` token from the previous response to continue from that place in the results."
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
       },
       {
         "Dynamic": "Limit",
@@ -7145,7 +7150,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields."
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "Fields",
@@ -7229,7 +7234,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields."
+        "Description": "Perform a generic substring search across all fields"
       }
     ],
     "Responses": {
@@ -7302,7 +7307,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields."
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "IncludeDeleted",
@@ -7386,7 +7391,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields."
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "IncludeDeleted",
@@ -7470,7 +7475,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields."
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "Fields",
@@ -7554,7 +7559,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields."
+        "Description": "Perform a generic substring search across all fields"
       }
     ],
     "Responses": {
@@ -7686,7 +7691,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields."
+        "Description": "Perform a generic substring search across all fields"
       }
     ],
     "Responses": {
@@ -7965,7 +7970,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Match query criteria, which includes all the filter string fields, plus TODO"
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "Offset",
@@ -8249,7 +8254,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Match query criteria, which includes all the filter string fields, plus TODO"
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "Offset",
@@ -8269,7 +8274,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the `limit` parameter to manage pagination of results. On your first request, don't provide an `after` token. On subsequent requests, provide the `after` token from the previous response to continue from that place in the results."
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
       },
       {
         "Dynamic": "Limit",
@@ -8328,7 +8333,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "Match query criteria, which includes all the filter string fields, plus TODO"
+        "Description": "Perform a generic substring search across all fields"
       },
       {
         "Dynamic": "Offset",
@@ -8348,7 +8353,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the `limit` parameter to manage pagination of results. On your first request, don't provide an `after` token. On subsequent requests, provide the `after` token from the previous response to continue from that place in the results."
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
       },
       {
         "Dynamic": "Limit",
@@ -8748,7 +8753,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the `limit` parameter to manage pagination of results. On your first request, don't provide an `after` token. On subsequent requests, provide the `after` token from the previous response to continue from that place in the results."
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
       },
       {
         "Dynamic": "Limit",
@@ -10650,8 +10655,8 @@
         "In": [
           "body"
         ],
-        "Required": true,
-        "Description": "An array containing multiple objects to submit in a single request",
+        "Required": false,
+        "Description": "An array of hashtables to submit in a single request",
         "ParameterSets": [
           "Array"
         ]
