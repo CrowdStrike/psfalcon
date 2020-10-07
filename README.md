@@ -584,8 +584,7 @@ account IDs which match the filter criteria
   Requires falconx-sandbox:read
 
   -ReportIds [Array] <Required>
-    ID of a summary. Find a summary ID from the response when submitting a malware sample or search
-    with `/falconx/queries/reports/v1`.
+    One or more report identifiers
 
   -Summary [SwitchParameter] <Required>
     Retrieve summary information
@@ -928,11 +927,11 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Get platforms by ID, e.g., windows or mac or droid
+# Get platform names by identifier
   Requires firewall-management:read
 
   -PlatformIds [Array] <Required>
-    The IDs of the platforms to retrieve
+    One or more platform identifiers
 ```
 ### Get-FalconFirewallRule
 ```
@@ -999,7 +998,7 @@ account IDs which match the filter criteria
   Requires firewall-management:read
 
   -PolicyIds [Array] <Required>
-    The policy container(s) to retrieve, identified by policy ID
+    One or more policy identifiers
       Pattern : \w{32}
 ```
 ### New-FalconFirewallGroup
@@ -1016,7 +1015,8 @@ account IDs which match the filter criteria
       Pattern : \w{32}
 
   -Library [String]
-    If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike Firewal Rule Groups Library.
+    If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike
+    Firewall Rule Groups Library.
 
   -Comment [String]
     Audit log comment for this action
@@ -1069,7 +1069,8 @@ account IDs which match the filter criteria
 ```
 ### Get-FalconFirewallPolicy
 ```
-# Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a set of Firewall Policy IDs which match the filter criteria
+# Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a
+  set of Firewall Policy IDs which match the filter criteria
   Requires firewall-management:read
 
   -Filter [String]
@@ -1083,7 +1084,9 @@ account IDs which match the filter criteria
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
+      name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -1091,7 +1094,8 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for members of a Firewall Policy in your environment by providing an FQL filter and paging details. Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Firewall Policy in your environment by providing an FQL filter and paging
+  details. Returns a set of Agent IDs which match the filter criteria
   Requires firewall-management:read
 
   -Filter [String]
@@ -1105,7 +1109,9 @@ account IDs which match the filter criteria
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
+      name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -1175,7 +1181,9 @@ account IDs which match the filter criteria
 ```
 ### Set-FalconFirewallPrecedence
 ```
-# Sets the precedence of Firewall Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
+# Sets the precedence of Firewall Policies based on the order of IDs specified in the request. The first ID
+  specified will have the highest precedence and the last ID specified will have the lowest. You must specify
+  all non-Default Policies for a platform when updating precedence
   Requires firewall-management:write
 
   -PolicyIds [Array] <Required>
@@ -1210,7 +1218,8 @@ account IDs which match the filter criteria
 ```
 ### Get-FalconHostGroup
 ```
-# Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set of Host Group IDs which match the filter criteria
+# Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set
+  of Host Group IDs which match the filter criteria
   Requires host-group:read
 
   -Filter [String]
@@ -1224,7 +1233,9 @@ account IDs which match the filter criteria
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, group_type|asc, group_type|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, group_type|asc,
+      group_type|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
+      name|asc, name|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -1232,7 +1243,8 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for members of a Host Group in your environment by providing an FQL filter and paging details. Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Host Group in your environment by providing an FQL filter and paging details. Returns
+  a set of Agent IDs which match the filter criteria
   Requires host-group:read
 
   -Filter [String]
@@ -1246,7 +1258,9 @@ account IDs which match the filter criteria
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, group_type|asc, group_type|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, group_type|asc,
+      group_type|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
+      name|asc, name|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -1283,7 +1297,8 @@ account IDs which match the filter criteria
 
   -FilterName [String] <Required>
     FQL filter name
-      Accepted : device_id, domain, external_ip, groups, hostname, local_ip, mac_address, os_version, ou, platform_name, site, system_manufacturer
+      Accepted : device_id, domain, external_ip, groups, hostname, local_ip, mac_address, os_version, ou,
+      platform_name, site, system_manufacturer
 
   -FilterValue [Array] <Required>
     One or more values for use with the FQL filter
@@ -1426,7 +1441,9 @@ account IDs which match the filter criteria
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : assigned_to|asc, assigned_to|desc, assigned_to_name|asc, assigned_to_name|desc, end|asc, end|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, sort_score|asc, sort_score|desc, start|asc, start|desc, state|asc, state|desc, status|asc, status|desc
+      Accepted : assigned_to|asc, assigned_to|desc, assigned_to_name|asc, assigned_to_name|desc, end|asc,
+      end|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, sort_score|asc,
+      sort_score|desc, start|asc, start|desc, state|asc, state|desc, status|asc, status|desc
 
   -Filter [String]
     An FQL filter expression
@@ -1472,7 +1489,8 @@ account IDs which match the filter criteria
 ```
 ### Invoke-FalconIncidentAction
 ```
-# Perform a set of actions on one or more incidents, such as adding tags or comments or updating the incident name or description
+# Perform a set of actions on one or more incidents, such as adding tags or comments or updating the incident
+  name or description
   Requires incidents:write
 
   -ActionName [String] <Required>
@@ -1721,24 +1739,9 @@ account IDs which match the filter criteria
     Search by rule title.
 
   -Type [String] <Required>
-    The rule news report type. Accepted values:
-
-snort-suricata-master
-
-snort-suricata-update
-
-snort-suricata-changelog
-
-yara-master
-
-yara-update
-
-yara-changelog
-
-common-event-format
-
-netwitness
-      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog, yara-master, yara-update, yara-changelog, common-event-format, netwitness
+    The rule news report type
+      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog, yara-master,
+      yara-update, yara-changelog, common-event-format, netwitness
 
   -Description [Array]
     Substring match on description field.
@@ -1800,7 +1803,8 @@ netwitness
 
   -Type [String] <Required>
     Rule news report type
-      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog, yara-master, yara-update, yara-changelog, common-event-format, netwitness
+      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog, yara-master,
+      yara-update, yara-changelog, common-event-format, netwitness
 ```
 ## /iocs/
 
@@ -1859,7 +1863,8 @@ netwitness
     The source where this indicator originated. This can be used for tracking where this indicator was defined.
 
   -ShareLevels [String]
-    The level at which the indicator will be shared. Currently only red share level (not shared) is supported, indicating that the IOC isn't shared with other FH customers.
+    The level at which the indicator will be shared. Currently only red share level (not shared) is supported,
+    indicating that the IOC isn't shared with other FH customers.
       Accepted : red
 
   -CreatedBy [String]
@@ -2040,7 +2045,8 @@ netwitness
 
   -FilterFileTypes [Array]
     File types to include with the results
-      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
+      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|
+      pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
 
   -FilterMeta [Array]
     Subset of metadata fields to include in the results
@@ -2075,7 +2081,8 @@ netwitness
 
   -FilterFileTypes [Array]
     File types to include with the results
-      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
+      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|
+      pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
 
   -FilterMeta [Array]
     Subset of metadata fields to include in the results
@@ -2201,7 +2208,8 @@ netwitness
 ```
 ### Get-FalconPreventionPolicy
 ```
-# Search for Prevention Policies in your environment by providing an FQL filter and paging details. Returns a set of Prevention Policy IDs which match the filter criteria
+# Search for Prevention Policies in your environment by providing an FQL filter and paging details. Returns a
+  set of Prevention Policy IDs which match the filter criteria
   Requires prevention-policies:read
 
   -Filter [String]
@@ -2215,7 +2223,9 @@ netwitness
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
+      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -2223,7 +2233,8 @@ netwitness
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for members of a Prevention Policy in your environment by providing an FQL filter and paging details. Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Prevention Policy in your environment by providing an FQL filter and paging
+  details. Returns a set of Agent IDs which match the filter criteria
   Requires prevention-policies:read
 
   -Filter [String]
@@ -2237,7 +2248,9 @@ netwitness
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
+      name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -2310,7 +2323,9 @@ netwitness
 ```
 ### Set-FalconPreventionPrecedence
 ```
-# Sets the precedence of Prevention Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
+# Sets the precedence of Prevention Policies based on the order of IDs specified in the request. The first ID
+specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
+non-Default Policies for a platform when updating precedence
   Requires prevention-policies:write
 
   -PolicyIds [Array] <Required>
@@ -2443,7 +2458,8 @@ netwitness
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig, ls, mount, netstat, ps, reg query, users
+      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig,
+      ls, mount, netstat, ps, reg query, users
 
   -Arguments [String]
     Arguments to include with the command
@@ -2457,7 +2473,8 @@ netwitness
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig, ls, mount, netstat, ps, reg query, users
+      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig,
+      ls, mount, netstat, ps, reg query, users
 
   -Arguments [String]
     Arguments to include with the command
@@ -2480,7 +2497,9 @@ netwitness
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, reg query, reg set, reg delete, reg load, reg unload, restart, rm, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
+      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, reg query, reg set, reg delete,
+      reg load, reg unload, restart, rm, runscript, shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2494,7 +2513,9 @@ netwitness
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, reg query, reg set, reg delete, reg load, reg unload, restart, rm, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
+      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, reg query, reg set, reg delete,
+      reg load, reg unload, restart, rm, runscript, shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2700,7 +2721,9 @@ netwitness
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, put, reg query, reg set, reg delete, reg load, reg unload, restart, rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
+      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, put, reg query, reg set,
+      reg delete, reg load, reg unload, restart, rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2714,7 +2737,9 @@ netwitness
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, put, reg query, reg set, reg delete, reg load, reg unload, restart, rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
+      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, put, reg query, reg set,
+      reg delete, reg load, reg unload, restart, rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2910,7 +2935,8 @@ netwitness
 ```
 ### Get-FalconSensorUpdatePolicy
 ```
-# Search for Sensor Update Policies in your environment by providing an FQL filter and paging details. Returns a set of Sensor Update Policy IDs which match the filter criteria
+# Search for Sensor Update Policies in your environment by providing an FQL filter and paging details. Returns
+  a set of Sensor Update Policy IDs which match the filter criteria
   Requires sensor-update-policies:read
 
   -Filter [String]
@@ -2924,7 +2950,9 @@ netwitness
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
+      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -2932,7 +2960,9 @@ netwitness
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for Sensor Update Policies with additional support for uninstall protection in your environment by providing an FQL filter and paging details. Returns a set of Sensor Update Policies which match the filter criteria
+# Search for Sensor Update Policies with additional support for uninstall protection in your environment by
+  providing an FQL filter and paging details. Returns a set of Sensor Update Policies which match the filter
+  criteria
   Requires sensor-update-policies:read
 
   -Filter [String]
@@ -2946,12 +2976,15 @@ netwitness
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
+      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
-# Search for members of a Sensor Update Policy in your environment by providing an FQL filter and paging details. Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Sensor Update Policy in your environment by providing an FQL filter and paging details.
+  Returns a set of Agent IDs which match the filter criteria
   Requires sensor-update-policies:read
 
   -Filter [String]
@@ -2965,7 +2998,9 @@ netwitness
 
   -Sort [String]
     Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc, enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
+      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
+      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -3046,7 +3081,9 @@ netwitness
 ```
 ### Set-FalconSensorUpdatePrecedence
 ```
-# Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
+# Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first ID
+specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
+non-Default Policies for a platform when updating precedence
   Requires sensor-update-policies:write
 
   -PolicyIds [Array] <Required>
@@ -3095,7 +3132,7 @@ netwitness
   Requires spotlight-vulnerabilities:read
 
   -VulnerabilityIds [Array] <Required>
-    One or more vulnerability IDs. Find vulnerability IDs with GET /spotlight/queries/vulnerabilities/v2
+    One or more vulnerability identifiers
 ```
 ## /user-management/
 
@@ -3138,9 +3175,9 @@ netwitness
   Requires usermgmt:read
 
   -RoleIds [Array] <Required>
-    ID of a role. Find a role ID from `/customer/queries/roles/v1` or `/users/queries/roles/v1`.
+    One or more role identifiers
 
-# Show role IDs of roles assigned to a user. For more information on each role, provide the role ID to `/customer/entities/roles/v1`.
+# Show role IDs of roles assigned to a user
   Requires usermgmt:read
 
   -UserUuid [String] <Required>
@@ -3183,7 +3220,8 @@ netwitness
     User's last name
 
   -Password [String]
-    The user's password. If left blank, the system will generate an email asking them to set their password (recommended)
+    The user's password. If left blank, the system will generate an email asking them to set their
+    password (recommended)
 
   -Username [String] <Required>
     A username; typically an email address

@@ -1218,7 +1218,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike Firewal Rule Groups Library."
+        "Description": "If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike Firewall Rule Groups Library."
       },
       {
         "Dynamic": "Comment",
@@ -3246,7 +3246,7 @@
       "Accept": "application/json"
     },
     "Permission": "firewall-management:read",
-    "Description": "Get platforms by ID, e.g., windows or mac or droid",
+    "Description": "Get platform names by identifier",
     "Parameters": [
       {
         "Dynamic": "PlatformIds",
@@ -3256,7 +3256,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the platforms to retrieve"
+        "Description": "One or more platform identifiers"
       }
     ],
     "Responses": {
@@ -3285,7 +3285,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "The policy container(s) to retrieve, identified by policy ID"
+        "Description": "One or more policy identifiers"
       }
     ],
     "Responses": {
@@ -3411,7 +3411,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "ID of a role. Find a role ID from `/customer/queries/roles/v1` or `/users/queries/roles/v1`."
+        "Description": "One or more role identifiers"
       }
     ],
     "Responses": {
@@ -3442,7 +3442,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the rule groups to retrieve"
+        "Description": "One or more rule group identifiers"
       }
     ],
     "Responses": {
@@ -3825,7 +3825,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "ID of a summary. Find a summary ID from the response when submitting a malware sample or search with `/falconx/queries/reports/v1`."
+        "Description": "One or more report identifiers"
       }
     ],
     "Responses": {
@@ -3846,7 +3846,7 @@
       "ContentType": "application/json"
     },
     "Permission": "usermgmt:read",
-    "Description": "Show role IDs of roles assigned to a user. For more information on each role, provide the role ID to `/customer/entities/roles/v1`.",
+    "Description": "Show role IDs of roles assigned to a user",
     "Parameters": [
       {
         "Dynamic": "UserUuid",
@@ -3887,7 +3887,7 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more vulnerability IDs. Find vulnerability IDs with GET /spotlight/queries/vulnerabilities/v2"
+        "Description": "One or more vulnerability identifiers"
       }
     ],
     "Responses": {
@@ -7641,7 +7641,7 @@
           "common-event-format",
           "netwitness"
         ],
-        "Description": "The rule news report type. Accepted values:\n\nsnort-suricata-master\n\nsnort-suricata-update\n\nsnort-suricata-changelog\n\nyara-master\n\nyara-update\n\nyara-changelog\n\ncommon-event-format\n\nnetwitness"
+        "Description": "The rule news report type"
       },
       {
         "Dynamic": "Description",
