@@ -205,6 +205,10 @@ PowerShell scripts. If the token has expired it will be ignored.
 
 ### Convert-FalconCSV
 ```
+# Format a response object to be CSV-compatible
+
+  -Object [object] <Accepted via Pipeline>
+    A result object to format
 ```
 ### Get-FalconQueue
 ```
