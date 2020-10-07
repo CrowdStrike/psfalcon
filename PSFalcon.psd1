@@ -83,6 +83,7 @@ FunctionsToExport = @(
     'Remove-AwsAccount',
 
     # custom
+    'Convert-CSV',
     'Get-Queue',
     'Invoke-Deploy',
 
@@ -102,6 +103,7 @@ FunctionsToExport = @(
     # device-control-policies
     'Edit-DeviceControlPolicy',
     'Get-DeviceControlPolicy',
+    'Get-DeviceControlPolicyMember',
     'Invoke-DeviceControlPolicyAction',
     'New-DeviceControlPolicy',
     'Remove-DeviceControlPolicy',
@@ -138,6 +140,7 @@ FunctionsToExport = @(
     # firewall-policies
     'Edit-FirewallPolicy',
     'Get-FirewallPolicy',
+    'Get-FirewallPolicyMember',
     'Invoke-FirewallPolicyAction',
     'New-FirewallPolicy',
     'Remove-FirewallPolicy',
@@ -146,6 +149,7 @@ FunctionsToExport = @(
     # host-group
     'Edit-HostGroup',
     'Get-HostGroup',
+    'Get-HostGroupMember',
     'Invoke-HostGroupAction',
     'New-HostGroup',
     'Remove-HostGroup',
@@ -199,6 +203,7 @@ FunctionsToExport = @(
     # prevention-policies
     'Edit-PreventionPolicy',
     'Get-PreventionPolicy',
+    'Get-PreventionPolicyMember',
     'Invoke-PreventionPolicyAction',
     'New-PreventionPolicy',
     'Remove-PreventionPolicy',
@@ -242,6 +247,7 @@ FunctionsToExport = @(
     'Edit-SensorUpdatePolicy',
     'Get-Build',
     'Get-SensorUpdatePolicy',
+    'Get-SensorUpdatePolicyMember',
     'Get-UninstallToken',
     'Invoke-SensorUpdatePolicyAction',
     'New-SensorUpdatePolicy',

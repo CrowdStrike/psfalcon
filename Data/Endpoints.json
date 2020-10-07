@@ -10,16 +10,7 @@
     "Permission": "installation-tokens:read",
     "Description": "Search for installation token audit events",
     "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
+
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -32,26 +23,6 @@
         "Max": 1000,
         "Default": "50",
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -1419,26 +1390,6 @@
     "Description": "List CrowdScore values",
     "Parameters": [
       {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
         "Dynamic": "Limit",
         "Name": "limit",
         "Type": "int",
@@ -1449,22 +1400,6 @@
         "Min": 1,
         "Max": 2500,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "score|asc",
-          "score|desc",
-          "timestamp|asc",
-          "timestamp|desc"
-        ],
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -1996,16 +1931,6 @@
         "Min": 1,
         "Max": 100,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
       }
     ],
     "Responses": {
@@ -2243,16 +2168,7 @@
     "Permission": "sensor-installers:read",
     "Description": "List detailed sensor installer information",
     "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
+
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -2263,34 +2179,7 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Default": "100",
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results",
-        "Enum": [
-          "release_date|asc",
-          "release_date|desc",
-          "version|asc",
-          "version|desc"
-        ]
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -2745,7 +2634,6 @@
           "query"
         ],
         "Required": false,
-        "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
     ],
@@ -2815,7 +2703,6 @@
           "query"
         ],
         "Required": false,
-        "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
     ],
@@ -3569,16 +3456,7 @@
     "Permission": "sensor-installers:read",
     "Description": "Get sensor installer IDs by provided query",
     "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
+
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -3589,34 +3467,7 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Default": "100",
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results",
-        "Enum": [
-          "release_date|asc",
-          "release_date|desc",
-          "version|asc",
-          "version|desc"
-        ]
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -5003,16 +4854,6 @@
         "Min": 1,
         "Max": 100,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
       }
     ],
     "Responses": {
@@ -5042,7 +4883,6 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Default": "manual",
         "Enum": [
           "cloudformation",
           "manual"
@@ -5156,38 +4996,7 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Default": "100",
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -5220,38 +5029,7 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Default": "100",
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -5275,26 +5053,6 @@
     "Description": "Search for behaviors by providing an FQL filter, sorting, and paging details",
     "Parameters": [
       {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
         "Dynamic": "Limit",
         "Name": "limit",
         "Type": "int",
@@ -5305,20 +5063,6 @@
         "Min": 1,
         "Max": 500,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "timestamp|asc",
-          "timestamp|desc"
-        ],
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -5339,68 +5083,7 @@
     },
     "Permission": "device-control-policies:read",
     "Description": "Search for Device Control Policies in your environment by providing an FQL filter and paging details. Returns a set of Device Control Policies which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "responses.DeviceControlPoliciesV1",
       "400": "responses.DeviceControlPoliciesV1",
@@ -5429,48 +5112,6 @@
         ],
         "Required": false,
         "Description": "The ID of the Device Control Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -5492,68 +5133,7 @@
     },
     "Permission": "firewall-management:read",
     "Description": "Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a set of Firewall Policies which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "responses.FirewallPoliciesV1",
       "400": "responses.FirewallPoliciesV1",
@@ -5582,48 +5162,6 @@
         ],
         "Required": false,
         "Description": "The ID of the Firewall Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -5658,48 +5196,6 @@
         "Max": 32,
         "Pattern": "\\w{32}",
         "Description": "Host group identifier"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -5721,64 +5217,7 @@
     },
     "Permission": "host-group:read",
     "Description": "Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set of Host Groups which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "group_type|asc",
-          "group_type|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "responses.HostGroupsV1",
       "400": "responses.HostGroupsV1",
@@ -5797,68 +5236,7 @@
     },
     "Permission": "prevention-policies:read",
     "Description": "Search for Prevention Policies in your environment by providing an FQL filter and paging details. Returns a set of Prevention Policies which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "responses.PreventionPoliciesV1",
       "400": "responses.PreventionPoliciesV1",
@@ -5887,48 +5265,6 @@
         ],
         "Required": false,
         "Description": "The ID of the Prevention Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -5985,68 +5321,7 @@
     },
     "Permission": "sensor-update-policies:read",
     "Description": "Search for Sensor Update Policies in your environment by providing an FQL filter and paging details. Returns a set of Sensor Update Policies which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "responses.SensorUpdatePoliciesV1",
       "400": "responses.SensorUpdatePoliciesV1",
@@ -6065,68 +5340,7 @@
     },
     "Permission": "sensor-update-policies:read",
     "Description": "Search for Sensor Update Policies with additional support for uninstall protection in your environment by providing an FQL filter and paging details. Returns a set of Sensor Update Policies which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "responses.SensorUpdatePoliciesV2",
       "400": "responses.SensorUpdatePoliciesV2",
@@ -6156,48 +5370,6 @@
         "Pattern": "\\w{32}",
         "Required": false,
         "Description": "The ID of the Sensor Update Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -6220,16 +5392,7 @@
     "Permission": "detects:read",
     "Description": "Search for detection IDs that match a given query",
     "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
+
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -6241,39 +5404,6 @@
         "Min": 1,
         "Max": 9999,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results",
-        "Enum": [
-          "adversary.id|asc",
-          "adversary.id|desc",
-          "devices.hostname|asc",
-          "devices.hostname|desc",
-          "first_behavior|asc",
-          "last_behavior|asc",
-          "last_behavior|desc",
-          "max_confidence|asc",
-          "max_confidence|desc",
-          "max_severity|asc",
-          "max_severity|desc"
-        ]
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       },
       {
         "Dynamic": "Query",
@@ -6304,68 +5434,7 @@
     },
     "Permission": "device-control-policies:read",
     "Description": "Search for Device Control Policies in your environment by providing an FQL filter and paging details. Returns a set of Device Control Policy IDs which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "msa.QueryResponse",
       "400": "msa.QueryResponse",
@@ -6394,48 +5463,6 @@
         ],
         "Required": false,
         "Description": "The ID of the Device Control Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -6466,39 +5493,7 @@
           "query"
         ],
         "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
       }
     ],
     "Responses": {
@@ -6519,26 +5514,6 @@
     "Description": "Find all event IDs matching the query with filter",
     "Parameters": [
       {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
         "Dynamic": "Query",
         "Name": "q",
         "Type": "string",
@@ -6549,16 +5524,6 @@
         "Description": "Perform a generic substring search across all fields"
       },
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
         "Dynamic": "After",
         "Name": "after",
         "Type": "string",
@@ -6567,16 +5532,6 @@
         ],
         "Required": false,
         "Description": "A pagination token used with the Limit parameter to manage pagination of results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
       }
     ],
     "Responses": {
@@ -6606,26 +5561,6 @@
         ],
         "Required": false,
         "Description": "Get fields configuration for this platform"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
       }
     ],
     "Responses": {
@@ -6644,68 +5579,7 @@
     },
     "Permission": "firewall-management:read",
     "Description": "Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a set of Firewall Policy IDs which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "msa.QueryResponse",
       "400": "msa.QueryResponse",
@@ -6734,48 +5608,6 @@
         ],
         "Required": false,
         "Description": "The ID of the Firewall Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -6810,48 +5642,6 @@
         "Max": 32,
         "Pattern": "\\w{32}",
         "Description": "The ID of the Host Group to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -6879,48 +5669,6 @@
         "Type": "switch",
         "Required": true,
         "Description": "Search for hidden hosts"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -6939,64 +5687,7 @@
     },
     "Permission": "host-group:read",
     "Description": "Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set of Host Group IDs which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "group_type|asc",
-          "group_type|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "msa.QueryResponse",
       "400": "msa.QueryResponse",
@@ -7017,56 +5708,6 @@
     "Permission": "incidents:read",
     "Description": "Search for incidents by providing an FQL filter, sorting, and paging details",
     "Parameters": [
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "assigned_to|asc",
-          "assigned_to|desc",
-          "assigned_to_name|asc",
-          "assigned_to_name|desc",
-          "end|asc",
-          "end|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "sort_score|asc",
-          "sort_score|desc",
-          "start|asc",
-          "start|desc",
-          "state|asc",
-          "state|desc",
-          "status|asc",
-          "status|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -7100,49 +5741,6 @@
     "Description": "Get info about actors that match provided FQL filters.",
     "Parameters": [
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "0",
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
         "Dynamic": "Query",
         "Name": "q",
         "Type": "string",
@@ -7160,7 +5758,6 @@
           "query"
         ],
         "Required": false,
-        "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
     ],
@@ -7183,49 +5780,6 @@
     "Permission": "falconx-actors:read",
     "Description": "Get actor IDs that match provided FQL filters.",
     "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "0",
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
       {
         "Dynamic": "Query",
         "Name": "q",
@@ -7257,17 +5811,6 @@
     "Description": "Get info about indicators that match provided FQL filters.",
     "Parameters": [
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "0",
-        "Description": "Position to begin retrieving results"
-      },
-      {
         "Dynamic": "Limit",
         "Name": "limit",
         "Type": "int",
@@ -7278,26 +5821,6 @@
         "Min": 1,
         "Max": 50000,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       },
       {
         "Dynamic": "Query",
@@ -7317,7 +5840,6 @@
           "query"
         ],
         "Required": false,
-        "Default": "False",
         "Description": "Include both published and deleted indicators"
       }
     ],
@@ -7341,17 +5863,6 @@
     "Description": "Get indicators IDs that match provided FQL filters.",
     "Parameters": [
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "0",
-        "Description": "Position to begin retrieving results"
-      },
-      {
         "Dynamic": "Limit",
         "Name": "limit",
         "Type": "int",
@@ -7362,26 +5873,6 @@
         "Min": 1,
         "Max": 50000,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       },
       {
         "Dynamic": "Query",
@@ -7401,7 +5892,6 @@
           "query"
         ],
         "Required": false,
-        "Default": "False",
         "Description": "Include both published and deleted indicators"
       }
     ],
@@ -7425,49 +5915,6 @@
     "Description": "Get info about reports that match provided FQL filters.",
     "Parameters": [
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "0",
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
         "Dynamic": "Query",
         "Name": "q",
         "Type": "string",
@@ -7485,7 +5932,6 @@
           "query"
         ],
         "Required": false,
-        "Default": "__basic__",
         "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
       }
     ],
@@ -7508,49 +5954,6 @@
     "Permission": "falconx-reports:read",
     "Description": "Get report IDs that match provided FQL filters.",
     "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "0",
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
       {
         "Dynamic": "Query",
         "Name": "q",
@@ -7582,17 +5985,6 @@
     "Description": "Search for rule IDs that match provided filter criteria.",
     "Parameters": [
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "0",
-        "Description": "Position to begin retrieving results"
-      },
-      {
         "Dynamic": "Limit",
         "Name": "limit",
         "Type": "int",
@@ -7600,18 +5992,9 @@
           "query"
         ],
         "Required": false,
-        "Default": "10",
+        "Min": 1,
+        "Max": 10000,
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       },
       {
         "Dynamic": "Name",
@@ -7830,18 +6213,7 @@
           "query"
         ],
         "Required": false,
-        "Default": "False",
-        "Description": "Include deleted IOCs "
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
+        "Description": "Include deleted IOCs"
       }
     ],
     "Responses": {
@@ -7871,16 +6243,6 @@
         ],
         "Required": false,
         "Description": "User UUID"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": true,
-        "Description": "An FQL filter expression"
       }
     ]
   },
@@ -7893,28 +6255,7 @@
     },
     "Permission": "firewall-management:read",
     "Description": "Get the list of platform names",
-    "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "fwmgr.msa.QueryResponse",
       "403": "msa.ReplyMetaOnly",
@@ -7943,26 +6284,6 @@
         "Description": "The ID of the policy container within which to query"
       },
       {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
         "Dynamic": "Query",
         "Name": "q",
         "Type": "string",
@@ -7971,26 +6292,6 @@
         ],
         "Required": false,
         "Description": "Perform a generic substring search across all fields"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
       }
     ],
     "Responses": {
@@ -8010,68 +6311,7 @@
     },
     "Permission": "prevention-policies:read",
     "Description": "Search for Prevention Policies in your environment by providing an FQL filter and paging details. Returns a set of Prevention Policy IDs which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "msa.QueryResponse",
       "400": "msa.QueryResponse",
@@ -8100,48 +6340,6 @@
         ],
         "Required": false,
         "Description": "The ID of the Prevention Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -8163,50 +6361,7 @@
     },
     "Permission": "falconx-sandbox:read",
     "Description": "Find sandbox reports by providing an FQL filter and paging details. Returns a set of report IDs that match your criteria.",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "msa.QueryResponse",
       "400": "msa.QueryResponse",
@@ -8227,26 +6382,6 @@
     "Description": "Find all rule group IDs matching the query with filter",
     "Parameters": [
       {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
         "Dynamic": "Query",
         "Name": "q",
         "Type": "string",
@@ -8257,16 +6392,6 @@
         "Description": "Perform a generic substring search across all fields"
       },
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
         "Dynamic": "After",
         "Name": "after",
         "Type": "string",
@@ -8275,16 +6400,6 @@
         ],
         "Required": false,
         "Description": "A pagination token used with the Limit parameter to manage pagination of results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
       }
     ],
     "Responses": {
@@ -8306,26 +6421,6 @@
     "Description": "Find all rule IDs matching the query with filter",
     "Parameters": [
       {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
         "Dynamic": "Query",
         "Name": "q",
         "Type": "string",
@@ -8336,16 +6431,6 @@
         "Description": "Perform a generic substring search across all fields"
       },
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
         "Dynamic": "After",
         "Name": "after",
         "Type": "string",
@@ -8354,16 +6439,6 @@
         ],
         "Required": false,
         "Description": "A pagination token used with the Limit parameter to manage pagination of results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
       }
     ],
     "Responses": {
@@ -8427,54 +6502,7 @@
     },
     "Permission": "quick-scan:read",
     "Description": "Find the volume identifiers for submitted scans",
-    "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Enum": [
-          "asc",
-          "desc"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      }
-    ]
+    "Parameters": []
   },
   {
     "Name": "querySensorUpdatePolicies",
@@ -8485,68 +6513,7 @@
     },
     "Permission": "sensor-update-policies:read",
     "Description": "Search for Sensor Update Policies in your environment by providing an FQL filter and paging details. Returns a set of Sensor Update Policy IDs which match the filter criteria",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Enum": [
-          "created_by|asc",
-          "created_by|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc",
-          "enabled|asc",
-          "enabled|desc",
-          "modified_by|asc",
-          "modified_by|desc",
-          "modified_timestamp|asc",
-          "modified_timestamp|desc",
-          "name|asc",
-          "name|desc",
-          "platform_name|asc",
-          "platform_name|desc",
-          "precedence|asc",
-          "precedence|desc"
-        ],
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "msa.QueryResponse",
       "400": "msa.QueryResponse",
@@ -8575,48 +6542,6 @@
         ],
         "Required": false,
         "Description": "The ID of the Sensor Update Policy to search for members of"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
       }
     ],
     "Responses": {
@@ -8638,50 +6563,7 @@
     },
     "Permission": "falconx-sandbox:read",
     "Description": "Find submission IDs for uploaded files by providing an FQL filter and paging details. Returns a set of submission IDs that match your criteria.",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 1,
-        "Max": 5000,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "msa.QueryResponse",
       "400": "msa.QueryResponse",
@@ -8690,50 +6572,6 @@
       "500": "msa.QueryResponse",
       "default": "msa.QueryResponse"
     }
-  },
-  {
-    "Name": "QuerySubmissionV2",
-    "Path": "/samples/queries/submissions/v2",
-    "Method": "GET",
-    "Headers": {
-      "Accept": "application/json",
-      "ContentType": "application/json"
-    },
-    "Permission": "samplestore:read",
-    "Description": "Finds submissions based on a given filter, currently allows only sha256/cid filtering.",
-    "Parameters": [
-      {
-        "Dynamic": "XCSUSERUUID",
-        "Name": "X-CS-USERUUID",
-        "Type": "string",
-        "In": [
-          "header"
-        ],
-        "Required": false,
-        "Description": "User UUID"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": true,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Default": "200",
-        "Description": "Maximum number of results per request"
-      }
-    ]
   },
   {
     "Name": "queryVulnerabilities",
@@ -8765,34 +6603,7 @@
         "Required": false,
         "Min": 1,
         "Max": 400,
-        "Default": "100",
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results",
-        "Enum": [
-          "closed_timestamp|asc",
-          "closed_timestamp|desc",
-          "created_timestamp|asc",
-          "created_timestamp|desc"
-        ]
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -9293,7 +7104,6 @@
           "formdata"
         ],
         "Required": true,
-        "Default": "none",
         "Enum": [
           "private",
           "group",
@@ -9309,7 +7119,6 @@
           "formdata"
         ],
         "Required": false,
-        "Default": "windows",
         "Enum": [
           "windows",
           "mac"
@@ -9926,48 +7735,7 @@
     },
     "Permission": "real-time-response:read",
     "Description": "Get a list of session_ids.",
-    "Parameters": [
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "domain.ListSessionsResponseMsa",
       "400": "domain.APIError",
@@ -10017,48 +7785,7 @@
     },
     "Permission": "real-time-response-admin:write",
     "Description": "Get a list of put-file ID's that are available to the user for the `put` command.",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "binservclient.MsaPutFileResponse",
       "400": "domain.APIError",
@@ -10115,48 +7842,7 @@
     },
     "Permission": "real-time-response-admin:write",
     "Description": "Get a list of custom-script ID's that are available to the user for the `runscript` command.",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "The position to begin retrieving results"
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "binservclient.MsaPutFileResponse",
       "400": "domain.APIError",
@@ -10310,7 +7996,6 @@
           "formdata"
         ],
         "Required": false,
-        "Default": "none",
         "Description": "Permission level [private: uploader only, group: admins, public: admins and active responders]"
       },
       {
@@ -10642,6 +8327,249 @@
         "ParameterSets": [
           "Array"
         ]
+      },
+      {
+        "Dynamic": "Filter",
+        "Name": "filter",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Description": "An FQL filter expression",
+        "ParameterSets": [
+          "audit-events-query",
+          "CrowdScore",
+          "GetCombinedSensorInstallersByQuery",
+          "GetSensorInstallersByQuery",
+          "QueryAWSAccounts",
+          "QueryAWSAccountsForIDs",
+          "QueryBehaviors",
+          "queryCombinedDeviceControlPolicies",
+          "queryCombinedDeviceControlPolicyMembers",
+          "queryCombinedFirewallPolicies",
+          "queryCombinedFirewallPolicyMembers",
+          "queryCombinedGroupMembers",
+          "queryCombinedHostGroups",
+          "queryCombinedPreventionPolicies",
+          "queryCombinedPreventionPolicyMembers",
+          "queryCombinedSensorUpdatePolicies",
+          "queryCombinedSensorUpdatePoliciesV2",
+          "queryCombinedSensorUpdatePolicyMembers",
+          "QueryDetects",
+          "queryDeviceControlPolicies",
+          "queryDeviceControlPolicyMembers",
+          "QueryDevicesByFilterScroll",
+          "query-events",
+          "queryFirewallPolicies",
+          "queryFirewallPolicyMembers",
+          "queryGroupMembers",
+          "QueryHiddenDevices",
+          "queryHostGroups",
+          "QueryIncidents",
+          "QueryIntelActorEntities",
+          "QueryIntelActorIds",
+          "QueryIntelIndicatorEntities",
+          "QueryIntelIndicatorIds",
+          "QueryIntelReportEntities",
+          "QueryIntelReportIds",
+          "QueryMetadataV2",
+          "query-policy-rules",
+          "queryPreventionPolicies",
+          "queryPreventionPolicyMembers",
+          "QueryReports",
+          "query-rule-groups",
+          "query-rules",
+          "QueryScan",
+          "querySensorUpdatePolicies",
+          "querySensorUpdatePolicyMembers",
+          "QuerySubmissions",
+          "queryVulnerabilities",
+          "RTR-ListAllSessions",
+          "RTR-ListPut-Files",
+          "RTR-ListScripts",
+          "tokens-query"
+        ]
+      },
+      {
+        "Dynamic": "Sort",
+        "Name": "sort",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Description": "Property and direction to sort results",
+        "ParameterSets": [
+          "audit-events-query",
+          "CrowdScore",
+          "GetCombinedSensorInstallersByQuery",
+          "GetSensorInstallersByQuery",
+          "QueryAWSAccounts",
+          "QueryAWSAccountsForIDs",
+          "QueryBehaviors",
+          "queryCombinedDeviceControlPolicies",
+          "queryCombinedDeviceControlPolicyMembers",
+          "queryCombinedFirewallPolicies",
+          "queryCombinedFirewallPolicyMembers",
+          "queryCombinedGroupMembers",
+          "queryCombinedHostGroups",
+          "queryCombinedPreventionPolicies",
+          "queryCombinedPreventionPolicyMembers",
+          "queryCombinedSensorUpdatePolicies",
+          "queryCombinedSensorUpdatePoliciesV2",
+          "queryCombinedSensorUpdatePolicyMembers",
+          "QueryDetects",
+          "queryDeviceControlPolicies",
+          "queryDeviceControlPolicyMembers",
+          "QueryDevicesByFilterScroll",
+          "query-events",
+          "queryFirewallPolicies",
+          "queryFirewallPolicyMembers",
+          "queryGroupMembers",
+          "QueryHiddenDevices",
+          "queryHostGroups",
+          "QueryIncidents",
+          "QueryIntelActorEntities",
+          "QueryIntelActorIds",
+          "QueryIntelIndicatorEntities",
+          "QueryIntelIndicatorIds",
+          "QueryIntelReportEntities",
+          "QueryIntelReportIds",
+          "QueryMetadataV2",
+          "query-policy-rules",
+          "queryPreventionPolicies",
+          "queryPreventionPolicyMembers",
+          "QueryReports",
+          "query-rule-groups",
+          "query-rules",
+          "QueryScan",
+          "querySensorUpdatePolicies",
+          "querySensorUpdatePolicyMembers",
+          "QuerySubmissions",
+          "queryVulnerabilities",
+          "RTR-ListAllSessions",
+          "RTR-ListPut-Files",
+          "RTR-ListScripts",
+          "tokens-query"
+        ]
+      },
+      {
+        "Dynamic": "Offset",
+        "Name": "offset",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Description": "Position to begin retrieving results",
+        "ParameterSets": [
+          "audit-events-query",
+          "CrowdScore",
+          "DevicesRanOn",
+          "GetCombinedSensorInstallersByQuery",
+          "GetSensorInstallersByQuery",
+          "ProcessesRanOn",
+          "query-events",
+          "query-firewall-fields",
+          "query-platforms",
+          "query-policy-rules",
+          "query-rule-groups",
+          "query-rules",
+          "QueryAWSAccounts",
+          "QueryAWSAccountsForIDs",
+          "QueryBehaviors",
+          "queryCombinedDeviceControlPolicies",
+          "queryCombinedDeviceControlPolicyMembers",
+          "queryCombinedFirewallPolicies",
+          "queryCombinedFirewallPolicyMembers",
+          "queryCombinedGroupMembers",
+          "queryCombinedHostGroups",
+          "queryCombinedPreventionPolicies",
+          "queryCombinedPreventionPolicyMembers",
+          "queryCombinedSensorUpdatePolicies",
+          "queryCombinedSensorUpdatePoliciesV2",
+          "queryCombinedSensorUpdatePolicyMembers",
+          "QueryDetects",
+          "queryDeviceControlPolicies",
+          "queryDeviceControlPolicyMembers",
+          "queryFirewallPolicies",
+          "queryFirewallPolicyMembers",
+          "queryGroupMembers",
+          "QueryHiddenDevices",
+          "queryHostGroups",
+          "QueryIncidents",
+          "QueryIntelActorEntities",
+          "QueryIntelActorIds",
+          "QueryIntelIndicatorEntities",
+          "QueryIntelIndicatorIds",
+          "QueryIntelReportEntities",
+          "QueryIntelReportIds",
+          "QueryIntelRuleIds",
+          "QueryIOCs",
+          "queryPreventionPolicies",
+          "queryPreventionPolicyMembers",
+          "QueryReports",
+          "QueryScan",
+          "querySensorUpdatePolicies",
+          "querySensorUpdatePolicyMembers",
+          "QuerySubmissions",
+          "RTR-ListAllSessions",
+          "RTR-ListPut-Files",
+          "RTR-ListScripts",
+          "tokens-query"
+        ]
+      },
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 5000,
+        "Description": "Maximum number of results per request",
+        "ParameterSets": [
+          "query-events",
+          "query-policy-rules",
+          "query-rule-groups",
+          "query-rules",
+          "queryCombinedDeviceControlPolicies",
+          "queryCombinedDeviceControlPolicyMembers",
+          "queryCombinedFirewallPolicies",
+          "queryCombinedFirewallPolicyMembers",
+          "queryCombinedGroupMembers",
+          "queryCombinedHostGroups",
+          "queryCombinedPreventionPolicies",
+          "queryCombinedPreventionPolicyMembers",
+          "queryCombinedSensorUpdatePolicies",
+          "queryCombinedSensorUpdatePoliciesV2",
+          "queryCombinedSensorUpdatePolicyMembers",
+          "queryDeviceControlPolicies",
+          "queryDeviceControlPolicyMembers",
+          "QueryDevicesByFilterScroll",
+          "queryFirewallPolicies",
+          "queryFirewallPolicyMembers",
+          "queryGroupMembers",
+          "QueryHiddenDevices",
+          "queryHostGroups",
+          "QueryIntelActorEntities",
+          "QueryIntelActorIds",
+          "QueryIntelReportEntities",
+          "QueryIntelReportIds",
+          "queryPreventionPolicies",
+          "queryPreventionPolicyMembers",
+          "QueryReports",
+          "QueryScan",
+          "querySensorUpdatePolicies",
+          "querySensorUpdatePolicyMembers",
+          "QuerySubmissions",
+          "RTR-ListAllSessions",
+          "RTR-ListPut-Files",
+          "RTR-ListScripts"
+        ]
       }
     ]
   },
@@ -10934,16 +8862,6 @@
     "Description": "Search for tokens by providing an FQL filter and paging details.",
     "Parameters": [
       {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Position to begin retrieving results"
-      },
-      {
         "Dynamic": "Limit",
         "Name": "limit",
         "Type": "int",
@@ -10953,28 +8871,7 @@
         "Required": false,
         "Min": 1,
         "Max": 1000,
-        "Default": "50",
         "Description": "Maximum number of results per request"
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "Property and direction to sort results"
-      },
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Description": "An FQL filter expression"
       }
     ],
     "Responses": {
@@ -12059,7 +9956,6 @@
           "query"
         ],
         "Required": false,
-        "Default": "True",
         "Description": "Visibility of the sample in Falcon MalQuery"
       }
     ],
