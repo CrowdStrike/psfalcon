@@ -78,6 +78,7 @@ PowerShell scripts. If the token has expired it will be ignored.
 
 # Commands
 
+
 ## /cloud-connect-aws/
 
 ### Add-FalconAwsSettings
@@ -86,13 +87,13 @@ PowerShell scripts. If the token has expired it will be ignored.
   Requires cloud-connect-aws:write
 
   -CloudtrailId [String]
-    The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs
-    from multiple accounts.
+    The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs from
+    multiple accounts.
       Pattern : \d{12}
 
   -ExternalId [String]
-    By setting this value, all subsequent accounts that are provisioned will default to using this value
-    as their external ID.
+    By setting this value, all subsequent accounts that are provisioned will default to using this value as their
+    external ID.
 ```
 ### Confirm-FalconAwsAccess
 ```
@@ -133,27 +134,27 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Get-FalconAwsAccount
 ```
-# Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS
-account IDs which match the filter criteria
+# Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS account
+  IDs which match the filter criteria
   Requires cloud-connect-aws:read
 
   -Limit [Int32]
     Maximum number of results per request
-
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 ```
 ### Get-FalconAwsSettings
 ```
@@ -204,10 +205,6 @@ account IDs which match the filter criteria
 
 ### Convert-FalconCSV
 ```
-# Format a response object to be CSV-compatible
-
-  -Object [object] (Pipeline accepted)
-    A result object to format
 ```
 ### Get-FalconQueue
 ```
@@ -255,8 +252,8 @@ account IDs which match the filter criteria
   Requires d4c-registration:read
 
   -SubscriptionIds [Array]
-    SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts
-    are returned.
+    SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts are
+    returned.
       Pattern : ^[0-9a-z-]{36}$
 
   -ScanType [String]
@@ -336,20 +333,8 @@ account IDs which match the filter criteria
 # Search for detection IDs that match a given query
   Requires detects:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : adversary.id|asc, adversary.id|desc, devices.hostname|asc, devices.hostname|desc,
-      first_behavior|asc, last_behavior|asc, last_behavior|desc, max_confidence|asc, max_confidence|desc,
-      max_severity|asc, max_severity|desc
-
-  -Filter [String]
-    An FQL filter expression
 
   -Query [String]
     Perform a generic substring search across all fields
@@ -359,6 +344,15 @@ account IDs which match the filter criteria
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # List detailed detection information
   Requires detects:read
@@ -390,24 +384,9 @@ account IDs which match the filter criteria
 ```
 ### Get-FalconDeviceControlPolicy
 ```
-# Search for Device Control Policies in your environment by providing an FQL filter and paging details. Returns
-  a set of Device Control Policy IDs which match the filter criteria
+# Search for Device Control Policies in your environment by providing an FQL filter and paging details.
+  Returns a set of Device Control Policy IDs which match the filter criteria
   Requires device-control-policies:read
-
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
-      name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -415,42 +394,50 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for members of a Device Control Policy in your environment by providing an FQL filter and paging
-  details. Returns a set of Agent IDs which match the filter criteria
-  Requires device-control-policies:read
-
   -Filter [String]
     An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
 
   -Offset [Int32]
     Position to begin retrieving results
 
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
-      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
-
-  -All [SwitchParameter]
-    Repeat requests until all available results are retrieved
-
-  -Detailed [SwitchParameter]
-    Retrieve detailed information
-
-  -PolicyId [String]
-    The ID of the Device Control Policy to search for members of
-
-  -Members [SwitchParameter] <Required>
-    List assigned host members
 
 # List detailed Device Control Policy information
   Requires device-control-policies:read
 
   -PolicyIds [Array] <Required>
     The IDs of the Device Control Policies to return
+```
+### Get-FalconDeviceControlPolicyMember
+```
+# Search for members of a Device Control Policy in your environment by providing an FQL filter and paging
+  details. Returns a set of Agent IDs which match the filter criteria
+  Requires device-control-policies:read
+
+  -PolicyId [String]
+    The ID of the Device Control Policy to search for members of
+
+  -All [SwitchParameter]
+    Repeat requests until all available results are retrieved
+
+  -Detailed [SwitchParameter]
+    Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 ```
 ### Invoke-FalconDeviceControlPolicyAction
 ```
@@ -505,8 +492,8 @@ account IDs which match the filter criteria
 ```
 ### Set-FalconDeviceControlPrecedence
 ```
-# Sets the precedence of Device Control Policies based on the order of IDs specified in the request. The first
-  ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify
+# Sets the precedence of Device Control Policies based on the order of IDs specified in the request. The first ID
+  specified will have the highest precedence and the last ID specified will have the lowest. You must specify
   all non-Default Policies for a platform when updating precedence
   Requires device-control-policies:write
 
@@ -560,23 +547,23 @@ account IDs which match the filter criteria
   your criteria.
   Requires falconx-sandbox:read
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # Get a full sandbox report.
   Requires falconx-sandbox:read
@@ -612,23 +599,23 @@ account IDs which match the filter criteria
   submission IDs that match your criteria.
   Requires falconx-sandbox:read
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # Check the status of a sandbox analysis
   Requires falconx-sandbox:read
@@ -738,9 +725,9 @@ account IDs which match the filter criteria
 
   -Path [String] <Required>
     Path to the file
-      Pattern : \.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|js|ko|lnk|o|ocx|mod|
-      msg|mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|
-      vbe|vbs|wsf|xls|xlsx)+$
+      Pattern : \.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|js|ko|lnk|o|ocx|mod|msg|
+      mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|vbe|vbs|
+      wsf|xls|xlsx)+$
 
   -Filename [String]
     Filename
@@ -824,29 +811,29 @@ account IDs which match the filter criteria
 # Find all event IDs matching the query with filter
   Requires firewall-management:read
 
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
-
   -Query [String]
     Perform a generic substring search across all fields
 
-  -Offset [String]
-    The position to begin retrieving results
-
   -After [String]
     A pagination token used with the Limit parameter to manage pagination of results
-
-  -Limit [Int32]
-    Maximum number of results per request
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # List Firewall Management events
   Requires firewall-management:read
@@ -863,17 +850,14 @@ account IDs which match the filter criteria
   -PlatformId [String]
     Get fields configuration for this platform
 
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # List detailed information about Firewall Management fields
   Requires firewall-management:read
@@ -886,23 +870,11 @@ account IDs which match the filter criteria
 # Find all rule group IDs matching the query with filter
   Requires firewall-management:read
 
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
-
   -Query [String]
     Perform a generic substring search across all fields
 
-  -Offset [String]
-    The position to begin retrieving results
-
   -After [String]
     A pagination token used with the Limit parameter to manage pagination of results
-
-  -Limit [Int32]
-    Maximum number of results per request
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -910,26 +882,35 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
+
 # Get rule group entities by ID. These groups do not contain their rule entites, just the rule IDs in
   precedence order.
   Requires firewall-management:read
 
   -GroupIds [Array] <Required>
-    The IDs of the rule groups to retrieve
+    One or more rule group identifiers
 ```
 ### Get-FalconFirewallPlatform
 ```
 # Get the list of platform names
   Requires firewall-management:read
 
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # Get platform names by identifier
   Requires firewall-management:read
@@ -942,23 +923,11 @@ account IDs which match the filter criteria
 # Find all rule IDs matching the query with filter
   Requires firewall-management:read
 
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
-
   -Query [String]
     Perform a generic substring search across all fields
 
-  -Offset [String]
-    The position to begin retrieving results
-
   -After [String]
     A pagination token used with the Limit parameter to manage pagination of results
-
-  -Limit [Int32]
-    Maximum number of results per request
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -966,26 +935,38 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Find all firewall rule IDs matching the query with filter, and return them in precedence order
-  Requires firewall-management:read
+  -Filter [String]
+    An FQL filter expression
 
   -Sort [String]
     Property and direction to sort results
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Query [String]
-    Perform a generic substring search across all fields
-
-  -Offset [String]
-    The position to begin retrieving results
+  -Offset [Int32]
+    Position to begin retrieving results
 
   -Limit [Int32]
     Maximum number of results per request
 
+# Find all firewall rule IDs matching the query with filter, and return them in precedence order
+  Requires firewall-management:read
+
+  -Query [String]
+    Perform a generic substring search across all fields
+
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
   -PolicyId [String] <Required>
     The ID of the policy container within which to query
@@ -1019,8 +1000,8 @@ account IDs which match the filter criteria
       Pattern : \w{32}
 
   -Library [String]
-    If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike
-    Firewall Rule Groups Library.
+    If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike Firewall
+    Rule Groups Library.
 
   -Comment [String]
     Audit log comment for this action
@@ -1073,24 +1054,9 @@ account IDs which match the filter criteria
 ```
 ### Get-FalconFirewallPolicy
 ```
-# Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a
-  set of Firewall Policy IDs which match the filter criteria
+# Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a set
+  of Firewall Policy IDs which match the filter criteria
   Requires firewall-management:read
-
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
-      name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -1098,42 +1064,50 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for members of a Firewall Policy in your environment by providing an FQL filter and paging
-  details. Returns a set of Agent IDs which match the filter criteria
-  Requires firewall-management:read
-
   -Filter [String]
     An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
 
   -Offset [Int32]
     Position to begin retrieving results
 
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
-      name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
-
-  -All [SwitchParameter]
-    Repeat requests until all available results are retrieved
-
-  -Detailed [SwitchParameter]
-    Retrieve detailed information
-
-  -PolicyId [String]
-    The ID of the Firewall Policy to search for members of
-
-  -Members [SwitchParameter] <Required>
-    List assigned host members
 
 # List detailed information about Firewall Policies
   Requires firewall-management:read
 
   -PolicyIds [Array] <Required>
     The IDs of the Firewall Policies to return
+```
+### Get-FalconFirewallPolicyMember
+```
+# Search for members of a Firewall Policy in your environment by providing an FQL filter and paging details.
+  Returns a set of Agent IDs which match the filter criteria
+  Requires firewall-management:read
+
+  -PolicyId [String]
+    The ID of the Firewall Policy to search for members of
+
+  -All [SwitchParameter]
+    Repeat requests until all available results are retrieved
+
+  -Detailed [SwitchParameter]
+    Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 ```
 ### Invoke-FalconFirewallPolicyAction
 ```
@@ -1186,8 +1160,8 @@ account IDs which match the filter criteria
 ### Set-FalconFirewallPrecedence
 ```
 # Sets the precedence of Firewall Policies based on the order of IDs specified in the request. The first ID
-  specified will have the highest precedence and the last ID specified will have the lowest. You must specify
-  all non-Default Policies for a platform when updating precedence
+specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
+non-Default Policies for a platform when updating precedence
   Requires firewall-management:write
 
   -PolicyIds [Array] <Required>
@@ -1222,24 +1196,9 @@ account IDs which match the filter criteria
 ```
 ### Get-FalconHostGroup
 ```
-# Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set
-  of Host Group IDs which match the filter criteria
+# Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set of
+  Host Group IDs which match the filter criteria
   Requires host-group:read
-
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, group_type|asc,
-      group_type|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
-      name|asc, name|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -1247,37 +1206,17 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for members of a Host Group in your environment by providing an FQL filter and paging details. Returns
-  a set of Agent IDs which match the filter criteria
-  Requires host-group:read
-
   -Filter [String]
     An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
 
   -Offset [Int32]
     Position to begin retrieving results
 
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, group_type|asc,
-      group_type|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
-      name|asc, name|desc
-
-  -All [SwitchParameter]
-    Repeat requests until all available results are retrieved
-
-  -Detailed [SwitchParameter]
-    Retrieve detailed information
-
-  -GroupId [String] <Required>
-    The ID of the Host Group to search for members of
-      Pattern : \w{32}
-
-  -Members [SwitchParameter] <Required>
-    List assigned host members
 
 # List detailed information about Host Groups
   Requires host-group:read
@@ -1285,6 +1224,34 @@ account IDs which match the filter criteria
   -GroupIds [Array] <Required>
     The IDs of the Host Groups to return
       Pattern : \w{32}
+```
+### Get-FalconHostGroupMember
+```
+# Search for members of a Host Group in your environment by providing an FQL filter and paging details. Returns
+  a set of Agent IDs which match the filter criteria
+  Requires host-group:read
+
+  -GroupId [String] <Required>
+    The ID of the Host Group to search for members of
+      Pattern : \w{32}
+
+  -All [SwitchParameter]
+    Repeat requests until all available results are retrieved
+
+  -Detailed [SwitchParameter]
+    Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 ```
 ### Invoke-FalconHostGroupAction
 ```
@@ -1345,43 +1312,43 @@ account IDs which match the filter criteria
   Requires devices:read
 
   -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
+    A pagination token used with the Limit parameter to manage pagination of results
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # Retrieve hidden hosts that match the provided filter criteria.
   Requires devices:read
 
   -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
+    Position to begin retrieving results
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
   -Hidden [SwitchParameter] <Required>
     Search for hidden hosts
@@ -1413,24 +1380,23 @@ account IDs which match the filter criteria
 # Search for behaviors by providing an FQL filter, sorting, and paging details
   Requires incidents:read
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [String]
-    The position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : timestamp|asc, timestamp|desc
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # List detailed information about behaviors
   Requires incidents:read
@@ -1443,18 +1409,6 @@ account IDs which match the filter criteria
 # Search for incidents by providing an FQL filter, sorting, and paging details
   Requires incidents:read
 
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : assigned_to|asc, assigned_to|desc, assigned_to_name|asc, assigned_to_name|desc, end|asc,
-      end|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc, name|desc, sort_score|asc,
-      sort_score|desc, start|asc, start|desc, state|asc, state|desc, status|asc, status|desc
-
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [String]
-    The position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
 
@@ -1463,6 +1417,15 @@ account IDs which match the filter criteria
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # List detailed information about Incidents
   Requires incidents:read
@@ -1475,21 +1438,20 @@ account IDs which match the filter criteria
 # List CrowdScore values
   Requires incidents:read
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [String]
-    The position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
 
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : score|asc, score|desc, timestamp|asc, timestamp|desc
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 ```
 ### Invoke-FalconIncidentAction
 ```
@@ -1539,23 +1501,23 @@ account IDs which match the filter criteria
 # Search for tokens by providing an FQL filter and paging details.
   Requires installation-tokens:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # Gets the details of one or more tokens by id.
   Requires installation-tokens:read
@@ -1569,23 +1531,23 @@ account IDs which match the filter criteria
 # Search for installation token audit events
   Requires installation-tokens:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # Retrieve installation token audit events
   Requires installation-tokens:read
@@ -1625,18 +1587,6 @@ account IDs which match the filter criteria
 # Get actor IDs that match provided FQL filters.
   Requires falconx-actors:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
-
   -Query [String]
     Perform a generic substring search across all fields
 
@@ -1645,6 +1595,18 @@ account IDs which match the filter criteria
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # List detailed information about Actors
   Requires falconx-actors:read
@@ -1660,17 +1622,8 @@ account IDs which match the filter criteria
 # Get indicators IDs that match provided FQL filters.
   Requires falconx-indicators:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
 
   -Query [String]
     Perform a generic substring search across all fields
@@ -1684,6 +1637,15 @@ account IDs which match the filter criteria
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
 # List detailed information about Indicators
   Requires falconx-indicators:read
 
@@ -1695,18 +1657,6 @@ account IDs which match the filter criteria
 # Get report IDs that match provided FQL filters.
   Requires falconx-reports:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
-
   -Query [String]
     Perform a generic substring search across all fields
 
@@ -1715,6 +1665,18 @@ account IDs which match the filter criteria
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # List detailed information about Intel Reports
   Requires falconx-reports:read
@@ -1730,14 +1692,8 @@ account IDs which match the filter criteria
 # Search for rule IDs that match provided filter criteria.
   Requires falconx-rules:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
 
   -Name [Array]
     Search by rule title.
@@ -1764,6 +1720,9 @@ account IDs which match the filter criteria
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # List detailed information about Intel Rules
   Requires falconx-rules:read
@@ -1878,13 +1837,13 @@ account IDs which match the filter criteria
     The user or API client who deleted the Custom IOC
 
   -IncludeDeleted [Boolean]
-    Include deleted IOCs 
-
-  -Offset [Int32]
-    Position to begin retrieving results
+    Include deleted IOCs
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # Get detailed information about an IOC
   Requires iocs:read
@@ -1916,11 +1875,11 @@ account IDs which match the filter criteria
   -Value [String] <Required>
     Custom IOC value
 
-  -Offset [Int32]
-    The position to begin retrieving results
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
   -Hosts [SwitchParameter] <Required>
     Retrieve host identifiers for hosts that have observed a custom IOC
@@ -1938,11 +1897,11 @@ account IDs which match the filter criteria
   -Value [String] <Required>
     Custom IOC value
 
-  -Offset [Int32]
-    The position to begin retrieving results
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
   -Limit [Int32]
     Maximum number of results per request
@@ -2049,8 +2008,8 @@ account IDs which match the filter criteria
 
   -FilterFileTypes [Array]
     File types to include with the results
-      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|
-      pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
+      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|
+      pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
 
   -FilterMeta [Array]
     Subset of metadata fields to include in the results
@@ -2085,8 +2044,8 @@ account IDs which match the filter criteria
 
   -FilterFileTypes [Array]
     File types to include with the results
-      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|
-      pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
+      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|
+      perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
 
   -FilterMeta [Array]
     Subset of metadata fields to include in the results
@@ -2216,63 +2175,56 @@ account IDs which match the filter criteria
   set of Prevention Policy IDs which match the filter criteria
   Requires prevention-policies:read
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
-      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-# Search for members of a Prevention Policy in your environment by providing an FQL filter and paging
-  details. Returns a set of Agent IDs which match the filter criteria
-  Requires prevention-policies:read
-
   -Filter [String]
     An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
 
   -Offset [Int32]
     Position to begin retrieving results
 
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc,
-      name|asc, name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
-
-  -All [SwitchParameter]
-    Repeat requests until all available results are retrieved
-
-  -Detailed [SwitchParameter]
-    Retrieve detailed information
-
-  -PolicyId [String]
-    The ID of the Prevention Policy to search for members of
-
-  -Members [SwitchParameter] <Required>
-    List assigned host members
 
 # Retrieve a set of Prevention policies
   Requires prevention-policies:read
 
   -PolicyIds [Array] <Required>
     Prevention policy identifiers
+```
+### Get-FalconPreventionPolicyMember
+```
+# Search for members of a Prevention Policy in your environment by providing an FQL filter and paging details.
+  Returns a set of Agent IDs which match the filter criteria
+  Requires prevention-policies:read
+
+  -PolicyId [String]
+    The ID of the Prevention Policy to search for members of
+
+  -All [SwitchParameter]
+    Repeat requests until all available results are retrieved
+
+  -Detailed [SwitchParameter]
+    Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 ```
 ### Invoke-FalconPreventionPolicyAction
 ```
@@ -2328,8 +2280,8 @@ account IDs which match the filter criteria
 ### Set-FalconPreventionPrecedence
 ```
 # Sets the precedence of Prevention Policies based on the order of IDs specified in the request. The first ID
-specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
-non-Default Policies for a platform when updating precedence
+  specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
+  non-Default Policies for a platform when updating precedence
   Requires prevention-policies:write
 
   -PolicyIds [Array] <Required>
@@ -2400,23 +2352,23 @@ non-Default Policies for a platform when updating precedence
 # Get a list of session_ids.
   Requires real-time-response:read
 
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
-  -Filter [String]
-    An FQL filter expression
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # Get queued session metadata by session ID
   Requires real-time-response:read
@@ -2462,8 +2414,8 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig,
-      ls, mount, netstat, ps, reg query, users
+      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig, ls,
+      mount, netstat, ps, reg query, users
 
   -Arguments [String]
     Arguments to include with the command
@@ -2477,8 +2429,8 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig,
-      ls, mount, netstat, ps, reg query, users
+      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig, ls,
+      mount, netstat, ps, reg query, users
 
   -Arguments [String]
     Arguments to include with the command
@@ -2665,23 +2617,23 @@ non-Default Policies for a platform when updating precedence
 # Get a list of put-file ID's that are available to the user for the `put` command.
   Requires real-time-response-admin:write
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # Get put-files based on the ID's given. These are used for the RTR `put` command.
   Requires real-time-response-admin:write
@@ -2694,23 +2646,23 @@ non-Default Policies for a platform when updating precedence
 # Get a list of custom-script ID's that are available to the user for the `runscript` command.
   Requires real-time-response-admin:write
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # Get custom-scripts based on the ID's given. These are used for the RTR `runscript` command.
   Requires real-time-response-admin:write
@@ -2824,21 +2776,20 @@ non-Default Policies for a platform when updating precedence
 # Find the volume identifiers for submitted scans
   Requires quick-scan:read
 
-  -Offset [String]
-    The position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : asc, desc
+  -Detailed [SwitchParameter]
+    Retrieve detailed information
 
   -Filter [String]
     An FQL filter expression
 
-  -Detailed [SwitchParameter]
-    Retrieve detailed information
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
+
+  -Limit [Int32]
+    Maximum number of results per request
 
 # Check the status of a submitted scan
   Requires quick-scan:read
@@ -2867,24 +2818,23 @@ non-Default Policies for a platform when updating precedence
 # Get sensor installer IDs by provided query
   Requires sensor-installers:read
 
-  -Offset [Int32]
-    Position to begin retrieving results
-
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : release_date|asc, release_date|desc, version|asc, version|desc
-
-  -Filter [String]
-    An FQL filter expression
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
+
+  -Offset [Int32]
+    Position to begin retrieving results
 
 # Get sensor installer details by provided SHA256 IDs
   Requires sensor-installers:read
@@ -2943,56 +2893,37 @@ non-Default Policies for a platform when updating precedence
   a set of Sensor Update Policy IDs which match the filter criteria
   Requires sensor-update-policies:read
 
+  -All [SwitchParameter]
+    Repeat requests until all available results are retrieved
+
+  -Detailed [SwitchParameter]
+    Retrieve detailed information
+
   -Filter [String]
     An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
 
   -Offset [Int32]
     Position to begin retrieving results
 
   -Limit [Int32]
     Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
-      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
-
-  -All [SwitchParameter]
-    Repeat requests until all available results are retrieved
-
-  -Detailed [SwitchParameter]
-    Retrieve detailed information
 
 # Search for Sensor Update Policies with additional support for uninstall protection in your environment by
   providing an FQL filter and paging details. Returns a set of Sensor Update Policies which match the filter
   criteria
   Requires sensor-update-policies:read
 
-  -Filter [String]
-    An FQL filter expression
-
-  -Offset [Int32]
-    Position to begin retrieving results
-
-  -Limit [Int32]
-    Maximum number of results per request
-
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
-      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
-# Search for members of a Sensor Update Policy in your environment by providing an FQL filter and paging details.
-  Returns a set of Agent IDs which match the filter criteria
-  Requires sensor-update-policies:read
-
   -Filter [String]
     An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
 
   -Offset [Int32]
     Position to begin retrieving results
@@ -3000,11 +2931,21 @@ non-Default Policies for a platform when updating precedence
   -Limit [Int32]
     Maximum number of results per request
 
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : created_by|asc, created_by|desc, created_timestamp|asc, created_timestamp|desc, enabled|asc,
-      enabled|desc, modified_by|asc, modified_by|desc, modified_timestamp|asc, modified_timestamp|desc, name|asc,
-      name|desc, platform_name|asc, platform_name|desc, precedence|asc, precedence|desc
+# Retrieve a set of Sensor Update Policies with additional support for uninstall protection by specifying
+  their IDs
+  Requires sensor-update-policies:read
+
+  -PolicyIds [Array] <Required>
+    The IDs of the Sensor Update Policies to return
+```
+### Get-FalconSensorUpdatePolicyMember
+```
+# Search for members of a Sensor Update Policy in your environment by providing an FQL filter and paging
+  details. Returns a set of Agent IDs which match the filter criteria
+  Requires sensor-update-policies:read
+
+  -PolicyId [String]
+    The ID of the Sensor Update Policy to search for members of
 
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
@@ -3012,17 +2953,17 @@ non-Default Policies for a platform when updating precedence
   -Detailed [SwitchParameter]
     Retrieve detailed information
 
-  -PolicyId [String]
-    The ID of the Sensor Update Policy to search for members of
+  -Filter [String]
+    An FQL filter expression
 
-  -Members [SwitchParameter] <Required>
-    List assigned host members
+  -Sort [String]
+    Property and direction to sort results
 
-# Retrieve a set of Sensor Update Policies with additional support for uninstall protection by specifying their IDs
-  Requires sensor-update-policies:read
+  -Offset [Int32]
+    Position to begin retrieving results
 
-  -PolicyIds [Array] <Required>
-    The IDs of the Sensor Update Policies to return
+  -Limit [Int32]
+    Maximum number of results per request
 ```
 ### Get-FalconUninstallToken
 ```
@@ -3085,9 +3026,9 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Set-FalconSensorUpdatePrecedence
 ```
-# Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first ID
-specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
-non-Default Policies for a platform when updating precedence
+# Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first
+  ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify
+  all non-Default Policies for a platform when updating precedence
   Requires sensor-update-policies:write
 
   -PolicyIds [Array] <Required>
@@ -3119,18 +3060,17 @@ non-Default Policies for a platform when updating precedence
   -Limit [Int32]
     Maximum number of results per request
 
-  -Sort [String]
-    Property and direction to sort results
-      Accepted : closed_timestamp|asc, closed_timestamp|desc, created_timestamp|asc, created_timestamp|desc
-
-  -Filter [String]
-    An FQL filter expression
-
   -All [SwitchParameter]
     Repeat requests until all available results are retrieved
 
   -Detailed [SwitchParameter]
     Retrieve detailed information
+
+  -Filter [String]
+    An FQL filter expression
+
+  -Sort [String]
+    Property and direction to sort results
 
 # Get details on vulnerabilities by providing one or more IDs
   Requires spotlight-vulnerabilities:read
