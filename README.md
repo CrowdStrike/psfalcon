@@ -204,6 +204,10 @@ account IDs which match the filter criteria
 
 ### Convert-FalconCSV
 ```
+# Format a response object to be CSV-compatible
+
+  -Object [object] (Pipeline accepted)
+    A result object to format
 ```
 ### Get-FalconQueue
 ```
