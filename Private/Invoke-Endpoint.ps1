@@ -78,6 +78,15 @@ function Invoke-Endpoint {
         }
         Format-Header @Param
 
+        if ($Query -match 'timeout') {
+            # Convert timeout query value to milliseconds
+            $Timeout = ($Query | Where-Object { $_ -match 'timeout' }).Split('=')[1]
+
+            # Set client timeout
+            $Client.Timeout = (New-TimeSpan -Seconds $Timeout).Ticks
+
+            Write-Verbose ("[$($MyInvocation.MyCommand.Name)] timeout set to $($Timeout) seconds")
+        }
         Write-Verbose ("[$($MyInvocation.MyCommand.Name)] $(($Target.Method).ToUpper())" +
         " $($Falcon.Hostname)$($Target.Path)")
 
