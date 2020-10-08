@@ -22,9 +22,13 @@ function Get-Query {
     )
     process {
         $QueryOutput = foreach ($Item in ($Dynamic.Values | Where-Object IsSet)) {
-            # Match input parameter with endpoint
-            $Param = $Endpoint.Parameters | Where-Object Dynamic -eq $Item.Name
-
+            $Param = if ($Endpoint.Parameters.Dynamic -contains $Item.Name) {
+                # Match input parameter with endpoint
+                $Endpoint.Parameters | Where-Object Dynamic -eq $Item.Name
+            } else {
+                # Match input with SharedParameters
+                $Falcon.Endpoint('SharedParameters').Parameters | Where-Object Dynamic -eq $Item.Name
+            }
             if ($Param.In -match 'query') {
                 foreach ($Value in $Item.Value) {
                     # Output query value

@@ -26,10 +26,11 @@ function Convert-CSV {
         }
         # TypeNames used to determine formatting
         $TypeNames = @{
-            Identifiers = @('domain.DeviceResponse', 'domain.SPAPIQueryVulnerabilitiesResponse',
-            'msa.QueryResponse')
             Hosts = @('domain.DeviceDetailsResponseSwagger', 'responses.HostGroupMembersV1',
             'responses.PolicyMembersRespV1')
+            Identifiers = @('domain.DeviceResponse', 'domain.SPAPIQueryVulnerabilitiesResponse',
+            'msa.QueryResponse')
+            Prevention = @('responses.PreventionPoliciesV1')
             Vulnerabilities = @('domain.SPAPIVulnerabilitiesEntitiesResponseV2')
         }
         function Add-Field ($Object, $Name, $Value) {
@@ -56,12 +57,8 @@ function Convert-CSV {
     }
     process {
         switch ($Object.PSObject.TypeNames) {
-            { $TypeNames.Identifiers -contains $_ } {
-                # Output identifier array
-                Out-Identifier $Object
-            }
             { $TypeNames.Hosts -contains $_ } {
-                # Convert detailed 'host' results
+                # Convert detailed host results
                 ($Object.resources).foreach{
                     # Output detail array
                     $Item = [PSCustomObject] @{}
@@ -100,8 +97,39 @@ function Convert-CSV {
                     $Item
                 }
             }
+            { $TypeNames.Identifiers -contains $_ } {
+                # Output identifier array
+                Out-Identifier $Object
+            }
+            { $TypeNames.Prevention -contains $_ } {
+                # Convert detailed Prevention policy results
+                ($Object.resources).foreach{
+                    $Item = [PSCustomObject] @{}
+
+                    ($_.psobject.properties).foreach{
+                        if ($_.name -eq 'groups') {
+                            # Add groups as [string]
+                            Add-Field $Item $_.name ($_.value.id -join ', ')
+                        } elseif ($_.name -eq 'prevention_settings') {
+                            ($_.value.settings).foreach{
+                                if ($_.type -eq 'toggle') {
+                                    # Add 'toggle' settings with as [bool]
+                                    Add-Field $Item $_.id $_.value.enabled
+                                } else {
+                                    # Add 'mlslider' settings as [string]
+                                    Add-Field $Item $_.id "$($_.value.detection):$($_.value.prevention)"
+                                }
+                            }
+                        } else {
+                            Add-Field $Item $_.name $_.value
+                        }
+                    }
+                    # Output item
+                    $Item
+                }
+            }
             { $TypeNames.Vulnerabilities -contains $_ } {
-                # Convert detailed 'vulnerability' results
+                # Convert detailed vulnerability results
                 ($Object.resources).foreach{
                     $Item = [PSCustomObject] @{}
 
