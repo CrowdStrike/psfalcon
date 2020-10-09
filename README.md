@@ -98,13 +98,13 @@ PowerShell scripts. If the token has expired it will be ignored.
   Requires cloud-connect-aws:write
 
   -CloudtrailId [String]
-    The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs from
-    multiple accounts.
+    The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail
+    logs from multiple accounts.
       Pattern : \d{12}
 
   -ExternalId [String]
-    By setting this value, all subsequent accounts that are provisioned will default to using this value as their
-    external ID.
+    By setting this value, all subsequent accounts that are provisioned will default to using
+    this value as their external ID.
 ```
 ### Confirm-FalconAwsAccess
 ```
@@ -121,8 +121,8 @@ PowerShell scripts. If the token has expired it will be ignored.
   Requires cloud-connect-aws:write
 
   -CloudtrailId [String]
-    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this
-    field is set, it takes precedence of the settings level field.
+    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this
+    account. If this field is set, it takes precedence of the settings level field.
 
   -CloudtrailRegion [String]
     Region where the S3 bucket containing cloudtrail logs resides.
@@ -137,16 +137,16 @@ PowerShell scripts. If the token has expired it will be ignored.
     12 digit AWS provided unique identifier for the account.
 
   -RateLimitReqs [Int32]
-    Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time
-    threshold.
+    Rate limiting setting to control the maximum number of requests that can be made within the
+    rate_limit_time threshold.
 
   -RateLimitTime [Int32]
     Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.
 ```
 ### Get-FalconAwsAccount
 ```
-# Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS account
-  IDs which match the filter criteria
+# Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a
+  set of AWS account IDs which match the filter criteria
   Requires cloud-connect-aws:read
 
   -Limit [Int32]
@@ -182,8 +182,8 @@ PowerShell scripts. If the token has expired it will be ignored.
       Accepted : cloudformation, manual
 
   -CloudtrailId [String]
-    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this
-    field is set, it takes precedence of the settings level field.
+    The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for
+    this account. If this field is set, it takes precedence of the settings level field.
 
   -CloudtrailRegion [String]
     Region where the S3 bucket containing cloudtrail logs resides.
@@ -198,8 +198,8 @@ PowerShell scripts. If the token has expired it will be ignored.
     12 digit AWS provided unique identifier for the account.
 
   -RateLimitReqs [Int32]
-    Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time
-    threshold.
+    Rate limiting setting to control the maximum number of requests that can be made within
+    the rate_limit_time threshold.
 
   -RateLimitTime [Int32]
     Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.
@@ -267,8 +267,8 @@ PowerShell scripts. If the token has expired it will be ignored.
   Requires d4c-registration:read
 
   -SubscriptionIds [Array]
-    SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts are
-    returned.
+    SubscriptionIDs of accounts to select for this status operation. If this is empty then
+    all accounts are returned.
       Pattern : ^[0-9a-z-]{36}$
 
   -ScanType [String]
@@ -295,7 +295,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Get-FalconGcpScript
 ```
-# Return a script for customer to run in their cloud environment to grant us access to their GCP environment
+# Return a script for customer to run in their cloud environment to grant us access to their
+  GCP environment
   Requires d4c-registration:read
 ```
 ### New-FalconAzureAccount
@@ -399,8 +400,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Get-FalconDeviceControlPolicy
 ```
-# Search for Device Control Policies in your environment by providing an FQL filter and paging details.
-  Returns a set of Device Control Policy IDs which match the filter criteria
+# Search for Device Control Policies in your environment by providing an FQL filter and
+  paging details. Returns a set of Device Control Policy IDs which match the filter criteria
   Requires device-control-policies:read
 
   -All [SwitchParameter]
@@ -429,8 +430,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Get-FalconDeviceControlPolicyMember
 ```
-# Search for members of a Device Control Policy in your environment by providing an FQL filter and paging
-  details. Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Device Control Policy in your environment by providing an FQL
+  filter and paging details. Returns a set of Agent IDs which match the filter criteria
   Requires device-control-policies:read
 
   -PolicyId [String]
@@ -507,9 +508,10 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Set-FalconDeviceControlPrecedence
 ```
-# Sets the precedence of Device Control Policies based on the order of IDs specified in the request. The first ID
-  specified will have the highest precedence and the last ID specified will have the lowest. You must specify
-  all non-Default Policies for a platform when updating precedence
+# Sets the precedence of Device Control Policies based on the order of IDs specified in
+  the request. The first ID specified will have the highest precedence and the last ID
+  specified will have the lowest. You must specify all non-Default Policies for a
+  platform when updating precedence
   Requires device-control-policies:write
 
   -PolicyIds [Array] <Required>
@@ -541,7 +543,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Update-FalconStream
 ```
-# Refresh an active event stream. Use the URL shown in a GET /sensors/entities/datafeed/v2 response.
+# Refresh an active event stream. Use the URL shown in a GET /sensors/entities/datafeed/v2
+  response.
   Requires streaming:read
 
   -ActionName [String] <Required>
@@ -558,8 +561,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 
 ### Get-FalconReport
 ```
-# Find sandbox reports by providing an FQL filter and paging details. Returns a set of report IDs that match
-  your criteria.
+# Find sandbox reports by providing an FQL filter and paging details. Returns a set of report
+  IDs that match your criteria.
   Requires falconx-sandbox:read
 
   -All [SwitchParameter]
@@ -610,8 +613,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Get-FalconSubmission
 ```
-# Find submission IDs for uploaded files by providing an FQL filter and paging details. Returns a set of
-  submission IDs that match your criteria.
+# Find submission IDs for uploaded files by providing an FQL filter and paging details.
+  Returns a set of submission IDs that match your criteria.
   Requires falconx-sandbox:read
 
   -All [SwitchParameter]
@@ -645,7 +648,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 
   -ActionScript [String]
     Runtime script for sandbox analysis
-      Accepted : default, default_maxantievasion, default_randomfiles, default_randomtheme, default_openie
+      Accepted : default, default_maxantievasion, default_randomfiles, default_randomtheme,
+      default_openie
 
   -CommandLine [String]
     Command line script passed to the submitted file at runtime
@@ -740,9 +744,9 @@ PowerShell scripts. If the token has expired it will be ignored.
 
   -Path [String] <Required>
     Path to the file
-      Pattern : \.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|js|ko|lnk|o|ocx|mod|msg|
-      mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|vbe|vbs|
-      wsf|xls|xlsx)+$
+      Pattern : \.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|
+      js|ko|lnk|o|ocx|mod|msg|mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|
+      py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|vbe|vbs|wsf|xls|xlsx)+$
 
   -Filename [String]
     Filename
@@ -757,7 +761,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 
 ### Edit-FalconFirewallGroup
 ```
-# Update name, description, or enabled status of a rule group, or create, edit, delete, or reorder rules
+# Update name, description, or enabled status of a rule group, or create, edit, delete,
+  or reorder rules
   Requires firewall-management:write
 
   -UserUuid [String] <Required>
@@ -909,8 +914,8 @@ PowerShell scripts. If the token has expired it will be ignored.
   -Limit [Int32]
     Maximum number of results per request
 
-# Get rule group entities by ID. These groups do not contain their rule entites, just the rule IDs in
-  precedence order.
+# Get rule group entities by ID. These groups do not contain their rule entites, just
+  the rule IDs in precedence order.
   Requires firewall-management:read
 
   -GroupIds [Array] <Required>
@@ -962,7 +967,8 @@ PowerShell scripts. If the token has expired it will be ignored.
   -Limit [Int32]
     Maximum number of results per request
 
-# Find all firewall rule IDs matching the query with filter, and return them in precedence order
+# Find all firewall rule IDs matching the query with filter, and return them in
+  precedence order
   Requires firewall-management:read
 
   -Query [String]
@@ -986,7 +992,8 @@ PowerShell scripts. If the token has expired it will be ignored.
   -PolicyId [String] <Required>
     The ID of the policy container within which to query
 
-# Get rule entities by ID (64-bit unsigned int as decimal string) or Family ID (32-character hexadecimal string)
+# Get rule entities by ID (64-bit unsigned int as decimal string) or Family
+  ID (32-character hexadecimal string)
   Requires firewall-management:read
 
   -RuleIds [Array] <Required>
@@ -1003,7 +1010,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### New-FalconFirewallGroup
 ```
-# Create new rule group on a platform for a customer with a name and description, and return the ID
+# Create new rule group on a platform for a customer with a name and description, and
+  return the ID
   Requires firewall-management:write
 
   -UserUuid [String] <Required>
@@ -1015,8 +1023,8 @@ PowerShell scripts. If the token has expired it will be ignored.
       Pattern : \w{32}
 
   -Library [String]
-    If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike Firewall
-    Rule Groups Library.
+    If this flag is set to true then the rules will be cloned from the clone_id from
+    the CrowdStrike Firewall Rule Groups Library.
 
   -Comment [String]
     Audit log comment for this action
@@ -1069,8 +1077,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Get-FalconFirewallPolicy
 ```
-# Search for Firewall Policies in your environment by providing an FQL filter and paging details. Returns a set
-  of Firewall Policy IDs which match the filter criteria
+# Search for Firewall Policies in your environment by providing an FQL filter and
+  paging details. Returns a set of Firewall Policy IDs which match the filter criteria
   Requires firewall-management:read
 
   -All [SwitchParameter]
@@ -1099,8 +1107,8 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Get-FalconFirewallPolicyMember
 ```
-# Search for members of a Firewall Policy in your environment by providing an FQL filter and paging details.
-  Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Firewall Policy in your environment by providing an FQL filter
+  and paging details. Returns a set of Agent IDs which match the filter criteria
   Requires firewall-management:read
 
   -PolicyId [String]
@@ -1174,9 +1182,10 @@ PowerShell scripts. If the token has expired it will be ignored.
 ```
 ### Set-FalconFirewallPrecedence
 ```
-# Sets the precedence of Firewall Policies based on the order of IDs specified in the request. The first ID
-specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
-non-Default Policies for a platform when updating precedence
+# Sets the precedence of Firewall Policies based on the order of IDs specified in the
+  request. The first ID specified will have the highest precedence and the last ID
+  specified will have the lowest. You must specify all non-Default Policies for a
+  platform when updating precedence
   Requires firewall-management:write
 
   -PolicyIds [Array] <Required>
@@ -1194,7 +1203,8 @@ non-Default Policies for a platform when updating precedence
   Requires host-group:write
 
   -AssignmentRule [String]
-    The new assignment rule of the group. Note: If the group type is static, this field cannot be updated manually
+    The new assignment rule of the group. Note: If the group type is static, this field
+    cannot be updated manually
 
   -Description [String]
     The new description of the group
@@ -1211,8 +1221,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Get-FalconHostGroup
 ```
-# Search for Host Groups in your environment by providing an FQL filter and paging details. Returns a set of
-  Host Group IDs which match the filter criteria
+# Search for Host Groups in your environment by providing an FQL filter and paging details.
+  Returns a set of Host Group IDs which match the filter criteria
   Requires host-group:read
 
   -All [SwitchParameter]
@@ -1242,8 +1252,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Get-FalconHostGroupMember
 ```
-# Search for members of a Host Group in your environment by providing an FQL filter and paging details. Returns
-  a set of Agent IDs which match the filter criteria
+# Search for members of a Host Group in your environment by providing an FQL filter and
+  paging details. Returns a set of Agent IDs which match the filter criteria
   Requires host-group:read
 
   -GroupId [String] <Required>
@@ -1283,8 +1293,8 @@ non-Default Policies for a platform when updating precedence
 
   -FilterName [String] <Required>
     FQL filter name
-      Accepted : device_id, domain, external_ip, groups, hostname, local_ip, mac_address, os_version, ou,
-      platform_name, site, system_manufacturer
+      Accepted : device_id, domain, external_ip, groups, hostname, local_ip, mac_address,
+      os_version, ou, platform_name, site, system_manufacturer
 
   -FilterValue [Array] <Required>
     One or more values for use with the FQL filter
@@ -1470,8 +1480,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Invoke-FalconIncidentAction
 ```
-# Perform a set of actions on one or more incidents, such as adding tags or comments or updating the incident
-  name or description
+# Perform a set of actions on one or more incidents, such as adding tags or comments or
+  updating the incident name or description
   Requires incidents:write
 
   -ActionName [String] <Required>
@@ -1495,7 +1505,8 @@ non-Default Policies for a platform when updating precedence
 
 ### Edit-FalconInstallToken
 ```
-# Updates one or more tokens. Use this endpoint to edit labels, change expiration, revoke, or restore.
+# Updates one or more tokens. Use this endpoint to edit labels, change expiration,
+  revoke, or restore.
   Requires installation-tokens:write
 
   -TokenIds [Array] <Required>
@@ -1588,7 +1599,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Remove-FalconInstallToken
 ```
-# Deletes a token immediately. To revoke a token, use PATCH /installation-tokens/entities/tokens/v1 instead.
+# Deletes a token immediately. To revoke a token, use PATCH
+  /installation-tokens/entities/tokens/v1 instead.
   Requires installation-tokens:write
 
   -TokenIds [Array] <Required>
@@ -1715,8 +1727,8 @@ non-Default Policies for a platform when updating precedence
 
   -Type [String] <Required>
     The rule news report type
-      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog, yara-master,
-      yara-update, yara-changelog, common-event-format, netwitness
+      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog,
+      yara-master, yara-update, yara-changelog, common-event-format, netwitness
 
   -Description [Array]
     Substring match on description field.
@@ -1781,8 +1793,8 @@ non-Default Policies for a platform when updating precedence
 
   -Type [String] <Required>
     Rule news report type
-      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog, yara-master,
-      yara-update, yara-changelog, common-event-format, netwitness
+      Accepted : snort-suricata-master, snort-suricata-update, snort-suricata-changelog,
+      yara-master, yara-update, yara-changelog, common-event-format, netwitness
 ```
 ## /iocs/
 
@@ -1838,11 +1850,12 @@ non-Default Policies for a platform when updating precedence
       Accepted : detect, none
 
   -Sources [String]
-    The source where this indicator originated. This can be used for tracking where this indicator was defined.
+    The source where this indicator originated. This can be used for tracking where this
+    indicator was defined.
 
   -ShareLevels [String]
-    The level at which the indicator will be shared. Currently only red share level (not shared) is supported,
-    indicating that the IOC isn't shared with other FH customers.
+    The level at which the indicator will be shared. Currently only red share level
+    (not shared) is supported, indicating that the IOC isn't shared with other FH customers.
       Accepted : red
 
   -CreatedBy [String]
@@ -2023,8 +2036,8 @@ non-Default Policies for a platform when updating precedence
 
   -FilterFileTypes [Array]
     File types to include with the results
-      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|
-      pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
+      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|
+      macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
 
   -FilterMeta [Array]
     Subset of metadata fields to include in the results
@@ -2059,8 +2072,8 @@ non-Default Policies for a platform when updating precedence
 
   -FilterFileTypes [Array]
     File types to include with the results
-      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|
-      perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
+      Pattern : (cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|
+      macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)
 
   -FilterMeta [Array]
     Subset of metadata fields to include in the results
@@ -2186,8 +2199,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Get-FalconPreventionPolicy
 ```
-# Search for Prevention Policies in your environment by providing an FQL filter and paging details. Returns a
-  set of Prevention Policy IDs which match the filter criteria
+# Search for Prevention Policies in your environment by providing an FQL filter and paging
+  details. Returns a set of Prevention Policy IDs which match the filter criteria
   Requires prevention-policies:read
 
   -All [SwitchParameter]
@@ -2216,8 +2229,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Get-FalconPreventionPolicyMember
 ```
-# Search for members of a Prevention Policy in your environment by providing an FQL filter and paging details.
-  Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Prevention Policy in your environment by providing an FQL filter
+  and paging details. Returns a set of Agent IDs which match the filter criteria
   Requires prevention-policies:read
 
   -PolicyId [String]
@@ -2294,9 +2307,10 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Set-FalconPreventionPrecedence
 ```
-# Sets the precedence of Prevention Policies based on the order of IDs specified in the request. The first ID
-  specified will have the highest precedence and the last ID specified will have the lowest. You must specify all
-  non-Default Policies for a platform when updating precedence
+# Sets the precedence of Prevention Policies based on the order of IDs specified in the
+  request. The first ID specified will have the highest precedence and the last ID specified
+  will have the lowest. You must specify all non-Default Policies for a platform
+  when updating precedence
   Requires prevention-policies:write
 
   -PolicyIds [Array] <Required>
@@ -2429,8 +2443,8 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig, ls,
-      mount, netstat, ps, reg query, users
+      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history,
+      ifconfig, ipconfig, ls, mount, netstat, ps, reg query, users
 
   -Arguments [String]
     Arguments to include with the command
@@ -2444,8 +2458,8 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history, ifconfig, ipconfig, ls,
-      mount, netstat, ps, reg query, users
+      Accepted : cat, cd, clear, csrutil, env, eventlog, filehash, getsid, help, history,
+      ifconfig, ipconfig, ls, mount, netstat, ps, reg query, users
 
   -Arguments [String]
     Arguments to include with the command
@@ -2468,9 +2482,10 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
-      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, reg query, reg set, reg delete,
-      reg load, reg unload, restart, rm, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid,
+      help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat,
+      ps, reg query, reg set, reg delete, reg load, reg unload, restart, rm, runscript,
+      shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2484,9 +2499,10 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
-      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, reg query, reg set, reg delete,
-      reg load, reg unload, restart, rm, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid,
+      help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat,
+      ps, reg query, reg set, reg delete, reg load, reg unload, restart, rm, runscript,
+      shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2692,9 +2708,10 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
-      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, put, reg query, reg set,
-      reg delete, reg load, reg unload, restart, rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid,
+      help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps,
+      put, reg query, reg set, reg delete, reg load, reg unload, restart, rm, run, runscript,
+      shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2708,9 +2725,10 @@ non-Default Policies for a platform when updating precedence
 
   -Command [String] <Required>
     Command to issue
-      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid, help, history,
-      ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps, put, reg query, reg set,
-      reg delete, reg load, reg unload, restart, rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get, getsid,
+      help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount, mv, netstat, ps,
+      put, reg query, reg set, reg delete, reg load, reg unload, restart, rm, run, runscript,
+      shutdown, umount, unmap, users, xmemdump, zip
 
   -Arguments [String]
     Arguments to include with the command
@@ -2904,8 +2922,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Get-FalconSensorUpdatePolicy
 ```
-# Search for Sensor Update Policies in your environment by providing an FQL filter and paging details. Returns
-  a set of Sensor Update Policy IDs which match the filter criteria
+# Search for Sensor Update Policies in your environment by providing an FQL filter and
+  paging details. Returns a set of Sensor Update Policy IDs which match the filter criteria
   Requires sensor-update-policies:read
 
   -All [SwitchParameter]
@@ -2926,9 +2944,9 @@ non-Default Policies for a platform when updating precedence
   -Limit [Int32]
     Maximum number of results per request
 
-# Search for Sensor Update Policies with additional support for uninstall protection in your environment by
-  providing an FQL filter and paging details. Returns a set of Sensor Update Policies which match the filter
-  criteria
+# Search for Sensor Update Policies with additional support for uninstall protection in
+  your environment by providing an FQL filter and paging details. Returns a set of Sensor
+  Update Policies which match the filter criteria
   Requires sensor-update-policies:read
 
   -All [SwitchParameter]
@@ -2946,8 +2964,8 @@ non-Default Policies for a platform when updating precedence
   -Limit [Int32]
     Maximum number of results per request
 
-# Retrieve a set of Sensor Update Policies with additional support for uninstall protection by specifying
-  their IDs
+# Retrieve a set of Sensor Update Policies with additional support for uninstall protection
+  by specifying their IDs
   Requires sensor-update-policies:read
 
   -PolicyIds [Array] <Required>
@@ -2955,8 +2973,8 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Get-FalconSensorUpdatePolicyMember
 ```
-# Search for members of a Sensor Update Policy in your environment by providing an FQL filter and paging
-  details. Returns a set of Agent IDs which match the filter criteria
+# Search for members of a Sensor Update Policy in your environment by providing an FQL filter
+  and paging details. Returns a set of Agent IDs which match the filter criteria
   Requires sensor-update-policies:read
 
   -PolicyId [String]
@@ -3041,9 +3059,10 @@ non-Default Policies for a platform when updating precedence
 ```
 ### Set-FalconSensorUpdatePrecedence
 ```
-# Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first
-  ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify
-  all non-Default Policies for a platform when updating precedence
+# Sets the precedence of Sensor Update Policies based on the order of IDs specified in
+  the request. The first ID specified will have the highest precedence and the last ID
+  specified will have the lowest. You must specify all non-Default Policies for a platform
+  when updating precedence
   Requires sensor-update-policies:write
 
   -PolicyIds [Array] <Required>
