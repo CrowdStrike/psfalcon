@@ -7,6 +7,20 @@ Requires **[PowerShell 5.1+](https://github.com/PowerShell/PowerShell#get-powers
 1. Download the files in this respository
 2. Extract the archive into `PSFalcon` under one of your `$env:PSModulePath` directories
 
+Linux/MacOS (PowerShell Core):
+```powershell
+PS> Expand-Archive ./psfalcon-master.zip $HOME/.local/share/powershell/Modules/PSFalcon/2.0.0
+```
+Windows (PowerShell Core):
+```powershell
+PS> Expand-Archive .\psfalcon-master.zip $HOME\Documents\PowerShell\Modules\PSFalcon\2.0.0
+```
+Windows (PowerShell Desktop):
+```powershell
+PS> Expand-Archive .\psfalcon-master.zip $HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
+```
+
+
 # Usage
 You can list all available commands through `Get-Module -Name PSFalcon` once the module has
 been imported. Using the `-Help` parameter with any command will show the available parameters and
