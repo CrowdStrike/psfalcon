@@ -29,13 +29,13 @@ function Get-IOC {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'Count' {
+                'TotalCount' {
                     $Param.Query = $Endpoints[2]
-                    $Param['Modifier'] = 'Count'
+                    $Param['Modifier'] = 'TotalCount'
                 }
-                'Hosts' {
+                'Observed' {
                     $Param.Query = $Endpoints[3]
-                    $Param['Modifier'] = 'Hosts'
+                    $Param['Modifier'] = 'Observed'
                 }
                 'Processes' {
                     $Param.Query = $Endpoints[4]
@@ -45,7 +45,7 @@ function Get-IOC {
                     $Param['All'] = $true
                 }
             }
-            if ((-not($Param.Modifier)) -and ($Dynamic.Type.value -and $Dynamic.Value.value)) {
+            if (-not($Param.Modifier) -and ($PSBoundParameters.Type -and $PSBoundParameters.Value)) {
                 # Switch from 'QueryIOCs' to 'GetIOC' if Type and Value are input
                 $Param.Query = $Endpoints[1]
             }

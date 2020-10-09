@@ -1832,7 +1832,7 @@
     "Description": "List the number of hosts that have observed a custom IOC",
     "Parameters": [
       {
-        "Dynamic": "Count",
+        "Dynamic": "TotalCount",
         "Type": "switch",
         "Required": true,
         "Description": "Retrieve the total number of hosts that have observed a custom IOC"
@@ -1886,7 +1886,7 @@
     "Description": "List the host identifiers that have observed a custom IOC",
     "Parameters": [
       {
-        "Dynamic": "Hosts",
+        "Dynamic": "Observed",
         "Type": "switch",
         "Required": true,
         "Description": "Retrieve host identifiers for hosts that have observed a custom IOC"
