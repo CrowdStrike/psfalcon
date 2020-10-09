@@ -26,6 +26,9 @@ function Get-Dictionary {
             $Attribute.Mandatory = $Param.Required
             $Attribute.HelpMessage = $Param.Description
 
+            if ($Param.Position) {
+                $Attribute.Position = $Param.Position
+            }
             if ($Dynamic.($Param.Dynamic)) {
                 # Add attribute to existing collection
                 $Dynamic.($Param.Dynamic).Attributes.add($Attribute)

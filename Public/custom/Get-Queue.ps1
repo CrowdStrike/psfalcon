@@ -155,12 +155,6 @@ function Get-Queue {
                                     }
                                 }
                             }
-                            @('command', 'session').foreach{
-                                # Update 'status' if 'session_deleted_at' or 'command_deleted_at' is populated
-                                if ($Object."$($_)_deleted_at") {
-                                    $Object."$($_)_status" = 'DELETED'
-                                }
-                            }
                             # Output object to CSV
                             $Object | Export-Csv $OutputFile -Append -NoTypeInformation -Force
                         }

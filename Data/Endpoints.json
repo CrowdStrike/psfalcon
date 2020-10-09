@@ -10,7 +10,6 @@
     "Permission": "installation-tokens:read",
     "Description": "Search for installation token audit events",
     "Parameters": [
-
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -22,7 +21,8 @@
         "Min": 1,
         "Max": 1000,
         "Default": "50",
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -53,7 +53,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "One or more event identifiers"
+        "Description": "One or more event identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -87,7 +88,8 @@
         "Min": 30,
         "Max": 600,
         "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "Command",
@@ -137,7 +139,8 @@
           "xmemdump",
           "zip"
         ],
-        "Description": "Command to issue"
+        "Description": "Command to issue",
+        "Position": null
       },
       {
         "Dynamic": "BatchId",
@@ -148,7 +151,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response batch session identifier"
+        "Description": "Real-time Response batch session identifier",
+        "Position": null
       },
       {
         "Dynamic": "Arguments",
@@ -158,7 +162,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Arguments to include with the command"
+        "Description": "Arguments to include with the command",
+        "Position": null
       },
       {
         "Dynamic": "OptionalHostIds",
@@ -169,7 +174,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{32}",
-        "Description": "Restrict the request to specific host identifiers"
+        "Description": "Restrict the request to specific host identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -202,7 +208,8 @@
         "Min": 30,
         "Max": 600,
         "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "Command",
@@ -254,7 +261,8 @@
           "xmemdump",
           "zip"
         ],
-        "Description": "Command to issue"
+        "Description": "Command to issue",
+        "Position": null
       },
       {
         "Dynamic": "BatchId",
@@ -265,7 +273,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response batch session identifier"
+        "Description": "Real-time Response batch session identifier",
+        "Position": null
       },
       {
         "Dynamic": "Arguments",
@@ -275,7 +284,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Arguments to include with the command"
+        "Description": "Arguments to include with the command",
+        "Position": null
       },
       {
         "Dynamic": "OptionalHostIds",
@@ -286,7 +296,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{32}",
-        "Description": "Restrict the request to specific host identifiers"
+        "Description": "Restrict the request to specific host identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -319,7 +330,8 @@
         "Min": 30,
         "Max": 600,
         "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "Command",
@@ -349,7 +361,8 @@
           "reg query",
           "users"
         ],
-        "Description": "Command to issue"
+        "Description": "Command to issue",
+        "Position": null
       },
       {
         "Dynamic": "BatchId",
@@ -360,7 +373,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response batch session identifier"
+        "Description": "Real-time Response batch session identifier",
+        "Position": null
       },
       {
         "Dynamic": "Arguments",
@@ -370,7 +384,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Arguments to include with the command"
+        "Description": "Arguments to include with the command",
+        "Position": null
       },
       {
         "Dynamic": "OptionalHostIds",
@@ -381,7 +396,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{32}",
-        "Description": "Restrict the request to specific host identifiers"
+        "Description": "Restrict the request to specific host identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -414,7 +430,8 @@
         "Min": 30,
         "Max": 600,
         "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "BatchId",
@@ -425,7 +442,8 @@
         ],
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Required": true,
-        "Description": "Real-time Response batch session identifier"
+        "Description": "Real-time Response batch session identifier",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -435,7 +453,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "Full path to the file to be retrieved from each host"
+        "Description": "Full path to the file to be retrieved from each host",
+        "Position": null
       },
       {
         "Dynamic": "OptionalHosts",
@@ -446,7 +465,8 @@
         ],
         "Pattern": "\\w{32}",
         "Required": false,
-        "Description": "Restrict the request to specific host identifiers"
+        "Description": "Restrict the request to specific host identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -478,7 +498,8 @@
         "Min": 30,
         "Max": 600,
         "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "BatchGetCmdReqId",
@@ -488,7 +509,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Batch 'get' command request identifier"
+        "Description": "Batch 'get' command request identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -523,7 +545,8 @@
         "Min": 30,
         "Max": 600,
         "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "ExistingBatchId",
@@ -534,7 +557,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Add hosts to an existing batch session"
+        "Description": "Add hosts to an existing batch session",
+        "Position": null
       },
       {
         "Dynamic": "HostIds",
@@ -545,7 +569,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more host identifiers"
+        "Description": "One or more host identifiers",
+        "Position": null
       },
       {
         "Dynamic": "QueueOffline",
@@ -555,7 +580,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Add sessions in this batch to the offline queue if the hosts do not initialize"
+        "Description": "Add sessions in this batch to the offline queue if the hosts do not initialize",
+        "Position": null
       }
     ],
     "Responses": {
@@ -588,7 +614,8 @@
         "Min": 30,
         "Max": 600,
         "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "BatchId",
@@ -599,7 +626,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response batch session identifier"
+        "Description": "Real-time Response batch session identifier",
+        "Position": null
       },
       {
         "Dynamic": "RemoveHostIds",
@@ -610,7 +638,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{32}",
-        "Description": "One or more Host identifiers to remove from the batch session"
+        "Description": "One or more Host identifiers to remove from the batch session",
+        "Position": null
       }
     ],
     "Responses": {
@@ -641,7 +670,8 @@
         ],
         "Required": false,
         "Pattern": "^[0-9a-z-]{36}$",
-        "Description": "Azure subscription identifier"
+        "Description": "Azure subscription identifier",
+        "Position": null
       },
       {
         "Dynamic": "TenantId",
@@ -651,7 +681,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Azure tenant identifier"
+        "Description": "Azure tenant identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -683,7 +714,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "GCP parent identifier"
+        "Description": "GCP parent identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -716,7 +748,8 @@
         "Parent": "resources",
         "Required": false,
         "Description": "Copy settings from an existing policy",
-        "Pattern": "\\w{32}"
+        "Pattern": "\\w{32}",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -727,7 +760,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Policy description"
+        "Description": "Policy description",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -738,7 +772,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "Policy name"
+        "Description": "Policy name",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -754,7 +789,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       },
       {
         "Dynamic": "Settings",
@@ -765,7 +801,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "A hashtable defining policy settings"
+        "Description": "A hashtable defining policy settings",
+        "Position": null
       }
     ],
     "Responses": {
@@ -798,7 +835,8 @@
         "Parent": "resources",
         "Required": false,
         "Description": "Copy settings from an existing policy",
-        "Pattern": "\\w{32}"
+        "Pattern": "\\w{32}",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -809,7 +847,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Policy description"
+        "Description": "Policy description",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -820,7 +859,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "Policy name"
+        "Description": "Policy name",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -836,7 +876,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       }
     ],
     "Responses": {
@@ -868,7 +909,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "An FQL filter expression to dynamically assign hosts"
+        "Description": "An FQL filter expression to dynamically assign hosts",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -879,7 +921,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Group description"
+        "Description": "Group description",
+        "Position": null
       },
       {
         "Dynamic": "GroupType",
@@ -894,7 +937,8 @@
           "static",
           "dynamic"
         ],
-        "Description": "Group type"
+        "Description": "Group type",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -905,7 +949,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "Group name"
+        "Description": "Group name",
+        "Position": null
       }
     ],
     "Responses": {
@@ -935,7 +980,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Custom IOC description"
+        "Description": "Custom IOC description",
+        "Position": null
       },
       {
         "Dynamic": "ExpirationDays",
@@ -945,7 +991,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Number of days before expiration (for 'domain', 'ipv4', and 'ipv6')"
+        "Description": "Number of days before expiration (for 'domain', 'ipv4', and 'ipv6')",
+        "Position": null
       },
       {
         "Dynamic": "Policy",
@@ -959,7 +1006,8 @@
           "detect",
           "none"
         ],
-        "Description": "Action to take when a host observes the custom IOC"
+        "Description": "Action to take when a host observes the custom IOC",
+        "Position": null
       },
       {
         "Dynamic": "ShareLevel",
@@ -972,7 +1020,8 @@
         "Enum": [
           "red"
         ],
-        "Description": "Custom IOC visibility level"
+        "Description": "Custom IOC visibility level",
+        "Position": null
       },
       {
         "Dynamic": "Source",
@@ -984,7 +1033,8 @@
         "Required": false,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC source"
+        "Description": "Custom IOC source",
+        "Position": null
       },
       {
         "Dynamic": "Type",
@@ -1001,7 +1051,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type"
+        "Description": "Custom IOC type",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -1013,7 +1064,8 @@
         "Required": true,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC value"
+        "Description": "Custom IOC value",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1044,7 +1096,8 @@
         "Parent": "resources",
         "Required": false,
         "Pattern": "\\d{12}",
-        "Description": "The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs from multiple accounts."
+        "Description": "The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs from multiple accounts.",
+        "Position": null
       },
       {
         "Dynamic": "ExternalId",
@@ -1055,7 +1108,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "By setting this value, all subsequent accounts that are provisioned will default to using this value as their external ID."
+        "Description": "By setting this value, all subsequent accounts that are provisioned will default to using this value as their external ID.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1087,7 +1141,8 @@
         "Parent": "resources",
         "Required": false,
         "Description": "Copy settings from an existing policy",
-        "Pattern": "\\w{32}"
+        "Pattern": "\\w{32}",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -1098,7 +1153,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Policy description"
+        "Description": "Policy description",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -1109,7 +1165,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "Policy name"
+        "Description": "Policy name",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -1125,7 +1182,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       },
       {
         "Dynamic": "Settings",
@@ -1136,7 +1194,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "An array of hashtables defining policy settings"
+        "Description": "An array of hashtables defining policy settings",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1168,7 +1227,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "CloneId",
@@ -1179,7 +1239,8 @@
         ],
         "Required": false,
         "Description": "Copy settings from an existing policy",
-        "Pattern": "\\w{32}"
+        "Pattern": "\\w{32}",
+        "Position": null
       },
       {
         "Dynamic": "Library",
@@ -1189,7 +1250,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike Firewall Rule Groups Library."
+        "Description": "If this flag is set to true then the rules will be cloned from the clone_id from the CrowdStrike Firewall Rule Groups Library.",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -1199,7 +1261,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Audit log comment for this action"
+        "Description": "Audit log comment for this action",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -1209,7 +1272,8 @@
           "body"
         ],
         "Description": "Description of the rule group",
-        "Required": false
+        "Required": false,
+        "Position": null
       },
       {
         "Dynamic": "Enabled",
@@ -1219,7 +1283,8 @@
           "body"
         ],
         "Description": "Status of the rule group",
-        "Required": true
+        "Required": true,
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -1229,7 +1294,8 @@
           "body"
         ],
         "Description": "Name of the rule group",
-        "Required": true
+        "Required": true,
+        "Position": null
       },
       {
         "Dynamic": "Rules",
@@ -1239,7 +1305,8 @@
           "body"
         ],
         "Description": "An array of hashtables containing rule properties",
-        "Required": false
+        "Required": false,
+        "Position": null
       }
     ],
     "Responses": {
@@ -1269,7 +1336,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The description to use when creating the policy"
+        "Description": "The description to use when creating the policy",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -1280,7 +1348,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "The name to use when creating the policy"
+        "Description": "The name to use when creating the policy",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -1296,7 +1365,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       },
       {
         "Dynamic": "Settings",
@@ -1307,7 +1377,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "A hashtable defining policy settings"
+        "Description": "A hashtable defining policy settings",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1338,7 +1409,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "User's first name"
+        "Description": "User's first name",
+        "Position": null
       },
       {
         "Dynamic": "LastName",
@@ -1348,7 +1420,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "User's last name"
+        "Description": "User's last name",
+        "Position": null
       },
       {
         "Dynamic": "Password",
@@ -1358,7 +1431,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "The user's password. If left blank, the system will generate an email asking them to set their password (recommended)"
+        "Description": "The user's password. If left blank, the system will generate an email asking them to set their password (recommended)",
+        "Position": null
       },
       {
         "Dynamic": "Username",
@@ -1368,7 +1442,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "A username; typically an email address"
+        "Description": "A username; typically an email address",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1399,7 +1474,8 @@
         "Required": false,
         "Min": 1,
         "Max": 2500,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1449,7 +1525,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more AWS account identifiers"
+        "Description": "One or more AWS account identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1480,7 +1557,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more policy identifiers"
+        "Description": "One or more policy identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1511,7 +1589,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more policy identifiers"
+        "Description": "One or more policy identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1542,7 +1621,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more group identifiers"
+        "Description": "One or more group identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1580,7 +1660,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type"
+        "Description": "Custom IOC type",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -1592,7 +1673,8 @@
         "Required": true,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC value"
+        "Description": "Custom IOC value",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1621,7 +1703,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more policy identifiers"
+        "Description": "One or more policy identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1651,7 +1734,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Sandbox report identifier"
+        "Description": "Sandbox report identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1682,7 +1766,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "RuleGroupIds",
@@ -1692,7 +1777,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more rule group identifiers"
+        "Description": "One or more rule group identifiers",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -1702,7 +1788,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Audit log comment for this action"
+        "Description": "Audit log comment for this action",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1733,7 +1820,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "Sha256",
@@ -1744,7 +1832,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{64}",
-        "Description": "SHA256 hash value of the file to remove"
+        "Description": "SHA256 hash value of the file to remove",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1776,7 +1865,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more policy identifiers"
+        "Description": "One or more policy identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1808,7 +1898,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1835,7 +1926,8 @@
         "Dynamic": "TotalCount",
         "Type": "switch",
         "Required": true,
-        "Description": "Retrieve the total number of hosts that have observed a custom IOC"
+        "Description": "Retrieve the total number of hosts that have observed a custom IOC",
+        "Position": null
       },
       {
         "Dynamic": "Type",
@@ -1852,7 +1944,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type"
+        "Description": "Custom IOC type",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -1864,7 +1957,8 @@
         "Required": true,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC value"
+        "Description": "Custom IOC value",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1889,7 +1983,8 @@
         "Dynamic": "Observed",
         "Type": "switch",
         "Required": true,
-        "Description": "Retrieve host identifiers for hosts that have observed a custom IOC"
+        "Description": "Retrieve host identifiers for hosts that have observed a custom IOC",
+        "Position": null
       },
       {
         "Dynamic": "Type",
@@ -1906,7 +2001,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type"
+        "Description": "Custom IOC type",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -1918,7 +2014,8 @@
         "Required": true,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC value"
+        "Description": "Custom IOC value",
+        "Position": null
       },
       {
         "Dynamic": "Limit",
@@ -1930,7 +2027,8 @@
         "Required": false,
         "Min": 1,
         "Max": 100,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1962,7 +2060,8 @@
         "Min": 64,
         "Max": 64,
         "Pattern": "\\w{64}",
-        "Description": "SHA256 hash value of the installer to download"
+        "Description": "SHA256 hash value of the installer to download",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -1973,7 +2072,8 @@
         ],
         "Required": true,
         "Pattern": "\\.(deb|exe|html|pkg|rpm)+$",
-        "Description": "Destination path"
+        "Description": "Destination path",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2003,7 +2103,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more process identifiers"
+        "Description": "One or more process identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2032,7 +2133,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Artifact identifier"
+        "Description": "Artifact identifier",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -2042,7 +2144,8 @@
           "outfile"
         ],
         "Required": true,
-        "Description": "Destination Path"
+        "Description": "Destination Path",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2092,7 +2195,8 @@
         ],
         "Required": true,
         "Pattern": "\\d{12}",
-        "Description": "One or more AWS account identifiers"
+        "Description": "One or more AWS account identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2145,7 +2249,8 @@
         "Required": true,
         "Min": 1,
         "Max": 500,
-        "Description": "One or more behavior identifiers"
+        "Description": "One or more behavior identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2168,7 +2273,6 @@
     "Permission": "sensor-installers:read",
     "Description": "List detailed sensor installer information",
     "Parameters": [
-
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -2179,7 +2283,8 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2211,7 +2316,8 @@
         "Parent": "resources",
         "Required": false,
         "Pattern": "^[0-9a-z-]{36}$",
-        "Description": "SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts are returned."
+        "Description": "SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts are returned.",
+        "Position": null
       },
       {
         "Dynamic": "ScanType",
@@ -2226,7 +2332,8 @@
           "dry",
           "full"
         ],
-        "Description": "Type of scan, dry or full, to perform on selected accounts"
+        "Description": "Type of scan, dry or full, to perform on selected accounts",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2300,7 +2407,8 @@
           "dry",
           "full"
         ],
-        "Description": "Type of scan, dry or full, to perform on selected accounts"
+        "Description": "Type of scan, dry or full, to perform on selected accounts",
+        "Position": null
       },
       {
         "Dynamic": "ParentIds",
@@ -2311,7 +2419,8 @@
         ],
         "Required": false,
         "Pattern": "\\d{10,}",
-        "Description": "Parent IDs of accounts"
+        "Description": "Parent IDs of accounts",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2383,7 +2492,8 @@
         "Required": true,
         "Min": 1,
         "Max": 1000,
-        "Description": "One or more detection identifiers"
+        "Description": "One or more detection identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2413,7 +2523,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the Device Control Policies to return"
+        "Description": "The IDs of the Device Control Policies to return",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2444,7 +2555,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "The host agentIDs used to get details on"
+        "Description": "The host agentIDs used to get details on",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2473,7 +2585,8 @@
         ],
         "Required": true,
         "Pattern": "[\\w-]{20}",
-        "Description": "The events to retrieve, identified by ID"
+        "Description": "The events to retrieve, identified by ID",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2502,7 +2615,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The field identifiers to retrieve"
+        "Description": "The field identifiers to retrieve",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2530,7 +2644,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the Firewall Policies to return"
+        "Description": "The IDs of the Firewall Policies to return",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2561,7 +2676,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "The IDs of the Host Groups to return"
+        "Description": "The IDs of the Host Groups to return",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2594,7 +2710,8 @@
         ],
         "Required": true,
         "Max": 500,
-        "Description": "One or more Incident identifiers"
+        "Description": "One or more Incident identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2624,7 +2741,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the actors you want to retrieve."
+        "Description": "The IDs of the actors you want to retrieve.",
+        "Position": null
       },
       {
         "Dynamic": "Fields",
@@ -2634,7 +2752,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
+        "Description": "The fields to return, or a predefined collection name surrounded by two underscores",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2664,7 +2783,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "One or more indicator identifiers"
+        "Description": "One or more indicator identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2693,7 +2813,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the reports you want to retrieve."
+        "Description": "The IDs of the reports you want to retrieve.",
+        "Position": null
       },
       {
         "Dynamic": "Fields",
@@ -2703,7 +2824,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
+        "Description": "The fields to return, or a predefined collection name surrounded by two underscores",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2732,7 +2854,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The ID of the report you want to download as a PDF."
+        "Description": "The ID of the report you want to download as a PDF.",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -2743,7 +2866,8 @@
         ],
         "Required": true,
         "Pattern": "\\.pdf$",
-        "Description": "Destination Path"
+        "Description": "Destination Path",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2773,7 +2897,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The ids of rules to return."
+        "Description": "The ids of rules to return.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2802,7 +2927,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Rule set identifier"
+        "Description": "Rule set identifier",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -2813,7 +2939,8 @@
         ],
         "Required": true,
         "Pattern": "\\.zip$",
-        "Description": "Destination Path"
+        "Description": "Destination Path",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2852,7 +2979,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Indicator type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']"
+        "Description": "Indicator type ['sha256', 'md5', 'domain', 'ipv4', 'ipv6']",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -2862,7 +2990,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Indicator value"
+        "Description": "Indicator value",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2900,7 +3029,8 @@
           "common-event-format",
           "netwitness"
         ],
-        "Description": "Rule news report type"
+        "Description": "Rule news report type",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -2911,7 +3041,8 @@
         ],
         "Required": true,
         "Pattern": "\\.zip$",
-        "Description": "Destination Path"
+        "Description": "Destination Path",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2944,7 +3075,8 @@
         "Required": true,
         "Min": 64,
         "Max": 64,
-        "Description": "SHA256 value of the sample"
+        "Description": "SHA256 value of the sample",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -2954,7 +3086,8 @@
           "outfile"
         ],
         "Required": true,
-        "Description": "Destination Path"
+        "Description": "Destination Path",
+        "Position": null
       }
     ],
     "Responses": {
@@ -2986,7 +3119,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Sample job identifier"
+        "Description": "Sample job identifier",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -2996,7 +3130,8 @@
           "outfile"
         ],
         "Required": true,
-        "Description": "Destination Path"
+        "Description": "Destination Path",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3026,7 +3161,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The file SHA256."
+        "Description": "The file SHA256.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3078,7 +3214,8 @@
         ],
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Required": true,
-        "Description": "MalQuery request identifier"
+        "Description": "MalQuery request identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3111,7 +3248,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "FileIds",
@@ -3121,7 +3259,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The file sha256."
+        "Description": "The file sha256.",
+        "Position": null
       }
     ]
   },
@@ -3143,7 +3282,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more platform identifiers"
+        "Description": "One or more platform identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3172,7 +3312,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more policy identifiers"
+        "Description": "One or more policy identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3201,7 +3342,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Prevention policy identifiers"
+        "Description": "Prevention policy identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3222,7 +3364,8 @@
         "Dynamic": "Days",
         "Type": "int",
         "Required": false,
-        "Description": "Number of days worth of results to retrieve [Default: 7]"
+        "Description": "Number of days worth of results to retrieve [Default: 7]",
+        "Position": null
       }
     ]
   },
@@ -3245,7 +3388,8 @@
         ],
         "Pattern": "\\w{32}",
         "Required": true,
-        "Description": "Remediation identifiers"
+        "Description": "Remediation identifiers",
+        "Position": null
       }
     ]
   },
@@ -3267,7 +3411,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more report identifiers"
+        "Description": "One or more report identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3298,7 +3443,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more role identifiers"
+        "Description": "One or more role identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3329,7 +3475,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more rule group identifiers"
+        "Description": "One or more rule group identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3358,7 +3505,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The rules to retrieve, identified by ID"
+        "Description": "The rules to retrieve, identified by ID",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3388,7 +3536,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "Sha256",
@@ -3399,7 +3548,8 @@
         ],
         "Pattern": "\\w{64}",
         "Required": true,
-        "Description": "SHA256 hash value of the file"
+        "Description": "SHA256 hash value of the file",
+        "Position": null
       },
       {
         "Dynamic": "PasswordProtected",
@@ -3409,7 +3559,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Flag whether the sample should be zipped and password protected with pass='infected'"
+        "Description": "Flag whether the sample should be zipped and password protected with pass='infected'",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3441,7 +3592,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}_\\w{32}",
-        "Description": "One or more volume scan identifiers"
+        "Description": "One or more volume scan identifiers",
+        "Position": null
       }
     ]
   },
@@ -3456,7 +3608,6 @@
     "Permission": "sensor-installers:read",
     "Description": "Get sensor installer IDs by provided query",
     "Parameters": [
-
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -3467,7 +3618,8 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3515,7 +3667,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the installers"
+        "Description": "The IDs of the installers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3546,7 +3699,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the Sensor Update Policies to return"
+        "Description": "The IDs of the Sensor Update Policies to return",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3576,7 +3730,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The IDs of the Sensor Update Policies to return"
+        "Description": "The IDs of the Sensor Update Policies to return",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3606,7 +3761,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more submission identifiers"
+        "Description": "One or more submission identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3638,7 +3794,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "SubmissionIds",
@@ -3648,7 +3805,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "A list of submission IDs"
+        "Description": "A list of submission IDs",
+        "Position": null
       }
     ]
   },
@@ -3666,7 +3824,8 @@
         "Dynamic": "Summary",
         "Type": "switch",
         "Required": true,
-        "Description": "Retrieve summary information"
+        "Description": "Retrieve summary information",
+        "Position": null
       },
       {
         "Dynamic": "ReportIds",
@@ -3676,7 +3835,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more report identifiers"
+        "Description": "One or more report identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3708,7 +3868,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3738,7 +3899,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more vulnerability identifiers"
+        "Description": "One or more vulnerability identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3768,7 +3930,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "RoleIds",
@@ -3778,7 +3941,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "One or more roles to assign"
+        "Description": "One or more roles to assign",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3798,20 +3962,23 @@
         "Dynamic": "Path",
         "Type": "string",
         "Required": true,
-        "Description": "Path to the executable"
+        "Description": "Path to the executable",
+        "Position": null
       },
       {
         "Dynamic": "HostIds",
         "Type": "array",
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more Host identifiers"
+        "Description": "One or more Host identifiers",
+        "Position": null
       },
       {
         "Dynamic": "Arguments",
         "Type": "string",
         "Required": false,
-        "Description": "Command line arguments to include upon execution"
+        "Description": "Command line arguments to include upon execution",
+        "Position": null
       },
       {
         "Dynamic": "Timeout",
@@ -3819,13 +3986,15 @@
         "Required": false,
         "Min": 30,
         "Max": 600,
-        "Description": "Length of time to wait for a result, in seconds"
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
       },
       {
         "Dynamic": "QueueOffline",
         "Type": "bool",
         "Required": false,
-        "Description": "Add session to the offline queue if the host does not initialize"
+        "Description": "Add session to the offline queue if the host does not initialize",
+        "Position": null
       }
     ]
   },
@@ -3851,7 +4020,8 @@
         "Min": 1,
         "Max": 32,
         "Pattern": "\\w{1,32}",
-        "Description": "Label that identifies your connection. Max: 32 alphanumeric characters (a-z, A-Z, 0-9)."
+        "Description": "Label that identifies your connection. Max: 32 alphanumeric characters (a-z, A-Z, 0-9).",
+        "Position": null
       },
       {
         "Dynamic": "Format",
@@ -3865,7 +4035,8 @@
           "json",
           "flatjson"
         ],
-        "Description": "Format for streaming events"
+        "Description": "Format for streaming events",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3897,7 +4068,8 @@
         "Required": false,
         "Min": 32,
         "Max": 32,
-        "Description": "The API client ID to authenticate your API requests"
+        "Description": "The API client ID to authenticate your API requests",
+        "Position": null
       },
       {
         "Dynamic": "Secret",
@@ -3909,7 +4081,8 @@
         "Required": false,
         "Min": 40,
         "Max": 40,
-        "Description": "The API client secret to authenticate your API requests"
+        "Description": "The API client secret to authenticate your API requests",
+        "Position": null
       },
       {
         "Dynamic": "CID",
@@ -3921,7 +4094,8 @@
         "Required": false,
         "Min": 32,
         "Max": 32,
-        "Description": "For MSSP Master CIDs, optionally lock the token to act on behalf of this member CID"
+        "Description": "For MSSP Master CIDs, optionally lock the token to act on behalf of this member CID",
+        "Position": null
       },
       {
         "Dynamic": "Cloud",
@@ -3933,7 +4107,8 @@
           "us-1",
           "us-2"
         ],
-        "Description": "Destination CrowdStrike cloud"
+        "Description": "Destination CrowdStrike cloud",
+        "Position": null
       }
     ],
     "Responses": {
@@ -3991,7 +4166,8 @@
           "hide_host",
           "unhide_host"
         ],
-        "Description": "The action to perform on the target Hosts"
+        "Description": "The action to perform on the target Hosts",
+        "Position": null
       },
       {
         "Dynamic": "HostIds",
@@ -4002,7 +4178,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more Host identifiers"
+        "Description": "One or more Host identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4039,7 +4216,8 @@
           "enable",
           "remove-host-group"
         ],
-        "Description": "Action to perform"
+        "Description": "Action to perform",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -4050,7 +4228,8 @@
         ],
         "Pattern": "\\w{32}",
         "Required": true,
-        "Description": "Policy identifier"
+        "Description": "Policy identifier",
+        "Position": null
       },
       {
         "Dynamic": "GroupId",
@@ -4062,7 +4241,8 @@
         "Parent": "action_parameters",
         "Pattern": "\\w{32}",
         "Required": false,
-        "Description": "Host Group identifier, used when adding or removing host groups"
+        "Description": "Host Group identifier, used when adding or removing host groups",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4100,7 +4280,8 @@
           "enable",
           "remove-host-group"
         ],
-        "Description": "Action to perform"
+        "Description": "Action to perform",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -4111,7 +4292,8 @@
         ],
         "Pattern": "\\w{32}",
         "Required": true,
-        "Description": "Policy identifier"
+        "Description": "Policy identifier",
+        "Position": null
       },
       {
         "Dynamic": "GroupId",
@@ -4123,7 +4305,8 @@
         "Parent": "action_parameters",
         "Pattern": "\\w{32}",
         "Required": false,
-        "Description": "Host Group identifier, used when adding or removing host groups"
+        "Description": "Host Group identifier, used when adding or removing host groups",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4159,7 +4342,8 @@
           "add-hosts",
           "remove-hosts"
         ],
-        "Description": "The action to perform on the target Host Groups"
+        "Description": "The action to perform on the target Host Groups",
+        "Position": null
       },
       {
         "Dynamic": "GroupId",
@@ -4172,7 +4356,8 @@
         "Min": 32,
         "Max": 32,
         "Pattern": "\\w{32}",
-        "Description": "Host group identifier"
+        "Description": "Host group identifier",
+        "Position": null
       },
       {
         "Dynamic": "FilterName",
@@ -4197,7 +4382,8 @@
           "site",
           "system_manufacturer"
         ],
-        "Description": "FQL filter name"
+        "Description": "FQL filter name",
+        "Position": null
       },
       {
         "Dynamic": "FilterValue",
@@ -4209,7 +4395,8 @@
         "Parent": "action_parameters",
         "Required": true,
         "Max": 500,
-        "Description": "One or more values for use with the FQL filter"
+        "Description": "One or more values for use with the FQL filter",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4249,7 +4436,8 @@
           "update_name",
           "update_status"
         ],
-        "Description": "Action to perform"
+        "Description": "Action to perform",
+        "Position": null
       },
       {
         "Dynamic": "ActionValue",
@@ -4260,7 +4448,8 @@
         ],
         "Parent": "action_parameters",
         "Required": true,
-        "Description": "Value for the chosen action"
+        "Description": "Value for the chosen action",
+        "Position": null
       },
       {
         "Dynamic": "IncidentIds",
@@ -4271,7 +4460,8 @@
         ],
         "Required": true,
         "Pattern": "inc:\\w{32}:\\w{32}",
-        "Description": "One or more Incident identifiers"
+        "Description": "One or more Incident identifiers",
+        "Position": null
       },
       {
         "Dynamic": "UpdateDetects",
@@ -4281,7 +4471,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Update the status of 'new' related detections"
+        "Description": "Update the status of 'new' related detections",
+        "Position": null
       },
       {
         "Dynamic": "OverwriteDetects",
@@ -4291,7 +4482,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Replace existing status for related detections"
+        "Description": "Replace existing status for related detections",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4329,7 +4521,8 @@
           "enable",
           "remove-host-group"
         ],
-        "Description": "Action to perform"
+        "Description": "Action to perform",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -4340,7 +4533,8 @@
         ],
         "Pattern": "\\w{32}",
         "Required": true,
-        "Description": "Policy identifier"
+        "Description": "Policy identifier",
+        "Position": null
       },
       {
         "Dynamic": "GroupId",
@@ -4352,7 +4546,8 @@
         "Parent": "action_parameters",
         "Pattern": "\\w{32}",
         "Required": false,
-        "Description": "Host Group identifier, used when adding or removing host groups"
+        "Description": "Host Group identifier, used when adding or removing host groups",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4390,7 +4585,8 @@
           "enable",
           "remove-host-group"
         ],
-        "Description": "Action to perform"
+        "Description": "Action to perform",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -4401,7 +4597,8 @@
         ],
         "Pattern": "\\w{32}",
         "Required": true,
-        "Description": "Policy identifier"
+        "Description": "Policy identifier",
+        "Position": null
       },
       {
         "Dynamic": "GroupId",
@@ -4413,7 +4610,8 @@
         "Parent": "action_parameters",
         "Pattern": "\\w{32}",
         "Required": false,
-        "Description": "Host Group identifier, used when adding or removing host groups"
+        "Description": "Host Group identifier, used when adding or removing host groups",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4445,7 +4643,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "List of sample sha256 ids"
+        "Description": "List of sample sha256 ids",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4480,7 +4679,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "(cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)",
-        "Description": "File types to include with the results"
+        "Description": "File types to include with the results",
+        "Position": null
       },
       {
         "Dynamic": "FilterMeta",
@@ -4492,7 +4692,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "(sha256|md5|type|size|first_seen|label|family)",
-        "Description": "Subset of metadata fields to include in the results"
+        "Description": "Subset of metadata fields to include in the results",
+        "Position": null
       },
       {
         "Dynamic": "Limit",
@@ -4503,7 +4704,8 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       },
       {
         "Dynamic": "MaxDate",
@@ -4515,7 +4717,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "\\d{4}/\\d{2}/\\d{2}",
-        "Description": "Limit results to files first seen after this date"
+        "Description": "Limit results to files first seen after this date",
+        "Position": null
       },
       {
         "Dynamic": "MaxSize",
@@ -4526,7 +4729,8 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum file size, specified in bytes or multiples of KB/MB/GB"
+        "Description": "Maximum file size, specified in bytes or multiples of KB/MB/GB",
+        "Position": null
       },
       {
         "Dynamic": "MinDate",
@@ -4538,7 +4742,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "\\d{4}/\\d{2}/\\d{2}",
-        "Description": "Limit results to files first seen after this date"
+        "Description": "Limit results to files first seen after this date",
+        "Position": null
       },
       {
         "Dynamic": "MinSize",
@@ -4549,7 +4754,8 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Minimum file size, specified in bytes or multiples of KB/MB/GB"
+        "Description": "Minimum file size, specified in bytes or multiples of KB/MB/GB",
+        "Position": null
       },
       {
         "Dynamic": "PatternType",
@@ -4565,7 +4771,8 @@
           "ascii",
           "wide"
         ],
-        "Description": "Pattern type"
+        "Description": "Pattern type",
+        "Position": null
       },
       {
         "Dynamic": "PatternValue",
@@ -4576,7 +4783,8 @@
         ],
         "Parent": "patterns",
         "Required": true,
-        "Description": "Pattern value"
+        "Description": "Pattern value",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4604,7 +4812,8 @@
         "Dynamic": "Fuzzy",
         "Type": "switch",
         "Required": true,
-        "Description": "Perform a fuzzy search"
+        "Description": "Perform a fuzzy search",
+        "Position": null
       },
       {
         "Dynamic": "FilterMeta",
@@ -4616,7 +4825,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "(sha256|md5|type|size|first_seen|label|family)",
-        "Description": "Subset of metadata fields to include in the results"
+        "Description": "Subset of metadata fields to include in the results",
+        "Position": null
       },
       {
         "Dynamic": "Limit",
@@ -4627,7 +4837,8 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       },
       {
         "Dynamic": "PatternType",
@@ -4643,7 +4854,8 @@
           "ascii",
           "wide"
         ],
-        "Description": "Pattern type"
+        "Description": "Pattern type",
+        "Position": null
       },
       {
         "Dynamic": "PatternValue",
@@ -4654,7 +4866,8 @@
         ],
         "Parent": "patterns",
         "Required": true,
-        "Description": "Pattern value"
+        "Description": "Pattern value",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4682,7 +4895,8 @@
         "Dynamic": "Hunt",
         "Type": "switch",
         "Required": true,
-        "Description": "Schedule a YARA-based search"
+        "Description": "Schedule a YARA-based search",
+        "Position": null
       },
       {
         "Dynamic": "FilterFileTypes",
@@ -4694,7 +4908,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "(cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)",
-        "Description": "File types to include with the results"
+        "Description": "File types to include with the results",
+        "Position": null
       },
       {
         "Dynamic": "FilterMeta",
@@ -4706,7 +4921,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "(sha256|md5|type|size|first_seen|label|family)",
-        "Description": "Subset of metadata fields to include in the results"
+        "Description": "Subset of metadata fields to include in the results",
+        "Position": null
       },
       {
         "Dynamic": "Limit",
@@ -4717,7 +4933,8 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       },
       {
         "Dynamic": "MaxDate",
@@ -4729,7 +4946,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "\\d{4}/\\d{2}/\\d{2}",
-        "Description": "Limit results to files first seen after this date"
+        "Description": "Limit results to files first seen after this date",
+        "Position": null
       },
       {
         "Dynamic": "MaxSize",
@@ -4740,7 +4958,8 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Maximum file size, specified in bytes or multiples of KB/MB/GB"
+        "Description": "Maximum file size, specified in bytes or multiples of KB/MB/GB",
+        "Position": null
       },
       {
         "Dynamic": "MinDate",
@@ -4752,7 +4971,8 @@
         "Parent": "options",
         "Required": false,
         "Pattern": "\\d{4}/\\d{2}/\\d{2}",
-        "Description": "Limit results to files first seen after this date"
+        "Description": "Limit results to files first seen after this date",
+        "Position": null
       },
       {
         "Dynamic": "MinSize",
@@ -4763,7 +4983,8 @@
         ],
         "Parent": "options",
         "Required": false,
-        "Description": "Minimum file size, specified in bytes or multiples of KB/MB/GB"
+        "Description": "Minimum file size, specified in bytes or multiples of KB/MB/GB",
+        "Position": null
       },
       {
         "Dynamic": "YaraRule",
@@ -4773,7 +4994,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "A YARA rule that defines your search"
+        "Description": "A YARA rule that defines your search",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4801,7 +5023,8 @@
         "Dynamic": "Processes",
         "Type": "switch",
         "Required": true,
-        "Description": "Retrieve process identifiers for a host that has observed a custom IOC"
+        "Description": "Retrieve process identifiers for a host that has observed a custom IOC",
+        "Position": null
       },
       {
         "Dynamic": "Type",
@@ -4818,7 +5041,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type"
+        "Description": "Custom IOC type",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -4830,7 +5054,8 @@
         "Required": true,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC value"
+        "Description": "Custom IOC value",
+        "Position": null
       },
       {
         "Dynamic": "HostId",
@@ -4841,7 +5066,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "Target Host identifier"
+        "Description": "Target Host identifier",
+        "Position": null
       },
       {
         "Dynamic": "Limit",
@@ -4853,7 +5079,8 @@
         "Required": false,
         "Min": 1,
         "Max": 100,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4887,7 +5114,8 @@
           "cloudformation",
           "manual"
         ],
-        "Description": "Provisioning mode"
+        "Description": "Provisioning mode",
+        "Position": null
       },
       {
         "Dynamic": "CloudtrailId",
@@ -4898,7 +5126,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this field is set, it takes precedence of the settings level field."
+        "Description": "The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this field is set, it takes precedence of the settings level field.",
+        "Position": null
       },
       {
         "Dynamic": "CloudtrailRegion",
@@ -4909,7 +5138,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Region where the S3 bucket containing cloudtrail logs resides."
+        "Description": "Region where the S3 bucket containing cloudtrail logs resides.",
+        "Position": null
       },
       {
         "Dynamic": "ExternalId",
@@ -4920,7 +5150,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "ID assigned for use with cross account IAM role access."
+        "Description": "ID assigned for use with cross account IAM role access.",
+        "Position": null
       },
       {
         "Dynamic": "IamRoleArn",
@@ -4931,7 +5162,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The full arn of the IAM role created in this account to control access."
+        "Description": "The full arn of the IAM role created in this account to control access.",
+        "Position": null
       },
       {
         "Dynamic": "AccountId",
@@ -4942,7 +5174,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "12 digit AWS provided unique identifier for the account."
+        "Description": "12 digit AWS provided unique identifier for the account.",
+        "Position": null
       },
       {
         "Dynamic": "RateLimitReqs",
@@ -4953,7 +5186,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time threshold."
+        "Description": "Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time threshold.",
+        "Position": null
       },
       {
         "Dynamic": "RateLimitTime",
@@ -4964,7 +5198,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Rate limiting setting to control the number of seconds for which -RateLimitReqs applies."
+        "Description": "Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -4996,7 +5231,8 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5029,7 +5265,8 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5062,7 +5299,8 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5111,7 +5349,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The ID of the Device Control Policy to search for members of"
+        "Description": "The ID of the Device Control Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5161,7 +5400,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The ID of the Firewall Policy to search for members of"
+        "Description": "The ID of the Firewall Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5195,7 +5435,8 @@
         "Min": 32,
         "Max": 32,
         "Pattern": "\\w{32}",
-        "Description": "Host group identifier"
+        "Description": "Host group identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5264,7 +5505,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The ID of the Prevention Policy to search for members of"
+        "Description": "The ID of the Prevention Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5300,7 +5542,8 @@
           "mac",
           "windows"
         ],
-        "Description": "The platform to return builds for"
+        "Description": "The platform to return builds for",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5369,7 +5612,8 @@
         ],
         "Pattern": "\\w{32}",
         "Required": false,
-        "Description": "The ID of the Sensor Update Policy to search for members of"
+        "Description": "The ID of the Sensor Update Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5392,7 +5636,6 @@
     "Permission": "detects:read",
     "Description": "Search for detection IDs that match a given query",
     "Parameters": [
-
       {
         "Dynamic": "Limit",
         "Name": "limit",
@@ -5403,7 +5646,8 @@
         "Required": false,
         "Min": 1,
         "Max": 9999,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       },
       {
         "Dynamic": "Query",
@@ -5413,7 +5657,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5462,7 +5707,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The ID of the Device Control Policy to search for members of"
+        "Description": "The ID of the Device Control Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5493,7 +5739,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5521,7 +5768,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       },
       {
         "Dynamic": "After",
@@ -5531,7 +5779,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5560,7 +5809,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Get fields configuration for this platform"
+        "Description": "Get fields configuration for this platform",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5607,7 +5857,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The ID of the Firewall Policy to search for members of"
+        "Description": "The ID of the Firewall Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5641,7 +5892,8 @@
         "Min": 32,
         "Max": 32,
         "Pattern": "\\w{32}",
-        "Description": "The ID of the Host Group to search for members of"
+        "Description": "The ID of the Host Group to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5668,7 +5920,8 @@
         "Dynamic": "Hidden",
         "Type": "switch",
         "Required": true,
-        "Description": "Search for hidden hosts"
+        "Description": "Search for hidden hosts",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5718,7 +5971,8 @@
         "Required": false,
         "Min": 1,
         "Max": 500,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5748,7 +6002,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       },
       {
         "Dynamic": "Fields",
@@ -5758,7 +6013,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
+        "Description": "The fields to return, or a predefined collection name surrounded by two underscores",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5788,7 +6044,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5820,7 +6077,8 @@
         "Required": false,
         "Min": 1,
         "Max": 50000,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       },
       {
         "Dynamic": "Query",
@@ -5830,7 +6088,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       },
       {
         "Dynamic": "IncludeDeleted",
@@ -5840,7 +6099,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Include both published and deleted indicators"
+        "Description": "Include both published and deleted indicators",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5872,7 +6132,8 @@
         "Required": false,
         "Min": 1,
         "Max": 50000,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       },
       {
         "Dynamic": "Query",
@@ -5882,7 +6143,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       },
       {
         "Dynamic": "IncludeDeleted",
@@ -5892,7 +6154,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Include both published and deleted indicators"
+        "Description": "Include both published and deleted indicators",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5922,7 +6185,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       },
       {
         "Dynamic": "Fields",
@@ -5932,7 +6196,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The fields to return, or a predefined collection name surrounded by two underscores"
+        "Description": "The fields to return, or a predefined collection name surrounded by two underscores",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5962,7 +6227,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       }
     ],
     "Responses": {
@@ -5994,7 +6260,8 @@
         "Required": false,
         "Min": 1,
         "Max": 10000,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -6004,7 +6271,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Search by rule title."
+        "Description": "Search by rule title.",
+        "Position": null
       },
       {
         "Dynamic": "Type",
@@ -6024,7 +6292,8 @@
           "common-event-format",
           "netwitness"
         ],
-        "Description": "The rule news report type"
+        "Description": "The rule news report type",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -6034,7 +6303,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Substring match on description field."
+        "Description": "Substring match on description field.",
+        "Position": null
       },
       {
         "Dynamic": "Tags",
@@ -6044,7 +6314,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Search for rule tags."
+        "Description": "Search for rule tags.",
+        "Position": null
       },
       {
         "Dynamic": "MinCreatedDate",
@@ -6054,7 +6325,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Filter results to those created on or after a certain date."
+        "Description": "Filter results to those created on or after a certain date.",
+        "Position": null
       },
       {
         "Dynamic": "MaxCreatedDate",
@@ -6064,7 +6336,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Filter results to those created on or before a certain date."
+        "Description": "Filter results to those created on or before a certain date.",
+        "Position": null
       },
       {
         "Dynamic": "Query",
@@ -6074,7 +6347,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6112,7 +6386,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Type of indicator"
+        "Description": "Type of indicator",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -6124,7 +6399,8 @@
         "Required": false,
         "Min": 1,
         "Max": 200,
-        "Description": "The string representation of the indicator"
+        "Description": "The string representation of the indicator",
+        "Position": null
       },
       {
         "Dynamic": "FromExpirationTimestamp",
@@ -6134,7 +6410,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Find custom IOCs created after this time (RFC-3339 timestamp)"
+        "Description": "Find custom IOCs created after this time (RFC-3339 timestamp)",
+        "Position": null
       },
       {
         "Dynamic": "ToExpirationTimestamp",
@@ -6144,7 +6421,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Find custom IOCs created before this time (RFC-3339 timestamp)"
+        "Description": "Find custom IOCs created before this time (RFC-3339 timestamp)",
+        "Position": null
       },
       {
         "Dynamic": "Policy",
@@ -6158,7 +6436,8 @@
           "detect",
           "none"
         ],
-        "Description": "Custom IOC policy type ['detect', 'none']"
+        "Description": "Custom IOC policy type ['detect', 'none']",
+        "Position": null
       },
       {
         "Dynamic": "Sources",
@@ -6170,7 +6449,8 @@
         "Required": false,
         "Min": 1,
         "Max": 200,
-        "Description": "The source where this indicator originated. This can be used for tracking where this indicator was defined."
+        "Description": "The source where this indicator originated. This can be used for tracking where this indicator was defined.",
+        "Position": null
       },
       {
         "Dynamic": "ShareLevels",
@@ -6183,7 +6463,8 @@
         "Enum": [
           "red"
         ],
-        "Description": "The level at which the indicator will be shared. Currently only red share level (not shared) is supported, indicating that the IOC isn't shared with other FH customers."
+        "Description": "The level at which the indicator will be shared. Currently only red share level (not shared) is supported, indicating that the IOC isn't shared with other FH customers.",
+        "Position": null
       },
       {
         "Dynamic": "CreatedBy",
@@ -6193,7 +6474,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The user or API client who created the Custom IOC"
+        "Description": "The user or API client who created the Custom IOC",
+        "Position": null
       },
       {
         "Dynamic": "DeletedBy",
@@ -6203,7 +6485,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The user or API client who deleted the Custom IOC"
+        "Description": "The user or API client who deleted the Custom IOC",
+        "Position": null
       },
       {
         "Dynamic": "IncludeDeleted",
@@ -6213,7 +6496,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Include deleted IOCs"
+        "Description": "Include deleted IOCs",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6242,7 +6526,8 @@
           "header"
         ],
         "Required": false,
-        "Description": "User UUID"
+        "Description": "User UUID",
+        "Position": null
       }
     ]
   },
@@ -6281,7 +6566,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "The ID of the policy container within which to query"
+        "Description": "The ID of the policy container within which to query",
+        "Position": null
       },
       {
         "Dynamic": "Query",
@@ -6291,7 +6577,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6339,7 +6626,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The ID of the Prevention Policy to search for members of"
+        "Description": "The ID of the Prevention Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6389,7 +6677,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       },
       {
         "Dynamic": "After",
@@ -6399,7 +6688,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6428,7 +6718,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Perform a generic substring search across all fields"
+        "Description": "Perform a generic substring search across all fields",
+        "Position": null
       },
       {
         "Dynamic": "After",
@@ -6438,7 +6729,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6469,7 +6761,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "Sha256s",
@@ -6481,7 +6774,8 @@
         "Max": 500,
         "Required": false,
         "Pattern": "\\w{64}",
-        "Description": "One or more SHA256 hash values"
+        "Description": "One or more SHA256 hash values",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6541,7 +6835,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "The ID of the Sensor Update Policy to search for members of"
+        "Description": "The ID of the Sensor Update Policy to search for members of",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6591,7 +6886,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "A pagination token used with the Limit parameter to manage pagination of results"
+        "Description": "A pagination token used with the Limit parameter to manage pagination of results",
+        "Position": null
       },
       {
         "Dynamic": "Limit",
@@ -6603,7 +6899,8 @@
         "Required": false,
         "Min": 1,
         "Max": 400,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6637,7 +6934,8 @@
         "Enum": [
           "refresh_active_stream_session"
         ],
-        "Description": "Action name. Allowed value is refresh_active_stream_session."
+        "Description": "Action name. Allowed value is refresh_active_stream_session.",
+        "Position": null
       },
       {
         "Dynamic": "AppId",
@@ -6649,7 +6947,8 @@
         "Required": true,
         "Min": 1,
         "Max": 32,
-        "Description": "Label that identifies your connection. Max: 32 alphanumeric characters (a-z, A-Z, 0-9)."
+        "Description": "Label that identifies your connection. Max: 32 alphanumeric characters (a-z, A-Z, 0-9).",
+        "Position": null
       },
       {
         "Dynamic": "Partition",
@@ -6659,7 +6958,8 @@
           "path"
         ],
         "Required": true,
-        "Description": "Partition to request data for."
+        "Description": "Partition to request data for.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6709,7 +7009,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "One or more user identifiers"
+        "Description": "One or more user identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6740,7 +7041,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Email address or username"
+        "Description": "Email address or username",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6767,7 +7069,8 @@
         "Dynamic": "Names",
         "Type": "switch",
         "Required": false,
-        "Description": "Retrieve usernames (typically email addresses) rather than user identifiers"
+        "Description": "Retrieve usernames (typically email addresses) rather than user identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6797,7 +7100,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "A comment to append to the audit log"
+        "Description": "A comment to append to the audit log",
+        "Position": null
       },
       {
         "Dynamic": "HostId",
@@ -6810,7 +7114,8 @@
         "Min": 32,
         "Max": 32,
         "Pattern": "\\w{32}",
-        "Description": "Host identifier"
+        "Description": "Host identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6842,7 +7147,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "RoleIds",
@@ -6852,7 +7158,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more roles"
+        "Description": "One or more roles",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6882,7 +7189,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Cloud request identifier of the executed command"
+        "Description": "Cloud request identifier of the executed command",
+        "Position": null
       },
       {
         "Dynamic": "SequenceId",
@@ -6892,7 +7200,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Sequence identifier [default: 0]"
+        "Description": "Sequence identifier [default: 0]",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6922,7 +7231,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Cloud request identifier of the executed command"
+        "Description": "Cloud request identifier of the executed command",
+        "Position": null
       },
       {
         "Dynamic": "SequenceId",
@@ -6932,7 +7242,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Sequence identifier [default: 0]"
+        "Description": "Sequence identifier [default: 0]",
+        "Position": null
       }
     ],
     "Responses": {
@@ -6962,7 +7273,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Cloud request identifier of the executed command"
+        "Description": "Cloud request identifier of the executed command",
+        "Position": null
       },
       {
         "Dynamic": "SequenceId",
@@ -6972,7 +7284,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Sequence identifier [default: 0]"
+        "Description": "Sequence identifier [default: 0]",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7002,7 +7315,8 @@
           "formdata"
         ],
         "Required": true,
-        "Description": "File to upload"
+        "Description": "File to upload",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -7012,7 +7326,8 @@
           "formdata"
         ],
         "Required": true,
-        "Description": "A description of the file"
+        "Description": "A description of the file",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -7022,7 +7337,8 @@
           "formdata"
         ],
         "Required": false,
-        "Description": "Optional name to use for the script"
+        "Description": "Optional name to use for the script",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -7033,7 +7349,8 @@
         ],
         "Required": false,
         "Max": 4096,
-        "Description": "A comment for the audit log"
+        "Description": "A comment for the audit log",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7063,7 +7380,8 @@
           "formdata"
         ],
         "Required": true,
-        "Description": "Script to upload"
+        "Description": "Script to upload",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -7073,7 +7391,8 @@
           "formdata"
         ],
         "Required": true,
-        "Description": "A description of the script"
+        "Description": "A description of the script",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -7083,7 +7402,8 @@
           "formdata"
         ],
         "Required": false,
-        "Description": "Optional name to use for the script"
+        "Description": "Optional name to use for the script",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -7094,7 +7414,8 @@
         ],
         "Required": false,
         "Max": 4096,
-        "Description": "A comment for the audit log"
+        "Description": "A comment for the audit log",
+        "Position": null
       },
       {
         "Dynamic": "PermissionType",
@@ -7109,7 +7430,8 @@
           "group",
           "public"
         ],
-        "Description": "Permission level [private: uploader only, group: admins, public: admins and active responders]"
+        "Description": "Permission level [private: uploader only, group: admins, public: admins and active responders]",
+        "Position": null
       },
       {
         "Dynamic": "Platform",
@@ -7123,7 +7445,8 @@
           "windows",
           "mac"
         ],
-        "Description": "Operating system platform [default: windows]"
+        "Description": "Operating system platform [default: windows]",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7152,7 +7475,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "File identifier"
+        "Description": "File identifier",
+        "Position": null
       },
       {
         "Dynamic": "SessionId",
@@ -7163,7 +7487,8 @@
         ],
         "Required": true,
         "Description": "Real-time Response session identifier",
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7192,7 +7517,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "File identifier"
+        "Description": "File identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7223,7 +7549,8 @@
         ],
         "Required": true,
         "Description": "Real-time Response session identifier",
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Position": null
       },
       {
         "Dynamic": "CloudRequestId",
@@ -7234,7 +7561,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Cloud request identifier of the executed command"
+        "Description": "Cloud request identifier of the executed command",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7263,7 +7591,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "Script identifier"
+        "Description": "Script identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7294,7 +7623,8 @@
         ],
         "Required": true,
         "Description": "Real-time Response session identifier",
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7364,7 +7694,8 @@
           "xmemdump",
           "zip"
         ],
-        "Description": "Command to issue"
+        "Description": "Command to issue",
+        "Position": null
       },
       {
         "Dynamic": "Arguments",
@@ -7374,7 +7705,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Arguments to include with the command"
+        "Description": "Arguments to include with the command",
+        "Position": null
       },
       {
         "Dynamic": "SessionId",
@@ -7385,7 +7717,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response session identifier"
+        "Description": "Real-time Response session identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7456,7 +7789,8 @@
           "xmemdump",
           "zip"
         ],
-        "Description": "Command to issue"
+        "Description": "Command to issue",
+        "Position": null
       },
       {
         "Dynamic": "Arguments",
@@ -7466,7 +7800,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Arguments to include with the command"
+        "Description": "Arguments to include with the command",
+        "Position": null
       },
       {
         "Dynamic": "SessionId",
@@ -7477,7 +7812,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response session identifier"
+        "Description": "Real-time Response session identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7526,7 +7862,8 @@
           "reg query",
           "users"
         ],
-        "Description": "Command to issue"
+        "Description": "Command to issue",
+        "Position": null
       },
       {
         "Dynamic": "Arguments",
@@ -7536,7 +7873,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Arguments to include with the command"
+        "Description": "Arguments to include with the command",
+        "Position": null
       },
       {
         "Dynamic": "SessionId",
@@ -7547,7 +7885,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response session identifier"
+        "Description": "Real-time Response session identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7576,7 +7915,8 @@
         ],
         "Required": true,
         "Description": "Real-time Response session identifier",
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Position": null
       },
       {
         "Dynamic": "Sha256",
@@ -7588,7 +7928,8 @@
         "Required": true,
         "Min": 64,
         "Max": 64,
-        "Description": "SHA256 value of the extracted file"
+        "Description": "SHA256 value of the extracted file",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -7599,7 +7940,8 @@
         ],
         "Required": true,
         "Pattern": "\\.7z$",
-        "Description": "Full destination path for .7z file"
+        "Description": "Full destination path for .7z file",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7630,7 +7972,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more file identifiers"
+        "Description": "One or more file identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7660,7 +8003,8 @@
           "query"
         ],
         "Required": true,
-        "Description": "One or more script identifiers"
+        "Description": "One or more script identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7694,7 +8038,8 @@
         "Min": 32,
         "Max": 32,
         "Pattern": "\\w{32}",
-        "Description": "Host identifier"
+        "Description": "Host identifier",
+        "Position": null
       },
       {
         "Dynamic": "Origin",
@@ -7704,7 +8049,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Optional comment about the creation of the session"
+        "Description": "Optional comment about the creation of the session",
+        "Position": null
       },
       {
         "Dynamic": "QueueOffline",
@@ -7714,7 +8060,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Add session to the offline queue if the host does not initialize"
+        "Description": "Add session to the offline queue if the host does not initialize",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7764,7 +8111,8 @@
         ],
         "Required": true,
         "Description": "Real-time Response session identifier",
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7814,13 +8162,15 @@
           "body"
         ],
         "Required": true,
-        "Description": "One or more session identifiers"
+        "Description": "One or more session identifiers",
+        "Position": null
       },
       {
         "Dynamic": "Queue",
         "Type": "switch",
         "Required": true,
-        "Description": "Lists information about sessions in the offline queue"
+        "Description": "Lists information about sessions in the offline queue",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7871,7 +8221,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "One or more session identifiers"
+        "Description": "One or more session identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7905,7 +8256,8 @@
         "Min": 32,
         "Max": 32,
         "Pattern": "\\w{32}",
-        "Description": "Host identifier"
+        "Description": "Host identifier",
+        "Position": null
       },
       {
         "Dynamic": "QueueOffline",
@@ -7915,7 +8267,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Add session to the offline queue"
+        "Description": "Add session to the offline queue",
+        "Position": null
       }
     ],
     "Responses": {
@@ -7945,7 +8298,8 @@
           "formdata"
         ],
         "Required": true,
-        "Description": "The identifier of the script to update"
+        "Description": "The identifier of the script to update",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -7955,7 +8309,8 @@
           "formdata"
         ],
         "Required": false,
-        "Description": "Script to upload"
+        "Description": "Script to upload",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -7965,7 +8320,8 @@
           "formdata"
         ],
         "Required": false,
-        "Description": "A description of the script"
+        "Description": "A description of the script",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -7975,7 +8331,8 @@
           "formdata"
         ],
         "Required": false,
-        "Description": "Optional name to use for the script"
+        "Description": "Optional name to use for the script",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -7986,7 +8343,8 @@
         ],
         "Required": false,
         "Max": 4096,
-        "Description": "A comment for the audit log"
+        "Description": "A comment for the audit log",
+        "Position": null
       },
       {
         "Dynamic": "PermissionType",
@@ -7996,7 +8354,8 @@
           "formdata"
         ],
         "Required": false,
-        "Description": "Permission level [private: uploader only, group: admins, public: admins and active responders]"
+        "Description": "Permission level [private: uploader only, group: admins, public: admins and active responders]",
+        "Position": null
       },
       {
         "Dynamic": "Platform",
@@ -8006,7 +8365,8 @@
           "formdata"
         ],
         "Required": false,
-        "Description": "Operating system platform [default: windows]"
+        "Description": "Operating system platform [default: windows]",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8036,7 +8396,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "All of the policy identifiers for the specified platform"
+        "Description": "All of the policy identifiers for the specified platform",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -8051,7 +8412,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8082,7 +8444,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "All of the policy identifiers for the specified platform"
+        "Description": "All of the policy identifiers for the specified platform",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -8097,7 +8460,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8128,7 +8492,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "All of the policy identifiers for the specified platform"
+        "Description": "All of the policy identifiers for the specified platform",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -8143,7 +8508,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8174,7 +8540,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "All of the policy identifiers for the specified platform"
+        "Description": "All of the policy identifiers for the specified platform",
+        "Position": null
       },
       {
         "Dynamic": "PlatformName",
@@ -8189,7 +8556,8 @@
           "Mac",
           "Linux"
         ],
-        "Description": "Platform name"
+        "Description": "Platform name",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8268,7 +8636,8 @@
           "RTR-CheckAdminCommandStatus",
           "RTR-ListPut-Files",
           "RTR-ListScripts"
-        ]
+        ],
+        "Position": null
       },
       {
         "Dynamic": "Detailed",
@@ -8314,7 +8683,8 @@
           "RTR-ListPut-Files",
           "RTR-ListScripts",
           "QueryScan"
-        ]
+        ],
+        "Position": null
       },
       {
         "Dynamic": "Array",
@@ -8326,7 +8696,8 @@
         "Description": "An array of hashtables to submit in a single request",
         "ParameterSets": [
           "Array"
-        ]
+        ],
+        "Position": null
       },
       {
         "Dynamic": "Filter",
@@ -8389,7 +8760,8 @@
           "RTR-ListPut-Files",
           "RTR-ListScripts",
           "tokens-query"
-        ]
+        ],
+        "Position": null
       },
       {
         "Dynamic": "Sort",
@@ -8452,7 +8824,8 @@
           "RTR-ListPut-Files",
           "RTR-ListScripts",
           "tokens-query"
-        ]
+        ],
+        "Position": null
       },
       {
         "Dynamic": "Offset",
@@ -8518,7 +8891,8 @@
           "RTR-ListPut-Files",
           "RTR-ListScripts",
           "tokens-query"
-        ]
+        ],
+        "Position": null
       },
       {
         "Dynamic": "Limit",
@@ -8569,7 +8943,8 @@
           "RTR-ListAllSessions",
           "RTR-ListPut-Files",
           "RTR-ListScripts"
-        ]
+        ],
+        "Position": null
       }
     ]
   },
@@ -8587,7 +8962,8 @@
         ],
         "Required": true,
         "Pattern": "(sha256|md5|domain|ipv4|ipv6):.*",
-        "Description": "Indicators to graph"
+        "Description": "Indicators to graph",
+        "Position": null
       }
     ]
   },
@@ -8618,7 +8994,8 @@
         ],
         "Parent": "sandbox",
         "Required": false,
-        "Description": "Runtime script for sandbox analysis"
+        "Description": "Runtime script for sandbox analysis",
+        "Position": null
       },
       {
         "Dynamic": "CommandLine",
@@ -8631,7 +9008,8 @@
         "Max": 2048,
         "Parent": "sandbox",
         "Required": false,
-        "Description": "Command line script passed to the submitted file at runtime"
+        "Description": "Command line script passed to the submitted file at runtime",
+        "Position": null
       },
       {
         "Dynamic": "DocumentPassword",
@@ -8644,7 +9022,8 @@
         "Max": 32,
         "Parent": "sandbox",
         "Required": false,
-        "Description": "Auto-filled for Adobe or Office files that prompt for a password"
+        "Description": "Auto-filled for Adobe or Office files that prompt for a password",
+        "Position": null
       },
       {
         "Dynamic": "EnableTor",
@@ -8655,7 +9034,8 @@
         ],
         "Parent": "sandbox",
         "Required": false,
-        "Description": "Route traffic via TOR"
+        "Description": "Route traffic via TOR",
+        "Position": null
       },
       {
         "Dynamic": "EnvironmentId",
@@ -8673,7 +9053,8 @@
         ],
         "Parent": "sandbox",
         "Required": true,
-        "Description": "Specific environment to use for analysis"
+        "Description": "Specific environment to use for analysis",
+        "Position": null
       },
       {
         "Dynamic": "Sha256",
@@ -8687,7 +9068,8 @@
         "Pattern": "\\w{64}",
         "Parent": "sandbox",
         "Required": false,
-        "Description": "SHA256 hash value of the sample to analyze"
+        "Description": "SHA256 hash value of the sample to analyze",
+        "Position": null
       },
       {
         "Dynamic": "SubmitName",
@@ -8698,7 +9080,8 @@
         ],
         "Parent": "sandbox",
         "Required": false,
-        "Description": "A name for the submission file"
+        "Description": "A name for the submission file",
+        "Position": null
       },
       {
         "Dynamic": "SystemDate",
@@ -8710,7 +9093,8 @@
         "Parent": "sandbox",
         "Pattern": "\\d{4}-\\d{2}-\\d{2}",
         "Required": false,
-        "Description": "A custom date to use in the sandbox environment"
+        "Description": "A custom date to use in the sandbox environment",
+        "Position": null
       },
       {
         "Dynamic": "SystemTime",
@@ -8722,7 +9106,8 @@
         "Parent": "sandbox",
         "Pattern": "\\d{2}:\\d{2}",
         "Required": false,
-        "Description": "A custom time to use in the sandbox environment"
+        "Description": "A custom time to use in the sandbox environment",
+        "Position": null
       },
       {
         "Dynamic": "Url",
@@ -8733,7 +9118,8 @@
         ],
         "Parent": "sandbox",
         "Required": false,
-        "Description": "A web page or file URL"
+        "Description": "A web page or file URL",
+        "Position": null
       },
       {
         "Dynamic": "UserTags",
@@ -8743,7 +9129,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Tags to categorize the submission"
+        "Description": "Tags to categorize the submission",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8774,7 +9161,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "One or more SHA256 hash values to submit as a volume scan"
+        "Description": "One or more SHA256 hash values to submit as a volume scan",
+        "Position": null
       }
     ]
   },
@@ -8797,7 +9185,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "The token's expiration time (RFC-3339). Null, if the token never expires."
+        "Description": "The token's expiration time (RFC-3339). Null, if the token never expires.",
+        "Position": null
       },
       {
         "Dynamic": "Label",
@@ -8807,7 +9196,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "The token label."
+        "Description": "The token label.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8837,7 +9227,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more token identifiers"
+        "Description": "One or more token identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8871,7 +9262,8 @@
         "Required": false,
         "Min": 1,
         "Max": 1000,
-        "Description": "Maximum number of results per request"
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8903,7 +9295,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{32}",
-        "Description": "One or more token identifiers"
+        "Description": "One or more token identifiers",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8935,7 +9328,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "One or more token identifiers"
+        "Description": "One or more token identifiers",
+        "Position": null
       },
       {
         "Dynamic": "ExpiresTimestamp",
@@ -8945,7 +9339,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "The token's expiration time (RFC-3339). Null, if the token never expires."
+        "Description": "The token's expiration time (RFC-3339). Null, if the token never expires.",
+        "Position": null
       },
       {
         "Dynamic": "Label",
@@ -8955,7 +9350,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "The token label."
+        "Description": "The token label.",
+        "Position": null
       },
       {
         "Dynamic": "Revoked",
@@ -8965,7 +9361,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Set to true to revoke the token, false to un-revoked it."
+        "Description": "Set to true to revoke the token, false to un-revoked it.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -8998,7 +9395,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this field is set, it takes precedence of the settings level field."
+        "Description": "The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this field is set, it takes precedence of the settings level field.",
+        "Position": null
       },
       {
         "Dynamic": "CloudtrailRegion",
@@ -9009,7 +9407,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Region where the S3 bucket containing cloudtrail logs resides."
+        "Description": "Region where the S3 bucket containing cloudtrail logs resides.",
+        "Position": null
       },
       {
         "Dynamic": "ExternalId",
@@ -9020,7 +9419,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "ID assigned for use with cross account IAM role access."
+        "Description": "ID assigned for use with cross account IAM role access.",
+        "Position": null
       },
       {
         "Dynamic": "IamRoleArn",
@@ -9031,7 +9431,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The full arn of the IAM role created in this account to control access."
+        "Description": "The full arn of the IAM role created in this account to control access.",
+        "Position": null
       },
       {
         "Dynamic": "AccountId",
@@ -9042,7 +9443,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "12 digit AWS provided unique identifier for the account."
+        "Description": "12 digit AWS provided unique identifier for the account.",
+        "Position": null
       },
       {
         "Dynamic": "RateLimitReqs",
@@ -9053,7 +9455,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time threshold."
+        "Description": "Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time threshold.",
+        "Position": null
       },
       {
         "Dynamic": "RateLimitTime",
@@ -9064,7 +9467,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "Rate limiting setting to control the number of seconds for which -RateLimitReqs applies."
+        "Description": "Rate limiting setting to control the number of seconds for which -RateLimitReqs applies.",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9097,7 +9501,8 @@
         ],
         "Required": true,
         "Pattern": "^[0-9a-z-]{36}$",
-        "Description": "Client identifier to use for the Service Principal associated with the Azure account"
+        "Description": "Client identifier to use for the Service Principal associated with the Azure account",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9128,7 +9533,8 @@
         ],
         "Required": false,
         "Description": "A user identifier to use to assign the detection",
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}"
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -9138,7 +9544,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "A comment to add to the detection"
+        "Description": "A comment to add to the detection",
+        "Position": null
       },
       {
         "Dynamic": "DetectionIds",
@@ -9150,7 +9557,8 @@
         "Required": true,
         "Pattern": "ldt:\\w{32}:\\w+",
         "Max": 1000,
-        "Description": "One or more detection identifiers"
+        "Description": "One or more detection identifiers",
+        "Position": null
       },
       {
         "Dynamic": "ShowInUi",
@@ -9160,7 +9568,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Display the detection in the Falcon UI"
+        "Description": "Display the detection in the Falcon UI",
+        "Position": null
       },
       {
         "Dynamic": "Status",
@@ -9177,7 +9586,8 @@
           "false_positive",
           "ignored"
         ],
-        "Description": "Detection status"
+        "Description": "Detection status",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9209,7 +9619,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new description to assign to the policy"
+        "Description": "The new description to assign to the policy",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -9220,7 +9631,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "The id of the policy to update"
+        "Description": "The id of the policy to update",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -9231,7 +9643,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new name to assign to the policy"
+        "Description": "The new name to assign to the policy",
+        "Position": null
       },
       {
         "Dynamic": "Settings",
@@ -9242,7 +9655,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "A hashtable defining policy settings"
+        "Description": "A hashtable defining policy settings",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9275,7 +9689,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new description to assign to the policy"
+        "Description": "The new description to assign to the policy",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -9286,7 +9701,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "The id of the policy to update"
+        "Description": "The id of the policy to update",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -9297,7 +9713,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new name to assign to the policy"
+        "Description": "The new name to assign to the policy",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9330,7 +9747,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new assignment rule of the group. Note: If the group type is static, this field cannot be updated manually"
+        "Description": "The new assignment rule of the group. Note: If the group type is static, this field cannot be updated manually",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -9341,7 +9759,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new description of the group"
+        "Description": "The new description of the group",
+        "Position": null
       },
       {
         "Dynamic": "GroupId",
@@ -9353,7 +9772,8 @@
         "Parent": "resources",
         "Required": true,
         "Pattern": "\\w{32}",
-        "Description": "The id of the group to update"
+        "Description": "The id of the group to update",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -9364,7 +9784,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new name of the group"
+        "Description": "The new name of the group",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9396,7 +9817,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Number of days before expiration (for 'domain', 'ipv4', and 'ipv6')"
+        "Description": "Number of days before expiration (for 'domain', 'ipv4', and 'ipv6')",
+        "Position": null
       },
       {
         "Dynamic": "Policy",
@@ -9410,7 +9832,8 @@
           "detect",
           "none"
         ],
-        "Description": "Action to take when a host observes the custom IOC"
+        "Description": "Action to take when a host observes the custom IOC",
+        "Position": null
       },
       {
         "Dynamic": "ShareLevel",
@@ -9423,7 +9846,8 @@
         "Enum": [
           "red"
         ],
-        "Description": "Custom IOC visibility level ['red']"
+        "Description": "Custom IOC visibility level ['red']",
+        "Position": null
       },
       {
         "Dynamic": "Source",
@@ -9435,7 +9859,8 @@
         "Required": false,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC source"
+        "Description": "Custom IOC source",
+        "Position": null
       },
       {
         "Dynamic": "Type",
@@ -9453,7 +9878,8 @@
           "ipv4",
           "ipv6"
         ],
-        "Description": "Custom IOC type"
+        "Description": "Custom IOC type",
+        "Position": null
       },
       {
         "Dynamic": "Value",
@@ -9466,7 +9892,8 @@
         "Required": true,
         "Min": 1,
         "Max": 200,
-        "Description": "Custom IOC value"
+        "Description": "Custom IOC value",
+        "Position": null
       },
       {
         "Dynamic": "Description",
@@ -9476,7 +9903,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Custom IOC description"
+        "Description": "Custom IOC description",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9506,7 +9934,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "DefaultInbound",
@@ -9520,7 +9949,8 @@
           "DENY"
         ],
         "Required": false,
-        "Description": "Default action for inbound traffic"
+        "Description": "Default action for inbound traffic",
+        "Position": null
       },
       {
         "Dynamic": "DefaultOutbound",
@@ -9534,7 +9964,8 @@
           "DENY"
         ],
         "Required": false,
-        "Description": "Default action for outbound traffic"
+        "Description": "Default action for outbound traffic",
+        "Position": null
       },
       {
         "Dynamic": "Enforce",
@@ -9544,7 +9975,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Enforce this policy's rules and override the firewall settings on each assigned host"
+        "Description": "Enforce this policy's rules and override the firewall settings on each assigned host",
+        "Position": null
       },
       {
         "Dynamic": "IsDefaultPolicy",
@@ -9554,7 +9986,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Set as default policy"
+        "Description": "Set as default policy",
+        "Position": null
       },
       {
         "Dynamic": "PlatformId",
@@ -9567,7 +10000,8 @@
           "0"
         ],
         "Required": true,
-        "Description": "Platform identifier"
+        "Description": "Platform identifier",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -9577,7 +10011,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "Policy identifier to update"
+        "Description": "Policy identifier to update",
+        "Position": null
       },
       {
         "Dynamic": "RuleGroupIds",
@@ -9587,7 +10022,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "One or more rule group identifiers"
+        "Description": "One or more rule group identifiers",
+        "Position": null
       },
       {
         "Dynamic": "MonitorMode",
@@ -9597,7 +10033,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Override all block rules in this policy and turn on monitoring"
+        "Description": "Override all block rules in this policy and turn on monitoring",
+        "Position": null
       },
       {
         "Dynamic": "Tracking",
@@ -9607,7 +10044,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Tracking identifier"
+        "Description": "Tracking identifier",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9639,7 +10077,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new description to assign to the policy"
+        "Description": "The new description to assign to the policy",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -9650,7 +10089,8 @@
         ],
         "Parent": "resources",
         "Required": true,
-        "Description": "The id of the policy to update"
+        "Description": "The id of the policy to update",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -9661,7 +10101,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new name to assign to the policy"
+        "Description": "The new name to assign to the policy",
+        "Position": null
       },
       {
         "Dynamic": "Settings",
@@ -9672,7 +10113,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "An array of hashtables defining policy settings"
+        "Description": "An array of hashtables defining policy settings",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9705,7 +10147,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -9715,7 +10158,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Audit log comment for this action"
+        "Description": "Audit log comment for this action",
+        "Position": null
       },
       {
         "Dynamic": "DiffOperations",
@@ -9725,7 +10169,8 @@
           "body"
         ],
         "Required": true,
-        "Description": "An array of hashtables containing rule or rule group changes"
+        "Description": "An array of hashtables containing rule or rule group changes",
+        "Position": null
       },
       {
         "Dynamic": "GroupId",
@@ -9735,7 +10180,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "A firewall rule group identifier"
+        "Description": "A firewall rule group identifier",
+        "Position": null
       },
       {
         "Dynamic": "RuleIds",
@@ -9745,7 +10191,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "One or more firewall rule identifiers"
+        "Description": "One or more firewall rule identifiers",
+        "Position": null
       },
       {
         "Dynamic": "RuleVersions",
@@ -9755,7 +10202,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Rule version value"
+        "Description": "Rule version value",
+        "Position": null
       },
       {
         "Dynamic": "Tracking",
@@ -9765,7 +10213,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Tracking value"
+        "Description": "Tracking value",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9796,7 +10245,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new description to assign to the policy"
+        "Description": "The new description to assign to the policy",
+        "Position": null
       },
       {
         "Dynamic": "PolicyId",
@@ -9808,7 +10258,8 @@
         "Parent": "resources",
         "Pattern": "\\w{32}",
         "Required": true,
-        "Description": "Policy identifier"
+        "Description": "Policy identifier",
+        "Position": null
       },
       {
         "Dynamic": "Name",
@@ -9819,7 +10270,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "The new name to assign to the policy"
+        "Description": "The new name to assign to the policy",
+        "Position": null
       },
       {
         "Dynamic": "Settings",
@@ -9830,7 +10282,8 @@
         ],
         "Parent": "resources",
         "Required": false,
-        "Description": "A hashtable defining policy settings"
+        "Description": "A hashtable defining policy settings",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9863,7 +10316,8 @@
         ],
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "FirstName",
@@ -9873,7 +10327,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "User's first name"
+        "Description": "User's first name",
+        "Position": null
       },
       {
         "Dynamic": "LastName",
@@ -9883,7 +10338,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "User's last name"
+        "Description": "User's last name",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9915,7 +10371,8 @@
         ],
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "User identifier"
+        "Description": "User identifier",
+        "Position": null
       },
       {
         "Dynamic": "Path",
@@ -9926,7 +10383,8 @@
         ],
         "Pattern": "\\.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|js|ko|lnk|o|ocx|mod|msg|mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|vbe|vbs|wsf|xls|xlsx)+$",
         "Required": true,
-        "Description": "Path to the file"
+        "Description": "Path to the file",
+        "Position": null
       },
       {
         "Dynamic": "Filename",
@@ -9936,7 +10394,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Filename"
+        "Description": "Filename",
+        "Position": null
       },
       {
         "Dynamic": "Comment",
@@ -9946,7 +10405,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "A comment to identify for other users to identify this sample"
+        "Description": "A comment to identify for other users to identify this sample",
+        "Position": null
       },
       {
         "Dynamic": "IsConfidential",
@@ -9956,7 +10416,8 @@
           "query"
         ],
         "Required": false,
-        "Description": "Visibility of the sample in Falcon MalQuery"
+        "Description": "Visibility of the sample in Falcon MalQuery",
+        "Position": null
       }
     ],
     "Responses": {
@@ -9988,7 +10449,8 @@
         ],
         "Required": true,
         "Pattern": "\\d{12}",
-        "Description": "One or more AWS account identifiers"
+        "Description": "One or more AWS account identifiers",
+        "Position": null
       }
     ],
     "Responses": {
