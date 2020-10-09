@@ -51,7 +51,7 @@ function Convert-CSV {
         }
     }
     process {
-        switch ($Object.PSObject.TypeNames) {
+        switch ($Object.PSObject.TypeNames | Where-Object { $_ -notmatch '^System.*$' }) {
             { $TypeNames.Host -contains $_ } {
                 # Convert detailed host results
                 ($Object.resources).foreach{
@@ -219,6 +219,10 @@ function Convert-CSV {
                     # Output item
                     $Item
                 }
+            }
+            default {
+                # Output error for undefined request types
+                Write-Error "CSV conversion is not available for this request type"
             }
         }
     }
