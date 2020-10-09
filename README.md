@@ -4,22 +4,22 @@
 Requires **[PowerShell 5.1+](https://github.com/PowerShell/PowerShell#get-powershell)**
 
 # Installation
-1. Download the files in this respository
-2. Extract the archive into `PSFalcon` under one of your `$env:PSModulePath` directories
+1. Download the files in this respository as a ZIP
+2. Extract the archive
+3. Move the contents of `psfalcon-master` into your user modules directory:
 
 Linux/MacOS (PowerShell Core):
 ```powershell
-PS> Expand-Archive ./psfalcon-master.zip $HOME/.local/share/powershell/Modules/PSFalcon/2.0.0
+$HOME/.local/share/powershell/Modules/PSFalcon/2.0.0
 ```
 Windows (PowerShell Core):
 ```powershell
-PS> Expand-Archive .\psfalcon-master.zip $HOME\Documents\PowerShell\Modules\PSFalcon\2.0.0
+$HOME\Documents\PowerShell\Modules\PSFalcon\2.0.0
 ```
 Windows (PowerShell Desktop):
 ```powershell
-PS> Expand-Archive .\psfalcon-master.zip $HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
+$HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
 ```
-
 
 # Usage
 You can list all available commands through `Get-Module -Name PSFalcon` once the module has
@@ -28,12 +28,12 @@ a brief description.
 
 # Credentials
 In order to interact with the Falcon OAuth2 APIs, you need a valid **[API Client ID and Secret](https://falcon.crowdstrike.com/support/api-clients-and-keys)**.
-If you have previously exported your credentials into `$Home\Falcon.cred`, they will be automatically imported
-when you import the PSFalcon module from the `$Home` directory.
+If you have previously exported your credentials into `$HOME\Falcon.cred`, they will be automatically imported
+when you import the PSFalcon module from the `$HOME` directory.
 
 ### Exporting Credentials
 You can save your credentials using the `ExportCred()` method, which will prompt you for your ID (username)
-and Secret (password). Once input, the credentials will be exported to `$Home\Falcon.cred`.
+and Secret (password). Once input, the credentials will be exported to `$HOME\Falcon.cred`.
 
 This exported file is designed to be used only by the user that created it, on the device that it was created on.
 Attemping to copy this file to a different device or importing it into PSFalcon under a different user account
@@ -86,7 +86,7 @@ during token requests. Your choice is saved and all requests will be sent to tha
 CID unless a new `Request-FalconToken` request is made specifying a new child environment.
 
 ### Exporting Tokens
-You can export a token your have requested using the `.ExportToken()` method, which creates `$Home\Falcon.token`.
+You can export a token your have requested using the `.ExportToken()` method, which creates `$HOME\Falcon.token`.
 Once exported, this token will be automatically loaded with PSFalcon, which enables support for multi-threaded
 PowerShell scripts. If the token has expired it will be ignored.
 
