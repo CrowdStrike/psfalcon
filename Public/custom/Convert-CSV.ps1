@@ -26,12 +26,15 @@ function Convert-CSV {
         }
         # TypeNames used to determine formatting
         $TypeNames = @{
-            Hosts = @('domain.DeviceDetailsResponseSwagger', 'responses.HostGroupMembersV1',
+            Host = @('domain.DeviceDetailsResponseSwagger', 'responses.HostGroupMembersV1',
             'responses.PolicyMembersRespV1')
-            Identifiers = @('domain.DeviceResponse', 'domain.SPAPIQueryVulnerabilitiesResponse',
+            HostGroup = @('responses.HostGroupsV1')
+            Identifier = @('domain.DeviceResponse', 'domain.SPAPIQueryVulnerabilitiesResponse',
             'msa.QueryResponse')
+            IOC = @('api.MsaReplyIOCIDs', 'api.MsaReplyIOC')
             Prevention = @('responses.PreventionPoliciesV1')
-            Vulnerabilities = @('domain.SPAPIVulnerabilitiesEntitiesResponseV2')
+            SensorUpdate = @('responses.SensorUpdatePoliciesV2')
+            Vulnerability = @('domain.SPAPIVulnerabilitiesEntitiesResponseV2')
         }
         function Add-Field ($Object, $Name, $Value) {
             $Value = if ($Name -match $TimeRegex) {
@@ -46,18 +49,10 @@ function Convert-CSV {
             # Add field and value to [PSCustomObject]
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
         }
-        function Out-Identifier ($Object) {
-            # Output identifier array
-            ($Object.resources).foreach{
-                [PSCustomObject] @{
-                    id = $_
-                }
-            }
-        }
     }
     process {
         switch ($Object.PSObject.TypeNames) {
-            { $TypeNames.Hosts -contains $_ } {
+            { $TypeNames.Host -contains $_ } {
                 # Convert detailed host results
                 ($Object.resources).foreach{
                     # Output detail array
@@ -97,9 +92,47 @@ function Convert-CSV {
                     $Item
                 }
             }
-            { $TypeNames.Identifiers -contains $_ } {
+            { $TypeNames.HostGroup -contains $_ } {
+                # Convert detailed host group results
+                ($Object.resources).foreach{
+                    # Output detail array
+                    $Item = [PSCustomObject] @{}
+
+                    ($_.psobject.properties).foreach{
+                        Add-Field $Item $_.name $_.value
+                    }
+                    # Output item
+                    $Item
+                }
+            }
+            { $TypeNames.Identifier -contains $_ } {
                 # Output identifier array
-                Out-Identifier $Object
+                ($Object.resources).foreach{
+                    [PSCustomObject] @{
+                        id = $_
+                    }
+                }
+            }
+            { $TypeNames.IOC -contains $_ } {
+                if ($_ -eq 'api.MsaReplyIOCIDs') {
+                    # Output type and value array
+                    ($Object.resources).foreach{
+                        [PSCustomObject] @{
+                            type = ($_).Split(':')[0]
+                            value = ($_).Split(':')[1]
+                        }
+                    }
+                } else {
+                    ($Object.resources).foreach{
+                        $Item = [PSCustomObject] @{}
+
+                        ($_.psobject.properties).foreach{
+                            Add-Field $Item $_.name $_.value
+                        }
+                        # Output item
+                        $Item
+                    }
+                }
             }
             { $TypeNames.Prevention -contains $_ } {
                 # Convert detailed Prevention policy results
@@ -128,7 +161,29 @@ function Convert-CSV {
                     $Item
                 }
             }
-            { $TypeNames.Vulnerabilities -contains $_ } {
+            { $TypeNames.SensorUpdate -contains $_ } {
+                # Convert detailed Sensor Update policy results
+                ($Object.resources).foreach{
+                    $Item = [PSCustomObject] @{}
+
+                    ($_.psobject.properties).foreach{
+                        if ($_.name -eq 'groups') {
+                            # Add group identifiers as [string]
+                            Add-Field $Item $_.name ($_.value.id -join ', ')
+                        } elseif ($_.name -eq 'settings') {
+                            ($_.value.psobject.properties).foreach{
+                                # Add settings fields and values
+                                Add-Field $Item $_.name $_.value
+                            }
+                        } else {
+                            Add-Field $Item $_.name $_.value
+                        }
+                    }
+                    # Output item
+                    $Item
+                }
+            }
+            { $TypeNames.Vulnerability -contains $_ } {
                 # Convert detailed vulnerability results
                 ($Object.resources).foreach{
                     $Item = [PSCustomObject] @{}
@@ -147,18 +202,17 @@ function Convert-CSV {
                         } elseif ($_.name -eq 'host_info') {
                             ($_.value.psobject.properties).foreach{
                                 if ($_.name -eq 'groups') {
-                                    # Add group names
-                                    Add-Field $Item $_.name $_.value.name
+                                    # Add group names as [string]
+                                    Add-Field $Item $_.name ($_.value.name -join ', ')
                                 } else {
                                     # Add fields from 'host_info'
                                     Add-Field $Item $_.name $_.value
                                 }
                             }
                         } elseif ($_.name -eq 'remediation') {
-                            # Add remediation ids
-                            Add-Field $Item "remediation_ids" $_.value.ids
+                            # Add remediation identifiers as [string]
+                            Add-Field $Item "remediation_ids" ($_.value.ids -join ', ')
                         } else {
-                            # Add field and value
                             Add-Field $Item $_.name $_.value
                         }
                     }
