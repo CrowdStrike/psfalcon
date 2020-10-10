@@ -194,42 +194,14 @@ function Invoke-Deploy {
                             Where-Object { ($_.complete -eq $true) -or ($_.offline_queued -eq $true) }).aid
                     }
                     if ($SessionHosts) {
-                        Write-Log "Initiated batch session with $($SessionHosts.count) host(s)..."
-
-                        # Verify file is not currently running
-                        $Param = @{
-                            BatchId = $Session.batch_id
-                            Command = 'runscript'
-                            Arguments = "-Raw='(Get-Process | Where-Object { `$_.ProcessName -eq " +
-                            "`"$ProcessName`" }).foreach{ if (`$_.path -match `"$Filename`") { `"IN_PROGRESS`"} }'"
-                        }
-                        if ($PSBoundParameters.Timeout) {
-                            $Param['Timeout'] = $PSBoundParameters.Timeout
-                        }
-                        $CmdScript = Invoke-FalconAdminCommand @Param
-
-                        if (-not $CmdScript.combined.resources) {
-                            # Error if 'runscript' command fails
-                            throw "$($CmdScript.errors.code): $($CmdScript.errors.message)"
-                        } else {
-                            # Capture 'runscript' results
-                            Write-Result $CmdScript "running_process_check"
-
-                            # Capture identifiers for hosts that do not have a running process
-                            $ScriptHosts = ($CmdScript.combined.resources.psobject.properties.Value |
-                            Where-Object {(($_.stdout -ne 'IN_PROGRESS') -or ($_.offline_queued -eq $true)) -and
-                            ((-not $_.stderr) -or $_.errors)}).aid
-                        }
-                    }
-                    if ($ScriptHosts) {
-                        Write-Log "Putting $Filename on $($ScriptHosts.count) host(s)..."
+                        Write-Log "Pushing $Filename to $($SessionHosts.count) host(s)..."
 
                         # Push file to target hosts
                         $Param = @{
                             BatchId = $Session.batch_id
                             Command = 'put'
                             Arguments = "$Filename"
-                            OptionalHostIds = $ScriptHosts
+                            OptionalHostIds = $SessionHosts
                         }
                         if ($PSBoundParameters.Timeout) {
                             $Param['Timeout'] = $PSBoundParameters.Timeout
@@ -245,7 +217,8 @@ function Invoke-Deploy {
 
                             # Capture identifiers for hosts that had a successful 'put'
                             $PutHosts = ($CmdPut.combined.resources.psobject.properties.Value |
-                            Where-Object { ($_.complete -eq $true) -or ($_.offline_queued -eq $true) }).aid
+                            Where-Object { ($_.stdout -eq 'Operation completed successfully.') -or
+                            ($_.offline_queued -eq $true) }).aid
                         }
                     }
                     if ($PutHosts) {
@@ -279,7 +252,7 @@ function Invoke-Deploy {
                         }
                     }
                     if ($PSBoundParameters.Debug -eq $true) {
-                        foreach ($Item in @('RemovePut', 'AddPut', 'Session', 'CmdScript', 'CmdPut', 'CmdRun')) {
+                        foreach ($Item in @('RemovePut', 'AddPut', 'Session', 'CmdPut', 'CmdRun')) {
                             # Capture full responses in $LogFile
                             if (Get-Variable $Item -ErrorAction SilentlyContinue) {
                                 "$($Item):`n $((Get-Variable $Item).Value | ConvertTo-Json -Depth 8)`n" |
