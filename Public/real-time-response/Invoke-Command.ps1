@@ -1,18 +1,18 @@
 function Invoke-Command {
 <#
 .SYNOPSIS
-    Issue a command to a Real-time Response session
+    Execute a command using Real-time Response
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-ExecuteCommand')]
+    [CmdletBinding(DefaultParameterSetName = 'CustomRTR')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-ExecuteCommand', 'BatchCmd')
+        $Endpoints = @('CustomRTR', 'RTR-ExecuteCommand', 'BatchCmd')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -22,14 +22,32 @@ function Invoke-Command {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
-            # Append 'base_command' to 'command_string'
+            # Join 'base_command' and 'command_string'
             if ($Dynamic.Arguments.value) {
                 $Dynamic.Arguments.value = "$($Dynamic.Command.value) $($Dynamic.Arguments.value)"
             } else {
                 $Dynamic.Arguments.value = "$($Dynamic.Command.value)"
             }
-            # Evaluate input and make request
-            Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
+            if ($PSBoundParameters.HostId) {
+                # Create a session and issue command
+                $Param = @{
+                    HostId = $PSBoundParameters.HostId
+                    Command = $PSBoundParameters.Command
+                }
+                switch ($PSBoundParameters.Keys) {
+                    'Arguments' { $Param['Arguments'] = $PSBoundParameters.Arguments }
+                    'QueueOffline' { $Param['QueueOffline'] = $PSBoundParameters.QueueOffline }
+                }
+                Invoke-RTR @Param
+            } elseif ($PSBoundParameters.SessionId) {
+                # Evaluate input and make request
+                Invoke-Request -Query $Endpoints[1] -Dynamic $Dynamic
+            } elseif ($PSBoundParameters.BatchId) {
+                # Evaluate input and make request
+                Invoke-Request -Query $Endpoints[2] -Dynamic $Dynamic
+            } else {
+                Write-Error "Must provide one or more Host identifiers, or an existing Session identifier"
+            }
         }
     }
 }
