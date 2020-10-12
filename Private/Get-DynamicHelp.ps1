@@ -42,6 +42,9 @@ function Get-DynamicHelp {
                             Required = $_.IsMandatory
                             Description = $_.HelpMessage
                         }
+                        if ($_.Position -gt 0) {
+                            $Parameter['Position'] = $_.Position
+                        }
                         # Add ValidateSet, ValidateLength and ValidateRange values
                         foreach ($Attribute in @('ValidValues', 'RegexPattern', 'MinLength', 'MaxLength',
                         'MinRange', 'MaxRange')) {
