@@ -1507,6 +1507,150 @@
     }
   },
   {
+    "Name": "CustomGetQueue",
+    "Description": "Create a report of with status of queued Real-time Response sessions",
+    "Permission": "real-time-response:read, real-time-response:write, real-time-response-admin:write",
+    "Parameters": [
+      {
+        "Dynamic": "Days",
+        "Type": "int",
+        "Required": false,
+        "Description": "Number of days worth of results to retrieve [Default: 7]",
+        "Position": null
+      }
+    ]
+  },
+  {
+    "Name": "CustomInvokeDeploy",
+    "Description": "Deploy and run an executable using Real-time Response",
+    "Permission": "real-time-response:read, real-time-response-admin:write",
+    "Parameters": [
+      {
+        "Dynamic": "Path",
+        "Type": "string",
+        "Required": true,
+        "Description": "Path to the executable",
+        "Position": null
+      },
+      {
+        "Dynamic": "HostIds",
+        "Type": "array",
+        "Required": true,
+        "Pattern": "\\w{32}",
+        "Description": "One or more Host identifiers",
+        "Position": null
+      },
+      {
+        "Dynamic": "Arguments",
+        "Type": "string",
+        "Required": false,
+        "Description": "Command line arguments to include upon execution",
+        "Position": null
+      },
+      {
+        "Dynamic": "Timeout",
+        "Type": "int",
+        "Required": false,
+        "Min": 30,
+        "Max": 600,
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": null
+      },
+      {
+        "Dynamic": "QueueOffline",
+        "Type": "bool",
+        "Required": false,
+        "Description": "Add session to the offline queue if the host does not initialize",
+        "Position": null
+      }
+    ]
+  },
+  {
+    "Name": "CustomOpenStream",
+    "Description": "Export recent Stream events to Json",
+    "Permission": "streaming:read"
+  },
+  {
+    "Name": "CustomRTR",
+    "Permission": "real-time-response:read",
+    "Description": "Create a session and execute a Real-time Response command",
+    "Parameters": [
+      {
+        "Dynamic": "HostId",
+        "Name": "device_id",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": true,
+        "Pattern": "\\w{32}",
+        "Description": "Host identifier",
+        "Position": 1
+      },
+      {
+        "Dynamic": "Command",
+        "Name": "base_command",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": true,
+        "Enum": [
+          "cat",
+          "cd",
+          "clear",
+          "csrutil",
+          "env",
+          "eventlog",
+          "filehash",
+          "getsid",
+          "help",
+          "history",
+          "ifconfig",
+          "ipconfig",
+          "ls",
+          "mount",
+          "netstat",
+          "ps",
+          "reg query",
+          "users"
+        ],
+        "Description": "Command to execute",
+        "Position": 2
+      },
+      {
+        "Dynamic": "Arguments",
+        "Name": "command_string",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": false,
+        "Description": "Arguments to include when executing command",
+        "Position": 3
+      }
+    ]
+  },
+  {
+    "Name": "CustomShowMap",
+    "Path": "/intelligence/graph?indicators=",
+    "Method": "POST",
+    "Description": "Graph Indicators",
+    "Parameters": [
+      {
+        "Dynamic": "Indicators",
+        "Type": "array",
+        "In": [
+          "query"
+        ],
+        "Required": true,
+        "Pattern": "(sha256|md5|domain|ipv4|ipv6):.*",
+        "Description": "Indicators to graph",
+        "Position": null
+      }
+    ]
+  },
+  {
     "Name": "DeleteAWSAccounts",
     "Path": "/cloud-connect-aws/entities/accounts/v1",
     "Method": "DELETE",
@@ -3356,20 +3500,6 @@
     }
   },
   {
-    "Name": "GetQueue",
-    "Description": "Create a report of with status of queued Real-time Response sessions",
-    "Permission": "real-time-response:read, real-time-response:write, real-time-response-admin:write",
-    "Parameters": [
-      {
-        "Dynamic": "Days",
-        "Type": "int",
-        "Required": false,
-        "Description": "Number of days worth of results to retrieve [Default: 7]",
-        "Position": null
-      }
-    ]
-  },
-  {
     "Name": "getRemediations",
     "Path": "/spotlight/entities/remediations/v2",
     "Method": "GET",
@@ -3954,51 +4084,6 @@
     }
   },
   {
-    "Name": "InvokeDeploy",
-    "Description": "Deploy and run an executable using Real-time Response",
-    "Permission": "real-time-response:read, real-time-response-admin:write",
-    "Parameters": [
-      {
-        "Dynamic": "Path",
-        "Type": "string",
-        "Required": true,
-        "Description": "Path to the executable",
-        "Position": null
-      },
-      {
-        "Dynamic": "HostIds",
-        "Type": "array",
-        "Required": true,
-        "Pattern": "\\w{32}",
-        "Description": "One or more Host identifiers",
-        "Position": null
-      },
-      {
-        "Dynamic": "Arguments",
-        "Type": "string",
-        "Required": false,
-        "Description": "Command line arguments to include upon execution",
-        "Position": null
-      },
-      {
-        "Dynamic": "Timeout",
-        "Type": "int",
-        "Required": false,
-        "Min": 30,
-        "Max": 600,
-        "Description": "Length of time to wait for a result, in seconds",
-        "Position": null
-      },
-      {
-        "Dynamic": "QueueOffline",
-        "Type": "bool",
-        "Required": false,
-        "Description": "Add session to the offline queue if the host does not initialize",
-        "Position": null
-      }
-    ]
-  },
-  {
     "Name": "listAvailableStreamsOAuth2",
     "Path": "/sensors/entities/datafeed/v2",
     "Method": "GET",
@@ -4135,11 +4220,6 @@
       "500": "msa.ReplyMetaOnly",
       "default": "msa.ReplyMetaOnly"
     }
-  },
-  {
-    "Name": "OpenStream",
-    "Description": "Export recent Stream events to Json",
-    "Permission": "streaming:read"
   },
   {
     "Name": "PerformActionV2",
@@ -7832,8 +7912,20 @@
       "ContentType": "application/json"
     },
     "Permission": "real-time-response:read",
-    "Description": "Issue a Real-time Response command to a session",
+    "Description": "Issue a Real-time Response command to an existing session",
     "Parameters": [
+      {
+        "Dynamic": "SessionId",
+        "Name": "session_id",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": true,
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Description": "Real-time Response session identifier",
+        "Position": 1
+      },
       {
         "Dynamic": "Command",
         "Name": "base_command",
@@ -7863,7 +7955,7 @@
           "users"
         ],
         "Description": "Command to issue",
-        "Position": null
+        "Position": 2
       },
       {
         "Dynamic": "Arguments",
@@ -7873,20 +7965,8 @@
           "body"
         ],
         "Required": false,
-        "Description": "Arguments to include with the command",
-        "Position": null
-      },
-      {
-        "Dynamic": "SessionId",
-        "Name": "session_id",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": true,
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response session identifier",
-        "Position": null
+        "Description": "Arguments to include when issuing the command",
+        "Position": 3
       }
     ],
     "Responses": {
@@ -8035,8 +8115,6 @@
           "body"
         ],
         "Required": true,
-        "Min": 32,
-        "Max": 32,
         "Pattern": "\\w{32}",
         "Description": "Host identifier",
         "Position": null
@@ -8944,25 +9022,6 @@
           "RTR-ListPut-Files",
           "RTR-ListScripts"
         ],
-        "Position": null
-      }
-    ]
-  },
-  {
-    "Name": "ShowMap",
-    "Path": "/intelligence/graph?indicators=",
-    "Method": "POST",
-    "Description": "Graph Indicators",
-    "Parameters": [
-      {
-        "Dynamic": "Indicators",
-        "Type": "array",
-        "In": [
-          "query"
-        ],
-        "Required": true,
-        "Pattern": "(sha256|md5|domain|ipv4|ipv6):.*",
-        "Description": "Indicators to graph",
         "Position": null
       }
     ]
