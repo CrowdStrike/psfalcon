@@ -7,12 +7,12 @@ function Invoke-Deploy {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'InvokeDeploy')]
+    [CmdletBinding(DefaultParameterSetName = 'CustomInvokeDeploy')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('InvokeDeploy')
+        $Endpoints = @('CustomInvokeDeploy')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
