@@ -86,6 +86,8 @@ FunctionsToExport = @(
     'Convert-CSV',
     'Get-Queue',
     'Invoke-Deploy',
+    'Open-Stream',
+    'Show-Map',
 
     # d4c-registration
     'Edit-AzureAccount',
@@ -111,7 +113,6 @@ FunctionsToExport = @(
 
     # event-streams
     'Get-Stream',
-    'Open-Stream',
     'Update-Stream',
 
     # falconx-sandbox
@@ -186,7 +187,6 @@ FunctionsToExport = @(
     'Get-Process',
     'New-IOC',
     'Remove-IOC',
-    'Show-Map',
 
     # malquery
     'Get-MalQuery',
