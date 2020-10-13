@@ -37,7 +37,7 @@ function Convert-CSV {
             Vulnerability = @('domain.SPAPIVulnerabilitiesEntitiesResponseV2')
         }
         function Add-Field ($Object, $Name, $Value) {
-            $Value = if ($Name -match $TimeRegex) {
+            $Value = if ($Value -and $Name -match $TimeRegex) {
                 # Add $TimeRegex values as [datetime]
                 [datetime] $Value
             } elseif (($Value -is [object[]]) -and ($Value[0] -is [string])) {
