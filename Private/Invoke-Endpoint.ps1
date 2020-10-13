@@ -80,12 +80,12 @@ function Invoke-Endpoint {
 
         if ($Query -match 'timeout') {
             # Gather timeout value from $Query and add 5 seconds
-            $Timeout = ($Query | Where-Object { $_ -match 'timeout' }).Split('=')[1] + 5
+            $Timeout = [int] ($Query | Where-Object { $_ -match 'timeout' }).Split('=')[1] + 5
 
             # Set client timeout in ticks
             $Client.Timeout = (New-TimeSpan -Seconds $Timeout).Ticks
 
-            Write-Verbose ("[$($MyInvocation.MyCommand.Name)] Request timeout set to $($Timeout) seconds")
+            Write-Verbose ("[$($MyInvocation.MyCommand.Name)] HttpClient timeout set to $($Timeout) seconds")
         }
         Write-Verbose ("[$($MyInvocation.MyCommand.Name)] $(($Target.Method).ToUpper())" +
         " $($Falcon.Hostname)$($Target.Path)")

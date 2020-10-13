@@ -1,7 +1,7 @@
 function Invoke-Command {
 <#
 .SYNOPSIS
-    Execute a command using Real-time Response
+    Issue or execute a command using Real-time Response
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
@@ -12,7 +12,7 @@ function Invoke-Command {
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('CustomRTR', 'RTR-ExecuteCommand', 'BatchCmd')
+        $Endpoints = @('CustomRTR', 'RTR-ExecuteCommand', 'CustomRTRBatch', 'BatchCmd')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -39,6 +39,18 @@ function Invoke-Command {
                     'QueueOffline' { $Param['QueueOffline'] = $PSBoundParameters.QueueOffline }
                 }
                 Invoke-RTR @Param
+            } elseif ($PSBoundParameters.HostIds) {
+                # Create a batch session and issue command
+                $Param = @{
+                    HostIds = $PSBoundParameters.HostIds
+                    Command = $PSBoundParameters.Command
+                }
+                switch ($PSBoundParameters.Keys) {
+                    'Arguments' { $Param['Arguments'] = $PSBoundParameters.Arguments }
+                    'Timeout' { $Param['Timeout'] = $PSBoundParameters.Timeout }
+                    'QueueOffline' { $Param['QueueOffline'] = $PSBoundParameters.QueueOffline }
+                }
+                Invoke-RTRBatch @Param
             } elseif ($PSBoundParameters.SessionId) {
                 # Evaluate input and make request
                 Invoke-Request -Query $Endpoints[1] -Dynamic $Dynamic

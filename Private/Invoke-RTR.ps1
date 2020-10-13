@@ -60,8 +60,8 @@ function Invoke-RTR {
             $Param = @{
                 HostId = $HostId
             }
-            if ($QueueOffline) {
-                $Param['QueueOffline'] = $QueueOffline
+            if ($PSBoundParameters.QueueOffline) {
+                $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
             }
             $Init = Start-FalconSession @Param
 
@@ -72,10 +72,10 @@ function Invoke-RTR {
             # Submit command request
             $Param = @{
                 SessionId = $Init.resources.session_id
-                Command = $Command
+                Command = $PSBoundParameters.Command
             }
-            if ($Arguments) {
-                $Param['Arguments'] = $Arguments
+            if ($PSBoundParameters.Arguments) {
+                $Param['Arguments'] = $PSBoundParameters.Arguments
             }
             $Request = & "Invoke-Falcon$($Permission)Command" @Param
 
@@ -83,10 +83,10 @@ function Invoke-RTR {
                 # Error when cloud_request_id is missing
                 throw "$($Request.errors.code): $($Request.errors.message)"
             }
-            if ($QueueOffline -and $Request.resources) {
+            if ($PSBoundParameters.QueueOffline -and $Request.resources) {
                 # Output result for queued session
                 $Request.resources
-            } elseif (-not $QueueOffline) {
+            } elseif (-not $PSBoundParameters.QueueOffline) {
                 Start-Sleep -Seconds $Sleep
 
                 # Query command results
