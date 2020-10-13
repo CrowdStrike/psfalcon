@@ -86,6 +86,7 @@ FunctionsToExport = @(
     'Convert-CSV',
     'Get-Queue',
     'Invoke-Deploy',
+    'Invoke-RTR',
     'Open-Stream',
     'Show-Map',
 

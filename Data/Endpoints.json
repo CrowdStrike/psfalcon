@@ -75,22 +75,8 @@
       "ContentType": "application/json"
     },
     "Permission": "real-time-response:write",
-    "Description": "Issue a Real-time Response command to a batch session using Active Responder permissions",
+    "Description": "Issue a Real-time Response command to an existing batch session",
     "Parameters": [
-      {
-        "Dynamic": "Timeout",
-        "Name": "timeout",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 30,
-        "Max": 600,
-        "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds",
-        "Position": null
-      },
       {
         "Dynamic": "Command",
         "Name": "base_command",
@@ -100,82 +86,28 @@
         ],
         "Required": true,
         "Enum": [
-          "cat",
-          "cd",
-          "clear",
           "cp",
-          "csrutil",
           "encrypt",
-          "env",
-          "eventlog",
-          "filehash",
           "get",
-          "getsid",
-          "help",
-          "history",
-          "ifconfig",
-          "ipconfig",
           "kill",
-          "ls",
           "map",
           "memdump",
           "mkdir",
-          "mount",
           "mv",
-          "netstat",
-          "ps",
+          "reg set",
           "reg delete",
           "reg load",
-          "reg query",
-          "reg set",
           "reg unload",
           "restart",
           "rm",
-          "runscript",
           "shutdown",
           "umount",
           "unmap",
-          "users",
           "xmemdump",
           "zip"
         ],
         "Description": "Command to issue",
-        "Position": null
-      },
-      {
-        "Dynamic": "BatchId",
-        "Name": "batch_id",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": true,
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response batch session identifier",
-        "Position": null
-      },
-      {
-        "Dynamic": "Arguments",
-        "Name": "command_string",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Description": "Arguments to include with the command",
-        "Position": null
-      },
-      {
-        "Dynamic": "OptionalHostIds",
-        "Name": "optional_hosts",
-        "Type": "array",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Pattern": "\\w{32}",
-        "Description": "Restrict the request to specific host identifiers",
-        "Position": null
+        "Position": 1
       }
     ],
     "Responses": {
@@ -195,22 +127,8 @@
       "ContentType": "application/json"
     },
     "Permission": "real-time-response-admin:write",
-    "Description": "Issue a Real-time Response command to a batch session using Admin permissions",
+    "Description": "Issue a Real-time Response command to an existing batch session",
     "Parameters": [
-      {
-        "Dynamic": "Timeout",
-        "Name": "timeout",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 30,
-        "Max": 600,
-        "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds",
-        "Position": null
-      },
       {
         "Dynamic": "Command",
         "Name": "base_command",
@@ -220,84 +138,12 @@
         ],
         "Required": true,
         "Enum": [
-          "cat",
-          "cd",
-          "clear",
-          "cp",
-          "csrutil",
-          "encrypt",
-          "env",
-          "eventlog",
-          "filehash",
-          "get",
-          "getsid",
-          "help",
-          "history",
-          "ifconfig",
-          "ipconfig",
-          "kill",
-          "ls",
-          "map",
-          "memdump",
-          "mkdir",
-          "mount",
-          "mv",
-          "netstat",
-          "ps",
           "put",
-          "reg delete",
-          "reg load",
-          "reg query",
-          "reg set",
-          "reg unload",
-          "restart",
-          "rm",
           "run",
-          "runscript",
-          "shutdown",
-          "umount",
-          "unmap",
-          "users",
-          "xmemdump",
-          "zip"
+          "runscript"
         ],
         "Description": "Command to issue",
-        "Position": null
-      },
-      {
-        "Dynamic": "BatchId",
-        "Name": "batch_id",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": true,
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response batch session identifier",
-        "Position": null
-      },
-      {
-        "Dynamic": "Arguments",
-        "Name": "command_string",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Description": "Arguments to include with the command",
-        "Position": null
-      },
-      {
-        "Dynamic": "OptionalHostIds",
-        "Name": "optional_hosts",
-        "Type": "array",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Pattern": "\\w{32}",
-        "Description": "Restrict the request to specific host identifiers",
-        "Position": null
+        "Position": 1
       }
     ],
     "Responses": {
@@ -319,18 +165,6 @@
     "Permission": "real-time-response:read",
     "Description": "Issue a Real-time Response command to an existing batch session",
     "Parameters": [
-      {
-        "Dynamic": "BatchId",
-        "Name": "batch_id",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": true,
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response batch session identifier",
-        "Position": 1
-      },
       {
         "Dynamic": "Command",
         "Name": "base_command",
@@ -360,43 +194,7 @@
           "users"
         ],
         "Description": "Command to issue",
-        "Position": 2
-      },
-      {
-        "Dynamic": "Arguments",
-        "Name": "command_string",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Description": "Arguments to include when issuing the command",
-        "Position": 3
-      },
-      {
-        "Dynamic": "OptionalHostIds",
-        "Name": "optional_hosts",
-        "Type": "array",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Pattern": "\\w{32}",
-        "Description": "Restrict the request to specific host identifiers",
-        "Position": 4
-      },
-      {
-        "Dynamic": "Timeout",
-        "Name": "timeout",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 30,
-        "Max": 600,
-        "Description": "Length of time to wait for a result, in seconds",
-        "Position": 5
+        "Position": 1
       }
     ],
     "Responses": {
@@ -496,7 +294,6 @@
         "Required": false,
         "Min": 30,
         "Max": 600,
-        "Default": "30",
         "Description": "Length of time to wait for a result, in seconds",
         "Position": null
       },
@@ -534,18 +331,16 @@
     "Description": "Initialize a Real-time Response session on multiple hosts",
     "Parameters": [
       {
-        "Dynamic": "Timeout",
-        "Name": "timeout",
-        "Type": "int",
+        "Dynamic": "HostIds",
+        "Name": "host_ids",
+        "Type": "array",
         "In": [
-          "query"
+          "body"
         ],
-        "Required": false,
-        "Min": 30,
-        "Max": 600,
-        "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds",
-        "Position": null
+        "Required": true,
+        "Pattern": "\\w{32}",
+        "Description": "One or more host identifiers",
+        "Position": 1
       },
       {
         "Dynamic": "ExistingBatchId",
@@ -557,19 +352,20 @@
         "Required": false,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "Add hosts to an existing batch session",
-        "Position": null
+        "Position": 2
       },
       {
-        "Dynamic": "HostIds",
-        "Name": "host_ids",
-        "Type": "array",
+        "Dynamic": "Timeout",
+        "Name": "timeout",
+        "Type": "int",
         "In": [
-          "body"
+          "query"
         ],
-        "Required": true,
-        "Pattern": "\\w{32}",
-        "Description": "One or more host identifiers",
-        "Position": null
+        "Required": false,
+        "Min": 30,
+        "Max": 600,
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": 3
       },
       {
         "Dynamic": "QueueOffline",
@@ -580,7 +376,7 @@
         ],
         "Required": false,
         "Description": "Add sessions in this batch to the offline queue if the hosts do not initialize",
-        "Position": null
+        "Position": 4
       }
     ],
     "Responses": {
@@ -603,20 +399,6 @@
     "Description": "Refresh a batch Real-time Response session, to avoid hitting the default timeout of 10 minutes",
     "Parameters": [
       {
-        "Dynamic": "Timeout",
-        "Name": "timeout",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Required": false,
-        "Min": 30,
-        "Max": 600,
-        "Default": "30",
-        "Description": "Length of time to wait for a result, in seconds",
-        "Position": null
-      },
-      {
         "Dynamic": "BatchId",
         "Name": "batch_id",
         "Type": "string",
@@ -626,7 +408,7 @@
         "Required": true,
         "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
         "Description": "Real-time Response batch session identifier",
-        "Position": null
+        "Position": 1
       },
       {
         "Dynamic": "RemoveHostIds",
@@ -638,7 +420,20 @@
         "Required": false,
         "Pattern": "\\w{32}",
         "Description": "One or more Host identifiers to remove from the batch session",
-        "Position": null
+        "Position": 2
+      },
+      {
+        "Dynamic": "Timeout",
+        "Name": "timeout",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 30,
+        "Max": 600,
+        "Description": "Length of time to wait for a result, in seconds",
+        "Position": 3
       }
     ],
     "Responses": {
@@ -1525,26 +1320,26 @@
     "Permission": "real-time-response:read, real-time-response-admin:write",
     "Parameters": [
       {
-        "Dynamic": "Path",
-        "Type": "string",
-        "Required": true,
-        "Description": "Path to the executable",
-        "Position": null
-      },
-      {
         "Dynamic": "HostIds",
         "Type": "array",
         "Required": true,
         "Pattern": "\\w{32}",
         "Description": "One or more Host identifiers",
-        "Position": null
+        "Position": 1
+      },
+      {
+        "Dynamic": "Path",
+        "Type": "string",
+        "Required": true,
+        "Description": "Path to the executable",
+        "Position": 2
       },
       {
         "Dynamic": "Arguments",
         "Type": "string",
         "Required": false,
         "Description": "Command line arguments to include upon execution",
-        "Position": null
+        "Position": 3
       },
       {
         "Dynamic": "Timeout",
@@ -1553,14 +1348,14 @@
         "Min": 30,
         "Max": 600,
         "Description": "Length of time to wait for a result, in seconds",
-        "Position": null
+        "Position": 4
       },
       {
         "Dynamic": "QueueOffline",
         "Type": "bool",
         "Required": false,
         "Description": "Add session to the offline queue if the host does not initialize",
-        "Position": null
+        "Position": 5
       }
     ]
   },
@@ -1570,18 +1365,10 @@
     "Permission": "streaming:read"
   },
   {
-    "Name": "CustomRTR",
-    "Permission": "real-time-response:read",
-    "Description": "Create a session and execute a Real-time Response command",
+    "Name": "InvokeSession",
+    "Permission": "real-time-response:read, real-time-response:write",
+    "Description": "Start a session, execute a Real-time Response command and output results",
     "Parameters": [
-      {
-        "Dynamic": "HostId",
-        "Type": "string",
-        "Required": true,
-        "Pattern": "\\w{32}",
-        "Description": "Host identifier",
-        "Position": 1
-      },
       {
         "Dynamic": "Command",
         "Type": "string",
@@ -1590,30 +1377,53 @@
           "cat",
           "cd",
           "clear",
+          "cp",
           "csrutil",
+          "encrypt",
           "env",
           "eventlog",
           "filehash",
+          "get",
           "getsid",
           "help",
           "history",
           "ifconfig",
           "ipconfig",
+          "kill",
           "ls",
+          "map",
+          "memdump",
+          "mkdir",
           "mount",
+          "mv",
           "netstat",
           "ps",
+          "put",
           "reg query",
-          "users"
+          "reg set",
+          "reg delete",
+          "reg load",
+          "reg unload",
+          "restart",
+          "rm",
+          "run",
+          "runscript",
+          "shutdown",
+          "umount",
+          "unmap",
+          "users",
+          "xmemdump",
+          "zip"
         ],
         "Description": "Command to execute",
-        "Position": 2
+        "Position": 1
       },
       {
-        "Dynamic": "Arguments",
+        "Dynamic": "HostId",
         "Type": "string",
-        "Required": false,
-        "Description": "Arguments to include when executing command",
+        "Required": true,
+        "Pattern": "\\w{32}",
+        "Description": "Host identifier",
         "Position": 3
       },
       {
@@ -1626,18 +1436,10 @@
     ]
   },
   {
-    "Name": "CustomRTRBatch",
-    "Permission": "real-time-response:read",
-    "Description": "Create a batch session and execute a Real-time Response command",
+    "Name": "InvokeBatch",
+    "Permission": "real-time-response:read, real-time-response:write",
+    "Description": "Start a batch session, execute a Real-time Response command and output results",
     "Parameters": [
-      {
-        "Dynamic": "HostIds",
-        "Type": "array",
-        "Required": true,
-        "Pattern": "\\w{32}",
-        "Description": "One or more host identifiers",
-        "Position": 1
-      },
       {
         "Dynamic": "Command",
         "Type": "string",
@@ -1646,30 +1448,53 @@
           "cat",
           "cd",
           "clear",
+          "cp",
           "csrutil",
+          "encrypt",
           "env",
           "eventlog",
           "filehash",
+          "get",
           "getsid",
           "help",
           "history",
           "ifconfig",
           "ipconfig",
+          "kill",
           "ls",
+          "map",
+          "memdump",
+          "mkdir",
           "mount",
+          "mv",
           "netstat",
           "ps",
+          "put",
           "reg query",
-          "users"
+          "reg set",
+          "reg delete",
+          "reg load",
+          "reg unload",
+          "restart",
+          "rm",
+          "run",
+          "runscript",
+          "shutdown",
+          "umount",
+          "unmap",
+          "users",
+          "xmemdump",
+          "zip"
         ],
-        "Description": "Command to issue",
-        "Position": 2
+        "Description": "Command to execute",
+        "Position": 1
       },
       {
-        "Dynamic": "Arguments",
-        "Type": "string",
-        "Required": false,
-        "Description": "Arguments to include when issuing the command",
+        "Dynamic": "HostIds",
+        "Type": "array",
+        "Required": true,
+        "Pattern": "\\w{32}",
+        "Description": "One or more host identifiers",
         "Position": 3
       },
       {
@@ -7783,7 +7608,7 @@
       "ContentType": "application/json"
     },
     "Permission": "real-time-response:write",
-    "Description": "Issue a Real-time Response command to a session using Active Responder permissions",
+    "Description": "Issue a Real-time Response command to an existing session",
     "Parameters": [
       {
         "Dynamic": "Command",
@@ -7794,70 +7619,28 @@
         ],
         "Required": true,
         "Enum": [
-          "cat",
-          "cd",
-          "clear",
           "cp",
-          "csrutil",
           "encrypt",
-          "env",
-          "eventlog",
-          "filehash",
           "get",
-          "getsid",
-          "help",
-          "history",
-          "ifconfig",
-          "ipconfig",
           "kill",
-          "ls",
           "map",
           "memdump",
           "mkdir",
-          "mount",
           "mv",
-          "netstat",
-          "ps",
-          "reg query",
           "reg set",
           "reg delete",
           "reg load",
           "reg unload",
           "restart",
           "rm",
-          "runscript",
           "shutdown",
           "umount",
           "unmap",
-          "users",
           "xmemdump",
           "zip"
         ],
         "Description": "Command to issue",
-        "Position": null
-      },
-      {
-        "Dynamic": "Arguments",
-        "Name": "command_string",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Description": "Arguments to include with the command",
-        "Position": null
-      },
-      {
-        "Dynamic": "SessionId",
-        "Name": "session_id",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": true,
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response session identifier",
-        "Position": null
+        "Position": 1
       }
     ],
     "Responses": {
@@ -7876,7 +7659,7 @@
       "ContentType": "application/json"
     },
     "Permission": "real-time-response-admin:write",
-    "Description": "Issue a Real-time Response command to a session using Admin permissions",
+    "Description": "Issue a Real-time Response command to an existing session",
     "Parameters": [
       {
         "Dynamic": "Command",
@@ -7887,72 +7670,12 @@
         ],
         "Required": true,
         "Enum": [
-          "cat",
-          "cd",
-          "clear",
-          "cp",
-          "csrutil",
-          "encrypt",
-          "env",
-          "eventlog",
-          "filehash",
-          "get",
-          "getsid",
-          "help",
-          "history",
-          "ifconfig",
-          "ipconfig",
-          "kill",
-          "ls",
-          "map",
-          "memdump",
-          "mkdir",
-          "mount",
-          "mv",
-          "netstat",
-          "ps",
           "put",
-          "reg query",
-          "reg set",
-          "reg delete",
-          "reg load",
-          "reg unload",
-          "restart",
-          "rm",
           "run",
-          "runscript",
-          "shutdown",
-          "umount",
-          "unmap",
-          "users",
-          "xmemdump",
-          "zip"
+          "runscript"
         ],
         "Description": "Command to issue",
-        "Position": null
-      },
-      {
-        "Dynamic": "Arguments",
-        "Name": "command_string",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Description": "Arguments to include with the command",
-        "Position": null
-      },
-      {
-        "Dynamic": "SessionId",
-        "Name": "session_id",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": true,
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response session identifier",
-        "Position": null
+        "Position": 1
       }
     ],
     "Responses": {
@@ -7973,18 +7696,6 @@
     "Permission": "real-time-response:read",
     "Description": "Issue a Real-time Response command to an existing session",
     "Parameters": [
-      {
-        "Dynamic": "SessionId",
-        "Name": "session_id",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": true,
-        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
-        "Description": "Real-time Response session identifier",
-        "Position": 1
-      },
       {
         "Dynamic": "Command",
         "Name": "base_command",
@@ -8014,18 +7725,7 @@
           "users"
         ],
         "Description": "Command to issue",
-        "Position": 2
-      },
-      {
-        "Dynamic": "Arguments",
-        "Name": "command_string",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Description": "Arguments to include when issuing the command",
-        "Position": 3
+        "Position": 1
       }
     ],
     "Responses": {
@@ -8834,7 +8534,7 @@
         "ParameterSets": [
           "Array"
         ],
-        "Position": null
+        "Position": 1
       },
       {
         "Dynamic": "Filter",
@@ -9082,6 +8782,96 @@
           "RTR-ListScripts"
         ],
         "Position": null
+      },
+      {
+        "Dynamic": "Arguments",
+        "Name": "command_string",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": false,
+        "Description": "Arguments to include with the command",
+        "ParameterSets": [
+          "RTR-ExecuteCommand",
+          "BatchCmd",
+          "RTR-ExecuteActiveResponderCommand",
+          "BatchActiveResponderCmd",
+          "RTR-ExecuteAdminCommand",
+          "BatchAdminCmd",
+          "InvokeSession",
+          "InvokeBatch"
+        ],
+        "Position": 2
+      },
+      {
+        "Dynamic": "BatchId",
+        "Name": "batch_id",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": true,
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Description": "Real-time Response batch session identifier",
+        "ParameterSets": [
+          "BatchCmd",
+          "BatchActiveResponderCmd",
+          "BatchAdminCmd"
+        ],
+        "Position": 3
+      },
+      {
+        "Dynamic": "SessionId",
+        "Name": "session_id",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": true,
+        "Pattern": "\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}",
+        "Description": "Real-time Response session identifier",
+        "Position": 3,
+        "ParameterSets": [
+          "RTR-ExecuteCommand",
+          "RTR-ExecuteActiveResponderCommand",
+          "RTR-ExecuteAdminCommand"
+        ]
+      },
+      {
+        "Dynamic": "OptionalHostIds",
+        "Name": "optional_hosts",
+        "Type": "array",
+        "In": [
+          "body"
+        ],
+        "Required": false,
+        "Pattern": "\\w{32}",
+        "Description": "Restrict the request to specific host identifiers",
+        "ParameterSets": [
+          "BatchCmd",
+          "BatchActiveResponderCmd",
+          "BatchAdminCmd"
+        ],
+        "Position": 4
+      },
+      {
+        "Dynamic": "Timeout",
+        "Name": "timeout",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 30,
+        "Max": 600,
+        "Description": "Length of time to wait for a result, in seconds",
+        "ParameterSets": [
+          "BatchCmd",
+          "BatchActiveResponderCmd",
+          "BatchAdminCmd"
+        ],
+        "Position": 5
       }
     ]
   },
