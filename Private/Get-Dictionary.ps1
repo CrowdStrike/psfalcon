@@ -39,6 +39,15 @@ function Get-Dictionary {
                 # Add attribute to collection
                 $Collection.Add($Attribute)
 
+                # Convert 'type' to PowerShell type
+                $PSType = switch ($Param.Type) {
+                    'array' { [array] }
+                    'bool' { [bool] }
+                    'hashtable' { [hashtable] }
+                    'int' { [int] }
+                    'switch' { [switch] }
+                    default { [string] }
+                }
                 if ($Param.Mandatory -eq $false) {
                     # Set ValidateNotNullOrEmpty when parameter is optional
                     $ValidEmpty = New-Object Management.Automation.ValidateNotNullOrEmptyAttribute
@@ -67,18 +76,9 @@ function Get-Dictionary {
                         ($Param.Pattern).ToString())
                     $Collection.Add($ValidPattern)
                 }
-                # Convert 'type' to PowerShell type
-                $Type = switch ($Param.Type) {
-                    'array' { [array] }
-                    'bool' { [bool] }
-                    'hashtable' { [hashtable] }
-                    'int' { [int] }
-                    'switch' { [switch] }
-                    default { [string] }
-                }
                 # Add collection to runtime parameter
                 $RunParam = New-Object System.Management.Automation.RuntimeDefinedParameter(
-                    $Param.Dynamic, $Type, $Collection)
+                    $Param.Dynamic, $PSType, $Collection)
 
                 # Add runtime parameter to dictionary
                 $Dynamic.Add($Param.Dynamic, $RunParam)
