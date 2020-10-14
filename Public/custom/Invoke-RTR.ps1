@@ -7,12 +7,12 @@ function Invoke-RTR {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'InvokeSession')]
+    [CmdletBinding(DefaultParameterSetName = 'InvokeRTR')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('InvokeSession', 'InvokeBatch')
+        $Endpoints = @('InvokeRTR')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -21,6 +21,9 @@ function Invoke-RTR {
         if (-not $PSBoundParameters.Help) {
             # Amount of seconds to wait between confirmation attempts
             $Sleep = 2
+
+            # Collect total HostId count for session or batch
+            $HostCount = ($PSBoundParameters.HostIds.count)
 
             # Gather available commands and set permission level
             @{ 
@@ -36,11 +39,15 @@ function Invoke-RTR {
                 default { $null }
             }
             # Set 'invoke' command
-            $InvokeCmd = "Invoke-Falcon$($Permission)Command"
-
+            $InvokeCmd = if ($PSBoundParameters.Command -eq 'get' -and $HostCount -gt 1) {
+                "Invoke-FalconBatchGet"
+            } else {
+                "Invoke-Falcon$($Permission)Command"
+            }
             # Set 'confirm' command
-            $ConfirmCmd = "Confirm-Falcon$($Permission)Command"
-
+            if ($HostCount -eq 1) {
+                $ConfirmCmd = "Confirm-Falcon$($Permission)Command"
+            }
             function Add-Field ($Object, $Name, $Value) {
                 # Add field and value to [PSCustomObject]
                 $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
@@ -53,9 +60,9 @@ function Invoke-RTR {
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             try {
-                if ($PSBoundParameters.HostId) {
+                if ($HostCount -eq 1) {
                     $Param = @{
-                        HostId = $PSBoundParameters.HostId
+                        HostId = [string] $PSBoundParameters.HostIds
                     }
                 } else {
                     $Param = @{
@@ -64,7 +71,9 @@ function Invoke-RTR {
                 }
                 switch ($PSBoundParameters.Keys) {
                     'Timeout' {
-                        $Param['Timeout'] = $PSBoundParameters.Timeout
+                        if ($HostCount -gt 1) {
+                            $Param['Timeout'] = $PSBoundParameters.Timeout
+                        }
                     }
                     'QueueOffline' {
                         $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
@@ -86,7 +95,12 @@ function Invoke-RTR {
                     $Param['SessionId'] = $Init.resources.session_id
                 }
                 if ($PSBoundParameters.Arguments) {
-                    $Param['Arguments'] = $PSBoundParameters.Arguments
+                    if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
+                        $Param['Path'] = $PSBoundParameters.Arguments
+                        $Param.Remove('Command')
+                    } else {
+                        $Param['Arguments'] = $PSBoundParameters.Arguments
+                    }
                 }
                 $Request = & $InvokeCmd @Param
 
