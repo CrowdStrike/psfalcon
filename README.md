@@ -250,6 +250,62 @@ PowerShell scripts. If the token has expired it will be ignored.
   -QueueOffline [Boolean]
     Add session to the offline queue if the host does not initialize
 ```
+### Invoke-FalconRTR
+```
+# Start a session, execute a Real-time Response command and output results
+  Requires real-time-response:read, real-time-response:write
+
+  -Command [String] <Required>
+    Command to execute
+      Position : 1
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get,
+      getsid, help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount,
+      mv, netstat, ps, put, reg query, reg set, reg delete, reg load, reg unload, restart,
+      rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
+
+  -HostId [String] <Required>
+    Host identifier
+      Position : 3
+      Pattern : \w{32}
+
+  -QueueOffline [Boolean]
+    Add session to the offline queue if the host does not initialize
+      Position : 4
+
+  -Arguments [String]
+    Arguments to include with the command
+      Position : 2
+
+# Start a batch session, execute a Real-time Response command and output results
+  Requires real-time-response:read, real-time-response:write
+
+  -Command [String] <Required>
+    Command to execute
+      Position : 1
+      Accepted : cat, cd, clear, cp, csrutil, encrypt, env, eventlog, filehash, get,
+      getsid, help, history, ifconfig, ipconfig, kill, ls, map, memdump, mkdir, mount,
+      mv, netstat, ps, put, reg query, reg set, reg delete, reg load, reg unload, restart,
+      rm, run, runscript, shutdown, umount, unmap, users, xmemdump, zip
+
+  -QueueOffline [Boolean]
+    Add sessions in this batch to the offline queue if the hosts do not initialize
+      Position : 5
+
+  -Arguments [String]
+    Arguments to include with the command
+      Position : 2
+
+  -HostIds [Array] <Required>
+    One or more host identifiers
+      Position : 3
+      Pattern : \w{32}
+
+  -Timeout [Int32]
+    Length of time to wait for a result, in seconds
+      Position : 4
+      Minimum : 30
+      Maximum : 600
+```
 ## /d4c-registration/
 
 ### Edit-FalconAzureAccount
