@@ -7,12 +7,12 @@ function Open-Stream {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'CustomOpenStream')]
+    [CmdletBinding(DefaultParameterSetName = 'OpenStream')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('CustomOpenStream')
+        $Endpoints = @('OpenStream')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

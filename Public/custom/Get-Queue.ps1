@@ -7,12 +7,12 @@ function Get-Queue {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'CustomGetQueue')]
+    [CmdletBinding(DefaultParameterSetName = 'GetQueue')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('CustomGetQueue')
+        $Endpoints = @('GetQueue')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

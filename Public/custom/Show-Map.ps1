@@ -7,12 +7,12 @@ function Show-Map {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'CustomShowMap')]
+    [CmdletBinding(DefaultParameterSetName = 'ShowMap')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('CustomShowMap')
+        $Endpoints = @('ShowMap')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
