@@ -1624,7 +1624,7 @@
         ],
         "Required": true,
         "Pattern": "\\w{64}",
-        "Description": "SHA256 hash value of the file to remove",
+        "Description": "Sha256 hash value of the file to remove",
         "Position": null
       }
     ],
@@ -2863,9 +2863,8 @@
           "query"
         ],
         "Required": true,
-        "Min": 64,
-        "Max": 64,
-        "Description": "SHA256 value of the sample",
+        "Pattern": "\\w{64}",
+        "Description": "Sha256 value of the sample",
         "Position": null
       },
       {
@@ -3338,7 +3337,7 @@
         ],
         "Pattern": "\\w{64}",
         "Required": true,
-        "Description": "SHA256 hash value of the file",
+        "Description": "Sha256 hash value of the file",
         "Position": null
       },
       {
@@ -6644,7 +6643,7 @@
         "Max": 500,
         "Required": false,
         "Pattern": "\\w{64}",
-        "Description": "One or more SHA256 hash values",
+        "Description": "One or more Sha256 hash values",
         "Position": null
       }
     ],
@@ -7671,9 +7670,8 @@
           "query"
         ],
         "Required": true,
-        "Min": 64,
-        "Max": 64,
-        "Description": "SHA256 value of the extracted file",
+        "Pattern": "\\w{64}",
+        "Description": "Sha256 value of the extracted file",
         "Position": null
       },
       {
@@ -8895,8 +8893,6 @@
         "In": [
           "body"
         ],
-        "Min": 64,
-        "Max": 64,
         "Pattern": "\\w{64}",
         "Parent": "sandbox",
         "Required": false,
@@ -8992,6 +8988,7 @@
         "In": [
           "body"
         ],
+        "Pattern": "\\w{64}",
         "Required": true,
         "Description": "One or more SHA256 hash values to submit as a volume scan",
         "Position": null
