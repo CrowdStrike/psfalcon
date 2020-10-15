@@ -22,18 +22,24 @@ function Convert-CSV {
 
         # Fields excluded from output
         $Exclusions = @{
-            Hosts = @('policies')
+            Detection = @('hostinfo', 'behaviors_processed')
+            Host = @('policies')
+            Incident = @('hosts')
         }
         # TypeNames used to determine formatting
         $TypeNames = @{
+            Detection = @('domain.MsaDetectSummariesResponse')
             Host = @('domain.DeviceDetailsResponseSwagger', 'responses.HostGroupMembersV1',
             'responses.PolicyMembersRespV1')
             HostGroup = @('responses.HostGroupsV1')
-            Identifier = @('domain.DeviceResponse', 'domain.SPAPIQueryVulnerabilitiesResponse',
-            'msa.QueryResponse')
+            Identifier = @('binservclient.MsaPutFileResponse', 'domain.DeviceResponse',
+            'domain.SPAPIQueryVulnerabilitiesResponse', 'api.MsaIncidentQueryResponse', 'msa.QueryResponse')
+            Incident = @('api.MsaExternalIncidentResponse')
             IOC = @('api.MsaReplyIOCIDs', 'api.MsaReplyIOC')
             Prevention = @('responses.PreventionPoliciesV1')
+            PutFile = @('binservclient.MsaPFResponse')
             SensorUpdate = @('responses.SensorUpdatePoliciesV2')
+            User = @('domain.UserMetaDataResponse')
             Vulnerability = @('domain.SPAPIVulnerabilitiesEntitiesResponseV2')
         }
         function Add-Field ($Object, $Name, $Value) {
@@ -49,9 +55,46 @@ function Convert-CSV {
             # Add field and value to [PSCustomObject]
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
         }
+        function Get-SimpleObject ($Object) {
+            ($Object.resources).foreach{
+                # Output detail array
+                $Item = [PSCustomObject] @{}
+
+                ($_.psobject.properties).foreach{
+                    Add-Field $Item $_.name $_.value
+                }
+                $Item
+            }
+        }
     }
     process {
         switch ($Object.PSObject.TypeNames | Where-Object { $_ -notmatch '^System.*$' }) {
+            { $TypeNames.Detection -contains $_ } {
+                # Convert detailed detection results
+                ($Object.resources).foreach{
+                    # Output detail array
+                    $Item = [PSCustomObject] @{}
+
+                    ($_.psobject.properties).foreach{
+                        if ($_.name -eq 'device') {
+                            # Add device identifier
+                            Add-Field $Item 'device_id' $_.value.device_id
+                        } elseif ($_.name -eq 'behaviors') {
+                            # Add combined tactic and technique identifiers
+                            $TTP = ($_.value).foreach{
+                                "$($_.tactic_id):$($_.technique_id)"
+                            }
+                            Add-Field $Item 'tactic_and_technique' ($TTP -join ', ')
+                        } elseif ($_.name -eq 'quarantined_files') {
+                            # Add quarantined file identifiers
+                            Add-Field $Item 'quarantined_files' $_.value.id
+                        } elseif ($Exclusions.Detection -notcontains $_.name) {
+                            Add-Field $Item $_.name $_.value
+                        }
+                    }
+                    $Item
+                }
+            }
             { $TypeNames.Host -contains $_ } {
                 # Convert detailed host results
                 ($Object.resources).foreach{
@@ -83,27 +126,16 @@ function Convert-CSV {
                         } elseif ($_.name -eq 'meta') {
                             # Add meta version
                             Add-Field $Item "$($_.name)_version" $_.value.version
-                        } elseif ($Exclusions.Hosts -notcontains $_.name) {
-                            # Add field and value
+                        } elseif ($Exclusions.Host -notcontains $_.name) {
                             Add-Field $Item $_.name $_.value
                         }
                     }
-                    # Output item
                     $Item
                 }
             }
             { $TypeNames.HostGroup -contains $_ } {
                 # Convert detailed host group results
-                ($Object.resources).foreach{
-                    # Output detail array
-                    $Item = [PSCustomObject] @{}
-
-                    ($_.psobject.properties).foreach{
-                        Add-Field $Item $_.name $_.value
-                    }
-                    # Output item
-                    $Item
-                }
+                Get-SimpleObject $Object
             }
             { $TypeNames.Identifier -contains $_ } {
                 # Output identifier array
@@ -111,6 +143,19 @@ function Convert-CSV {
                     [PSCustomObject] @{
                         id = $_
                     }
+                }
+            }
+            { $TypeNames.Incident -contains $_ } {
+                # Convert detailed incident results
+                ($Object.resources).foreach{
+                    $Item = [PSCustomObject] @{}
+
+                    ($_.psobject.properties).foreach{
+                        if ($Exclusions.Incident -notcontains $_.name) {
+                            Add-Field $Item $_.name $_.value
+                        }
+                    }
+                    $Item
                 }
             }
             { $TypeNames.IOC -contains $_ } {
@@ -123,15 +168,8 @@ function Convert-CSV {
                         }
                     }
                 } else {
-                    ($Object.resources).foreach{
-                        $Item = [PSCustomObject] @{}
-
-                        ($_.psobject.properties).foreach{
-                            Add-Field $Item $_.name $_.value
-                        }
-                        # Output item
-                        $Item
-                    }
+                    # Convert detailed IOC results
+                    Get-SimpleObject $Object
                 }
             }
             { $TypeNames.Prevention -contains $_ } {
@@ -157,9 +195,12 @@ function Convert-CSV {
                             Add-Field $Item $_.name $_.value
                         }
                     }
-                    # Output item
                     $Item
                 }
+            }
+            { $TypeNames.PutFile -contains $_ } {
+                # Convert detailed put file results
+                Get-SimpleObject $Object
             }
             { $TypeNames.SensorUpdate -contains $_ } {
                 # Convert detailed Sensor Update policy results
@@ -182,6 +223,10 @@ function Convert-CSV {
                     # Output item
                     $Item
                 }
+            }
+            { $TypeNames.User -contains $_ } {
+                # Convert detailed user results
+                Get-SimpleObject $Object
             }
             { $TypeNames.Vulnerability -contains $_ } {
                 # Convert detailed vulnerability results
