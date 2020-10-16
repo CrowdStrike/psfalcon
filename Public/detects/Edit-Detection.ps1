@@ -18,14 +18,13 @@ function Edit-Detection {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     process {
-        if ($PSBoundParameters.Comment -and (-not($PSBoundParameters.AssignedUuid -or
-        $PSBoundParameters.ShowInUi -or $PSBoundParameters.Status))) {
-            # Output exception if 'Comment' is provided without other required field
-            throw 'Must provide AssignedUuid, ShowInUi or Status when adding a Comment'
-        }
         if ($PSBoundParameters.Help) {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
+        } elseif ($PSBoundParameters.Comment -and (-not($PSBoundParameters.AssignedUuid -or
+        $PSBoundParameters.ShowInUi -or $PSBoundParameters.Status))) {
+            # Output exception if 'comment' is provided without other required field
+            throw 'Must provide AssignedUuid, ShowInUi or Status when adding a Comment'
         } else {
             # Evaluate input and make request
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
