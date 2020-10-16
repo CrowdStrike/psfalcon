@@ -96,10 +96,10 @@ function Invoke-RTR {
                 }
                 if ($PSBoundParameters.Arguments) {
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        $Param['Path'] = $PSBoundParameters.Arguments
+                        $Param['Path'] = "'$($PSBoundParameters.Arguments)'"
                         $Param.Remove('Command')
                     } else {
-                        $Param['Arguments'] = $PSBoundParameters.Arguments
+                        $Param['Arguments'] = "'$($PSBoundParameters.Arguments)'"
                     }
                 }
                 $Request = & $InvokeCmd @Param
