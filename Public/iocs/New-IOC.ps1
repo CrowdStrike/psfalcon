@@ -31,7 +31,7 @@ function New-IOC {
                 # Build body from array
                 $Param = @{
                     Endpoint = $Endpoints[0]
-                    Body = $PSBoundParameters.Array[$i..($i + ($Max -1))]
+                    Body = $PSBoundParameters.Array[$i..($i + ($Max - 1))]
                 }
                 # Convert Body to Json
                 Format-Param $Param
