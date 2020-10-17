@@ -47,17 +47,16 @@ function Split-Param {
     }
     process {
         if ($Max -and $Param.Query.count -gt $Max) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] query: $Max identifiers per request"
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max query values per request"
 
             for ($i = 0; $i -lt $Param.Query.count; $i += $Max) {
-                # Output groups of 'query' inputs
+                # Output groups of 'query' identifiers
                 $Group = @{
-                    Endpoint = $Param.Endpoint
                     Query = $Param.Query[$i..($i + ($Max - 1))]
                 }
-                @('Body', 'Formdata', 'Header', 'Outfile', 'Path') | ForEach-Object {
-                    if ($Param.$_) {
-                        # Add other fields to group
+                ($Param.Keys).foreach{
+                    # Add other parameters
+                    if ($_ -ne 'Query') {
                         $Group[$_] = $Param.$_
                     }
                 }
@@ -65,21 +64,27 @@ function Split-Param {
                 $Group
             }
         } elseif ($Max -and $Param.Body.ids.count -gt $Max) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] body: $Max identifiers per request"
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max body values per request"
 
             for ($i = 0; $i -lt $Param.Body.ids.count; $i += $Max) {
-                # Output groups of 'body' inputs
+                # Output groups of 'body' identifiers
                 $Group = @{
-                    Endpoint = $Param.Endpoint
-                    Body = @{ ids = @( $Param.Body.ids[$i..($i + ($Max - 1))] ) }
-                }
-                @('Formdata', 'Header', 'Outfile', 'Path', 'Query') | ForEach-Object {
-                    if ($Param.$_) {
-                        # Add other fields to group
-                        $Group[$_] = $Param.$_
+                    Body = @{
+                        ids = $Param.Body.ids[$i..($i + ($Max - 1))]
                     }
                 }
-                # Output result
+                ($Param.Keys).foreach{
+                    # Add other parameters
+                    if ($_ -ne 'Body') {
+                        $Group[$_] = $Param.$_
+                    } else {
+                        (($Param.$_).Keys).foreach{
+                            if ($_ -ne 'ids') {
+                                $Group.Body[$_] = $Param.Body.$_
+                            }
+                        }
+                    }
+                }
                 $Group
             }
         } else {
