@@ -25,6 +25,10 @@ function Invoke-RTR {
             # Collect total HostId count for session or batch
             $HostCount = ($PSBoundParameters.HostIds.count)
 
+            # Encapsulate arguments in quotes when a parameter is not specified
+            if ($PSBoundParameters.Arguments -and ($PSBoundParameters.Arguments -notmatch '^-\w{1,}=')) {
+                $PSBoundParameters.Arguments = "'$($PSBoundParameters.Arguments)'"
+            }
             # Gather available commands and set permission level
             @{ 
                 Responder = 'RTR-ExecuteActiveResponderCommand'
@@ -96,10 +100,10 @@ function Invoke-RTR {
                 }
                 if ($PSBoundParameters.Arguments) {
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        $Param['Path'] = "'$($PSBoundParameters.Arguments)'"
+                        $Param['Path'] = "$($PSBoundParameters.Arguments)"
                         $Param.Remove('Command')
                     } else {
-                        $Param['Arguments'] = "'$($PSBoundParameters.Arguments)'"
+                        $Param['Arguments'] = "$($PSBoundParameters.Arguments)"
                     }
                 }
                 $Request = & $InvokeCmd @Param
