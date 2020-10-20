@@ -58,7 +58,7 @@ function Get-Queue {
                 # Make request for sessions with queued commands
                 $Param = @{
                     Filter = "created_at:>'$($Falcon.Rfc3339(-$Days))'+commands_queued:1"
-                    # All = $true TODO: fix this... all seems to break everything?
+                    All = $true
                 }
                 $SessionIds = Get-FalconSession @Param
 
