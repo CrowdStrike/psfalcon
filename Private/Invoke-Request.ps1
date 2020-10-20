@@ -76,19 +76,16 @@ function Invoke-Request {
                 # Convert body to Json
                 Format-Param $Param
 
-                # Make request
-                $Request = Invoke-Endpoint @Param
-
-                if ($Request.resources -and $Detailed -and $Detailed -ne 'Combined') {
-                    # Add identifiers
-                    $DetailParam = @{
-                        $Detailed = $Request.resources
+                if ($Detailed -and $Detailed -ne 'Combined') {
+                    # Add identifiers to command string
+                    $CmdParam = @{
+                        $Detailed = (Invoke-Endpoint @Param).resources
                     }
                     # Re-run command for identifier detail
-                    & $Command @DetailParam
+                    & $Command @CmdParam
                 } else {
                     # Output result
-                    $Request
+                    Invoke-Endpoint @Param
                 }
             }
         }
