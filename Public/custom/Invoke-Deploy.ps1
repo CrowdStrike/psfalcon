@@ -33,7 +33,7 @@ function Invoke-Deploy {
         }
         # Capture filename and process name from input
         $FilePath = if ($Dynamic.Path.Value -match '^\.') {
-            $Dynamic.Path.Value -replace '^\.', $pwd
+            $Dynamic.Path.Value -replace '^\.', $PSCmdlet.MyInvocation.PSScriptRoot
         } else {
             $Dynamic.Path.Value
         }
