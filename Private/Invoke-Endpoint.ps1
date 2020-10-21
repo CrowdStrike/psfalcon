@@ -98,7 +98,7 @@ function Invoke-Endpoint {
                 foreach ($Key in $Formdata.Keys) {
                     if ((Test-Path $Formdata.$Key) -eq $true) {
                         # If file, read as bytes
-                        $FileStream = [System.IO.File]::OpenRead($Formdata.$Key)
+                        $FileStream = [System.IO.FileStream]::New($Formdata.$Key, [System.IO.FileMode]::Open)
                         $Filename = [System.IO.Path]::GetFileName($Formdata.$Key)
                         $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
                         $MultiContent.Add($StreamContent, $Key, $Filename)
@@ -142,11 +142,11 @@ function Invoke-Endpoint {
                     # Display successful output
                     Get-ChildItem $Outfile | Out-Host
                 }
-            } elseif ($Response.Result) {
+            } elseif ($Response) {
                 # Format output
                 Format-Result $Response $Endpoint
             } else {
-                throw "Unable to perform request. Check connectivity and proxy configuration."
+                throw "Unable to complete request. Check connectivity and proxy configuration."
             }
         } catch {
             # Output error
