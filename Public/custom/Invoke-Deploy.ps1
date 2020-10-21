@@ -32,8 +32,13 @@ function Invoke-Deploy {
             $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
         }
         # Capture filename and process name from input
-        $Filename = "$([System.IO.Path]::GetFileName($PSBoundParameters.Path))"
-        $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($PSBoundParameters.Path))"
+        $FilePath = if ($Dynamic.Path.Value -match '^\.') {
+            $Dynamic.Path.Value -replace '^\.', $pwd
+        } else {
+            $Dynamic.Path.Value
+        }
+        $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
+        $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
 
         function Add-Field ($Object, $Name, $Value) {
             # Add NoteProperty to PSCustomObject
@@ -81,7 +86,7 @@ function Invoke-Deploy {
             # Output timestamped message to console
             Write-Host "[$($Falcon.Rfc3339(0))] $Value"
         }
-        if (-not $PSBoundParameters.Help) {
+        if (-not $PSBoundParameters.Help -and ((Test-Path $FilePath) -eq $true)) {
             try {
                 Write-Log "Checking cloud for existing file..."
 
@@ -100,14 +105,14 @@ function Invoke-Deploy {
                 }
                 if ($CloudFile) {
                     # Capture detail about local file to compare with cloud file
-                    $LocalFile = foreach ($Item in (Get-ChildItem $PSBoundParameters.Path |
+                    $LocalFile = foreach ($Item in (Get-ChildItem $FilePath |
                     Select-Object CreationTime, Name, LastWriteTime)) {
                         # Capture relevant fields into hashtable
                         [ordered] @{
                             name = $Item.Name
                             created_timestamp = [datetime] $Item.CreationTime
                             modified_timestamp = [datetime] $Item.LastWriteTime
-                            sha256 = ((Get-FileHash -Algorithm SHA256 -Path $PSBoundParameters.Path).Hash).ToLower()
+                            sha256 = ((Get-FileHash -Algorithm SHA256 -Path $FilePath).Hash).ToLower()
                         }
                     }
                     if ($LocalFile.sha256 -eq $CloudFile.sha256) {
@@ -149,6 +154,9 @@ function Invoke-Deploy {
         if ($PSBoundParameters.Help) {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
+        } elseif ((Test-Path $FilePath) -eq $false) {
+            # Output error
+            Write-Error "Cannot find path $FilePath because it does not exist."
         } else {
             try {
                 if (($RemovePut.meta.writes.resources_affected -eq 1) -or (-not $CloudFile)) {
@@ -156,7 +164,7 @@ function Invoke-Deploy {
 
                     # Upload local file to cloud
                     $Param = @{
-                        Path = $PSBoundParameters.Path
+                        Path = $FilePath
                         Name = $Filename
                         Description = "$ProcessName"
                         Comment = "PSFalcon: Invoke-FalconDeploy"
