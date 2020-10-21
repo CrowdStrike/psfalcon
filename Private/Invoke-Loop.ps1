@@ -26,15 +26,19 @@ function Invoke-Loop {
         [string] $Detailed
     )
     process {
-        if ($Detailed) {
-            # Output detail about identifiers
+        # Make request
+        $Loop = & $Command @Param
+
+        if ($Loop.resources -and $Detailed -and $Detailed -ne 'Combined') {
+            # Add identifiers
             $DetailParam = @{
-                $Detailed = (& $Command @Param -OutVariable Loop).resources
+                $Detailed = $Loop.resources
             }
+            # Re-run command for identifier detail
             & $Command @DetailParam
         } else {
-            # Request identifiers
-            & $Command @Param -OutVariable Loop
+            # Output result
+            $Loop
         }
         if ($Loop.resources -and (($Loop.resources.count -lt $Loop.meta.pagination.total) -or
         $Loop.meta.pagination.next_page)) {
@@ -59,15 +63,19 @@ function Invoke-Loop {
                         $Loop.meta.pagination.offset
                     }
                 }
-                if ($Detailed) {
-                    # Output detail about identifiers
+                # Make request
+                $Loop = & $Command @Param
+
+                if ($Loop.resources -and $Detailed -and $Detailed -ne 'Combined') {
+                    # Add identifiers
                     $DetailParam = @{
-                        $Detailed = (& $Command @Param -OutVariable Loop).resources
+                        $Detailed = $Loop.resources
                     }
+                    # Re-run command for identifier detail
                     & $Command @DetailParam
                 } else {
-                    # Request identifiers
-                    & $Command @Param -OutVariable Loop
+                    # Output result
+                    $Loop
                 }
             }
         }
