@@ -142,11 +142,10 @@ function Invoke-Endpoint {
                     # Display successful output
                     Get-ChildItem $Outfile | Out-Host
                 }
-            } elseif ($Response) {
+            } elseif ($Response.Result) {
                 # Format output
                 Format-Result $Response $Endpoint
             } else {
-                # Output error
                 throw "Unable to perform request. Check connectivity and proxy configuration."
             }
         } catch {
