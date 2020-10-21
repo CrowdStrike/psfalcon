@@ -31,9 +31,9 @@ function Invoke-Deploy {
             # Filename for debug logging
             $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
         }
-        # Capture filename and process name from input
-        $FilePath = if ($Dynamic.Path.Value -match '^\.') {
-            $Dynamic.Path.Value -replace '^\.', $PSCmdlet.MyInvocation.PSScriptRoot
+        # Capture absolute file path, filename and process name from input
+        $FilePath = if ($Dynamic.Path.Value -match '^\.(\\|\/)') {
+            "$([System.IO.Path]::GetFullPath($FilePath))"
         } else {
             $Dynamic.Path.Value
         }
