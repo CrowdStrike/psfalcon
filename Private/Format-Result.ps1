@@ -40,9 +40,12 @@ function Format-Result {
             }
             # Output result
             $Output
-        } else {
+        } elseif ($Response.Result) {
             # Output exception
             $Response.Result.EnsureSuccessStatusCode()
+        } else {
+            # Catch all for unexpected responses
+            $Response
         }
     }
 }
