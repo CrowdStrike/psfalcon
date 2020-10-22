@@ -33,7 +33,7 @@ function Invoke-Deploy {
         }
         # Capture absolute file path, filename and process name from input
         $FilePath = if ($Dynamic.Path.Value -match '^\.(\\|\/)') {
-            "$([System.IO.Path]::GetFullPath($FilePath))"
+            "$([System.IO.Path]::GetFullPath($Dynamic.Path.Value))"
         } else {
             $Dynamic.Path.Value
         }
