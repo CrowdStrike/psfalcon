@@ -18,13 +18,12 @@ function Send-Sample {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     begin {
-        if ($Dynamic.Path.Value -match '^\.') {
-            # Convert relative path to absolute path
-            $Dynamic.Path.Value = $Dynamic.Path.Value -replace '^\.', $pwd
-        }
+        # Correct relative file paths
+        $Dynamic.Path.Value = (Resolve-Path -Path $Dynamic.Path.Value).Path
+
         if (-not $Dynamic.FileName.Value) {
             # Capture filename from path
-            $Dynamic.FileName.Value = [System.IO.Path]::GetFileName($Dynamic.Path.Value)
+            $Dynamic.FileName.Value = "$([System.IO.Path]::GetFileName($Dynamic.Path.Value))"
         }
     }
     process {

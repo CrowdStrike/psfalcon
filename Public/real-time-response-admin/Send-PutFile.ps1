@@ -18,10 +18,8 @@ function Send-PutFile {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     begin {
-        if ($Dynamic.Path.Value -match '^\.') {
-            # Convert relative path to absolute path
-            $Dynamic.Path.Value = $Dynamic.Path.Value -replace '^\.', $pwd
-        }
+        # Correct relative file paths
+        $Dynamic.Path.Value = (Resolve-Path -Path $Dynamic.Path.Value).Path
     }
     process {
         if ($PSBoundParameters.Help) {

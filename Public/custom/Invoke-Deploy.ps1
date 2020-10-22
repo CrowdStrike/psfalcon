@@ -32,7 +32,7 @@ function Invoke-Deploy {
             $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
         }
         # Capture absolute file path, filename and process name from input
-        $FilePath = "$([System.IO.Path]::GetFullPath($Dynamic.Path.Value))"
+        $FilePath = (Resolve-Path -Path $Dynamic.Path.Value).Path
         $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
         $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
 
@@ -152,7 +152,7 @@ function Invoke-Deploy {
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } elseif ((Test-Path -Path $FilePath -PathType Leaf) -eq $false) {
             # Output error
-            Write-Error "Cannot find path $FilePath because it does not exist."
+            Write-Error "Cannot find path $($FilePath) because it does not exist."
         } else {
             try {
                 if (($RemovePut.meta.writes.resources_affected -eq 1) -or (-not $CloudFile)) {
