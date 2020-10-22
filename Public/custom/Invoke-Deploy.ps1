@@ -32,11 +32,7 @@ function Invoke-Deploy {
             $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
         }
         # Capture absolute file path, filename and process name from input
-        $FilePath = if ($Dynamic.Path.Value -match '^\.(\\|\/)') {
-            "$([System.IO.Path]::GetFullPath($Dynamic.Path.Value))"
-        } else {
-            $Dynamic.Path.Value
-        }
+        $FilePath = "$([System.IO.Path]::GetFullPath($Dynamic.Path.Value))"
         $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
         $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
 
