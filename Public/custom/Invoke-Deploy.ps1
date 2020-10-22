@@ -82,7 +82,7 @@ function Invoke-Deploy {
             # Output timestamped message to console
             Write-Host "[$($Falcon.Rfc3339(0))] $Value"
         }
-        if (-not $PSBoundParameters.Help -and ((Test-Path $FilePath) -eq $true)) {
+        if (-not $PSBoundParameters.Help -and ((Test-Path -Path $FilePath -PathType Leaf) -eq $true)) {
             try {
                 Write-Log "Checking cloud for existing file..."
 
@@ -150,7 +150,7 @@ function Invoke-Deploy {
         if ($PSBoundParameters.Help) {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
-        } elseif ((Test-Path $FilePath) -eq $false) {
+        } elseif ((Test-Path -Path $FilePath -PathType Leaf) -eq $false) {
             # Output error
             Write-Error "Cannot find path $FilePath because it does not exist."
         } else {
