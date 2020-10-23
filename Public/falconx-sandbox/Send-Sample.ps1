@@ -18,9 +18,6 @@ function Send-Sample {
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
     }
     begin {
-        # Correct relative file paths
-        $Dynamic.Path.Value = (Resolve-Path -Path $Dynamic.Path.Value).Path
-
         if (-not $Dynamic.FileName.Value) {
             # Capture filename from path
             $Dynamic.FileName.Value = "$([System.IO.Path]::GetFileName($Dynamic.Path.Value))"
@@ -30,13 +27,12 @@ function Send-Sample {
         if ($PSBoundParameters.Help) {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
+        } elseif (-not(Test-Path $PSBoundParameters.Path)) {
+            # Output exception for invalid file path
+            throw "Cannot find path '$($PSBoundParameters.Path)' because it does not exist."
         } else {
-            if ((Test-Path $Dynamic.Path.Value) -eq $false) {
-                # Output exception for invalid file path
-                throw "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
-            }
             # Evaluate input and make request
-            Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
