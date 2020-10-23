@@ -31,11 +31,15 @@ function Invoke-Deploy {
             # Filename for debug logging
             $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
         }
-        # Capture absolute file path, filename and process name from input
-        $FilePath = (Resolve-Path -Path $Dynamic.Path.Value).Path
-        $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
-        $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
+        # Enforce absolute file path
+        $Dynamic.Path.Value = (Resolve-Path $Dynamic.Path.Value).Path
 
+        # Capture filepath, filename, and process name from input
+        $FilePath = if (Test-Path $Dynamic.Path.Value) { $Dynamic.Path.Value }
+        if ($FilePath) {
+            $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
+            $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
+        }
         function Add-Field ($Object, $Name, $Value) {
             # Add NoteProperty to PSCustomObject
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
@@ -82,7 +86,7 @@ function Invoke-Deploy {
             # Output timestamped message to console
             Write-Host "[$($Falcon.Rfc3339(0))] $Value"
         }
-        if (-not $PSBoundParameters.Help -and ((Test-Path -Path $FilePath -PathType Leaf) -eq $true)) {
+        if (-not $PSBoundParameters.Help -and $FilePath) {
             try {
                 Write-Log "Checking cloud for existing file..."
 
@@ -150,9 +154,8 @@ function Invoke-Deploy {
         if ($PSBoundParameters.Help) {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
-        } elseif ((Test-Path -Path $FilePath -PathType Leaf) -eq $false) {
-            # Output error
-            Write-Error "Cannot find path $($FilePath) because it does not exist."
+        } elseif (-not $FilePath) {
+            Write-Error "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
         } else {
             try {
                 if (($RemovePut.meta.writes.resources_affected -eq 1) -or (-not $CloudFile)) {
