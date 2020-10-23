@@ -3940,7 +3940,7 @@
         "Min": 32,
         "Max": 32,
         "Description": "The API client ID to authenticate your API requests",
-        "Position": null
+        "Position": 1
       },
       {
         "Dynamic": "Secret",
@@ -3953,20 +3953,7 @@
         "Min": 40,
         "Max": 40,
         "Description": "The API client secret to authenticate your API requests",
-        "Position": null
-      },
-      {
-        "Dynamic": "CID",
-        "Name": "member_cid",
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Required": false,
-        "Min": 32,
-        "Max": 32,
-        "Description": "For MSSP Master CIDs, optionally lock the token to act on behalf of this member CID",
-        "Position": null
+        "Position": 2
       },
       {
         "Dynamic": "Cloud",
@@ -3979,7 +3966,20 @@
           "us-2"
         ],
         "Description": "Destination CrowdStrike cloud",
-        "Position": null
+        "Position": 3
+      },
+      {
+        "Dynamic": "CID",
+        "Name": "member_cid",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Required": false,
+        "Min": 32,
+        "Max": 32,
+        "Description": "For MSSP Master CIDs, optionally lock the token to act on behalf of this member CID",
+        "Position": 4
       }
     ],
     "Responses": {
