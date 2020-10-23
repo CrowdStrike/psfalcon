@@ -76,6 +76,16 @@ function Get-Dictionary {
                         ($Param.Pattern).ToString())
                     $Collection.Add($ValidPattern)
                 }
+                if ($Param.Script) {
+                    # Set ValidateScript when script is populated
+                    $ValidScript = New-Object Management.Automation.ValidateScriptAttribute([scriptblock]::Create(
+                        $Param.Script))
+                    if ($Param.ScriptError) {
+                        # Add predefined script error message
+                        $ValidScript.ErrorMessage = $Param.ScriptError
+                    }
+                    $Collection.Add($ValidScript)
+                }
                 # Add collection to runtime parameter
                 $RunParam = New-Object System.Management.Automation.RuntimeDefinedParameter(
                     $Param.Dynamic, $PSType, $Collection)

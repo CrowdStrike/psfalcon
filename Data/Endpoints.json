@@ -3839,6 +3839,8 @@
         "Dynamic": "Path",
         "Type": "string",
         "Required": true,
+        "Script": "[System.IO.Path]::IsPathRooted($_)",
+        "ScriptError": "Relative paths are not permitted.",
         "Description": "Path to the executable",
         "Position": 2
       },
@@ -7184,6 +7186,8 @@
           "formdata"
         ],
         "Required": true,
+        "Script": "[System.IO.Path]::IsPathRooted($_)",
+        "ScriptError": "Relative paths are not permitted.",
         "Description": "File to upload",
         "Position": null
       },
@@ -7249,6 +7253,8 @@
           "formdata"
         ],
         "Required": true,
+        "Script": "[System.IO.Path]::IsPathRooted($_)",
+        "ScriptError": "Relative paths are not permitted.",
         "Description": "Script to upload",
         "Position": null
       },
@@ -10211,6 +10217,8 @@
           "body"
         ],
         "Pattern": "\\.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|js|ko|lnk|o|ocx|mod|msg|mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|vbe|vbs|wsf|xls|xlsx)+$",
+        "Script": "[System.IO.Path]::IsPathRooted($_)",
+        "ScriptError": "Relative paths are not permitted.",
         "Required": true,
         "Description": "Path to the file",
         "Position": null
