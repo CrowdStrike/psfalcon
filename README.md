@@ -4,7 +4,7 @@
 Requires **[PowerShell 5.1](https://github.com/PowerShell/PowerShell#get-powershell)** or above.
 
 # Installation
-1. Download the files in this respository as a ZIP
+1. Download the files in this repository as a ZIP
 2. Extract the archive
 3. Move the contents of `psfalcon-master.zip` into your user modules directory:
 
