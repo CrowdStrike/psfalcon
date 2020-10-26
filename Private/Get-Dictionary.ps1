@@ -80,7 +80,7 @@ function Get-Dictionary {
                     # Set ValidateScript when script is populated
                     $ValidScript = New-Object Management.Automation.ValidateScriptAttribute([scriptblock]::Create(
                         $Param.Script))
-                    if ($Param.ScriptError) {
+                    if ($Param.ScriptError -and $ValidScript.ErrorMessage) {
                         # Add predefined script error message
                         $ValidScript.ErrorMessage = $Param.ScriptError
                     }
