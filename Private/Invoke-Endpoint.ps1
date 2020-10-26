@@ -96,7 +96,7 @@ function Invoke-Endpoint {
                 $MultiContent = [System.Net.Http.MultipartFormDataContent]::New()
 
                 foreach ($Key in $Formdata.Keys) {
-                    if ((Test-Path $Formdata.$Key) -eq $true) {
+                    if ($Key -match '(file|upfile)') {
                         # If file, read as bytes
                         $FileStream = [System.IO.FileStream]::New($Formdata.$Key, [System.IO.FileMode]::Open)
                         $Filename = [System.IO.Path]::GetFileName($Formdata.$Key)

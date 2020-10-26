@@ -31,15 +31,11 @@ function Invoke-Deploy {
             # Filename for debug logging
             $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
         }
-        # Enforce absolute file path
-        $Dynamic.Path.Value = (Resolve-Path $Dynamic.Path.Value).Path
-
         # Capture filepath, filename, and process name from input
-        $FilePath = if (Test-Path $Dynamic.Path.Value) { $Dynamic.Path.Value }
-        if ($FilePath) {
-            $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
-            $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
-        }
+        $FilePath = $Dynamic.Path.Value
+        $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
+        $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
+
         function Add-Field ($Object, $Name, $Value) {
             # Add NoteProperty to PSCustomObject
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
@@ -172,7 +168,7 @@ function Invoke-Deploy {
 
                     if ($AddPut.meta.writes.resources_affected -ne 1) {
                         # Error if upload fails
-                        throw "$($RemovePut.errors.code): $($RemovePut.errors.message)"
+                        throw "$($AddPut.errors.code): $($AddPut.errors.message)"
                     }
                 }
                 for ($i = 0; $i -lt ($PSBoundParameters.HostIds).count; $i += $Max) {

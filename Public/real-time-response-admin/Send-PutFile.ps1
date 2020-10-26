@@ -21,9 +21,9 @@ function Send-PutFile {
         if ($PSBoundParameters.Help) {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
-        } elseif (-not(Test-Path $PSBoundParameters.Path)) {
+        } elseif (-not(Test-Path $Dynamic.Path.Value)) {
             # Output exception for invalid file path
-            throw "Cannot find path '$($PSBoundParameters.Path)' because it does not exist."
+            throw "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
         } else {
             # Evaluate input and make request
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
