@@ -54,7 +54,7 @@ function Invoke-RTR {
             }
             function Add-Field ($Object, $Name, $Value) {
                 # Add field and value to [PSCustomObject]
-                $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
+                $Object.psobject.properties.Add((New-Object PSNoteProperty($Name, $Value)))
             }
         }
     }
@@ -141,64 +141,65 @@ function Invoke-RTR {
                 $Output = if ($Request.resources) {
                     $Item = [PSCustomObject] @{}
 
-                    ($Request.resources).foreach{
-                        ($_.PSObject.Properties).foreach{
+                    foreach ($Result in $Request.resources) {
+                        foreach ($Property in $Result.psobject.properties) {
                             # Add initial request results for individual sessions
-                            Add-Field $Item $_.Name $_.Value
+                            Add-Field $Item $Property.Name $Property.Value
                         }
                     }
-                    ($Confirm.resources | Select-Object base_command, complete, stdout, stderr).foreach{
-                        ($_.PSObject.Properties).foreach{
-                            if ($_.Value) {
+                    foreach ($Result in ($Confirm.resources | Select-Object base_command, complete,
+                    stdout, stderr)) {
+                        foreach ($Property in $Result.psobject.properties) {
+                            if ($Property.Value) {
                                 # Add command detail
-                                Add-Field $Item $_.Name $_.Value
+                                Add-Field $Item $Property.Name $Property.Value
                             }
                         }
                     }
                     # Add result to array
                     $Item
                 } elseif ($Request.combined.resources) {
-                    ($Init.resources.PSObject.Properties.Value | Where-Object { $_.complete -eq $false -and
-                    $_.offline_queued -eq $false }).foreach{
+                    foreach ($Result in ($Init.resources.psobject.properties.Value | Where-Object {
+                    $_.complete -eq $false -and $_.offline_queued -eq $false })) {
                         $Item = [PSCustomObject] @{}
 
-                        ($_.PSObject.Properties).foreach{
-                            if ($_.Name -eq 'task_id') {
+                        foreach ($Property in $Result.psobject.properties) {
+                            if ($Property.Name -eq 'task_id') {
                                 # Add 'task_id' as 'cloud_request_id'
-                                Add-Field $Item 'cloud_request_id' $_.Value
-                            } elseif ($_.Name -eq 'errors' -and $_.Value) {
-                                $Value = if ($_.Value) {
-                                    "$($_.Value.code): $($_.Value.message)"
+                                Add-Field $Item 'cloud_request_id' $Property.Value
+                            } elseif ($Property.Name -eq 'errors' -and $Property.Value) {
+                                $Value = if ($Property.Value) {
+                                    "$($Property.Value.code): $($Property.Value.message)"
                                 } else {
                                     $null
                                 }
                                 # Combine error messages or add empty value
-                                Add-Field $Item $_.Name $Value
+                                Add-Field $Item $Property.Name $Value
                             } else {
-                                Add-Field $Item $_.Name $_.Value
+                                Add-Field $Item $Property.Name $Property.Value
                             }
                         }
                         # Add result to array
                         $Item
                     }
-                    ($Request.combined.resources.PSObject.Properties.Value).foreach{
+                    foreach ($Result in ($Request.combined.resources.psobject.properties.Value)) {
                         $Item = [PSCustomObject] @{}
 
-                        ($_.PSObject.Properties).foreach{
+                        foreach ($Property in $Result.psobject.properties) {
                             # Add results for batch sessions
-                            if ($_.Name -eq 'task_id') {
+                            if ($Property.Name -eq 'task_id') {
                                 # Add 'task_id' as 'cloud_request_id'
-                                Add-Field $Item 'cloud_request_id' $_.Value
-                            } elseif ($_.Name -eq 'errors') {
-                                $Value = if ($_.Value) {
-                                    "$($_.Value.code): $($_.Value.message)"
+                                Add-Field $Item 'cloud_request_id' $Property.Value
+                            } elseif ($Property.Name -eq 'errors') {
+                                $Value = if ($Property.Value) {
+                                    "$($Property.Value.code): $($Property.Value.message)"
                                 } else {
                                     $null
                                 }
                                 # Combine error messages or add empty value
-                                Add-Field $Item $_.Name $Value
+                                Add-Field $Item $Property.Name $Value
                             } else {
-                                Add-Field $Item $_.Name $_.Value
+                                Add-Field $Item $Property.Name $Property.Value
                             }
                         }
                         # Add result to array
