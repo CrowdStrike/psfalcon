@@ -19,17 +19,30 @@ function Invoke-RTR {
     }
     begin {
         if (-not $PSBoundParameters.Help) {
-            # Amount of seconds to wait between confirmation attempts
+            # Amount of seconds to wait between confirmation attempts for single-host commands
             $Sleep = 2
 
-            # Collect total HostId count for session or batch
-            $HostCount = ($PSBoundParameters.HostIds.count)
+            # Maximum sleep time while waiting for confirmation of single-host commands
+            $MaxSleep = 30
 
-            # Encapsulate arguments in quotes when a parameter is not specified
-            if ($PSBoundParameters.Arguments -and ($PSBoundParameters.Arguments -notmatch '^-\w{1,}=')) {
+            # Count total number of HostIds
+            $HostCount = ($PSBoundParameters.HostIds).count
+
+            if ($PSBoundParameters.Command -match 'runscript' -and $PSBoundParameters.Timeout -and
+            ($PSBoundParameters.Arguments -notmatch "-Timeout \d{2,3}")) {
+                # If using runscript and a timeout was included, ensure it's added to the arguments
+                $PSBoundParameters.Arguments += " -Timeout $($PSBoundParameters.Timeout)"
+
+                if ($HostCount -eq 1) {
+                    # Update maximum sleep time to match timeout for single-host sessions
+                    $MaxSleep = $PSBoundParameters.Timeout
+                }
+            }
+            if ($PSBoundParameters.Arguments -and ($PSBoundParameters.Arguments -notmatch '^-')) {
+                # Encapsulate arguments in quotes when they don't have an explicit parameter
                 $PSBoundParameters.Arguments = "'$($PSBoundParameters.Arguments)'"
             }
-            # Gather available commands and set permission level
+            # Gather available Real-time Response commands
             @{ 
                 Responder = 'RTR-ExecuteActiveResponderCommand'
                 Admin = 'RTR-ExecuteAdminCommand'
@@ -37,24 +50,86 @@ function Invoke-RTR {
                 New-Variable -Name $_.Key -Value (($Falcon.Endpoint($_.Value)).Parameters |
                     Where-Object { $_.Dynamic -eq 'Command' }).Enum
             }
+            # Define permission level
             $Permission = switch ($PSBoundParameters.Command) {
                 { $Admin -contains $_ } { 'Admin' }
                 { $Responder -contains $_ } { 'Responder' }
                 default { $null }
             }
-            # Set 'invoke' command
+            # Define 'invoke' command
             $InvokeCmd = if ($PSBoundParameters.Command -eq 'get' -and $HostCount -gt 1) {
                 "Invoke-FalconBatchGet"
             } else {
                 "Invoke-Falcon$($Permission)Command"
             }
-            # Set 'confirm' command
+            # Define 'confirm' command
             if ($HostCount -eq 1) {
                 $ConfirmCmd = "Confirm-Falcon$($Permission)Command"
             }
-            function Add-Field ($Object, $Name, $Value) {
-                # Add field and value to [PSCustomObject]
-                $Object.psobject.properties.Add((New-Object PSNoteProperty($Name, $Value)))
+            function Set-Field ($Item, $Object) {
+                foreach ($Field in $Object.psobject.properties) {
+                    if ($Item.psobject.properties.name -contains $Field.name -or $Field.name -eq 'task_id') {
+                        # Set field and value on [PSCustomObject] from result
+                        $Value = if (($Field.value -is [object[]]) -and ($Field.value[0] -is [string])) {
+                            # Add array values as [string]
+                            $Field.value -join ', '
+                        } elseif ($Field.value.code -and $Field.value.message) {
+                            # Combine error values into [string]
+                            "$($Field.value.code): $($Field.value.message)"
+                        } else {
+                            $Field.value
+                        }
+                        $Name = if ($Field.name -eq 'task_id') {
+                            # Add 'task_id' as 'cloud_request_id'
+                            'cloud_request_id'
+                        } else {
+                            $Field.name
+                        }
+                        # Set value for field in $Item
+                        $Item.$Name = $Value
+                    }
+                }
+            }
+            function Show-Results ($HostIds) {
+                # Create and output a [PSCustomObject] array of filtered results by HostId
+                [array] $Output = ($HostIds).foreach{
+                    [PSCustomObject] @{
+                        aid = $_
+                        session_id = $null
+                        cloud_request_id = $null
+                        complete = $false
+                        stdout = $null
+                        stderr = $null
+                        errors = $null
+                    }
+                }
+                if ($HostCount -eq 1) {
+                    # Single-host results
+                    @($Init, $Confirm).foreach{
+                        foreach ($Resource in $_.resources) {
+                            Set-Field $Output[0] $Resource
+                        }
+                    }
+                } else {
+                    # Multi-host results
+                    @($Init, $Request).foreach{
+                        if ($_.resources) {
+                            foreach ($Resource in $_.resources) {
+                                foreach ($Result in $Resource.psobject.properties) {
+                                    Set-Field ($Output | Where-Object aid -eq $Result.name) $Result.value
+                                }
+                            }
+                        } elseif ($_.combined.resources) {
+                            foreach ($Resource in $_.combined.resources) {
+                                foreach ($Result in $Resource.psobject.properties) {
+                                    Set-Field ($Output | Where-Object aid -eq $Result.name) $Result.value
+                                }
+                            }
+                        }
+                    }
+                }
+                # Output array
+                $Output | Format-List
             }
         }
     }
@@ -64,151 +139,90 @@ function Invoke-RTR {
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
             try {
+                # Define session initialization parameters
                 if ($HostCount -eq 1) {
                     $Param = @{
-                        HostId = [string] $PSBoundParameters.HostIds
+                        # Use HostId for single hosts
+                        HostId = $PSBoundParameters.HostIds[0]
                     }
                 } else {
                     $Param = @{
+                        # Use HostIds for multiple hosts
                         HostIds = $PSBoundParameters.HostIds
                     }
-                }
-                switch ($PSBoundParameters.Keys) {
-                    'Timeout' {
-                        if ($HostCount -gt 1) {
-                            $Param['Timeout'] = $PSBoundParameters.Timeout
-                        }
-                    }
-                    'QueueOffline' {
-                        $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
+                    if ($PSBoundParameters.Timeout) {
+                        # Add timeout value
+                        $Param['Timeout'] = $PSBoundParameters.Timeout
                     }
                 }
+                if ($PSBoundParameters.QueueOffline) {
+                    # Add QueueOffline status
+                    $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
+                }
+                # Initialize session
                 $Init = Start-FalconSession @Param
 
-                if ((-not $Init.resources.session_id) -and (-not $Init.batch_id)) {
-                    # Error when session creation fails
+                # Define command request parameters
+                if ($Init.batch_id) {
+                    $Param = @{
+                        # Use BatchId for batch sessions
+                        BatchId = $Init.batch_id
+                    }
+                    if ($PSBoundParameters.Timeout) {
+                        # Add timeout value
+                        $Param['Timeout'] = $PSBoundParameters.Timeout
+                    }
+                } elseif ($Init.resources.session_id) {
+                    $Param = @{
+                        # Use SessionId for single hosts
+                        SessionId = $Init.resources.session_id
+                    }
+                } else {
+                    # Output error if session was not created
                     throw "$($Init.errors.code): $($Init.errors.message)"
                 }
-                # Submit command request
-                $Param = @{
-                    Command = $PSBoundParameters.Command
-                }
-                if ($Init.batch_id) {
-                    $Param['BatchId'] = $Init.batch_id
+                if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
+                    # Use 'Arguments' as 'Path' for 'get' commands in batch sessions
+                    $Param['Path'] = $PSBoundParameters.Arguments
                 } else {
-                    $Param['SessionId'] = $Init.resources.session_id
-                }
-                if ($PSBoundParameters.Arguments) {
-                    if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        $Param['Path'] = "$($PSBoundParameters.Arguments)"
-                        $Param.Remove('Command')
-                    } else {
-                        $Param['Arguments'] = "$($PSBoundParameters.Arguments)"
+                    # Add command
+                    $Param['Command'] = $PSBoundParameters.Command
+
+                    if ($PSBoundParameters.Arguments) {
+                        # Add arguments
+                        $Param['Arguments'] = $PSBoundParameters.Arguments
                     }
                 }
+                # Send command request
                 $Request = & $InvokeCmd @Param
 
-                if ((-not $Request.resources.cloud_request_id) -and (-not $Request.combined.resources)) {
-                    # Error when command results are missing
-                    throw "$($Request.errors.code): $($Request.errors.message)"
-                }
-                if ((-not $PSBoundParameters.QueueOffline) -and ($Request.resources)) {
-                    Start-Sleep -Seconds $Sleep
-
-                    # Query command results
+                if ($Request.resources.cloud_request_id -and (-not $PSBoundParameters.QueueOffline)) {
+                    # Define confirmation parameters for single-host commands
                     $Param = @{
                         CloudRequestId = $Request.resources.cloud_request_id
+                        OutVariable = 'Confirm'
                     }
-                    $Confirm = & $ConfirmCmd @Param
-
-                    if (-not $Confirm.resources) {
-                        # Error when confirmation results are not retrieved
-                        throw "$($Confirm.errors.code): $($Confirm.errors.message)"
-                    } elseif ($Confirm.resources.complete -eq $false) {
+                    if ((& $ConfirmCmd @Param).resources.complete -eq $false) {
                         do {
                             if (-not $Confirm.resources) {
                                 # Error when confirmation results are not retrieved
                                 throw "$($Confirm.errors.code): $($Confirm.errors.message)"
                             }
                             Start-Sleep -Seconds $Sleep
+
+                            $i += $Sleep
                         } until (
-                            # Repeat requests until command has completed
-                            (& $ConfirmCmd @Param -OutVariable Confirm).resources.complete -eq $true
+                            # Repeat confirmation requests until command has completed or $MaxSleep is reached
+                            ((& $ConfirmCmd @Param).resources.complete -eq $true) -or ($i -ge $MaxSleep)
                         )
                     }
+                } elseif ((-not $Request.combined.resources) -and (-not $Request.resources)) {
+                    # Output error if command request failed
+                    throw "$($Request.errors.code): $($Request.errors.message)"
                 }
-                # Create output array
-                $Output = if ($Request.resources) {
-                    $Item = [PSCustomObject] @{}
-
-                    foreach ($Result in $Request.resources) {
-                        foreach ($Property in $Result.psobject.properties) {
-                            # Add initial request results for individual sessions
-                            Add-Field $Item $Property.Name $Property.Value
-                        }
-                    }
-                    foreach ($Result in ($Confirm.resources | Select-Object base_command, complete,
-                    stdout, stderr)) {
-                        foreach ($Property in $Result.psobject.properties) {
-                            if ($Property.Value) {
-                                # Add command detail
-                                Add-Field $Item $Property.Name $Property.Value
-                            }
-                        }
-                    }
-                    # Add result to array
-                    $Item
-                } elseif ($Request.combined.resources) {
-                    foreach ($Result in ($Init.resources.psobject.properties.Value | Where-Object {
-                    $_.complete -eq $false -and $_.offline_queued -eq $false })) {
-                        $Item = [PSCustomObject] @{}
-
-                        foreach ($Property in $Result.psobject.properties) {
-                            if ($Property.Name -eq 'task_id') {
-                                # Add 'task_id' as 'cloud_request_id'
-                                Add-Field $Item 'cloud_request_id' $Property.Value
-                            } elseif ($Property.Name -eq 'errors' -and $Property.Value) {
-                                $Value = if ($Property.Value) {
-                                    "$($Property.Value.code): $($Property.Value.message)"
-                                } else {
-                                    $null
-                                }
-                                # Combine error messages or add empty value
-                                Add-Field $Item $Property.Name $Value
-                            } else {
-                                Add-Field $Item $Property.Name $Property.Value
-                            }
-                        }
-                        # Add result to array
-                        $Item
-                    }
-                    foreach ($Result in ($Request.combined.resources.psobject.properties.Value)) {
-                        $Item = [PSCustomObject] @{}
-
-                        foreach ($Property in $Result.psobject.properties) {
-                            # Add results for batch sessions
-                            if ($Property.Name -eq 'task_id') {
-                                # Add 'task_id' as 'cloud_request_id'
-                                Add-Field $Item 'cloud_request_id' $Property.Value
-                            } elseif ($Property.Name -eq 'errors') {
-                                $Value = if ($Property.Value) {
-                                    "$($Property.Value.code): $($Property.Value.message)"
-                                } else {
-                                    $null
-                                }
-                                # Combine error messages or add empty value
-                                Add-Field $Item $Property.Name $Value
-                            } else {
-                                Add-Field $Item $Property.Name $Property.Value
-                            }
-                        }
-                        # Add result to array
-                        $Item
-                    }
-                }
-                # Output result(s)
-                $Output
-            } catch {
+                # Output results
+                Show-Results $PSBoundParameters.HostIds
+           } catch {
                 # Output error
                 Write-Error "$($_.Exception.Message)"
             }
