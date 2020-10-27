@@ -33,12 +33,8 @@ function Format-Header {
             }
         }
         $Authorization = if ($Endpoint.Permission -match ".*:(read|write)") {
-            if ($Falcon.token) {
-                # Bearer token
-                Get-SecureString $Falcon.token
-            } else {
-                $null
-            }
+            # Bearer token
+            $Falcon.token
         } else {
             # Basic authorization
             Get-AuthPair

@@ -27,7 +27,7 @@ function Revoke-Token {
             # Base request parameters
             $Param = @{
                 Endpoint = $Endpoints[0]
-                Body = "token=$((Get-SecureString $Falcon.token) -replace 'bearer ', '')"
+                Body = "token=$($Falcon.token -replace 'bearer ', '')"
             }
             # Make request
             $Request = Invoke-Endpoint @Param

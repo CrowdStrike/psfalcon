@@ -9,11 +9,9 @@ foreach ($Import in @($Public + $Private)) {
         Write-Error -Message "Failed import of $($Import.fullname): $_"
     }
 }
-# Create variable to store module data and set default hostname
-if (-not($Falcon)) {
-    $Global:Falcon = [Falcon]::New('https://api.crowdstrike.com')
+if (-not($Script:Falcon)) {
+    # Create variable to set default hostname and store data
+    $Script:Falcon = [Falcon]::New('https://api.crowdstrike.com',
+    (Get-Content "$PSScriptRoot\Data\Endpoints.json" | ConvertFrom-Json))
 }
-# Import endpoint data
-$Falcon.Endpoints = Get-Content "$PSScriptRoot\Data\Endpoints.json" | ConvertFrom-Json
-
 Write-Warning "PSFalcon has modified commands. Review 'Get-Command -Module PSFalcon' and '<Command> -Help'"

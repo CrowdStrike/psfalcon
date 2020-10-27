@@ -10,7 +10,7 @@ function Get-AuthPair {
         if ($Falcon.Id -and $Falcon.Secret) {
             # Output base64 encoded Username/Password pair
             "basic $([System.Convert]::ToBase64String(
-                [System.Text.Encoding]::ASCII.GetBytes("$($Falcon.Id):$(Get-SecureString $Falcon.Secret)")))"
+                [System.Text.Encoding]::ASCII.GetBytes("$($Falcon.Id):$($Falcon.Secret)")))"
         } else {
             $null
         }

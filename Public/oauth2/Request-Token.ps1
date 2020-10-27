@@ -47,11 +47,8 @@ function Request-Token {
                     $Dynamic.Secret.Value = $Falcon.Secret
                 } else {
                     # Force input of Secret
-                    $Dynamic.Secret.Value = Read-Host "Secret" -AsSecureString
+                    $Dynamic.Secret.Value = Read-Host "Secret"
                 }
-            } else {
-                # Convert dynamic Secret input to SecureString
-                $Dynamic.Secret.Value = $Dynamic.Secret.Value | ConvertTo-SecureString -AsPlainText -Force
             }
             Write-Debug "[$($MyInvocation.MyCommand.Name)] id: $($Dynamic.Id.Value)"
 
@@ -62,7 +59,7 @@ function Request-Token {
             # Base parameters
             $Param = @{
                 Endpoint = $Endpoints[0]
-                Body = "client_id=$($Dynamic.Id.Value)&client_secret=$(Get-SecureString $Dynamic.Secret.Value)"
+                Body = "client_id=$($Dynamic.Id.Value)&client_secret=$($Dynamic.Secret.Value)"
             }
             if ($Dynamic.CID.Value) {
                 $Param.Body += "&member_cid=$($Dynamic.CID.Value)"
@@ -85,15 +82,7 @@ function Request-Token {
                 Write-Verbose "[$($MyInvocation.MyCommand.Name)] token generated"
 
                 $Falcon.Expires = (Get-Date).AddSeconds($Request.expires_in)
-                $Falcon.Token = "$($Request.token_type) $($Request.access_token)" |
-                    ConvertTo-SecureString -AsPlainText -Force
-
-                if (Test-Path "$Home\Falcon.token") {
-                    # Update cached token
-                    $Falcon.ExportToken()
-
-                    Write-Verbose "[$($MyInvocation.MyCommand.Name)] token saved as $Home\Falcon.token"
-                }
+                $Falcon.Token = "$($Request.token_type) $($Request.access_token)"
             } else {
                 # Clear cached authentication information
                 @('id', 'secret', 'CID', 'token').foreach{
