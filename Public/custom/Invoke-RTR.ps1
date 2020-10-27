@@ -31,7 +31,7 @@ function Invoke-RTR {
             if ($PSBoundParameters.Command -match 'runscript' -and $PSBoundParameters.Timeout -and
             ($PSBoundParameters.Arguments -notmatch "-Timeout \d{2,3}")) {
                 # If using runscript and a timeout was included, ensure it's added to the arguments
-                $PSBoundParameters.Arguments += " -Timeout $($PSBoundParameters.Timeout)"
+                $PSBoundParameters.Arguments += " -Timeout=$($PSBoundParameters.Timeout)"
 
                 if ($HostCount -eq 1) {
                     # Update maximum sleep time to match timeout for single-host sessions
