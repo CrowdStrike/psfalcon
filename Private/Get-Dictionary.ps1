@@ -24,8 +24,10 @@ function Get-Dictionary {
             # Set base parameter attributes
             $Attribute.ParameterSetName = $Endpoint
             $Attribute.Mandatory = $Param.Required
-            $Attribute.HelpMessage = $Param.Description
 
+            if ($Param.Description) {
+                $Attribute.HelpMessage = $Param.Description
+            }
             if ($Param.Position) {
                 $Attribute.Position = $Param.Position
             }
