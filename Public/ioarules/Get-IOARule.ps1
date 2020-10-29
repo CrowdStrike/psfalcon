@@ -1,7 +1,7 @@
 function Get-IOARule {
 <#
 .SYNOPSIS
-    Search for custom Indicators of Attack
+    Search for custom Indicator of Attack rules
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
