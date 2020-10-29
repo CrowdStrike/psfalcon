@@ -7,12 +7,12 @@ function Remove-Session {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-DeleteSession')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-DeleteSession')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-DeleteSession')
+        $Endpoints = @('real-time-response/RTR-DeleteSession')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

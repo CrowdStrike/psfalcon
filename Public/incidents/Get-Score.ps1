@@ -7,12 +7,12 @@ function Get-Score {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'CrowdScore')]
+    [CmdletBinding(DefaultParameterSetName = 'incidents/CrowdScore')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('CrowdScore')
+        $Endpoints = @('incidents/CrowdScore')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

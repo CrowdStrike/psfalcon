@@ -7,12 +7,12 @@ function Get-Detection {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryDetects')]
+    [CmdletBinding(DefaultParameterSetName = 'detects/QueryDetects')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryDetects', 'GetDetectSummaries')
+        $Endpoints = @('detects/QueryDetects', 'detects/GetDetectSummaries')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

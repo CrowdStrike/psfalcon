@@ -7,12 +7,12 @@ function Get-TokenEvent {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'audit-events-query')]
+    [CmdletBinding(DefaultParameterSetName = 'installation-tokens/audit-events-query')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('audit-events-query', 'audit-events-read')
+        $Endpoints = @('installation-tokens/audit-events-query', 'installation-tokens/audit-events-read')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

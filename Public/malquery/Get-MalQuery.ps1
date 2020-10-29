@@ -7,12 +7,12 @@ function Get-MalQuery {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'GetMalQueryRequestV1')]
+    [CmdletBinding(DefaultParameterSetName = 'malquery/GetMalQueryRequestV1')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('GetMalQueryRequestV1')
+        $Endpoints = @('malquery/GetMalQueryRequestV1')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

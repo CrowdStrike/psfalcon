@@ -7,12 +7,12 @@ function New-InstallToken {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'tokens-create')]
+    [CmdletBinding(DefaultParameterSetName = 'installation-tokens/tokens-create')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('tokens-create')
+        $Endpoints = @('installation-tokens/tokens-create')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

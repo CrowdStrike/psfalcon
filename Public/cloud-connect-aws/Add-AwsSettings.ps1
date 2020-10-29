@@ -7,12 +7,12 @@ function Add-AwsSettings {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'CreateOrUpdateAWSSettings')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/CreateOrUpdateAWSSettings')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('CreateOrUpdateAWSSettings')
+        $Endpoints = @('cloud-connect-aws/CreateOrUpdateAWSSettings')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

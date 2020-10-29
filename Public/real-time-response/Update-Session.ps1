@@ -7,12 +7,12 @@ function Update-Session {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-PulseSession')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-PulseSession')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-PulseSession', 'BatchRefreshSessions')
+        $Endpoints = @('real-time-response/RTR-PulseSession', 'real-time-response/BatchRefreshSessions')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

@@ -1,18 +1,18 @@
 function Get-Scan {
 <#
 .SYNOPSIS
-    Get the status or results of a Falcon QuickScan volume request
+    Get the status or results of a scan request
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryScan')]
+    [CmdletBinding(DefaultParameterSetName = 'scanner/QueryScans')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryScan', 'GetScan')
+        $Endpoints = @('scanner/QueryScans', 'scanner/GetScans')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

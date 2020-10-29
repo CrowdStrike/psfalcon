@@ -7,12 +7,12 @@ function Receive-Rule {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'GetIntelRuleFile')]
+    [CmdletBinding(DefaultParameterSetName = 'intel/GetIntelRuleFile')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('GetIntelRuleFile', 'GetLatestIntelRuleFile')
+        $Endpoints = @('intel/GetIntelRuleFile', 'intel/GetLatestIntelRuleFile')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

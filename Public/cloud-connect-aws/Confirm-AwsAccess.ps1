@@ -7,12 +7,12 @@ function Confirm-AwsAccess {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'VerifyAWSAccountAccess')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/VerifyAWSAccountAccess')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('VerifyAWSAccountAccess')
+        $Endpoints = @('cloud-connect-aws/VerifyAWSAccountAccess')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

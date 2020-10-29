@@ -103,7 +103,7 @@ function Get-Dictionary {
                 # Add parameters from each endpoint
                 Add-Parameter $Param $Endpoint
             }
-            foreach ($Param in ($Falcon.Endpoint('SharedParameters').Parameters |
+            foreach ($Param in ($Falcon.Endpoint('private/SharedParameters').Parameters |
             Where-Object { $_.ParameterSets -contains $Endpoint })) {
                 # Add shared parameters
                 Add-Parameter $Param $Endpoint

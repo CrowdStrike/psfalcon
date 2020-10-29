@@ -27,7 +27,7 @@ function Format-Header {
     )
     begin {
         # Check existing token
-        if ($Endpoint.Name -ne 'oauth2AccessToken') {
+        if ($Endpoint.Name -ne 'oauth2/oauth2AccessToken') {
             if ((-not($Falcon.Token)) -or (($Falcon.Expires) -le (Get-Date).AddSeconds(30))) {
                 Request-FalconToken
             }

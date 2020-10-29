@@ -7,12 +7,12 @@ function Get-AwsAccount {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryAWSAccountsForIDs')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/QueryAWSAccountsForIDs')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryAWSAccountsForIDs', 'QueryAWSAccounts')
+        $Endpoints = @('cloud-connect-aws/QueryAWSAccountsForIDs', 'cloud-connect-aws/QueryAWSAccounts')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

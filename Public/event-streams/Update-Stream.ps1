@@ -7,12 +7,12 @@ function Update-Stream {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'refreshActiveStreamSession')]
+    [CmdletBinding(DefaultParameterSetName = 'event-streams/refreshActiveStreamSession')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('refreshActiveStreamSession')
+        $Endpoints = @('event-streams/refreshActiveStreamSession')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

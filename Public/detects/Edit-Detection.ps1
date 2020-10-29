@@ -7,12 +7,12 @@ function Edit-Detection {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'UpdateDetectsByIdsV2')]
+    [CmdletBinding(DefaultParameterSetName = 'detects/UpdateDetectsByIdsV2')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('UpdateDetectsByIdsV2')
+        $Endpoints = @('detects/UpdateDetectsByIdsV2')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

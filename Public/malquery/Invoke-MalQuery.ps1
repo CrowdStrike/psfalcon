@@ -7,12 +7,13 @@ function Invoke-MalQuery {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'PostMalQueryExactSearchV1')]
+    [CmdletBinding(DefaultParameterSetName = 'malquery/PostMalQueryExactSearchV1')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('PostMalQueryExactSearchV1', 'PostMalQueryFuzzySearchV1', 'PostMalQueryHuntV1')
+        $Endpoints = @('malquery/PostMalQueryExactSearchV1', 'malquery/PostMalQueryFuzzySearchV1',
+            'malquery/PostMalQueryHuntV1')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

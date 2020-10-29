@@ -7,12 +7,12 @@ function Get-TokenSettings {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'customer-settings-read')]
+    [CmdletBinding(DefaultParameterSetName = 'installation-tokens/customer-settings-read')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('customer-settings-read')
+        $Endpoints = @('installation-tokens/customer-settings-read')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

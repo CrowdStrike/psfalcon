@@ -7,12 +7,12 @@ function Confirm-ResponderCommand {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-CheckActiveResponderCommandStatus')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-CheckActiveResponderCommandStatus')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-CheckActiveResponderCommandStatus')
+        $Endpoints = @('real-time-response/RTR-CheckActiveResponderCommandStatus')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

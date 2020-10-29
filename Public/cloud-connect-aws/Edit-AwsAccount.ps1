@@ -7,12 +7,12 @@ function Edit-AwsAccount {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'UpdateAWSAccounts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/UpdateAWSAccounts')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('UpdateAWSAccounts')
+        $Endpoints = @('cloud-connect-aws/UpdateAWSAccounts')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

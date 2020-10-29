@@ -7,12 +7,12 @@ function Get-Actor {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryIntelActorIds')]
+    [CmdletBinding(DefaultParameterSetName = 'intel/QueryIntelActorIds')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryIntelActorIds', 'GetIntelActorEntities', 'QueryIntelActorEntities')
+        $Endpoints = @('intel/QueryIntelActorIds', 'intel/GetIntelActorEntities', 'intel/QueryIntelActorEntities')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -20,7 +20,7 @@ function Get-Actor {
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('QueryIntelActorEntities')
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('intel/QueryIntelActorEntities')
         } else {
             # Evaluate input and make request
             $Param = @{

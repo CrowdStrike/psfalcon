@@ -7,12 +7,12 @@ function Get-Rule {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryIntelRuleIds')]
+    [CmdletBinding(DefaultParameterSetName = 'intel/QueryIntelRuleIds')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryIntelRuleIds', 'GetIntelRuleEntities')
+        $Endpoints = @('intel/QueryIntelRuleIds', 'intel/GetIntelRuleEntities')
         
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

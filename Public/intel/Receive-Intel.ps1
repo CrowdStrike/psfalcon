@@ -7,12 +7,12 @@ function Receive-Intel {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'GetIntelReportPDF')]
+    [CmdletBinding(DefaultParameterSetName = 'intel/GetIntelReportPDF')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('GetIntelReportPDF')
+        $Endpoints = @('intel/GetIntelReportPDF')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

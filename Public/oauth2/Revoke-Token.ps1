@@ -5,12 +5,12 @@ function Revoke-Token {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'oauth2RevokeToken')]
+    [CmdletBinding(DefaultParameterSetName = 'oauth2/oauth2RevokeToken')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('oauth2RevokeToken')
+        $Endpoints = @('oauth2/oauth2RevokeToken')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

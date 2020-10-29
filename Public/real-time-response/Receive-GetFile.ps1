@@ -7,12 +7,12 @@ function Receive-GetFile {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-GetExtractedFileContents')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-GetExtractedFileContents')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-GetExtractedFileContents')
+        $Endpoints = @('real-time-response/RTR-GetExtractedFileContents')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

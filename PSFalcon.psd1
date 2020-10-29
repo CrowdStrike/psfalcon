@@ -82,52 +82,43 @@ FunctionsToExport = @(
     'New-AwsAccount',
     'Remove-AwsAccount',
 
-    # custom
-    'Convert-CSV',
-    'Get-Queue',
-    'Invoke-Deploy',
-    'Invoke-RTR',
-    'Open-Stream',
-    'Show-Map',
-
-    # d4c-registration
+    # cloud-connect-azure
     'Edit-AzureAccount',
     'Get-AzureAccount',
     'Get-AzureScript',
+    'New-AzureAccount',
+
+    # cloud-connect-gcp
     'Get-GcpAccount',
     'Get-GcpScript',
-    'New-AzureAccount',
     'New-GcpAccount',
 
     # detects
     'Edit-Detection',
     'Get-Detection',
 
-    # device-control-policies
-    'Edit-DeviceControlPolicy',
-    'Get-DeviceControlPolicy',
-    'Get-DeviceControlPolicyMember',
-    'Invoke-DeviceControlPolicyAction',
-    'New-DeviceControlPolicy',
-    'Remove-DeviceControlPolicy',
-    'Set-DeviceControlPrecedence',
+    # devices
+    'Edit-HostGroup',
+    'Get-Host',
+    'Get-HostGroup',
+    'Get-HostGroupMember',
+    'Invoke-HostAction',
+    'Invoke-HostGroupAction',
+    'New-HostGroup',
+    'Remove-HostGroup',
 
     # event-streams
     'Get-Stream',
     'Update-Stream',
 
-    # falconx-sandbox
+    # falconx
     'Get-Report',
-    'Get-Sample',
     'Get-Submission',
     'New-Submission',
     'Receive-Artifact',
-    'Receive-Sample',
     'Remove-Report',
-    'Remove-Sample',
-    'Send-Sample',
 
-    # firewall-management
+    # fwmgr
     'Edit-FirewallGroup',
     'Edit-FirewallSetting',
     'Get-FirewallEvent',
@@ -139,32 +130,17 @@ FunctionsToExport = @(
     'New-FirewallGroup',
     'Remove-FirewallGroup',
 
-    # firewall-policies
-    'Edit-FirewallPolicy',
-    'Get-FirewallPolicy',
-    'Get-FirewallPolicyMember',
-    'Invoke-FirewallPolicyAction',
-    'New-FirewallPolicy',
-    'Remove-FirewallPolicy',
-    'Set-FirewallPrecedence',
-
-    # host-group
-    'Edit-HostGroup',
-    'Get-HostGroup',
-    'Get-HostGroupMember',
-    'Invoke-HostGroupAction',
-    'New-HostGroup',
-    'Remove-HostGroup',
-
-    # hosts
-    'Get-Host',
-    'Invoke-HostAction',
-
     # incidents
     'Get-Behavior',
     'Get-Incident',
     'Get-Score',
     'Invoke-IncidentAction',
+
+    # indicators
+    'Edit-IOC',
+    'Get-IOC',
+    'New-IOC',
+    'Remove-IOC',
 
     # installation-tokens
     'Edit-InstallToken',
@@ -182,90 +158,126 @@ FunctionsToExport = @(
     'Receive-Intel',
     'Receive-Rule',
 
-    # iocs
-    'Edit-IOC',
-    'Get-IOC',
-    'Get-Process',
-    'New-IOC',
-    'Remove-IOC',
+    # ioarules
+    'Edit-IOAGroup',
+    'Edit-IOARule',
+    'Get-IOAGroup',
+    'Get-IOAPattern',
+    'Get-IOAPlatform',
+    'Get-IOARule',
+    'Get-IOAType',
+    'New-IOAGroup',
+    'New-IOARule',
+    'Remove-IOAGroup',
+    'Remove-IOARule',
+    'Test-IOARule',
 
     # malquery
     'Get-MalQuery',
-    'Get-MalQueryFile',
-    'Get-Quota',
+    'Get-MalQueryQuota',
+    'Get-MalQuerySample',
+    'Group-MalQuerySample',
     'Invoke-MalQuery',
-    'Invoke-MalQueryJob',
-    'Receive-MalQueryFile',
+    'Receive-MalQuerySample',
 
     # oauth2
     'Request-Token',
     'Revoke-Token',
 
-    # prevention-policies
+    # policy
+    'Edit-DeviceControlPolicy',
+    'Edit-FirewallPolicy',
     'Edit-PreventionPolicy',
+    'Edit-SensorUpdatePolicy',
+    'Get-Build',
+    'Get-DeviceControlPolicy',
+    'Get-DeviceControlPolicyMember',
+    'Get-FirewallPolicy',
+    'Get-FirewallPolicyMember',
     'Get-PreventionPolicy',
     'Get-PreventionPolicyMember',
+    'Get-SensorUpdatePolicy',
+    'Get-SensorUpdatePolicyMember',
+    'Get-UninstallToken',
+    'Invoke-DeviceControlPolicyAction',
+    'Invoke-FirewallPolicyAction',
     'Invoke-PreventionPolicyAction',
+    'Invoke-SensorUpdatePolicyAction',
+    'New-DeviceControlPolicy',
+    'New-FirewallPolicy',
     'New-PreventionPolicy',
+    'New-SensorUpdatePolicy',
+    'Remove-DeviceControlPolicy',
+    'Remove-FirewallPolicy',
     'Remove-PreventionPolicy',
+    'Remove-SensorUpdatePolicy',
+    'Set-DeviceControlPrecedence',
+    'Set-FirewallPrecedence',
     'Set-PreventionPrecedence',
+    'Set-SensorUpdatePrecedence',
+
+    # processes
+    'Get-Process',
 
     # real-time-response
+    'Confirm-AdminCommand',
     'Confirm-Command',
     'Confirm-GetFile',
     'Confirm-ResponderCommand',
+    'Get-PutFile',
+    'Get-Script',
     'Get-Session',
+    'Invoke-AdminCommand',
     'Invoke-BatchGet',
     'Invoke-Command',
     'Invoke-ResponderCommand',
     'Receive-GetFile',
     'Remove-Command',
     'Remove-GetFile',
+    'Remove-PutFile',
+    'Remove-Script',
     'Remove-Session',
+    'Send-PutFile',
+    'Send-Script',
     'Start-Session',
     'Update-Session',
 
-    # real-time-response-admin
-    'Confirm-AdminCommand',
-    'Get-PutFile',
-    'Get-Script',
-    'Invoke-AdminCommand',
-    'Remove-PutFile',
-    'Remove-Script',
-    'Send-PutFile',
-    'Send-Script',
+    # samples
+    'Get-Sample',
+    'Receive-Sample',
+    'Remove-Sample',
+    'Send-Sample',
 
     # scanner
     'Get-Scan',
-    'New-Volume',
+    'New-Scan',
 
-    # sensor-download
+    # scripts
+    'Convert-CSV',
+    'Get-Queue',
+    'Invoke-Deploy',
+    'Invoke-RTR',
+    'Open-Stream',
+    'Show-Map',
+
+    # sensors
     'Get-CCID',
     'Get-Installer',
     'Receive-Installer',
 
-    # sensor-update-policies
-    'Edit-SensorUpdatePolicy',
-    'Get-Build',
-    'Get-SensorUpdatePolicy',
-    'Get-SensorUpdatePolicyMember',
-    'Get-UninstallToken',
-    'Invoke-SensorUpdatePolicyAction',
-    'New-SensorUpdatePolicy',
-    'Remove-SensorUpdatePolicy',
-    'Set-SensorUpdatePrecedence',
-
-    # spotlight-vulnerabilities
+    # spotlight
     'Get-Remediation',
     'Get-Vulnerability',
 
-    # user-management
+    # user-roles
     'Add-Role',
-    'Edit-User',
     'Get-Role',
+    'Remove-Role',
+
+    # users
+    'Edit-User',
     'Get-User',
     'New-User',
-    'Remove-Role',
     'Remove-User'
 )
 
@@ -302,27 +314,20 @@ PrivateData = @{
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/bk-CS/PSFalcon'
+        ProjectUri = 'https://github.com/crowdstrike/psfalcon'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://avatars3.githubusercontent.com/u/54042976?s=460&u=de53aed783c47ef9bd9ffe9489fb77a67648eb89&v=4'
+        # IconUri = ''
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "
-        Version 2.0:
+        ReleaseNotes = ""
 
-        * Rebuilt module to use an underlying template to reduce complexity and allow for re-use with other APIs (PSRestKit)
-        * Functions now use dynamic parameters defined in a Json-based input file, enabling easier support of API changes
-        * Changed prefix of commands from 'Cs' to 'Falcon', renamed many commands to better fit their purpose and PowerShell standards
-        * Added credential handling capabilities via the Falcon class
-        * Added token handling capabilities via the Falcon class, enabling support for multi-threaded PowerShell scripts
-        "
     } # End of PSData hashtable
 
 } # End of PrivateData hashtable
 
 # HelpInfo URI of this module
-HelpInfoURI = 'https://github.com/bk-cs/PSFalcon/blob/master/README.md'
+HelpInfoURI = 'https://github.com/crowdstrike/psfalcon/blob/master/README.md'
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix
 DefaultCommandPrefix = 'Falcon'

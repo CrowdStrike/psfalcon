@@ -7,12 +7,13 @@ function Invoke-ResponderCommand {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-ExecuteActiveResponderCommand')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-ExecuteActiveResponderCommand')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-ExecuteActiveResponderCommand', 'BatchActiveResponderCmd')
+        $Endpoints = @('real-time-response/RTR-ExecuteActiveResponderCommand',
+            'real-time-response/BatchActiveResponderCmd')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

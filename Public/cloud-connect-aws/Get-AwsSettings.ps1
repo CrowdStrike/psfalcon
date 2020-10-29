@@ -7,12 +7,12 @@ function Get-AwsSettings {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'GetAWSSettings')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/GetAWSSettings')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('GetAWSSettings')
+        $Endpoints = @('cloud-connect-aws/GetAWSSettings')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

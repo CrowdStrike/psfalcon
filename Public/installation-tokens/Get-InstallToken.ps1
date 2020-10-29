@@ -7,12 +7,12 @@ function Get-InstallToken {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'tokens-query')]
+    [CmdletBinding(DefaultParameterSetName = 'installation-tokens/tokens-query')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('tokens-query', 'tokens-read')
+        $Endpoints = @('installation-tokens/tokens-query', 'installation-tokens/tokens-read')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

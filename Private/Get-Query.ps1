@@ -27,7 +27,7 @@ function Get-Query {
                 $Endpoint.Parameters | Where-Object Dynamic -eq $Item.Name
             } else {
                 # Match input with SharedParameters
-                $Falcon.Endpoint('SharedParameters').Parameters | Where-Object Dynamic -eq $Item.Name
+                $Falcon.Endpoint('private/SharedParameters').Parameters | Where-Object Dynamic -eq $Item.Name
             }
             if ($Param.In -match 'query') {
                 foreach ($Value in $Item.Value) {

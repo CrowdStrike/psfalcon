@@ -7,12 +7,12 @@ function Remove-AwsAccount {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'DeleteAWSAccounts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/DeleteAWSAccounts')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('DeleteAWSAccounts')
+        $Endpoints = @('cloud-connect-aws/DeleteAWSAccounts')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

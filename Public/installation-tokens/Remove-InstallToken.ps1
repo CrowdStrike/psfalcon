@@ -7,12 +7,12 @@ function Remove-InstallToken {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'tokens-delete')]
+    [CmdletBinding(DefaultParameterSetName = 'installation-tokens/tokens-delete')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('tokens-delete')
+        $Endpoints = @('installation-tokens/tokens-delete')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

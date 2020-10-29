@@ -7,12 +7,12 @@ function Confirm-GetFile {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-ListFiles')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-ListFiles')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-ListFiles', 'BatchGetCmdStatus')
+        $Endpoints = @('real-time-response/RTR-ListFiles', 'real-time-response/BatchGetCmdStatus')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

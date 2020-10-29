@@ -7,12 +7,12 @@ function Remove-GetFile {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-DeleteFile')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-DeleteFile')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-DeleteFile')
+        $Endpoints = @('real-time-response/RTR-DeleteFile')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

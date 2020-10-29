@@ -7,12 +7,12 @@ function Start-Session {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-InitSession')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-InitSession')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-InitSession', 'BatchInitSessions')
+        $Endpoints = @('real-time-response/RTR-InitSession', 'real-time-response/BatchInitSessions')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

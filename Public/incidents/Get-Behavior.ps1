@@ -7,12 +7,12 @@ function Get-Behavior {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryBehaviors')]
+    [CmdletBinding(DefaultParameterSetName = 'incidents/QueryBehaviors')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryBehaviors', 'GetBehaviors')
+        $Endpoints = @('incidents/QueryBehaviors', 'incidents/GetBehaviors')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

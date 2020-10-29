@@ -7,12 +7,12 @@ function Get-Incident {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryIncidents')]
+    [CmdletBinding(DefaultParameterSetName = 'incidents/QueryIncidents')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryIncidents', 'GetIncidents')
+        $Endpoints = @('incidents/QueryIncidents', 'incidents/GetIncidents')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

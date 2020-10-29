@@ -7,12 +7,12 @@ function Get-Stream {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'listAvailableStreamsOAuth2')]
+    [CmdletBinding(DefaultParameterSetName = 'event-streams/listAvailableStreamsOAuth2')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('listAvailableStreamsOAuth2')
+        $Endpoints = @('event-streams/listAvailableStreamsOAuth2')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

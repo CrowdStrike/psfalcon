@@ -7,12 +7,13 @@ function Get-Indicator {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryIntelIndicatorIds')]
+    [CmdletBinding(DefaultParameterSetName = 'intel/QueryIntelIndicatorIds')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryIntelIndicatorIds', 'GetIntelIndicatorEntities', 'QueryIntelIndicatorEntities')
+        $Endpoints = @('intel/QueryIntelIndicatorIds', 'intel/GetIntelIndicatorEntities',
+            'intel/QueryIntelIndicatorEntities')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -20,7 +21,7 @@ function Get-Indicator {
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('QueryIntelIndicatorEntities')
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('intel/QueryIntelIndicatorEntities')
         } else {
             # Evaluate input and make request
             $Param = @{

@@ -7,12 +7,13 @@ function Get-Session {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-ListAllSessions')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-ListAllSessions')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-ListAllSessions', 'RTR-ListSessions', 'RTR-ListQueuedSessions')
+        $Endpoints = @('real-time-response/RTR-ListAllSessions', 'real-time-response/RTR-ListSessions',
+            'real-time-response/RTR-ListQueuedSessions')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

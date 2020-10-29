@@ -7,12 +7,12 @@ function Request-Token {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'oauth2AccessToken')]
+    [CmdletBinding(DefaultParameterSetName = 'oauth2/oauth2AccessToken')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('oauth2AccessToken')
+        $Endpoints = @('oauth2/oauth2AccessToken')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

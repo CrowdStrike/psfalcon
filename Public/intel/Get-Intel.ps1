@@ -7,12 +7,13 @@ function Get-Intel {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'QueryIntelReportIds')]
+    [CmdletBinding(DefaultParameterSetName = 'intel/QueryIntelReportIds')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('QueryIntelReportIds', 'GetIntelReportEntities', 'QueryIntelReportEntities')
+        $Endpoints = @('intel/QueryIntelReportIds', 'intel/GetIntelReportEntities',
+            'intel/QueryIntelReportEntities')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -20,7 +21,7 @@ function Get-Intel {
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('QueryIntelReportEntities')
+            Get-DynamicHelp $MyInvocation.MyCommand.Name @('intel/QueryIntelReportEntities')
         } else {
             # Evaluate input and make request
             $Param = @{

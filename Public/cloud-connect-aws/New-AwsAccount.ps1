@@ -7,12 +7,12 @@ function New-AwsAccount {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'ProvisionAWSAccounts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/ProvisionAWSAccounts')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('ProvisionAWSAccounts')
+        $Endpoints = @('cloud-connect-aws/ProvisionAWSAccounts')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

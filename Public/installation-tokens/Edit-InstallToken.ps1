@@ -7,12 +7,12 @@ function Edit-InstallToken {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'tokens-update')]
+    [CmdletBinding(DefaultParameterSetName = 'installation-tokens/tokens-update')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('tokens-update')
+        $Endpoints = @('installation-tokens/tokens-update')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

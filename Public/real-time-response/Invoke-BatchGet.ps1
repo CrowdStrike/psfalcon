@@ -7,12 +7,12 @@ function Invoke-BatchGet {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'BatchGetCmd')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/BatchGetCmd')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('BatchGetCmd')
+        $Endpoints = @('real-time-response/BatchGetCmd')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)

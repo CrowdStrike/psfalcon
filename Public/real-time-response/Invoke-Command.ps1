@@ -7,12 +7,12 @@ function Invoke-Command {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'RTR-ExecuteCommand')]
+    [CmdletBinding(DefaultParameterSetName = 'real-time-response/RTR-ExecuteCommand')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('RTR-ExecuteCommand', 'BatchCmd')
+        $Endpoints = @('real-time-response/RTR-ExecuteCommand', 'real-time-response/BatchCmd')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
