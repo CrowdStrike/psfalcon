@@ -883,6 +883,7 @@
       "In": [
         "query"
       ],
+      "Pattern": "\\w{32}",
       "Position": null
     },
     "Responses": {
@@ -958,7 +959,21 @@
       "Accept": "application/json"
     },
     "Permission": "custom-ioa:read",
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 500,
+        "Description": "Maximum number of results per request",
+        "Position": null
+      }
+    ],
     "Responses": {
       "200": "msa.QueryResponse",
       "403": "msa.ReplyMetaOnly",
@@ -975,7 +990,21 @@
       "Accept": "application/json"
     },
     "Permission": "custom-ioa:read",
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 500,
+        "Description": "Maximum number of results per request",
+        "Position": null
+      }
+    ],
     "Responses": {
       "200": "msa.QueryResponse",
       "403": "msa.ReplyMetaOnly",
@@ -1002,6 +1031,19 @@
         "In": [
           "query"
         ],
+        "Position": null
+      },
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 500,
+        "Description": "Maximum number of results per request",
         "Position": null
       }
     ],
@@ -1033,6 +1075,19 @@
           "query"
         ],
         "Position": null
+      },
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 500,
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1063,6 +1118,19 @@
           "query"
         ],
         "Position": null
+      },
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 500,
+        "Description": "Maximum number of results per request",
+        "Position": null
       }
     ],
     "Responses": {
@@ -1082,7 +1150,21 @@
       "Accept": "application/json"
     },
     "Permission": "custom-ioa:read",
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Required": false,
+        "Min": 1,
+        "Max": 500,
+        "Description": "Maximum number of results per request",
+        "Position": null
+      }
+    ],
     "Responses": {
       "200": "msa.QueryResponse",
       "403": "msa.ReplyMetaOnly",
@@ -8177,12 +8259,6 @@
           "intel/QueryIntelActorIds",
           "intel/QueryIntelReportEntities",
           "intel/QueryIntelReportIds",
-          "ioarules/query-patterns",
-          "ioarules/query-platforms",
-          "ioarules/query-rule-groups",
-          "ioarules/query-rule-groups-full",
-          "ioarules/query-rules",
-          "ioarules/query-rule-types",
           "policy/queryCombinedDeviceControlPolicies",
           "policy/queryCombinedDeviceControlPolicyMembers",
           "policy/queryCombinedFirewallPolicies",
