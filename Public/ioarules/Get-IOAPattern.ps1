@@ -30,6 +30,9 @@ function Get-IOAPattern {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
                 'Detailed' {
                     $Param['Detailed'] = 'PatternIds'
                 }
