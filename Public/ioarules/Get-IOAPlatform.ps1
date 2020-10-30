@@ -30,6 +30,9 @@ function Get-IOAPlatform {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
                 'Detailed' {
                     $Param['Detailed'] = 'PlatformIds'
                 }
