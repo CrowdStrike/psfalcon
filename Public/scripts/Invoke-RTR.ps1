@@ -44,8 +44,8 @@ function Invoke-RTR {
             }
             # Gather available Real-time Response commands
             @{ 
-                Responder = 'RTR-ExecuteActiveResponderCommand'
-                Admin = 'RTR-ExecuteAdminCommand'
+                Responder = 'real-time-response/RTR-ExecuteActiveResponderCommand'
+                Admin = 'real-time-response/RTR-ExecuteAdminCommand'
             }.GetEnumerator().foreach{
                 New-Variable -Name $_.Key -Value (($Falcon.Endpoint($_.Value)).Parameters |
                     Where-Object { $_.Dynamic -eq 'Command' }).Enum
