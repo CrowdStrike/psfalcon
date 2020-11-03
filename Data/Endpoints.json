@@ -638,45 +638,15 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "XCSUSERNAME",
+        "Dynamic": "UserUuid",
         "Name": "X-CS-USERNAME",
-        "Required": true,
-        "Description": "The user ID",
         "Type": "string",
         "In": [
           "header"
         ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Comment",
-        "Name": "comment",
         "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Description",
-        "Name": "description",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Name",
-        "Name": "name",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
+        "Description": "User identifier",
+        "Position": 1
       },
       {
         "Dynamic": "Platform",
@@ -686,7 +656,42 @@
         "In": [
           "body"
         ],
-        "Position": null
+        "Enum": [
+          "linux",
+          "mac",
+          "windows"
+        ],
+        "Position": 2
+      },
+      {
+        "Dynamic": "Name",
+        "Name": "name",
+        "Required": true,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 3
+      },
+      {
+        "Dynamic": "Description",
+        "Name": "description",
+        "Required": false,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 4
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 5
       }
     ],
     "Responses": {
@@ -707,26 +712,15 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "XCSUSERNAME",
+        "Dynamic": "UserUuid",
         "Name": "X-CS-USERNAME",
-        "Required": true,
-        "Description": "The user ID",
         "Type": "string",
         "In": [
           "header"
         ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Comment",
-        "Name": "comment",
-        "Required": false,
-        "Description": "Explains why the entity is being deleted",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Position": null
+        "Required": true,
+        "Description": "User identifier",
+        "Position": 1
       },
       {
         "Dynamic": "GroupIds",
@@ -737,7 +731,18 @@
         "In": [
           "query"
         ],
-        "Position": null
+        "Position": 2
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Description": "Explains why the entity is being deleted",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Position": 3
       }
     ],
     "Responses": {
