@@ -638,17 +638,6 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "UserUuid",
-        "Name": "X-CS-USERNAME",
-        "Type": "string",
-        "In": [
-          "header"
-        ],
-        "Required": true,
-        "Description": "User identifier",
-        "Position": 1
-      },
-      {
         "Dynamic": "Platform",
         "Name": "platform",
         "Required": true,
@@ -661,7 +650,7 @@
           "mac",
           "windows"
         ],
-        "Position": 2
+        "Position": 1
       },
       {
         "Dynamic": "Name",
@@ -671,7 +660,7 @@
         "In": [
           "body"
         ],
-        "Position": 3
+        "Position": 2
       },
       {
         "Dynamic": "Description",
@@ -681,7 +670,7 @@
         "In": [
           "body"
         ],
-        "Position": 4
+        "Position": 3
       },
       {
         "Dynamic": "Comment",
@@ -691,7 +680,7 @@
         "In": [
           "body"
         ],
-        "Position": 5
+        "Position": 4
       }
     ],
     "Responses": {
@@ -712,26 +701,15 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "UserUuid",
-        "Name": "X-CS-USERNAME",
-        "Type": "string",
-        "In": [
-          "header"
-        ],
-        "Required": true,
-        "Description": "User identifier",
-        "Position": 1
-      },
-      {
         "Dynamic": "GroupIds",
         "Name": "ids",
         "Required": true,
-        "Description": "The IDs of the entities",
+        "Description": "One or more rule group identifiers to delete",
         "Type": "array",
         "In": [
           "query"
         ],
-        "Position": 2
+        "Position": 1
       },
       {
         "Dynamic": "Comment",
@@ -742,7 +720,7 @@
         "In": [
           "query"
         ],
-        "Position": 3
+        "Position": 2
       }
     ],
     "Responses": {
@@ -764,17 +742,6 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "XCSUSERNAME",
-        "Name": "X-CS-USERNAME",
-        "Required": true,
-        "Description": "The user ID",
-        "Type": "string",
-        "In": [
-          "header"
-        ],
-        "Position": null
-      },
-      {
         "Dynamic": "RuleGroupId",
         "Name": "rule_group_id",
         "Required": true,
@@ -783,7 +750,18 @@
         "In": [
           "query"
         ],
-        "Position": null
+        "Position": 1
+      },
+      {
+        "Dynamic": "RuleIds",
+        "Name": "ids",
+        "Required": true,
+        "Description": "One or more rule identifiers to delete",
+        "Type": "array",
+        "In": [
+          "query"
+        ],
+        "Position": 2
       },
       {
         "Dynamic": "Comment",
@@ -794,18 +772,7 @@
         "In": [
           "query"
         ],
-        "Position": null
-      },
-      {
-        "Dynamic": "RuleIds",
-        "Name": "ids",
-        "Required": true,
-        "Description": "The IDs of the entities",
-        "Type": "array",
-        "In": [
-          "query"
-        ],
-        "Position": null
+        "Position": 3
       }
     ],
     "Responses": {
@@ -1189,47 +1156,6 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "XCSUSERNAME",
-        "Name": "X-CS-USERNAME",
-        "Required": true,
-        "Description": "The user ID",
-        "Type": "string",
-        "In": [
-          "header"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Comment",
-        "Name": "comment",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Description",
-        "Name": "description",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Enabled",
-        "Name": "enabled",
-        "Required": true,
-        "Type": "boolean",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
         "Dynamic": "GroupId",
         "Name": "id",
         "Required": true,
@@ -1237,27 +1163,57 @@
         "In": [
           "body"
         ],
-        "Position": null
+        "Position": 1
       },
       {
         "Dynamic": "Name",
         "Name": "name",
-        "Required": true,
+        "Required": false,
         "Type": "string",
         "In": [
           "body"
         ],
-        "Position": null
+        "Position": 2
+      },
+      {
+        "Dynamic": "Description",
+        "Name": "description",
+        "Required": false,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 3
+      },
+      {
+        "Dynamic": "Enabled",
+        "Name": "enabled",
+        "Required": false,
+        "Type": "boolean",
+        "In": [
+          "body"
+        ],
+        "Position": 4
       },
       {
         "Dynamic": "Version",
         "Name": "rulegroup_version",
-        "Required": true,
+        "Required": false,
         "Type": "integer",
         "In": [
           "body"
         ],
-        "Position": null
+        "Position": 5
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 6
       }
     ],
     "Responses": {
@@ -1279,17 +1235,6 @@
     },
     "Permission": "custom-ioa:write",
     "Parameters": [
-      {
-        "Dynamic": "XCSUSERNAME",
-        "Name": "X-CS-USERNAME",
-        "Required": true,
-        "Description": "The user ID",
-        "Type": "string",
-        "In": [
-          "header"
-        ],
-        "Position": null
-      },
       {
         "Dynamic": "Comment",
         "Name": "comment",
