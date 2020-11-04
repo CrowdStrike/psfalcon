@@ -32,7 +32,7 @@ function Edit-FirewallGroup {
             Format-Param $Param
 
             # Make request
-            $Param # Invoke-Endpoint @Param
+            Invoke-Endpoint @Param
         }
     }
 }
