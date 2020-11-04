@@ -22,8 +22,14 @@ function Remove-IOARule {
             # Output help information
             Get-DynamicHelp $MyInvocation.MyCommand.Name
         } else {
-            # Evaluate input and make request
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            foreach ($Param in (Get-Param $Endpoints[0] $Dynamic)) {
+                # Add Header parameter with api-client-id
+                $Param['Header'] = @{
+                    'X-CS-USERNAME' = "api-client-id:$($Falcon.id)"
+                }
+                # Make request
+                Invoke-Endpoint @Param
+            }
         }
     }
 }
