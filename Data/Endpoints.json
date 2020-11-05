@@ -1097,7 +1097,7 @@
   },
   {
     "Name": "ioarules/update-rule-group",
-    "Description": "Update a rule group. The following properties can be modified: name, description, enabled.",
+    "Description": "Update a rule group.",
     "Path": "/ioarules/entities/rule-groups/v1",
     "Method": "patch",
     "Headers": {
@@ -1120,7 +1120,7 @@
       {
         "Dynamic": "Name",
         "Name": "name",
-        "Required": false,
+        "Required": true,
         "Type": "string",
         "In": [
           "body"
@@ -1131,7 +1131,7 @@
       {
         "Dynamic": "Description",
         "Name": "description",
-        "Required": false,
+        "Required": true,
         "Type": "string",
         "In": [
           "body"
@@ -1142,7 +1142,7 @@
       {
         "Dynamic": "Enabled",
         "Name": "enabled",
-        "Required": false,
+        "Required": true,
         "Type": "bool",
         "In": [
           "body"
@@ -1164,7 +1164,7 @@
       {
         "Dynamic": "Comment",
         "Name": "comment",
-        "Required": false,
+        "Required": true,
         "Type": "string",
         "In": [
           "body"
