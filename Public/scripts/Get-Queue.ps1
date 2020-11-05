@@ -109,19 +109,23 @@ function Get-Queue {
                                 command_stdout = $null
                                 command_stderr = $null
                             }
+                            $Param = @{
+                                Object = $Object
+                            }
                             ($_.psobject.properties).foreach{
                                 if ($_.name -eq 'status') {
                                     # Add 'status' with 'command' prefix
-                                    Add-Field $Object "command_$($_.name)" $_.value
+                                    Add-Field @Param -Name "command_$($_.name)" $_.value
                                 } elseif ($_.name -match '(created_at|updated_at|deleted_at)') {
                                     # Add date fields with 'command' prefix as [datetime]
-                                    if ($_.value) {
-                                        Add-Field $Object "command_$($_.name)" ([datetime] $_.value)
+                                    $Value = if ($_.value) {
+                                        [datetime] $_.value
                                     } else {
-                                        Add-Field $Object "command_$($_.name)" $null
+                                        $null
                                     }
+                                    Add-Field @Param -Name "command_$($_.name)" -Value $Value
                                 } else {
-                                    Add-Field $Object $_.name $_.value
+                                    Add-Field @Param -Name $_.name -Value $_.value
                                 }
                             }
                             if ($Object.command_status -eq 'FINISHED') {
