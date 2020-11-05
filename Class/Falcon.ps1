@@ -15,7 +15,7 @@ class Falcon {
     [array] Endpoint($Endpoint) {
         return ($this.Endpoints | Where-Object { $Endpoint -contains $_.Name })
     }
-    [string] Rfc3339($Days) {
-        return "$([Xml.XmlConvert]::ToString((Get-Date).AddDays($Days),[Xml.XmlDateTimeSerializationMode]::Utc))"
+    [string] Rfc3339($Hours) {
+        return "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
     }
 }
