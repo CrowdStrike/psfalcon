@@ -468,137 +468,6 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "XCSUSERNAME",
-        "Name": "X-CS-USERNAME",
-        "Required": true,
-        "Description": "The user ID",
-        "Type": "string",
-        "In": [
-          "header"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Comment",
-        "Name": "comment",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Description",
-        "Name": "description",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "DispositionId",
-        "Name": "disposition_id",
-        "Required": true,
-        "Type": "integer",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "FinalValue",
-        "Name": "final_value",
-        "Required": false,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Label",
-        "Name": "label",
-        "Required": false,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Name",
-        "Name": "name",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Type",
-        "Name": "type",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Value",
-        "Name": "value",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Label",
-        "Name": "label",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Value",
-        "Name": "value",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Name",
-        "Name": "name",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "PatternSeverity",
-        "Name": "pattern_severity",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
         "Dynamic": "GroupId",
         "Name": "rulegroup_id",
         "Required": true,
@@ -606,7 +475,34 @@
         "In": [
           "body"
         ],
-        "Position": null
+        "Position": 1
+      },
+      {
+        "Dynamic": "Name",
+        "Name": "name",
+        "Required": true,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 2
+      },
+      {
+        "Dynamic": "Severity",
+        "Name": "pattern_severity",
+        "Required": true,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Enum": [
+          "critical",
+          "high",
+          "medium",
+          "low",
+          "informational"
+        ],
+        "Position": 3
       },
       {
         "Dynamic": "TypeId",
@@ -616,7 +512,47 @@
         "In": [
           "body"
         ],
-        "Position": null
+        "Position": 4
+      },
+      {
+        "Dynamic": "DispositionId",
+        "Name": "disposition_id",
+        "Required": true,
+        "Type": "integer",
+        "In": [
+          "body"
+        ],
+        "Position": 5
+      },
+      {
+        "Dynamic": "FieldValues",
+        "Name": "field_values",
+        "Required": true,
+        "Type": "array",
+        "In": [
+          "body"
+        ],
+        "Position": 6
+      },
+      {
+        "Dynamic": "Description",
+        "Name": "description",
+        "Required": false,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 7
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 8
       }
     ],
     "Responses": {
@@ -801,7 +737,7 @@
       "In": [
         "query"
       ],
-      "Position": null
+      "Position": 1
     },
     "Responses": {
       "200": "api.PatternsResponse",
@@ -828,7 +764,7 @@
       "In": [
         "query"
       ],
-      "Position": null
+      "Position": 1
     },
     "Responses": {
       "200": "api.PlatformsResponse",
@@ -856,7 +792,7 @@
         "query"
       ],
       "Pattern": "\\w{32}",
-      "Position": null
+      "Position": 1
     },
     "Responses": {
       "200": "api.RuleGroupsResponse",
@@ -884,7 +820,7 @@
       "In": [
         "body"
       ],
-      "Position": null
+      "Position": 1
     },
     "Responses": {
       "200": "api.RulesResponse",
@@ -912,7 +848,7 @@
       "In": [
         "query"
       ],
-      "Position": null
+      "Position": 1
     },
     "Responses": {
       "200": "api.RuleTypesResponse",
@@ -1276,10 +1212,10 @@
         "Position": null
       },
       {
-        "Dynamic": "FinalValue",
-        "Name": "final_value",
+        "Dynamic": "FieldValues",
+        "Name": "field_values",
         "Required": false,
-        "Type": "string",
+        "Type": "array",
         "In": [
           "body"
         ],
@@ -10453,7 +10389,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/createSensorUpdatePoliciesV2",
+    "Name": "policy/createSensorUpdatePoliciesV2",
     "Path": "/policy/entities/sensor-update/v2",
     "Method": "POST",
     "Headers": {
@@ -10527,7 +10463,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/deleteSensorUpdatePolicies",
+    "Name": "policy/deleteSensorUpdatePolicies",
     "Path": "/policy/entities/sensor-update/v1",
     "Method": "DELETE",
     "Headers": {
@@ -10559,7 +10495,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/getSensorUpdatePolicies",
+    "Name": "policy/getSensorUpdatePolicies",
     "Path": "/policy/entities/sensor-update/v1",
     "Method": "GET",
     "Headers": {
@@ -10590,7 +10526,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/getSensorUpdatePoliciesV2",
+    "Name": "policy/getSensorUpdatePoliciesV2",
     "Path": "/policy/entities/sensor-update/v2",
     "Method": "GET",
     "Headers": {
@@ -10621,7 +10557,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/performSensorUpdatePoliciesAction",
+    "Name": "policy/performSensorUpdatePoliciesAction",
     "Path": "/policy/entities/sensor-update-actions/v1",
     "Method": "POST",
     "Headers": {
@@ -10685,7 +10621,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/queryCombinedSensorUpdateBuilds",
+    "Name": "policy/queryCombinedSensorUpdateBuilds",
     "Path": "/policy/combined/sensor-update-builds/v1",
     "Method": "GET",
     "Headers": {
@@ -10721,7 +10657,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/queryCombinedSensorUpdatePolicies",
+    "Name": "policy/queryCombinedSensorUpdatePolicies",
     "Path": "/policy/combined/sensor-update/v1",
     "Method": "GET",
     "Headers": {
@@ -10740,7 +10676,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/queryCombinedSensorUpdatePoliciesV2",
+    "Name": "policy/queryCombinedSensorUpdatePoliciesV2",
     "Path": "/policy/combined/sensor-update/v2",
     "Method": "GET",
     "Headers": {
@@ -10759,7 +10695,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/queryCombinedSensorUpdatePolicyMembers",
+    "Name": "policy/queryCombinedSensorUpdatePolicyMembers",
     "Path": "/policy/combined/sensor-update-members/v1",
     "Method": "GET",
     "Headers": {
@@ -10792,7 +10728,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/querySensorUpdatePolicies",
+    "Name": "policy/querySensorUpdatePolicies",
     "Path": "/policy/queries/sensor-update/v1",
     "Method": "GET",
     "Headers": {
@@ -10811,7 +10747,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/querySensorUpdatePolicyMembers",
+    "Name": "policy/querySensorUpdatePolicyMembers",
     "Path": "/policy/queries/sensor-update-members/v1",
     "Method": "GET",
     "Headers": {
@@ -10843,7 +10779,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/revealUninstallToken",
+    "Name": "policy/revealUninstallToken",
     "Path": "/policy/combined/reveal-uninstall-token/v1",
     "Method": "POST",
     "Headers": {
@@ -10889,7 +10825,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/setSensorUpdatePoliciesPrecedence",
+    "Name": "policy/setSensorUpdatePoliciesPrecedence",
     "Path": "/policy/entities/sensor-update-precedence/v1",
     "Method": "POST",
     "Headers": {
@@ -10937,7 +10873,7 @@
     }
   },
   {
-    "Name": "sensor-update-policies/updateSensorUpdatePoliciesV2",
+    "Name": "policy/updateSensorUpdatePoliciesV2",
     "Path": "/policy/entities/sensor-update/v2",
     "Method": "PATCH",
     "Headers": {
