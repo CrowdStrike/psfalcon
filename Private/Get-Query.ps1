@@ -20,6 +20,28 @@ function Get-Query {
             Position = 2)]
         [System.Collections.ArrayList] $Dynamic
     )
+    begin {
+        if ($Dynamic.Filter.Value) {
+            # Convert relative time values into RFC3339 string
+            $LastHourValue = if ($Dynamic.Filter.Value -match "\:\'Last (?<StrValue>(hour|day|week))\'") {
+                if ($Matches.StrValue -eq 'hour') {
+                    -1
+                } elseif ($Matches.StrValue -eq 'day') {
+                    -24
+                } elseif ($Matches.StrValue -eq 'week') {
+                    -168
+                }
+            } elseif ($Dynamic.Filter.Value -match "\:\'Last (?<IntValue>\d{1,}) hours\'") {
+                ([int] $Matches.IntValue) * -1
+            } elseif ($Dynamic.Filter.Value -match "\:\'Last (?<IntValue>\d{1,}) days\'") {
+                ([int] $Matches.IntValue) * -24
+            }
+            if ($Matches -and $LastHourValue) {
+                $Dynamic.Filter.Value = $Dynamic.Filter.Value -replace $Matches[0],
+                ":>'$($Falcon.Rfc3339($LastHourValue))'"
+            }
+        }
+    }
     process {
         $QueryOutput = foreach ($Item in ($Dynamic.Values | Where-Object IsSet)) {
             $Param = if ($Endpoint.Parameters.Dynamic -contains $Item.Name) {
