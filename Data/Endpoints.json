@@ -475,6 +475,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule group identifier",
         "Position": 1
       },
       {
@@ -485,6 +486,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule name",
         "Position": 2
       },
       {
@@ -502,6 +504,7 @@
           "low",
           "informational"
         ],
+        "Description": "Rule severity",
         "Position": 3
       },
       {
@@ -512,16 +515,18 @@
         "In": [
           "body"
         ],
+        "Description": "Rule type identifier",
         "Position": 4
       },
       {
         "Dynamic": "DispositionId",
         "Name": "disposition_id",
         "Required": true,
-        "Type": "integer",
+        "Type": "int",
         "In": [
           "body"
         ],
+        "Description": "Rule disposition identifier",
         "Position": 5
       },
       {
@@ -532,6 +537,7 @@
         "In": [
           "body"
         ],
+        "Description": "An array of hashtables containing rule properties",
         "Position": 6
       },
       {
@@ -542,6 +548,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule description",
         "Position": 7
       },
       {
@@ -552,6 +559,7 @@
         "In": [
           "body"
         ],
+        "Description": "Comment for tracking purposes",
         "Position": 8
       }
     ],
@@ -586,6 +594,7 @@
           "mac",
           "windows"
         ],
+        "Description": "Operating system platform",
         "Position": 1
       },
       {
@@ -596,6 +605,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule group name",
         "Position": 2
       },
       {
@@ -606,6 +616,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule group description",
         "Position": 3
       },
       {
@@ -616,6 +627,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule group comment",
         "Position": 4
       }
     ],
@@ -640,7 +652,7 @@
         "Dynamic": "GroupIds",
         "Name": "ids",
         "Required": true,
-        "Description": "One or more rule group identifiers to delete",
+        "Description": "One or more rule group identifiers",
         "Type": "array",
         "In": [
           "query"
@@ -651,7 +663,7 @@
         "Dynamic": "Comment",
         "Name": "comment",
         "Required": false,
-        "Description": "Explains why the entity is being deleted",
+        "Description": "Comment for tracking purposes",
         "Type": "string",
         "In": [
           "query"
@@ -681,7 +693,7 @@
         "Dynamic": "RuleGroupId",
         "Name": "rule_group_id",
         "Required": true,
-        "Description": "The parent rule group",
+        "Description": "Rule group identifier",
         "Type": "string",
         "In": [
           "query"
@@ -692,7 +704,7 @@
         "Dynamic": "RuleIds",
         "Name": "ids",
         "Required": true,
-        "Description": "One or more rule identifiers to delete",
+        "Description": "One or more rule identifiers",
         "Type": "array",
         "In": [
           "query"
@@ -703,7 +715,7 @@
         "Dynamic": "Comment",
         "Name": "comment",
         "Required": false,
-        "Description": "Explains why the entity is being deleted",
+        "Description": "Comment for tracking purposes",
         "Type": "string",
         "In": [
           "query"
@@ -729,14 +741,15 @@
     },
     "Permission": "custom-ioa:read",
     "Parameters": {
-      "Dynamic": "PatternIds",
+      "Dynamic": "SeverityIds",
       "Name": "ids",
       "Required": true,
-      "Description": "The IDs of the entities",
+      "Description": "One or more rule severity identifiers",
       "Type": "array",
       "In": [
         "query"
       ],
+      "Pattern": "(critical|high|medium|low|informational)",
       "Position": 1
     },
     "Responses": {
@@ -759,11 +772,12 @@
       "Dynamic": "PlatformIds",
       "Name": "ids",
       "Required": true,
-      "Description": "The IDs of the entities",
+      "Description": "One or more platform identifiers",
       "Type": "array",
       "In": [
         "query"
       ],
+      "Pattern": "(linux|mac|windows)",
       "Position": 1
     },
     "Responses": {
@@ -786,7 +800,7 @@
       "Dynamic": "GroupIds",
       "Name": "ids",
       "Required": true,
-      "Description": "The IDs of the entities",
+      "Description": "One or more rule group identifiers",
       "Type": "array",
       "In": [
         "query"
@@ -820,6 +834,7 @@
       "In": [
         "body"
       ],
+      "Description": "One or more rule identifiers",
       "Position": 1
     },
     "Responses": {
@@ -843,7 +858,7 @@
       "Dynamic": "TypeIds",
       "Name": "ids",
       "Required": true,
-      "Description": "The IDs of the entities",
+      "Description": "One or more rule type identifiers",
       "Type": "array",
       "In": [
         "query"
@@ -934,7 +949,7 @@
         "Dynamic": "Query",
         "Name": "q",
         "Required": false,
-        "Description": "Match query criteria, which includes all the filter string fields",
+        "Description": "Perform a generic substring search across all fields",
         "Type": "string",
         "In": [
           "query"
@@ -977,7 +992,7 @@
         "Dynamic": "Query",
         "Name": "q",
         "Required": false,
-        "Description": "Match query criteria, which includes all the filter string fields",
+        "Description": "Perform a generic substring search across all fields",
         "Type": "string",
         "In": [
           "query"
@@ -1020,7 +1035,7 @@
         "Dynamic": "Query",
         "Name": "q",
         "Required": false,
-        "Description": "Match query criteria, which includes all the filter string fields",
+        "Description": "Perform a generic substring search across all fields",
         "Type": "string",
         "In": [
           "query"
@@ -1099,6 +1114,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule group identifier",
         "Position": 1
       },
       {
@@ -1109,6 +1125,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule group name",
         "Position": 2
       },
       {
@@ -1119,26 +1136,29 @@
         "In": [
           "body"
         ],
+        "Description": "Rule group description",
         "Position": 3
       },
       {
         "Dynamic": "Enabled",
         "Name": "enabled",
         "Required": false,
-        "Type": "boolean",
+        "Type": "bool",
         "In": [
           "body"
         ],
+        "Description": "Rule group status",
         "Position": 4
       },
       {
         "Dynamic": "Version",
         "Name": "rulegroup_version",
-        "Required": false,
-        "Type": "integer",
+        "Required": true,
+        "Type": "int",
         "In": [
           "body"
         ],
+        "Description": "Rule group version",
         "Position": 5
       },
       {
@@ -1149,6 +1169,7 @@
         "In": [
           "body"
         ],
+        "Description": "Comment for tracking purposes",
         "Position": 6
       }
     ],
@@ -1172,156 +1193,6 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "Comment",
-        "Name": "comment",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Description",
-        "Name": "description",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "DispositionId",
-        "Name": "disposition_id",
-        "Required": true,
-        "Type": "integer",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Enabled",
-        "Name": "enabled",
-        "Required": true,
-        "Type": "boolean",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "FieldValues",
-        "Name": "field_values",
-        "Required": false,
-        "Type": "array",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Label",
-        "Name": "label",
-        "Required": false,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Name",
-        "Name": "name",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Type",
-        "Name": "type",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Value",
-        "Name": "value",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Label",
-        "Name": "label",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Value",
-        "Name": "value",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "InstanceId",
-        "Name": "instance_id",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Name",
-        "Name": "name",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "PatternSeverity",
-        "Name": "pattern_severity",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Version",
-        "Name": "rulegroup_version",
-        "Required": true,
-        "Type": "integer",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
         "Dynamic": "GroupId",
         "Name": "rulegroup_id",
         "Required": true,
@@ -1329,17 +1200,41 @@
         "In": [
           "body"
         ],
-        "Position": null
+        "Description": "Rule group identifier",
+        "Position": 1
       },
       {
-        "Dynamic": "RulegroupVersion",
+        "Dynamic": "GroupVersion",
         "Name": "rulegroup_version",
         "Required": true,
-        "Type": "integer",
+        "Type": "int",
         "In": [
           "body"
         ],
-        "Position": null
+        "Description": "Rule group version",
+        "Position": 2
+      },
+      {
+        "Dynamic": "RuleUpdates",
+        "Name": "rule_updates",
+        "Required": true,
+        "Type": "array",
+        "In": [
+          "body"
+        ],
+        "Description": "An array of hashtables containing rule changes",
+        "Position": 3
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Description": "Comment for tracking purposes",
+        "Position": 4
       }
     ],
     "Responses": {
@@ -1369,6 +1264,7 @@
         "In": [
           "body"
         ],
+        "Description": "Rule name",
         "Position": null
       },
       {
@@ -1389,6 +1285,7 @@
         "In": [
           "body"
         ],
+        "Description": "",
         "Position": null
       },
       {
@@ -1399,6 +1296,7 @@
         "In": [
           "body"
         ],
+        "Description": "",
         "Position": null
       },
       {
@@ -1409,6 +1307,7 @@
         "In": [
           "body"
         ],
+        "Description": "",
         "Position": null
       }
     ],
@@ -8328,7 +8227,7 @@
         "Name": "limit",
         "Required": false,
         "Description": "Maximum number of volume IDs to return. Max: 5000.",
-        "Type": "integer",
+        "Type": "int",
         "In": [
           "query"
         ],
@@ -9538,7 +9437,7 @@
           "windows",
           "mac"
         ],
-        "Description": "Operating system platform [default: windows]",
+        "Description": "Operating system platform",
         "Position": null
       }
     ],
@@ -10045,7 +9944,7 @@
         "Required": false,
         "Default": true,
         "Description": "Defines visibility of this file in Falcon MalQuery, either via the API or the Falcon console.\n\n- `true`: File is only shown to users within your customer account\n- `false`: File can be seen by other CrowdStrike customers \n\nDefault: `true`.",
-        "Type": "boolean",
+        "Type": "bool",
         "In": [
           "query"
         ],

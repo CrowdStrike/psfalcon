@@ -1,18 +1,18 @@
-function Edit-IOAGroup {
+function Test-IOARule {
 <#
 .SYNOPSIS
-    Modify a custom Indicator of Attack rule group
+    Test a custom Indicator of Attack rule
 .DESCRIPTION
     Additional information is available with the -Help parameter
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'ioarules/update-rule-group')]
+    [CmdletBinding(DefaultParameterSetName = 'custom-ioa/validate')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('ioarules/update-rule-group')
+        $Endpoints = @('custom-ioa/validate')
 
         # Create runtime dictionary
         return (Get-Dictionary $Endpoints -OutVariable Dynamic)
@@ -27,9 +27,6 @@ function Edit-IOAGroup {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.id)"
                 }
-                # Convert body to Json
-                Format-Param $Param
-
                 # Make request
                 Invoke-Endpoint @Param
             }

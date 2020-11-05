@@ -1,4 +1,4 @@
-function Get-IOAPattern {
+function Get-IOASeverity {
 <#
 .SYNOPSIS
     Search for available patterns for use with custom Indicators of Attack
@@ -34,7 +34,7 @@ function Get-IOAPattern {
                     $Param['All'] = $true
                 }
                 'Detailed' {
-                    $Param['Detailed'] = 'PatternIds'
+                    $Param['Detailed'] = 'SeverityIds'
                 }
             }
             Invoke-Request @Param
