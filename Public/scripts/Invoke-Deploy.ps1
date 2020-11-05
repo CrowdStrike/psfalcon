@@ -68,10 +68,10 @@ function Invoke-Deploy {
                         } else {
                             $_.Name
                         }
-                        Add-Field $Output $Name $Value
+                        Add-Field -Object $Output -Name $Name -Value $Value
                     }
                     # Add the deployment step field
-                    Add-Field $Output "deployment_step" $Step
+                    Add-Field -Object $Output -Name 'deployment_step' -Value $Step
 
                     # Output result to CSV
                     $Output | Export-Csv $OutputFile -Append -NoTypeInformation -Force
