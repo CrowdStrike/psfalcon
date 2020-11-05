@@ -27,6 +27,9 @@ function New-IOARule {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.id)"
                 }
+                # Convert body to Json
+                Format-Param $Param
+
                 # Make request
                 Invoke-Endpoint @Param
             }
