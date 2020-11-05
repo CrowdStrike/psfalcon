@@ -61,7 +61,7 @@ function Convert-CSV {
                 $Item = [PSCustomObject] @{}
 
                 ($_.psobject.properties).foreach{
-                    Add-Field $Item $_.name $_.value
+                    Add-Field -Object $Item -Name $_.name -Value $_.value
                 }
                 $Item
             }
@@ -75,21 +75,24 @@ function Convert-CSV {
                     # Output detail array
                     $Item = [PSCustomObject] @{}
 
+                    $Param = @{
+                        Object = $Item
+                    }
                     ($_.psobject.properties).foreach{
                         if ($_.name -eq 'device') {
                             # Add device identifier
-                            Add-Field $Item 'device_id' $_.value.device_id
+                            Add-Field @Param -Name 'device_id' -Value $_.value.device_id
                         } elseif ($_.name -eq 'behaviors') {
                             # Add combined tactic and technique identifiers
                             $TTP = ($_.value).foreach{
                                 "$($_.tactic_id):$($_.technique_id)"
                             }
-                            Add-Field $Item 'tactic_and_technique' ($TTP -join ', ')
+                            Add-Field @Param -Name 'tactic_and_technique' -Value ($TTP -join ', ')
                         } elseif ($_.name -eq 'quarantined_files') {
                             # Add quarantined file identifiers
-                            Add-Field $Item 'quarantined_files' $_.value.id
+                            Add-Field @Param -Name 'quarantined_files' -Value $_.value.id
                         } elseif ($Exclusions.Detection -notcontains $_.name) {
-                            Add-Field $Item $_.name $_.value
+                            Add-Field @Param -Name $_.name -Value $_.value
                         }
                     }
                     $Item
@@ -101,14 +104,17 @@ function Convert-CSV {
                     # Output detail array
                     $Item = [PSCustomObject] @{}
 
+                    $Param = @{
+                        Object = $Item
+                    }
                     ($_.psobject.properties).foreach{
                         if ($_.name -eq 'device_policies') {
                             ($_.value.psobject.properties).foreach{
                                 # Add policy type and identifier
-                                Add-Field $Item "$($_.name)_id" $_.value.policy_id
+                                Add-Field @Param -Name "$($_.name)_id" -Value $_.value.policy_id
 
                                 # Add assigned date
-                                Add-Field $Item "$($_.name)_assigned" $_.value.assigned_date
+                                Add-Field @Param -Name "$($_.name)_assigned" -Value $_.value.assigned_date
 
                                 # Add applied date
                                 $Applied = if ($_.value.applied -eq $true) {
@@ -116,18 +122,19 @@ function Convert-CSV {
                                 } else {
                                     $null
                                 }
-                                Add-Field $Item "$($_.name)_applied" $Applied
+                                Add-Field @Param -Name "$($_.name)_applied" -Value $Applied
 
                                 if ($_.value.uninstall_protection) {
                                     # Add uninstall_protection
-                                    Add-Field $Item 'uninstall_protection' $_.value.uninstall_protection
+                                    Add-Field @Param -Name 'uninstall_protection' -Value (
+                                        $_.value.uninstall_protection)
                                 }
                             }
                         } elseif ($_.name -eq 'meta') {
                             # Add meta version
-                            Add-Field $Item "$($_.name)_version" $_.value.version
+                            Add-Field @Param -Name "$($_.name)_version" -Value $_.value.version
                         } elseif ($Exclusions.Host -notcontains $_.name) {
-                            Add-Field $Item $_.name $_.value
+                            Add-Field @Param -Name $_.name -Value $_.value
                         }
                     }
                     $Item
@@ -135,7 +142,7 @@ function Convert-CSV {
             }
             { $TypeNames.HostGroup -contains $_ } {
                 # Convert detailed host group results
-                Get-SimpleObject $Object
+                Get-SimpleObject -Object $Object
             }
             { $TypeNames.Identifier -contains $_ } {
                 # Output identifier array
@@ -152,7 +159,7 @@ function Convert-CSV {
 
                     ($_.psobject.properties).foreach{
                         if ($Exclusions.Incident -notcontains $_.name) {
-                            Add-Field $Item $_.name $_.value
+                            Add-Field  -Object $Item -Name $_.name -Value $_.value
                         }
                     }
                     $Item
@@ -169,7 +176,7 @@ function Convert-CSV {
                     }
                 } else {
                     # Convert detailed IOC results
-                    Get-SimpleObject $Object
+                    Get-SimpleObject -Object $Object
                 }
             }
             { $TypeNames.Prevention -contains $_ } {
@@ -177,22 +184,26 @@ function Convert-CSV {
                 ($Object.resources).foreach{
                     $Item = [PSCustomObject] @{}
 
+                    $Param = @{
+                        Object = $Item
+                    }
                     ($_.psobject.properties).foreach{
                         if ($_.name -eq 'groups') {
                             # Add groups as [string]
-                            Add-Field $Item $_.name ($_.value.id -join ', ')
+                            Add-Field @Param -Name $_.name -Value ($_.value.id -join ', ')
                         } elseif ($_.name -eq 'prevention_settings') {
                             ($_.value.settings).foreach{
                                 if ($_.type -eq 'toggle') {
                                     # Add 'toggle' settings with as [bool]
-                                    Add-Field $Item $_.id $_.value.enabled
+                                    Add-Field @Param -Name $_.id -Value $_.value.enabled
                                 } else {
                                     # Add 'mlslider' settings as [string]
-                                    Add-Field $Item $_.id "$($_.value.detection):$($_.value.prevention)"
+                                    Add-Field @Param -Name $_.id -Value (
+                                        "$($_.value.detection):$($_.value.prevention)")
                                 }
                             }
                         } else {
-                            Add-Field $Item $_.name $_.value
+                            Add-Field @Param -Name $_.name -Value $_.value
                         }
                     }
                     $Item
@@ -200,68 +211,72 @@ function Convert-CSV {
             }
             { $TypeNames.PutFile -contains $_ } {
                 # Convert detailed put file results
-                Get-SimpleObject $Object
+                Get-SimpleObject -Object $Object
             }
             { $TypeNames.SensorUpdate -contains $_ } {
                 # Convert detailed Sensor Update policy results
                 ($Object.resources).foreach{
                     $Item = [PSCustomObject] @{}
 
+                    $Param = @{
+                        Object = $Item
+                    }
                     ($_.psobject.properties).foreach{
                         if ($_.name -eq 'groups') {
                             # Add group identifiers as [string]
-                            Add-Field $Item $_.name ($_.value.id -join ', ')
+                            Add-Field @Param -Name $_.name -Value ($_.value.id -join ', ')
                         } elseif ($_.name -eq 'settings') {
                             ($_.value.psobject.properties).foreach{
                                 # Add settings fields and values
-                                Add-Field $Item $_.name $_.value
+                                Add-Field @Param -Name $_.name -Value $_.value
                             }
                         } else {
-                            Add-Field $Item $_.name $_.value
+                            Add-Field @Param -Name $_.name -Value $_.value
                         }
                     }
-                    # Output item
                     $Item
                 }
             }
             { $TypeNames.User -contains $_ } {
                 # Convert detailed user results
-                Get-SimpleObject $Object
+                Get-SimpleObject -Object $Object
             }
             { $TypeNames.Vulnerability -contains $_ } {
                 # Convert detailed vulnerability results
                 ($Object.resources).foreach{
                     $Item = [PSCustomObject] @{}
 
+                    $Param = @{
+                        Object = $Item
+                    }
                     ($_.psobject.properties).foreach{
                         if ($_.name -eq 'cve') {
                             ($_.value.psobject.properties).foreach{
                                 # Add fields from 'cve' with 'cve' prefix
-                                Add-Field $Item "cve_$($_.name)" $_.value
+                                Add-Field @Param -Name "cve_$($_.name)" -Value $_.value
                             }
                         } elseif ($_.name -eq 'app') {
                             ($_.value.psobject.properties).foreach{
                                 # Add fields from 'app'
-                                Add-Field $Item $_.name $_.value
+                                Add-Field @Param -Name $_.name -Value $_.value
                             }
                         } elseif ($_.name -eq 'host_info') {
                             ($_.value.psobject.properties).foreach{
                                 if ($_.name -eq 'groups') {
                                     # Add group names as [string]
-                                    Add-Field $Item $_.name ($_.value.name -join ', ')
+                                    Add-Field @Param -Name $_.name -Value ($_.value.name -join ', ')
                                 } else {
                                     # Add fields from 'host_info'
-                                    Add-Field $Item $_.name $_.value
+                                    Add-Field @Param -Name $_.name -Value $_.value
                                 }
                             }
                         } elseif ($_.name -eq 'remediation') {
                             # Add remediation identifiers as [string]
-                            Add-Field $Item "remediation_ids" ($_.value.ids -join ', ')
+                            Add-Field @Param -Name "remediation_ids" -Value ($_.value.ids -join ', ')
                         } else {
-                            Add-Field $Item $_.name $_.value
+                            Add-Field @Param -Name $_.name -Value $_.value
                         }
                     }
-                    # Output item
                     $Item
                 }
             }
