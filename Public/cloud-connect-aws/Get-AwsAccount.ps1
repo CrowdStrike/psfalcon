@@ -12,12 +12,12 @@
     param()
     DynamicParam {
         $Endpoints = @('cloud-connect-aws/QueryAWSAccountsForIDs', 'cloud-connect-aws/QueryAWSAccounts')
-
-        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('cloud-connect-aws/QueryAWSAccounts')
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
+                'cloud-connect-aws/QueryAWSAccounts')
         }
         else {
             $Param = @{

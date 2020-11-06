@@ -12,12 +12,11 @@
     param()
     DynamicParam {
         $Endpoints = @('cloud-connect-aws/GetAWSSettings')
-
-        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
-            Get-DynamicHelp $MyInvocation.MyCommand.Name
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
             Invoke-Endpoint -Endpoint $Endpoints[0]
