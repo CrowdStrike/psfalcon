@@ -28,6 +28,7 @@
                         'closed' { "40" }
                     }
                 }
+            }
             else {
                 throw "Valid values for 'update_status': 'closed', 'in_progress', 'new', 'reopened'."
             }
