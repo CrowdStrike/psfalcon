@@ -1,5 +1,5 @@
-function Get-Script {
-<#
+﻿function Get-Script {
+    <#
 .SYNOPSIS
     Search for scripts that are available to use with the Real-time Response 'runscript' command
 .DESCRIPTION
@@ -11,22 +11,19 @@ function Get-Script {
     [OutputType()]
     param()
     DynamicParam {
-        # Endpoint(s) used by function
         $Endpoints = @('real-time-response/RTR-ListScripts', 'real-time-response/RTR-GetScripts')
-
-        # Create runtime dictionary
-        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
-            # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name
-        } else {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+ else {
             # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
-                Query = $Endpoints[0]
-                Entity = $Endpoints[1]
+                Query   = $Endpoints[0]
+                Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
