@@ -2203,7 +2203,7 @@
     }
   },
   {
-    "Name": "event-streams/listAvailableStreamsOAuth2",
+    "Name": "sensors/listAvailableStreamsOAuth2",
     "Path": "/sensors/entities/datafeed/v2",
     "Method": "GET",
     "Headers": {
@@ -2253,7 +2253,7 @@
     }
   },
   {
-    "Name": "event-streams/refreshActiveStreamSession",
+    "Name": "sensors/refreshActiveStreamSession",
     "Path": "/sensors/entities/datafeed-actions/v1/<partition>",
     "Method": "POST",
     "Headers": {
@@ -9942,7 +9942,6 @@
         "Dynamic": "IsConfidential",
         "Name": "is_confidential",
         "Required": false,
-        "Default": true,
         "Description": "Defines visibility of this file in Falcon MalQuery, either via the API or the Falcon console.\n\n- `true`: File is only shown to users within your customer account\n- `false`: File can be seen by other CrowdStrike customers \n\nDefault: `true`.",
         "Type": "bool",
         "In": [

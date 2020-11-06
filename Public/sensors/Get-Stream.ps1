@@ -1,4 +1,4 @@
-function Update-Stream {
+function Get-Stream {
 <#
 .SYNOPSIS
     Discover event streams
@@ -7,20 +7,20 @@ function Update-Stream {
 .LINK
     https://github.com/CrowdStrike/psfalcon
 #>
-    [CmdletBinding(DefaultParameterSetName = 'event-streams/refreshActiveStreamSession')]
+    [CmdletBinding(DefaultParameterSetName = 'sensors/listAvailableStreamsOAuth2')]
     [OutputType()]
     param()
     DynamicParam {
         # Endpoint(s) used by function
-        $Endpoints = @('event-streams/refreshActiveStreamSession')
+        $Endpoints = @('sensors/listAvailableStreamsOAuth2')
 
         # Create runtime dictionary
-        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         } else {
             # Evaluate input and make request
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic

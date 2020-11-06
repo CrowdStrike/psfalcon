@@ -107,10 +107,6 @@ FunctionsToExport = @(
     'New-HostGroup',
     'Remove-HostGroup',
 
-    # event-streams
-    'Get-Stream',
-    'Update-Stream',
-
     # falconx
     'Get-Report',
     'Get-Submission',
@@ -263,7 +259,9 @@ FunctionsToExport = @(
     # sensors
     'Get-CCID',
     'Get-Installer',
+    'Get-Stream',
     'Receive-Installer',
+    'Update-Stream',
 
     # spotlight
     'Get-Remediation',
