@@ -1,10 +1,12 @@
 ﻿function Revoke-Token {
     <#
-.SYNOPSIS
-    Revoke your current OAuth2 access token before the end of its standard lifespan
-.LINK
-    https://github.com/CrowdStrike/psfalcon
-#>
+    .SYNOPSIS
+        Revoke your current OAuth2 access token before the end of its standard lifespan
+    .DESCRIPTION
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/CrowdStrike/psfalcon
+    #>
     [CmdletBinding(DefaultParameterSetName = 'oauth2/oauth2RevokeToken')]
     [OutputType()]
     param()
