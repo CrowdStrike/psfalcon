@@ -1,39 +1,30 @@
-function Invoke-MalQuery {
-<#
-.SYNOPSIS
-    Perform a MalQuery search
-.DESCRIPTION
-    Additional information is available with the -Help parameter
-.LINK
-    https://github.com/CrowdStrike/psfalcon
-#>
+﻿function Invoke-MalQuery {
+    <#
+    .SYNOPSIS
+        Perform a MalQuery search
+    .DESCRIPTION
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/CrowdStrike/psfalcon
+    #>
     [CmdletBinding(DefaultParameterSetName = 'malquery/PostMalQueryExactSearchV1')]
     [OutputType()]
     param()
     DynamicParam {
-        # Endpoint(s) used by function
         $Endpoints = @('malquery/PostMalQueryExactSearchV1', 'malquery/PostMalQueryFuzzySearchV1',
             'malquery/PostMalQueryHuntV1')
-
-        # Create runtime dictionary
-        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
-            # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name
-        } else {
-            # Evaluate input
-            $Param = Get-Param $PSCmdlet.ParameterSetName $Dynamic
-
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            $Param = Get-Param -Endpoint $PSCmdlet.ParameterSetName -Dynamic $Dynamic
             if ($Param.Body.options) {
-                # Convert options from array to hashtable
                 $Param.Body.options = $Param.Body.options[0]
             }
-            # Convert to Json
-            Format-Param $Param
-
-            # Make request
+            Format-Param -Param $Param
             Invoke-Endpoint @Param
         }
     }
