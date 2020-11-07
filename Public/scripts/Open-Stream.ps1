@@ -1,32 +1,26 @@
-function Open-Stream {
-<#
-.SYNOPSIS
-    Open an Event Stream and output to a Json file
-.DESCRIPTION
-    Additional information is available with the -Help parameter
-.LINK
-    https://github.com/CrowdStrike/psfalcon
-#>
+﻿function Open-Stream {
+    <#
+    .SYNOPSIS
+        Open an Event Stream and output to a Json file
+    .DESCRIPTION
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/CrowdStrike/psfalcon
+    #>
     [CmdletBinding(DefaultParameterSetName = 'scripts/OpenStream')]
     [OutputType()]
     param()
     DynamicParam {
-        # Endpoint(s) used by function
         $Endpoints = @('scripts/OpenStream')
-
-        # Create runtime dictionary
-        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
-            # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name
-        } elseif (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
-            # Open stream
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
             $Stream = Get-FalconStream -AppId 'PSFalcon' -Format json
-
             if ($Stream.resources) {
-                # Create parameters from stream
                 $ArgumentList =
                 "try {
                     `$Param = @{
@@ -42,13 +36,13 @@ function Open-Stream {
                 } catch {
                     Write-Output $_ | Out-File `$FilePath
                 }"
-                # Launch PowerShell window and output results to working directory
                 Start-Process -FilePath powershell.exe -ArgumentList $ArgumentList
-            } else {
+            }
+            else {
                 $Stream
             }
-        } else {
-            # Output exception if run on non-Windows devices
+        }
+        else {
             throw "This command is only compatible with PowerShell on Windows"
         }
     }
