@@ -1961,7 +1961,7 @@
         "Position": null
       },
       {
-        "Dynamic": "RuleGroupIds",
+        "Dynamic": "GroupIds",
         "Name": "ids",
         "Type": "array",
         "In": [
@@ -2482,7 +2482,7 @@
         "Position": null
       },
       {
-        "Dynamic": "RuleGroupIds",
+        "Dynamic": "GroupIds",
         "Name": "rule_group_ids",
         "Type": "array",
         "In": [
