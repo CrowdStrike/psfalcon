@@ -19,7 +19,13 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            foreach ($Param in (Get-Param $Endpoints[0] $Dynamic)) {
+                $Param['Header'] = @{
+                    'X-CS-USERNAME' = "api-client-id:$($Falcon.id)"
+                }
+                Format-Param -Param $Param
+                Invoke-Endpoint @Param
+            }
         }
     }
 }

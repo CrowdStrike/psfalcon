@@ -19,10 +19,14 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
-            $Param.Body['diff_type'] = 'application/json-patch+json'
-            Format-Param -Param $Param
-            Invoke-Endpoint @Param
+            foreach ($Param in (Get-Param $Endpoints[0] $Dynamic)) {
+                $Param['Header'] = @{
+                    'X-CS-USERNAME' = "api-client-id:$($Falcon.id)"
+                }
+                $Param.Body['diff_type'] = 'application/json-patch+json'
+                Format-Param -Param $Param
+                Invoke-Endpoint @Param
+            }
         }
     }
 }
