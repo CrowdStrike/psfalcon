@@ -1,33 +1,30 @@
-function Get-Installer {
-<#
-.SYNOPSIS
-    Search for sensor installer packages
-.DESCRIPTION
-    Additional information is available with the -Help parameter
-.LINK
-    https://github.com/CrowdStrike/psfalcon
-#>
+﻿function Get-Installer {
+    <#
+    .SYNOPSIS
+        Search for sensor installer packages
+    .DESCRIPTION
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/CrowdStrike/psfalcon
+    #>
     [CmdletBinding(DefaultParameterSetName = 'sensors/GetSensorInstallersByQuery')]
     [OutputType()]
     param()
     DynamicParam {
-        # Endpoint(s) used by function
         $Endpoints = @('sensors/GetSensorInstallersByQuery', 'sensors/GetSensorInstallersEntities',
             'sensors/GetCombinedSensorInstallersByQuery')
-
-        # Create runtime dictionary
-        return (Get-Dictionary $Endpoints -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
-            # Output help information
-            Get-DynamicHelp $MyInvocation.MyCommand.Name @('sensors/GetCombinedSensorInstallersByQuery')
-        } else {
-            # Evaluate input and make request
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
+                'sensors/GetCombinedSensorInstallersByQuery')
+        }
+        else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
-                Query = $Endpoints[0]
-                Entity = $Endpoints[1]
+                Query   = $Endpoints[0]
+                Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
