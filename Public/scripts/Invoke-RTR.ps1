@@ -79,6 +79,7 @@
                         session_id = $null
                         cloud_request_id = $null
                         complete = $false
+                        offline_queued = $false
                         stdout = $null
                         stderr = $null
                         errors = $null
