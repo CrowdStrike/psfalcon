@@ -28,7 +28,7 @@
             }
         }
         if ($PathModified -eq $true) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $PathOutput"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $PathOutput"
             $PathOutput
         }
     }

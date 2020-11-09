@@ -37,7 +37,7 @@ function Split-Param {
     }
     process {
         if ($Max -and $Param.Query.count -gt $Max) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max query values per request"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $Max query values per request"
             for ($i = 0; $i -lt $Param.Query.count; $i += $Max) {
                 $Group = @{
                     Query = $Param.Query[$i..($i + ($Max - 1))]
@@ -50,7 +50,7 @@ function Split-Param {
                 $Group
             }
         } elseif ($Max -and $Param.Body.ids.count -gt $Max) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max body values per request"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $Max body values per request"
             for ($i = 0; $i -lt $Param.Body.ids.count; $i += $Max) {
                 $Group = @{
                     Body = @{

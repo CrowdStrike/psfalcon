@@ -62,7 +62,7 @@
             }
         }
         if ($QueryOutput) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $($QueryOutput -join ', ')"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $($QueryOutput -join ', ')"
             $QueryOutput
         }
     }

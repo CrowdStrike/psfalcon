@@ -27,7 +27,7 @@
             }
         }
         if ($FormdataOutput) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $(ConvertTo-Json $FormdataOutput)"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $(ConvertTo-Json $FormdataOutput)"
             $FormdataOutput
         }
     }

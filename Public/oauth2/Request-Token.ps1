@@ -38,11 +38,11 @@
                 Endpoint = $Endpoints[0]
                 Body     = "client_id=$($Falcon.Id)&client_secret=$($Falcon.Secret)"
             }
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] id: $($Falcon.Id)"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] id: $($Falcon.Id)"
             if ($Falcon.CID) {
                 $Param.Body += "&member_cid=$($Falcon.CID)"
-                Write-Debug "[$($MyInvocation.MyCommand.Name)] cid: $($Falcon.CID)"
+                Write-Verbose "[$($MyInvocation.MyCommand.Name)] cid: $($Falcon.CID)"
             }
             $Request = Invoke-Endpoint @Param
             if ($Request.access_token) {

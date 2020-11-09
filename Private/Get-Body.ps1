@@ -69,7 +69,7 @@
             $BodyOutput
         }
         elseif ($ByteArray) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] File: $Filename"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] File: $Filename"
             $ByteArray
         }
     }

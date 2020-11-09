@@ -14,7 +14,7 @@
     process {
         if ($Param.Body -and ($Falcon.Endpoint($Param.Endpoint)).Headers.ContentType -eq 'application/json') {
             $Param.Body = ConvertTo-Json $Param.Body -Depth 8
-            Write-Debug ("[$($MyInvocation.MyCommand.Name)] $($Param.Body)")
+            Write-Verbose ("[$($MyInvocation.MyCommand.Name)] $($Param.Body)")
         }
     }
 }

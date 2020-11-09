@@ -29,7 +29,7 @@
             }
         }
         if ($FileOutput) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $FileOutput"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $FileOutput"
             $FileOutput
         }
     }

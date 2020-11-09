@@ -48,7 +48,7 @@
         if ($Authorization) {
             $Request.Headers.Add('Authorization', $Authorization)
         }
-        Write-Debug ("[$($MyInvocation.MyCommand.Name)] " +
+        Write-Verbose ("[$($MyInvocation.MyCommand.Name)] " +
             "$(ConvertTo-Json ($Request.Headers | Where-Object { $_.Key -NE 'Authorization' }))")
     }
 }
