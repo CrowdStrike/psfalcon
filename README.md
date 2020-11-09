@@ -5,18 +5,17 @@ Requires **[PowerShell 5.1](https://github.com/PowerShell/PowerShell#get-powersh
 
 # Installation
 1. Download the files in this repository as a ZIP
-2. Extract the archive
-3. Move the contents of `psfalcon-master.zip` into your user modules directory:
+2. Extract `psfalcon-master.zip` into the appropriate user modules folder:
 
 Linux/MacOS (PowerShell Core):
 ```powershell
 $HOME/.local/share/powershell/Modules/PSFalcon/2.0.0
 ```
-Windows (PowerShell Core):
+Windows (PowerShell Core/PowerShell v6 or newer):
 ```powershell
 $HOME\Documents\PowerShell\Modules\PSFalcon\2.0.0
 ```
-Windows (PowerShell Desktop):
+Windows (PowerShell Desktop/PowerShell v5.1):
 ```powershell
 $HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
 ```
