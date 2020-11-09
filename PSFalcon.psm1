@@ -1,3 +1,4 @@
+$Endpoints = Get-Content "$PSScriptRoot\Data\Endpoints.json" -ErrorAction Stop | ConvertFrom-Json
 $Public = @(Get-ChildItem -Path $PSScriptRoot\Public\*\*.ps1 -ErrorAction SilentlyContinue)
 $Private = @(Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue)
 foreach ($Import in @($Public + $Private)) {
@@ -8,10 +9,6 @@ foreach ($Import in @($Public + $Private)) {
     }
 }
 if (-not($Script:Falcon)) {
-    $Script:Falcon = [Falcon]::New((Get-Content "$PSScriptRoot\Data\Endpoints.json" | ConvertFrom-Json))
+    $Script:Falcon = [Falcon]::New($Endpoints)
 }
-$Param = @{
-    Object = "Imported PSFalcon. Review 'Get-Command -Module PSFalcon' and '<Command> -Help' for details."
-    ForeGroundColor = "DarkRed"
-}
-Write-Host @Param
+Write-Host "Imported PSFalcon. Review 'Get-Command -Module PSFalcon' and '<Command> -Help' for details."
