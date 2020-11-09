@@ -254,6 +254,7 @@ FunctionsToExport = @(
     'Invoke-Deploy',
     'Invoke-RTR',
     'Open-Stream',
+    'Search-MalQueryHash',
     'Show-Map',
 
     # sensors
