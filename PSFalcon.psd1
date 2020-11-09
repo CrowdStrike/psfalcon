@@ -24,7 +24,7 @@ GUID = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
 Author = 'Brendan Kremian'
 
 # Company or vendor of this module
-# CompanyName = ''
+CompanyName = 'CrowdStrike'
 
 # Copyright statement for this module
 Copyright = '(c) Brendan Kremian. All rights reserved.'
