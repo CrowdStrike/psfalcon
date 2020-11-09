@@ -25,15 +25,16 @@ You can list available commands using `Get-Command -Module PSFalcon` once the mo
 
 Because the parameters used by individual commands are dynamically loaded, the `Get-Help` PowerShell function
 does not contain much information. Using the `-Help` parameter with any PSFalcon command will show the available
-parameters and a brief description.
+parameters and a brief description of how the command is used.
 
 ## Credentials
-In order to interact with the Falcon OAuth2 APIs, you need a valid **[API Client ID and Secret](https://falcon.crowdstrike.com/support/api-clients-and-keys)**.
+In order to interact with the Falcon OAuth2 APIs, you must have a valid **[API Client ID and Secret](https://falcon.crowdstrike.com/support/api-clients-and-keys)**.
 
 ## Requesting Access Tokens
-An access token is required in order to interact with the CrowdStrike OAuth2 APIs. If your credentials have
-been loaded and you do not have a valid access token, PSFalcon will request one on your behalf when you issue
-a command. You can also request a token and provide your credentials.
+An access token is required whenever API requests are made. If your credentials have been loaded and you do not
+have a valid access token, PSFalcon will request one on your behalf when you issue a command. You can also
+request a token and provide your credentials (which is required when attempting to use a non-default cloud or
+authenticate with a child CID).
 
 ```powershell
 PS> Request-FalconToken
