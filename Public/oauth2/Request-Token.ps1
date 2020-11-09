@@ -27,22 +27,25 @@
                 default { 'https://api.crowdstrike.com' }
             }
             @('Id', 'Secret', 'CID') | ForEach-Object {
-                if (($_ -NE 'CID') -and (-not($Dynamic.$_.Value))) {
-                    $Dynamic.$_.Value = Read-Host "$_"
-                }
-                if ($Dynamic.$_.Value) {
-                    $Falcon.$_ = $Dynamic.$_.Value
+                if (-not($PSBoundParameters.$_)) {
+                    if ($Falcon.$_) {
+                        $PSBoundParameters.$_ = $Falcon.$_
+                    } elseif ($_ -NE 'CID') {
+                        $Falcon.$_ = Read-Host "$_"
+                    }
+                } else {
+                    $Falcon.$_ = $PSBoundParameters.$_
                 }
             }
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] id: $($Falcon.Id)"
             $Param = @{
                 Endpoint = $Endpoints[0]
                 Body     = "client_id=$($Falcon.Id)&client_secret=$($Falcon.Secret)"
             }
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] id: $($Falcon.Id)"
             if ($Falcon.CID) {
-                $Param.Body += "&member_cid=$($Falcon.CID)"
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] cid: $($Falcon.CID)"
+                $Param.Body += "&member_cid=$($Falcon.CID.ToLower())"
+                Write-Verbose "[$($MyInvocation.MyCommand.Name)] cid: $($Falcon.CID.ToLower())"
             }
             $Request = Invoke-Endpoint @Param
             if ($Request.access_token) {
