@@ -1,28 +1,26 @@
-function Invoke-Endpoint {
-<#
-.SYNOPSIS
-    Makes a request to an API endpoint
-.PARAMETER ENDPOINT
-    Falcon endpoint
-.PARAMETER HEADER
-    Header key/value pair inputs
-.PARAMETER QUERY
-    An array of string values to append to the URI
-.PARAMETER BODY
-    Body string
-.PARAMETER FORMDATA
-    Formdata dictionary
-.PARAMETER OUTFILE
-    Path for file output
-.PARAMETER PATH
-    A modified 'path' value to use in place of the endpoint-defined string
-#>
+﻿function Invoke-Endpoint {
+    <#
+    .SYNOPSIS
+        Makes a request to an API endpoint
+    .PARAMETER ENDPOINT
+        Falcon endpoint
+    .PARAMETER HEADER
+        Header key/value pair inputs
+    .PARAMETER QUERY
+        An array of string values to append to the URI
+    .PARAMETER BODY
+        Body string
+    .PARAMETER FORMDATA
+        Formdata dictionary
+    .PARAMETER OUTFILE
+        Path for file output
+    .PARAMETER PATH
+        A modified 'path' value to use in place of the endpoint-defined string
+    #>
     [CmdletBinding()]
     [OutputType()]
     param(
-        [Parameter(
-            Mandatory = $true,
-            Position = 1)]
+        [Parameter(Mandatory = $true)]
         [string] $Endpoint,
 
         [Parameter()]
@@ -44,31 +42,24 @@ function Invoke-Endpoint {
         [string] $Path
     )
     begin {
-        # Set Falcon endpoint target
         $Target = $Falcon.Endpoint($Endpoint)
-
-        # Define 'path' for request
         $FullPath = if ($Path) {
             "$($Falcon.Hostname)$($Path)"
-        } else {
+        }
+        else {
             "$($Falcon.Hostname)$($Target.Path)"
         }
         if ($Query) {
-            # Add query items to UriPath
             $FullPath += "?$($Query -join '&')"
         }
         if ($PSVersionTable.PSVersion.Major -lt 6) {
-            # Add System.Net.Http
             Add-Type -AssemblyName System.Net.Http
         }
     }
     process {
-        # Create Http request objects
         $Client = [System.Net.Http.HttpClient]::New()
         $Request = [System.Net.Http.HttpRequestMessage]::New(
             ([System.Net.Http.HttpMethod]::($Target.Method)), $FullPath)
-
-        # Add headers
         $Param = @{
             Endpoint = $Target
             Request = $Request
@@ -77,89 +68,71 @@ function Invoke-Endpoint {
             $Param['Header'] = $Header
         }
         Format-Header @Param
-
         if ($Query -match 'timeout') {
-            # Gather timeout value from $Query and add 5 seconds
             $Timeout = [int] ($Query | Where-Object { $_ -match 'timeout' }).Split('=')[1] + 5
-
-            # Set client timeout in ticks
             $Client.Timeout = (New-TimeSpan -Seconds $Timeout).Ticks
-
             Write-Verbose ("[$($MyInvocation.MyCommand.Name)] HttpClient timeout set to $($Timeout) seconds")
         }
         Write-Verbose ("[$($MyInvocation.MyCommand.Name)] $(($Target.Method).ToUpper())" +
-        " $($Falcon.Hostname)$($Target.Path)")
-
+            " $($Falcon.Hostname)$($Target.Path)")
         try {
             if ($Formdata) {
-                # Add multipart content
                 $MultiContent = [System.Net.Http.MultipartFormDataContent]::New()
-
                 foreach ($Key in $Formdata.Keys) {
                     if ($Key -match '(file|upfile)') {
-                        # If file, read as bytes
                         $FileStream = [System.IO.FileStream]::New($Formdata.$Key, [System.IO.FileMode]::Open)
                         $Filename = [System.IO.Path]::GetFileName($Formdata.$Key)
                         $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
                         $MultiContent.Add($StreamContent, $Key, $Filename)
-                    } else {
-                        # Add as string
+                    }
+                    else {
                         $StringContent = [System.Net.Http.StringContent]::New($Formdata.$Key)
                         $MultiContent.Add($StringContent, $Key)
                     }
                 }
                 $Request.Content = $MultiContent
-            } elseif ($Body) {
+            }
+            elseif ($Body) {
                 $Request.Content = if ($Body -is [string]) {
-                    # Add string content
                     [System.Net.Http.StringContent]::New($Body, [System.Text.Encoding]::UTF8,
                         ($Target.Headers.ContentType))
-                } else {
-                    # Add ByteArray content
+                }
+                else {
                     $Body
                 }
             }
-            # Make request
             $Response = if ($Outfile) {
                 ($Request.Headers.GetEnumerator()).foreach{
-                    # Add headers to HttpClient from HttpRequestMessage
                     $Client.DefaultRequestHeaders.Add($_.Key, $_.Value)
                 }
-                # Dispose of HttpRequestMessage
                 $Request.Dispose()
-
-                # Make direct request using HttpClient
                 $Client.GetByteArrayAsync($FullPath)
-            } else {
-                # Send request
+            }
+            else {
                 $Client.SendAsync($Request)
             }
             if ($Response.Result -is [System.Byte[]]) {
-                # Output response to file
                 [System.IO.File]::WriteAllBytes($Outfile, ($Response.Result))
-    
                 if (Test-Path $Outfile) {
-                    # Display successful output
                     Get-ChildItem $Outfile | Out-Host
                 }
-            } elseif ($Response) {
-                # Format output
-                Format-Result $Response $Endpoint
-            } else {
+            }
+            elseif ($Response) {
+                Format-Result -Response $Response -Endpoint $Endpoint
+            }
+            else {
                 throw "Unable to complete request. Check connectivity and proxy configuration."
             }
-        } catch {
-            # Output error
+        }
+        catch {
             Write-Error $_.Exception.Message
         }
     }
     end {
         if ($Response.Result.Headers) {
-            # Check for rate limiting
             Wait-RetryAfter $Response.Result.Headers
         }
         if ($Response) {
-            # Dispose open HttpClient
             $Response.Dispose()
         }
     }

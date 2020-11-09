@@ -12,7 +12,7 @@
     param()
     DynamicParam {
         $Endpoints = @('devices/PerformActionV2')
-        return (Get-Dictionary $Endpoints[0] -OutVariable Dynamic)
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     begin {
         $Max = if ($Dynamic.ActionName.value -match '(hide_host|unhide_host)') {

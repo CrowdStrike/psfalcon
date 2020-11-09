@@ -1,22 +1,22 @@
-function Invoke-Request {
-<#
-.SYNOPSIS
-    Determines request type and submits input to Invoke-Loop or Invoke-Endpoint
-.PARAMETER COMMAND
-    PSFalcon command calling Invoke-Request [required for -All and -Detailed]
-.PARAMETER QUERY
-    The Falcon endpoint that is used for 'query' operations
-.PARAMETER ENTITY
-    The Falcon endpoint that is used for 'get' operations
-.PARAMETER DYNAMIC
-    A runtime parameter dictionary to search for input values
-.PARAMETER DETAILED
-    Type of request used to retrieve detailed information
-.PARAMETER MODIFIER
-    The name of a switch parameter used to modify a command when using Invoke-Loop
-.PARAMETER ALL
-    Toggle the use of Invoke-Loop
-#>
+﻿function Invoke-Request {
+    <#
+    .SYNOPSIS
+        Determines request type and submits input to Invoke-Loop or Invoke-Endpoint
+    .PARAMETER COMMAND
+        PSFalcon command calling Invoke-Request [required for -All and -Detailed]
+    .PARAMETER QUERY
+        The Falcon endpoint that is used for 'query' operations
+    .PARAMETER ENTITY
+        The Falcon endpoint that is used for 'get' operations
+    .PARAMETER DYNAMIC
+        A runtime parameter dictionary to search for input values
+    .PARAMETER DETAILED
+        Type of request used to retrieve detailed information
+    .PARAMETER MODIFIER
+        The name of a switch parameter used to modify a command when using Invoke-Loop
+    .PARAMETER ALL
+        Toggle the use of Invoke-Loop
+    #>
     [CmdletBinding()]
     [OutputType()]
     param(
@@ -45,49 +45,38 @@ function Invoke-Request {
         if ($All) {
             $LoopParam = @{
                 Command = $Command
-                Param = Get-LoopParam $Dynamic
+                Param = Get-LoopParam -Dynamic $Dynamic
             }
             switch ($Detailed) {
                 'Combined' {
-                    # Set detail switch to use 'Combined' endpoints
                     $LoopParam.Param['Detailed'] = $true
                 }
                 default {
-                    # Pass identifier parameter name to use 'Entity' endpoints
                     $LoopParam['Detailed'] = $Detailed
                 }
             }
             if ($Modifier) {
-                # Add modifier switch to command parameters
                 $LoopParam.Param[$Modifier] = $true
             }
-            # Repeat requests until all results are retrieved
             Invoke-Loop @LoopParam
-        } else {
-            # Set target endpoint
+        }
+        else {
             $Endpoint = if (($Dynamic.values | Where-Object IsSet).Attributes.ParameterSetName -eq $Entity) {
-                # Use 'Entity' if ParameterSetName matches $Entity
                 $Entity
-            } else {
-                # Use 'Query'
+            }
+            else {
                 $Query
             }
-            foreach ($Param in (Get-Param $Endpoint $Dynamic)) {
-                # Convert body to Json
-                Format-Param $Param
-
-                # Make request
+            foreach ($Param in (Get-Param -Endpoint $Endpoint -Dynamic $Dynamic)) {
+                Format-Param -Param $Param
                 $Request = Invoke-Endpoint @Param
-
                 if ($Request.resources -and $Detailed -and $Detailed -ne 'Combined') {
-                    # Add identifiers
                     $DetailParam = @{
                         $Detailed = $Request.resources
                     }
-                    # Re-run command for identifier detail
                     & $Command @DetailParam
-                } else {
-                    # Output result
+                }
+                else {
                     $Request
                 }
             }
