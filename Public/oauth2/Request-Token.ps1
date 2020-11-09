@@ -26,7 +26,6 @@
                 'us-2' { 'https://api.us-2.crowdstrike.com' }
                 default { 'https://api.crowdstrike.com' }
             }
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
             @('Id', 'Secret', 'CID') | ForEach-Object {
                 if (($_ -NE 'CID') -and (-not($Dynamic.$_.Value))) {
                     $Dynamic.$_.Value = Read-Host "$_"
@@ -35,11 +34,12 @@
                     $Falcon.$_ = $Dynamic.$_.Value
                 }
             }
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] id: $($Falcon.Id)"
             $Param = @{
                 Endpoint = $Endpoints[0]
                 Body     = "client_id=$($Falcon.Id)&client_secret=$($Falcon.Secret)"
             }
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] id: $($Falcon.Id)"
             if ($Falcon.CID) {
                 $Param.Body += "&member_cid=$($Falcon.CID)"
                 Write-Debug "[$($MyInvocation.MyCommand.Name)] cid: $($Falcon.CID)"
