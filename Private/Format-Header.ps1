@@ -26,12 +26,12 @@
             if ((-not($Falcon.Token)) -or (($Falcon.Expires) -le (Get-Date).AddSeconds(30))) {
                 Request-FalconToken
             }
-        }
-        $Authorization = if ($Endpoint.Permission -match ".*:(read|write)") {
-            $Falcon.token
-        }
-        else {
-            Get-AuthPair
+            $Authorization = if ($Endpoint.Permission -match ".*:(read|write)") {
+                $Falcon.token
+            }
+            else {
+                Get-AuthPair
+            }
         }
     }
     process {
@@ -48,5 +48,6 @@
         if ($Authorization) {
             $Request.Headers.Add('Authorization', $Authorization)
         }
+        Write-Debug "[$($MyInvocation.MyCommand.Name)] $(ConvertTo-Json $Request.Headers)"
     }
 }

@@ -27,7 +27,6 @@
             }
         }
         if ($HeaderOutput) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $(ConvertTo-Json $HeaderOutput)"
             $HeaderOutput
         }
     }
