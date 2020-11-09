@@ -20,11 +20,26 @@
         }
         else {
             $Falcon.Hostname = switch ($PSBoundParameters.Cloud) {
-                'eu-1' { 'https://api.eu-1.crowdstrike.com' }
-                'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
-                'us-1' { 'https://api.crowdstrike.com' }
-                'us-2' { 'https://api.us-2.crowdstrike.com' }
-                default { 'https://api.crowdstrike.com' }
+                'eu-1' {
+                    'https://api.eu-1.crowdstrike.com'
+                }
+                'us-gov-1' {
+                    'https://api.laggar.gcw.crowdstrike.com'
+                }
+                'us-1' {
+                    'https://api.crowdstrike.com'
+                }
+                'us-2' {
+                    'https://api.us-2.crowdstrike.com'
+                }
+                default {
+                    if ($Falcon.Hostname) {
+                        $Falcon.Hostname
+                    }
+                    else {
+                        'https://api.crowdstrike.com'
+                    }
+                }
             }
             @('Id', 'Secret', 'CID') | ForEach-Object {
                 if (-not($PSBoundParameters.$_)) {
