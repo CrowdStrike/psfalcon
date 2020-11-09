@@ -6,9 +6,7 @@ class Falcon {
     [string] $Token
     [datetime] $Expires
     [array] $Endpoints
-
-    Falcon ($Hostname, $Endpoints) {
-        $this.Hostname = $Hostname
+    Falcon ($Endpoints) {
         $this.Endpoints = $Endpoints
         $this.psobject.typenames.insert(0,'Falcon')
     }
