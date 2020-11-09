@@ -19,61 +19,38 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            if ($PSBoundParameters.Cloud) {
-                $Falcon.Hostname = switch ($PSBoundParameters.Cloud) {
-                    'eu-1' { 'https://api.eu-1.crowdstrike.com' }
-                    'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
-                    'us-1' { 'https://api.crowdstrike.com' }
-                    'us-2' { 'https://api.us-2.crowdstrike.com' }
-                }
-                Write-Debug "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
+            $Falcon.Hostname = switch ($PSBoundParameters.Cloud) {
+                'eu-1' { 'https://api.eu-1.crowdstrike.com' }
+                'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+                'us-1' { 'https://api.crowdstrike.com' }
+                'us-2' { 'https://api.us-2.crowdstrike.com' }
+                default { 'https://api.crowdstrike.com' }
             }
-            if (-not($Dynamic.Id.Value)) {
-                if ($Falcon.Id) {
-                    $Dynamic.Id.Value = $Falcon.Id
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
+            @('Id', 'Secret', 'CID') | ForEach-Object {
+                if (($_ -NE 'CID') -and (-not($Dynamic.$_.Value))) {
+                    $Dynamic.$_.Value = Read-Host "$_"
                 }
-                else {
-                    $Dynamic.Id.Value = Read-Host "Id"
-                }
-            }
-            if (-not($Dynamic.Secret.Value)) {
-                if ($Falcon.Secret) {
-                    $Dynamic.Secret.Value = $Falcon.Secret
-                }
-                else {
-                    $Dynamic.Secret.Value = Read-Host "Secret"
+                if ($Dynamic.$_.Value) {
+                    $Falcon.$_ = $Dynamic.$_.Value
                 }
             }
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] id: $($Dynamic.Id.Value)"
-            if ((-not($Dynamic.CID.Value)) -and $Falcon.CID) {
-                $Dynamic.CID.Value = $Falcon.CID
-            }
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] id: $($Falcon.Id)"
             $Param = @{
                 Endpoint = $Endpoints[0]
-                Body     = "client_id=$($Dynamic.Id.Value)&client_secret=$($Dynamic.Secret.Value)"
+                Body     = "client_id=$($Falcon.Id)&client_secret=$($Falcon.Secret)"
             }
-            if ($Dynamic.CID.Value) {
-                $Param.Body += "&member_cid=$($Dynamic.CID.Value)"
-                Write-Debug "[$($MyInvocation.MyCommand.Name)] cid: $($Dynamic.CID.Value)"
+            if ($Falcon.CID) {
+                $Param.Body += "&member_cid=$($Falcon.CID)"
+                Write-Debug "[$($MyInvocation.MyCommand.Name)] cid: $($Falcon.CID)"
             }
             $Request = Invoke-Endpoint @Param
             if ($Request.access_token) {
-                $Falcon.Id = $Dynamic.Id.Value
-                $Falcon.Secret = $Dynamic.Secret.Value
-                if ($Dynamic.CID.Value) {
-                    $Falcon.CID = $Dynamic.CID.Value
-                }
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] token generated"
                 $Falcon.Expires = (Get-Date).AddSeconds($Request.expires_in)
                 $Falcon.Token = "$($Request.token_type) $($Request.access_token)"
             }
             else {
-                @('id', 'secret', 'CID', 'token').foreach{
-                    if ($Falcon.$_) {
-                        $Falcon.$_ = $null
-                        Write-Debug "[$($MyInvocation.MyCommand.Name)] cleared $_"
-                    }
-                }
+                Clear-Auth
                 $Request
             }
         }

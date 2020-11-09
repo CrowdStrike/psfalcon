@@ -28,13 +28,7 @@
             }
             $Request = Invoke-Endpoint @Param
             if ($Request.meta) {
-                @('id', 'secret', 'CID', 'token').foreach{
-                    if ($Falcon.$_) {
-                        $Falcon.$_ = $null
-                        Write-Debug "[$($MyInvocation.MyCommand.Name)] cleared $_"
-                    }
-                }
-                $Falcon.Expires = Get-Date
+                Clear-Auth
             }
             $Request
         }
