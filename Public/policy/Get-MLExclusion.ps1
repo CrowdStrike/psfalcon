@@ -7,11 +7,11 @@ function Get-MLExclusion {
     .LINK
         https://github.com/CrowdStrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'policy/GetMLExclusionsv1')]
+    [CmdletBinding(DefaultParameterSetName = 'policy/queryMLExclusionsv1')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('policy/GetMLExclusionsv1')
+        $Endpoints = @('policy/queryMLExclusionsv1', 'policy/GetMLExclusionsv1')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -19,7 +19,21 @@ function Get-MLExclusion {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            $Param = @{
+                Command = $MyInvocation.MyCommand.Name
+                Query   = $Endpoints[0]
+                Entity  = $Endpoints[1]
+                Dynamic = $Dynamic
+            }
+            switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
+                'Detailed' {
+                    $Param['Detailed'] = 'ExclusionIds'
+                }
+            }
+            Invoke-Request @Param
         }
     }
 }

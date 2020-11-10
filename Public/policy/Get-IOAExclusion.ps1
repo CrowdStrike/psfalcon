@@ -7,11 +7,11 @@ function Get-IOAExclusion {
     .LINK
         https://github.com/CrowdStrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'policy/GetIOAExclusionsv1')]
+    [CmdletBinding(DefaultParameterSetName = 'policy/queryIOAExclusionsv1')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('policy/GetIOAExclusionsv1')
+        $Endpoints = @('policy/queryIOAExclusionsV1', 'policy/GetIOAExclusionsv1')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -19,7 +19,21 @@ function Get-IOAExclusion {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            $Param = @{
+                Command = $MyInvocation.MyCommand.Name
+                Query   = $Endpoints[0]
+                Entity  = $Endpoints[1]
+                Dynamic = $Dynamic
+            }
+            switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
+                'Detailed' {
+                    $Param['Detailed'] = 'ExclusionIds'
+                }
+            }
+            Invoke-Request @Param
         }
     }
 }

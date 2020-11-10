@@ -7,11 +7,11 @@ function Get-SVExclusion {
     .LINK
         https://github.com/CrowdStrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'policy/GetSensorVisibilityExclusionsv1')]
+    [CmdletBinding(DefaultParameterSetName = 'policy/querySensorVisibilityExclusionsv1')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('policy/GetSensorVisibilityExclusionsv1')
+        $Endpoints = @('policy/querySensorVisibilityExclusionsv1', 'policy/GetSensorVisibilityExclusionsv1')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -19,7 +19,21 @@ function Get-SVExclusion {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            $Param = @{
+                Command = $MyInvocation.MyCommand.Name
+                Query   = $Endpoints[0]
+                Entity  = $Endpoints[1]
+                Dynamic = $Dynamic
+            }
+            switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
+                'Detailed' {
+                    $Param['Detailed'] = 'ExclusionIds'
+                }
+            }
+            Invoke-Request @Param
         }
     }
 }
