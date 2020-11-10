@@ -6098,6 +6098,76 @@
     }
   },
   {
+    "Name": "policy/createMLExclusionsV1",
+    "Description": "Create the ML exclusions",
+    "Path": "/policy/entities/ml-exclusions/v1",
+    "Method": "post",
+    "Headers": {
+      "Accept": "application/json",
+      "ContentType": "application/json"
+    },
+    "Permission": "ml-exclusions:write",
+    "Parameters": [
+      {
+        "Dynamic": "Value",
+        "Name": "value",
+        "Required": false,
+        "Description": null,
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 1
+      },
+      {
+        "Dynamic": "Exclude",
+        "Name": "excluded_from",
+        "Required": false,
+        "Description": "Operations to exclude",
+        "Type": "array",
+        "In": [
+          "body"
+        ],
+        "Enum": [
+          "blocking",
+          "extraction"
+        ],
+        "Position": 2
+      },
+      {
+        "Dynamic": "GroupIds",
+        "Name": "groups",
+        "Required": false,
+        "Description": "One or more host group identifiers",
+        "Type": "array",
+        "In": [
+          "body"
+        ],
+        "Pattern": "(\\w{32}|all)",
+        "Position": 3
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Description": "Comment for tracking purposes",
+        "Type": "string",
+        "In": [
+          "body"
+        ],
+        "Position": 4
+      }
+    ],
+    "Responses": {
+      "200": "responses.MlExclusionRespV1",
+      "400": "responses.MlExclusionRespV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.MlExclusionRespV1",
+      "default": "responses.MlExclusionRespV1"
+    }
+  },
+  {
     "Name": "policy/createPreventionPolicies",
     "Path": "/policy/entities/prevention/v1",
     "Method": "POST",
@@ -7376,6 +7446,72 @@
     }
   },
   {
+    "Name": "policy/queryIOAExclusionsV1",
+    "Description": "Search for IOA exclusions.",
+    "Path": "/policy/queries/ioa-exclusions/v1",
+    "Method": "get",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "self-service-ioa-exclusions:read",
+    "Parameters": [
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Required": false,
+        "Description": "Maximum number of results per request",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Min": 1,
+        "Max": 500,
+        "Position": null
+      }
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
+  },
+  {
+    "Name": "policy/queryMLExclusionsV1",
+    "Description": "Search for ML exclusions.",
+    "Path": "/policy/queries/ml-exclusions/v1",
+    "Method": "get",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "ml-exclusions:read",
+    "Parameters": [
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Required": false,
+        "Description": "Maximum number of results per request",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Min": 1,
+        "Max": 500,
+        "Position": null
+      }
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
+  },
+  {
     "Name": "policy/queryPreventionPolicies",
     "Path": "/policy/queries/prevention/v1",
     "Method": "GET",
@@ -7472,6 +7608,39 @@
       "400": "msa.QueryResponse",
       "403": "msa.ErrorsOnly",
       "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
+  },
+  {
+    "Name": "policy/querySensorVisibilityExclusionsV1",
+    "Description": "Search for sensor visibility exclusions.",
+    "Path": "/policy/queries/sv-exclusions/v1",
+    "Method": "get",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "sensor-visibility-exclusions:read",
+    "Parameters": [
+      {
+        "Dynamic": "Limit",
+        "Name": "limit",
+        "Required": false,
+        "Description": "Maximum number of results per request",
+        "Type": "int",
+        "In": [
+          "query"
+        ],
+        "Min": 1,
+        "Max": 500,
+        "Position": null
+      }
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
       "429": "msa.ReplyMetaOnly",
       "500": "msa.QueryResponse",
       "default": "msa.QueryResponse"
@@ -8040,10 +8209,13 @@
           "policy/queryDeviceControlPolicyMembers",
           "policy/queryFirewallPolicies",
           "policy/queryFirewallPolicyMembers",
+          "policy/queryIOAExclusionsV1",
+          "policy/queryMLExclusionsV1",
           "policy/queryPreventionPolicies",
           "policy/queryPreventionPolicyMembers",
           "policy/querySensorUpdatePolicies",
           "policy/querySensorUpdatePolicyMembers",
+          "policy/querySensorVisibilityExclusionsV1",
           "real-time-response/BatchGetCmdStatus",
           "real-time-response/RTR-CheckActiveResponderCommandStatus",
           "real-time-response/RTR-CheckAdminCommandStatus",
@@ -8053,6 +8225,7 @@
           "real-time-response/RTR-ListPut-Files",
           "real-time-response/RTR-ListQueuedSessions",
           "real-time-response/RTR-ListScripts",
+          "scanner/QuerySubmissions",
           "sensors/GetCombinedSensorInstallersByQuery",
           "sensors/GetSensorInstallersByQuery",
           "spotlight/queryRemediations",
@@ -8099,10 +8272,13 @@
           "policy/queryDeviceControlPolicyMembers",
           "policy/queryFirewallPolicies",
           "policy/queryFirewallPolicyMembers",
+          "policy/queryIOAExclusionsV1",
+          "policy/queryMLExclusionsV1",
           "policy/queryPreventionPolicies",
           "policy/queryPreventionPolicyMembers",
           "policy/querySensorUpdatePolicies",
           "policy/querySensorUpdatePolicyMembers",
+          "policy/querySensorVisibilityExclusionsV1",
           "real-time-response/RTR-ListAllSessions",
           "real-time-response/RTR-ListPut-Files",
           "real-time-response/RTR-ListScripts",
@@ -8181,10 +8357,13 @@
           "policy/queryDeviceControlPolicyMembers",
           "policy/queryFirewallPolicies",
           "policy/queryFirewallPolicyMembers",
+          "policy/queryIOAExclusionsV1",
+          "policy/queryMLExclusionsV1",
           "policy/queryPreventionPolicies",
           "policy/queryPreventionPolicyMembers",
           "policy/querySensorUpdatePolicies",
           "policy/querySensorUpdatePolicyMembers",
+          "policy/querySensorVisibilityExclusionsV1",
           "real-time-response/RTR-ListAllSessions",
           "real-time-response/RTR-ListPut-Files",
           "real-time-response/RTR-ListScripts",
@@ -8248,10 +8427,13 @@
           "policy/queryDeviceControlPolicyMembers",
           "policy/queryFirewallPolicies",
           "policy/queryFirewallPolicyMembers",
+          "policy/queryIOAExclusionsV1",
+          "policy/queryMLExclusionsV1",
           "policy/queryPreventionPolicies",
           "policy/queryPreventionPolicyMembers",
           "policy/querySensorUpdatePolicies",
           "policy/querySensorUpdatePolicyMembers",
+          "policy/querySensorVisibilityExclusionsV1",
           "real-time-response/RTR-ListAllSessions",
           "real-time-response/RTR-ListPut-Files",
           "real-time-response/RTR-ListScripts",
@@ -8323,10 +8505,13 @@
           "policy/queryDeviceControlPolicyMembers",
           "policy/queryFirewallPolicies",
           "policy/queryFirewallPolicyMembers",
+          "policy/queryIOAExclusionsV1",
+          "policy/queryMLExclusionsV1",
           "policy/queryPreventionPolicies",
           "policy/queryPreventionPolicyMembers",
           "policy/querySensorUpdatePolicies",
           "policy/querySensorUpdatePolicyMembers",
+          "policy/querySensorVisibilityExclusionsV1",
           "real-time-response/RTR-ListAllSessions",
           "real-time-response/RTR-ListPut-Files",
           "real-time-response/RTR-ListScripts",
@@ -10447,52 +10632,7 @@
       "Accept": "application/json"
     },
     "Permission": "quick-scan:read",
-    "Parameters": [
-      {
-        "Dynamic": "Filter",
-        "Name": "filter",
-        "Required": false,
-        "Description": "Optional filter and sort criteria in the form of an FQL query. For more information about FQL queries, see [our FQL documentation in Falcon](https://falcon.crowdstrike.com/support/documentation/45/falcon-query-language-feature-guide).",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Offset",
-        "Name": "offset",
-        "Required": false,
-        "Description": "The offset to start retrieving submissions from.",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Limit",
-        "Name": "limit",
-        "Required": false,
-        "Description": "Maximum number of volume IDs to return. Max: 5000.",
-        "Type": "int",
-        "In": [
-          "query"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Sort",
-        "Name": "sort",
-        "Required": false,
-        "Description": "Sort order: `asc` or `desc`.",
-        "Type": "string",
-        "In": [
-          "query"
-        ],
-        "Position": null
-      }
-    ],
+    "Parameters": [],
     "Responses": {
       "200": "mlscanner.QueryResponse",
       "400": "mlscanner.QueryResponse",
