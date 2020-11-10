@@ -204,6 +204,7 @@ FunctionsToExport = @(
     'Invoke-SensorUpdatePolicyAction',
     'New-DeviceControlPolicy',
     'New-FirewallPolicy',
+    'New-MLExclusion',
     'New-PreventionPolicy',
     'New-SensorUpdatePolicy',
     'Remove-DeviceControlPolicy',
