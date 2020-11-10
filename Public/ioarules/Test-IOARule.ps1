@@ -7,11 +7,11 @@
     .LINK
         https://github.com/CrowdStrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'custom-ioa/validate')]
+    [CmdletBinding(DefaultParameterSetName = 'ioarules/validate')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('custom-ioa/validate')
+        $Endpoints = @('ioarules/validate')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -23,6 +23,7 @@
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.id)"
                 }
+                Format-Param -Param $Param
                 Invoke-Endpoint @Param
             }
         }
