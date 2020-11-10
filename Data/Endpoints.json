@@ -11009,7 +11009,7 @@
       {
         "Dynamic": "Service",
         "Name": "service",
-        "Required": true,
+        "Required": false,
         "Description": "Service type to filter policy settings by.",
         "Type": "string",
         "In": [
