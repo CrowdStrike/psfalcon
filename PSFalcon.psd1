@@ -190,10 +190,13 @@ FunctionsToExport = @(
     'Get-DeviceControlPolicyMember',
     'Get-FirewallPolicy',
     'Get-FirewallPolicyMember',
+    'Get-IOAExclusion',
+    'Get-MLExclusion',
     'Get-PreventionPolicy',
     'Get-PreventionPolicyMember',
     'Get-SensorUpdatePolicy',
     'Get-SensorUpdatePolicyMember',
+    'Get-SVExclusion',
     'Get-UninstallToken',
     'Invoke-DeviceControlPolicyAction',
     'Invoke-FirewallPolicyAction',
@@ -205,8 +208,11 @@ FunctionsToExport = @(
     'New-SensorUpdatePolicy',
     'Remove-DeviceControlPolicy',
     'Remove-FirewallPolicy',
+    'Remove-IOAExclusion',
+    'Remove-MLExclusion',
     'Remove-PreventionPolicy',
     'Remove-SensorUpdatePolicy',
+    'Remove-SVExclusion',
     'Set-DeviceControlPrecedence',
     'Set-FirewallPrecedence',
     'Set-PreventionPrecedence',
@@ -263,6 +269,9 @@ FunctionsToExport = @(
     'Get-Stream',
     'Receive-Installer',
     'Update-Stream',
+
+    # settings
+    'Get-HorizonSetting',
 
     # spotlight
     'Get-Remediation',

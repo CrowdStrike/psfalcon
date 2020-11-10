@@ -4487,6 +4487,7 @@
         "In": [
           "body"
         ],
+        "Pattern": "\\w{32}",
         "Description": "Rule group identifier",
         "Position": 1
       },
@@ -4710,6 +4711,7 @@
         "In": [
           "query"
         ],
+        "Pattern": "\\w{32}",
         "Position": 1
       },
       {
@@ -5125,6 +5127,7 @@
         "In": [
           "body"
         ],
+        "Pattern": "\\w{32}",
         "Description": "Rule group identifier",
         "Position": 1
       },
@@ -5207,44 +5210,45 @@
         "Dynamic": "GroupId",
         "Name": "rulegroup_id",
         "Required": true,
+        "Description": "Rule group identifier",
         "Type": "string",
         "In": [
           "body"
         ],
-        "Description": "Rule group identifier",
+        "Pattern": "\\w{32}",
         "Position": 1
       },
       {
         "Dynamic": "GroupVersion",
         "Name": "rulegroup_version",
         "Required": true,
+        "Description": "Rule group version",
         "Type": "int",
         "In": [
           "body"
         ],
-        "Description": "Rule group version",
         "Position": 2
       },
       {
         "Dynamic": "RuleUpdates",
         "Name": "rule_updates",
         "Required": true,
+        "Description": "An array of hashtables containing rule properties",
         "Type": "array",
         "In": [
           "body"
         ],
-        "Description": "An array of hashtables containing rule changes",
         "Position": 3
       },
       {
         "Dynamic": "Comment",
         "Name": "comment",
-        "Required": false,
+        "Required": true,
+        "Description": "Comment for tracking purposes",
         "Type": "string",
         "In": [
           "body"
         ],
-        "Description": "Comment for tracking purposes",
         "Position": 4
       }
     ],
@@ -5268,58 +5272,15 @@
     "Permission": "custom-ioa:write",
     "Parameters": [
       {
-        "Dynamic": "Name",
-        "Name": "name",
+        "Dynamic": "Fields",
+        "Name": "fields",
         "Required": true,
-        "Type": "string",
+        "Type": "array",
         "In": [
           "body"
         ],
-        "Description": "Rule name",
-        "Position": null
-      },
-      {
-        "Dynamic": "TestData",
-        "Name": "test_data",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Position": null
-      },
-      {
-        "Dynamic": "Type",
-        "Name": "type",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Description": "",
-        "Position": null
-      },
-      {
-        "Dynamic": "Label",
-        "Name": "label",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Description": "",
-        "Position": null
-      },
-      {
-        "Dynamic": "Value",
-        "Name": "value",
-        "Required": true,
-        "Type": "string",
-        "In": [
-          "body"
-        ],
-        "Description": "",
-        "Position": null
+        "Description": "An array of hashtables containing rule properties",
+        "Position": 1
       }
     ],
     "Responses": {
@@ -6362,6 +6323,90 @@
     }
   },
   {
+    "Name": "policy/deleteIOAExclusionsV1",
+    "Description": "Delete the IOA exclusions by id",
+    "Path": "/policy/entities/ioa-exclusions/v1",
+    "Method": "delete",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "self-service-ioa-exclusions:write",
+    "Parameters": [
+      {
+        "Dynamic": "ExclusionIds",
+        "Name": "ids",
+        "Required": true,
+        "Description": "One or more exclusion identifiers",
+        "Type": "array",
+        "In": [
+          "query"
+        ],
+        "Position": 1
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Description": "Explains why this exclusions was deleted",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Position": 2
+      }
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
+  },
+  {
+    "Name": "policy/deleteMLExclusionsV1",
+    "Description": "Delete the ML exclusions by id",
+    "Path": "/policy/entities/ml-exclusions/v1",
+    "Method": "delete",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "ml-exclusions:write",
+    "Parameters": [
+      {
+        "Dynamic": "ExclusionIds",
+        "Name": "ids",
+        "Required": true,
+        "Description": "One or more exclusion identifiers",
+        "Type": "array",
+        "In": [
+          "query"
+        ],
+        "Position": 1
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Description": "Explains why this exclusions was deleted",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Position": 2
+      }
+    ],
+    "Responses": {
+      "200": "responses.MlExclusionRespV1",
+      "400": "responses.MlExclusionRespV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.MlExclusionRespV1",
+      "default": "responses.MlExclusionRespV1"
+    }
+  },
+  {
     "Name": "policy/deletePreventionPolicies",
     "Path": "/policy/entities/prevention/v1",
     "Method": "DELETE",
@@ -6420,6 +6465,48 @@
       "200": "msa.QueryResponse",
       "403": "msa.ErrorsOnly",
       "404": "msa.QueryResponse",
+      "429": "msa.ReplyMetaOnly",
+      "500": "msa.QueryResponse",
+      "default": "msa.QueryResponse"
+    }
+  },
+  {
+    "Name": "policy/deleteSensorVisibilityExclusionsV1",
+    "Description": "Delete the sensor visibility exclusions by id",
+    "Path": "/policy/entities/sv-exclusions/v1",
+    "Method": "delete",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "sensor-visibility-exclusions:write",
+    "Parameters": [
+      {
+        "Dynamic": "ExclusionIds",
+        "Name": "ids",
+        "Required": true,
+        "Description": "One or more exclusion identifiers",
+        "Type": "array",
+        "In": [
+          "query"
+        ],
+        "Position": 1
+      },
+      {
+        "Dynamic": "Comment",
+        "Name": "comment",
+        "Required": false,
+        "Description": "Explains why this exclusions was deleted",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Position": 2
+      }
+    ],
+    "Responses": {
+      "200": "msa.QueryResponse",
+      "400": "msa.QueryResponse",
+      "403": "msa.ErrorsOnly",
       "429": "msa.ReplyMetaOnly",
       "500": "msa.QueryResponse",
       "default": "msa.QueryResponse"
@@ -6485,6 +6572,66 @@
       "429": "msa.ReplyMetaOnly",
       "500": "responses.FirewallPoliciesV1",
       "default": "responses.FirewallPoliciesV1"
+    }
+  },
+  {
+    "Name": "policy/getIOAExclusionsV1",
+    "Description": "Get a set of IOA Exclusions by specifying their IDs",
+    "Path": "/policy/entities/ioa-exclusions/v1",
+    "Method": "get",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "self-service-ioa-exclusions:read",
+    "Parameters": {
+      "Dynamic": "ExclusionIds",
+      "Name": "ids",
+      "Required": true,
+      "Description": "One or more exclusion identifiers",
+      "Type": "array",
+      "In": [
+        "query"
+      ],
+      "Pattern": "\\w{32}",
+      "Position": 1
+    },
+    "Responses": {
+      "200": "responses.IoaExclusionRespV1",
+      "400": "responses.IoaExclusionRespV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.IoaExclusionRespV1",
+      "default": "responses.IoaExclusionRespV1"
+    }
+  },
+  {
+    "Name": "policy/getMLExclusionsV1",
+    "Description": "Get a set of ML Exclusions by specifying their IDs",
+    "Path": "/policy/entities/ml-exclusions/v1",
+    "Method": "get",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "ml-exclusions:read",
+    "Parameters": {
+      "Dynamic": "ExclusionIds",
+      "Name": "ids",
+      "Required": true,
+      "Description": "One or more exclusion identifiers",
+      "Type": "array",
+      "In": [
+        "query"
+      ],
+      "Pattern": "\\w{32}",
+      "Position": 1
+    },
+    "Responses": {
+      "200": "responses.MlExclusionRespV1",
+      "400": "responses.MlExclusionRespV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.MlExclusionRespV1",
+      "default": "responses.MlExclusionRespV1"
     }
   },
   {
@@ -6578,6 +6725,36 @@
       "429": "msa.ReplyMetaOnly",
       "500": "responses.SensorUpdatePoliciesV2",
       "default": "responses.SensorUpdatePoliciesV2"
+    }
+  },
+  {
+    "Name": "policy/getSensorVisibilityExclusionsV1",
+    "Description": "Get a set of Sensor Visibility Exclusions by specifying their IDs",
+    "Path": "/policy/entities/sv-exclusions/v1",
+    "Method": "get",
+    "Headers": {
+      "Accept": "application/json"
+    },
+    "Permission": "sensor-visibility-exclusions:read",
+    "Parameters": {
+      "Dynamic": "ExclusionIds",
+      "Name": "ids",
+      "Required": true,
+      "Description": "One or more exclusion identifiers",
+      "Type": "array",
+      "In": [
+        "query"
+      ],
+      "Pattern": "\\w{32}",
+      "Position": 1
+    },
+    "Responses": {
+      "200": "responses.SvExclusionRespV1",
+      "400": "responses.SvExclusionRespV1",
+      "403": "msa.ErrorsOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "responses.SvExclusionRespV1",
+      "default": "responses.SvExclusionRespV1"
     }
   },
   {
@@ -9347,7 +9524,6 @@
       },
       {
         "Dynamic": "Path",
-        "Name": "",
         "Type": "string",
         "In": [
           "outfile"
@@ -10805,6 +10981,52 @@
       "429": "msa.ReplyMetaOnly",
       "500": "msa.ReplyMetaOnly",
       "default": "msa.ReplyMetaOnly"
+    }
+  },
+  {
+    "Name": "settings/GetCSPMPolicySettings",
+    "Description": "Returns information about current policy settings.",
+    "Path": "/settings/entities/policy/v1",
+    "Method": "get",
+    "Headers": {
+      "Accept": "application/json",
+      "ContentType": "application/json"
+    },
+    "Permission": "cspm-registration:read",
+    "Parameters": [
+      {
+        "Dynamic": "PolicyId",
+        "Name": "policy-id",
+        "Required": false,
+        "Description": "Policy identifier",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Pattern": "\\d{*}",
+        "Position": 1
+      },
+      {
+        "Dynamic": "Service",
+        "Name": "service",
+        "Required": true,
+        "Description": "Service type to filter policy settings by.",
+        "Type": "string",
+        "In": [
+          "query"
+        ],
+        "Pattern": "^(EC2|IAM|KMS|ACM|ELB|NLB/ALB|EBS|RDS|S3|Redshift|NetworkSecurityGroup|VirtualNetwork|Disk|PostgreSQL|AppService|KeyVault|VirtualMachine|Monitor|StorageAccount|LoadBalancer|SQLServer)$",
+        "Position": 2
+      }
+    ],
+    "Responses": {
+      "200": "registration.PolicySettingsResponseV1",
+      "207": "registration.PolicySettingsResponseV1",
+      "400": "registration.PolicySettingsResponseV1",
+      "403": "msa.ReplyMetaOnly",
+      "429": "msa.ReplyMetaOnly",
+      "500": "registration.PolicySettingsResponseV1",
+      "default": "registration.PolicySettingsResponseV1"
     }
   },
   {
