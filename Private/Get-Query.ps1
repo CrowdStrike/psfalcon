@@ -18,7 +18,7 @@
     )
     begin {
         if ($Dynamic.Filter.Value) {
-            $LastHourValue = if ($Dynamic.Filter.Value -match "\:\'Last (?<StrValue>(hour|day|week))\'") {
+            $HourValue = if ($Dynamic.Filter.Value -match "\:\'Last (?<StrValue>(hour|day|week))\'") {
                 if ($Matches.StrValue -eq 'hour') {
                     -1
                 }
@@ -35,9 +35,9 @@
             elseif ($Dynamic.Filter.Value -match "\:\'Last (?<IntValue>\d{1,}) days\'") {
                 ([int] $Matches.IntValue) * -24
             }
-            if ($Matches -and $LastHourValue) {
+            if ($Matches -and $HourValue) {
                 $Dynamic.Filter.Value = $Dynamic.Filter.Value -replace $Matches[0],
-                ":>'$($Falcon.Rfc3339($LastHourValue))'"
+                ":>'$($Falcon.Rfc3339($HourValue))'"
             }
         }
     }
