@@ -110,7 +110,7 @@
                         }
                     }
                 }
-                $Output | Format-List
+                $Output
             }
         }
     }
