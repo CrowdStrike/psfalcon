@@ -183,6 +183,7 @@ FunctionsToExport = @(
     # policy
     'Edit-DeviceControlPolicy',
     'Edit-FirewallPolicy',
+    'Edit-MLExclusion',
     'Edit-PreventionPolicy',
     'Edit-SensorUpdatePolicy',
     'Get-Build',
