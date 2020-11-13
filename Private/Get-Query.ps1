@@ -18,21 +18,17 @@
     )
     begin {
         if ($Dynamic.Filter.Value) {
-            $Hours = "(last (?<Int>\d{1,}) (hour[s]?)){1,}"
-            $Days = "(last (?<Int>\d{1,}) (day[s]?)){1,}"
-            if ($Dynamic.Filter.Value -match $Hours) {
-                $Dynamic.Filter.Value | Select-String $Hours -AllMatches | ForEach-Object {
+            $Relative = "(last (?<Int>\d{1,}) (day[s]?|hour[s]?))"
+            if ($Dynamic.Filter.Value -match $Relative) {
+                $Dynamic.Filter.Value | Select-String $Relative -AllMatches | ForEach-Object {
                     foreach ($Match in $_.Matches.Value) {
-                        [int] $Int = $Match -replace $Hours, '${Int}'
-                        $Dynamic.Filter.Value = $Dynamic.Filter.Value -replace $Match, $Falcon.Rfc3339(-$Int)
-                    }
-                }
-            }
-            if ($Dynamic.Filter.Value -match $Days) {
-                $Dynamic.Filter.Value | Select-String $Days -AllMatches | ForEach-Object {
-                    foreach ($Match in $_.Matches.Value) {
-                        [int] $Int = $Match -replace $Days, '${Int}'
-                        $Dynamic.Filter.Value = $Dynamic.Filter.Value -replace $Match, $Falcon.Rfc3339(-24*$Int)
+                        [int] $Int = $Match -replace $Relative, '${Int}'
+                        if ($Match -match "day") {
+                            $Int = $Int * -24
+                        } else {
+                            $Int = $Int * -1
+                        }
+                        $Dynamic.Filter.Value = $Dynamic.Filter.Value -replace $Match, $Falcon.Rfc3339($Int)
                     }
                 }
             }
