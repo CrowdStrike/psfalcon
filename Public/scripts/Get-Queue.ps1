@@ -44,7 +44,8 @@
         else {
             try {
                 $Param = @{
-                    Filter = "(deleted_at:null+commands_queued:1),(created_at:'Last $Days days'+commands_queued:1)"
+                    Filter = "(deleted_at:null+commands_queued:1),(created_at:>'Last $Days days'+" +
+                    "commands_queued:1)"
                     All    = $true
                 }
                 $SessionIds = Get-FalconSession @Param
