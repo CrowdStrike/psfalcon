@@ -7,11 +7,11 @@
     .LINK
         https://github.com/CrowdStrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'processes/entities.processes')]
+    [CmdletBinding(DefaultParameterSetName = 'processes/entities-processes')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('processes/entities.processes')
+        $Endpoints = @('processes/entities-processes')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

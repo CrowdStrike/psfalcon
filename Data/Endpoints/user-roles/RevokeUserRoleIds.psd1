@@ -1,0 +1,38 @@
+@{
+  Name = "user-roles/RevokeUserRoleIds"
+  Path = "/user-roles/entities/user-roles/v1"
+  Method = "DELETE"
+  Headers = @{
+    Accept = "application/json"
+    ContentType = "application/json"
+  }
+  Permission = "usermgmt:write"
+  Description = "Revoke one or more roles from a user"
+  Parameters = @(
+    @{
+      Dynamic = "UserUuid"
+      Name = "user_uuid"
+      Type = "string"
+      In = @( "query" )
+      Required = $true
+      Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
+      Description = "User identifier"
+      Position = $null
+    }
+    @{
+      Dynamic = "RoleIds"
+      Name = "ids"
+      Type = "array"
+      In = @( "query" )
+      Required = $true
+      Description = "One or more roles"
+      Position = $null
+    }
+  )
+  Responses = @{
+    200 = "domain.UserRoleIDsResponse"
+    400 = "msa.EntitiesResponse"
+    403 = "msa.EntitiesResponse"
+    429 = "msa.ReplyMetaOnly"
+  }
+}
