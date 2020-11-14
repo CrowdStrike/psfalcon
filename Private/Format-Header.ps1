@@ -36,8 +36,8 @@
     }
     process {
         if ($Endpoint.Headers) {
-            foreach ($Name in ($Endpoint.Headers | Get-Member -MemberType NoteProperty).Name) {
-                $Request.Headers.Add($Name, ($Endpoint.Headers.$Name))
+            foreach ($Pair in $Endpoint.Headers.GetEnumerator()) {
+                $Request.Headers.Add($Pair.Key, $Pair.Value)
             }
         }
         if ($Header) {
@@ -48,7 +48,8 @@
         if ($Authorization) {
             $Request.Headers.Add('Authorization', $Authorization)
         }
-        Write-Verbose ("[$($MyInvocation.MyCommand.Name)] " +
-            "$(ConvertTo-Json ($Request.Headers | Where-Object { $_.Key -NE 'Authorization' }))")
+        $VerboseHeader = ($Request.Headers.GetEnumerator() |
+            Where-Object { $_.Key -NE 'Authorization' }).foreach{ "$($_.Key): '$($_.Value)'" } -join ', '
+        Write-Verbose "[$($MyInvocation.MyCommand.Name)] $VerboseHeader"
     }
 }
