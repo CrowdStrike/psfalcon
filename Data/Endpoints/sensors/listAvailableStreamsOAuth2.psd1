@@ -15,7 +15,7 @@
       Type = "string"
       In = @( "query" )
       Required = $true
-      Pattern = "\w{32}"
+      Pattern = "\w{1,32}"
       Description = "Label that identifies your connection. Max: 32 alphanumeric characters (a-z A-Z 0-9)."
       Position = $null
     }
