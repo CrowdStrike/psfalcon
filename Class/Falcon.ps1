@@ -6,17 +6,17 @@ class Falcon {
     [string] $Token
     [datetime] $Expires
     [array] $Endpoints
-    [array] $Responses
-    Falcon ($Endpoints, $Responses) {
+    [array] $Definitions
+    Falcon ($Endpoints, $Definitions) {
         $this.Endpoints = $Endpoints
-        $this.Responses = $Responses
+        $this.Definitions = $Definitions
         $this.psobject.typenames.insert(0,'Falcon')
     }
     [array] Endpoint($Endpoint) {
         return ($this.Endpoints | Where-Object { $Endpoint -contains $_.Name })
     }
-    [string] Response($Response) {
-        return ($this.Responses | Where-Object { $_.Name -EQ $Response })
+    [string] Schema($Definition) {
+        return ($this.Definitions | Where-Object { $_.Name -EQ $Definition })
     }
     [string] Rfc3339($Hours) {
         return "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
