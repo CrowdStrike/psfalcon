@@ -33,6 +33,7 @@
         "shutdown"
         "umount"
         "unmap"
+        "update"
         "xmemdump"
         "zip"
       )
