@@ -5,6 +5,7 @@
   Method = "post"
   Headers = @{
     Accept = "application/json"
+    ContentType = "application/json"
   }
   Permission = "quick-scan:write"
   Parameters = @{
