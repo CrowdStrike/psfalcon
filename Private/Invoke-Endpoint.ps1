@@ -42,24 +42,30 @@
         [string] $Path
     )
     begin {
+        if ($PSVersionTable.PSVersion.Major -lt 6) {
+            Add-Type -AssemblyName System.Net.Http
+        }
+        if ((-not($Falcon.Token)) -or (($Falcon.Expires) -le (Get-Date).AddSeconds(30)) -and
+        ($Endpoint -ne 'oauth2/oauth2AccessToken')) {
+            Request-FalconToken
+        }
         $Target = $Falcon.Endpoint($Endpoint)
-        $FullPath = if ($Path) {
+
+        $FullUri = if ($Path) {
             "$($Falcon.Hostname)$($Path)"
         }
         else {
             "$($Falcon.Hostname)$($Target.Path)"
         }
         if ($Query) {
-            $FullPath += "?$($Query -join '&')"
-        }
-        if ($PSVersionTable.PSVersion.Major -lt 6) {
-            Add-Type -AssemblyName System.Net.Http
+            $FullUri += "?$($Query -join '&')"
         }
     }
     process {
         $Client = [System.Net.Http.HttpClient]::New()
-        $Request = [System.Net.Http.HttpRequestMessage]::New(
-            ([System.Net.Http.HttpMethod]::($Target.Method)), $FullPath)
+        $Method = [System.Net.Http.HttpMethod]::($Target.Method)
+        $Uri = [System.Uri]::New($FullUri)
+        $Request = [System.Net.Http.HttpRequestMessage]::New($Method, $Uri)
         $Param = @{
             Endpoint = $Target
             Request = $Request
@@ -106,7 +112,7 @@
                     $Client.DefaultRequestHeaders.Add($_.Key, $_.Value)
                 }
                 $Request.Dispose()
-                $Client.GetByteArrayAsync($FullPath)
+                $Client.GetByteArrayAsync($Uri)
             }
             else {
                 $Client.SendAsync($Request)
