@@ -13,10 +13,14 @@ class Falcon {
         $this.psobject.typenames.insert(0,'Falcon')
     }
     [array] Endpoint($Endpoint) {
-        return ($this.Endpoints | Where-Object { $Endpoint -contains $_.Name })
+        return $this.Endpoints | Where-Object { $Endpoint -contains $_.Name }
     }
-    [string] Schema($Definition) {
-        return ($this.Definitions | Where-Object { $_.Name -EQ $Definition })
+    [array] Definition($Definition) {
+        return ($this.Definitions | Where-Object { $_.Name -EQ $Definition }).Fields
+    }
+    [string] Response($Endpoint, $StatusCode) {
+        return (($this.Endpoint($Endpoint).Responses).GetEnumerator() |
+            Where-Object { $_.Key -eq $StatusCode }).Value
     }
     [string] Rfc3339($Hours) {
         return "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
