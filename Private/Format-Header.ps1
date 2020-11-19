@@ -22,16 +22,11 @@
         [hashtable] $Header
     )
     begin {
-        if ($Endpoint.Name -ne 'oauth2/oauth2AccessToken') {
-            if ((-not($Falcon.Token)) -or (($Falcon.Expires) -le (Get-Date).AddSeconds(30))) {
-                Request-FalconToken
-            }
-            $Authorization = if ($Endpoint.Permission -match ".*:(read|write)") {
-                $Falcon.token
-            }
-            else {
-                Get-AuthPair
-            }
+        $Authorization = if ($Endpoint.Permission -match ".*:(read|write)") {
+            $Falcon.token
+        }
+        else {
+            Get-AuthPair
         }
     }
     process {
