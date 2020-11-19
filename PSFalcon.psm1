@@ -1,7 +1,7 @@
 $Public = @(Get-ChildItem -Path $PSScriptRoot\Public\*\*.ps1 -ErrorAction SilentlyContinue)
 $Private = @(Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue)
-$Endpoints = @(Get-ChildItem -Path $PSScriptRoot\Data\Endpoints\*\*.psd1 -ErrorAction SilentlyContinue)
-$Responses = @(Get-ChildItem -Path $PSScriptRoot\Data\Responses\*.psd1 -ErrorAction SilentlyContinue)
+$EndpointFiles = @(Get-ChildItem -Path $PSScriptRoot\Data\Endpoints\*\*.psd1 -ErrorAction SilentlyContinue)
+$DefinitionFiles = @(Get-ChildItem -Path $PSScriptRoot\Data\Definitions\*\*.psd1 -ErrorAction SilentlyContinue)
 foreach ($Import in @($Public + $Private)) {
     try {
         . $Import.fullname
@@ -10,7 +10,7 @@ foreach ($Import in @($Public + $Private)) {
         Write-Error -Message "Failed import of $($Import.fullname): $_"
     }
 }
-$EndpointData = foreach ($Import in $Endpoints) {
+$Endpoints = foreach ($Import in $EndpointFiles) {
     try {
         Import-PowerShellDataFile $Import
     }
@@ -18,7 +18,7 @@ $EndpointData = foreach ($Import in $Endpoints) {
         Write-Error -Message "Failed import of $($Import.fullname): $_"
     }
 }
-$ResponseData = foreach ($Import in $Responses) {
+$Definitions = foreach ($Import in $DefinitionFiles) {
     try {
         Import-PowerShellDataFile $Import
     }
@@ -27,6 +27,6 @@ $ResponseData = foreach ($Import in $Responses) {
     }
 }
 if (-not($Script:Falcon)) {
-    $Script:Falcon = [Falcon]::New($EndpointData, $ResponseData)
+    $Script:Falcon = [Falcon]::New($Endpoints, $Definitions)
 }
 Write-Host "Imported PSFalcon. Review 'Get-Command -Module PSFalcon' and '<Command> -Help' for details."
