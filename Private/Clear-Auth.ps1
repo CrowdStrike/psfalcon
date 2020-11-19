@@ -7,7 +7,7 @@ function Clear-Auth {
     [OutputType()]
     param()
     process {
-        @('Id', 'Secret', 'CID', 'Token').foreach{
+        @('Hostname', 'Id', 'Secret', 'CID', 'Token').foreach{
             if ($Falcon.$_) {
                 $Falcon.$_ = $null
             }
