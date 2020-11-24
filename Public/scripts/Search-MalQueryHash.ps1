@@ -47,9 +47,9 @@ function Search-MalQueryHash {
                     )
                 }
                 if ($Result.resources) {
-                    $Result.resources | Select-Object sha256, filetype, family, label | Format-List
+                    $Result.resources | Select-Object sha256, filetype, family, label
                 } else {
-                    $Result.meta | Select-Object reqid, status | Format-List
+                    $Result.meta | Select-Object reqid, status
                 }
             }
             else {
