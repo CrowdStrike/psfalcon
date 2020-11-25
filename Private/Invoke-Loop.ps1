@@ -23,9 +23,9 @@
     )
     process {
         $Loop = & $Command @Param
-        if ($Loop.resources -and $Detailed -and $Detailed -ne 'Combined') {
+        if ($Loop -and $Detailed -and $Detailed -ne 'Combined') {
             $DetailParam = @{
-                $Detailed = $Loop.resources
+                $Detailed = $Loop
             }
             & $Command @DetailParam
         }
