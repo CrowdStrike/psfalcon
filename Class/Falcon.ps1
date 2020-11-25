@@ -19,8 +19,12 @@ class Falcon {
         return ($this.Definitions | Where-Object { $_.Name -EQ $Definition }).Fields
     }
     [string] Response($Endpoint, $StatusCode) {
-        return (($this.Endpoint($Endpoint).Responses).GetEnumerator() |
-            Where-Object { $_.Key -eq $StatusCode }).Value
+        if ($this.Endpoint($Endpoint).Responses.Keys -contains $StatusCode) {
+            return $this.Endpoint($Endpoint).Responses.$StatusCode
+        }
+        else {
+            return $this.Endpoint($Endpoint).Responses.default
+        }
     }
     [string] Rfc3339($Hours) {
         return "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
