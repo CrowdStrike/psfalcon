@@ -50,9 +50,6 @@
                 elseif ($Populated.count -eq 1) {
                     $Json.($Populated[0])
                 }
-                else {
-                    "No results."
-                }
                 if ($ErrorMessage) {
                     throw $ErrorMessage
                 }
