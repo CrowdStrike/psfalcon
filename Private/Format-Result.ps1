@@ -33,23 +33,32 @@
             }
             if ($Json) {
                 Read-Meta -Object $Json -Endpoint $Endpoint
-                $Populated = ($Json.PSObject.Properties).foreach{
-                    if ($_.Value -and ($_.Name -ne 'meta')) {
+                $Populated = ($Json.PSObject.Properties | Where-Object { ($_.Name -ne 'meta') -and
+                ($_.Name -ne 'errors') }).foreach{
+                    if ($_.Value) {
                         $_.Name
                     }
                 }
-                $Output = if ($Populated.count -eq 1) {
-                    if ($Populated[0] -eq 'errors') {
-                        throw "$($Json.errors.code): $($Json.errors.message)"
-                    }
-                    else {
-                        $Json.($Populated[0])
+                $ErrorMessage = ($Json.PSObject.Properties | Where-Object { ($_.Name -eq 'errors') }).foreach{
+                    if ($_.Value) {
+                        "$($Json.errors.code): $($Json.errors.message)"
                     }
                 }
-                else {
+                $Output = if ($Populated.count -gt 1) {
                     $Json
                 }
-                $Output
+                elseif ($Populated.count -eq 1) {
+                    $Json.($Populated[0])
+                }
+                else {
+                    "No results."
+                }
+                if ($ErrorMessage) {
+                    throw $ErrorMessage
+                }
+                if ($Output) {
+                    $Output
+                }
             }
             elseif ($HTML) {
                 $HTML
