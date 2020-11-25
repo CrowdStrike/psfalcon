@@ -70,9 +70,9 @@
             foreach ($Param in (Get-Param -Endpoint $Endpoint -Dynamic $Dynamic)) {
                 Format-Param -Param $Param
                 $Request = Invoke-Endpoint @Param
-                if ($Request.resources -and $Detailed -and $Detailed -ne 'Combined') {
+                if ($Request -and $Detailed -and $Detailed -ne 'Combined') {
                     $DetailParam = @{
-                        $Detailed = $Request.resources
+                        $Detailed = $Request
                     }
                     & $Command @DetailParam
                 }
