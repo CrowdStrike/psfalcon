@@ -1,4 +1,4 @@
-﻿function Convert-CSV {
+﻿function Convert-Csv {
     <#
     .SYNOPSIS
         Format a response object to be CSV-compatible
@@ -51,7 +51,7 @@
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
         }
         function Get-SimpleObject ($Object) {
-            ($Object.resources).foreach{
+            ($Object).foreach{
                 $Item = [PSCustomObject] @{}
                 ($_.psobject.properties).foreach{
                     Add-Field -Object $Item -Name $_.name -Value $_.value
@@ -61,9 +61,9 @@
         }
     }
     process {
-        switch ($Object.PSObject.TypeNames | Where-Object { $_ -notmatch '^System.*$' }) {
+        switch ($Meta.PSObject.TypeNames | Where-Object { $_ -notmatch '^System.*$' }) {
             { $TypeNames.Detection -contains $_ } {
-                ($Object.resources).foreach{
+                ($Object).foreach{
                     $Item = [PSCustomObject] @{}
                     $Param = @{
                         Object = $Item
@@ -89,7 +89,7 @@
                 }
             }
             { $TypeNames.Host -contains $_ } {
-                ($Object.resources).foreach{
+                ($Object).foreach{
                     $Item = [PSCustomObject] @{}
                     $Param = @{
                         Object = $Item
@@ -126,14 +126,14 @@
                 Get-SimpleObject -Object $Object
             }
             { $TypeNames.Identifier -contains $_ } {
-                ($Object.resources).foreach{
+                ($Object).foreach{
                     [PSCustomObject] @{
                         id = $_
                     }
                 }
             }
             { $TypeNames.Incident -contains $_ } {
-                ($Object.resources).foreach{
+                ($Object).foreach{
                     $Item = [PSCustomObject] @{}
                     ($_.psobject.properties).foreach{
                         if ($Exclusions.Incident -notcontains $_.name) {
@@ -145,7 +145,7 @@
             }
             { $TypeNames.IOC -contains $_ } {
                 if ($_ -eq 'api.MsaReplyIOCIDs') {
-                    ($Object.resources).foreach{
+                    ($Object).foreach{
                         [PSCustomObject] @{
                             type  = ($_).Split(':')[0]
                             value = ($_).Split(':')[1]
@@ -157,7 +157,7 @@
                 }
             }
             { $TypeNames.Prevention -contains $_ } {
-                ($Object.resources).foreach{
+                ($Object).foreach{
                     $Item = [PSCustomObject] @{}
                     $Param = @{
                         Object = $Item
@@ -188,7 +188,7 @@
                 Get-SimpleObject -Object $Object
             }
             { $TypeNames.SensorUpdate -contains $_ } {
-                ($Object.resources).foreach{
+                ($Object).foreach{
                     $Item = [PSCustomObject] @{}
                     $Param = @{
                         Object = $Item
@@ -213,7 +213,7 @@
                 Get-SimpleObject -Object $Object
             }
             { $TypeNames.Vulnerability -contains $_ } {
-                ($Object.resources).foreach{
+                ($Object).foreach{
                     $Item = [PSCustomObject] @{}
                     $Param = @{
                         Object = $Item
