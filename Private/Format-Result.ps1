@@ -20,19 +20,20 @@
         $StatusCode = $Response.Result.StatusCode.GetHashCode()
         if ($StatusCode) {
             $Definition = $Falcon.Response($Endpoint, $StatusCode)
-            Write-Verbose ("[$($MyInvocation.MyCommand.Name)] $($StatusCode): $Definition")
+        }
+        if ($Response.Result.Content -match '^<') {
+            $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
+        }
+        elseif ($Response.Result.Content) {
+            $Json = ConvertFrom-Json ($Response.Result.Content).ReadAsStringAsync().Result
+        }
+        if ($Json) {
+            Read-Meta -Object $Json -Endpoint $Endpoint -TypeName $Definition
         }
     }
     process {
         try {
-            if ($Response.Result.Content -match '^<') {
-                $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
-            }
-            elseif ($Response.Result.Content) {
-                $Json = ConvertFrom-Json ($Response.Result.Content).ReadAsStringAsync().Result
-            }
             if ($Json) {
-                Read-Meta -Object $Json -Endpoint $Endpoint
                 $Populated = ($Json.PSObject.Properties | Where-Object { ($_.Name -ne 'meta') -and
                 ($_.Name -ne 'errors') }).foreach{
                     if ($_.Value) {
