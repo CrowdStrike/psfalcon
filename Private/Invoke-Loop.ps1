@@ -32,11 +32,9 @@
         else {
             $Loop
         }
-        if ($Loop -and (($Loop.count -lt $Meta.pagination.total) -or
-        $Meta.pagination.next_page)) {
-            for ($i = $Loop.count; (($i -lt $Meta.pagination.total) -or
-                ($Meta.pagination.next_page)); $i += $Loop.count) {
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] $i of $($Meta.pagination.total)"
+        if ($Loop -and (($Loop.count -lt $Meta.pagination.total) -or $Meta.pagination.next_page)) {
+            for ($i = $Loop.count; (($i -lt $Meta.pagination.total) -or ($Meta.pagination.next_page));
+            $i += $Loop.count) {
                 if ($Meta.pagination.after) {
                     $Param['After'] = $Meta.pagination.after
                 }
