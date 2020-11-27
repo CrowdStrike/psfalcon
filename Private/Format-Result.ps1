@@ -43,7 +43,17 @@
                 ($Json.PSObject.Properties | Where-Object { ($_.Name -eq 'errors') }).foreach{
                     if ($_.Value) {
                         ($_.Value).foreach{
-                            Write-Error "$($_.code): $($_.message)"
+                            $ErrParam = @{
+                                TargetObject = "$($Falcon.Hostname)$($Falcon.Endpoint($Endpoint).Path)"
+                                Category = 'FromStdErr'
+                                CategoryTargetName = "$($Falcon.Endpoint($Endpoint).Path)"
+                                CategoryTargetType = "$($Falcon.Endpoint($Endpoint).Method)"
+                                Message = "$($_.code): $($_.message)"
+                            }
+                            if ($Meta) {
+                                $ErrParam['CategoryActivity'] = "[$($Meta.trace_id)]"
+                            }
+                            Write-Error @ErrParam
                         }
                     }
                 }
