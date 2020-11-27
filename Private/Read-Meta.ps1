@@ -22,20 +22,25 @@ function Read-Meta {
         [string] $TypeName
     )
     begin {
-        $VerboseName = $MyInvocation.MyCommand.Name
-        Write-Verbose ("[$($VerboseName)] $($StatusCode): $TypeName")
-        function Read-VerboseValue ($Property) {
+        function Read-CountValue ($Property) {
             if ($_.Value -is [PSCustomObject]) {
                 ($_.Value.PSObject.Properties).foreach{
-                    Read-VerboseValue $_
+                    Read-CountValue $_
                 }
             }
-            else {
-                Write-Verbose "[$($VerboseName)] $($_.Name): $($_.Value)"
+            elseif ($_.Name -match '(after|offset|total)') {
+                $Value = if (($_.Value -is [string]) -and ($_.Value.Length -gt 7)) {
+                    "$($_.Value.Substring(0,6))..."
+                }
+                else {
+                    $_.Value
+                }
+                "$($_.Name): $($Value)"
             }
         }
     }
     process {
+        $ResponseInfo = "$($StatusCode): $TypeName"
         if ($Object.meta) {
             $Script:Meta = $Object.meta
             if ($TypeName) {
@@ -43,8 +48,16 @@ function Read-Meta {
             }
         }
         if ($Meta) {
-            ($Meta.PSObject.Properties).foreach{
-                Read-VerboseValue $_
+            if ($Meta.trace_id) {
+                $ResponseInfo += ", trace_id: $($Meta.trace_id)"
+            }
+            $CountInfo = (($Meta.PSObject.Properties).foreach{
+                Read-CountValue $_
+            }) -join ', '
+        }
+        @($ResponseInfo, $CountInfo) | ForEach-Object {
+            if ($_) {
+                Write-Verbose "[$($MyInvocation.MyCommand.Name)] $_"
             }
         }
     }
