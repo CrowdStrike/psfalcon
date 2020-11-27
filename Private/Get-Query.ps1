@@ -55,7 +55,18 @@
             }
         }
         if ($QueryOutput) {
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $($QueryOutput -join ', ')"
+            $VerboseOutput = (($QueryOutput).foreach{
+                if (($_ -match '^offset=') -and ($_.Length -gt 14)) {
+                    "$($_.Substring(0,13))..."
+                }
+                elseif (($_ -match '^after=') -and ($_.Length -gt 13)) {
+                    "$($_.Substring(0,12))..."
+                }
+                else {
+                    $_
+                }
+            }) -join ', '
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $VerboseOutput"
             $QueryOutput
         }
     }
