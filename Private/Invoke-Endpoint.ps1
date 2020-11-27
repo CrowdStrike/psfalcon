@@ -128,10 +128,12 @@
             }
             else {
                 $ErrParam = @{
+                    TargetObject = "$($Falcon.Hostname)$($Falcon.Endpoint($Endpoint).Path)"
                     Category = 'ConnectionError'
-                    CategoryReason = "Unable to reach $($Falcon.hostname)."
-                    Message = "Request failed. Unable to reach $($Falcon.hostname)."
-                    RecommendedAction = 'Check internet connection and proxy configuration.'
+                    CategoryTargetName = "$($Falcon.Endpoint($Endpoint).Path)"
+                    CategoryTargetType = "$($Falcon.Endpoint($Endpoint).Method)"
+                    Message = "Unable to contact $($Falcon.Hostname)"
+                    RecommendedAction = 'Check connectivity and proxy configuration'
                 }
                 Write-Error @ErrParam
             }
