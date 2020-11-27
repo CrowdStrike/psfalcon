@@ -40,9 +40,11 @@
                         $_.Name
                     }
                 }
-                $ErrorMessage = ($Json.PSObject.Properties | Where-Object { ($_.Name -eq 'errors') }).foreach{
+                ($Json.PSObject.Properties | Where-Object { ($_.Name -eq 'errors') }).foreach{
                     if ($_.Value) {
-                        "$($Json.errors.code): $($Json.errors.message)"
+                        ($_.Value).foreach{
+                            Write-Error "$($_.code): $($_.message)"
+                        }
                     }
                 }
                 $Output = if ($Populated.count -gt 1) {
@@ -50,9 +52,6 @@
                 }
                 elseif ($Populated.count -eq 1) {
                     $Json.($Populated[0])
-                }
-                if ($ErrorMessage) {
-                    Write-Error $ErrorMessage
                 }
                 if ($Output) {
                     $Output
