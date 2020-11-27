@@ -52,7 +52,7 @@
                     $Json.($Populated[0])
                 }
                 if ($ErrorMessage) {
-                    throw $ErrorMessage
+                    Write-Error $ErrorMessage
                 }
                 if ($Output) {
                     $Output
@@ -61,15 +61,12 @@
             elseif ($HTML) {
                 $HTML
             }
-            elseif ($Response.Result) {
-                $Response.Result.EnsureSuccessStatusCode()
-            }
             else {
-                $Response
+                $Response.Result.EnsureSuccessStatusCode()
             }
         }
         catch {
-            Write-Error $_.Exception.Message
+            $_
         }
     }
 }
