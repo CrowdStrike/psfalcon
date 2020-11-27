@@ -123,15 +123,21 @@
                     Get-ChildItem $Outfile | Out-Host
                 }
             }
-            elseif ($Response) {
+            elseif ($Response.Result) {
                 Format-Result -Response $Response -Endpoint $Endpoint
             }
             else {
-                throw "Unable to complete request. Check connectivity and proxy configuration."
+                $ErrParam = @{
+                    Category = 'ConnectionError'
+                    CategoryReason = "Unable to reach $($Falcon.hostname)."
+                    Message = "Request failed. Unable to reach $($Falcon.hostname)."
+                    RecommendedAction = 'Check internet connection and proxy configuration.'
+                }
+                Write-Error @ErrParam
             }
         }
         catch {
-            Write-Error $_.Exception.Message
+            $_
         }
     }
     end {
