@@ -27,5 +27,6 @@
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "domain.MsaDetectSummariesResponse"
+    default = "domain.MsaDetectSummariesResponse"
   }
 }

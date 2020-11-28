@@ -35,5 +35,6 @@
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.QueryResponse"
+    default = "msa.QueryResponse"
   }
 }

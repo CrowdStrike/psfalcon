@@ -71,5 +71,6 @@
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyMetaOnly"
+    default = "msa.ReplyMetaOnly"
   }
 }
