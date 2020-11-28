@@ -6,17 +6,12 @@ class Falcon {
     [string] $Token
     [datetime] $Expires
     [array] $Endpoints
-    [array] $Definitions
-    Falcon ($Endpoints, $Definitions) {
+    Falcon ($Endpoints) {
         $this.Endpoints = $Endpoints
-        $this.Definitions = $Definitions
-        $this.psobject.typenames.insert(0,'Falcon')
+        $this.PSObject.TypeNames.Insert(0,'Falcon')
     }
     [array] Endpoint($Endpoint) {
         return $this.Endpoints | Where-Object { $Endpoint -contains $_.Name }
-    }
-    [array] Definition($Definition) {
-        return ($this.Definitions | Where-Object { $_.Name -EQ $Definition }).Fields
     }
     [string] Response($Endpoint, $StatusCode) {
         if ($this.Endpoint($Endpoint).Responses.Keys -contains $StatusCode) {
