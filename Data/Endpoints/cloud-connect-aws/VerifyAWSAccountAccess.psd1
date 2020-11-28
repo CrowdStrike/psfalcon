@@ -17,7 +17,7 @@
       Required = $true
       Pattern = "\d{12}"
       Description = "One or more AWS account identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
@@ -26,5 +26,6 @@
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "models.VerifyAccessResponseV1"
+    default = "models.VerifyAccessResponseV1"
   }
 }

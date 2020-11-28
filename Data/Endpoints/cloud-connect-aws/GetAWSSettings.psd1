@@ -14,5 +14,6 @@
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "models.CustomerConfigurationsV1"
+    default = "models.CustomerConfigurationsV1"
   }
 }

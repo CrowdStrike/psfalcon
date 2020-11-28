@@ -27,5 +27,6 @@
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "models.AWSAccountsV1"
+    default = "models.AWSAccountsV1"
   }
 }

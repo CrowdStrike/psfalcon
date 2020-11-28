@@ -87,5 +87,6 @@
     404 = "models.AWSAccountsV1"
     429 = "msa.ReplyMetaOnly"
     500 = "models.AWSAccountsV1"
+    default = "models.AWSAccountsV1"
   }
 }

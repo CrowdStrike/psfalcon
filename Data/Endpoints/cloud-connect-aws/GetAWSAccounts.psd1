@@ -17,7 +17,7 @@
       Required = $true
       Pattern = "\d{12}"
       Description = "One or more AWS account identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
@@ -27,5 +27,6 @@
     404 = "models.AWSAccountsV1"
     429 = "msa.ReplyMetaOnly"
     500 = "models.AWSAccountsV1"
+    default = "models.AWSAccountsV1"
   }
 }
