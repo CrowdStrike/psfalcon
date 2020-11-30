@@ -19,6 +19,11 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
+            if (-not($PSBoundParameters.Cloud)) {
+                if (-not($Falcon.Hostname)) {
+                    $PSBoundParameters.Cloud = 'us-1'
+                }
+            }
             if ($PSBoundParameters.Cloud) {
                 $Falcon.Hostname = switch ($PSBoundParameters.Cloud) {
                     'eu-1' {
@@ -34,9 +39,6 @@
                         'https://api.us-2.crowdstrike.com'
                     }
                 }
-            }
-            else {
-                $Falcon.Hostname = 'https://api.crowdstrike.com'
             }
             @('Id', 'Secret', 'CID') | ForEach-Object {
                 if (-not($PSBoundParameters.$_)) {
