@@ -15,12 +15,12 @@
       In = @( "query" )
       Required = $false
       Description = "Get fields configuration for this platform"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "fwmgr.msa.QueryResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.msa.QueryResponse"
   }
 }

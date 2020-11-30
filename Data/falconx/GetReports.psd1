@@ -15,14 +15,12 @@
       In = @( "query" )
       Required = $true
       Description = "One or more report identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "falconx.ReportV1Response"
-    400 = "falconx.ReportV1Response"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "falconx.ReportV1Response"
+    default = "falconx.ReportV1Response"
   }
 }

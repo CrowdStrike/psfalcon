@@ -15,7 +15,7 @@
       In = @( "query" )
       Required = $true
       Description = "Sandbox report identifier"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{

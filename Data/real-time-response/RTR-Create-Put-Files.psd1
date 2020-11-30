@@ -18,7 +18,7 @@
       Script = '[System.IO.Path]::IsPathRooted($_)'
       ScriptError = "Relative paths are not permitted."
       Description = "File to upload"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Description"
@@ -27,7 +27,7 @@
       In = @( "formdata" )
       Required = $true
       Description = "A description of the file"
-      Position = $null
+      Position = 3
     }
     @{
       Dynamic = "Name"
@@ -36,7 +36,7 @@
       In = @( "formdata" )
       Required = $false
       Description = "Optional name to use for the script"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "Comment"
@@ -46,13 +46,11 @@
       Required = $false
       Max = 4096
       Description = "A comment for the audit log"
-      Position = $null
+      Position = 4
     }
   )
   Responses = @{
-    200 = "msa.ReplyMetaOnly"
     400 = "domain.APIError"
-    403 = "msa.ReplyMetaOnly"
-    429 = "msa.ReplyMetaOnly"
+    default = "msa.ReplyMetaOnly"
   }
 }

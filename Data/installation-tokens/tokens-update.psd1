@@ -18,16 +18,7 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "One or more token identifiers"
-      Position = $null
-    }
-    @{
-      Dynamic = "ExpiresTimestamp"
-      Name = "expires_timestamp"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Description = "The token's expiration time (RFC-3339). Null if the token never expires."
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Label"
@@ -39,6 +30,16 @@
       Position = $null
     }
     @{
+      Dynamic = "ExpiresTimestamp"
+      Name = "expires_timestamp"
+      Type = "string"
+      In = @( "body" )
+      Required = $false
+      Description = "The token's expiration time (RFC-3339). Null if the token never expires."
+      Position = $null
+    }
+    
+    @{
       Dynamic = "Revoked"
       Name = "revoked"
       Type = "bool"
@@ -49,11 +50,10 @@
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
     400 = "msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
-    404 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyMetaOnly"
+    default = "msa.QueryResponse"
   }
 }

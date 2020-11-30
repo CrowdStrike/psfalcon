@@ -22,7 +22,7 @@
         "remove-host-group"
       )
       Description = "Action to perform"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "PolicyId"
@@ -32,7 +32,7 @@
       Pattern = "\w{32}"
       Required = $true
       Description = "Policy identifier"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "GroupId"
@@ -43,15 +43,12 @@
       Pattern = "\w{32}"
       Required = $false
       Description = "Host Group identifier used when adding or removing host groups"
-      Position = $null
+      Position = 3
     }
   )
   Responses = @{
-    200 = "responses.SensorUpdatePoliciesV1"
-    400 = "responses.SensorUpdatePoliciesV1"
     403 = "msa.ErrorsOnly"
-    404 = "responses.SensorUpdatePoliciesV1"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.SensorUpdatePoliciesV1"
+    default = "responses.SensorUpdatePoliciesV1"
   }
 }

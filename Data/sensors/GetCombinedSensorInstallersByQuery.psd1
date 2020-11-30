@@ -22,9 +22,9 @@
     }
   )
   Responses = @{
-    200 = "domain.SensorInstallersV1"
     400 = "msa.QueryResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.SensorInstallersV1"
   }
 }

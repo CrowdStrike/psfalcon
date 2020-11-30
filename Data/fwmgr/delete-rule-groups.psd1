@@ -28,9 +28,9 @@
     }
   )
   Responses = @{
-    200 = "fwmgr.api.QueryResponse"
     400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.QueryResponse"
   }
 }

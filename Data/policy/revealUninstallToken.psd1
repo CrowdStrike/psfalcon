@@ -10,30 +10,28 @@
   Description = "Reveal an uninstall token for a specific device or use 'MAINTENANCE' to reveal the bulk token"
   Parameters = @(
     @{
+      Dynamic = "HostId"
+      Name = "device_id"
+      Type = "string"
+      In = @( "body" )
+      Required = $true
+      Pattern = "(\w{32}|MAINTENANCE)"
+      Description = "Host identifier"
+      Position = 1
+    }
+    @{
       Dynamic = "AuditMessage"
       Name = "audit_message"
       Type = "string"
       In = @( "body" )
       Required = $false
       Description = "A comment to append to the audit log"
-      Position = $null
-    }
-    @{
-      Dynamic = "HostId"
-      Name = "device_id"
-      Type = "string"
-      In = @( "body" )
-      Required = $true
-      Pattern = "\w{32}"
-      Description = "Host identifier"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{
-    200 = "responses.RevealUninstallTokenRespV1"
-    400 = "responses.RevealUninstallTokenRespV1"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.RevealUninstallTokenRespV1"
+    default = "responses.RevealUninstallTokenRespV1"
   }
 }

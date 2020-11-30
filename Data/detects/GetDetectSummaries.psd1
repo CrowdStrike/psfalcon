@@ -22,11 +22,8 @@
     }
   )
   Responses = @{
-    200 = "domain.MsaDetectSummariesResponse"
-    400 = "domain.MsaDetectSummariesResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "domain.MsaDetectSummariesResponse"
     default = "domain.MsaDetectSummariesResponse"
   }
 }

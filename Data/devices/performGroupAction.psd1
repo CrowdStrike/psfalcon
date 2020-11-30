@@ -20,7 +20,7 @@
         "remove-hosts"
       )
       Description = "The action to perform on the target Host Groups"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "GroupId"
@@ -30,7 +30,7 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "Host group identifier"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "FilterName"
@@ -54,7 +54,7 @@
         "system_manufacturer"
       )
       Description = "FQL filter name"
-      Position = $null
+      Position = 3
     }
     @{
       Dynamic = "FilterValue"
@@ -65,15 +65,12 @@
       Required = $true
       Max = 500
       Description = "One or more values for use with the FQL filter"
-      Position = $null
+      Position = 4
     }
   )
   Responses = @{
-    200 = "responses.HostGroupsV1"
-    400 = "responses.HostGroupsV1"
     403 = "msa.ErrorsOnly"
-    404 = "responses.HostGroupsV1"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.HostGroupsV1"
+    default = "responses.HostGroupsV1"
   }
 }

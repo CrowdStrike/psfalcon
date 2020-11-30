@@ -16,15 +16,14 @@
       In = @( "query" )
       Required = $true
       Description = "The IDs of the installers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "domain.SensorInstallersV1"
-    207 = "domain.SensorInstallersV1"
     400 = "msa.QueryResponse"
     403 = "msa.ReplyMetaOnly"
     404 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.SensorInstallersV1"
   }
 }

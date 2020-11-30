@@ -15,14 +15,12 @@
       In = @( "query" )
       Required = $true
       Description = "The IDs of the Device Control Policies to return"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "responses.DeviceControlPoliciesV1"
     403 = "msa.ErrorsOnly"
-    404 = "responses.DeviceControlPoliciesV1"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.DeviceControlPoliciesV1"
+    default = "responses.DeviceControlPoliciesV1"
   }
 }

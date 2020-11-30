@@ -13,17 +13,13 @@
     Required = $true
     Description = "One or more exclusion identifiers"
     Type = "array"
-    In = @(
-      "query"
-    )
+    In = @( "query" )
     Pattern = "\w{32}"
     Position = 1
   }
   Responses = @{
-    200 = "responses.IoaExclusionRespV1"
-    400 = "responses.IoaExclusionRespV1"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.IoaExclusionRespV1"
+    default = "responses.IoaExclusionRespV1"
   }
 }

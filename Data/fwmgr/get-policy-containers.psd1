@@ -16,13 +16,13 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "One or more policy identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "fwmgr.api.PolicyContainersResponse"
     400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.PolicyContainersResponse"
   }
 }

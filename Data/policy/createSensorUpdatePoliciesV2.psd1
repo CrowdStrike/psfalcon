@@ -10,26 +10,6 @@
   Description = "Create Sensor Update Policies"
   Parameters = @(
     @{
-      Dynamic = "Description"
-      Name = "description"
-      Type = "string"
-      In = @( "body" )
-      Parent = "resources"
-      Required = $false
-      Description = "The description to use when creating the policy"
-      Position = $null
-    }
-    @{
-      Dynamic = "Name"
-      Name = "name"
-      Type = "string"
-      In = @( "body" )
-      Parent = "resources"
-      Required = $true
-      Description = "The name to use when creating the policy"
-      Position = $null
-    }
-    @{
       Dynamic = "PlatformName"
       Name = "platform_name"
       Type = "string"
@@ -42,7 +22,27 @@
         "Linux"
       )
       Description = "Platform name"
-      Position = $null
+      Position = 1
+    }
+    @{
+      Dynamic = "Name"
+      Name = "name"
+      Type = "string"
+      In = @( "body" )
+      Parent = "resources"
+      Required = $true
+      Description = "The name to use when creating the policy"
+      Position = 2
+    }
+    @{
+      Dynamic = "Description"
+      Name = "description"
+      Type = "string"
+      In = @( "body" )
+      Parent = "resources"
+      Required = $false
+      Description = "The description to use when creating the policy"
+      Position = 3
     }
     @{
       Dynamic = "Settings"
@@ -52,7 +52,7 @@
       Parent = "resources"
       Required = $false
       Description = "A hashtable defining policy settings"
-      Position = $null
+      Position = 4
     }
   )
   Responses = @{

@@ -10,18 +10,16 @@
   Parameters = @{
     Dynamic = "SeverityIds"
     Name = "ids"
-    Required = $true
-    Description = "One or more rule severity identifiers"
     Type = "array"
-    In = @(
-      "query"
-    )
+    In = @( "query" )
+    Required = $true
     Pattern = "(critical|high|medium|low|informational)"
+    Description = "One or more rule severity identifiers"
     Position = 1
   }
   Responses = @{
-    200 = "api.PatternsResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.PatternsResponse"
   }
 }

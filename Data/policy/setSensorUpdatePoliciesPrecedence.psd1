@@ -10,15 +10,6 @@
   Description = "Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence"
   Parameters = @(
     @{
-      Dynamic = "PolicyIds"
-      Name = "ids"
-      Type = "array"
-      In = @( "body" )
-      Required = $true
-      Description = "All of the policy identifiers for the specified platform"
-      Position = $null
-    }
-    @{
       Dynamic = "PlatformName"
       Name = "platform_name"
       Type = "string"
@@ -30,14 +21,21 @@
         "Linux"
       )
       Description = "Platform name"
-      Position = $null
+      Position = 1
+    }
+    @{
+      Dynamic = "PolicyIds"
+      Name = "ids"
+      Type = "array"
+      In = @( "body" )
+      Required = $true
+      Description = "All of the policy identifiers for the specified platform"
+      Position = 2
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
-    400 = "msa.QueryResponse"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "msa.QueryResponse"
+    default = "msa.QueryResponse"
   }
 }

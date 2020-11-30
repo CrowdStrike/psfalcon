@@ -16,15 +16,15 @@
       In = @( "query" )
       Required = $true
       Description = "One or more role identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "domain.UserRoleResponse"
     400 = "msa.EntitiesResponse"
     403 = "msa.EntitiesResponse"
     404 = "msa.EntitiesResponse"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.EntitiesResponse"
+    default = "domain.UserRoleResponse"
   }
 }

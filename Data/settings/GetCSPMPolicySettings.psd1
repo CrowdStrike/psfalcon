@@ -31,11 +31,8 @@
     }
   )
   Responses = @{
-    200 = "registration.PolicySettingsResponseV1"
-    207 = "registration.PolicySettingsResponseV1"
-    400 = "registration.PolicySettingsResponseV1"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "registration.PolicySettingsResponseV1"
+    default = "registration.PolicySettingsResponseV1"
   }
 }

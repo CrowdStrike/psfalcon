@@ -56,8 +56,8 @@
     }
   )
   Responses = @{
-    200 = "api.MsaReplyDevicesRanOn"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.MsaReplyDevicesRanOn"
   }
 }

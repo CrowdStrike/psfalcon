@@ -15,7 +15,7 @@
       In = @( "query" )
       Required = $true
       Description = "The ID of the policy container within which to query"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Query"
@@ -28,9 +28,9 @@
     }
   )
   Responses = @{
-    200 = "fwmgr.api.QueryResponse"
     400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.QueryResponse"
   }
 }

@@ -16,15 +16,12 @@
       Pattern = "\w{32}"
       Required = $false
       Description = "The ID of the Sensor Update Policy to search for members of"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "responses.PolicyMembersRespV1"
-    400 = "responses.PolicyMembersRespV1"
     403 = "msa.ErrorsOnly"
-    404 = "responses.PolicyMembersRespV1"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.PolicyMembersRespV1"
+    default = "responses.PolicyMembersRespV1"
   }
 }

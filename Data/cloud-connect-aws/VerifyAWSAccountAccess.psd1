@@ -21,11 +21,8 @@
     }
   )
   Responses = @{
-    200 = "models.VerifyAccessResponseV1"
-    400 = "models.VerifyAccessResponseV1"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "models.VerifyAccessResponseV1"
     default = "models.VerifyAccessResponseV1"
   }
 }

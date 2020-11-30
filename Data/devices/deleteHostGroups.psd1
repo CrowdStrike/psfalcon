@@ -16,14 +16,12 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "One or more group identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
     403 = "msa.ReplyMetaOnly"
-    404 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
-    500 = "msa.QueryResponse"
+    default = "msa.QueryResponse"
   }
 }

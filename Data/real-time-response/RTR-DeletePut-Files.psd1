@@ -15,14 +15,10 @@
       In = @( "query" )
       Required = $true
       Description = "File identifier"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "msa.ReplyMetaOnly"
-    400 = "msa.ReplyMetaOnly"
-    403 = "msa.ReplyMetaOnly"
-    404 = "msa.ReplyMetaOnly"
-    429 = "msa.ReplyMetaOnly"
+    default = "msa.ReplyMetaOnly"
   }
 }

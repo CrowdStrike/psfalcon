@@ -17,14 +17,14 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "One or more user identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "domain.UserMetaDataResponse"
     400 = "msa.EntitiesResponse"
     403 = "msa.EntitiesResponse"
     404 = "msa.EntitiesResponse"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.UserMetaDataResponse"
   }
 }

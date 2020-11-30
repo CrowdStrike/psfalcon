@@ -15,13 +15,13 @@
       In = @( "query" )
       Required = $true
       Description = "One or more rule group identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "fwmgr.api.RuleGroupsResponse"
     400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.RuleGroupsResponse"
   }
 }

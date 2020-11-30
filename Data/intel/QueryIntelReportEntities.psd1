@@ -28,10 +28,9 @@
     }
   )
   Responses = @{
-    200 = "domain.NewsResponse"
-    400 = ""
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ErrorsOnly"
+    default = "domain.NewsResponse"
   }
 }

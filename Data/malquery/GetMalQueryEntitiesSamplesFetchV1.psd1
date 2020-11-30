@@ -15,18 +15,17 @@
       In = @( "query" )
       Required = $true
       Description = "Sample job identifier"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Path"
       Name = ""
       Type = "String"
-      In = @(
-        "outfile"
-      )
+      In = @( "outfile" )
       Required = $true
+      Pattern = "\.zip$"
       Description = "Destination Path"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{

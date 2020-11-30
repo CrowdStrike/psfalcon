@@ -14,13 +14,14 @@
       Type = "array"
       In = @( "query" )
       Required = $true
+      Pattern = "\d{1}"
       Description = "One or more platform identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "fwmgr.api.PlatformsResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.PlatformsResponse"
   }
 }

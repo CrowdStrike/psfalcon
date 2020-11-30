@@ -17,15 +17,10 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "One or more token identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "msa.ReplyMetaOnly"
-    400 = "msa.ReplyMetaOnly"
-    403 = "msa.ReplyMetaOnly"
-    404 = "msa.QueryResponse"
-    429 = "msa.ReplyMetaOnly"
-    500 = "msa.ReplyMetaOnly"
+    default = "msa.ReplyMetaOnly"
   }
 }

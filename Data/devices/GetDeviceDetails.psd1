@@ -13,15 +13,16 @@
       Name = "ids"
       Type = "array"
       In = @( "query" )
+      Max = 1000
       Required = $true
       Pattern = "\w{32}"
       Description = "The host agentIDs used to get details on"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "domain.DeviceDetailsResponseSwagger"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.DeviceDetailsResponseSwagger"
   }
 }

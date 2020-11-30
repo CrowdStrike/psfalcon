@@ -30,11 +30,7 @@
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
-    400 = "msa.QueryResponse"
-    403 = "msa.QueryResponse"
-    404 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
-    500 = "msa.QueryResponse"
+    default = "msa.QueryResponse"
   }
 }

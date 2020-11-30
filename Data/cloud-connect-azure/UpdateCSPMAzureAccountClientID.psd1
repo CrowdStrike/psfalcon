@@ -21,8 +21,6 @@
     }
   )
   Responses = @{
-    201 = "registration.AzureServicePrincipalResponseV1"
-    400 = "registration.AzureServicePrincipalResponseV1"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "registration.AzureServicePrincipalResponseV1"

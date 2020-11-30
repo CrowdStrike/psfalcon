@@ -13,18 +13,14 @@
     Name = "samples"
     Required = $true
     Type = "array"
-    In = @(
-      "body"
-    )
+    In = @( "body" )
     Pattern = "\w{64}"
     Description = "One or more SHA256 hash values to submit as a volume scan"
-    Position = $null
+    Position = 1
   }
   Responses = @{
-    200 = "mlscanner.QueryResponse"
-    400 = "mlscanner.QueryResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "mlscanner.QueryResponse"
+    default = "mlscanner.QueryResponse"
   }
 }

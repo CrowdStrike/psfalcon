@@ -15,16 +15,16 @@
       Name = "ids"
       Type = "array"
       In = @( "query" )
-      Required = $false
+      Required = $true
       Description = "One or more event identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "api.auditEventDetailsResponseV1"
     400 = "msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyMetaOnly"
+    default = "api.auditEventDetailsResponseV1"
   }
 }

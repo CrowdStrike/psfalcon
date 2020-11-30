@@ -10,15 +10,29 @@
   Description = "Search MalQuery for a combination of hex patterns and strings"
   Parameters = @(
     @{
-      Dynamic = "FilterFileTypes"
-      Name = "filter_filetypes"
-      Type = "array"
+      Dynamic = "PatternType"
+      Name = "type"
+      Type = "string"
       In = @( "body" )
-      Parent = "options"
-      Required = $false
-      Pattern = "(cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)"
-      Description = "File types to include with the results"
-      Position = $null
+      Parent = "patterns"
+      Required = $true
+      Enum = @(
+        "hex"
+        "ascii"
+        "wide"
+      )
+      Description = "Pattern type"
+      Position = 1
+    }
+    @{
+      Dynamic = "PatternValue"
+      Name = "value"
+      Type = "string"
+      In = @( "body" )
+      Parent = "patterns"
+      Required = $true
+      Description = "Pattern value"
+      Position = 2
     }
     @{
       Dynamic = "FilterMeta"
@@ -32,18 +46,19 @@
       Position = $null
     }
     @{
-      Dynamic = "Limit"
-      Name = "limit"
-      Type = "int"
+      Dynamic = "FilterFileTypes"
+      Name = "filter_filetypes"
+      Type = "array"
       In = @( "body" )
       Parent = "options"
       Required = $false
-      Description = "Maximum number of results per request"
+      Pattern = "(cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)"
+      Description = "File types to include with the results"
       Position = $null
     }
     @{
-      Dynamic = "MaxDate"
-      Name = "max_date"
+      Dynamic = "MinDate"
+      Name = "min_date"
       Type = "string"
       In = @( "body" )
       Parent = "options"
@@ -53,18 +68,8 @@
       Position = $null
     }
     @{
-      Dynamic = "MaxSize"
-      Name = "max_size"
-      Type = "string"
-      In = @( "body" )
-      Parent = "options"
-      Required = $false
-      Description = "Maximum file size specified in bytes or multiples of KB/MB/GB"
-      Position = $null
-    }
-    @{
-      Dynamic = "MinDate"
-      Name = "min_date"
+      Dynamic = "MaxDate"
+      Name = "max_date"
       Type = "string"
       In = @( "body" )
       Parent = "options"
@@ -84,37 +89,29 @@
       Position = $null
     }
     @{
-      Dynamic = "PatternType"
-      Name = "type"
+      Dynamic = "MaxSize"
+      Name = "max_size"
       Type = "string"
       In = @( "body" )
-      Parent = "patterns"
-      Required = $true
-      Enum = @(
-        "hex"
-        "ascii"
-        "wide"
-      )
-      Description = "Pattern type"
+      Parent = "options"
+      Required = $false
+      Description = "Maximum file size specified in bytes or multiples of KB/MB/GB"
       Position = $null
     }
     @{
-      Dynamic = "PatternValue"
-      Name = "value"
-      Type = "string"
+      Dynamic = "Limit"
+      Name = "limit"
+      Type = "int"
       In = @( "body" )
-      Parent = "patterns"
-      Required = $true
-      Description = "Pattern value"
+      Parent = "options"
+      Required = $false
+      Description = "Maximum number of results per request"
       Position = $null
     }
   )
   Responses = @{
-    200 = "malquery.ExternalQueryResponse"
-    400 = "malquery.ExternalQueryResponse"
     401 = "msa.ErrorsOnly"
     403 = "msa.ErrorsOnly"
-    429 = "malquery.ExternalQueryResponse"
-    500 = "malquery.ExternalQueryResponse"
+    default = "malquery.ExternalQueryResponse"
   }
 }

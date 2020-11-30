@@ -15,17 +15,17 @@
       Name = "ids"
       Type = "array"
       In = @( "query" )
-      Required = $false
+      Required = $true
       Pattern = "\w{32}"
       Description = "One or more token identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "api.tokenDetailsResponseV1"
     400 = "msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyMetaOnly"
+    default = "api.tokenDetailsResponseV1"
   }
 }

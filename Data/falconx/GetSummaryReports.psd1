@@ -9,27 +9,25 @@
   Description = "Get a short summary version of a sandbox report."
   Parameters = @(
     @{
-      Dynamic = "Summary"
-      Type = "switch"
-      Required = $true
-      Description = "Retrieve summary information"
-      Position = $null
-    }
-    @{
       Dynamic = "ReportIds"
       Name = "ids"
       Type = "array"
       In = @( "query" )
       Required = $true
       Description = "One or more report identifiers"
-      Position = $null
+      Position = 1
+    }
+    @{
+      Dynamic = "Summary"
+      Type = "switch"
+      Required = $true
+      Description = "Retrieve summary information"
+      Position = 2
     }
   )
   Responses = @{
-    200 = "falconx.SummaryReportV1Response"
-    400 = "falconx.SummaryReportV1Response"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "falconx.SummaryReportV1Response"
+    default = "falconx.SummaryReportV1Response"
   }
 }

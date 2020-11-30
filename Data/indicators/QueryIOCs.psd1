@@ -23,7 +23,7 @@
         "ipv6"
       )
       Description = "Type of indicator"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Value"
@@ -34,7 +34,7 @@
       Min = 1
       Max = 200
       Description = "The string representation of the indicator"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "FromExpirationTimestamp"
@@ -64,7 +64,7 @@
         "detect"
         "none"
       )
-      Description = "Custom IOC policy type @('detect' 'none')"
+      Description = "Custom IOC policy type"
       Position = $null
     }
     @{
@@ -119,8 +119,8 @@
     }
   )
   Responses = @{
-    200 = "api.MsaReplyIOCIDs"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.MsaReplyIOCIDs"
   }
 }

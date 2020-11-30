@@ -8,10 +8,9 @@
   }
   Permission = "usermgmt:read"
   Description = "List all usernames (typically an email address)"
+  Parameters = @()
   Responses = @{
-    200 = "msa.QueryResponse"
-    400 = "msa.QueryResponse"
-    403 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
+    default = "msa.QueryResponse"
   }
 }

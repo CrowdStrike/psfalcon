@@ -15,13 +15,13 @@
       In = @( "query" )
       Required = $true
       Description = "The rules to retrieve identified by ID"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "fwmgr.api.RulesResponse"
     400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.RulesResponse"
   }
 }

@@ -15,7 +15,7 @@
       In = @( "query" )
       Required = $true
       Description = "Rule set identifier"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Path"
@@ -27,8 +27,7 @@
       Required = $true
       Pattern = "\.zip$"
       Description = "Destination Path"
-      Position = $null
-    }
+      Position = 2
   )
   Responses = @{
     200 = ""

@@ -7,11 +7,10 @@
   }
   Permission = "d4c-registration:read"
   Description = "Download a script to run in their cloud environment to grant us access to their Azure environment as a downloadable attachment"
+  Parameters = @()
   Responses = @{
-    200 = "registration.AzureProvisionGetUserScriptResponseV1"
-    400 = "registration.AzureProvisionGetUserScriptResponseV1"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "registration.AzureProvisionGetUserScriptResponseV1"
+    default = "registration.AzureProvisionGetUserScriptResponseV1"
   }
 }

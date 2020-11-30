@@ -15,15 +15,13 @@
       In = @( "query" )
       Required = $true
       Description = "The file SHA256."
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "malquery.SampleMetadataResponse"
-    400 = "malquery.SampleMetadataResponse"
     401 = "msa.ErrorsOnly"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "malquery.SampleMetadataResponse"
+    default = "malquery.SampleMetadataResponse"
   }
 }

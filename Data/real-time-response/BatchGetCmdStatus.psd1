@@ -30,11 +30,11 @@
     }
   )
   Responses = @{
-    200 = "domain.BatchGetCmdStatusResponse"
     400 = "domain.APIError"
     403 = "msa.ErrorsOnly"
     404 = "domain.APIError"
     429 = "msa.ReplyMetaOnly"
     500 = "domain.APIError"
+    default = "domain.BatchGetCmdStatusResponse"
   }
 }

@@ -19,8 +19,8 @@
     }
   )
   Responses = @{
-    200 = "domain.SPAPIVulnerabilitiesEntitiesResponseV2"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.SPAPIVulnerabilitiesEntitiesResponseV2"
   }
 }

@@ -16,18 +16,16 @@
       Required = $true
       Pattern = "\w{64}"
       Description = "Sha256 value of the sample"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Path"
       Name = ""
       Type = "string"
-      In = @(
-        "outfile"
-      )
+      In = @( "outfile" )
       Required = $true
       Description = "Destination Path"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{

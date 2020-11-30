@@ -17,14 +17,11 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "User identifier"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
-    400 = "msa.QueryResponse"
-    403 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
-    500 = "msa.QueryResponse"
+    default = "msa.QueryResponse"
   }
 }

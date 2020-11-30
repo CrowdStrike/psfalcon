@@ -30,10 +30,8 @@
     }
   )
   Responses = @{
-    200 = "domain.SPAPIQueryVulnerabilitiesResponse"
-    400 = "domain.SPAPIQueryVulnerabilitiesResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "domain.SPAPIQueryVulnerabilitiesResponse"
+    default = "domain.SPAPIQueryVulnerabilitiesResponse"
   }
 }

@@ -10,25 +10,15 @@
   Description = "Update Sensor Update Policies by specifying the ID of the policy and details to update"
   Parameters = @(
     @{
-      Dynamic = "Description"
-      Name = "description"
-      Type = "string"
-      In = @( "body" )
-      Parent = "resources"
-      Required = $false
-      Description = "The new description to assign to the policy"
-      Position = $null
-    }
-    @{
       Dynamic = "PolicyId"
       Name = "id"
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Pattern = "\w{32}"
       Required = $true
+      Pattern = "\w{32}"
       Description = "Policy identifier"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Name"
@@ -38,7 +28,17 @@
       Parent = "resources"
       Required = $false
       Description = "The new name to assign to the policy"
-      Position = $null
+      Position = 2
+    }
+    @{
+      Dynamic = "Description"
+      Name = "description"
+      Type = "string"
+      In = @( "body" )
+      Parent = "resources"
+      Required = $false
+      Description = "The new description to assign to the policy"
+      Position = 3
     }
     @{
       Dynamic = "Settings"
@@ -48,15 +48,12 @@
       Parent = "resources"
       Required = $false
       Description = "A hashtable defining policy settings"
-      Position = $null
+      Position = 4
     }
   )
   Responses = @{
-    200 = "responses.SensorUpdatePoliciesV2"
-    400 = "responses.SensorUpdatePoliciesV2"
     403 = "msa.ErrorsOnly"
-    404 = "responses.SensorUpdatePoliciesV2"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.SensorUpdatePoliciesV2"
+    default = "responses.SensorUpdatePoliciesV2"
   }
 }

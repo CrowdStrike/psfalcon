@@ -16,13 +16,13 @@
       In = @( "body" )
       Required = $true
       Description = "One or more indicator identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "domain.PublicIndicatorsV3Response"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ErrorsOnly"
+    default = "domain.PublicIndicatorsV3Response"
   }
 }

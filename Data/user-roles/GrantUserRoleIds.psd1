@@ -17,7 +17,7 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "User identifier"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "RoleIds"
@@ -26,13 +26,13 @@
       In = @( "body" )
       Required = $true
       Description = "One or more roles to assign"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{
-    200 = "domain.UserRoleIDsResponse"
     400 = "msa.EntitiesResponse"
     403 = "msa.EntitiesResponse"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.UserRoleIDsResponse"
   }
 }

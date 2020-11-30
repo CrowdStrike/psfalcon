@@ -20,11 +20,8 @@
     }
   )
   Responses = @{
-    200 = "models.BaseResponseV1"
-    400 = "models.BaseResponseV1"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "models.BaseResponseV1"
     default = "models.BaseResponseV1"
   }
 }

@@ -10,12 +10,12 @@
   Description = "Update name description or enabled status of a rule group or create edit delete or reorder rules"
   Parameters = @(
     @{
-      Dynamic = "Comment"
-      Name = "comment"
+      Dynamic = "GroupId"
+      Name = "id"
       Type = "string"
-      In = @( "query" )
+      In = @( "body" )
       Required = $false
-      Description = "Audit log comment for this action"
+      Description = "A firewall rule group identifier"
       Position = $null
     }
     @{
@@ -25,15 +25,6 @@
       In = @( "body" )
       Required = $true
       Description = "An array of hashtables containing rule or rule group changes"
-      Position = $null
-    }
-    @{
-      Dynamic = "GroupId"
-      Name = "id"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Description = "A firewall rule group identifier"
       Position = $null
     }
     @{
@@ -55,6 +46,15 @@
       Position = $null
     }
     @{
+      Dynamic = "Comment"
+      Name = "comment"
+      Type = "string"
+      In = @( "query" )
+      Required = $false
+      Description = "Audit log comment for this action"
+      Position = $null
+    }
+    @{
       Dynamic = "Tracking"
       Name = "tracking"
       Type = "string"
@@ -65,9 +65,9 @@
     }
   )
   Responses = @{
-    200 = "fwmgr.api.QueryResponse"
     400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.QueryResponse"
   }
 }

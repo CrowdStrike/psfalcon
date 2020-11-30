@@ -16,14 +16,14 @@
       In = @( "body" )
       Required = $true
       Description = "One or more session identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "domain.SessionResponseWrapper"
     400 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"
     404 = "domain.APIError"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.SessionResponseWrapper"
   }
 }

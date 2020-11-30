@@ -22,8 +22,8 @@
         "ipv4"
         "ipv6"
       )
-      Description = "Indicator type @('sha256' 'md5' 'domain' 'ipv4' 'ipv6')"
-      Position = $null
+      Description = "Indicator type"
+      Position = 1
     }
     @{
       Dynamic = "Value"
@@ -32,12 +32,12 @@
       In = @( "query" )
       Required = $true
       Description = "Indicator value"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{
-    200 = "api.MsaReplyIOC"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.MsaReplyIOC"
   }
 }

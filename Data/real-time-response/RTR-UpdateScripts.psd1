@@ -28,6 +28,15 @@
       Position = $null
     }
     @{
+      Dynamic = "Platform"
+      Name = "platform"
+      Type = "array"
+      In = @( "formdata" )
+      Required = $false
+      Description = "Operating system platform [default: windows]"
+      Position = $null
+    }
+    @{
       Dynamic = "Description"
       Name = "description"
       Type = "string"
@@ -64,20 +73,9 @@
       Description = "Permission level @(private: uploader only group: admins public: admins and active responders)"
       Position = $null
     }
-    @{
-      Dynamic = "Platform"
-      Name = "platform"
-      Type = "array"
-      In = @( "formdata" )
-      Required = $false
-      Description = "Operating system platform @(default: windows)"
-      Position = $null
-    }
   )
   Responses = @{
-    200 = "msa.ReplyMetaOnly"
     400 = "domain.APIError"
-    403 = "msa.ReplyMetaOnly"
-    429 = "msa.ReplyMetaOnly"
+    default = "msa.ReplyMetaOnly"
   }
 }

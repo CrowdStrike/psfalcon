@@ -17,7 +17,7 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "User identifier"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "FirstName"
@@ -26,7 +26,7 @@
       In = @( "body" )
       Required = $false
       Description = "User's first name"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "LastName"
@@ -35,14 +35,14 @@
       In = @( "body" )
       Required = $false
       Description = "User's last name"
-      Position = $null
+      Position = 3
     }
   )
   Responses = @{
-    200 = "domain.UserMetaDataResponse"
     400 = "msa.EntitiesResponse"
     403 = "msa.EntitiesResponse"
     404 = "msa.EntitiesResponse"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.UserMetaDataResponse"
   }
 }

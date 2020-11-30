@@ -16,14 +16,11 @@
       In = @( "query" )
       Required = $true
       Description = "Email address or username"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
-    400 = "msa.QueryResponse"
-    403 = "msa.QueryResponse"
-    404 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
+    default = "msa.QueryResponse"
   }
 }

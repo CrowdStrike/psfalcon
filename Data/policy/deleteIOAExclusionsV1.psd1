@@ -21,17 +21,15 @@
       Dynamic = "Comment"
       Name = "comment"
       Required = $false
-      Description = "Explains why this exclusions was deleted"
+      Description = "Explains why this exclusion was deleted"
       Type = "string"
       In = @( "query" )
       Position = 2
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
-    400 = "msa.QueryResponse"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "msa.QueryResponse"
+    default = "msa.QueryResponse"
   }
 }

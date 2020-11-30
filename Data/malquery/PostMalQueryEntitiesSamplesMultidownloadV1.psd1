@@ -16,16 +16,12 @@
       In = @( "body" )
       Required = $true
       Description = "List of sample sha256 ids"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "malquery.ExternalQueryResponse"
-    400 = "malquery.ExternalQueryResponse"
     401 = "msa.ErrorsOnly"
     403 = "msa.ErrorsOnly"
-    404 = "malquery.ExternalQueryResponse"
-    429 = "malquery.ExternalQueryResponse"
-    500 = "malquery.ExternalQueryResponse"
+    default = "malquery.ExternalQueryResponse"
   }
 }

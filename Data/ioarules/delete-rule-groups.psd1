@@ -28,9 +28,6 @@
     }
   )
   Responses = @{
-    200 = "msa.ReplyMetaOnly"
-    403 = "msa.ReplyMetaOnly"
-    404 = "msa.ReplyMetaOnly"
-    429 = "msa.ReplyMetaOnly"
+    default = "msa.ReplyMetaOnly"
   }
 }

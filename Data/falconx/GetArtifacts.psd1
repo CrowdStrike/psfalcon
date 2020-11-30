@@ -16,7 +16,7 @@
       In = @( "query" )
       Required = $true
       Description = "Artifact identifier"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Path"
@@ -27,7 +27,7 @@
       )
       Required = $true
       Description = "Destination Path"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{

@@ -15,14 +15,12 @@
       In = @( "query" )
       Required = $true
       Description = "Prevention policy identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "responses.PreventionPoliciesV1"
     403 = "msa.ErrorsOnly"
-    404 = "responses.PreventionPoliciesV1"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.PreventionPoliciesV1"
+    default = "responses.PreventionPoliciesV1"
   }
 }

@@ -23,7 +23,7 @@
         "ipv6"
       )
       Description = "Custom IOC type"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Value"
@@ -34,12 +34,12 @@
       Min = 1
       Max = 200
       Description = "Custom IOC value"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{
-    200 = "api.MsaReplyIOC"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.MsaReplyIOC"
   }
 }

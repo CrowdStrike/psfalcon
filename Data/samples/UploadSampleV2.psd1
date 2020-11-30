@@ -60,10 +60,8 @@
     }
   )
   Responses = @{
-    200 = "samplestore.SampleMetadataResponseV2"
-    400 = "samplestore.SampleMetadataResponseV2"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "samplestore.SampleMetadataResponseV2"
+    default = "samplestore.SampleMetadataResponseV2"
   }
 }

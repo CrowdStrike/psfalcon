@@ -22,7 +22,7 @@
         "unhide_host"
       )
       Description = "The action to perform on the target Hosts"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "HostIds"
@@ -32,14 +32,11 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "One or more Host identifiers"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{
-    202 = "msa.ReplyAffectedEntities"
-    400 = "msa.ReplyAffectedEntities"
     403 = "msa.ReplyMetaOnly"
-    409 = "msa.ReplyAffectedEntities"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyAffectedEntities"
   }

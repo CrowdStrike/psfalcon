@@ -10,13 +10,31 @@
   Description = "Update a custom IOC"
   Parameters = @(
     @{
-      Dynamic = "ExpirationDays"
-      Name = "expiration_days"
-      Type = "int"
+      Dynamic = "Type"
+      Name = "type"
+      Type = "string"
       In = @( "body" )
-      Required = $false
-      Description = "Number of days before expiration (for 'domain' 'ipv4' and 'ipv6')"
-      Position = $null
+      Required = $true
+      Enum = @(
+        "sha256"
+        "md5"
+        "domain"
+        "ipv4"
+        "ipv6"
+      )
+      Description = "Custom IOC type"
+      Position = 1
+    }
+    @{
+      Dynamic = "Value"
+      Name = "value"
+      Type = "string"
+      In = @( "body" )
+      Required = $true
+      Min = 1
+      Max = 200
+      Description = "Custom IOC value"
+      Position = 2
     }
     @{
       Dynamic = "Policy"
@@ -29,19 +47,25 @@
         "none"
       )
       Description = "Action to take when a host observes the custom IOC"
-      Position = $null
+      Position = 3
     }
     @{
-      Dynamic = "ShareLevel"
-      Name = "share_level"
+      Dynamic = "ExpirationDays"
+      Name = "expiration_days"
+      Type = "int"
+      In = @( "body" )
+      Required = $false
+      Description = "Number of days before expiration (for 'domain' 'ipv4' and 'ipv6')"
+      Position = 4
+    }
+    @{
+      Dynamic = "Description"
+      Name = "description"
       Type = "string"
       In = @( "body" )
       Required = $false
-      Enum = @(
-        "red"
-      )
-      Description = "Custom IOC visibility level @('red')"
-      Position = $null
+      Description = "Custom IOC description"
+      Position = 5
     }
     @{
       Dynamic = "Source"
@@ -52,54 +76,24 @@
       Min = 1
       Max = 200
       Description = "Custom IOC source"
-      Position = $null
+      Position = 6
     }
     @{
-      Dynamic = "Type"
-      Name = "type"
-      Type = "string"
-      In = @(
-        "body"
-        "query"
-      )
-      Required = $true
-      Enum = @(
-        "sha256"
-        "md5"
-        "domain"
-        "ipv4"
-        "ipv6"
-      )
-      Description = "Custom IOC type"
-      Position = $null
-    }
-    @{
-      Dynamic = "Value"
-      Name = "value"
-      Type = "string"
-      In = @(
-        "body"
-        "query"
-      )
-      Required = $true
-      Min = 1
-      Max = 200
-      Description = "Custom IOC value"
-      Position = $null
-    }
-    @{
-      Dynamic = "Description"
-      Name = "description"
+      Dynamic = "ShareLevel"
+      Name = "share_level"
       Type = "string"
       In = @( "body" )
       Required = $false
-      Description = "Custom IOC description"
-      Position = $null
+      Enum = @(
+        "red"
+      )
+      Description = "Custom IOC visibility level"
+      Position = 7
     }
   )
   Responses = @{
-    200 = "api.MsaReplyIOC"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.MsaReplyIOC"
   }
 }

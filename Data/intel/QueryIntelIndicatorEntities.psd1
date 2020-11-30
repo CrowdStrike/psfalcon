@@ -39,10 +39,10 @@
     }
   )
   Responses = @{
-    200 = "domain.PublicIndicatorsV3Response"
     400 = "msa.ErrorsOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ErrorsOnly"
+    default = "domain.PublicIndicatorsV3Response"
   }
 }

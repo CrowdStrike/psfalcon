@@ -16,13 +16,13 @@
       Required = $true
       Pattern = "(\w-){20}"
       Description = "The events to retrieve identified by ID"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "fwmgr.api.EventsResponse"
     400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.EventsResponse"
   }
 }

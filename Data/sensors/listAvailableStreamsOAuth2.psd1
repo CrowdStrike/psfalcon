@@ -17,7 +17,7 @@
       Required = $true
       Pattern = "\w{1,32}"
       Description = "Label that identifies your connection. Max: 32 alphanumeric characters (a-z A-Z 0-9)."
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Format"
@@ -30,14 +30,12 @@
         "flatjson"
       )
       Description = "Format for streaming events"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{
-    200 = "main.discoveryResponseV2"
-    400 = "main.discoveryResponseV2"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "main.discoveryResponseV2"
+    default = "main.discoveryResponseV2"
   }
 }

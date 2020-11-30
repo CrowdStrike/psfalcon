@@ -17,26 +17,24 @@
       Required = $true
       Pattern = "\w{64}"
       Description = "SHA256 hash value of the installer to download"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Path"
       Name = ""
       Type = "string"
-      In = @(
-        "outfile"
-      )
+      In = @( "outfile" )
       Required = $true
       Pattern = "\.(deb|exe|html|pkg|rpm)+$"
       Description = "Destination path"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{
-    200 = "domain.DownloadItem"
     400 = "msa.QueryResponse"
     403 = "msa.ReplyMetaOnly"
     404 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.DownloadItem"
   }
 }

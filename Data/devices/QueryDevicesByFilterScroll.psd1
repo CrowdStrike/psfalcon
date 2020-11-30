@@ -19,8 +19,8 @@
     }
   )
   Responses = @{
-    200 = "domain.DeviceResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.DeviceResponse"
   }
 }

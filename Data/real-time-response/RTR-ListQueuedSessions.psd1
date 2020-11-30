@@ -16,7 +16,7 @@
       In = @( "body" )
       Required = $true
       Description = "One or more session identifiers"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Queue"
@@ -27,11 +27,11 @@
     }
   )
   Responses = @{
-    200 = "domain.QueuedSessionResponseWrapper"
     400 = "domain.APIError"
     401 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"
     404 = "domain.APIError"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.QueuedSessionResponseWrapper"
   }
 }

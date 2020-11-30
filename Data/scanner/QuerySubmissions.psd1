@@ -9,10 +9,8 @@
   Permission = "quick-scan:read"
   Parameters = @()
   Responses = @{
-    200 = "mlscanner.QueryResponse"
-    400 = "mlscanner.QueryResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "mlscanner.QueryResponse"
+    default = "mlscanner.QueryResponse"
   }
 }

@@ -13,15 +13,13 @@
     Required = $true
     Description = "One or more rule identifiers"
     Type = "array"
-    In = @(
-      "query"
-    )
+    In = @( "query" )
     Position = 1
   }
   Responses = @{
-    200 = "api.RulesResponse"
     403 = "msa.ReplyMetaOnly"
     404 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.RulesResponse"
   }
 }

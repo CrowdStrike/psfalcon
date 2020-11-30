@@ -15,14 +15,12 @@
       In = @( "query" )
       Required = $true
       Description = "The IDs of the Sensor Update Policies to return"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "responses.SensorUpdatePoliciesV2"
     403 = "msa.ErrorsOnly"
-    404 = "responses.SensorUpdatePoliciesV2"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.SensorUpdatePoliciesV2"
+    default = "responses.SensorUpdatePoliciesV2"
   }
 }

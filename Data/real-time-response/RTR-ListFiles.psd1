@@ -20,10 +20,10 @@
     }
   )
   Responses = @{
-    200 = "domain.ListFilesResponseWrapper"
     400 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"
     404 = "domain.APIError"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.ListFilesResponseWrapper"
   }
 }

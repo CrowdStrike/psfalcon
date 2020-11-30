@@ -11,26 +11,25 @@
   Description = "Creates a token."
   Parameters = @(
     @{
-      Dynamic = "ExpiresTimestamp"
-      Name = "expires_timestamp"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Description = "The token's expiration time (RFC-3339). Null if the token never expires."
-      Position = $null
-    }
-    @{
       Dynamic = "Label"
       Name = "label"
       Type = "string"
       In = @( "body" )
       Required = $false
       Description = "The token label."
-      Position = $null
+      Position = 1
+    }
+    @{
+      Dynamic = "ExpiresTimestamp"
+      Name = "expires_timestamp"
+      Type = "string"
+      In = @( "body" )
+      Required = $false
+      Description = "The token's expiration time (RFC-3339). Null if the token never expires."
+      Position = 2
     }
   )
   Responses = @{
-    201 = "api.tokenDetailsResponseV1"
     400 = "msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"

@@ -16,15 +16,13 @@
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Required = $true
       Description = "MalQuery request identifier"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "malquery.RequestResponse"
-    400 = "malquery.RequestResponse"
     401 = "msa.ErrorsOnly"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "malquery.RequestResponse"
+    default = "malquery.RequestResponse"
   }
 }

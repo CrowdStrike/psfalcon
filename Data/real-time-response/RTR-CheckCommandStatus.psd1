@@ -16,7 +16,7 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "Cloud request identifier of the executed command"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "SequenceId"
@@ -24,14 +24,14 @@
       Type = "int"
       In = @( "query" )
       Required = $false
-      Description = "Sequence identifier @(default: 0)"
-      Position = $null
+      Description = "Sequence identifier"
+      Position = 2
     }
   )
   Responses = @{
-    200 = "domain.StatusResponseWrapper"
     401 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "domain.StatusResponseWrapper"
   }
 }

@@ -21,12 +21,8 @@
     }
   )
   Responses = @{
-    200 = "models.AWSAccountsV1"
-    400 = "models.AWSAccountsV1"
     403 = "msa.ReplyMetaOnly"
-    404 = "models.AWSAccountsV1"
     429 = "msa.ReplyMetaOnly"
-    500 = "models.AWSAccountsV1"
     default = "models.AWSAccountsV1"
   }
 }

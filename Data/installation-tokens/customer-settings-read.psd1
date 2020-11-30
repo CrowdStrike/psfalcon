@@ -9,11 +9,12 @@
   }
   Permission = "installation-tokens:read"
   Description = "List installation token settings"
+  Parameters = @()
   Responses = @{
-    200 = "api.customerSettingsResponseV1"
     400 = "msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyMetaOnly"
+    default = "api.customerSettingsResponseV1"
   }
 }

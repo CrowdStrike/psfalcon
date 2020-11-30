@@ -103,10 +103,8 @@
     }
   )
   Responses = @{
-    200 = "fwmgr.msa.ReplyMetaOnly"
-    201 = "fwmgr.msa.ReplyMetaOnly"
-    400 = "fwmgr.msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.msa.ReplyMetaOnly"
   }
 }

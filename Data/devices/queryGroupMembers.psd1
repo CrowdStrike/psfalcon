@@ -16,15 +16,12 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "The ID of the Host Group to search for members of"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "msa.QueryResponse"
-    400 = "msa.QueryResponse"
     403 = "msa.ErrorsOnly"
-    404 = "msa.QueryResponse"
     429 = "msa.ReplyMetaOnly"
-    500 = "msa.QueryResponse"
+    default = "msa.QueryResponse"
   }
 }

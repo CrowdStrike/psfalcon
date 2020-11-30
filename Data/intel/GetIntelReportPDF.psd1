@@ -15,19 +15,17 @@
       In = @( "query" )
       Required = $true
       Description = "The ID of the report you want to download as a PDF."
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Path"
       Name = ""
       Type = "string"
-      In = @(
-        "outfile"
-      )
+      In = @( "outfile" )
       Required = $true
       Pattern = "\.pdf$"
       Description = "Destination Path"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{

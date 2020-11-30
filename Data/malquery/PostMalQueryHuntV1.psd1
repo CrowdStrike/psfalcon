@@ -17,14 +17,12 @@
       Position = $null
     }
     @{
-      Dynamic = "FilterFileTypes"
-      Name = "filter_filetypes"
-      Type = "array"
+      Dynamic = "YaraRule"
+      Name = "yara_rule"
+      Type = "string"
       In = @( "body" )
-      Parent = "options"
-      Required = $false
-      Pattern = "(cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)"
-      Description = "File types to include with the results"
+      Required = $true
+      Description = "A YARA rule that defines your search"
       Position = $null
     }
     @{
@@ -39,18 +37,19 @@
       Position = $null
     }
     @{
-      Dynamic = "Limit"
-      Name = "limit"
-      Type = "int"
+      Dynamic = "FilterFileTypes"
+      Name = "filter_filetypes"
+      Type = "array"
       In = @( "body" )
       Parent = "options"
       Required = $false
-      Description = "Maximum number of results per request"
+      Pattern = "(cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)"
+      Description = "File types to include with the results"
       Position = $null
     }
     @{
-      Dynamic = "MaxDate"
-      Name = "max_date"
+      Dynamic = "MinDate"
+      Name = "min_date"
       Type = "string"
       In = @( "body" )
       Parent = "options"
@@ -60,18 +59,8 @@
       Position = $null
     }
     @{
-      Dynamic = "MaxSize"
-      Name = "max_size"
-      Type = "string"
-      In = @( "body" )
-      Parent = "options"
-      Required = $false
-      Description = "Maximum file size specified in bytes or multiples of KB/MB/GB"
-      Position = $null
-    }
-    @{
-      Dynamic = "MinDate"
-      Name = "min_date"
+      Dynamic = "MaxDate"
+      Name = "max_date"
       Type = "string"
       In = @( "body" )
       Parent = "options"
@@ -91,21 +80,29 @@
       Position = $null
     }
     @{
-      Dynamic = "YaraRule"
-      Name = "yara_rule"
+      Dynamic = "MaxSize"
+      Name = "max_size"
       Type = "string"
       In = @( "body" )
-      Required = $true
-      Description = "A YARA rule that defines your search"
+      Parent = "options"
+      Required = $false
+      Description = "Maximum file size specified in bytes or multiples of KB/MB/GB"
+      Position = $null
+    }
+    @{
+      Dynamic = "Limit"
+      Name = "limit"
+      Type = "int"
+      In = @( "body" )
+      Parent = "options"
+      Required = $false
+      Description = "Maximum number of results per request"
       Position = $null
     }
   )
   Responses = @{
-    200 = "malquery.ExternalQueryResponse"
-    400 = "malquery.ExternalQueryResponse"
     401 = "msa.ErrorsOnly"
     403 = "msa.ErrorsOnly"
-    429 = "malquery.ExternalQueryResponse"
-    500 = "malquery.ExternalQueryResponse"
+    default = "malquery.ExternalQueryResponse"
   }
 }

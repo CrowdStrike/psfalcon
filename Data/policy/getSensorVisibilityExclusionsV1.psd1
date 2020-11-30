@@ -20,10 +20,8 @@
     Position = 1
   }
   Responses = @{
-    200 = "responses.SvExclusionRespV1"
-    400 = "responses.SvExclusionRespV1"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.SvExclusionRespV1"
+    default = "responses.SvExclusionRespV1"
   }
 }

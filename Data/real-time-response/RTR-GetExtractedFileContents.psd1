@@ -16,7 +16,7 @@
       Required = $true
       Description = "Real-time Response session identifier"
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Sha256"
@@ -26,26 +26,24 @@
       Required = $true
       Pattern = "\w{64}"
       Description = "Sha256 value of the extracted file"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "Path"
       Type = "string"
-      In = @(
-        "outfile"
-      )
+      In = @( "outfile" )
       Required = $true
       Pattern = "\.7z$"
       Description = "Full destination path for .7z file"
-      Position = $null
+      Position = 3
     }
   )
   Responses = @{
-    200 = ""
     400 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"
     404 = "domain.APIError"
     429 = "msa.ReplyMetaOnly"
     500 = "domain.APIError"
+    default = ""
   }
 }

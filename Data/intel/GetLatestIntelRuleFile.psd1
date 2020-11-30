@@ -25,19 +25,17 @@
         "netwitness"
       )
       Description = "Rule news report type"
-      Position = $null
+      Position = 1
     }
     @{
       Dynamic = "Path"
       Name = ""
       Type = "string"
-      In = @(
-        "outfile"
-      )
+      In = @( "outfile" )
       Required = $true
       Pattern = "\.zip$"
       Description = "Destination Path"
-      Position = $null
+      Position = 2
     }
   )
   Responses = @{

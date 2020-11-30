@@ -45,8 +45,8 @@
     }
   )
   Responses = @{
-    200 = "api.MsaReplyIOCDevicesCount"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.MsaReplyIOCDevicesCount"
   }
 }

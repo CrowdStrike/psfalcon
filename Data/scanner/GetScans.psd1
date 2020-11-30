@@ -11,20 +11,15 @@
     Dynamic = "ScanIds"
     Name = "ids"
     Type = "array"
-    In = @(
-      "query"
-    )
+    In = @( "query" )
     Required = $true
     Pattern = "\w{32}_\w{32}"
     Description = "One or more volume scan identifiers"
-    Position = $null
+    Position = 1
   }
   Responses = @{
-    200 = "mlscanner.ScanV1Response"
-    400 = "mlscanner.ScanV1Response"
     403 = "msa.ReplyMetaOnly"
-    404 = "mlscanner.ScanV1Response"
     429 = "msa.ReplyMetaOnly"
-    500 = "mlscanner.ScanV1Response"
+    default = "mlscanner.ScanV1Response"
   }
 }

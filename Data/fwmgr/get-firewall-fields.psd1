@@ -15,12 +15,12 @@
       In = @( "query" )
       Required = $true
       Description = "The field identifiers to retrieve"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "fwmgr.api.FirewallFieldsResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "fwmgr.api.FirewallFieldsResponse"
   }
 }

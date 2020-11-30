@@ -15,12 +15,12 @@
       In = @( "query" )
       Required = $true
       Description = "One or more process identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "api.MsaProcessDetailResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
+    default = "api.MsaProcessDetailResponse"
   }
 }

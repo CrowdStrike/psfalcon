@@ -34,11 +34,8 @@
     }
   )
   Responses = @{
-    200 = "registration.GCPAccountResponseV1"
-    207 = "registration.GCPAccountResponseV1"
-    400 = "registration.GCPAccountResponseV1"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "registration.GCPAccountResponseV1"
+    default = "registration.GCPAccountResponseV1"
   }
 }

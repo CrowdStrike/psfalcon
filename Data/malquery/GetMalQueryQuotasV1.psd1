@@ -7,13 +7,12 @@
   }
   Permission = "malquery:read"
   Description = "Get information about search and download quotas in your environment"
+  Parameters = @()
   Responses = @{
-    200 = "malquery.RateLimitsResponse"
     400 = "msa.ErrorsOnly"
     401 = "msa.ErrorsOnly"
     403 = "msa.ErrorsOnly"
-    404 = "malquery.RateLimitsResponse"
     429 = "msa.ReplyMetaOnly"
-    500 = "malquery.RateLimitsResponse"
+    default = "malquery.RateLimitsResponse"
   }
 }

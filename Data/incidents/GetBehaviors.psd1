@@ -22,10 +22,10 @@
     }
   )
   Responses = @{
-    200 = "api.MsaExternalBehaviorResponse"
     400 = "msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyMetaOnly"
+    default = "api.MsaExternalBehaviorResponse"
   }
 }

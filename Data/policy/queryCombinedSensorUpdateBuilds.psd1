@@ -20,14 +20,12 @@
         "windows"
       )
       Description = "The platform to return builds for"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "responses.SensorUpdateBuildsV1"
-    400 = "responses.SensorUpdateBuildsV1"
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.SensorUpdateBuildsV1"
+    default = "responses.SensorUpdateBuildsV1"
   }
 }

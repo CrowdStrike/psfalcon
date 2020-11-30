@@ -15,14 +15,12 @@
       In = @( "query" )
       Required = $true
       Description = "One or more submission identifiers"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "falconx.SubmissionV1Response"
-    400 = "falconx.SubmissionV1Response"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
-    500 = "falconx.SubmissionV1Response"
+    default = "falconx.SubmissionV1Response"
   }
 }

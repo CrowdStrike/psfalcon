@@ -16,15 +16,12 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "Host group identifier"
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "responses.HostGroupMembersV1"
-    400 = "responses.HostGroupMembersV1"
     403 = "msa.ErrorsOnly"
-    404 = "responses.HostGroupMembersV1"
     429 = "msa.ReplyMetaOnly"
-    500 = "responses.HostGroupMembersV1"
+    default = "responses.HostGroupMembersV1"
   }
 }

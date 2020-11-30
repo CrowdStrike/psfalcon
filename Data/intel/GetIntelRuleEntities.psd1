@@ -15,13 +15,13 @@
       In = @( "query" )
       Required = $true
       Description = "The ids of rules to return."
-      Position = $null
+      Position = 1
     }
   )
   Responses = @{
-    200 = "domain.RulesResponse"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ErrorsOnly"
+    default = "domain.RulesResponse"
   }
 }

@@ -10,13 +10,22 @@
   Description = "Create a user"
   Parameters = @(
     @{
+      Dynamic = "Username"
+      Name = "uid"
+      Type = "string"
+      In = @( "body" )
+      Required = $true
+      Description = "An email address or username"
+      Position = 1
+    }
+    @{
       Dynamic = "FirstName"
       Name = "firstName"
       Type = "string"
       In = @( "body" )
       Required = $false
       Description = "User's first name"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "LastName"
@@ -25,7 +34,7 @@
       In = @( "body" )
       Required = $false
       Description = "User's last name"
-      Position = $null
+      Position = 3
     }
     @{
       Dynamic = "Password"
@@ -34,16 +43,7 @@
       In = @( "body" )
       Required = $false
       Description = "The user's password. If left blank the system will generate an email asking them to set their password (recommended)"
-      Position = $null
-    }
-    @{
-      Dynamic = "Username"
-      Name = "uid"
-      Type = "string"
-      In = @( "body" )
-      Required = $true
-      Description = "A username typically an email address"
-      Position = $null
+      Position = 4
     }
   )
   Responses = @{

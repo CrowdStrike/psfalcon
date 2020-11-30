@@ -28,10 +28,10 @@
     }
   )
   Responses = @{
-    200 = "domain.ActorsResponse"
     400 = "msa.ErrorsOnly"
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"
     500 = "msa.ErrorsOnly"
+    default = "domain.ActorsResponse"
   }
 }
