@@ -21,13 +21,12 @@
       Dynamic = "Path"
       Name = ""
       Type = "string"
-      In = @(
-        "outfile"
-      )
+      In = @( "outfile" )
       Required = $true
       Pattern = "\.zip$"
       Description = "Destination Path"
       Position = 2
+    }
   )
   Responses = @{
     200 = ""
