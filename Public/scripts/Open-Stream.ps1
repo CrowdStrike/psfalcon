@@ -19,7 +19,7 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         elseif (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
-            $Stream = Get-FalconStream -AppId 'PSFalcon' -Format json
+            $Stream = Get-FalconStream -AppId 'psfalcon' -Format json
             if ($Stream.resources) {
                 $ArgumentList =
                 "try {

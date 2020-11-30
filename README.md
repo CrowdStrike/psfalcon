@@ -7,16 +7,16 @@ Requires **[PowerShell 5.1](https://github.com/PowerShell/PowerShell#get-powersh
 
 Linux/MacOS:
 ```powershell
-$HOME/.local/share/powershell/Modules/PSFalcon/2.0.0
+$HOME/.local/share/powershell/Modules/psfalcon/2.0.0
 ```
 Windows (PowerShell Core):
 ```powershell
-$HOME\Documents\PowerShell\Modules\PSFalcon\2.0.0
+$HOME\Documents\PowerShell\Modules\psfalcon\2.0.0
 ```
 Windows (PowerShell Desktop):
 ```powershell
-$HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
+$HOME\Documents\WindowsPowerShell\Modules\psfalcon\2.0.0
 ```
 
 # Documentation
-PSFalcon documentation can be found [here](https://docs.google.com/document/d/1OdMziQ1jh2nvNJf7-50oa84_rvFH1v9RmPVXbEVayUg).
+psfalcon documentation can be found [here](https://docs.google.com/document/d/1OdMziQ1jh2nvNJf7-50oa84_rvFH1v9RmPVXbEVayUg).

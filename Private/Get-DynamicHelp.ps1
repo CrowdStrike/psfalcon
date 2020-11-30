@@ -3,7 +3,7 @@
     .SYNOPSIS
         Outputs documentation about commands
     .PARAMETER COMMAND
-        PSFalcon command name(s)
+        psfalcon command name(s)
     .PARAMETER EXCLUSIONS
         Falcon endpoint names to exclude from results
     #>

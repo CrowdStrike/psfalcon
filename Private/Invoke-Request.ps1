@@ -3,7 +3,7 @@
     .SYNOPSIS
         Determines request type and submits input to Invoke-Loop or Invoke-Endpoint
     .PARAMETER COMMAND
-        PSFalcon command calling Invoke-Request [required for -All and -Detailed]
+        psfalcon command calling Invoke-Request [required for -All and -Detailed]
     .PARAMETER QUERY
         The Falcon endpoint that is used for 'query' operations
     .PARAMETER ENTITY

@@ -3,7 +3,7 @@
     .SYNOPSIS
         Watches 'meta' results and repeats commands
     .PARAMETER COMMAND
-        The PSFalcon command to repeat
+        The psfalcon command to repeat
     .PARAMETER PARAM
         Parameters to include when running the command
     .PARAMETER DETAILED

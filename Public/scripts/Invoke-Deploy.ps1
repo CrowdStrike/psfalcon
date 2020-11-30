@@ -134,7 +134,7 @@
                         Path        = $FilePath
                         Name        = $Filename
                         Description = "$ProcessName"
-                        Comment     = "PSFalcon: Invoke-FalconDeploy"
+                        Comment     = "psfalcon: Invoke-FalconDeploy"
                     }
                     $AddPut = Send-FalconPutFile @Param
                     if ($AddPut.meta.writes.resources_affected -ne 1) {
