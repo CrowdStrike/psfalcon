@@ -17,6 +17,24 @@
       Description = "Get fields configuration for this platform"
       Position = 1
     }
+    @{ 
+      Dynamic = "Limit"
+      Name = "limit"
+      Type = "int"
+      In = @( "query" )
+      Required = $false
+      Description = "Maximum number of results per request"
+      Position = 2
+    }
+    @{ 
+      Dynamic = "Offset"
+      Name = "offset"
+      Type = "string"
+      In = @( "query" )
+      Required = $false
+      Description = "Position to begin retrieving results"
+      Position = 3
+    }
   )
   Responses = @{
     403 = "msa.ReplyMetaOnly"
