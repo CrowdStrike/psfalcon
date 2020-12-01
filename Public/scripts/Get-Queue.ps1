@@ -30,9 +30,6 @@
         function Add-Field ($Object, $Name, $Value) {
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
         }
-        function Write-Log ($Value) {
-            Write-Host "[$($Falcon.Rfc3339(0))] $Value"
-        }
     }
     process {
         if ($PSBoundParameters.Help) {
@@ -47,7 +44,7 @@
                 }
                 $SessionIds = Get-FalconSession @Param
                 if ($SessionIds) {
-                    Write-Log "Found $($SessionIds.count) session(s) with queued commands..."
+                    Write-Host "Found $($SessionIds.count) session(s) with queued commands..."
                     $Param = @{
                         Queue      = $true
                         SessionIds = $SessionIds
@@ -113,7 +110,7 @@
                             }
                             $CmdResult = & "Confirm-Falcon$($Permission)Command" @Param
                             if ($CmdResult) {
-                                Write-Log "Capturing cloud_request_id $($Object.cloud_request_id)..."
+                                Write-Host "Gathering results for $($Object.cloud_request_id)..."
                                 (($CmdResult | Select-Object stdout, stderr,
                                 complete).psobject.properties).foreach{
                                     $Object."command_$($_.Name)" = $_.Value
