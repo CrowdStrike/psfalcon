@@ -248,6 +248,7 @@
         "intel/QueryIntelIndicatorIds"
         "intel/QueryIntelReportEntities"
         "intel/QueryIntelReportIds"
+        "intel/QueryIntelRuleIds"
         "ioarules/query-rule-groups"
         "ioarules/query-rule-groups-full"
         "ioarules/query-rules"
