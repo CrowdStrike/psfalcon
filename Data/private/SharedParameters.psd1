@@ -444,7 +444,7 @@
         "real-time-response/BatchAdminCmd"
         "real-time-response/BatchCmd"
       )
-      Position = 3
+      Position = $null
     }
     @{
       Dynamic = "SessionId"
@@ -454,12 +454,12 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "Real-time Response session identifier"
-      Position = 3
       ParameterSets = @(
         "real-time-response/RTR-ExecuteActiveResponderCommand"
         "real-time-response/RTR-ExecuteAdminCommand"
         "real-time-response/RTR-ExecuteCommand"
       )
+      Position = $null
     }
     @{
       Dynamic = "OptionalHostIds"
@@ -474,7 +474,7 @@
         "real-time-response/BatchAdminCmd"
         "real-time-response/BatchCmd"
       )
-      Position = 4
+      Position = $null
     }
     @{
       Dynamic = "Timeout"
@@ -490,7 +490,7 @@
         "real-time-response/BatchAdminCmd"
         "real-time-response/BatchCmd"
       )
-      Position = 5
+      Position = $null
     }
   )
 }
