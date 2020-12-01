@@ -70,7 +70,7 @@
       Type = "string"
       In = @( "formdata" )
       Required = $false
-      Description = "Permission level @(private: uploader only group: admins public: admins and active responders)"
+      Description = "Permission level [private: uploader only group: admins public: admins and active responders]"
       Position = $null
     }
   )

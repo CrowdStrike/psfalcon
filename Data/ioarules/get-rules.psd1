@@ -1,6 +1,6 @@
 @{
   Name = "ioarules/get-rules"
-  Description = "Get rules by ID and optionally version in the following format: ID@(:version)"
+  Description = "Get rules by ID and optionally version in the following format: ID[:version]"
   Path = "/ioarules/entities/rules/v1"
   Method = "get"
   Headers = @{

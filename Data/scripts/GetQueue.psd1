@@ -7,7 +7,7 @@
       Dynamic = "Days"
       Type = "int"
       Required = $false
-      Description = "Number of days worth of results to retrieve @(Default: 7)"
+      Description = "Number of days worth of results to retrieve [default: 7]"
       Position = 1
     }
   )

@@ -31,7 +31,7 @@
         "group"
         "public"
       )
-      Description = "Permission level (private: uploader only, group: admins, public: admins and active responders)"
+      Description = "Permission level"
       Position = 2
     }
     @{
