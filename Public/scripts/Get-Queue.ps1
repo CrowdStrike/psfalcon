@@ -23,9 +23,6 @@
         }
         $FileDateTime = Get-Date -Format FileDateTime
         $OutputFile = "$pwd\FalconQueue_$FileDateTime.csv"
-        if ($PSBoundParameters.Debug -eq $true) {
-            $LogFile = "$pwd\FalconQueue_$FileDateTime.log"
-        }
         $RequiresResponder = @('cp', 'encrypt', 'get', 'kill', 'map', 'memdump', 'mkdir', 'mv', 'reg delete',
             'reg load', 'reg set', 'reg unload', 'restart', 'rm', 'runscript', 'shutdown', 'umount', 'unmap',
             'xmemdump', 'zip')
@@ -49,113 +46,90 @@
                     All    = $true
                 }
                 $SessionIds = Get-FalconSession @Param
-                if ($PSBoundParameters.Debug -eq $true -and $SessionIds) {
-                    "SessionIds:`n $($SessionIds | ConvertTo-Json -Depth 8)`n" | Out-File $LogFile -Append
-                }
-                if ($SessionIds.resources) {
-                    Write-Log "Found $($SessionIds.resources.count) session(s) with queued commands..."
+                if ($SessionIds) {
+                    Write-Log "Found $($SessionIds.count) session(s) with queued commands..."
                     $Param = @{
                         Queue      = $true
-                        SessionIds = $SessionIds.resources
+                        SessionIds = $SessionIds
                     }
                     $Sessions = Get-FalconSession @Param
-                    if ($PSBoundParameters.Debug -eq $true -and $Sessions) {
-                        "Sessions:`n $($Sessions | ConvertTo-Json -Depth 8)`n" | Out-File $LogFile -Append
-                    }
-                }
-                elseif ($SessionIds.errors) {
-                    throw ("$($SessionIds.errors.code): $($SessionIds.errors.message)" +
-                        " [$($SessionIds.meta.trace_id)]")
                 }
                 else {
                     throw "No queued sessions created within the last $($Days) day(s)"
                 }
-                if ($Sessions.resources) {
-                    foreach ($Session in $Sessions.resources) {
-                        ($Session.Commands).foreach{
-                            $Object = [PSCustomObject] @{
-                                aid                = $Session.aid
-                                user_id            = $Session.user_id
-                                user_uuid          = $Session.user_uuid
-                                session_id         = $Session.id
-                                session_created_at = [datetime] $Session.created_at
-                                session_deleted_at = if ($Session.deleted_at) {
-                                    [datetime] $Session.deleted_at
+                foreach ($Session in $Sessions) {
+                    ($Session.Commands).foreach{
+                        $Object = [PSCustomObject] @{
+                            aid                = $Session.aid
+                            user_id            = $Session.user_id
+                            user_uuid          = $Session.user_uuid
+                            session_id         = $Session.id
+                            session_created_at = [datetime] $Session.created_at
+                            session_deleted_at = if ($Session.deleted_at) {
+                                [datetime] $Session.deleted_at
+                            }
+                            else {
+                                $null
+                            }
+                            session_updated_at = [datetime] $Session.updated_at
+                            session_status     = $Session.status
+                            command_complete   = $false
+                            command_stdout     = $null
+                            command_stderr     = $null
+                        }
+                        $Param = @{
+                            Object = $Object
+                        }
+                        ($_.psobject.properties).foreach{
+                            if ($_.name -eq 'status') {
+                                Add-Field @Param -Name "command_$($_.name)" $_.value
+                            }
+                            elseif ($_.name -match '(created_at|updated_at|deleted_at)') {
+                                $Value = if ($_.value) {
+                                    [datetime] $_.value
                                 }
                                 else {
                                     $null
                                 }
-                                session_updated_at = [datetime] $Session.updated_at
-                                session_status     = $Session.status
-                                command_complete   = $false
-                                command_stdout     = $null
-                                command_stderr     = $null
+                                Add-Field @Param -Name "command_$($_.name)" -Value $Value
+                            }
+                            else {
+                                Add-Field @Param -Name $_.name -Value $_.value
+                            }
+                        }
+                        if ($Object.command_status -eq 'FINISHED') {
+                            $Permission = if ($RequiresAdmin -contains $Object.base_command) {
+                                'Admin'
+                            }
+                            elseif ($RequiresResponder -contains $Object.base_command) {
+                                'Responder'
+                            }
+                            else {
+                                $null
                             }
                             $Param = @{
-                                Object = $Object
+                                CloudRequestId = $Object.cloud_request_id
+                                ErrorAction    = 'SilentlyContinue'
                             }
-                            ($_.psobject.properties).foreach{
-                                if ($_.name -eq 'status') {
-                                    Add-Field @Param -Name "command_$($_.name)" $_.value
-                                }
-                                elseif ($_.name -match '(created_at|updated_at|deleted_at)') {
-                                    $Value = if ($_.value) {
-                                        [datetime] $_.value
-                                    }
-                                    else {
-                                        $null
-                                    }
-                                    Add-Field @Param -Name "command_$($_.name)" -Value $Value
-                                }
-                                else {
-                                    Add-Field @Param -Name $_.name -Value $_.value
+                            $CmdResult = & "Confirm-Falcon$($Permission)Command" @Param
+                            if ($CmdResult) {
+                                Write-Log "Capturing cloud_request_id $($Object.cloud_request_id)..."
+                                (($CmdResult | Select-Object stdout, stderr,
+                                complete).psobject.properties).foreach{
+                                    $Object."command_$($_.Name)" = $_.Value
                                 }
                             }
-                            if ($Object.command_status -eq 'FINISHED') {
-                                $Permission = if ($RequiresAdmin -contains $Object.base_command) {
-                                    'Admin'
-                                }
-                                elseif ($RequiresResponder -contains $Object.base_command) {
-                                    'Responder'
-                                }
-                                else {
-                                    $null
-                                }
-                                $Param = @{
-                                    CloudRequestId = $Object.cloud_request_id
-                                    ErrorAction    = 'SilentlyContinue'
-                                }
-                                $CmdResult = & "Confirm-Falcon$($Permission)Command" @Param
-
-                                if ($PSBoundParameters.Debug -eq $true -and $CmdResult) {
-                                    "CmdResult:`n $($CmdResult | ConvertTo-Json -Depth 8)`n" |
-                                        Out-File $LogFile -Append
-                                }
-                                if ($CmdResult.resources) {
-                                    Write-Log "Capturing cloud_request_id $($Object.cloud_request_id)..."
-                                    (($CmdResult.resources | Select-Object stdout, stderr,
-                                        complete).psobject.properties).foreach{
-                                        $Object."command_$($_.Name)" = $_.Value
-                                    }
-                                }
-                            }
-                            $Object | Export-Csv $OutputFile -Append -NoTypeInformation -Force
                         }
+                        $Object | Export-Csv $OutputFile -Append -NoTypeInformation -Force
                     }
-                }
-                elseif ($Sessions.errors) {
-                    throw ("$($Sessions.errors.code): $($Sessions.errors.message)" +
-                        " [$($Sessions.meta.trace_id)]")
                 }
             }
             catch {
-                Write-Error "$($_.Exception.Message)"
+                $_
             }
             finally {
-                foreach ($Item in @($LogFile, $OutputFile)) {
-                    if ($Item -and (Test-Path $Item)) {
-                        Get-ChildItem $Item | Out-Host
-                    }
+                if (Test-Path $OutputFile) {
+                    Get-ChildItem $OutputFile | Out-Host
                 }
             }
         }
