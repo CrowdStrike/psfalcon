@@ -210,6 +210,8 @@
         "real-time-response/RTR-ListScripts"
         "samples/QueryMetadataV2"
         "scanner/QuerySubmissions"
+        "sensors/GetCombinedSensorInstallersByQuery"
+        "sensors/GetSensorInstallersByQuery"
         "spotlight/queryVulnerabilities"
       )
       Position = $null
@@ -279,6 +281,8 @@
         "real-time-response/RTR-ListScripts"
         "samples/QueryMetadataV2"
         "scanner/QuerySubmissions"
+        "sensors/GetCombinedSensorInstallersByQuery"
+        "sensors/GetSensorInstallersByQuery"
         "spotlight/queryVulnerabilities"
       )
       Position = $null
@@ -353,6 +357,8 @@
         "real-time-response/RTR-ListAllSessions"
         "real-time-response/RTR-ListPut-Files"
         "real-time-response/RTR-ListScripts"
+        "sensors/GetCombinedSensorInstallersByQuery"
+        "sensors/GetSensorInstallersByQuery"
         "scanner/QuerySubmissions"
       )
       Position = $null
