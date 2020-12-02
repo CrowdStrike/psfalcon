@@ -18,59 +18,50 @@
         $Max = 500
         $FileDateTime = Get-Date -Format FileDateTime
         $OutputFile = "$pwd\FalconDeploy_$FileDateTime.csv"
-        if ($PSBoundParameters.Debug -eq $true) {
-            $LogFile = "$pwd\FalconDeploy_$FileDateTime.log"
-        }
         $FilePath = $Dynamic.Path.Value
         $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
         $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
-        function Add-Field ($Object, $Name, $Value) {
-            $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
-        }
-        function Write-Result ($Object, $Step) {
-            foreach ($Result in @($Object.resources, $Object.combined.resources)) {
-                foreach ($Item in $Result.psobject.properties.Value) {
-                    $Output = [PSCustomObject] @{
-                        batch_id = if ($Object.batch_id) {
-                            $Object.batch_id
-                        }
-                        elseif ($Session.batch_id) {
-                            $Session.batch_id
-                        }
-                        else {
-                            $null
-                        }
-                    }
-                    (($Item | Select-Object aid, session_id, task_id, complete, stdout,
-                        stderr, errors, offline_queued).psobject.properties).foreach{
-                        $Value = if (($_.Name -eq 'errors') -and $_.Value) {
-                            "$($_.Value.code): $($_.Value.message)"
-                        }
-                        else {
-                            $_.Value
-                        }
-                        $Name = if ($_.Name -eq 'task_id') {
-                            'cloud_request_id'
-                        }
-                        else {
-                            $_.Name
-                        }
-                        Add-Field -Object $Output -Name $Name -Value $Value
-                    }
-                    Add-Field -Object $Output -Name 'deployment_step' -Value $Step
-                    $Output | Export-Csv $OutputFile -Append -NoTypeInformation -Force
+        function Write-Result ($Object, $Step, $BatchId) {
+            $Output = foreach ($Aid in $Object.aid) {
+                [PSCustomObject] @{
+                    aid = $Aid
+                    batch_id = $BatchId
+                    session_id = $null
+                    cloud_request_id = $null
+                    complete = $false
+                    stdout = $null
+                    stderr = $null
+                    errors = $null
+                    offline_queued = $false
+                    deployment_step = $Step
                 }
             }
-        }
-        function Write-Log ($Value) {
-            Write-Host "[$($Falcon.Rfc3339(0))] $Value"
+            foreach ($Result in ($Object | Select-Object aid, session_id, task_id, complete, stdout,
+            stderr, errors, offline_queued)) {
+                ($Result.PSObject.Properties).foreach{
+                    $Value = if (($_.Name -eq 'errors') -and $_.Value) {
+                        "$($_.Value.code): $($_.Value.message)"
+                    }
+                    else {
+                        $_.Value
+                    }
+                    $Name = if ($_.Name -eq 'task_id') {
+                        'cloud_request_id'
+                    }
+                    else {
+                        $_.Name
+                    }
+                    ($Output | Where-Object { $_.aid -eq $Result.aid }).$Name = $Value
+                }
+            }
+            $Output | Export-Csv $OutputFile -Append -NoTypeInformation
         }
         if (-not $PSBoundParameters.Help -and $FilePath) {
             try {
-                Write-Log "Checking cloud for existing file..."
+                Write-Host "Checking cloud for existing file..."
                 $CloudFile = foreach ($Item in (
-                        (Get-FalconPutFile -Filter "name:'$Filename'" -Detailed).resources |
-                            Select-Object id, name, created_timestamp, modified_timestamp, sha256)) {
+                Get-FalconPutFile -Filter "name:['$Filename']" -Detailed | Select-Object id, name,
+                created_timestamp, modified_timestamp, sha256)) {
                     [ordered] @{
                         id                 = $Item.id
                         name               = $Item.Name
@@ -90,7 +81,7 @@
                         }
                     }
                     if ($LocalFile.sha256 -eq $CloudFile.sha256) {
-                        Write-Log "Hash match: $($LocalFile.sha256)"
+                        Write-Host "Matched hash values between local and cloud files..."
                     }
                     else {
                         foreach ($Item in @('CloudFile', 'LocalFile')) {
@@ -102,20 +93,19 @@
                             "$Filename exists in your 'Put Files'. Use the existing version?", $null,
                             [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No"), 0)
                         if ($FileChoice -eq 0) {
-                            Write-Log "Proceeding with $($CloudFile.id)..."
+                            Write-Host "Proceeding with $($CloudFile.id)..."
                         }
                         else {
                             $RemovePut = Remove-FalconPutFile -FileId $CloudFile.id
-                            if ($RemovePut.meta.writes.resources_affected -ne 1) {
-                                throw "$($RemovePut.errors.code): $($RemovePut.errors.message)"
+                            if ($RemovePut.resources_affected -eq 1) {
+                                Write-Host "Removed cloud file $($CloudFile.id)"
                             }
-                            Write-Log "Removed cloud file $($CloudFile.id)"
                         }
                     }
                 }
             }
             catch {
-                Write-Error "$($_.Exception.Message)"
+                $_
             }
         }
     }
@@ -128,8 +118,8 @@
         }
         else {
             try {
-                if (($RemovePut.meta.writes.resources_affected -eq 1) -or (-not $CloudFile)) {
-                    Write-Log "Uploading $Filename..."
+                if (($RemovePut.resources_affected -eq 1) -or (-not $CloudFile)) {
+                    Write-Host "Uploading $Filename..."
                     $Param = @{
                         Path        = $FilePath
                         Name        = $Filename
@@ -137,8 +127,8 @@
                         Comment     = "psfalcon: Invoke-FalconDeploy"
                     }
                     $AddPut = Send-FalconPutFile @Param
-                    if ($AddPut.meta.writes.resources_affected -ne 1) {
-                        throw "$($AddPut.errors.code): $($AddPut.errors.message)"
+                    if ($AddPut.resources_affected -ne 1) {
+                        break
                     }
                 }
                 for ($i = 0; $i -lt ($PSBoundParameters.HostIds).count; $i += $Max) {
@@ -153,16 +143,18 @@
                         }
                     }
                     $Session = Start-FalconSession @Param
-                    if (-not $Session.batch_id) {
-                        throw "$($Session.errors.code): $($Session.errors.message)"
-                    }
-                    else {
-                        Write-Result $Session "session_start"
-                        $SessionHosts = ($Session.resources.psobject.properties.Value |
-                            Where-Object { ($_.complete -eq $true) -or ($_.offline_queued -eq $true) }).aid
+                    if ($Session) {
+                        $Param = @{
+                            Object = $Session.hosts
+                            Step = 'session_start'
+                            BatchId = $Session.batch_id
+                        }
+                        Write-Result @Param
+                        $SessionHosts = ($Session.hosts | Where-Object { ($_.complete -eq $true) -or
+                        ($_.offline_queued -eq $true) }).aid
                     }
                     if ($SessionHosts) {
-                        Write-Log "Pushing $Filename to $($SessionHosts.count) host(s)..."
+                        Write-Host "Pushing $Filename to $($SessionHosts.count) host(s)..."
                         $Param = @{
                             BatchId         = $Session.batch_id
                             Command         = 'put'
@@ -173,18 +165,19 @@
                             $Param['Timeout'] = $PSBoundParameters.Timeout
                         }
                         $CmdPut = Invoke-FalconAdminCommand @Param
-                        if (-not $CmdPut.combined.resources) {
-                            throw "$($CmdPut.errors.code): $($CmdPut.errors.message)"
-                        }
-                        else {
-                            Write-Result $CmdPut "put_file"
-                            $PutHosts = ($CmdPut.combined.resources.psobject.properties.Value |
-                                Where-Object { ($_.stdout -eq 'Operation completed successfully.') -or
-                                ($_.offline_queued -eq $true) }).aid
+                        if ($CmdPut) {
+                            $Param = @{
+                                Object = $CmdPut
+                                Step = 'put_file'
+                                BatchId = $Session.batch_id
+                            }
+                            Write-Result @Param
+                            $PutHosts = ($CmdPut | Where-Object { ($_.stdout -eq
+                            'Operation completed successfully.') -or ($_.offline_queued -eq $true) }).aid
                         }
                     }
                     if ($PutHosts) {
-                        Write-Log "Starting $Filename on $($PutHosts.count) host(s)..."
+                        Write-Host "Starting $Filename on $($PutHosts.count) host(s)..."
                         $Arguments = "\$Filename"
                         if ($PSBoundParameters.Arguments) {
                             $Arguments += " -CommandLine=`"$($PSBoundParameters.Arguments)`""
@@ -199,31 +192,23 @@
                             $Param['Timeout'] = $PSBoundParameters.Timeout
                         }
                         $CmdRun = Invoke-FalconAdminCommand @Param
-                        if (-not $CmdRun.combined.resources) {
-                            throw "$($CmdRun.errors.code): $($CmdRun.errors.message)"
-                        }
-                        else {
-                            Write-Result $CmdRun "run_file"
-                        }
-                    }
-                    if ($PSBoundParameters.Debug -eq $true) {
-                        foreach ($Item in @('RemovePut', 'AddPut', 'Session', 'CmdPut', 'CmdRun')) {
-                            if (Get-Variable $Item -ErrorAction SilentlyContinue) {
-                                "$($Item):`n $((Get-Variable $Item).Value | ConvertTo-Json -Depth 8)`n" |
-                                    Out-File $LogFile -Append
+                        if ($CmdRun) {
+                            $Param = @{
+                                Object = $CmdRun
+                                Step = 'run_file'
+                                BatchId = $Session.batch_id
                             }
+                            Write-Result @Param
                         }
                     }
                 }
             }
             catch {
-                Write-Error "$($_.Exception.Message)"
+                $_
             }
             finally {
-                foreach ($Item in @($LogFile, $OutputFile)) {
-                    if ($Item -and (Test-Path $Item)) {
-                        Get-ChildItem $Item | Out-Host
-                    }
+                if (Test-Path $OutputFile) {
+                    Get-ChildItem $OutputFile | Out-Host
                 }
             }
         }

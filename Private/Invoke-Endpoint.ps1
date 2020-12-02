@@ -127,15 +127,14 @@
                 Format-Result -Response $Response -Endpoint $Endpoint
             }
             else {
-                $ErrParam = @{
-                    TargetObject = "$($Falcon.Hostname)$($Falcon.Endpoint($Endpoint).Path)"
-                    Category = 'ConnectionError'
-                    CategoryTargetName = "$($Falcon.Endpoint($Endpoint).Path)"
-                    CategoryTargetType = "$($Falcon.Endpoint($Endpoint).Method)"
-                    Message = "Unable to contact $($Falcon.Hostname)"
-                    RecommendedAction = 'Check connectivity and proxy configuration'
-                }
-                Write-Error @ErrParam
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::New(
+                        [Exception]::New("Unable to contact $($Falcon.Hostname)"),
+                        "psfalcon_connection_failure",
+                        [System.Management.Automation.ErrorCategory]::ConnectionError,
+                        $Response
+                    )
+                )
             }
         }
         catch {

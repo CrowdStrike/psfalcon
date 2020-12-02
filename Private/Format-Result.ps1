@@ -43,25 +43,40 @@
                 ($Json.PSObject.Properties | Where-Object { ($_.Name -eq 'errors') }).foreach{
                     if ($_.Value) {
                         ($_.Value).foreach{
-                            $ErrParam = @{
-                                TargetObject = "$($Falcon.Hostname)$($Falcon.Endpoint($Endpoint).Path)"
-                                Category = 'FromStdErr'
-                                CategoryTargetName = "$($Falcon.Endpoint($Endpoint).Path)"
-                                CategoryTargetType = "$($Falcon.Endpoint($Endpoint).Method)"
-                                Message = "$($_.code): $($_.message)"
-                            }
-                            if ($Meta) {
-                                $ErrParam['CategoryActivity'] = "[$($Meta.trace_id)]"
-                            }
-                            Write-Error @ErrParam
+                            $PSCmdlet.WriteError(
+                                [System.Management.Automation.ErrorRecord]::New(
+                                    [Exception]::New("$($_.code): $($_.message)"),
+                                    $Meta.trace_id,
+                                    [System.Management.Automation.ErrorCategory]::NotSpecified,
+                                    $Response.Result
+                                )
+                            )
                         }
                     }
                 }
                 $Output = if ($Populated.count -gt 1) {
-                    $Json
+                    if ($Populated -eq 'batch_id' -and 'resources') {
+                        [PSCustomObject] @{
+                            batch_id = $Json.batch_id
+                            hosts = $Json.resources.PSObject.Properties.Value
+                        }
+                    }
+                    else {
+                        $Json
+                    }
                 }
                 elseif ($Populated.count -eq 1) {
-                    $Json.($Populated[0])
+                    if ($Populated[0] -eq 'combined') {
+                        $Json.combined.resources.PSObject.Properties.Value
+                    }
+                    else {
+                        $Json.($Populated[0])
+                    }
+                }
+                else {
+                    if ($Meta.writes) {
+                        $Meta.writes
+                    }
                 }
                 if ($Output) {
                     $Output
