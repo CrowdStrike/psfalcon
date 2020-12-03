@@ -16,9 +16,9 @@
     }
     begin {
         if (-not $PSBoundParameters.Help) {
+            $MaxHosts = 500
             $Sleep = 2
             $MaxSleep = 30
-            $HostCount = ($PSBoundParameters.HostIds).count
             if ($PSBoundParameters.Command -match 'runscript' -and $PSBoundParameters.Timeout -and
                 ($PSBoundParameters.Arguments -notmatch "-Timeout \d{2,3}")) {
                 $PSBoundParameters.Arguments += " -Timeout=$($PSBoundParameters.Timeout)"
@@ -29,88 +29,51 @@
             if ($PSBoundParameters.Arguments -and ($PSBoundParameters.Arguments -notmatch '^-')) {
                 $PSBoundParameters.Arguments = "'$($PSBoundParameters.Arguments)'"
             }
-            @{ 
+            @{
                 Responder = 'real-time-response/RTR-ExecuteActiveResponderCommand'
                 Admin = 'real-time-response/RTR-ExecuteAdminCommand'
             }.GetEnumerator().foreach{
                 New-Variable -Name $_.Key -Value (($Falcon.Endpoint($_.Value)).Parameters |
-                        Where-Object { $_.Dynamic -eq 'Command' }).Enum
+                Where-Object { $_.Dynamic -eq 'Command' }).Enum
             }
             $Permission = switch ($PSBoundParameters.Command) {
                 { $Admin -contains $_ } { 'Admin' }
                 { $Responder -contains $_ } { 'Responder' }
                 default { $null }
             }
-            $InvokeCmd = if ($PSBoundParameters.Command -eq 'get' -and $HostCount -gt 1) {
+            $InvokeCmd = if ($PSBoundParameters.Command -eq 'get' -and $PSBoundParameters.HostIds.count -gt 1) {
                 "Invoke-FalconBatchGet"
             }
             else {
                 "Invoke-Falcon$($Permission)Command"
             }
-            if ($HostCount -eq 1) {
+            if ($PSBoundParameters.HostIds.count -eq 1) {
                 $ConfirmCmd = "Confirm-Falcon$($Permission)Command"
             }
-            function Set-Field ($Item, $Object) {
-                foreach ($Field in $Object.psobject.properties) {
-                    if ($Item.psobject.properties.name -contains $Field.name -or $Field.name -eq 'task_id') {
-                        $Value = if (($Field.value -is [object[]]) -and ($Field.value[0] -is [string])) {
-                            $Field.value -join ', '
-                        }
-                        elseif ($Field.value.code -and $Field.value.message) {
-                            "$($Field.value.code): $($Field.value.message)"
-                        }
-                        else {
-                            $Field.value
-                        }
-                        $Name = if ($Field.name -eq 'task_id') {
-                            'cloud_request_id'
-                        }
-                        else {
-                            $Field.name
-                        }
+            function Write-Result ($Object, $Item) {
+                ($Object.PSObject.Properties).foreach{
+                    $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
+                        $_.Value -join ', '
+                    }
+                    elseif ($_.Value.code -and $_.Value.message) {
+                        "$($_.Value.code): $($_.Value.message)"
+                    }
+                    else {
+                        $_.Value
+                    }
+                    $Name = if ($_.Name -eq 'task_id') {
+                        'cloud_request_id'
+                    }
+                    elseif ($_.Name -eq 'queued_command_offline') {
+                        'offline_queued'
+                    }
+                    else {
+                        $_.Name
+                    }
+                    if ($Item.PSObject.Properties.Name -contains $Name) {
                         $Item.$Name = $Value
                     }
                 }
-            }
-            function Show-Results ($HostIds) {
-                [array] $Output = ($HostIds).foreach{
-                    [PSCustomObject] @{
-                        aid = $_
-                        session_id = $null
-                        cloud_request_id = $null
-                        complete = $false
-                        offline_queued = $false
-                        stdout = $null
-                        stderr = $null
-                        errors = $null
-                    }
-                }
-                if ($HostCount -eq 1) {
-                    @($Init, $Confirm).foreach{
-                        foreach ($Resource in $_.resources) {
-                            Set-Field $Output[0] $Resource
-                        }
-                    }
-                }
-                else {
-                    @($Init, $Request).foreach{
-                        if ($_.resources) {
-                            foreach ($Resource in $_.resources) {
-                                foreach ($Result in $Resource.psobject.properties) {
-                                    Set-Field ($Output | Where-Object aid -EQ $Result.name) $Result.value
-                                }
-                            }
-                        }
-                        elseif ($_.combined.resources) {
-                            foreach ($Resource in $_.combined.resources) {
-                                foreach ($Result in $Resource.psobject.properties) {
-                                    Set-Field ($Output | Where-Object aid -EQ $Result.name) $Result.value
-                                }
-                            }
-                        }
-                    }
-                }
-                $Output
             }
         }
     }
@@ -119,74 +82,114 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            try {
-                if ($HostCount -eq 1) {
+            for ($i = 0; $i -lt $PSBoundParameters.HostIds.count; $i += $MaxHosts) {
+                try {
+                    [array] $Output = ($PSBoundParameters.HostIds[$i..($i + ($MaxHosts - 1))]).foreach{
+                        [PSCustomObject] @{
+                            aid = $_
+                            batch_id = $null
+                            session_id = $null
+                            cloud_request_id = $null
+                            complete = $false
+                            offline_queued = $false
+                            stdout = $null
+                            stderr = $null
+                            errors = $null
+                        }
+                    }
+                    $HostParam = if ($Output.aid.count -eq 1) {
+                        $Output[0].PSObject.Properties.Remove('batch_id')
+                        'HostId'
+                    }
+                    else {
+                        'HostIds'
+                    }
                     $Param = @{
-                        HostId = $PSBoundParameters.HostIds[0]
+                        $HostParam = $Output.aid
                     }
-                }
-                else {
-                    $Param = @{
-                        HostIds = $PSBoundParameters.HostIds
-                    }
-                    if ($PSBoundParameters.Timeout) {
-                        $Param['Timeout'] = $PSBoundParameters.Timeout
-                    }
-                }
-                if ($PSBoundParameters.QueueOffline) {
-                    $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
-                }
-                $Init = Start-FalconSession @Param
-                if ($Init.batch_id) {
-                    $Param = @{
-                        BatchId = $Init.batch_id
-                    }
-                    if ($PSBoundParameters.Timeout) {
-                        $Param['Timeout'] = $PSBoundParameters.Timeout
-                    }
-                }
-                elseif ($Init.resources.session_id) {
-                    $Param = @{
-                        SessionId = $Init.resources.session_id
-                    }
-                }
-                else {
-                    throw "$($Init.errors.code): $($Init.errors.message)"
-                }
-                if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                    $Param['Path'] = $PSBoundParameters.Arguments
-                }
-                else {
-                    $Param['Command'] = $PSBoundParameters.Command
-                    if ($PSBoundParameters.Arguments) {
-                        $Param['Arguments'] = $PSBoundParameters.Arguments
-                    }
-                }
-                $Request = & $InvokeCmd @Param
-                if ($Request.resources.cloud_request_id -and (-not $PSBoundParameters.QueueOffline)) {
-                    $Param = @{
-                        CloudRequestId = $Request.resources.cloud_request_id
-                        OutVariable = 'Confirm'
-                    }
-                    if ((& $ConfirmCmd @Param).resources.complete -eq $false) {
-                        do {
-                            if (-not $Confirm.resources) {
-                                throw "$($Confirm.errors.code): $($Confirm.errors.message)"
+                    switch ($PSBoundParameters.Keys) {
+                        'QueueOffline' {
+                            $Param['QueueOffline'] = $PSBoundParameters.$_
+                        }
+                        'Timeout' {
+                            if ($HostParam -eq 'HostIds') {
+                                $Param['Timeout'] = $PSBoundParameters.$_
                             }
-                            Start-Sleep -Seconds $Sleep
-                            $i += $Sleep
-                        } until (
-                            ((& $ConfirmCmd @Param).resources.complete -eq $true) -or ($i -ge $MaxSleep)
-                        )
+                        }
+                    }
+                    $Init = Start-FalconSession @Param
+                    if ($Init) {
+                        $Content = if ($Init.hosts) {
+                            $Init.hosts
+                        }
+                        else {
+                            $Init
+                        }
+                        foreach ($Result in $Content) {
+                            $Item = ($Output | Where-Object { $_.aid -eq $Result.aid })
+                            Write-Result -Object $Result -Item $Item
+                            if (($PSBoundParameters.QueueOffline -eq $true -or $Result.session_id) -and
+                            $Init.batch_id) {
+                                $Item.batch_id = $Init.batch_id
+                            } 
+                        }
+                        $SessionType = if ($HostParam -eq 'HostIds') {
+                            'BatchId'
+                            $IdValue = $Init.batch_id
+                        }
+                        else {
+                            'SessionId'
+                            $IdValue = $Init.session_id
+                        }
+                        $Param = @{
+                            $SessionType = $IdValue
+                        }
+                        switch ($PSBoundParameters.Keys) {
+                            'Command' {
+                                $Param[$_] = $PSBoundParameters.$_
+                            }
+                            'Arguments' {
+                                if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
+                                    $Param['Path'] = $PSBoundParameters.$_
+                                }
+                                else {
+                                    $Param[$_] = $PSBoundParameters.$_
+                                }
+                            }
+                            'Timeout' {
+                                if ($SessionType -eq 'BatchId') {
+                                    $Param[$_] = $PSBoundParameters.$_
+                                }
+                            }
+                        }
+                        $Request = & $InvokeCmd @Param
+                    }
+                    if ($Request -and $HostParam -eq 'HostIds') {
+                        foreach ($Result in $Request) {
+                            Write-Result -Object $Result -Item ($Output | Where-Object { $_.session_id -eq
+                            $Result.session_id })
+                        }
+                        $Output
+                    }
+                    elseif ($Request) {
+                        Write-Result -Object $Request -Item $Output[0]
+                        if ($Output[0].cloud_request_id -and $Output[0].complete -eq $false -and
+                        $Output[0].offline_queued -eq $false) {
+                            do {
+                                Start-Sleep -Seconds $Sleep
+                                $Confirm = & $ConfirmCmd -CloudRequestId $Output[0].cloud_request_id
+                                Write-Result -Object $Confirm -Item $Output[0]
+                                $i += $Sleep
+                            } until (
+                                ($Output[0].complete -eq $true) -or ($i -ge $MaxSleep)
+                            )
+                        }
+                        $Output
                     }
                 }
-                elseif ((-not $Request.combined.resources) -and (-not $Request.resources)) {
-                    throw "$($Request.errors.code): $($Request.errors.message)"
+                catch {
+                    $_
                 }
-                Show-Results $PSBoundParameters.HostIds
-            }
-            catch {
-                Write-Error "$($_.Exception.Message)"
             }
         }
     }
