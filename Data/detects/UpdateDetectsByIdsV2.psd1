@@ -60,6 +60,8 @@
         "true_positive"
         "false_positive"
         "ignored"
+        "closed"
+        "reopened"
       )
       Description = "Detection status"
       Position = $null
