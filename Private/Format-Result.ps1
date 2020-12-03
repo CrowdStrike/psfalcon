@@ -75,8 +75,8 @@
                 }
                 else {
                     if ($Meta) {
-                        @('reqid', 'status', 'writes').foreach{
-                            if ($Meta.$_) {
+                        ($Meta.PSObject.Properties.Name).foreach{
+                            if ($_ -notmatch '(pagination|powered_by|query_time|trace_id)' -and $Meta.$_) {
                                 if (-not($MetaValues)) {
                                     $MetaValues = [PSCustomObject] @{}
                                 }
