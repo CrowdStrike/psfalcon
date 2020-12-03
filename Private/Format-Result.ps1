@@ -74,8 +74,18 @@
                     }
                 }
                 else {
-                    if ($Meta.writes) {
-                        $Meta.writes
+                    if ($Meta) {
+                        @('reqid', 'status', 'writes').foreach{
+                            if ($Meta.$_) {
+                                if (-not($MetaValues)) {
+                                    $MetaValues = [PSCustomObject] @{}
+                                }
+                                $MetaValues.PSObject.Properties.Add((New-Object PSNoteProperty($_,$Meta.$_)))
+                            }
+                        }
+                        if ($MetaValues) {
+                            $MetaValues
+                        }
                     }
                 }
                 if ($Output) {
