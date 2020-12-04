@@ -21,53 +21,57 @@
         [Parameter()]
         [string] $Detailed
     )
-    process {
-        $Loop = & $Command @Param
-        @('total', 'after', 'offset', 'next_page').foreach{
-            if ($Meta.pagination.$_) {
-                Set-Variable -Name $_ -Value $Meta.pagination.$_
+    begin {
+        function Set-Paging ($Object, $Param, $Count) {
+            if ($Object.after) {
+                $Param['After'] = $Object.after
+            }
+            else {
+                if ($Object.next_page) {
+                    $Param['Offset'] = $Object.offset
+                }
+                else {
+                    $Param['Offset'] = if ($Object.offset -match '^\d{1,}$') {
+                        $Count
+                    }
+                    else {
+                        $Object.offset
+                    }
+                }
             }
         }
-        if ($Loop -and $Detailed -and ($Detailed -ne 'Combined')) {
+    }
+    process {
+        $Loop = @{
+            Request = & $Command @Param
+            Pagination = $Meta.pagination
+        }
+        if ($Loop.Request -and $Detailed -and ($Detailed -ne 'Combined')) {
             $DetailParam = @{
-                $Detailed = $Loop
+                $Detailed = $Loop.Request
             }
             & $Command @DetailParam
         }
         else {
-            $Loop
+            $Loop.Request
         }
-        if ($Loop -and (($Loop.count -lt $total) -or $next_page)) {
-            for ($i = $Loop.count; ($next_page -or ($i -lt $total)); $i += $Loop.count) {
+        if ($Loop.Request -and (($Loop.Request.count -lt $Loop.Pagination.total) -or $Loop.Pagination.next_page)) {
+            for ($i = $Loop.Request.count; ($Loop.Pagination.next_page -or ($i -lt $Loop.Pagination.total));
+            $i += $Loop.Request.count) {
                 Write-Verbose "[$($MyInvocation.MyCommand.Name)] retrieved $i results"
-                if ($after) {
-                    $Param['After'] = $after
+                Set-Paging -Object $Loop.Pagination -Param $Param -Count $i
+                $Loop = @{
+                    Request = & $Command @Param
+                    Pagination = $Meta.pagination
                 }
-                elseif ($offset) {
-                    $Param['Offset'] = if ($next_page) {
-                        $offset
-                    }
-                    elseif ($offset -match '^\d{1,}$') {
-                        $i
-                    }
-                    else {
-                        $offset
-                    }
-                }
-                $Loop = & $Command @Param
-                @('total', 'after', 'offset', 'next_page').foreach{
-                    if ($Meta.pagination.$_) {
-                        Set-Variable -Name $_ -Value $Meta.pagination.$_
-                    }
-                }
-                if ($Loop -and $Detailed -and ($Detailed -ne 'Combined')) {
+                if ($Loop.Request -and $Detailed -and ($Detailed -ne 'Combined')) {
                     $DetailParam = @{
-                        $Detailed = $Loop
+                        $Detailed = $Loop.Request
                     }
                     & $Command @DetailParam
                 }
                 else {
-                    $Loop
+                    $Loop.Request
                 }
             }
         }
