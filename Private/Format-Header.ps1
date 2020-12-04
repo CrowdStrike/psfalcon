@@ -43,8 +43,8 @@
         if ($Authorization) {
             $Request.Headers.Add('Authorization', $Authorization)
         }
-        $VerboseHeader = ($Request.Headers.GetEnumerator() |
-            Where-Object { $_.Key -NE 'Authorization' }).foreach{ "$($_.Key): '$($_.Value)'" } -join ', '
-        Write-Verbose "[$($MyInvocation.MyCommand.Name)] $VerboseHeader"
+        $DebugHeader = ($Request.Headers.GetEnumerator() |
+        Where-Object { $_.Key -NE 'Authorization' }).foreach{ "$($_.Key): '$($_.Value)'" } -join ', '
+        Write-Debug "[$($MyInvocation.MyCommand.Name)] $DebugHeader"
     }
 }
