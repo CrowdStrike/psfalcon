@@ -35,12 +35,14 @@ function Read-Meta {
                 else {
                     $_.Value
                 }
-                "$($_.Name): $($Value)"
+                if ($Value) {
+                    "$($_.Name): $($Value)"
+                }
             }
         }
     }
     process {
-        $ResponseInfo = "$($StatusCode): $TypeName"
+        Write-Debug "[$($MyInvocation.MyCommand.Name)] $($StatusCode): $TypeName"
         if ($Object.meta) {
             $Script:Meta = $Object.meta
             if ($TypeName) {
@@ -49,15 +51,13 @@ function Read-Meta {
         }
         if ($Meta) {
             if ($Meta.trace_id) {
-                $ResponseInfo += ", trace_id: $($Meta.trace_id)"
+                Write-Verbose "[$($MyInvocation.MyCommand.Name)] trace_id: $($Meta.trace_id)"
             }
             $CountInfo = (($Meta.PSObject.Properties).foreach{
                 Read-CountValue $_
             }) -join ', '
-        }
-        @($ResponseInfo, $CountInfo) | ForEach-Object {
-            if ($_) {
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] $_"
+            if ($CountInfo) {
+                Write-Verbose "[$($MyInvocation.MyCommand.Name)] $CountInfo"
             }
         }
     }
