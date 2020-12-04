@@ -258,6 +258,7 @@ FunctionsToExport = @(
 
     # scripts
     'Convert-CSV',
+    'Find-Duplicate',
     'Get-Queue',
     'Invoke-Deploy',
     'Invoke-RTR',
