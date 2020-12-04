@@ -5,7 +5,7 @@
     .PARAMETER OBJECT
         A result object to format
     .LINK
-        https://github.com/CrowdStrike/psfalcon
+        https://github.com/crowdstrike/psfalcon
     #>
     [CmdletBinding(DefaultParameterSetName = 'ConvertCSV')]
     [OutputType()]

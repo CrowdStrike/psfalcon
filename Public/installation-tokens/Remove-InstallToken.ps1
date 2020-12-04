@@ -5,7 +5,7 @@
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
-        https://github.com/CrowdStrike/psfalcon
+        https://github.com/crowdstrike/psfalcon
     #>
     [CmdletBinding(DefaultParameterSetName = 'installation-tokens/tokens-delete')]
     [OutputType()]
