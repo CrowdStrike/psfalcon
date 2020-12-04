@@ -23,7 +23,12 @@
     )
     process {
         $Loop = & $Command @Param
-        if ($Loop -and $Detailed -and $Detailed -ne 'Combined') {
+        @('total', 'after', 'offset', 'next_page').foreach{
+            if ($Meta.pagination.$_) {
+                Set-Variable -Name $_ -Value $Meta.pagination.$_
+            }
+        }
+        if ($Loop -and $Detailed -and ($Detailed -ne 'Combined')) {
             $DetailParam = @{
                 $Detailed = $Loop
             }
@@ -32,25 +37,30 @@
         else {
             $Loop
         }
-        if ($Loop -and (($Loop.count -lt $Meta.pagination.total) -or $Meta.pagination.next_page)) {
-            for ($i = $Loop.count; (($i -lt $Meta.pagination.total) -or ($Meta.pagination.next_page));
-            $i += $Loop.count) {
-                if ($Meta.pagination.after) {
-                    $Param['After'] = $Meta.pagination.after
+        if ($Loop -and (($Loop.count -lt $total) -or $next_page)) {
+            for ($i = $Loop.count; ($next_page -or ($i -lt $total)); $i += $Loop.count) {
+                Write-Verbose "[$($MyInvocation.MyCommand.Name)] retrieved $i results"
+                if ($after) {
+                    $Param['After'] = $after
                 }
-                else {
-                    $Param['Offset'] = if ($Meta.pagination.next_page) {
-                        $Meta.pagination.offset
+                elseif ($offset) {
+                    $Param['Offset'] = if ($next_page) {
+                        $offset
                     }
-                    elseif ($Meta.pagination.offset -match '^\d{1,}$') {
+                    elseif ($offset -match '^\d{1,}$') {
                         $i
                     }
                     else {
-                        $Meta.pagination.offset
+                        $offset
                     }
                 }
                 $Loop = & $Command @Param
-                if ($Loop -and $Detailed -and $Detailed -ne 'Combined') {
+                @('total', 'after', 'offset', 'next_page').foreach{
+                    if ($Meta.pagination.$_) {
+                        Set-Variable -Name $_ -Value $Meta.pagination.$_
+                    }
+                }
+                if ($Loop -and $Detailed -and ($Detailed -ne 'Combined')) {
                     $DetailParam = @{
                         $Detailed = $Loop
                     }
@@ -59,9 +69,6 @@
                 else {
                     $Loop
                 }
-            }
-            if ($Script:Meta) {
-                Remove-Variable -Name Meta -Scope Script
             }
         }
     }
