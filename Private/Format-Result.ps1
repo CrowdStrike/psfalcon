@@ -29,6 +29,7 @@
         }
         if ($Json) {
             Read-Meta -Object $Json -Endpoint $Endpoint -TypeName $Definition
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] `r`n$($Json | ConvertTo-Json -Depth 16)"
         }
     }
     process {
