@@ -10,16 +10,17 @@
   Permission = "ml-exclusions:write"
   Parameters = @(
     @{
-      Dynamic = "RegEx"
-      Name = "value"
+      Dynamic = "GroupIds"
+      Name = "groups"
       Required = $true
-      Description = "RegEx pattern for the exclusion"
-      Type = "string"
+      Description = "One or more host group identifiers or 'all'"
+      Type = "array"
       In = @( "body" )
+      Pattern = "(\w{32}|all)"
       Position = 1
     }
     @{
-      Dynamic = "Exclude"
+      Dynamic = "ExcludedFrom"
       Name = "excluded_from"
       Required = $true
       Description = "Operations to exclude"
@@ -32,13 +33,12 @@
       Position = 2
     }
     @{
-      Dynamic = "GroupIds"
-      Name = "groups"
+      Dynamic = "Pattern"
+      Name = "value"
       Required = $true
-      Description = "One or more host group identifiers or 'all'"
-      Type = "array"
+      Description = "RegEx pattern for the exclusion"
+      Type = "string"
       In = @( "body" )
-      Pattern = "(\w{32}|all)"
       Position = 3
     }
     @{

@@ -19,16 +19,17 @@
       Position = 1
     }
     @{
-      Dynamic = "RegEx"
-      Name = "value"
+      Dynamic = "GroupIds"
+      Name = "groups"
       Required = $false
-      Description = "RegEx pattern for the exclusion"
-      Type = "string"
+      Description = "One or more host group identifiers or 'all'"
+      Type = "array"
       In = @( "body" )
+      Pattern = "(\w{32}|all)"
       Position = 2
     }
     @{
-      Dynamic = "Exclude"
+      Dynamic = "ExcludedFrom"
       Name = "excluded_from"
       Required = $false
       Description = "Operations to exclude"
@@ -41,13 +42,12 @@
       Position = 3
     }
     @{
-      Dynamic = "GroupIds"
-      Name = "groups"
+      Dynamic = "Pattern"
+      Name = "value"
       Required = $false
-      Description = "One or more host group identifiers or 'all'"
-      Type = "array"
+      Description = "RegEx pattern for the exclusion"
+      Type = "string"
       In = @( "body" )
-      Pattern = "(\w{32}|all)"
       Position = 4
     }
     @{
