@@ -19,10 +19,7 @@ function New-MLExclusion {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                Format-Param -Param $Param
-                Invoke-Endpoint @Param
-            }
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
