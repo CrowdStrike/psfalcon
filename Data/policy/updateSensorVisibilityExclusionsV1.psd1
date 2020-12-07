@@ -19,23 +19,23 @@
       Description = "Exclusion identifier"
     }
     @{
-      Dynamic = "Value"
-      Name = "value"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Position = 2
-      Description = "The file or folder path to exclude"
-    }
-    @{
       Dynamic = "GroupIds"
       Name = "groups"
       Type = "array"
       In = @( "body" )
       Required = $false
       Pattern = "(\w{32}|all)"
-      Position = 3
+      Position = 2
       Description = "One or more host group identifiers or 'all'"
+    }
+    @{
+      Dynamic = "Pattern"
+      Name = "value"
+      Type = "string"
+      In = @( "body" )
+      Required = $false
+      Position = 3
+      Description = "The file or folder path to exclude"
     }
     @{
       Dynamic = "Comment"

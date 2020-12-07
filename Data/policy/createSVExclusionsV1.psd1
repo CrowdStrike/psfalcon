@@ -10,23 +10,23 @@
   Permission = "sensor-visibility-exclusions:write"
   Parameters = @(
     @{
-      Dynamic = "Value"
-      Name = "value"
-      Type = "string"
-      In = @( "body" )
-      Required = $true
-      Position = 1
-      Description = "The file or folder path to exclude"
-    }
-    @{
       Dynamic = "GroupIds"
       Name = "groups"
       Type = "array"
       In = @( "body" )
       Required = $true
       Pattern = "(\w{32}|all)"
-      Position = 2
+      Position = 1
       Description = "One or more host group identifiers or 'all'"
+    }
+    @{
+      Dynamic = "Pattern"
+      Name = "value"
+      Type = "string"
+      In = @( "body" )
+      Required = $true
+      Position = 2
+      Description = "The file or folder path to exclude"
     }
     @{
       Dynamic = "Comment"
