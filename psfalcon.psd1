@@ -183,6 +183,7 @@ FunctionsToExport = @(
     # policy
     'Edit-DeviceControlPolicy',
     'Edit-FirewallPolicy',
+    'Edit-IOAExclusion',
     'Edit-MLExclusion',
     'Edit-PreventionPolicy',
     'Edit-SensorUpdatePolicy',
@@ -206,6 +207,7 @@ FunctionsToExport = @(
     'Invoke-SensorUpdatePolicyAction',
     'New-DeviceControlPolicy',
     'New-FirewallPolicy',
+    'New-IOAExclusion',
     'New-MLExclusion',
     'New-PreventionPolicy',
     'New-SensorUpdatePolicy',
