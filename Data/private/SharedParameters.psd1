@@ -129,6 +129,7 @@
         "real-time-response/RTR-ListScripts"
         "scanner/QuerySubmissions"
         "sensors/GetSensorInstallersByQuery"
+        "settings/GetCSPMPolicySettings"
         "spotlight/queryVulnerabilities"
         "user-roles/GetAvailableRoleIds"
         "users/RetrieveUserUUIDsByCID"

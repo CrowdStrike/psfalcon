@@ -10,24 +10,36 @@
   Permission = "cspm-registration:read"
   Parameters = @(
     @{
-      Dynamic = "PolicyId"
-      Name = "policy-id"
-      Required = $false
-      Description = "Policy identifier"
-      Type = "string"
-      In = @( "query" )
-      Pattern = "\d{1,}"
-      Position = 1
-    }
-    @{
       Dynamic = "Service"
       Name = "service"
-      Required = $false
+      Required = $true
       Description = "Service type to filter policy settings by."
       Type = "string"
       In = @( "query" )
-      Pattern = "^(EC2|IAM|KMS|ACM|ELB|NLB/ALB|EBS|RDS|S3|Redshift|NetworkSecurityGroup|VirtualNetwork|Disk|PostgreSQL|AppService|KeyVault|VirtualMachine|Monitor|StorageAccount|LoadBalancer|SQLServer)$"
-      Position = 2
+      Enum = @(
+        "EC2"
+        "IAM"
+        "KMS"
+        "ACM"
+        "ELB"
+        "NLB/ALB"
+        "EBS"
+        "RDS"
+        "S3"
+        "Redshift"
+        "NetworkSecurityGroup"
+        "VirtualNetwork"
+        "Disk"
+        "PostgreSQL"
+        "AppService"
+        "KeyVault"
+        "VirtualMachine"
+        "Monitor"
+        "StorageAccount"
+        "LoadBalancer"
+        "SQLServer"
+      )
+      Position = 1
     }
   )
   Responses = @{

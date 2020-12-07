@@ -274,7 +274,10 @@ FunctionsToExport = @(
     'Update-Stream',
 
     # settings
-    'Get-HorizonSetting',
+    'Edit-HorizonPolicy',
+    'Edit-HorizonSchedule',
+    'Get-HorizonPolicy',
+    'Get-HorizonSchedule',
 
     # spotlight
     'Get-Remediation',
