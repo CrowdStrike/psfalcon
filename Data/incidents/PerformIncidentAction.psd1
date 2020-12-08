@@ -10,6 +10,16 @@
   Description = "Perform a set of actions on one or more incidents such as adding tags or comments or updating the incident name or description"
   Parameters = @(
     @{
+      Dynamic = "IncidentIds"
+      Name = "ids"
+      Type = "array"
+      In = @( "body" )
+      Required = $true
+      Pattern = "inc:\w{32}:\w{32}"
+      Description = "One or more Incident identifiers"
+      Position = 1
+    }
+    @{
       Dynamic = "ActionName"
       Name = "name"
       Type = "string"
@@ -24,7 +34,7 @@
         "update_status"
       )
       Description = "Action to perform"
-      Position = $null
+      Position = 2
     }
     @{
       Dynamic = "ActionValue"
@@ -34,17 +44,7 @@
       Parent = "action_parameters"
       Required = $true
       Description = "Value for the chosen action"
-      Position = $null
-    }
-    @{
-      Dynamic = "IncidentIds"
-      Name = "ids"
-      Type = "array"
-      In = @( "body" )
-      Required = $true
-      Pattern = "inc:\w{32}:\w{32}"
-      Description = "One or more Incident identifiers"
-      Position = $null
+      Position = 3
     }
     @{
       Dynamic = "UpdateDetects"
@@ -53,16 +53,16 @@
       In = @( "query" )
       Required = $false
       Description = "Update the status of 'new' related detections"
-      Position = $null
+      Position = 4
     }
     @{
       Dynamic = "OverwriteDetects"
       Name = "overwrite_detects"
-      Type = "string"
+      Type = "bool"
       In = @( "query" )
       Required = $false
       Description = "Replace existing status for related detections"
-      Position = $null
+      Position = 5
     }
   )
   Responses = @{
