@@ -7,11 +7,11 @@
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'PerformIncidentAction')]
+    [CmdletBinding(DefaultParameterSetName = 'incidents/PerformIncidentAction')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('PerformIncidentAction')
+        $Endpoints = @('incidents/PerformIncidentAction')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
