@@ -19,4 +19,4 @@ $HOME\Documents\WindowsPowerShell\Modules\psfalcon\2.0.0
 ```
 
 # Documentation
-psfalcon documentation can be found [here](https://docs.google.com/document/d/1OdMziQ1jh2nvNJf7-50oa84_rvFH1v9RmPVXbEVayUg).
+psfalcon documentation can be found [here](https://docs.google.com/document/d/1fWFsVeJExyyCwhHH1enSs2qQMGSUPPnWcdCf3sWrD5M).
