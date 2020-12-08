@@ -261,7 +261,7 @@ FunctionsToExport = @(
     'New-Scan',
 
     # scripts
-    'Convert-CSV',
+    'Export-Report',
     'Find-Duplicate',
     'Get-Queue',
     'Invoke-Deploy',
