@@ -15,7 +15,7 @@
       In = @( "query" )
       Required = $false
       Min = 1
-      Max = 50000
+      Max = 10000
       Description = "Maximum number of results per request"
       Position = $null
     }
