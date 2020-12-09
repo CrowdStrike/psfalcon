@@ -9,27 +9,22 @@
   }
   Permission = "cspm-registration:write"
   Parameters = @(
-    @{ 
+    @{
       Dynamic = "CloudPlatform"
       Name = "cloud_platform"
       Type = "string"
       Parent = "resources"
       In = @( "body" )
+      Enum = @(
+        "aws",
+        "azure",
+        "gcp"
+      )
       Required = $true
-      Position = $null
-      Description = $null
-    } 
-    @{ 
-      Dynamic = "NextScan"
-      Name = "next_scan_timestamp"
-      Type = "string"
-      Parent = "resources"
-      In = @( "body" )
-      Required = $true
-      Position = $null
-      Description = $null
-    } 
-    @{ 
+      Position = 1
+      Description = "Cloud Platform"
+    }
+    @{
       Dynamic = "ScanSchedule"
       Name = "scan_schedule"
       Type = "string"
@@ -41,8 +36,18 @@
         "12h"
         "24h"
       )
-      Required = $true
-      Position = $null
+      Required = $false
+      Position = 2
+      Description = "Scan interval"
+    }
+    @{
+      Dynamic = "NextScan"
+      Name = "next_scan_timestamp"
+      Type = "string"
+      Parent = "resources"
+      In = @( "body" )
+      Required = $false
+      Position = 3
       Description = $null
     }
   )
