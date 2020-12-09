@@ -1,17 +1,17 @@
-﻿function Get-GcpAccount {
+﻿function Add-DiscoverAwsSettings {
     <#
     .SYNOPSIS
-        List registered GCP accounts
+        Create or update global settings applied to all provisioned AWS accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-gcp/GetCSPMCGPAccount')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/CreateOrUpdateAWSSettings')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-gcp/GetCSPMCGPAccount')
+        $Endpoints = @('cloud-connect-aws/CreateOrUpdateAWSSettings')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

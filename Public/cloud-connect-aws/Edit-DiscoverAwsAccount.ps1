@@ -1,17 +1,17 @@
-﻿function Get-AzureAccount {
+﻿function Edit-DiscoverAwsAccount {
     <#
     .SYNOPSIS
-        List registered Azure accounts
+        Update AWS accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/GetCSPMAzureAccount')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/UpdateAWSAccounts')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-azure/GetCSPMAzureAccount')
+        $Endpoints = @('cloud-connect-aws/UpdateAWSAccounts')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

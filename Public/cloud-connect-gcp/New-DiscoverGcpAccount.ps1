@@ -1,17 +1,17 @@
-﻿function Confirm-AwsAccess {
+﻿function New-DiscoverGcpAccount {
     <#
     .SYNOPSIS
-        Perform an access verification check on AWS accounts
+        Creates a new GCP account and generates a script to grant access to the Falcon platform
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/VerifyAWSAccountAccess')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-gcp/CreateCSPMGCPAccount')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-aws/VerifyAWSAccountAccess')
+        $Endpoints = @('cloud-connect-gcp/CreateCSPMGCPAccount')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

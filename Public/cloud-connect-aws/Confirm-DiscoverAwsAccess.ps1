@@ -1,17 +1,17 @@
-﻿function Get-AwsSettings {
+﻿function Confirm-DiscoverAwsAccess {
     <#
     .SYNOPSIS
-        Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts
+        Perform an access verification check on AWS accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/GetAWSSettings')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/VerifyAWSAccountAccess')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-aws/GetAWSSettings')
+        $Endpoints = @('cloud-connect-aws/VerifyAWSAccountAccess')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -19,7 +19,7 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Endpoint -Endpoint $Endpoints[0]
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }

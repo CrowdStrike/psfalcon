@@ -1,17 +1,17 @@
-﻿function Edit-AwsAccount {
+﻿function Get-DiscoverGcpAccount {
     <#
     .SYNOPSIS
-        Update AWS accounts
+        List registered GCP accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/UpdateAWSAccounts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-gcp/GetCSPMCGPAccount')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-aws/UpdateAWSAccounts')
+        $Endpoints = @('cloud-connect-gcp/GetCSPMCGPAccount')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

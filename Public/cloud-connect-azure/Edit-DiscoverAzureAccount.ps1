@@ -1,17 +1,17 @@
-﻿function Get-GcpScript {
+﻿function Edit-DiscoverAzureAccount {
     <#
     .SYNOPSIS
-        Provides a script to run in a GCP environment to grant access to the Falcon platform
+        Update an Azure service account
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-gcp/GetCSPMGCPUserScripts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/UpdateCSPMAzureAccountClientID')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-gcp/GetCSPMGCPUserScripts')
+        $Endpoints = @('cloud-connect-azure/UpdateCSPMAzureAccountClientID')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

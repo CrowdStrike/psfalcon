@@ -1,17 +1,17 @@
-﻿function Remove-AwsAccount {
+﻿function Get-DiscoverAzureAccount {
     <#
     .SYNOPSIS
-        Delete AWS Accounts
+        List registered Azure accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/DeleteAWSAccounts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/GetCSPMAzureAccount')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-aws/DeleteAWSAccounts')
+        $Endpoints = @('cloud-connect-azure/GetCSPMAzureAccount')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

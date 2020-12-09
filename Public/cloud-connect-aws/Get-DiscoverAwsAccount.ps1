@@ -1,4 +1,4 @@
-﻿function Get-AwsAccount {
+﻿function Get-DiscoverAwsAccount {
     <#
     .SYNOPSIS
         Search for provisioned AWS accounts

@@ -1,17 +1,17 @@
-﻿function Edit-AzureAccount {
+﻿function New-DiscoverAwsAccount {
     <#
     .SYNOPSIS
-        Update an Azure service account
+        Provision AWS accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/UpdateCSPMAzureAccountClientID')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/ProvisionAWSAccounts')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-azure/UpdateCSPMAzureAccountClientID')
+        $Endpoints = @('cloud-connect-aws/ProvisionAWSAccounts')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

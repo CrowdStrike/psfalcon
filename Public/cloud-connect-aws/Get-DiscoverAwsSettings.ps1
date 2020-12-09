@@ -1,17 +1,17 @@
-﻿function Add-AwsSettings {
+﻿function Get-DiscoverAwsSettings {
     <#
     .SYNOPSIS
-        Create or update global settings applied to all provisioned AWS accounts
+        Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/CreateOrUpdateAWSSettings')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/GetAWSSettings')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-aws/CreateOrUpdateAWSSettings')
+        $Endpoints = @('cloud-connect-aws/GetAWSSettings')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -19,7 +19,7 @@
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            Invoke-Endpoint -Endpoint $Endpoints[0]
         }
     }
 }

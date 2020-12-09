@@ -74,24 +74,24 @@ ScriptsToProcess = @('Class/Falcon.ps1')
 # use an empty array if there are no functions to export.
 FunctionsToExport = @(
     # cloud-connect-aws
-    'Add-AwsSettings',
-    'Confirm-AwsAccess',
-    'Edit-AwsAccount',
-    'Get-AwsAccount',
-    'Get-AwsSettings',
-    'New-AwsAccount',
-    'Remove-AwsAccount',
+    'Add-DiscoverAwsSettings',
+    'Confirm-DiscoverAwsAccess',
+    'Edit-DiscoverAwsAccount',
+    'Get-DiscoverAwsAccount',
+    'Get-DiscoverAwsSettings',
+    'New-DiscoverAwsAccount',
+    'Remove-DiscoverAwsAccount',
 
     # cloud-connect-azure
-    'Edit-AzureAccount',
-    'Get-AzureAccount',
-    'Get-AzureScript',
-    'New-AzureAccount',
+    'Edit-DiscoverAzureAccount',
+    'Get-DiscoverAzureAccount',
+    'Get-DiscoverAzureScript',
+    'New-DiscoverAzureAccount',
 
     # cloud-connect-gcp
-    'Get-GcpAccount',
-    'Get-GcpScript',
-    'New-GcpAccount',
+    'Get-DiscoverGcpAccount',
+    'Get-DiscoverGcpScript',
+    'New-DiscoverGcpAccount',
 
     # detects
     'Edit-Detection',

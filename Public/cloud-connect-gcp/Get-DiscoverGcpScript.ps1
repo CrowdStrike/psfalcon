@@ -1,17 +1,17 @@
-﻿function Get-AzureScript {
+﻿function Get-DiscoverGcpScript {
     <#
     .SYNOPSIS
-        Provides a script to run in an Azure environment to grant access to the Falcon platform
+        Provides a script to run in a GCP environment to grant access to the Falcon platform
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/GetCSPMAzureUserScripts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-gcp/GetCSPMGCPUserScripts')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-azure/GetCSPMAzureUserScripts')
+        $Endpoints = @('cloud-connect-gcp/GetCSPMGCPUserScripts')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

@@ -1,17 +1,17 @@
-﻿function New-AzureAccount {
+﻿function Get-DiscoverAzureScript {
     <#
     .SYNOPSIS
-        Creates a new Azure account and generates a script to grant access to the Falcon platform
+        Provides a script to run in an Azure environment to grant access to the Falcon platform
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/CreateCSPMAzureAccount')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/GetCSPMAzureUserScripts')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-azure/CreateCSPMAzureAccount')
+        $Endpoints = @('cloud-connect-azure/GetCSPMAzureUserScripts')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

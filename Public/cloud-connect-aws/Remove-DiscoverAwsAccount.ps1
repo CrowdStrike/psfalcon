@@ -1,17 +1,17 @@
-﻿function New-AwsAccount {
+﻿function Remove-DiscoverAwsAccount {
     <#
     .SYNOPSIS
-        Provision AWS accounts
+        Delete AWS Accounts
     .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/ProvisionAWSAccounts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-aws/DeleteAWSAccounts')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-aws/ProvisionAWSAccounts')
+        $Endpoints = @('cloud-connect-aws/DeleteAWSAccounts')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
