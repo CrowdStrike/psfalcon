@@ -88,6 +88,15 @@ FunctionsToExport = @(
     'Get-DiscoverAzureScript',
     'New-DiscoverAzureAccount',
 
+    # cloud-connect-cspm-aws
+    'Get-HorizonAwsAccount',
+    'Get-HorizonAwsLink',
+    'New-HorizonAwsAccount',
+    'Receive-HorizonAwsScript',
+    'Remove-HorizonAwsAccount',
+
+    # cloud-connect-cspm-azure
+
     # cloud-connect-gcp
     'Get-DiscoverGcpAccount',
     'Get-DiscoverGcpScript',

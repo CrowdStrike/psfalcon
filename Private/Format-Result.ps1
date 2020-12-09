@@ -22,10 +22,20 @@
             $Definition = $Falcon.Response($Endpoint, $StatusCode)
         }
         if ($Response.Result.Content -match '^<') {
-            $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
+            try {
+                $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
+            }
+            catch {
+                $_
+            }
         }
         elseif ($Response.Result.Content) {
-            $Json = ConvertFrom-Json ($Response.Result.Content).ReadAsStringAsync().Result
+            try {
+                $Json = ConvertFrom-Json ($Response.Result.Content).ReadAsStringAsync().Result
+            }
+            catch {
+                $_
+            }
         }
         if ($Json) {
             Read-Meta -Object $Json -Endpoint $Endpoint -TypeName $Definition
@@ -81,7 +91,19 @@
                                 if (-not($MetaValues)) {
                                     $MetaValues = [PSCustomObject] @{}
                                 }
-                                $MetaValues.PSObject.Properties.Add((New-Object PSNoteProperty($_,$Meta.$_)))
+                                $Name = if ($_ -eq 'writes') {
+                                    $Meta.$_.PSObject.Properties.Name
+                                }
+                                else {
+                                    $_
+                                }
+                                $Value = if ($Name -eq 'resources_affected') {
+                                    $Meta.$_.PSObject.Properties.Value
+                                }
+                                else {
+                                    $Meta.$_
+                                }
+                                $MetaValues.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
                             }
                         }
                         if ($MetaValues) {
@@ -95,6 +117,9 @@
             }
             elseif ($HTML) {
                 $HTML
+            }
+            elseif ($Response.Result.Content) {
+                ($Response.Result.Content).ReadAsStringAsync().Result
             }
             else {
                 $Response.Result.EnsureSuccessStatusCode()

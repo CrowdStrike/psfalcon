@@ -9,6 +9,7 @@
       ParameterSets = @(
         "cloud-connect-aws/QueryAWSAccounts"
         "cloud-connect-aws/QueryAWSAccountsforIDs"
+        "cloud-connect-cspm-aws/GetCSPMAwsAccount"
         "detects/QueryDetects"
         "devices/queryCombinedGroupMembers"
         "devices/queryCombinedHostGroups"
@@ -298,6 +299,7 @@
       ParameterSets = @(
         "cloud-connect-aws/QueryAWSAccounts"
         "cloud-connect-aws/QueryAWSAccountsForIDs"
+        "cloud-connect-cspm-aws/GetCSPMAwsAccount"
         "detects/QueryDetects"
         "devices/queryCombinedGroupMembers"
         "devices/queryCombinedHostGroups"
@@ -374,6 +376,7 @@
       Max = 5000
       Description = "Maximum number of results per request"
       ParameterSets = @(
+        "cloud-connect-cspm-aws/GetCSPMAwsAccount"
         "devices/queryCombinedGroupMembers"
         "devices/queryCombinedHostGroups"
         "devices/QueryDevicesByFilterScroll"
