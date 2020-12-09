@@ -11,8 +11,7 @@
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('indicators/QueryIOCs', 'indicators/GetIOC', 'indicators/DevicesCount',
-            'indicators/DevicesRanOn', 'indicators/ProcessesRanOn')
+        $Endpoints = @('indicators/QueryIOCs', 'indicators/GetIOC')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -22,30 +21,26 @@
         else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
-                Query   = $Endpoints[0]
+                Query = $Endpoints[0]
                 Dynamic = $Dynamic
             }
-            switch ($PSBoundParameters.Keys) {
-                'TotalCount' {
-                    $Param.Query = $Endpoints[2]
-                    $Param['Modifier'] = 'TotalCount'
-                }
-                'Observed' {
-                    $Param.Query = $Endpoints[3]
-                    $Param['Modifier'] = 'Observed'
-                }
-                'Processes' {
-                    $Param.Query = $Endpoints[4]
-                    $Param['Modifier'] = 'Processes'
-                }
-                'All' {
-                    $Param['All'] = $true
-                }
+            if (($PSBoundParameters.Keys.count -eq 3) -and ($PSBoundParameters.Type -and
+            $PSBoundParameters.Value -and $PSBoundParameters.Detailed)) {
+                $PSBoundParameters.Remove('Detailed')
             }
-            if (-not($Param.Modifier) -and ($PSBoundParameters.Type -and $PSBoundParameters.Value)) {
+            if (($PSBoundParameters.Keys.count -eq 2) -and ($PSBoundParameters.Type -and
+            $PSBoundParameters.Value)) {
                 $Param.Query = $Endpoints[1]
             }
-            Invoke-Request @Param
+            $Request = Invoke-Request @Param
+            if ($Request -and $PSBoundParameters.Detailed) {
+                foreach ($Item in $Request) {
+                    & $MyInvocation.MyCommand.Name -Type $Item.Split(':')[0] -Value $Item.Split(':')[1]
+                }
+            }
+            else {
+                $Request
+            }
         }
     }
 }

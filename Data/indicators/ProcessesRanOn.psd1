@@ -10,13 +10,6 @@
   Description = "Search for processes associated with a custom IOC"
   Parameters = @(
     @{
-      Dynamic = "Processes"
-      Type = "switch"
-      Required = $true
-      Description = "Retrieve process identifiers for a host that has observed a custom IOC"
-      Position = $null
-    }
-    @{
       Dynamic = "Type"
       Name = "type"
       Type = "string"
@@ -29,8 +22,8 @@
         "ipv4"
         "ipv6"
       )
-      Description = "Custom IOC type"
-      Position = $null
+      Description = "Indicator type"
+      Position = 1
     }
     @{
       Dynamic = "Value"
@@ -38,10 +31,8 @@
       Type = "string"
       In = @( "query" )
       Required = $true
-      Min = 1
-      Max = 200
-      Description = "Custom IOC value"
-      Position = $null
+      Description = "Indicator value"
+      Position = 2
     }
     @{
       Dynamic = "HostId"
@@ -50,8 +41,8 @@
       In = @( "query" )
       Required = $true
       Pattern = "\w{32}"
-      Description = "Target Host identifier"
-      Position = $null
+      Description = "Host identifier"
+      Position = 3
     }
     @{
       Dynamic = "Limit"
@@ -62,7 +53,7 @@
       Min = 1
       Max = 100
       Description = "Maximum number of results per request"
-      Position = $null
+      Position = 4
     }
   )
   Responses = @{

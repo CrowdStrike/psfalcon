@@ -103,6 +103,8 @@
         "fwmgr/query-rules"
         "incidents/QueryBehaviors"
         "incidents/QueryIncidents"
+        "indicators/ProcessesRanOn"
+        "indicators/QueryIOCs"
         "installation-tokens/audit-events-query"
         "installation-tokens/tokens-query"
         "intel/QueryIntelActorIds"

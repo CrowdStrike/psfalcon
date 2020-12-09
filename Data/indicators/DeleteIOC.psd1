@@ -22,7 +22,7 @@
         "ipv4"
         "ipv6"
       )
-      Description = "Custom IOC type"
+      Description = "Indicator type"
       Position = 1
     }
     @{
@@ -33,7 +33,7 @@
       Required = $true
       Min = 1
       Max = 200
-      Description = "Custom IOC value"
+      Description = "Indicator value"
       Position = 2
     }
   )

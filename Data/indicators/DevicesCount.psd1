@@ -10,13 +10,6 @@
   Description = "List the number of hosts that have observed a custom IOC"
   Parameters = @(
     @{
-      Dynamic = "TotalCount"
-      Type = "switch"
-      Required = $true
-      Description = "Retrieve the total number of hosts that have observed a custom IOC"
-      Position = $null
-    }
-    @{
       Dynamic = "Type"
       Name = "type"
       Type = "string"
@@ -29,8 +22,8 @@
         "ipv4"
         "ipv6"
       )
-      Description = "Custom IOC type"
-      Position = $null
+      Description = "Indicator type"
+      Position = 1
     }
     @{
       Dynamic = "Value"
@@ -38,10 +31,8 @@
       Type = "string"
       In = @( "query" )
       Required = $true
-      Min = 1
-      Max = 200
-      Description = "Custom IOC value"
-      Position = $null
+      Description = "Indicator value"
+      Position = 2
     }
   )
   Responses = @{

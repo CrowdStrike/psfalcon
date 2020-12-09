@@ -22,7 +22,7 @@
         "ipv4"
         "ipv6"
       )
-      Description = "Type of indicator"
+      Description = "Indicator type"
       Position = 1
     }
     @{
@@ -31,28 +31,8 @@
       Type = "string"
       In = @( "query" )
       Required = $false
-      Min = 1
-      Max = 200
-      Description = "The string representation of the indicator"
+      Description = "Indicator value"
       Position = 2
-    }
-    @{
-      Dynamic = "FromExpirationTimestamp"
-      Name = "from.expiration_timestamp"
-      Type = "string"
-      In = @( "query" )
-      Required = $false
-      Description = "Find custom IOCs created after this time (RFC-3339 timestamp)"
-      Position = $null
-    }
-    @{
-      Dynamic = "ToExpirationTimestamp"
-      Name = "to.expiration_timestamp"
-      Type = "string"
-      In = @( "query" )
-      Required = $false
-      Description = "Find custom IOCs created before this time (RFC-3339 timestamp)"
-      Position = $null
     }
     @{
       Dynamic = "Policy"
@@ -64,8 +44,8 @@
         "detect"
         "none"
       )
-      Description = "Custom IOC policy type"
-      Position = $null
+      Description = "Indicator policy type"
+      Position = 3
     }
     @{
       Dynamic = "Sources"
@@ -73,10 +53,8 @@
       Type = "string"
       In = @( "query" )
       Required = $false
-      Min = 1
-      Max = 200
-      Description = "The source where this indicator originated. This can be used for tracking where this indicator was defined."
-      Position = $null
+      Description = "Indicator source"
+      Position = 4
     }
     @{
       Dynamic = "ShareLevels"
@@ -87,8 +65,26 @@
       Enum = @(
         "red"
       )
-      Description = "The level at which the indicator will be shared. Currently only red share level (not shared) is supported indicating that the IOC isn't shared with other FH customers."
-      Position = $null
+      Description = "Visibility level"
+      Position = 5
+    }
+    @{
+      Dynamic = "FromExpirationTimestamp"
+      Name = "from.expiration_timestamp"
+      Type = "string"
+      In = @( "query" )
+      Required = $false
+      Description = "Find indicators created after this time (RFC-3339 timestamp)"
+      Position = 6
+    }
+    @{
+      Dynamic = "ToExpirationTimestamp"
+      Name = "to.expiration_timestamp"
+      Type = "string"
+      In = @( "query" )
+      Required = $false
+      Description = "Find indicators created before this time (RFC-3339 timestamp)"
+      Position = 7
     }
     @{
       Dynamic = "CreatedBy"
@@ -96,8 +92,8 @@
       Type = "string"
       In = @( "query" )
       Required = $false
-      Description = "The user or API client who created the Custom IOC"
-      Position = $null
+      Description = "The user or API client who created the indicator"
+      Position = 8
     }
     @{
       Dynamic = "DeletedBy"
@@ -105,8 +101,8 @@
       Type = "string"
       In = @( "query" )
       Required = $false
-      Description = "The user or API client who deleted the Custom IOC"
-      Position = $null
+      Description = "The user or API client who deleted the indicator"
+      Position = 9
     }
     @{
       Dynamic = "IncludeDeleted"
@@ -114,8 +110,8 @@
       Type = "bool"
       In = @( "query" )
       Required = $false
-      Description = "Include deleted IOCs"
-      Position = $null
+      Description = "Include deleted indicators"
+      Position = 10
     }
   )
   Responses = @{

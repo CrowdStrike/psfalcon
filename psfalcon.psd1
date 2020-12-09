@@ -144,6 +144,9 @@ FunctionsToExport = @(
     # indicators
     'Edit-IOC',
     'Get-IOC',
+    'Get-IOCHost',
+    'Get-IOCProcess',
+    'Get-IOCTotal',
     'New-IOC',
     'Remove-IOC',
 

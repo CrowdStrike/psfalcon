@@ -10,60 +10,6 @@
   Description = "Create custom IOCs"
   Parameters = @(
     @{
-      Dynamic = "Description"
-      Name = "description"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Description = "Custom IOC description"
-      Position = $null
-    }
-    @{
-      Dynamic = "ExpirationDays"
-      Name = "expiration_days"
-      Type = "int"
-      In = @( "body" )
-      Required = $false
-      Description = "Number of days before expiration (for 'domain' 'ipv4' and 'ipv6')"
-      Position = $null
-    }
-    @{
-      Dynamic = "Policy"
-      Name = "policy"
-      Type = "string"
-      In = @( "body" )
-      Required = $true
-      Enum = @(
-        "detect"
-        "none"
-      )
-      Description = "Action to take when a host observes the custom IOC"
-      Position = $null
-    }
-    @{
-      Dynamic = "ShareLevel"
-      Name = "share_level"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Enum = @(
-        "red"
-      )
-      Description = "Custom IOC visibility level"
-      Position = $null
-    }
-    @{
-      Dynamic = "Source"
-      Name = "source"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Min = 1
-      Max = 200
-      Description = "Custom IOC source"
-      Position = $null
-    }
-    @{
       Dynamic = "Type"
       Name = "type"
       Type = "string"
@@ -76,8 +22,8 @@
         "ipv4"
         "ipv6"
       )
-      Description = "Custom IOC type"
-      Position = $null
+      Description = "Indicator type"
+      Position = 1
     }
     @{
       Dynamic = "Value"
@@ -85,10 +31,61 @@
       Type = "string"
       In = @( "body" )
       Required = $true
-      Min = 1
-      Max = 200
-      Description = "Custom IOC value"
+      Description = "Indicator value"
+      Position = 2
+    }
+    @{
+      Dynamic = "Policy"
+      Name = "policy"
+      Type = "string"
+      In = @( "body" )
+      Required = $true
+      Enum = @(
+        "detect"
+        "none"
+      )
+      Description = "Action to take when a host observes the indicator"
+      Position = 3
+    }
+    @{
+      Dynamic = "ExpirationDays"
+      Name = "expiration_days"
+      Type = "int"
+      In = @( "body" )
+      Required = $false
+      Description = "Number of days before expiration (for 'domain' 'ipv4' and 'ipv6')"
+      Position = 4
+    }
+    
+    @{
+      Dynamic = "ShareLevel"
+      Name = "share_level"
+      Type = "string"
+      In = @( "body" )
+      Required = 5
+      Enum = @(
+        "red"
+      )
+      Description = "Indicator visibility level"
       Position = $null
+    }
+    @{
+      Dynamic = "Description"
+      Name = "description"
+      Type = "string"
+      In = @( "body" )
+      Required = $false
+      Description = "Indicator description"
+      Position = 6
+    }
+    @{
+      Dynamic = "Source"
+      Name = "source"
+      Type = "string"
+      In = @( "body" )
+      Required = $false
+      Description = "Indicator source"
+      Position = 7
     }
   )
   Responses = @{

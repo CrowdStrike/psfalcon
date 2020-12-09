@@ -22,7 +22,7 @@
         "ipv4"
         "ipv6"
       )
-      Description = "Custom IOC type"
+      Description = "Indicator type"
       Position = 1
     }
     @{
@@ -33,7 +33,7 @@
       Required = $true
       Min = 1
       Max = 200
-      Description = "Custom IOC value"
+      Description = "Indicator value"
       Position = 2
     }
     @{
@@ -46,7 +46,7 @@
         "detect"
         "none"
       )
-      Description = "Action to take when a host observes the custom IOC"
+      Description = "Action to take when a host observes the indicator"
       Position = 3
     }
     @{
@@ -59,26 +59,6 @@
       Position = 4
     }
     @{
-      Dynamic = "Description"
-      Name = "description"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Description = "Custom IOC description"
-      Position = 5
-    }
-    @{
-      Dynamic = "Source"
-      Name = "source"
-      Type = "string"
-      In = @( "body" )
-      Required = $false
-      Min = 1
-      Max = 200
-      Description = "Custom IOC source"
-      Position = 6
-    }
-    @{
       Dynamic = "ShareLevel"
       Name = "share_level"
       Type = "string"
@@ -87,7 +67,25 @@
       Enum = @(
         "red"
       )
-      Description = "Custom IOC visibility level"
+      Description = "Indicator visibility level"
+      Position = 5
+    }
+    @{
+      Dynamic = "Description"
+      Name = "description"
+      Type = "string"
+      In = @( "body" )
+      Required = $false
+      Description = "Indicator description"
+      Position = 6
+    }
+    @{
+      Dynamic = "Source"
+      Name = "source"
+      Type = "string"
+      In = @( "body" )
+      Required = $false
+      Description = "Indicator source"
       Position = 7
     }
   )
