@@ -414,7 +414,6 @@
         "policy/querySensorUpdatePolicyMembers"
         "real-time-response/RTR-ListAllSessions"
         "real-time-response/RTR-ListPut-Files"
-        "real-time-response/RTR-ListScripts"
         "scanner/QuerySubmissions"
       )
       Position = $null

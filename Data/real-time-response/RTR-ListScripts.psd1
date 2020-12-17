@@ -6,8 +6,20 @@
     Accept = "application/json"
   }
   Permission = "real-time-response-admin:write"
-  Description = "Get a list of custom-script ID's that are available to the user for the `runscript` command."
-  Parameters = @()
+  Description = "Get a list of custom-script ID's that are available to the user for the runscript command."
+  Parameters = @(
+    @{
+      Dynamic = "Limit"
+      Name = "limit"
+      Type = "int"
+      In = @( "query" )
+      Required = $false
+      Min = 1
+      Max = 100
+      Description = "Maximum number of results per request"
+      Position = $null
+    }
+  )
   Responses = @{
     400 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"
