@@ -6,7 +6,7 @@
     Accept = "application/json"
   }
   Permission = "real-time-response-admin:write"
-  Description = "Get custom-scripts based on the ID's given. These are used for the RTR `runscript` command."
+  Description = "Get custom-scripts based on the ID's given. These are used for the RTR runscript command."
   Parameters = @(
     @{
       Dynamic = "ScriptIds"
