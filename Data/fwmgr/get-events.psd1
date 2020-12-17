@@ -14,7 +14,7 @@
       Type = "array"
       In = @( "query" )
       Required = $true
-      Pattern = "(\w-){20}"
+      Pattern = "\w{32}:\d{1,}:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"
       Description = "The events to retrieve identified by ID"
       Position = 1
     }
