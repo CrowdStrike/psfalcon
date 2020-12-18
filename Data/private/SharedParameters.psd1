@@ -302,6 +302,7 @@
         "cloud-connect-aws/QueryAWSAccounts"
         "cloud-connect-aws/QueryAWSAccountsForIDs"
         "cloud-connect-cspm-aws/GetCSPMAwsAccount"
+        "cloud-connect-cspm-azure/GetCSPMAzureAccount"
         "detects/QueryDetects"
         "devices/queryCombinedGroupMembers"
         "devices/queryCombinedHostGroups"

@@ -38,7 +38,8 @@
                             'responses.PolicyMembersRespV1')
             HostGroup     = @('responses.HostGroupsV1')
             Identifier    = @('binservclient.MsaPutFileResponse', 'domain.DeviceResponse',
-                            'domain.SPAPIQueryVulnerabilitiesResponse', 'api.MsaIncidentQueryResponse', 'msa.QueryResponse')
+                            'domain.SPAPIQueryVulnerabilitiesResponse', 'api.MsaIncidentQueryResponse',
+                            'msa.QueryResponse')
             Incident      = @('api.MsaExternalIncidentResponse')
             IOC           = @('api.MsaReplyIOCIDs', 'api.MsaReplyIOC')
             Prevention    = @('responses.PreventionPoliciesV1')
