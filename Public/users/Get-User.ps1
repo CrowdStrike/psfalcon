@@ -22,19 +22,24 @@
         else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
-                Query   = $PSCmdlet.ParameterSetName
+                Query   = $Endpoints[0]
                 Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
+                'Usernames' {
+                    $Param.Query = $Endpoints[3]
+                }
                 'All' {
                     $Param['All'] = $true
                 }
                 'Detailed' {
-                    $Param['Detailed'] = 'UserIds'
-                }
-                'Names' {
-                    $Param['Query'] = 'RetrieveEmailsByCID'
+                    $Param['Detailed'] = if ($Param.Query -eq $Endpoints[0]) {
+                        'UserIds'
+                    }
+                    else {
+                        'Username'
+                    }
                 }
             }
             Invoke-Request @Param
