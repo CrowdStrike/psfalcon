@@ -1,8 +1,6 @@
 ﻿function Get-HostGroupMember {
     <#
     .SYNOPSIS
-        Search for Host Groups members
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Get-FirewallGroup {
     <#
     .SYNOPSIS
-        Search for firewall rule groups
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Get-IOCHost {
     <#
     .SYNOPSIS
-        List the host identifiers that have observed a custom IOC
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Remove-PutFile {
     <#
     .SYNOPSIS
-        Remove a 'put' file
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

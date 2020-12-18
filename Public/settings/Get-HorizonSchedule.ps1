@@ -1,8 +1,6 @@
 function Get-HorizonSchedule {
     <#
     .SYNOPSIS
-        Retrieve the Falcon Horizon scan schedule
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

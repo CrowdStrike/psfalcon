@@ -1,8 +1,6 @@
 ﻿function Send-PutFile {
     <#
     .SYNOPSIS
-        Upload a file to use with the Real-time Response 'put' command
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 function Get-IOAExclusion {
     <#
     .SYNOPSIS
-        Retrieve information about Indicator of Attack exclusions
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

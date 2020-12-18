@@ -1,8 +1,6 @@
 ﻿function Invoke-HostAction {
     <#
     .SYNOPSIS
-        Perform actions on Hosts
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

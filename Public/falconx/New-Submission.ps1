@@ -1,8 +1,6 @@
 ﻿function New-Submission {
     <#
     .SYNOPSIS
-        Submit an uploaded file or URL for sandbox analysis
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

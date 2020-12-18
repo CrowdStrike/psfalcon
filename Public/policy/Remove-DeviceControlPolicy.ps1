@@ -1,8 +1,6 @@
 ﻿function Remove-DeviceControlPolicy {
     <#
     .SYNOPSIS
-        Remove Device Control Policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

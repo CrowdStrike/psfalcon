@@ -1,8 +1,6 @@
 ﻿function Revoke-Token {
     <#
     .SYNOPSIS
-        Revoke your current OAuth2 access token before the end of its standard lifespan
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

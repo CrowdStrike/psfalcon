@@ -1,8 +1,6 @@
 ﻿function Get-FirewallSetting {
     <#
     .SYNOPSIS
-        Retrieve settings applied to Firewall policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

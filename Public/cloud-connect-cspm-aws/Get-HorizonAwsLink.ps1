@@ -1,8 +1,6 @@
 ﻿function Get-HorizonAwsLink {
     <#
     .SYNOPSIS
-        Return a URL to visit within your AWS environment to provide Horizon access
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

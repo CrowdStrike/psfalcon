@@ -1,8 +1,6 @@
 ﻿function Remove-GetFile {
     <#
     .SYNOPSIS
-        Remove a 'get' file retrieved from a Real-time Response session
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Edit-IOAGroup {
     <#
     .SYNOPSIS
-        Modify a custom Indicator of Attack rule group
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

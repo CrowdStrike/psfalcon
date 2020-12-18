@@ -1,8 +1,6 @@
 ﻿function Request-Token {
     <#
     .SYNOPSIS
-        Generate an OAuth2 access token
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

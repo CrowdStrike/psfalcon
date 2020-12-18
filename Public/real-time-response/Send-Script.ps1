@@ -1,8 +1,6 @@
 ﻿function Send-Script {
     <#
     .SYNOPSIS
-        Upload a script to use with the Real-time Response 'runscript' command
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

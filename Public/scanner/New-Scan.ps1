@@ -1,8 +1,6 @@
 ﻿function New-Scan {
     <#
     .SYNOPSIS
-        Submit one or more files to analyze using machine learning
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Get-Scan {
     <#
     .SYNOPSIS
-        Get the status or results of a scan request
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

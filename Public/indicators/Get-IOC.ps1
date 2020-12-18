@@ -1,8 +1,6 @@
 ﻿function Get-IOC {
     <#
     .SYNOPSIS
-        Search for Custom IOCs
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function New-HorizonAzureAccount {
     <#
     .SYNOPSIS
-        Create a Horizon Azure account and generate a script to grant access
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Get-FirewallPlatform {
     <#
     .SYNOPSIS
-        Search for platforms available for use with Firewall Management
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

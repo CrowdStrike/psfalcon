@@ -1,8 +1,6 @@
 ﻿function Remove-Sample {
     <#
     .SYNOPSIS
-        Remove a sample file
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Receive-MalQuerySample {
     <#
     .SYNOPSIS
-        Download a sample file or archive from MalQuery
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

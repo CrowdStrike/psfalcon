@@ -1,8 +1,6 @@
 ﻿function Invoke-SensorUpdatePolicyAction {
     <#
     .SYNOPSIS
-        Perform actions on Sensor Update policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

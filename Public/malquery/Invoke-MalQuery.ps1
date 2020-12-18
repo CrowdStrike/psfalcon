@@ -1,8 +1,6 @@
 ﻿function Invoke-MalQuery {
     <#
     .SYNOPSIS
-        Perform a MalQuery search
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

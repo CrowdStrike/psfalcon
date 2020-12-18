@@ -1,8 +1,6 @@
 ﻿function Invoke-IncidentAction {
     <#
     .SYNOPSIS
-        Perform actions on Incidents
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

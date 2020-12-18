@@ -1,8 +1,6 @@
 ﻿function Add-Role {
     <#
     .SYNOPSIS
-        Assign one or more roles to a user
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 function Remove-MLExclusion {
     <#
     .SYNOPSIS
-        Remove Machine Learning exclusions
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

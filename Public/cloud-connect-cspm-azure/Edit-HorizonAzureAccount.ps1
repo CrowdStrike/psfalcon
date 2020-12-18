@@ -1,8 +1,6 @@
 ﻿function Edit-HorizonAzureAccount {
     <#
     .SYNOPSIS
-        Change the Client ID for an Azure Account in Horizon
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

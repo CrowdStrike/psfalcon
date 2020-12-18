@@ -1,8 +1,6 @@
 ﻿function Get-Queue {
     <#
     .SYNOPSIS
-        Create a report of with status of queued Real-time Response sessions
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Invoke-DeviceControlPolicyAction {
     <#
     .SYNOPSIS
-        Perform actions on Device Control policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

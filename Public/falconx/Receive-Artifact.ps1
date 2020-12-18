@@ -1,8 +1,6 @@
 ﻿function Receive-Artifact {
     <#
     .SYNOPSIS
-        Download IOC packs, PCAP files, and other analysis artifacts
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

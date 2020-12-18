@@ -1,8 +1,6 @@
 ﻿function New-DiscoverGcpAccount {
     <#
     .SYNOPSIS
-        Creates a new GCP account and generates a script to grant access to the Falcon platform
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Get-IOCTotal {
     <#
     .SYNOPSIS
-        Retrieve the total number of hosts that have observed a custom IOC
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

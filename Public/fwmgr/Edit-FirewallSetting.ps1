@@ -1,8 +1,6 @@
 ﻿function Edit-FirewallSetting {
     <#
     .SYNOPSIS
-        Update settings applied to Firewall policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

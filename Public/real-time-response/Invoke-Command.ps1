@@ -1,8 +1,6 @@
 ﻿function Invoke-Command {
     <#
     .SYNOPSIS
-        Issue a command to a Real-time Response session
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

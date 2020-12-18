@@ -1,8 +1,6 @@
 function Get-HorizonPolicy {
     <#
     .SYNOPSIS
-        Retrieve Falcon Horizon policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

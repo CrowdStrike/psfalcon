@@ -1,8 +1,6 @@
 ﻿function Edit-Detection {
     <#
     .SYNOPSIS
-        Modify the state, assignee, and visibility of detections
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

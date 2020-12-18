@@ -1,8 +1,6 @@
 ﻿function Get-IOCProcess {
     <#
     .SYNOPSIS
-        Search for processes associated with a custom IOC
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

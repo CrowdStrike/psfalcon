@@ -1,8 +1,6 @@
 ﻿function Get-Process {
     <#
     .SYNOPSIS
-        Retrieve summary information about a process
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

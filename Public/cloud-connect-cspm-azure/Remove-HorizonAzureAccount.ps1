@@ -1,8 +1,6 @@
 ﻿function Remove-HorizonAzureAccount {
     <#
     .SYNOPSIS
-        Delete and existing Azure account from Horizon
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

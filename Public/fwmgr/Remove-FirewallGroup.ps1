@@ -1,8 +1,6 @@
 ﻿function Remove-FirewallGroup {
     <#
     .SYNOPSIS
-        Remove Firewall Rule Groups
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

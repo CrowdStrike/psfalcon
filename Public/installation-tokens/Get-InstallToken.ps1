@@ -1,8 +1,6 @@
 ﻿function Get-InstallToken {
     <#
     .SYNOPSIS
-        Search for installation tokens
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

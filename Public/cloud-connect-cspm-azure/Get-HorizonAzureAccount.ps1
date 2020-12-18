@@ -1,8 +1,6 @@
 ﻿function Get-HorizonAzureAccount {
     <#
     .SYNOPSIS
-        Return information about existing Azure accounts in Horizon
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

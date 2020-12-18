@@ -1,8 +1,6 @@
 ﻿function Set-FirewallPrecedence {
     <#
     .SYNOPSIS
-        Set the precedence of Firewall policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

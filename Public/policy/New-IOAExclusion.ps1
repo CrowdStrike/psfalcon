@@ -1,8 +1,6 @@
 function New-IOAExclusion {
     <#
     .SYNOPSIS
-        Create an Indicator of Attack exclusion
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

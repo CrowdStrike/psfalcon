@@ -1,8 +1,6 @@
 function Receive-HorizonAwsScript {
     <#
     .SYNOPSIS
-        Download a script to provide Horizon with access to your AWS account
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

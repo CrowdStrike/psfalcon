@@ -1,8 +1,6 @@
 function Search-MalQueryHash {
     <#
     .SYNOPSIS
-        Perform a YARA-based MalQuery search for a specific hash
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

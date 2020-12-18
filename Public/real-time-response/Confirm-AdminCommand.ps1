@@ -1,8 +1,6 @@
 ﻿function Confirm-AdminCommand {
     <#
     .SYNOPSIS
-        Check the status of an Admin Real-time Response command
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

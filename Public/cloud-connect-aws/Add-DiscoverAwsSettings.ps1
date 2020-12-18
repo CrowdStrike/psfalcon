@@ -1,8 +1,6 @@
 ﻿function Add-DiscoverAwsSettings {
     <#
     .SYNOPSIS
-        Create or update global settings applied to all provisioned AWS accounts
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

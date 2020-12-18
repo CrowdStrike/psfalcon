@@ -1,8 +1,6 @@
 ﻿function Get-Rule {
     <#
     .SYNOPSIS
-        Search for threat intelligence rules
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

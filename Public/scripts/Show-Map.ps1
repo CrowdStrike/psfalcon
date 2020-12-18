@@ -1,8 +1,6 @@
 ﻿function Show-Map {
     <#
     .SYNOPSIS
-        Launch the Indicator Graph in a browser window
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

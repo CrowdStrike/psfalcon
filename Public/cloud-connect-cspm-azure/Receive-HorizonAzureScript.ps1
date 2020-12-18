@@ -1,8 +1,6 @@
 function Receive-HorizonAzureScript {
     <#
     .SYNOPSIS
-        Download a Bash script to provide Horizon with access to your Azure account
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Receive-GetFile {
     <#
     .SYNOPSIS
-        Download a file extracted through a Real-time Response 'get' request in an encrypted .7z archive
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

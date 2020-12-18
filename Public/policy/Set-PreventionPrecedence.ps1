@@ -1,8 +1,6 @@
 ﻿function Set-PreventionPrecedence {
     <#
     .SYNOPSIS
-        Set the precedence of Prevention policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

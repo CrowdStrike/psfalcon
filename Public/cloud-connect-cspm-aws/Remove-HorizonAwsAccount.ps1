@@ -1,8 +1,6 @@
 ﻿function Remove-HorizonAwsAccount {
     <#
     .SYNOPSIS
-        Delete and existing AWS account or organization from Horizon
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

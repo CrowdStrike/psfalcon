@@ -1,8 +1,6 @@
 ﻿function Update-Stream {
     <#
     .SYNOPSIS
-        Discover event streams
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

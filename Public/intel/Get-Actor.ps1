@@ -1,8 +1,6 @@
 ﻿function Get-Actor {
     <#
     .SYNOPSIS
-        Search for threat actors
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

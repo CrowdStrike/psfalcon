@@ -1,8 +1,6 @@
 ﻿function Get-DiscoverAwsSettings {
     <#
     .SYNOPSIS
-        Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

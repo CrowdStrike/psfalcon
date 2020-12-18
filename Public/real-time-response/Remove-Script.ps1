@@ -1,8 +1,6 @@
 ﻿function Remove-Script {
     <#
     .SYNOPSIS
-        Remove a Real-time Response script
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

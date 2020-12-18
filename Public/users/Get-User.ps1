@@ -1,8 +1,6 @@
 ﻿function Get-User {
     <#
     .SYNOPSIS
-        Retrieve user identifiers or usernames
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

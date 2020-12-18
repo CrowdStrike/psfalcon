@@ -1,8 +1,6 @@
 ﻿function Get-MalQueryQuota {
     <#
     .SYNOPSIS
-        Get MalQuery search and download quotas
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

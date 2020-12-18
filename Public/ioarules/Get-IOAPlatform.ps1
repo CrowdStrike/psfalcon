@@ -1,8 +1,6 @@
 ﻿function Get-IOAPlatform {
     <#
     .SYNOPSIS
-        Search for available platforms for use with custom Indicators of Attack
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

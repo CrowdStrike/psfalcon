@@ -1,8 +1,6 @@
 function New-SVExclusion {
     <#
     .SYNOPSIS
-        Create a Sensor Visibility exclusion
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

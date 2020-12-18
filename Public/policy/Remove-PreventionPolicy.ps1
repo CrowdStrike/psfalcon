@@ -1,8 +1,6 @@
 ﻿function Remove-PreventionPolicy {
     <#
     .SYNOPSIS
-        Remove Prevention Policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

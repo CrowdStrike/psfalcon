@@ -1,8 +1,6 @@
 ﻿function Get-DiscoverGcpAccount {
     <#
     .SYNOPSIS
-        List registered GCP accounts
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Confirm-GetFile {
     <#
     .SYNOPSIS
-        Lists files retrieved with 'get' during a Real-time Response session
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

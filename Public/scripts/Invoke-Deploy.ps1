@@ -1,8 +1,6 @@
 ﻿function Invoke-Deploy {
     <#
     .SYNOPSIS
-        Deploy and run an executable using Real-time Response
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

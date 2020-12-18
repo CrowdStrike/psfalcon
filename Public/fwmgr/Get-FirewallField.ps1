@@ -1,8 +1,6 @@
 ﻿function Get-FirewallField {
     <#
     .SYNOPSIS
-        Search for firewall field specifications
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

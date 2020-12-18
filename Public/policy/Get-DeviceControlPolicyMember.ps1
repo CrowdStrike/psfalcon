@@ -1,8 +1,6 @@
 ﻿function Get-DeviceControlPolicyMember {
     <#
     .SYNOPSIS
-        Search for Device Control policy members
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

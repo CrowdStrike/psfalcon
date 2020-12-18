@@ -1,8 +1,6 @@
 ﻿function Edit-FirewallGroup {
     <#
     .SYNOPSIS
-        Update a Firewall Rule Group
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

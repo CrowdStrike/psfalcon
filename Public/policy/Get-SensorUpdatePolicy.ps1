@@ -1,8 +1,6 @@
 ﻿function Get-SensorUpdatePolicy {
     <#
     .SYNOPSIS
-        Search for Sensor Update policies and their members
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

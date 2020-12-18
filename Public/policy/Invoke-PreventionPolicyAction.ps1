@@ -1,8 +1,6 @@
 ﻿function Invoke-PreventionPolicyAction {
     <#
     .SYNOPSIS
-        Perform actions on Prevention policies
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

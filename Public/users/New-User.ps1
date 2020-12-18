@@ -1,8 +1,6 @@
 ﻿function New-User {
     <#
     .SYNOPSIS
-        Create a new user
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

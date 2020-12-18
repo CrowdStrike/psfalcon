@@ -1,8 +1,6 @@
 ﻿function Start-Session {
     <#
     .SYNOPSIS
-        Initialize a Real-time Response session with one or more hosts
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

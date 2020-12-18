@@ -1,8 +1,6 @@
 ﻿function Get-Role {
     <#
     .SYNOPSIS
-        Search for user roles, or roles assigned to a specific user
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

@@ -1,8 +1,6 @@
 ﻿function Receive-Sample {
     <#
     .SYNOPSIS
-        Download a sample file
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

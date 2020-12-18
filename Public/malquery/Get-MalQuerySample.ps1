@@ -1,8 +1,6 @@
 ﻿function Get-MalQuerySample {
     <#
     .SYNOPSIS
-        Retrieve indexed file metadata by SHA256 hash
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

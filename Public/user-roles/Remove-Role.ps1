@@ -1,8 +1,6 @@
 ﻿function Remove-Role {
     <#
     .SYNOPSIS
-        Remove one or more roles from a user
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon

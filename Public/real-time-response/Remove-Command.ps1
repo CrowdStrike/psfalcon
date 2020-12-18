@@ -1,8 +1,6 @@
 ﻿function Remove-Command {
     <#
     .SYNOPSIS
-        Remove a queued Real-time Response command
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
