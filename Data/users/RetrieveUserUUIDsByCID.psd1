@@ -10,7 +10,7 @@
   Description = "List all user identifiers"
   Parameters = @(
     @{
-      Dynamic = "Names"
+      Dynamic = "Usernames"
       Type = "switch"
       Required = $false
       Description = "Retrieve usernames (typically email addresses) rather than user identifiers"

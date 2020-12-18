@@ -10,7 +10,7 @@
   Description = "Assign one or more roles to a user"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "user_uuid"
       Type = "string"
       In = @( "query" )

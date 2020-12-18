@@ -10,7 +10,7 @@
   Description = "Show role IDs of roles assigned to a user"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "user_uuid"
       Type = "string"
       In = @( "query" )

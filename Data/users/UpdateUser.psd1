@@ -10,7 +10,7 @@
   Description = "Modify an existing user's first or last name"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "user_uuid"
       Type = "string"
       In = @( "query" )

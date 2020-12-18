@@ -10,7 +10,7 @@
   Description = "Delete a user"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "user_uuid"
       Type = "string"
       In = @( "query" )
