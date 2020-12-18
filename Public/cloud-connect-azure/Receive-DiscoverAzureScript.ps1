@@ -1,17 +1,15 @@
-﻿function Get-DiscoverAzureScript {
+﻿function Receive-DiscoverAzureScript {
     <#
     .SYNOPSIS
-        Provides a script to run in an Azure environment to grant access to the Falcon platform
-    .DESCRIPTION
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/GetCSPMAzureUserScripts')]
+    [CmdletBinding(DefaultParameterSetName = 'cloud-connect-azure/GetCSPMAzureUserScriptsAttachment')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('cloud-connect-azure/GetCSPMAzureUserScripts')
+        $Endpoints = @('cloud-connect-azure/GetCSPMAzureUserScriptsAttachment')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
