@@ -1,16 +1,16 @@
 @{
-  Name = "samples/UploadSampleV2"
-  Path = "/samples/entities/samples/v2"
-  Method = "POST"
+  Name = "samples/UploadSampleV3"
+  Method = "post"
+  Path = "/samples/entities/samples/v3"
+  Description = "Upload a file for further cloud analysis. After uploading, call the specific analysis API endpoint."
   Headers = @{
     Accept = "application/json"
     ContentType = "application/octet-stream"
   }
-  Permission = "falconx-sandbox:write"
-  Description = "Upload a sample file"
+  Permission = "samplestore:write"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )
@@ -58,10 +58,19 @@
       Description = "Visibility of the sample in Falcon MalQuery"
       Position = $null
     }
+    @{
+      Dynamic = "Upfile"
+      Name = "upfile"
+      Type = "file"
+      In = @( "formData" )
+      Required = $false
+      Position = $null
+      Description = "The binary file."
+    }
   )
   Responses = @{
-    403 = "msa.ReplyMetaOnly"
-    429 = "msa.ReplyMetaOnly"
     default = "samplestore.SampleMetadataResponseV2"
+    429 = "msa.ReplyMetaOnly"
+    403 = "msa.ReplyMetaOnly"
   }
 }

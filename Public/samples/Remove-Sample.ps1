@@ -7,11 +7,11 @@
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'samples/DeleteSampleV2')]
+    [CmdletBinding(DefaultParameterSetName = 'samples/DeleteSampleV3')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('samples/DeleteSampleV2')
+        $Endpoints = @('samples/DeleteSampleV3')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {

@@ -1,19 +1,19 @@
 @{
-  Name = "samples/DeleteSampleV2"
-  Path = "/samples/entities/samples/v2"
-  Method = "DELETE"
+  Name = "samples/DeleteSampleV3"
+  Method = "delete"
+  Path = "/samples/entities/samples/v3"
+  Description = "Removes a sample, including file, meta and submissions from the collection"
   Headers = @{
     Accept = "application/json"
   }
-  Permission = "falconx-sandbox:write"
-  Description = "Removes a sample including file meta and submissions from the collection"
+  Permission = "samplestore:write"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )
-      Required = $false
+      Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "User identifier"
       Position = $null

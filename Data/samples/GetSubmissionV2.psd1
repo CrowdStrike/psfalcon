@@ -10,7 +10,7 @@
   Description = "Gets the submissions entities."
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )

@@ -7,11 +7,11 @@
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = 'samples/UploadSampleV2')]
+    [CmdletBinding(DefaultParameterSetName = 'samples/UploadSampleV3')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('samples/UploadSampleV2')
+        $Endpoints = @('samples/UploadSampleV3')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     begin {

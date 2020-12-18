@@ -10,7 +10,7 @@
   Description = "Retrieves metadata information about a sample."
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )

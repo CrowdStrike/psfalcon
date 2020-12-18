@@ -1,15 +1,16 @@
 @{
-  Name = "samples/GetSampleV2"
-  Path = "/samples/entities/samples/v2"
-  Method = "GET"
+  Name = "samples/GetSampleV3"
+  Method = "get"
+  Path = "/samples/entities/samples/v3"
+  Description = "Retrieves the file associated with the given ID (SHA256)"
   Headers = @{
     Accept = "application/octet-stream"
+    ContentType = "*/*"
   }
-  Permission = "falconx-sandbox:read"
-  Description = "Retrieves the file associated with the given ID (SHA256)"
+  Permission = "samplestore:read"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )
@@ -40,10 +41,9 @@
   )
   Responses = @{
     400 = "msa.ReplyMetaOnly"
-    403 = "msa.ReplyMetaOnly"
     404 = "msa.ReplyMetaOnly"
-    429 = "msa.ReplyMetaOnly"
     500 = "msa.ReplyMetaOnly"
-    default = ""
+    429 = "msa.ReplyMetaOnly"
+    403 = "msa.ReplyMetaOnly"
   }
 }

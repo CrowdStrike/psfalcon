@@ -10,7 +10,7 @@
   Description = "Retrieve information about sandbox submission files"
   Parameters = @(
     @{
-      Dynamic = "UserUuid"
+      Dynamic = "UserId"
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )
