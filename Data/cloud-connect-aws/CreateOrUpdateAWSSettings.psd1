@@ -15,10 +15,8 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Pattern = "\d{12}"
       Description = "The 12 digit AWS account which is hosting the centralized S3 bucket of containing cloudtrail logs from multiple accounts."
-      Position = $null
     }
     @{
       Dynamic = "ExternalId"
@@ -26,9 +24,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "By setting this value all subsequent accounts that are provisioned will default to using this value as their external ID."
-      Position = $null
     }
   )
   Responses = @{

@@ -19,7 +19,6 @@
         "refresh_active_stream_session"
       )
       Description = "Action name. Allowed value is refresh_active_stream_session."
-      Position = $null
     }
     @{
       Dynamic = "AppId"
@@ -29,7 +28,6 @@
       Required = $true
       Pattern = "\w{1,32}"
       Description = "Label that identifies your connection. Max: 32 alphanumeric characters (a-z A-Z 0-9)."
-      Position = $null
     }
     @{
       Dynamic = "Partition"
@@ -38,7 +36,6 @@
       In = @( "path" )
       Required = $true
       Description = "Partition to request data for."
-      Position = $null
     }
   )
   Responses = @{

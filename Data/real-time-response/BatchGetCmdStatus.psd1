@@ -13,11 +13,9 @@
       Name = "timeout"
       Type = "int"
       In = @( "query" )
-      Required = $false
       Min = 30
       Max = 600
       Description = "Length of time to wait for a result in seconds"
-      Position = $null
     }
     @{
       Dynamic = "BatchGetCmdReqId"
@@ -26,7 +24,6 @@
       In = @( "query" )
       Required = $true
       Description = "Batch 'get' command request identifier"
-      Position = $null
     }
   )
   Responses = @{

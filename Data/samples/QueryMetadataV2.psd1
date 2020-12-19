@@ -14,9 +14,7 @@
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )
-      Required = $false
       Description = "User UUID"
-      Position = $null
     }
   )
 }

@@ -23,7 +23,6 @@
       Name = "sequence_id"
       Type = "int"
       In = @( "query" )
-      Required = $false
       Description = "Sequence identifier"
       Position = 2
     }

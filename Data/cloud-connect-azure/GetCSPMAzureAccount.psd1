@@ -15,10 +15,8 @@
       Type = "array"
       In = @( "query" )
       Parent = "resources"
-      Required = $false
       Pattern = "^(0-9a-z-){36}$"
       Description = "SubscriptionIDs of accounts to select for this status operation. If this is empty then all accounts are returned."
-      Position = $null
     }
     @{
       Dynamic = "ScanType"
@@ -26,13 +24,11 @@
       Type = "string"
       In = @( "query" )
       Parent = "resources"
-      Required = $false
       Enum = @(
         "dry"
         "full"
       )
       Description = "Type of scan dry or full to perform on selected accounts"
-      Position = $null
     }
   )
   Responses = @{

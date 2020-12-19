@@ -39,7 +39,6 @@
       Name = "platform"
       Type = "array"
       In = @( "formdata" )
-      Required = $false
       Enum = @(
         "windows"
         "mac"
@@ -61,7 +60,6 @@
       Name = "name"
       Type = "string"
       In = @( "formdata" )
-      Required = $false
       Description = "Optional name to use for the script"
       Position = 5
     }
@@ -70,7 +68,6 @@
       Name = "comments_for_audit_log"
       Type = "string"
       In = @( "formdata" )
-      Required = $false
       Max = 4096
       Description = "A comment for the audit log"
       Position = 6

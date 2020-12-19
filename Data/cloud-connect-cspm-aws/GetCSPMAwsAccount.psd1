@@ -14,9 +14,7 @@
       Name = "ids"
       Type = "array"
       In = @( "query" )
-      Required = $false
       Pattern = "\d{12}"
-      Position = $null
       Description = "AWS account IDs"
     }
     @{
@@ -24,9 +22,7 @@
       Name = "organization-ids"
       Type = "array"
       In = @( "query" )
-      Required = $false
       Pattern = "^o-[0-9a-z]{10,32}$"
-      Position = $null
       Description = "AWS organization IDs"
     }
     @{
@@ -34,12 +30,10 @@
       Name = "status"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Enum = @(
         "provisioned",
         "operational"
       )
-      Position = $null
       Description = "Account status to filter results by."
     }
     @{
@@ -47,12 +41,10 @@
       Name = "scan-type"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Enum = @(
         "full",
         "dry"
       )
-      Position = $null
       Description = "Type of scan, dry or full, to perform on selected accounts"
     }
   )

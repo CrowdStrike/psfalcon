@@ -14,8 +14,6 @@
       Name = "ids"
       Type = "array"
       In = @( "query" )
-      Required = $false
-      Position = $null
       Description = "AWS account IDs to remove"
     }
     @{
@@ -23,9 +21,7 @@
       Name = "organization-ids"
       Type = "array"
       In = @( "query" )
-      Required = $false
       Pattern = "^o-[0-9a-z]{10,32}$"
-      Position = $null
       Description = "AWS organization IDs to remove"
     }
   )

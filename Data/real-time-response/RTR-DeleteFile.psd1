@@ -15,7 +15,6 @@
       In = @( "query" )
       Required = $true
       Description = "File identifier"
-      Position = $null
     }
     @{
       Dynamic = "SessionId"
@@ -25,7 +24,6 @@
       Required = $true
       Description = "Real-time Response session identifier"
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
-      Position = $null
     }
   )
   Responses = @{

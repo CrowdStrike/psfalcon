@@ -41,7 +41,6 @@
       In = @( "body" )
       Parent = "action_parameters"
       Pattern = "\w{32}"
-      Required = $false
       Description = "Host Group identifier used when adding or removing host groups"
       Position = 3
     }

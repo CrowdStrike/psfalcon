@@ -24,7 +24,6 @@
       Name = "audit_message"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Description = "A comment to append to the audit log"
       Position = 2
     }

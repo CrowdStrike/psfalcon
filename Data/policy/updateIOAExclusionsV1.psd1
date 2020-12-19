@@ -25,7 +25,6 @@
       Type = "array"
       In = @( "body" )
       Pattern = "(\w{32}|all)"
-      Required = $false
       Position = 2
       Description = "One or more host group identifiers or 'all'"
     }
@@ -34,7 +33,6 @@
       Name = "name"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 3
       Description = "Indicator of Attack exclusion name"
     }
@@ -43,7 +41,6 @@
       Name = "pattern_id"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 4
       Description = "Indicator of Attack pattern identifier"
     }
@@ -52,7 +49,6 @@
       Name = "ifn_regex"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 5
       Description = "Image filename RegEx pattern"
     }
@@ -61,7 +57,6 @@
       Name = "cl_regex"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 6
       Description = "Command line RegEx pattern"
     }
@@ -70,7 +65,6 @@
       Name = "pattern_name"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 7
       Description = "Indicator of Attack pattern name"
     }
@@ -79,7 +73,6 @@
       Name = "description"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 8
       Description = "A description of the Indicator of Attack exclusion"
     }
@@ -88,7 +81,6 @@
       Name = "detection_json"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 9
       Description = $null
     }
@@ -97,7 +89,6 @@
       Name = "comment"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 10
       Description = "Comment for tracking purposes"
     }

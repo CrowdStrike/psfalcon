@@ -26,7 +26,6 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "The new name to assign to the policy"
       Position = 2
     }
@@ -36,7 +35,6 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "The new description to assign to the policy"
       Position = 3
     }

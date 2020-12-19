@@ -23,14 +23,12 @@
     @{
       Dynamic = "Arguments"
       Type = "string"
-      Required = $false
       Description = "Command line arguments to include upon execution"
       Position = 3
     }
     @{
       Dynamic = "Timeout"
       Type = "int"
-      Required = $false
       Min = 30
       Max = 600
       Description = "Length of time to wait for a result in seconds"
@@ -39,7 +37,6 @@
     @{
       Dynamic = "QueueOffline"
       Type = "bool"
-      Required = $false
       Description = "Add session to the offline queue if the host does not initialize"
       Position = 5
     }

@@ -23,7 +23,6 @@
       Name = "firstName"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Description = "User's first name"
       Position = 2
     }
@@ -32,7 +31,6 @@
       Name = "lastName"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Description = "User's last name"
       Position = 3
     }
@@ -41,7 +39,6 @@
       Name = "password"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Description = "The user's password. If left blank the system will generate an email asking them to set their password (recommended)"
       Position = 4
     }

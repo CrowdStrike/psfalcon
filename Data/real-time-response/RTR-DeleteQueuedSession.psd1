@@ -16,7 +16,6 @@
       Required = $true
       Description = "Real-time Response session identifier"
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
-      Position = $null
     }
     @{
       Dynamic = "CloudRequestId"
@@ -26,7 +25,6 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "Cloud request identifier of the executed command"
-      Position = $null
     }
   )
   Responses = @{

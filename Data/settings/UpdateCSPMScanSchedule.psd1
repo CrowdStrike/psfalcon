@@ -36,7 +36,6 @@
         "12h"
         "24h"
       )
-      Required = $false
       Position = 2
       Description = "Scan interval"
     }
@@ -46,7 +45,6 @@
       Type = "string"
       Parent = "resources"
       In = @( "body" )
-      Required = $false
       Position = 3
       Description = $null
     }

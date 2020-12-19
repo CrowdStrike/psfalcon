@@ -14,10 +14,8 @@
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )
-      Required = $false
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "User identifier"
-      Position = $null
     }
     @{
       Dynamic = "Sha256"
@@ -27,16 +25,13 @@
       Pattern = "\w{64}"
       Required = $true
       Description = "Sha256 hash value of the file"
-      Position = $null
     }
     @{
       Dynamic = "PasswordProtected"
       Name = "password_protected"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Description = "Flag whether the sample should be zipped and password protected with pass='infected'"
-      Position = $null
     }
   )
   Responses = @{

@@ -13,7 +13,6 @@
       Name = "platform"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Enum = @(
         "linux"
         "mac"

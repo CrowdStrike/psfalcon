@@ -8,7 +8,6 @@
   }
   Permission = "cloud-connect-aws:read"
   Description = "Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts"
-  Parameters = @()
   Responses = @{
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"

@@ -14,7 +14,6 @@
       Name = "cloud-platform"
       Type = "array"
       In = @( "query" )
-      Required = $false
       Enum = @(
         "aws",
         "azure",

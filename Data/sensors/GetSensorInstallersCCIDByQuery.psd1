@@ -8,7 +8,6 @@
   }
   Permission = "sensor-installers:read"
   Description = "Get CCID to use with sensor installers"
-  Parameters = @()
   Responses = @{
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"

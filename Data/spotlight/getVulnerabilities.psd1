@@ -15,7 +15,6 @@
       In = @( "query" )
       Required = $true
       Description = "One or more vulnerability identifiers"
-      Position = $null
     }
   )
   Responses = @{

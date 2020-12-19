@@ -14,23 +14,19 @@
       Name = "scan-type"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Enum = @(
         "dry"
         "full"
       )
       Description = "Type of scan dry or full to perform on selected accounts"
-      Position = $null
     }
     @{
       Dynamic = "ParentIds"
       Name = "ids"
       Type = "array"
       In = @( "query" )
-      Required = $false
       Pattern = "\d{10}"
       Description = "Parent IDs of accounts"
-      Position = $null
     }
   )
   Responses = @{

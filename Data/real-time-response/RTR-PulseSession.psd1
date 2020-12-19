@@ -17,16 +17,13 @@
       Required = $true
       Pattern = "\w{32}"
       Description = "Host identifier"
-      Position = $null
     }
     @{
       Dynamic = "QueueOffline"
       Name = "queue_offline"
       Type = "bool"
       In = @( "body" )
-      Required = $false
       Description = "Add session to the offline queue"
-      Position = $null
     }
   )
   Responses = @{

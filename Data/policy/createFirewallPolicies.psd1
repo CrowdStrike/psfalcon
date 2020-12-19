@@ -15,10 +15,8 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "Copy settings from an existing policy"
       Pattern = "\w{32}"
-      Position = $null
     }
     @{
       Dynamic = "Description"
@@ -26,9 +24,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "Policy description"
-      Position = $null
     }
     @{
       Dynamic = "Name"
@@ -38,7 +34,6 @@
       Parent = "resources"
       Required = $true
       Description = "Policy name"
-      Position = $null
     }
     @{
       Dynamic = "PlatformName"
@@ -53,7 +48,6 @@
         "Linux"
       )
       Description = "Platform name"
-      Position = $null
     }
   )
   Responses = @{

@@ -63,7 +63,6 @@
     @{
       Dynamic = "Timeout"
       Type = "int"
-      Required = $false
       Min = 30
       Max = 600
       Description = "Length of time to wait for a result in seconds"
@@ -72,7 +71,6 @@
     @{
       Dynamic = "QueueOffline"
       Type = "bool"
-      Required = $false
       Description = "Add sessions in this batch to the offline queue if the hosts do not initialize"
       Position = 5
     }

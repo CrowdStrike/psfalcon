@@ -23,7 +23,6 @@
       Name = "groups"
       Type = "array"
       In = @( "body" )
-      Required = $false
       Pattern = "(\w{32}|all)"
       Position = 2
       Description = "One or more host group identifiers or 'all'"
@@ -33,7 +32,6 @@
       Name = "value"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 3
       Description = "The file or folder path to exclude"
     }
@@ -42,7 +40,6 @@
       Name = "comment"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 4
       Description = "Comment for tracking purposes"
     }

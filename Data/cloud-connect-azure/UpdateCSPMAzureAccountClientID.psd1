@@ -17,7 +17,6 @@
       Required = $true
       Pattern = "^(0-9a-z-){36}$"
       Description = "Client identifier to use for the Service Principal associated with the Azure account"
-      Position = $null
     }
   )
   Responses = @{

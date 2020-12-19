@@ -8,7 +8,6 @@
   }
   Permission = "usermgmt:read"
   Description = "List user role identifiers"
-  Parameters = @()
   Responses = @{
     429 = "msa.ReplyMetaOnly"
     default = "msa.QueryResponse"

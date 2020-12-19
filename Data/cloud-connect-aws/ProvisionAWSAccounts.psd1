@@ -15,13 +15,11 @@
       Type = "string"
       In = @( "query" )
       Parent = "resources"
-      Required = $false
       Enum = @(
         "cloudformation"
         "manual"
       )
       Description = "Provisioning mode"
-      Position = $null
     }
     @{
       Dynamic = "CloudtrailId"
@@ -29,9 +27,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "The 12 digit AWS account which is hosting the S3 bucket containing cloudtrail logs for this account. If this field is set it takes precedence of the settings level field."
-      Position = $null
     }
     @{
       Dynamic = "CloudtrailRegion"
@@ -39,9 +35,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "Region where the S3 bucket containing cloudtrail logs resides."
-      Position = $null
     }
     @{
       Dynamic = "ExternalId"
@@ -49,9 +43,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "ID assigned for use with cross account IAM role access."
-      Position = $null
     }
     @{
       Dynamic = "IamRoleArn"
@@ -59,9 +51,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "The full arn of the IAM role created in this account to control access."
-      Position = $null
     }
     @{
       Dynamic = "AccountId"
@@ -69,9 +59,8 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
+      Pattern = "\d{12}"
       Description = "12 digit AWS provided unique identifier for the account."
-      Position = $null
     }
     @{
       Dynamic = "RateLimitReqs"
@@ -79,9 +68,7 @@
       Type = "int"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "Rate limiting setting to control the maximum number of requests that can be made within the rate_limit_time threshold."
-      Position = $null
     }
     @{
       Dynamic = "RateLimitTime"
@@ -89,9 +76,7 @@
       Type = "int"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "Rate limiting setting to control the number of seconds for which -RateLimitReqs applies."
-      Position = $null
     }
   )
   Responses = @{

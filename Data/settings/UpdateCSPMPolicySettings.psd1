@@ -25,7 +25,6 @@
       Type = "bool"
       Parent = "resources"
       In = @( "body" )
-      Required = $false
       Position = 2
       Description = $null
     }
@@ -40,7 +39,6 @@
         "medium"
         "informational"
       )
-      Required = $false
       Position = 3
       Description = $null
     }

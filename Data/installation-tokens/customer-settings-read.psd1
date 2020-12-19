@@ -9,7 +9,6 @@
   }
   Permission = "installation-tokens:read"
   Description = "List installation token settings"
-  Parameters = @()
   Responses = @{
     400 = "msa.ReplyMetaOnly"
     403 = "msa.ReplyMetaOnly"

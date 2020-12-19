@@ -17,7 +17,6 @@
       Parent = "resources"
       Required = $true
       Description = "GCP parent identifier"
-      Position = $null
     }
   )
   Responses = @{

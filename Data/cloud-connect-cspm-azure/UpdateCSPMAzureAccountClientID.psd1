@@ -24,7 +24,6 @@
       Name = "tenant-id"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Position = 2
       Description = "Tenant ID to update client ID for. Required if multiple tenants are registered."

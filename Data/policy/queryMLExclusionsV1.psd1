@@ -11,13 +11,11 @@
     @{
       Dynamic = "Limit"
       Name = "limit"
-      Required = $false
       Description = "Maximum number of results per request"
       Type = "int"
       In = @( "query" )
       Min = 1
       Max = 500
-      Position = $null
     }
   )
   Responses = @{

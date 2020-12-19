@@ -13,7 +13,6 @@
       Name = "id"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Description = "The ID of the Prevention Policy to search for members of"
       Position = 1
     }

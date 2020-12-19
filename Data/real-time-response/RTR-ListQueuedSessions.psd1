@@ -23,7 +23,6 @@
       Type = "switch"
       Required = $true
       Description = "Lists information about sessions in the offline queue"
-      Position = $null
     }
   )
   Responses = @{

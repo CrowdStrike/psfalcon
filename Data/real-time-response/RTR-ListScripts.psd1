@@ -13,11 +13,9 @@
       Name = "limit"
       Type = "int"
       In = @( "query" )
-      Required = $false
       Min = 1
       Max = 100
       Description = "Maximum number of results per request"
-      Position = $null
     }
   )
   Responses = @{

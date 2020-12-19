@@ -44,7 +44,6 @@
     @{
       Dynamic = "Comment"
       Name = "comment"
-      Required = $false
       Description = "Comment for tracking purposes"
       Type = "string"
       In = @( "body" )

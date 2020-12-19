@@ -60,7 +60,6 @@
       Name = "pattern_name"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 6
       Description = "Indicator of Attack pattern name"
     }
@@ -69,7 +68,6 @@
       Name = "description"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 7
       Description = "A description of the Indicator of Attack exclusion"
     }
@@ -78,7 +76,6 @@
       Name = "detection_json"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 8
       Description = $null
     }
@@ -87,7 +84,6 @@
       Name = "comment"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 9
       Description = "Comment for tracking purposes"
     }

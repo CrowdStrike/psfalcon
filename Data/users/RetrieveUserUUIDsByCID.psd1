@@ -12,9 +12,7 @@
     @{
       Dynamic = "Usernames"
       Type = "switch"
-      Required = $false
       Description = "Retrieve usernames (typically email addresses) rather than user identifiers"
-      Position = $null
     }
   )
   Responses = @{

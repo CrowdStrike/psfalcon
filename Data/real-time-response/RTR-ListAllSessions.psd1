@@ -8,7 +8,6 @@
   }
   Permission = "real-time-response:read"
   Description = "Get a list of session_ids."
-  Parameters = @()
   Responses = @{
     400 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"

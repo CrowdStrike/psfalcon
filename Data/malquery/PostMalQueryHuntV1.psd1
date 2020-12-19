@@ -14,7 +14,6 @@
       Type = "switch"
       Required = $true
       Description = "Schedule a YARA-based search"
-      Position = $null
     }
     @{
       Dynamic = "YaraRule"
@@ -23,7 +22,6 @@
       In = @( "body" )
       Required = $true
       Description = "A YARA rule that defines your search"
-      Position = $null
     }
     @{
       Dynamic = "FilterMeta"
@@ -31,10 +29,8 @@
       Type = "array"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Pattern = "(sha256|md5|type|size|first_seen|label|family)"
       Description = "Subset of metadata fields to include in the results"
-      Position = $null
     }
     @{
       Dynamic = "FilterFileTypes"
@@ -42,10 +38,8 @@
       Type = "array"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Pattern = "(cdf|cdfv2|cjava|dalvik|doc|docx|elf32|elf64|email|html|hwp|java.arc|lnk|macho|pcap|pdf|pe32|pe64|perl|ppt|pptx|python|pythonc|rtf|swf|text|xls|xlsx)"
       Description = "File types to include with the results"
-      Position = $null
     }
     @{
       Dynamic = "MinDate"
@@ -53,10 +47,8 @@
       Type = "string"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Pattern = "\d{4}/\d{2}/\d{2}"
       Description = "Limit results to files first seen after this date"
-      Position = $null
     }
     @{
       Dynamic = "MaxDate"
@@ -64,10 +56,8 @@
       Type = "string"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Pattern = "\d{4}/\d{2}/\d{2}"
       Description = "Limit results to files first seen after this date"
-      Position = $null
     }
     @{
       Dynamic = "MinSize"
@@ -75,9 +65,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Description = "Minimum file size specified in bytes or multiples of KB/MB/GB"
-      Position = $null
     }
     @{
       Dynamic = "MaxSize"
@@ -85,9 +73,7 @@
       Type = "string"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Description = "Maximum file size specified in bytes or multiples of KB/MB/GB"
-      Position = $null
     }
     @{
       Dynamic = "Limit"
@@ -95,9 +81,7 @@
       Type = "int"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Description = "Maximum number of results per request"
-      Position = $null
     }
   )
   Responses = @{

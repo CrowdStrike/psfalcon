@@ -24,7 +24,6 @@
       Name = "firstName"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Description = "User's first name"
       Position = 2
     }
@@ -33,7 +32,6 @@
       Name = "lastName"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Description = "User's last name"
       Position = 3
     }

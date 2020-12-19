@@ -24,7 +24,6 @@
       Name = "hosts_to_remove"
       Type = "array"
       In = @( "body" )
-      Required = $false
       Pattern = "\w{32}"
       Description = "One or more Host identifiers to remove from the batch session"
       Position = 2
@@ -34,7 +33,6 @@
       Name = "timeout"
       Type = "int"
       In = @( "query" )
-      Required = $false
       Min = 30
       Max = 600
       Description = "Length of time to wait for a result in seconds"

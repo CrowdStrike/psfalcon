@@ -33,7 +33,6 @@
       Name = "comment"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Position = 3
       Description = "Comment for tracking purposes"
     }

@@ -25,7 +25,6 @@
       Type = "string"
       Parent = "resources"
       In = @( "body" )
-      Required = $false
       Position = 2
       Description = "AWS organization identifier"
     }

@@ -7,7 +7,6 @@
   }
   Permission = "sensor-update-policies:read"
   Description = "Search for Sensor Update Policies in your environment by providing an FQL filter and paging details. Returns a set of Sensor Update Policy IDs which match the filter criteria"
-  Parameters = @()
   Responses = @{
     403 = "msa.ErrorsOnly"
     429 = "msa.ReplyMetaOnly"

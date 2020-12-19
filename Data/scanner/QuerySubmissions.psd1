@@ -7,7 +7,6 @@
     Accept = "application/json"
   }
   Permission = "quick-scan:read"
-  Parameters = @()
   Responses = @{
     403 = "msa.ReplyMetaOnly"
     429 = "msa.ReplyMetaOnly"

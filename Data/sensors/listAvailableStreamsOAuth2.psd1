@@ -24,7 +24,6 @@
       Name = "format"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Enum = @(
         "json"
         "flatjson"

@@ -40,7 +40,6 @@
       Type = "string"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "The description to use when creating the policy"
       Position = 3
     }
@@ -50,7 +49,6 @@
       Type = "hashtable"
       In = @( "body" )
       Parent = "resources"
-      Required = $false
       Description = "A hashtable defining policy settings"
       Position = 4
     }

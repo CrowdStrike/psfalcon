@@ -13,7 +13,6 @@
       Name = "tenant-id"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Position = 1
       Description = "Tenant ID to generate script for. Defaults to most recently registered tenant."

@@ -14,10 +14,8 @@
       Name = "X-CS-USERUUID"
       Type = "string"
       In = @( "header" )
-      Required = $false
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "User identifier"
-      Position = $null
     }
     @{
       Dynamic = "FileIds"
@@ -26,7 +24,6 @@
       In = @( "query" )
       Required = $true
       Description = "The file sha256."
-      Position = $null
     }
   )
 }

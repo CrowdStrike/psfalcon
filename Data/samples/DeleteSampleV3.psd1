@@ -16,7 +16,6 @@
       Required = $true
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Description = "User identifier"
-      Position = $null
     }
     @{
       Dynamic = "Sha256"
@@ -26,7 +25,6 @@
       Required = $true
       Pattern = "\w{64}"
       Description = "Sha256 hash value of the file to remove"
-      Position = $null
     }
   )
   Responses = @{

@@ -22,7 +22,6 @@
         "wide"
       )
       Description = "Pattern type"
-      Position = $null
     }
     @{
       Dynamic = "PatternValue"
@@ -32,7 +31,6 @@
       Parent = "patterns"
       Required = $true
       Description = "Pattern value"
-      Position = $null
     }
     @{
       Dynamic = "FilterMeta"
@@ -40,10 +38,8 @@
       Type = "array"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Pattern = "(sha256|md5|type|size|first_seen|label|family)"
       Description = "Subset of metadata fields to include in the results"
-      Position = $null
     }
     @{
       Dynamic = "Limit"
@@ -51,16 +47,13 @@
       Type = "int"
       In = @( "body" )
       Parent = "options"
-      Required = $false
       Description = "Maximum number of results per request"
-      Position = $null
     }
     @{
       Dynamic = "Fuzzy"
       Type = "switch"
       Required = $true
       Description = "Perform a fuzzy search"
-      Position = $null
     }
   )
   Responses = @{

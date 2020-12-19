@@ -21,7 +21,6 @@
     @{
       Dynamic = "GroupIds"
       Name = "groups"
-      Required = $false
       Description = "One or more host group identifiers or 'all'"
       Type = "array"
       In = @( "body" )
@@ -31,7 +30,6 @@
     @{
       Dynamic = "ExcludedFrom"
       Name = "excluded_from"
-      Required = $false
       Description = "Operations to exclude"
       Type = "array"
       In = @( "body" )
@@ -44,7 +42,6 @@
     @{
       Dynamic = "Pattern"
       Name = "value"
-      Required = $false
       Description = "RegEx pattern for the exclusion"
       Type = "string"
       In = @( "body" )
@@ -53,7 +50,6 @@
     @{
       Dynamic = "Comment"
       Name = "comment"
-      Required = $false
       Description = "Comment for tracking purposes"
       Type = "string"
       In = @( "body" )

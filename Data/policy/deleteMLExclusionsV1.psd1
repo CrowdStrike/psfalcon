@@ -20,7 +20,6 @@
     @{
       Dynamic = "Comment"
       Name = "comment"
-      Required = $false
       Description = "Explains why this exclusion was deleted"
       Type = "string"
       In = @( "query" )

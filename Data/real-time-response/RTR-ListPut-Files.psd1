@@ -7,7 +7,6 @@
   }
   Permission = "real-time-response-admin:write"
   Description = "Get a list of put-file ID's that are available to the user for the `put` command."
-  Parameters = @()
   Responses = @{
     400 = "domain.APIError"
     403 = "msa.ReplyMetaOnly"

@@ -16,7 +16,6 @@
       Pattern = "\w{32}"
       Required = $true
       Description = "Remediation identifiers"
-      Position = $null
     }
   )
 }

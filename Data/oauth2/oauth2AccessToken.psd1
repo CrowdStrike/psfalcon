@@ -13,7 +13,6 @@
       Name = "client_id"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Pattern = "\w{32}"
       Description = "The API client ID to authenticate your API requests"
       Position = 1
@@ -23,7 +22,6 @@
       Name = "client_secret"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Pattern = "\w{40}"
       Description = "The API client secret to authenticate your API requests"
       Position = 2
@@ -31,7 +29,6 @@
     @{
       Dynamic = "Cloud"
       Type = "string"
-      Required = $false
       Enum = @(
         "eu-1"
         "us-gov-1"
@@ -46,7 +43,6 @@
       Name = "member_cid"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Pattern = "\w{32}"
       Description = "For MSSP Master CIDs optionally lock the token to act on behalf of this member CID"
       Position = 4

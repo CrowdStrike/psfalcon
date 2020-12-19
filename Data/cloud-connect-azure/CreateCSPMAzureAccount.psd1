@@ -14,19 +14,15 @@
       Name = "subscription_id"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Pattern = "^(0-9a-z-){36}$"
       Description = "Azure subscription identifier"
-      Position = $null
     }
     @{
       Dynamic = "TenantId"
       Name = "tenant_id"
       Type = "string"
       In = @( "body" )
-      Required = $false
       Description = "Azure tenant identifier"
-      Position = $null
     }
   )
   Responses = @{

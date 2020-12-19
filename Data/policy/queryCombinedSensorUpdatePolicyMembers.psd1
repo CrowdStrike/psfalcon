@@ -14,7 +14,6 @@
       Type = "string"
       In = @( "query" )
       Pattern = "\w{32}"
-      Required = $false
       Description = "The ID of the Sensor Update Policy to search for members of"
       Position = 1
     }

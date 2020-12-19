@@ -13,20 +13,16 @@
       Name = "after"
       Type = "string"
       In = @( "query" )
-      Required = $false
       Description = "A pagination token used with the Limit parameter to manage pagination of results"
-      Position = $null
     }
     @{
       Dynamic = "Limit"
       Name = "limit"
       Type = "int"
       In = @( "query" )
-      Required = $false
       Min = 1
       Max = 400
       Description = "Maximum number of results per request"
-      Position = $null
     }
   )
   Responses = @{

@@ -14,11 +14,9 @@
       Name = "timeout"
       Type = "int"
       In = @( "query" )
-      Required = $false
       Min = 30
       Max = 600
       Description = "Length of time to wait for a result in seconds"
-      Position = $null
     }
     @{
       Dynamic = "BatchId"
@@ -28,7 +26,6 @@
       Pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
       Required = $true
       Description = "Real-time Response batch session identifier"
-      Position = $null
     }
     @{
       Dynamic = "Path"
@@ -37,7 +34,6 @@
       In = @( "body" )
       Required = $true
       Description = "Full path to the file to be retrieved from each host"
-      Position = $null
     }
     @{
       Dynamic = "OptionalHosts"
@@ -45,9 +41,7 @@
       Type = "array"
       In = @( "body" )
       Pattern = "\w{32}"
-      Required = $false
       Description = "Restrict the request to specific host identifiers"
-      Position = $null
     }
   )
   Responses = @{
