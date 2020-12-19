@@ -26,7 +26,13 @@ function Split-Param {
                     $PathLength = ("$($Falcon.Hostname)$($Target.Path)").Length
                     $LongestId = (($Output.Query | Where-Object { $_ -match 'ids='}) |
                         Measure-Object -Maximum -Property Length).Maximum + 1
-                    [Math]::Floor([decimal]((65535 - $PathLength)/$LongestId))
+                    $IdCount = [Math]::Floor([decimal]((65535 - $PathLength)/$LongestId))
+                    if ($IdCount -gt 1000) {
+                        1000
+                    }
+                    else {
+                        $IdCount
+                    }
                 }
             } elseif (($Target.Parameters | Where-Object Name -eq ids).Max -gt 0) {
                 ($Target.Parameters | Where-Object Name -eq ids).Max
