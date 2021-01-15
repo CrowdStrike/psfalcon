@@ -5,19 +5,19 @@ A valid CrowdStrike **[OAuth2 API Client](https://falcon.crowdstrike.com/support
 
 # Installation
 1. Download the files in this repository as a ZIP
-2. Extract the contents of `psfalcon-master.zip` into the appropriate PowerShell modules folder:
+2. Extract the contents of `psfalcon-master.zip/psfalcon-master` into the appropriate PowerShell modules folder:
 
 Linux/MacOS:
 ```powershell
-Expand-Archive ./psfalcon-master.zip $HOME/.local/share/powershell/Modules/PSFalcon/2.0.0
+$HOME/.local/share/powershell/Modules/PSFalcon/2.0.0
 ```
 Windows (PowerShell Core/6+):
 ```powershell
-Expand-Archive .\psfalcon-master.zip $HOME\Documents\PowerShell\Modules\PSFalcon\2.0.0
+$HOME\Documents\PowerShell\Modules\PSFalcon\2.0.0
 ```
 Windows (PowerShell Desktop/5.1):
 ```powershell
-Expand-Archive .\psfalcon-master.zip $HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
+$HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
 ```
 
 # Commands
