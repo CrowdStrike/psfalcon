@@ -9,7 +9,7 @@ PSFalcon lets you automate tasks and perform actions in large numbers not normal
 * Upload or download malware samples or Real-time Response files
 * Create/modify configurations for MSSP parent and child environments
 
-Please visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)** for example use and detailed information.
+### Visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)** for example use and detailed information.
 
 # Requirements
 * An active Falcon subscription for the appropriate modules
