@@ -18,8 +18,6 @@ PSFalcon lets you automate tasks and perform actions in large numbers not normal
 
 # Installation
 
-## Install PowerShell
-
 If not already present, install [PowerShell](https://github.com/PowerShell/PowerShell#get-powershell).
 
 ## Installation through the PowerShell Gallery
