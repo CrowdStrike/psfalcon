@@ -73,5 +73,5 @@ For instance, if you unpacked it in a folder called "PSFalcon", you could naviga
 Import-Module .\PSFalcon
 ```
 
-# Additional Information and Examples
+# Additional Information
 Please visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)**.
