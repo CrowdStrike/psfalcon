@@ -9,7 +9,7 @@ PSFalcon lets you automate tasks and perform actions in large numbers not normal
 * Upload or download malware samples or Real-time Response files
 * Create/modify configurations for MSSP parent and child environments
 
-### **Visit the [PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki) for detailed examples.**
+### _**Visit the [PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki) for detailed examples.**_
 
 # Requirements
 * An active Falcon subscription for the appropriate modules
@@ -49,7 +49,7 @@ $HOME\Documents\WindowsPowerShell\Modules\PSFalcon\2.0.0
 
 The PSFalcon module must be loaded at the beginning of a PowerShell session or script in order to access the commands included with PSFalcon.
 
-### During a Session
+### During a session
 
 **NOTE**: The `Import-Module` command can be added to your PowerShell `$PROFILE` to automatically load the module when you start PowerShell.
 
@@ -57,7 +57,7 @@ The PSFalcon module must be loaded at the beginning of a PowerShell session or s
 Import-Module -Name PSFalcon
 ```
 
-### During the beginning of a Script
+### During the beginning of a script
 
 ```powershell
 #Requires -Version 5.1 -Modules @{ModuleName='PSFalcon';ModuleVersion='2.0.0'}
