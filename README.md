@@ -22,10 +22,10 @@ PSFalcon lets you automate tasks and perform actions in large numbers not normal
 
 If not already present, install [PowerShell](https://github.com/PowerShell/PowerShell#get-powershell).
 
-## Use the PowerShell Gallery
+## Installation through the PowerShell Gallery
 TODO
 
-## Manual Installation using GitHub
+## Installation through GitHub
 
 If you're unable to use the PowerShell Gallery to install the module, you can download directly from GitHub.
 
