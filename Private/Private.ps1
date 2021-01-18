@@ -368,6 +368,9 @@ function Get-Dictionary {
                 if ($_.Value.position) {
                     $Attribute.Position = $_.Value.position
                 }
+                if ($_.Value.pipeline) {
+                    $Attribute.ValueFromPipeline = $_.Value.pipeline
+                }
                 if ($Output.($_.Value.dynamic)) {
                     $Output.($_.Value.dynamic).Attributes.add($Attribute)
                 }
@@ -381,6 +384,7 @@ function Get-Dictionary {
                         'integer' { [int] }
                         'int32' { [Int32] }
                         'int64' { [Int64] }
+                        'object' { [object] }
                         'switch' { [switch] }
                         default { [string] }
                     }

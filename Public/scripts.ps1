@@ -1,359 +1,360 @@
 function Export-Report {
     <#
     .SYNOPSIS
-        Format a response object and output to CSV
-    .PARAMETER PATH
-        Output path and file name
-    .PARAMETER OBJECT
-        A result object to format
+        Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
     [CmdletBinding()]
     [OutputType()]
-    param(
-        [Parameter(
-            Position = 1,
-            Mandatory = $true)]
-        [string] $Path,
-
-        [Parameter(
-            Position = 2,
-            Mandatory = $true,
-            ValueFromPipeline = $true)]
-        [object] $Object
-    )
+    param()
+    DynamicParam {
+        $Endpoints = @('script:ExportReport')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
     begin {
-        $TimeRegex = '(^(first|last)_seen$|^.*_timestamp$|^.*_(applied|assigned)$)'
-        $Exclusions = @{
-            Detection = @('hostinfo', 'behaviors_processed')
-            Host      = @('policies')
-            Incident  = @('hosts')
-        }
-        $TypeNames = @{
-            Detection     = @('domain.MsaDetectSummariesResponse')
-            DeviceControl = @('responses.DeviceControlPoliciesV1')
-            Firewall      = @('responses.FirewallPoliciesV1')
-            Host          = @('domain.DeviceDetailsResponseSwagger', 'responses.HostGroupMembersV1',
-                            'responses.PolicyMembersRespV1')
-            HostGroup     = @('responses.HostGroupsV1')
-            Identifier    = @('binservclient.MsaPutFileResponse', 'domain.DeviceResponse',
-                            'domain.SPAPIQueryVulnerabilitiesResponse', 'api.MsaIncidentQueryResponse',
-                            'msa.QueryResponse')
-            Incident      = @('api.MsaExternalIncidentResponse')
-            IOC           = @('api.MsaReplyIOCIDs', 'api.MsaReplyIOC')
-            Prevention    = @('responses.PreventionPoliciesV1')
-            PutFile       = @('binservclient.MsaPFResponse')
-            SensorUpdate  = @('responses.SensorUpdatePoliciesV2')
-            User          = @('domain.UserMetaDataResponse')
-            Vulnerability = @('domain.SPAPIVulnerabilitiesEntitiesResponseV2')
-        }
-        function Add-Field ($Object, $Name, $Value) {
-            $Value = if ($Value -and $Name -match $TimeRegex) {
-                [datetime] $Value
+        if (-not $PSBoundParameters.Help) {
+            $TimeRegex = '(^(first|last)_seen$|^.*_timestamp$|^.*_(applied|assigned)$)'
+            $Exclusions = @{
+                Detection = @('hostinfo', 'behaviors_processed')
+                Host      = @('policies')
+                Incident  = @('hosts')
             }
-            elseif (($Value -is [object[]]) -and ($Value[0] -is [string])) {
-                $Value -join ', '
+            $TypeNames = @{
+                Detection     = @('domain.MsaDetectSummariesResponse')
+                DeviceControl = @('responses.DeviceControlPoliciesV1')
+                Firewall      = @('responses.FirewallPoliciesV1')
+                Host          = @('domain.DeviceDetailsResponseSwagger', 'responses.HostGroupMembersV1',
+                                'responses.PolicyMembersRespV1')
+                HostGroup     = @('responses.HostGroupsV1')
+                Identifier    = @('binservclient.MsaPutFileResponse', 'domain.DeviceResponse',
+                                'domain.SPAPIQueryVulnerabilitiesResponse', 'api.MsaIncidentQueryResponse',
+                                'msa.QueryResponse')
+                Incident      = @('api.MsaExternalIncidentResponse')
+                IOC           = @('api.MsaReplyIOCIDs', 'api.MsaReplyIOC')
+                Prevention    = @('responses.PreventionPoliciesV1')
+                PutFile       = @('binservclient.MsaPFResponse')
+                SensorUpdate  = @('responses.SensorUpdatePoliciesV2')
+                User          = @('domain.UserMetaDataResponse')
+                Vulnerability = @('domain.SPAPIVulnerabilitiesEntitiesResponseV2')
             }
-            else {
-                $Value
-            }
-            $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
-        }
-        function Get-SimpleObject ($Object) {
-            ($Object).foreach{
-                $Item = [PSCustomObject] @{}
-                ($_.PSObject.Properties).foreach{
-                    Add-Field -Object $Item -Name $_.Name -Value $_.Value
+            function Add-Field ($Object, $Name, $Value) {
+                $Value = if ($Value -and $Name -match $TimeRegex) {
+                    [datetime] $Value
                 }
-                $Item
+                elseif (($Value -is [object[]]) -and ($Value[0] -is [string])) {
+                    $Value -join ', '
+                }
+                else {
+                    $Value
+                }
+                $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
+            }
+            function Get-SimpleObject ($Object) {
+                ($Object).foreach{
+                    $Item = [PSCustomObject] @{}
+                    ($_.PSObject.Properties).foreach{
+                        Add-Field -Object $Item -Name $_.Name -Value $_.Value
+                    }
+                    $Item
+                }
             }
         }
     }
     process {
-        $Output = switch (($Meta.PSObject.TypeNames).Where({ $_ -notmatch '^System.*$' })) {
-            { $TypeNames.Detection -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    $Param = @{
-                        Object = $Item
-                    }
-                    ($_.PSObject.Properties).foreach{
-                        if ($_.Name -eq 'device') {
-                            Add-Field @Param -Name 'device_id' -Value $_.Value.device_id
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            $Output = switch (($Meta.PSObject.TypeNames).Where({ $_ -notmatch '^System.*$' })) {
+                { $TypeNames.Detection -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        $Param = @{
+                            Object = $Item
                         }
-                        elseif ($_.Name -eq 'behaviors') {
-                            $TTP = ($_.Value).foreach{
-                                "$($_.tactic_id):$($_.technique_id)"
+                        ($_.PSObject.Properties).foreach{
+                            if ($_.Name -eq 'device') {
+                                Add-Field @Param -Name 'device_id' -Value $_.Value.device_id
                             }
-                            Add-Field @Param -Name 'tactic_and_technique' -Value ($TTP -join ', ')
-                        }
-                        elseif ($_.Name -eq 'quarantined_files') {
-                            Add-Field @Param -Name 'quarantined_files' -Value $_.Value.id
-                        }
-                        elseif ($Exclusions.Detection -notcontains $_.Name) {
-                            Add-Field @Param -Name $_.Name -Value $_.Value
-                        }
-                    }
-                    $Item
-                }
-            }
-            { $TypeNames.DeviceControl -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    $Param = @{
-                        Object = $Item
-                    }
-                    ($_.PSObject.Properties).foreach{
-                        if ($_.Name -eq 'groups') {
-                            Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
-                        }
-                        elseif ($_.Name -eq 'settings') {
-                            Add-Field @Param -Name 'enforcement_mode' -Value $_.Value.enforcement_mode
-                            Add-Field @Param -Name 'end_user_notification' -Value $_.Value.end_user_notification
-                        }
-                        else {
-                            Add-Field @Param -Name $_.Name -Value $_.Value
-                        }
-                    }
-                    $Item
-                }
-            }
-            { $TypeNames.Firewall -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    $Param = @{
-                        Object = $Item
-                    }
-                    ($_.PSObject.Properties).foreach{
-                        if ($_.Name -eq 'groups') {
-                            Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
-                        }
-                        else {
-                            Add-Field @Param -Name $_.Name -Value $_.Value
-                        }
-                    }
-                    $Item
-                }
-            }
-            { $TypeNames.Host -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    $Param = @{
-                        Object = $Item
-                    }
-                    ($_.PSObject.Properties).foreach{
-                        if ($_.Name -eq 'device_policies') {
-                            ($_.Value.psobject.properties).foreach{
-                                Add-Field @Param -Name "$($_.Name)_id" -Value $_.Value.policy_id
-                                Add-Field @Param -Name "$($_.Name)_assigned" -Value $_.Value.assigned_date
-                                $Applied = if ($_.Value.applied -eq $true) {
-                                    $_.Value.applied_date
+                            elseif ($_.Name -eq 'behaviors') {
+                                $TTP = ($_.Value).foreach{
+                                    "$($_.tactic_id):$($_.technique_id)"
                                 }
-                                else {
-                                    $null
-                                }
-                                Add-Field @Param -Name "$($_.Name)_applied" -Value $Applied
-                                if ($_.Value.uninstall_protection) {
-                                    Add-Field @Param -Name 'uninstall_protection' -Value (
-                                        $_.Value.uninstall_protection)
-                                }
+                                Add-Field @Param -Name 'tactic_and_technique' -Value ($TTP -join ', ')
+                            }
+                            elseif ($_.Name -eq 'quarantined_files') {
+                                Add-Field @Param -Name 'quarantined_files' -Value $_.Value.id
+                            }
+                            elseif ($Exclusions.Detection -notcontains $_.Name) {
+                                Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
-                        elseif ($_.Name -eq 'meta') {
-                            Add-Field @Param -Name "$($_.Name)_version" -Value $_.Value.version
-                        }
-                        elseif ($Exclusions.Host -notcontains $_.Name) {
-                            Add-Field @Param -Name $_.Name -Value $_.Value
-                        }
-                    }
-                    $Item
-                }
-            }
-            { $TypeNames.HostGroup -contains $_ } {
-                Get-SimpleObject -Object $Object
-            }
-            { $TypeNames.Identifier -contains $_ } {
-                ($Object).foreach{
-                    [PSCustomObject] @{
-                        id = $_
+                        $Item
                     }
                 }
-            }
-            { $TypeNames.Incident -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    ($_.PSObject.Properties).foreach{
-                        if ($Exclusions.Incident -notcontains $_.Name) {
-                            Add-Field -Object $Item -Name $_.Name -Value $_.Value
+                { $TypeNames.DeviceControl -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        $Param = @{
+                            Object = $Item
                         }
+                        ($_.PSObject.Properties).foreach{
+                            if ($_.Name -eq 'groups') {
+                                Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
+                            }
+                            elseif ($_.Name -eq 'settings') {
+                                Add-Field @Param -Name 'enforcement_mode' -Value $_.Value.enforcement_mode
+                                Add-Field @Param -Name 'end_user_notification' -Value
+                                    $_.Value.end_user_notification
+                            }
+                            else {
+                                Add-Field @Param -Name $_.Name -Value $_.Value
+                            }
+                        }
+                        $Item
                     }
-                    $Item
                 }
-            }
-            { $TypeNames.IOC -contains $_ } {
-                if ($_ -eq 'api.MsaReplyIOCIDs') {
-                    ($Object).foreach{
+                { $TypeNames.Firewall -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        $Param = @{
+                            Object = $Item
+                        }
+                        ($_.PSObject.Properties).foreach{
+                            if ($_.Name -eq 'groups') {
+                                Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
+                            }
+                            else {
+                                Add-Field @Param -Name $_.Name -Value $_.Value
+                            }
+                        }
+                        $Item
+                    }
+                }
+                { $TypeNames.Host -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        $Param = @{
+                            Object = $Item
+                        }
+                        ($_.PSObject.Properties).foreach{
+                            if ($_.Name -eq 'device_policies') {
+                                ($_.Value.psobject.properties).foreach{
+                                    Add-Field @Param -Name "$($_.Name)_id" -Value $_.Value.policy_id
+                                    Add-Field @Param -Name "$($_.Name)_assigned" -Value $_.Value.assigned_date
+                                    $Applied = if ($_.Value.applied -eq $true) {
+                                        $_.Value.applied_date
+                                    }
+                                    else {
+                                        $null
+                                    }
+                                    Add-Field @Param -Name "$($_.Name)_applied" -Value $Applied
+                                    if ($_.Value.uninstall_protection) {
+                                        Add-Field @Param -Name 'uninstall_protection' -Value (
+                                            $_.Value.uninstall_protection)
+                                    }
+                                }
+                            }
+                            elseif ($_.Name -eq 'meta') {
+                                Add-Field @Param -Name "$($_.Name)_version" -Value $_.Value.version
+                            }
+                            elseif ($Exclusions.Host -notcontains $_.Name) {
+                                Add-Field @Param -Name $_.Name -Value $_.Value
+                            }
+                        }
+                        $Item
+                    }
+                }
+                { $TypeNames.HostGroup -contains $_ } {
+                    Get-SimpleObject -Object $PSBoundParameters.Object
+                }
+                { $TypeNames.Identifier -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
                         [PSCustomObject] @{
-                            type  = ($_).Split(':')[0]
-                            value = ($_).Split(':')[1]
+                            id = $_
                         }
                     }
                 }
-                else {
-                    Get-SimpleObject -Object $Object
-                }
-            }
-            { $TypeNames.Prevention -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    $Param = @{
-                        Object = $Item
-                    }
-                    ($_.PSObject.Properties).foreach{
-                        if ($_.Name -eq 'groups') {
-                            Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
-                        }
-                        elseif ($_.Name -eq 'prevention_settings') {
-                            ($_.Value.settings).foreach{
-                                if ($_.type -eq 'toggle') {
-                                    Add-Field @Param -Name $_.id -Value $_.Value.enabled
-                                }
-                                else {
-                                    Add-Field @Param -Name $_.id -Value (
-                                        "$($_.Value.detection):$($_.Value.prevention)")
-                                }
+                { $TypeNames.Incident -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        ($_.PSObject.Properties).foreach{
+                            if ($Exclusions.Incident -notcontains $_.Name) {
+                                Add-Field -Object $Item -Name $_.Name -Value $_.Value
                             }
                         }
-                        else {
-                            Add-Field @Param -Name $_.Name -Value $_.Value
-                        }
+                        $Item
                     }
-                    $Item
                 }
-            }
-            { $TypeNames.PutFile -contains $_ } {
-                Get-SimpleObject -Object $Object
-            }
-            { $TypeNames.SensorUpdate -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    $Param = @{
-                        Object = $Item
-                    }
-                    ($_.PSObject.Properties).foreach{
-                        if ($_.Name -eq 'groups') {
-                            Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
+                { $TypeNames.IOC -contains $_ } {
+                    if ($_ -eq 'api.MsaReplyIOCIDs') {
+                        ($PSBoundParameters.Object).foreach{
+                            [PSCustomObject] @{
+                                type  = ($_).Split(':')[0]
+                                value = ($_).Split(':')[1]
+                            }
                         }
-                        elseif ($_.Name -eq 'settings') {
-                            ($_.Value.psobject.properties).foreach{
+                    }
+                    else {
+                        Get-SimpleObject -Object $PSBoundParameters.Object
+                    }
+                }
+                { $TypeNames.Prevention -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        $Param = @{
+                            Object = $Item
+                        }
+                        ($_.PSObject.Properties).foreach{
+                            if ($_.Name -eq 'groups') {
+                                Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
+                            }
+                            elseif ($_.Name -eq 'prevention_settings') {
+                                ($_.Value.settings).foreach{
+                                    if ($_.type -eq 'toggle') {
+                                        Add-Field @Param -Name $_.id -Value $_.Value.enabled
+                                    }
+                                    else {
+                                        Add-Field @Param -Name $_.id -Value (
+                                            "$($_.Value.detection):$($_.Value.prevention)")
+                                    }
+                                }
+                            }
+                            else {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
-                        else {
-                            Add-Field @Param -Name $_.Name -Value $_.Value
-                        }
+                        $Item
                     }
-                    $Item
                 }
-            }
-            { $TypeNames.User -contains $_ } {
-                Get-SimpleObject -Object $Object
-            }
-            { $TypeNames.Vulnerability -contains $_ } {
-                ($Object).foreach{
-                    $Item = [PSCustomObject] @{}
-                    $Param = @{
-                        Object = $Item
-                    }
-                    ($_.PSObject.Properties).foreach{
-                        if ($_.Name -eq 'cve') {
-                            ($_.Value.psobject.properties).foreach{
-                                Add-Field @Param -Name "cve_$($_.Name)" -Value $_.Value
-                            }
+                { $TypeNames.PutFile -contains $_ } {
+                    Get-SimpleObject -Object $PSBoundParameters.Object
+                }
+                { $TypeNames.SensorUpdate -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        $Param = @{
+                            Object = $Item
                         }
-                        elseif ($_.Name -eq 'app') {
-                            ($_.Value.psobject.properties).foreach{
-                                Add-Field @Param -Name $_.Name -Value $_.Value
+                        ($_.PSObject.Properties).foreach{
+                            if ($_.Name -eq 'groups') {
+                                Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
                             }
-                        }
-                        elseif ($_.Name -eq 'host_info') {
-                            ($_.Value.psobject.properties).foreach{
-                                if ($_.Name -eq 'groups') {
-                                    Add-Field @Param -Name $_.Name -Value ($_.Value.name -join ', ')
-                                }
-                                else {
+                            elseif ($_.Name -eq 'settings') {
+                                ($_.Value.psobject.properties).foreach{
                                     Add-Field @Param -Name $_.Name -Value $_.Value
                                 }
                             }
+                            else {
+                                Add-Field @Param -Name $_.Name -Value $_.Value
+                            }
                         }
-                        elseif ($_.Name -eq 'remediation') {
-                            Add-Field @Param -Name "remediation_ids" -Value ($_.Value.ids -join ', ')
-                        }
-                        else {
-                            Add-Field @Param -Name $_.Name -Value $_.Value
-                        }
+                        $Item
                     }
-                    $Item
+                }
+                { $TypeNames.User -contains $_ } {
+                    Get-SimpleObject -Object $PSBoundParameters.Object
+                }
+                { $TypeNames.Vulnerability -contains $_ } {
+                    ($PSBoundParameters.Object).foreach{
+                        $Item = [PSCustomObject] @{}
+                        $Param = @{
+                            Object = $Item
+                        }
+                        ($_.PSObject.Properties).foreach{
+                            if ($_.Name -eq 'cve') {
+                                ($_.Value.psobject.properties).foreach{
+                                    Add-Field @Param -Name "cve_$($_.Name)" -Value $_.Value
+                                }
+                            }
+                            elseif ($_.Name -eq 'app') {
+                                ($_.Value.psobject.properties).foreach{
+                                    Add-Field @Param -Name $_.Name -Value $_.Value
+                                }
+                            }
+                            elseif ($_.Name -eq 'host_info') {
+                                ($_.Value.psobject.properties).foreach{
+                                    if ($_.Name -eq 'groups') {
+                                        Add-Field @Param -Name $_.Name -Value ($_.Value.name -join ', ')
+                                    }
+                                    else {
+                                        Add-Field @Param -Name $_.Name -Value $_.Value
+                                    }
+                                }
+                            }
+                            elseif ($_.Name -eq 'remediation') {
+                                Add-Field @Param -Name "remediation_ids" -Value ($_.Value.ids -join ', ')
+                            }
+                            else {
+                                Add-Field @Param -Name $_.Name -Value $_.Value
+                            }
+                        }
+                        $Item
+                    }
                 }
             }
-        }
-        if ($Output) {
-            $Output | Export-Csv -Path $Path -NoTypeInformation -Append
-        }
-        else {
-            Write-Error "CSV conversion is not available for this request type"
+            if ($Output) {
+                $Output | Export-Csv -Path $PSBoundParameters.Path -NoTypeInformation -Append -Force
+            }
+            else {
+                Write-Error "CSV conversion is not available for this request type"
+            }
         }
     }
 }
 function Find-Duplicate {
     <#
     .SYNOPSIS
-        Lists potential duplicates from detailed 'Host' results
-    .PARAMETER HOSTS
-        Array of detailed 'Host' results
+        Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
     [CmdletBinding()]
     [OutputType()]
-    param(
-        [Parameter(
-            Position = 1,
-            Mandatory = $true)]
-        [array] $Hosts
-    )
+    param()
+    DynamicParam {
+        $Endpoints = @('script:FindDuplicate')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
     begin {
-        $Criteria = @('device_id', 'hostname', 'first_seen', 'last_seen', 'mac_address')
-        $InputFields = ($Hosts | Get-Member -MemberType NoteProperty).Name
-        function Group-Selection ($Selection, $Criteria) {
-            ((($Selection | Group-Object $Criteria).Where({ $_.Count -gt 1 })).Group |
-            Group-Object $Criteria).foreach{
-                $_.Group | Select-Object -First (($_.Count) - 1)
+        if (-not $PSBoundParameters.Help) {
+            $Criteria = @('device_id', 'hostname', 'first_seen', 'last_seen', 'mac_address')
+            $InputFields = ($PSBoundParameters.Hosts | Get-Member -MemberType NoteProperty).Name
+            function Group-Selection ($Selection, $Criteria) {
+                ((($Selection | Group-Object $Criteria).Where({ $_.Count -gt 1 })).Group |
+                Group-Object $Criteria).foreach{
+                    $_.Group | Select-Object -First (($_.Count) - 1)
+                }
             }
         }
     }
     process {
-        try {
-            ($Criteria).foreach{
-                if ($InputFields -notcontains $_) {
-                    throw "Input object does not contain '$_' field"
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            try {
+                ($Criteria).foreach{
+                    if ($InputFields -notcontains $_) {
+                        throw "Input object does not contain '$_' field"
+                    }
+                }
+                $Param = @{
+                    Selection = $PSBoundParameters.Hosts | Select-Object $Criteria
+                    Criteria = 'hostname'
+                }
+                $Duplicates = Group-Selection @Param 
+                if ($Duplicates) {
+                    $Duplicates
+                }
+                else {
+                    Write-Warning "No duplicates found"
                 }
             }
-            $Param = @{
-                Selection = $Hosts | Select-Object $Criteria
-                Criteria = 'hostname'
+            catch {
+                $_
             }
-            $Duplicates = Group-Selection @Param 
-            if ($Duplicates) {
-                $Duplicates
-            }
-            else {
-                Write-Warning "No duplicates found"
-            }
-        }
-        catch {
-            $_
         }
     }
 }

@@ -1,5 +1,24 @@
 @{
     script = @{
+        ExportReport = @{
+            description = "Format a response object and output to CSV"
+            parameters = @{
+                path = @{
+                    type = "string"
+                    description = "Output path and file name"
+                    position = 1
+                    required = $true
+                    pattern = "\.csv$"
+                }
+                object = @{
+                    type = "object"
+                    description = "A result object to format (can be passed via pipeline)"
+                    position = 2
+                    required = $true
+                    pipeline = $true
+                }
+            }
+        }
         GetQueue = @{
             description = "Create a report of with status of queued Real-time Response sessions"
             security = "real-time-response:read, real-time-response:write, real-time-response-admin:write"
@@ -8,6 +27,17 @@
                     type = "int"
                     description = "Number of days worth of results to retrieve [default: 7]"
                     position = 1
+                }
+            }
+        }
+        FindDuplicate = @{
+            description = "Lists potential duplicates from detailed 'Host' results"
+            parameters = @{
+                hosts = @{
+                    type = "array"
+                    description = "Array of detailed 'Host' results"
+                    position = 1
+                    required = $true
                 }
             }
         }
