@@ -50,7 +50,6 @@
             type = "integer"
             in = "query"
             min = 1
-            max = 5000
             position = 3
         }
         offset = @{
@@ -81,7 +80,6 @@
             type = "integer"
             in = "query"
             min = 1
-            max = 5000
             position = 4
         }
         offset = @{
@@ -113,7 +111,6 @@
             type = "integer"
             in = "query"
             min = 1
-            max = 5000
             position = 4
         }
         offset = @{

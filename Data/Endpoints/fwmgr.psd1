@@ -260,6 +260,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsQuery"
+                limit = @{
+                    max = 5000
+                }
                 offset = @{
                     type = "string"
                     description = "Pagination token used to retrieve the next result set"
@@ -325,6 +328,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
                 offset = @{
                     type = "string"
                     description = "Pagination token used to retrieve the next result set"
@@ -345,6 +351,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsQuery"
+                limit = @{
+                    max = 5000
+                }
                 offset = @{
                     type = "string"
                     description = "Pagination token used to retrieve the next result set"
@@ -365,6 +374,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsQuery"
+                limit = @{
+                    max = 5000
+                }
                 offset = @{
                     type = "string"
                     description = "Pagination token used to retrieve the next result set"

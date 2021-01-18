@@ -6,6 +6,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 500
+                }
             }
             responses = @{
                 "responses.HostGroupMembersV1" = @(200,400,404,500)
@@ -216,6 +219,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 500
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,404,500)

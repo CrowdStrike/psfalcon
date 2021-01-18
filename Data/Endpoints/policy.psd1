@@ -6,6 +6,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "responses.PolicyMembersRespV1" = @(200,400,404,500)
@@ -47,6 +50,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "responses.PolicyMembersRespV1" = @(200,400,404,500)
@@ -88,6 +94,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "responses.PolicyMembersRespV1" = @(200,400,404,500)
@@ -129,6 +138,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 default = ""
@@ -195,6 +207,9 @@
             parameters = @{
                 parameters = @{
                     schema = "BasicParamsId"
+                    limit = @{
+                        max = 5000
+                    }
                 }
             }
             responses = @{
@@ -939,6 +954,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,404,500)
@@ -985,6 +1003,9 @@
                         "enabled.asc","enabled.desc","modified_by.asc","modified_by.desc","modified_timestamp.asc",
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
+                }
+                limit = @{
+                    max = 5000
                 }
             }
             responses = @{
@@ -1076,6 +1097,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,404,500)
@@ -1117,6 +1141,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 default = "msa.QueryResponse"
@@ -1146,6 +1173,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsId"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,404,500)

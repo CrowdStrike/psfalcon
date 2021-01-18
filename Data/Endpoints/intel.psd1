@@ -37,6 +37,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsQuery"
+                limit = @{
+                    max = 5000
+                }
                 include_deleted = @{}
             }
             responses = @{
@@ -218,6 +221,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsQuery"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200)
@@ -234,6 +240,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsQuery"
+                limit = @{
+                    max = 5000
+                }
                 include_deleted = @{}
             }
             responses = @{
@@ -251,6 +260,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParamsQuery"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200)
