@@ -938,7 +938,7 @@ function Invoke-Endpoint {
             # Append URI path with Hostname
             "$($Falcon.Hostname)$($Target.Path)"
         }
-        Write-Verbose "[$($MyInvocation.MyCommand.Name)] $(($Target.Method).ToUpper()) $FullUri"
+        Write-Verbose "[$($MyInvocation.MyCommand.Name)] $($Target.Method.ToUpper()) $FullUri"
         if ($Query) {
             # Appent query inputs to URI path
             $FullUri += "?$($Query -join '&')"
@@ -947,9 +947,7 @@ function Invoke-Endpoint {
     process {
         # Create System.Net.Http base object and append request header
         $Client = [System.Net.Http.HttpClient]::New()
-        $Method = [System.Net.Http.HttpMethod]::($Target.Method)
-        $Uri = [System.Uri]::New($FullUri)
-        $Request = [System.Net.Http.HttpRequestMessage]::New($Method, $Uri)
+        $Request = [System.Net.Http.HttpRequestMessage]::New($Target.Method.ToUpper(), [System.Uri]::New($FullUri))
         $Param = @{
             Endpoint = $Target
             Request = $Request
