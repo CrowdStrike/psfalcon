@@ -599,6 +599,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 100
+                }
             }
             responses = @{
                 "binservclient.MsaPutFileResponse" = @(200)
@@ -615,6 +618,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 100
+                }
             }
             responses = @{
                 "binservclient.MsaPutFileResponse" = @(200)
@@ -631,6 +637,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 100
+                }
             }
             responses = @{
                 "domain.ListSessionsResponseMsa" = @(200)

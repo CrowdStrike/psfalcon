@@ -10,6 +10,9 @@
                 sort = @{
                     enum = @("score.asc","score.desc","timestamp.asc","timestamp.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "api.MsaEnvironmentScoreResponse" = @(200)
@@ -90,6 +93,9 @@
                 sort = @{
                     enum = @("timestamp.asc","timestamp.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200)
@@ -111,6 +117,9 @@
                         "end.asc","end.desc","modified_timestamp.asc","modified_timestamp.desc","name.asc",
                         "name.desc","sort_score.asc","sort_score.desc","start.asc","start.desc","state.asc",
                         "state.desc","status.asc","status.desc")
+                }
+                limit = @{
+                    max = 5000
                 }
             }
             responses = @{

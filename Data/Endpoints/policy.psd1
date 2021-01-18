@@ -28,6 +28,9 @@
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "responses.DeviceControlPoliciesV1" = @(200,400,500)
@@ -65,6 +68,9 @@
                         "enabled.asc","enabled.desc","modified_by.asc","modified_by.desc","modified_timestamp.asc",
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
+                }
+                limit = @{
+                    max = 5000
                 }
             }
             responses = @{
@@ -104,6 +110,9 @@
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "responses.PreventionPoliciesV1" = @(200,400,500)
@@ -133,6 +142,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 default = ""
@@ -205,6 +217,9 @@
                         "enabled.asc","enabled.desc","modified_by.asc","modified_by.desc","modified_timestamp.asc",
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
+                }
+                limit = @{
+                    max = 5000
                 }
             }
             responses = @{
@@ -946,6 +961,9 @@
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,500)
@@ -990,6 +1008,9 @@
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,500)
@@ -1012,6 +1033,9 @@
                         "modified_by.asc","modified_by.desc","name.asc","name.desc","pattern_id.asc",
                         "pattern_id.desc","pattern_name.asc","pattern_name.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,500)
@@ -1032,6 +1056,9 @@
                     enum = @("applied_globally.asc","applied_globally.desc","created_by.asc","created_by.desc",
                         "created_on.asc","created_on.desc","last_modified.asc","last_modified.desc",
                         "modified_by.asc","modified_by.desc","value.asc")
+                }
+                limit = @{
+                    max = 5000
                 }
             }
             responses = @{
@@ -1071,6 +1098,9 @@
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,500)
@@ -1100,6 +1130,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 default = "msa.QueryResponse"
@@ -1135,6 +1168,9 @@
                         "modified_timestamp.desc","name.asc","name.desc","platform_name.asc","platform_name.desc",
                         "precedence.asc","precedence.desc")
                 }
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,500)
@@ -1155,6 +1191,9 @@
                     enum = @("applied_globally.asc","applied_globally.desc","created_by.asc","created_by.desc",
                         "created_on.asc","created_on.desc","last_modified.asc","last_modified.desc",
                         "modified_by.asc","modified_by.desc","value.asc")
+                }
+                limit = @{
+                    max = 5000
                 }
             }
             responses = @{

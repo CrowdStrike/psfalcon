@@ -109,6 +109,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,500)
@@ -124,6 +127,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 5000
+                }
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,500)

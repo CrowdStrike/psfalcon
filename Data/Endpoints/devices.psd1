@@ -27,6 +27,9 @@
                         "group_type.asc","group_type.desc","modified_by.asc","modified_by.desc",
                         "modified_timestamp.asc","modified_timestamp.desc","name.asc","name.desc")
                 }
+                limit = @{
+                    max = 500
+                }
             }
             responses = @{
                 "responses.HostGroupsV1" = @(200,400,500)
@@ -167,6 +170,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 5000
+                }
                 hidden_switch = @{
                     dynamic = "Hidden"
                     type = "switch"
@@ -188,6 +194,9 @@
             produces = "application/json"
             parameters = @{
                 schema = "BasicParams"
+                limit = @{
+                    max = 5000
+                }
                 offset = @{
                     type = "string"
                     description = "Pagination token used to retrieve the next result set"
