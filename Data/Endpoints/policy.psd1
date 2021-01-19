@@ -253,6 +253,7 @@
             produces = "application/json"
             parameters = @{
                 action_name = @{
+                    dynamic = "Name"
                     enum = @("add-host-group","remove-host-group","enable","disable")
                 }
                 ids = @{
@@ -363,6 +364,7 @@
             produces = "application/json"
             parameters = @{
                 action_name = @{
+                    dynamic = "Name"
                     enum = @("add-host-group","remove-host-group","enable","disable")
                 }
                 ids = @{
@@ -581,6 +583,7 @@
             produces = "application/json"
             parameters = @{
                 action_name = @{
+                    dynamic = "Name"
                     enum = @("add-host-group","remove-host-group","enable","disable")
                 }
                 ids = @{
@@ -691,6 +694,7 @@
             produces = "application/json"
             parameters = @{
                 action_name = @{
+                    dynamic = "Name"
                     enum = @("add-host-group","remove-host-group","enable","disable")
                 }
                 ids = @{
@@ -782,6 +786,7 @@
             produces = "application/json"
             parameters = @{
                 action_name = @{
+                    dynamic = "Name"
                     enum = @("add-host-group","remove-host-group","enable","disable")
                 }
                 ids = @{

@@ -23,14 +23,10 @@
         post = @{
             description = "Refresh an active event stream"
             security = "streaming:read"
-            consumes = "application/json"
             produces = "application/json"
             parameters = @{
-                action_name = @{
-                    enum = @("refresh_active_stream_session")
-                }
                 appId = @{
-                    position = 2
+                    position = 1
                     required = $true
                 }
                 partition = @{
@@ -38,7 +34,7 @@
                     type = "integer"
                     in = "path"
                     required = $true
-                    position = 3
+                    position = 2
                 }
             }
             responses = @{

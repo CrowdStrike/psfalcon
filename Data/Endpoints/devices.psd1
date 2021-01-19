@@ -50,9 +50,16 @@
             produces = "application/json"
             parameters = @{
                 action_name = @{
+                    dynamic = "Name"
                     enum = @("contain","lift_containment","hide_host","unhide_host")
                 }
-                schema = "EntityAction"
+                ids = @{
+                    description = "One or more {0} identifiers"
+                    type = "array"
+                    in = "body"
+                    required = $true
+                    position = 2
+                }
             }
             responses = @{
                 "msa.ReplyAffectedEntities" = @(202,400,409,500)
@@ -83,6 +90,7 @@
             produces = "application/json"
             parameters = @{
                 action_name = @{
+                    dynamic = "Name"
                     enum = @("add-hosts","remove-hosts")
                 }
                 ids = @{
@@ -93,7 +101,8 @@
                     position = 2
                 }
                 value = @{
-                    dynamic = 'HostIds'
+                    in = "body"
+                    dynamic = "HostIds"
                     type = "array"
                     required = $true
                     parent = "action_parameters"

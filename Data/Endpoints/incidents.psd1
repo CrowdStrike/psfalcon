@@ -44,7 +44,25 @@
             consumes = "application/json"
             produces = "application/json"
             parameters = @{
-                schema = "EntityAction"
+                name = @{
+                    description = "Action to perform"
+                    enum = @("add_tag","delete_tag","update_description","update_name","update_status")
+                    parent = "action_parameters"
+                    required = $true
+                    position = 1
+                }
+                value = @{
+                    description = "Value for the chosen action"
+                    parent = "action_parameters"
+                    required = $true
+                    position = 2
+                }
+                ids = @{
+                    description = "One or more {0} identifiers"
+                    type = "array"
+                    required = $true
+                    position = 3
+                }
                 update_detects = @{
                     description = "Update status of related 'new' detections"
                     type = "boolean"

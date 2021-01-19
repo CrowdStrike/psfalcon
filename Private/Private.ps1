@@ -290,7 +290,7 @@ function Get-Body {
         foreach ($Item in $Dynamic.Values.Where({ $_.IsSet -eq $true })) {
             # Match dynamic parameters to parameters defined by endpoint
             $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
-            (-not($_.Value.in) -or ($_.Value.in -eq 'body')) -and ($_.Value.type -ne 'switch') }).foreach{
+            ((-not $_.Value.in) -or ($_.Value.in -eq 'body')) -and ($_.Value.type -ne 'switch') }).foreach{
                 if ($_.Key -eq 'body') {
                     # Convert files sent as 'body' to ByteStream and upload
                     $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
@@ -332,6 +332,7 @@ function Get-Body {
         }
         if ($BodyOutput) {
             # Output body table
+            Write-Verbose "[$($MyInvocation.MyCommand.Name)] Body: $($BodyOutput.Keys -join ', ')"
             $BodyOutput
         }
         elseif ($ByteArray) {

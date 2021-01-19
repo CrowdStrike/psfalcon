@@ -125,7 +125,9 @@ function Update-Stream {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param.Query = @( $Param.Query, "action_name=refresh_active_stream_session" )
+            Invoke-Endpoint @Param
         }
     }
 }

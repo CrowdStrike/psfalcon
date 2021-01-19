@@ -151,14 +151,10 @@ function Invoke-HostAction {
     param()
     DynamicParam {
         $Endpoints = @('/devices/entities/devices-actions/v2:post')
-        $Dynamic = Get-Dictionary -Endpoints $Endpoints
-        @('name', 'value').foreach{
-            [void] $Dynamic.Remove($_)
-        }
-        return $Dynamic
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     begin {
-        $Max = if ($Dynamic.ActionName.value -match '(hide_host|unhide_host)') {
+        $Max = if ($Dynamic.ActionName.Value -match '^(hide_host|unhide_host)$') {
             100
         }
         else {
