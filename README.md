@@ -9,9 +9,9 @@ PSFalcon lets you automate tasks and perform actions in large numbers not normal
 * Upload or download malware samples or Real-time Response files
 * Create/modify configurations for MSSP parent and child environments
 
-### _**Visit the [PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki).**_
-
 # Requirements
 * An active Falcon subscription for the appropriate modules
 * PowerShell 5.1+ (Windows), PowerShell 6+ (Linux/MacOS)
 * A Falcon [OAuth2 API Client](https://falcon.crowdstrike.com/support/api-clients-and-keys) with appropriate roles
+
+### Visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)** to find instructions for installation and use.
