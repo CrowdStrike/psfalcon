@@ -390,38 +390,36 @@ function Get-Dictionary {
                         default { [string] }
                     }
                     if ($_.Value.required -eq $false) {
-                        $ValidEmpty = New-Object Management.Automation.ValidateNotNullOrEmptyAttribute
-                        $Collection.Add($ValidEmpty)
+                        $Collection.Add((New-Object Management.Automation.ValidateNotNullOrEmptyAttribute))
                     }
                     if ($_.Value.enum) {
                         $ValidSet = New-Object System.Management.Automation.ValidateSetAttribute($_.Value.enum)
                         $ValidSet.IgnoreCase = $false
                         $Collection.Add($ValidSet)
                     }
-                    if (($PSType -eq [int]) -and ($_.Value.Min -and $_.Value.Max)) {
-                        # Set range min/max for integers
-                        $ValidRange = New-Object Management.Automation.ValidateRangeAttribute(
-                            $_.Value.Min, $_.Value.Max)
-                        $Collection.Add($ValidRange)
+                    if ($_.Value.min -and $_.Value.max) {
+                        if ($PSType -eq [int]) {
+                            # Set range min/max for integers
+                            $Collection.Add((New-Object Management.Automation.ValidateRangeAttribute(
+                                $_.Value.Min, $_.Value.Max)))
+                        }
+                        elseif ($PSType -eq [string]) {
+                            # Set length min/max for strings
+                            $Collection.Add((New-Object Management.Automation.ValidateLengthAttribute(
+                                    $_.Value.Min, $_.Value.Max)))
+                        }
                     }
-                    elseif (($PSType -eq [string]) -and ($_.Value.Min -and $_.Value.Max)) {
-                        # Set length min/max for strings
-                        $ValidLength = New-Object System.Management.Automation.ValidateLengthAttribute(
-                            $_.Value.Min, $_.Value.Max)
-                        $Collection.Add($ValidLength)
-                    }
-                    if ($_.Value.Pattern) {
+                    if ($_.Value.pattern) {
                         # Set RegEx validation pattern
-                        $ValidPattern = New-Object Management.Automation.ValidatePatternAttribute(
-                            ($_.Value.Pattern).ToString())
-                        $Collection.Add($ValidPattern)
+                        $Collection.Add((New-Object Management.Automation.ValidatePatternAttribute(
+                            ($_.Value.pattern).ToString())))
                     }
-                    if ($_.Value.Script) {
+                    if ($_.Value.script) {
                         # Set ValidationScript
                         $ValidScript = New-Object Management.Automation.ValidateScriptAttribute(
-                            [scriptblock]::Create($_.Value.Script))
-                        if ($_.Value.ScriptError -and $ValidScript.ErrorMessage) {
-                            $ValidScript.ErrorMessage = $_.Value.ScriptError
+                            [scriptblock]::Create($_.Value.script))
+                        if ($_.Value.scripterror -and $ValidScript.ErrorMessage) {
+                            $ValidScript.ErrorMessage = $_.Value.scripterror
                         }
                         $Collection.Add($ValidScript)
                     }
@@ -436,8 +434,8 @@ function Get-Dictionary {
     process {
         foreach ($Endpoint in $Endpoints) {
             # Add parameters from each endpoint
-            (($Falcon.GetEndpoint($Endpoint)).parameters).foreach{
-                Add-Parameter $_
+            $Falcon.GetEndpoint($Endpoint).Parameters.foreach{
+                Add-Parameter -Parameter $_
             }
         }
         ($Endpoints -match '/queries/').foreach{
@@ -497,11 +495,12 @@ function Get-DynamicHelp {
         [array] $Exclusions
     )
     begin {
+        # Default PowerShell parameters to exclude from output
         $Defaults = @('Verbose', 'Debug', 'ErrorAction', 'WarningAction', 'InformationAction', 'ErrorVariable',
             'WarningVariable', 'InformationVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable')
         $ParamSets = foreach ($Set in ((Get-Command $Command).ParameterSets).Where({
         ($_.Name -ne 'psfalcon:help') -and ($Exclusions -notcontains $_.Name) })) {
-            # Gather endpoint data using 'ParameterSets' defined by 'Get-Dictionary'
+            # Gather endpoint data using 'ParameterSets' defined by 'Get-Dictionary', minus Exclusions
             ($Falcon.GetEndpoint($Set.Name)).foreach{
                 # Create custom object for each endpoint
                 @{
