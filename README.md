@@ -14,4 +14,5 @@ PSFalcon lets you automate tasks and perform actions in large numbers not normal
 * PowerShell 5.1+ (Windows), PowerShell 6+ (Linux/MacOS)
 * A Falcon [OAuth2 API Client](https://falcon.crowdstrike.com/support/api-clients-and-keys) with appropriate roles
 
-### Visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)** to find instructions for installation and use.
+# More Information
+Visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)** for information about [installation](https://github.com/CrowdStrike/psfalcon/wiki/Installation), [importing](https://github.com/CrowdStrike/psfalcon/wiki/Importing) the module, finding [commands](https://github.com/CrowdStrike/psfalcon/wiki/Commands) \(and their [parameters](https://github.com/CrowdStrike/psfalcon/wiki/Parameters)\) and [example use](https://github.com/CrowdStrike/psfalcon/wiki#using-commands).
