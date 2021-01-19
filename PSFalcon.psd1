@@ -363,32 +363,24 @@ PrivateData = @{
 
         # ReleaseNotes of this module.
         ReleaseNotes = "
-        Initial v2.0.0 release includes the following changes from v1.4.2:
+        The initial v2.0.0 release includes the following changes from v1.4.2:
 
         * Moved to the official CrowdStrike GitHub!
         * Changed how API endpoint data is stored to decrease complexity as new APIs are added.
         * Moved from static to dynamic PowerShell parameters based off API endpoint data.
         * Added additional API endpoints that have been published by CrowdStrike.
-        * Added a custom commands designed to perform specific operations:
-
-          Export-FalconReport
-          Find-FalconDuplicate
-          Get-FalconQueue
-          Invoke-FalconDeploy
-          Invoke-FalconRTR
-          Open-FalconStream
-          Search-FalconMalQueryHash
-          Show-FalconMap
-
-        SCRIPT-BREAKING CHANGES:
-        * Condensed all commands, so instead of having commands involving 'Ids' and 'Info', they're tied
-          into one command and change depending on the given parameters. The 'Detailed' parameter will pass
-          'Ids' to their related 'Info' endpoints automatically.
-        * Changed prefix of commands from 'Cs'/'Rtr' to 'Falcon' for consistency and to serve as a mechanism
-          to implicitly notify users that commands operate differently than in v1.4.2.
-        * Removed 'sub-objects' that come from API responses -- no more 'resources'/'errors', etc. -- all commands
-          output the data directly.
-        * Various other commands and parameters have been renamed.
+        * Added custom commands designed to perform specific operations: Export-FalconReport,
+          Find-FalconDuplicate, Get-FalconQueue, Invoke-FalconDeploy, Invoke-FalconRTR, Open-FalconStream,
+          Search-FalconMalQueryHash, and Show-FalconMap.
+        * SCRIPT-BREAKING CHANGES:
+        1. Condensed all commands, so instead of having commands involving 'Ids' and 'Info', they're tied into
+           one command and change depending on the given parameters. The 'Detailed' parameter will pass 'Ids' to
+           their related 'Info' endpoints automatically.
+        2. Changed prefix of commands from 'Cs'/'Rtr' to 'Falcon' for consistency and to serve as a mechanism to
+           implicitly notify users that commands operate differently than in v1.4.2.
+        3. Removed 'sub-objects' that come from API responses -- no more 'resources'/'errors', etc. -- all
+           commands output the data directly.
+        4. Various other commands and parameters have been renamed.
         "
     } # End of PSData hashtable
 
