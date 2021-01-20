@@ -22,77 +22,62 @@ class Falcon {
         $this.PSObject.TypeNames.Insert(0,'Falcon')
     }
     [hashtable] GetEndpoint([string] $Endpoint) {
-        # Output endpoint information
         $Path = $Endpoint.Split(':')[0]
         $Method = $Endpoint.Split(':')[1]
         if (-not($Path -and $Method)) {
             throw "Invalid endpoint: '$Endpoint'"
         }
+        # Gather endpoint properties and begin output construction
+        $Ref = ($this.Endpoints.$Path.$Method).Clone()
         $Output = @{
             path = $Path
             method = $Method
         }
-        # Gather endpoint properties
-        $Default = $this.Endpoints.$Path.$Method.Clone()
-        if (-not $Default.consumes -and $Default.parameters.schema) {
-            # Force 'application/json' for 'content-type' with body parameters
-            $Default['consumes'] = "application/json"
-        }
-        $Default.GetEnumerator().foreach{
-            $Value = if ($_.Key -eq 'parameters') {
-                $Parameters = @{}
-                ($_.Value).GetEnumerator().foreach{
-                    if ($_.Key -eq 'schema') {
-                        $this.GetSchema($_.Value).GetEnumerator().foreach{
-                            # Use shared parameter sets from schema
-                            $Parameters[$_.Key] = $_.Value
-                            if ($Default.Parameters.($_.Key)) {
-                                # Update with manually defined endpoint values
-                                $Name = $_.Key
-                                $Default.Parameters.$Name.GetEnumerator().foreach{
-                                    $Parameters.$Name[$_.Key] = $_.Value
-                                }
-                            }
-                        }
-                    }
-                    elseif ($this.Parameters.($_.Key)) {
-                        # Use shared parameter properties
-                        $Parameters[$_.Key] = $this.Parameters.($_.Key).Clone()
-                        if ($Default.Parameters.($_.Key)) {
-                            # Update with manually defined endpoint values
-                            $Name = $_.Key
-                            $Default.Parameters.$Name.GetEnumerator().foreach{
-                                $Parameters.$Name[$_.Key] = $_.Value
-                            }
-                        }
-                    }
-                    else {
-                        # Use endpoint parameter properties
-                        $Parameters[$_.Key] = $_.Value
-                    }
-                }
-                $Parameters.GetEnumerator().foreach{
-                    if (($_.Key -match '^(id|ids)$') -and (-not $_.Value.pattern)) {
-                        # Append default RegEx pattern by endpoint
-                        $_.Value['pattern'] = $this.GetPattern($Endpoint)
-                    }
-                    if (-not $_.Value.dynamic) {
-                        # Generate dynamic parameter name
-                        $_.Value['dynamic'] = $this.Culture.ToTitleCase($_.Key) -replace '[^a-zA-Z0-9]',''
-                    }
-                    # Update description with ItemType and add ParameterSetName
-                    $_.Value['description'] = $this.GetItemType($Endpoint, $_.Value.description)
-                    $_.Value['set'] = $Endpoint
-                }
-                $Parameters
+        if ($Ref.parameters) {
+            $Output['parameters'] = if ($Ref.parameters.schema) {
+                # Build from Schema
+                $this.GetSchema($Ref.parameters.schema)
             }
-            elseif ($_.Key -eq 'description') {
-                $this.GetItemType($Endpoint, $_.Value)
+            elseif ($Ref.parameters) {
+                $Shared = @{}
+                $Ref.parameters.Keys.Where({ $this.Parameters.$_ }).foreach{
+                    # Build from shared Parameters
+                    $Shared[$_] = $this.Parameters.($_)
+                }
+                $Shared
+            }
+            ($Output.parameters).GetEnumerator().foreach{
+                foreach ($Pair in ($Output.parameters).GetEnumerator()) {
+                    if ($Ref.parameters.($Pair.Key)) {
+                        ($Ref.parameters.($Pair.Key)).GetEnumerator().foreach{
+                            # Force manual parameter properties from endpoint
+                            $Output.parameters.($Pair.Key)[$_.Key] = $_.Value
+                        }
+                    }
+                }
+                if (-not $_.Value.dynamic) {
+                    # Generate dynamic parameter name
+                    $_.Value['dynamic'] = $this.Culture.ToTitleCase($_.Key) -replace '[^a-zA-Z0-9]',''
+                }
+                if (($_.Key -match '^(id|ids)$') -and (-not $_.Value.pattern)) {
+                    # Append default RegEx pattern by endpoint
+                    $_.Value['pattern'] = $this.GetPattern($Endpoint)
+                }
+                # Update description with ItemType
+                $_.Value['description'] = $this.GetItemType($Endpoint, $_.Value.description)
+                # Add ParameterSetName
+                $_.Value['set'] = $Endpoint
+            }
+        }
+        $Ref.GetEnumerator().Where({ $_.Key -ne 'parameters' }).foreach{
+            if ($_.Key -eq 'description') {
+                # Update description using ItemType
+                $Output[$_.Key] = $this.GetItemType($Endpoint, $_.Value)
             }
             else {
-                $_.Value
+                # Add directly to output
+                $Output[$_.Key] = $_.Value
             }
-            $Output[$_.Key] = $Value
         }
         return $Output
     }
@@ -129,7 +114,7 @@ class Falcon {
     [hashtable] GetSchema([string] $Schema) {
         # Gather schema and output all references as a single parameter set
         $Output = @{}
-        $this.Schema.$Schema.GetEnumerator().foreach{
+        $this.Schema.($Schema).GetEnumerator().foreach{
             if ($_.Value.schema) {
                 $Parent = $_.Key
                 $this.GetSchema($_.Value.schema).GetEnumerator().foreach{

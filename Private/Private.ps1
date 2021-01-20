@@ -432,9 +432,9 @@ function Get-Dictionary {
         }
     }
     process {
-        foreach ($Endpoint in $Endpoints) {
-            # Add parameters from each endpoint
-            $Falcon.GetEndpoint($Endpoint).Parameters.foreach{
+        ($Endpoints).foreach{
+            ($Falcon.GetEndpoint($_).Parameters).foreach{
+                # Add parameters from each endpoint
                 Add-Parameter -Parameter $_
             }
         }
@@ -495,84 +495,54 @@ function Get-DynamicHelp {
         [array] $Exclusions
     )
     begin {
-        # Default PowerShell parameters to exclude from output
-        $Defaults = @('Verbose', 'Debug', 'ErrorAction', 'WarningAction', 'InformationAction', 'ErrorVariable',
-            'WarningVariable', 'InformationVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable')
-        $ParamSets = foreach ($Set in ((Get-Command $Command).ParameterSets).Where({
-        ($_.Name -ne 'psfalcon:help') -and ($Exclusions -notcontains $_.Name) })) {
-            # Gather endpoint data using 'ParameterSets' defined by 'Get-Dictionary', minus Exclusions
-            ($Falcon.GetEndpoint($Set.Name)).foreach{
-                # Create custom object for each endpoint
-                @{
-                    $Set.Name = @{
-                        Description = $_.Description
-                        Permission  = $_.Security
-                        Parameters  = ($Set.Parameters).Where({ $Defaults -notcontains $_.Name }).foreach{
-                            $Parameter = [ordered] @{
-                                Name        = $_.Name
-                                Type        = $_.ParameterType.name
-                                Required    = $_.IsMandatory
-                                Description = $_.HelpMessage
-                            }
-                            if ($_.Position -gt 0) {
-                                $Parameter['Position'] = $_.Position
-                            }
-                            foreach ($Attribute in @('ValidValues', 'RegexPattern', 'MinLength', 'MaxLength',
-                                'MinRange', 'MaxRange')) {
-                                $Name = switch -Regex ($Attribute) {
-                                    'ValidValues' { 'Values' }
-                                    'RegexPattern' { 'Pattern' }
-                                    '(MinLength|MinRange)' { 'Minimum' }
-                                    '(MaxLength|MaxRange)' { 'Maximum' }
-                                }
-                                if ($_.Attributes.$Attribute) {
-                                    $Value = if ($_.Attributes.$Attribute -is [array]) {
-                                        $_.Attributes.$Attribute -join ', '
-                                    }
-                                    else {
-                                        $_.Attributes.$Attribute
-                                    }
-                                    $Parameter[$Name] = $Value
-                                }
-                            }
-                            $Parameter
-                        }
-                    }
-                }
-            }
-        }
         function Show-Parameter ($Parameter) {
-            # Output endpoint object as string
-            if ($_.Name) {
-                $Label = "`n  -$($_.Name) [$($_.Type)]"
-                if ($_.Required -eq $true) {
-                    $Label += " <Required>"
-                }
-                $Label + "`n    $($_.Description)"
+            # Output name and type
+            $Type = if ($_.Value.type) {
+                $_.Value.type
             }
-            (($_.GetEnumerator()).Where({ $_.Key -notmatch
-            '(Name|Type|Required|Description)' })).foreach{
-                    "      $($_.Key) : $($_.Value)"
+            else {
+                'string'
+            }
+            $Label = "`n  -$($_.Value.dynamic) [$($Type)]"
+            if ($_.Value.required -eq $true) {
+                # Output required status
+                $Label += " <Required>"
+            }
+            # Output description
+            $Label + "`n    $($_.Value.description)"
+            (($_.Value).GetEnumerator().Where({ $_.Key -match '(enum|min|max|pattern|position)' }) |
+            Sort-Object { $_.Key }).foreach{
+                $Value = if ($_.Value -is [array]) {
+                    # Convert arrays to strings
+                    $_.Value -join ', '
+                }
+                else {
+                    $_.Value
+                }
+                # Output remaining properties
+                "      $($Falcon.Culture.ToTitleCase($_.Key)) : $Value"
             }
         }
     }
     process {
-        ($ParamSets).foreach{
-            ($_.GetEnumerator()).foreach{
-                # Output endpoint description and permission
-                "`n# $($_.Value.Description)"
-                if ($_.Value.Permission) {
-                    "  Requires $($_.Value.Permission)"
+        # Gather endpoint names from $Command
+        (((Get-Command $Command).ParameterSets.Name).Where({ ($_ -ne 'psfalcon:help') -and
+        ($Exclusions -notcontains $_) })).foreach{
+            $Ref = $Falcon.GetEndpoint($_)
+            # Output endpoint description and permission
+            "`n# $($Ref.description)"
+            if ($Ref.security) {
+                "  Requires $($Ref.security)"
+            }
+            if ($Ref.parameters) {
+                (($Ref.parameters).GetEnumerator().Where({ $_.Value.type -ne 'switch' }) |
+                Sort-Object { $_.Value.position }).foreach{
+                    # Output parameters based on position
+                    Show-Parameter -Parameter $_
                 }
-                if ($_.Value.Parameters) {
-                    # Output each individual parameter for endpoint
-                    (($_.Value.Parameters).Where({ $_.Type -notmatch 'SwitchParameter' }) |
-                    Sort-Object { $_.Position }).foreach{
-                        Show-Parameter $_
-                    }
-                    ($_.Value.Parameters).Where({ $_.Type -match 'SwitchParameter' }).foreach{
-                        Show-Parameter $_
-                    }
+                ($Ref.Parameters).GetEnumerator().Where({ $_.Value.type -eq 'switch' }).foreach{
+                    # Output switch parameters
+                    Show-Parameter -Parameter $_
                 }
             }
         }
