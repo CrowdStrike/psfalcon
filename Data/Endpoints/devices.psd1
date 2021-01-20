@@ -186,6 +186,9 @@
                 limit = @{
                     max = 5000
                 }
+                offset = @{
+                    description = "Position to begin retrieving results"
+                }
                 hidden_switch = @{
                     dynamic = "Hidden"
                     type = "switch"

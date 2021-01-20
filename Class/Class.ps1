@@ -60,42 +60,43 @@ class Falcon {
     }
     [hashtable] GetParameters([hashtable] $Object, [string] $Endpoint) {
         $Output = $Object.Clone()
-        if ($Output.schema) {
-            foreach ($Pair in $this.GetSchema($Output.schema).GetEnumerator()) {
-                if ($Output.($Pair.Key)) {
-                    ($Pair.Value).GetEnumerator().foreach{
-                        if (-not $Output.($Pair.Key).($_.Key)) {
-                            # Append properties for existing parameter from 'Schema'
-                            $Output.($Pair.Key)[$_.Key] = $_.Value
+        if ($Object.schema) {
+            # Collect parameters from 'Schema'
+            $Ref = $this.GetSchema($Object.schema).Clone()
+            $RefParameters = @( $Ref.Keys )
+            foreach ($Parameter in $RefParameters) {
+                if ($Output.$Parameter) {
+                    # Compare existing parameters against 'Schema'
+                    $Properties = @( ($Ref.$Parameter).Keys )
+                    foreach ($Property in $Properties) {
+                        if ($Output.$Parameter.$Property) {
+                            # Remove existing properties from 'Schema' definition
+                            $Ref.$Parameter.Remove($Property)
                         }
                     }
+                    # Merge parameter from 'Schema'
+                    $Output.$Parameter += $Ref.$Parameter
                 }
                 else {
-                    # Add parameters from 'Schema'
-                    $Output[$Pair.Key] = $Pair.Value
+                    # Add parameter from 'Schema'
+                    $Output[$Parameter] = $Ref.$Parameter
                 }
             }
             # Remove 'Schema' name
             $Output.Remove('schema')
         }
-        else {
-            foreach ($Pair in $Object.GetEnumerator()) {
-                if ($this.Parameters.($Pair.Key) -and $Output.($Pair.Key)) {
-                    $this.Parameters.($Pair.Key).Clone().GetEnumerator().foreach{
-                        if (-not $Output.($Pair.Key).($_.Key)) {
-                            # Append properties for existing parameter from 'Shared'
-                            $Output.($Pair.Key)[$_.Key] = $_.Value
-                        }
+        foreach ($Pair in $Object.GetEnumerator()) {
+            if ($this.Parameters.($Pair.Key)) {
+                # Gather shared parameter properties
+                $Ref = $this.Parameters.($Pair.Key).Clone()
+                $Output.($Pair.Key).GetEnumerator().foreach{
+                    if ($Ref.($_.Key)) {
+                        # Remove existing properties from 'Shared' definition
+                        $Ref.Remove($_.Key)
                     }
                 }
-                elseif ($this.Parameters.($Pair.Key)) {
-                    # Add parameter from 'Shared'
-                    $Output[$Pair.Key] = $this.Parameters.($Pair.Key)
-                }
-                else {
-                    # Add parameter
-                    $Output[$Pair.Key] = $Pair.Value
-                }
+                # Merge parameter from 'Shared'
+                $Output.($Pair.Key) += $Ref
             }
         }
         ($Output.GetEnumerator()).foreach{
