@@ -17,6 +17,7 @@
             description = "Submit a {0}"
             security = "quick-scan:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "mlscanner.SamplesScanParameters"
             }

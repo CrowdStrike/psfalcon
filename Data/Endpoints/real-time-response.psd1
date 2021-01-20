@@ -4,6 +4,7 @@
             description = "Issue a {0} using Active Responder privileges"
             security = "real-time-response:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.BatchExecuteCommandRequest"
                 timeout = @{}
@@ -28,6 +29,7 @@
             description = "Issue a {0} using Admin privileges"
             security = "real-time-response-admin:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.BatchExecuteCommandRequest"
                 timeout = @{}
@@ -52,6 +54,7 @@
             description = "Issue a {0} using Read-Only privileges"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.BatchExecuteCommandRequest"
                 timeout = @{}
@@ -97,6 +100,7 @@
             description = "Issue a batch Real-time Response 'get' command"
             security = "real-time-response:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.BatchGetCommandRequest"
                 timeout = @{
@@ -116,6 +120,7 @@
             description = "Initiate a {0}"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.BatchInitSessionRequest"
                 timeout = @{
@@ -135,6 +140,7 @@
             description = "Refresh a batch {0} to prevent expiration"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.BatchRefreshSessionRequest"
                 timeout = @{
@@ -154,6 +160,7 @@
             description = "Check the status of a {0} request"
             security = "real-time-response:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "RtrCmdStatus"
             }
@@ -168,6 +175,7 @@
             description = "Issue a {0} using Active Responder privileges"
             security = "real-time-response:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.CommandExecuteRequest"
                 base_command = @{
@@ -190,6 +198,7 @@
             description = "Check the status of a {0} request"
             security = "real-time-response-admin:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "RtrCmdStatus"
             }
@@ -204,6 +213,7 @@
             description = "Issue a {0} using Admin privileges"
             security = "real-time-response-admin:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.CommandExecuteRequest"
                 base_command = @{
@@ -226,6 +236,7 @@
             description = "Check the status of a {0} request"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "RtrCmdStatus"
             }
@@ -240,6 +251,7 @@
             description = "Issue a {0} using Read-Only privileges"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.CommandExecuteRequest"
                 base_command = @{
@@ -377,6 +389,7 @@
             description = "Retrieve detailed queued Real-time Response session information"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "msa.IdsRequest"
                 queue_switch = @{
@@ -399,6 +412,7 @@
             description = "Remove a queued Real-time Response command"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "RtrCmdStatus"
             }
@@ -413,6 +427,7 @@
             description = "Refresh a {0} to prevent expiration"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.InitRequest"
             }
@@ -554,6 +569,7 @@
             description = "Retrieve detailed {0} information"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "msa.IdsRequest"
             }
@@ -570,6 +586,7 @@
             description = "Initiate a {0}"
             security = "real-time-response:read"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "domain.InitRequest"
             }

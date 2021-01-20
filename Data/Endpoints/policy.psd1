@@ -167,6 +167,7 @@
         post = @{
             description = "Retrieve an uninstall or maintenance token"
             security = "sensor-update-policies:write"
+            consumes = "application/json"
             produces = "application/json"
             parameters = @{
                 schema = "requests.RevealUninstallTokenV1"
@@ -288,6 +289,7 @@
             description = "Set {0} precedence"
             security = "device-control-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyPrecedence"
             }
@@ -318,6 +320,7 @@
             description = "Create Device Control policies"
             security = "device-control-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyCreate"
             }
@@ -345,6 +348,7 @@
             description = "Modify Device Control policies"
             security = "device-control-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyUpdate"
             }
@@ -399,6 +403,7 @@
             description = "Set {0} precedence"
             security = "firewall-management:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyPrecedence"
             }
@@ -429,6 +434,7 @@
             description = "Create Firewall policies"
             security = "firewall-management:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.CreateFirewallPoliciesV1"
             }
@@ -456,6 +462,7 @@
             description = "Modify Firewall policies"
             security = "firewall-management:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.UpdateFirewallPoliciesV1"
             }
@@ -503,6 +510,7 @@
             description = "Modify {0}s"
             security = "self-service-ioa-exclusions:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.IoaExclusionUpdateReqV1"
             }
@@ -533,6 +541,7 @@
             description = "Create {0}s"
             security = "ml-exclusions:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.MlExclusionCreateReqV1"
             }
@@ -564,6 +573,7 @@
             description = "Modify {0}s"
             security = "ml-exclusions:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.SvExclusionUpdateReqV1"
             }
@@ -618,6 +628,7 @@
             description = "Set {0} precedence"
             security = "prevention-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyPrecedence"
             }
@@ -648,6 +659,7 @@
             description = "Create Prevention policies"
             security = "prevention-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyCreate"
             }
@@ -675,6 +687,7 @@
             description = "Modify Prevention policies"
             security = "prevention-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyUpdate"
             }
@@ -726,8 +739,9 @@
             description = "Set {0} precedence"
             security = "response-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
-                schema = ""
+                schema = "PolicyPrecedence"
             }
             responses = @{
                 default = "msa.QueryResponse"
@@ -750,8 +764,9 @@
             description = "Create Response policies"
             security = "response-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
-                schema = ""
+                schema = "PolicyCreate"
             }
             responses = @{}
         }
@@ -770,8 +785,9 @@
             description = "Modify Response policies"
             security = "response-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
-                schema = ""
+                schema = "PolicyUpdate"
             }
             responses = @{
                 default = ""
@@ -821,6 +837,7 @@
             description = "Set {0} precedence"
             security = "sensor-update-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyPrecedence"
             }
@@ -867,6 +884,7 @@
             description = "Create Sensor Update policies"
             security = "sensor-update-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.CreateSensorUpdatePoliciesV2"
             }
@@ -880,6 +898,7 @@
             description = "Modify Sensor Update policies"
             security = "sensor-update-policies:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "PolicyUpdate"
             }
@@ -910,6 +929,7 @@
             description = "Create {0}s"
             security = "sensor-visibility-exclusions:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.SvExclusionCreateReqV1"
             }
@@ -941,6 +961,7 @@
             description = "Modify {0}s"
             security = "sensor-visibility-exclusions:write"
             produces = "application/json"
+            consumes = "application/json"
             parameters = @{
                 schema = "requests.SvExclusionUpdateReqV1"
             }
