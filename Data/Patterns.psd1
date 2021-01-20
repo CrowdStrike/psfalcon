@@ -18,6 +18,7 @@
     "^/ioarules/entities/pattern-severities/" = "^(critical|high|medium|low|informational)$"
     "^/ioarules/entities/platforms/" = "^(windows|mac|linux)$"
     "^/malquery/entities/requests/" = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
+    "^/policy/" = "\w{32}"
     "^/real-time-response/entities/(scripts|put-files)/" = "\w{32}_\w{32}"
     "^/real-time-response/entities/sessions/GET/" = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
     "^/samples/entities/samples/" = "\w{64}"
@@ -26,5 +27,4 @@
     "^/spotlight/entities/remediations/" = "\w{32}"
     "^/spotlight/entities/vulnerabilities/" = "\w{32}_\w{32}"
     "^/users/(entities|queries)/(users|user-uuids-by-email)/" = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
-    "^/policy/" = "\w{32}"
 }

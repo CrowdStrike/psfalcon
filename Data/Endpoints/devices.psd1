@@ -107,6 +107,7 @@
                     required = $true
                     parent = "action_parameters"
                     description = "One or more Host identifiers"
+                    pattern = "\w{32}"
                     position = 3
                 }
             }

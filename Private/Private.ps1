@@ -526,9 +526,9 @@ function Get-DynamicHelp {
     }
     process {
         # Gather endpoint names from $Command
-        (((Get-Command $Command).ParameterSets.Name).Where({ ($_ -ne 'psfalcon:help') -and
-        ($Exclusions -notcontains $_) })).foreach{
-            $Ref = $Falcon.GetEndpoint($_)
+        ((Get-Command $Command).ParameterSets.Where({ ($_.Name -ne 'psfalcon:help') -and
+        ($Exclusions -notcontains $_.Name) })).foreach{
+            $Ref = $Falcon.GetEndpoint($_.Name)
             # Output endpoint description and permission
             "`n# $($Ref.description)"
             if ($Ref.security) {
@@ -537,13 +537,17 @@ function Get-DynamicHelp {
             if ($Ref.parameters) {
                 (($Ref.parameters).GetEnumerator().Where({ $_.Value.type -ne 'switch' }) |
                 Sort-Object { $_.Value.position }).foreach{
-                    # Output parameters based on position
+                    # Output parameters from endpoint based on position
                     Show-Parameter -Parameter $_
                 }
                 ($Ref.Parameters).GetEnumerator().Where({ $_.Value.type -eq 'switch' }).foreach{
-                    # Output switch parameters
+                    # Output switch parameters from endpoint
                     Show-Parameter -Parameter $_
                 }
+            }
+            ($_.Parameters).Where({ $_.Name -match '^(All|Detailed)$'}).foreach{
+                # Show switch parameters added by Get-Dictionary
+                "`n  -$($_.Name) [switch]`n    $($_.HelpMessage)"
             }
         }
         "`n"

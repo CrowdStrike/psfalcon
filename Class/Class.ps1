@@ -28,50 +28,10 @@ class Falcon {
             throw "Invalid endpoint: '$Endpoint'"
         }
         # Gather endpoint properties and begin output construction
-        $Ref = ($this.Endpoints.$Path.$Method).Clone()
+        $Ref = $this.Endpoints.$Path.$Method
         $Output = @{
             path = $Path
             method = $Method
-        }
-        if ($Ref.parameters) {
-            $Output['parameters'] = if ($Ref.parameters.schema) {
-                # Build from Schema
-                $this.GetSchema($Ref.parameters.schema)
-            }
-            elseif ($Ref.parameters) {
-                $Shared = @{}
-                $Ref.parameters.Keys.Where({ $this.Parameters.$_ }).foreach{
-                    # Build from shared Parameters
-                    $Shared[$_] = $this.Parameters.($_)
-                }
-                if (-not $Output.consumes) {
-                    # Force 'content-type' for endpoints that have body content
-                    $Output['consumes'] = 'application/json'
-                }
-                $Shared
-            }
-            ($Output.parameters).GetEnumerator().foreach{
-                foreach ($Pair in ($Output.parameters).GetEnumerator()) {
-                    if ($Ref.parameters.($Pair.Key)) {
-                        ($Ref.parameters.($Pair.Key)).GetEnumerator().foreach{
-                            # Force manual parameter properties from endpoint
-                            $Output.parameters.($Pair.Key)[$_.Key] = $_.Value
-                        }
-                    }
-                }
-                if (-not $_.Value.dynamic) {
-                    # Generate dynamic parameter name
-                    $_.Value['dynamic'] = $this.Culture.ToTitleCase($_.Key) -replace '[^a-zA-Z0-9]',''
-                }
-                if (($_.Key -match '^(id|ids)$') -and (-not $_.Value.pattern)) {
-                    # Append default RegEx pattern by endpoint
-                    $_.Value['pattern'] = $this.GetPattern($Endpoint)
-                }
-                # Update description with ItemType
-                $_.Value['description'] = $this.GetItemType($Endpoint, $_.Value.description)
-                # Add ParameterSetName
-                $_.Value['set'] = $Endpoint
-            }
         }
         $Ref.GetEnumerator().Where({ $_.Key -ne 'parameters' }).foreach{
             if ($_.Key -eq 'description') {
@@ -83,6 +43,9 @@ class Falcon {
                 $Output[$_.Key] = $_.Value
             }
         }
+        if ($Ref.parameters) {
+            $Output['parameters'] = $this.GetParameters($Ref.parameters, $Endpoint)
+        }
         return $Output
     }
     [string] GetItemType([string] $Endpoint, [string] $Value) {
@@ -92,6 +55,62 @@ class Falcon {
         }
         else {
             $Value
+        }
+        return $Output
+    }
+    [hashtable] GetParameters([hashtable] $Object, [string] $Endpoint) {
+        $Output = $Object.Clone()
+        if ($Output.schema) {
+            foreach ($Pair in $this.GetSchema($Output.schema).GetEnumerator()) {
+                if ($Output.($Pair.Key)) {
+                    ($Pair.Value).GetEnumerator().foreach{
+                        if (-not $Output.($Pair.Key).($_.Key)) {
+                            # Append properties for existing parameter from 'Schema'
+                            $Output.($Pair.Key)[$_.Key] = $_.Value
+                        }
+                    }
+                }
+                else {
+                    # Add parameters from 'Schema'
+                    $Output[$Pair.Key] = $Pair.Value
+                }
+            }
+            # Remove 'Schema' name
+            $Output.Remove('schema')
+        }
+        else {
+            foreach ($Pair in $Object.GetEnumerator()) {
+                if ($this.Parameters.($Pair.Key) -and $Output.($Pair.Key)) {
+                    $this.Parameters.($Pair.Key).Clone().GetEnumerator().foreach{
+                        if (-not $Output.($Pair.Key).($_.Key)) {
+                            # Append properties for existing parameter from 'Shared'
+                            $Output.($Pair.Key)[$_.Key] = $_.Value
+                        }
+                    }
+                }
+                elseif ($this.Parameters.($Pair.Key)) {
+                    # Add parameter from 'Shared'
+                    $Output[$Pair.Key] = $this.Parameters.($Pair.Key)
+                }
+                else {
+                    # Add parameter
+                    $Output[$Pair.Key] = $_.Value
+                }
+            }
+        }
+        ($Output.GetEnumerator()).foreach{
+            if (-not $_.Value.dynamic) {
+                # Generate dynamic parameter name
+                $Output.($_.Key)['dynamic'] = $this.Culture.ToTitleCase($_.Key) -replace '[^a-zA-Z0-9]',''
+            }
+            elseif (($_.Key -match '^(id|ids)$') -and (-not $_.Value.pattern)) {
+                # Append default RegEx pattern by endpoint
+                $Output.($_.Key)['pattern'] = $this.GetPattern($Endpoint)
+            }
+            # Update description with ItemType
+            $Output.($_.Key)['description'] = $this.GetItemType($Endpoint, $_.Value.description)
+            # Add ParameterSetName
+            $Output.($_.Key)['set'] = $Endpoint
         }
         return $Output
     }
