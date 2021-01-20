@@ -94,7 +94,7 @@ class Falcon {
                 }
                 else {
                     # Add parameter
-                    $Output[$Pair.Key] = $_.Value
+                    $Output[$Pair.Key] = $Pair.Value
                 }
             }
         }
