@@ -44,6 +44,10 @@ class Falcon {
                     # Build from shared Parameters
                     $Shared[$_] = $this.Parameters.($_)
                 }
+                if (-not $Output.consumes) {
+                    # Force 'content-type' for endpoints that have body content
+                    $Output['consumes'] = 'application/json'
+                }
                 $Shared
             }
             ($Output.parameters).GetEnumerator().foreach{
