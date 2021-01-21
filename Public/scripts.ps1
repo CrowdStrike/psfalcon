@@ -404,8 +404,8 @@ function Get-Queue {
                 if ($SessionIds) {
                     Write-Host "Found $($SessionIds.count) session(s) with queued commands..."
                     $Param = @{
-                        Queue      = $true
-                        SessionIds = $SessionIds
+                        Queue = $true
+                        Ids   = $SessionIds
                     }
                     $Sessions = Get-FalconSession @Param
                 }
