@@ -722,18 +722,23 @@ function Invoke-RTR {
     }
     begin {
         if (-not $PSBoundParameters.Help) {
+            # Max number of hosts per session
             $MaxHosts = 500
+            # Sleep time, and max time to sleep when interacting with a single host
             $Sleep = 2
             $MaxSleep = 30
+            # Commands segregated by permission level
             $Responder = @("cp","encrypt","get","kill","map","memdump","mkdir","mv","reg delete","reg load",
                 "reg set","reg unload","restart","rm","runscript","shutdown","umount","unmap","update history",
                 "update install","update list","update install","xmemdump","zip")
             $Admin = @("put","run")
+            # Determine permission level from input command
             $Permission = switch ($PSBoundParameters.Command) {
                 { $Admin -contains $_ } { 'Admin' }
                 { $Responder -contains $_ } { 'Responder' }
                 default { $null }
             }
+            # Force 'Timeout' into 'Arguments' when using 'runscript'
             if ($PSBoundParameters.Command -match 'runscript' -and $PSBoundParameters.Timeout -and
                 ($PSBoundParameters.Arguments -notmatch "-Timeout=\d{2,3}")) {
                 $PSBoundParameters.Arguments += " -Timeout=$($PSBoundParameters.Timeout)"
@@ -745,35 +750,51 @@ function Invoke-RTR {
                 $PSBoundParameters.Arguments = "'$($PSBoundParameters.Arguments)'"
             }
             $InvokeCmd = if ($PSBoundParameters.Command -eq 'get' -and $PSBoundParameters.HostIds.count -gt 1) {
+                # Set command for 'get' with multiple hosts
                 "Invoke-FalconBatchGet"
             }
             else {
+                # Set command
                 "Invoke-Falcon$($Permission)Command"
             }
             if ($PSBoundParameters.HostIds.count -eq 1) {
+                # Set confirmation command to match
                 $ConfirmCmd = "Confirm-Falcon$($Permission)Command"
             }
-            function Write-Result ($Object, $Item) {
+            function Write-Result ($Object) {
                 ($Object.PSObject.Properties).foreach{
                     $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
+                        # Convert array results into strings
                         $_.Value -join ', '
                     }
                     elseif ($_.Value.code -and $_.Value.message) {
+                        # Convert error code and message into string
                         "$($_.Value.code): $($_.Value.message)"
                     }
                     else {
                         $_.Value
                     }
                     $Name = if ($_.Name -eq 'task_id') {
+                        # Rename 'task_id'
                         'cloud_request_id'
                     }
                     elseif ($_.Name -eq 'queued_command_offline') {
+                        # Rename 'queued_command_offline'
                         'offline_queued'
                     }
                     else {
                         $_.Name
                     }
+                    $Item = if ($Object.aid) {
+                        # Match using 'aid' for batches
+                        $Output.Where({ $_.aid -eq $Object.aid })
+                    }
+                    elseif ($Object.count -eq 1) {
+                        # Assume single host
+                        $Output[0]
+                    }
                     if ($Item.PSObject.Properties.Name -contains $Name) {
+                        # Add result to output
                         $Item.$Name = $Value
                     }
                 }
@@ -788,9 +809,9 @@ function Invoke-RTR {
             for ($i = 0; $i -lt $PSBoundParameters.HostIds.count; $i += $MaxHosts) {
                 try {
                     [array] $Output = ($PSBoundParameters.HostIds[$i..($i + ($MaxHosts - 1))]).foreach{
+                        # Create base output object for each host
                         [PSCustomObject] @{
                             aid = $_
-                            batch_id = $null
                             session_id = $null
                             cloud_request_id = $null
                             complete = $false
@@ -800,6 +821,7 @@ function Invoke-RTR {
                             errors = $null
                         }
                     }
+                    # Determine total number of hosts and set request parameters
                     $HostParam = if ($Output.aid.count -eq 1) {
                         $Output[0].PSObject.Properties.Remove('batch_id')
                         'HostId'
@@ -820,6 +842,7 @@ function Invoke-RTR {
                             }
                         }
                     }
+                    # Start session and capture results
                     $Init = Start-FalconSession @Param
                     if ($Init) {
                         $Content = if ($Init.hosts) {
@@ -828,14 +851,17 @@ function Invoke-RTR {
                         else {
                             $Init
                         }
-                        foreach ($Result in $Content) {
-                            $Item = ($Output).Where({ $_.aid -eq $Result.aid })
-                            Write-Result -Object $Result -Item $Item
-                            if (($PSBoundParameters.QueueOffline -eq $true -or $Result.session_id) -and
-                            $Init.batch_id) {
-                                $Item.batch_id = $Init.batch_id
-                            } 
+                        $Content.foreach{
+                            Write-Result -Object $_
                         }
+                        if ($Init.batch_id) {
+                            $Output.Where({ $_.session_id }).foreach{
+                                # Add batch_id
+                                $_.PSObject.Properties.Add(
+                                    (New-Object PSNoteProperty('batch_id', $Init.batch_id)))
+                            }
+                        }
+                        # Set command parameters based on init result
                         $SessionType = if ($HostParam -eq 'HostIds') {
                             'BatchId'
                             $IdValue = $Init.batch_id
@@ -848,6 +874,7 @@ function Invoke-RTR {
                             $SessionType = $IdValue
                         }
                         switch ($PSBoundParameters.Keys) {
+                            # Add user input to command parameters
                             'Command' {
                                 $Param[$_] = $PSBoundParameters.$_
                             }
@@ -865,28 +892,33 @@ function Invoke-RTR {
                                 }
                             }
                         }
+                        # Perform command request
                         $Request = & $InvokeCmd @Param
                     }
                     if ($Request -and $HostParam -eq 'HostIds') {
-                        foreach ($Result in $Request) {
-                            Write-Result -Object $Result -Item ($Output).Where({ $_.session_id -eq
-                            $Result.session_id })
+                        # Capture results and output batch commands
+                        $Request.foreach{
+                            Write-Result -Object $_
                         }
                         $Output
                     }
                     elseif ($Request) {
-                        Write-Result -Object $Request -Item $Output[0]
-                        if ($Output[0].cloud_request_id -and $Output[0].complete -eq $false -and
-                        $Output[0].offline_queued -eq $false) {
+                        # Capture results
+                        Write-Result -Object $Request
+                        if ($Output.cloud_request_id -and $Output.complete -eq $false -and
+                        $Output.offline_queued -eq $false) {
                             do {
+                                # Loop command confirmation using intervals of $Sleep
                                 Start-Sleep -Seconds $Sleep
-                                $Confirm = & $ConfirmCmd -CloudRequestId $Output[0].cloud_request_id
-                                Write-Result -Object $Confirm -Item $Output[0]
+                                $Confirm = & $ConfirmCmd -CloudRequestId $Output.cloud_request_id
+                                Write-Result -Object $Confirm
                                 $i += $Sleep
                             } until (
+                                # Break if command is complete or $MaxSleep is reached
                                 ($Output[0].complete -eq $true) -or ($i -ge $MaxSleep)
                             )
                         }
+                        # Output results
                         $Output
                     }
                 }
