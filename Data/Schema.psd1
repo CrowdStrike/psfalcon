@@ -533,6 +533,7 @@
             description = "One or more {0} identifiers"
             type = "array"
             position = 1
+            max = 1000
         }
         status = @{
             description = "{0} status"
