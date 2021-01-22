@@ -50,7 +50,7 @@ class Falcon {
     }
     [string] GetItemType([string] $Endpoint, [string] $Value) {
         $Output = if ($Value -match '\{0\}') {
-            $ItemType = $this.ItemTypes.GetEnumerator().Where({ $Endpoint -match $_.Key }).Value
+            $ItemType = $this.ItemTypes.Clone().GetEnumerator().Where({ $Endpoint -match $_.Key }).Value
             $Value -f $ItemType
         }
         else {
@@ -104,9 +104,12 @@ class Falcon {
                 # Generate dynamic parameter name
                 $Output.($_.Key)['dynamic'] = $this.Culture.ToTitleCase($_.Key) -replace '[^a-zA-Z0-9]',''
             }
-            elseif (($_.Key -match '^(id|ids)$') -and (-not $_.Value.pattern)) {
+            if (($_.Key -eq 'id') -or ($_.Key -eq 'ids')) {
                 # Append default RegEx pattern by endpoint
-                $Output.($_.Key)['pattern'] = $this.GetPattern($Endpoint)
+                $Pattern = $this.GetPattern($Endpoint)
+                if ($Pattern) {
+                    $Output.($_.Key)['pattern'] = $this.GetPattern($Endpoint) #$Pattern
+                }
             }
             # Update description with ItemType
             $Output.($_.Key)['description'] = $this.GetItemType($Endpoint, $_.Value.description)
@@ -117,7 +120,7 @@ class Falcon {
     }
     [string] GetPattern([string] $Endpoint) {
         # Match Endpoint to Patterns
-        return $this.Patterns.GetEnumerator().Where({ $Endpoint -match $_.Key }).Value
+        return $this.Patterns.Clone().GetEnumerator().Where({ $Endpoint -match $_.Key }).Value
     }
     [string] GetResponse([string] $Endpoint, [int] $Code) {
         # Gather Endpoint.Responses and output response type
