@@ -359,7 +359,7 @@ PrivateData = @{
         ProjectUri = 'https://github.com/crowdstrike/psfalcon'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
         ReleaseNotes = "
