@@ -977,7 +977,7 @@ function Invoke-Endpoint {
                     $Client.DefaultRequestHeaders.Add($_.Key, $_.Value)
                 }
                 $Request.Dispose()
-                $Client.GetByteArrayAsync($Uri)
+                $Client.GetByteArrayAsync($FullUri)
             }
             else {
                 # Make request
