@@ -541,7 +541,7 @@ function Invoke-Deploy {
                     else {
                         $_.Name
                     }
-                    $Output.Where({ $_.aid -eq $Result.aid }).foreach{
+                    $Output | Where-Object { $_.aid -eq $Result.aid } | ForEach-Object {
                         $_.$Name = $Value
                     }
                 }
@@ -642,8 +642,8 @@ function Invoke-Deploy {
                             BatchId = $Session.batch_id
                         }
                         Write-Result @Param
-                        $SessionHosts = ($Session.hosts.Where({ ($_.complete -eq $true) -or
-                        ($_.offline_queued -eq $true) })).aid
+                        $SessionHosts = ($Session.hosts | Where-Object { ($_.complete -eq $true) -or
+                        ($_.offline_queued -eq $true) }).aid
                     }
                     if ($SessionHosts) {
                         Write-Host "Pushing $Filename to $($SessionHosts.count) host(s)..."
@@ -664,8 +664,8 @@ function Invoke-Deploy {
                                 BatchId = $Session.batch_id
                             }
                             Write-Result @Param
-                            $PutHosts = ($CmdPut.Where({ ($_.stdout -eq
-                            'Operation completed successfully.') -or ($_.offline_queued -eq $true) })).aid
+                            $PutHosts = ($CmdPut | Where-Object { ($_.stdout -eq
+                            'Operation completed successfully.') -or ($_.offline_queued -eq $true) }).aid
                         }
                     }
                     if ($PutHosts) {
@@ -787,9 +787,9 @@ function Invoke-RTR {
                     }
                     $Item = if ($Object.aid) {
                         # Match using 'aid' for batches
-                        $Output.Where({ $_.aid -eq $Object.aid })
+                        $Output | Where-Object { $_.aid -eq $Object.aid }
                     }
-                    elseif ($Object.count -eq 1) {
+                    else {
                         # Assume single host
                         $Output[0]
                     }
@@ -851,11 +851,11 @@ function Invoke-RTR {
                         else {
                             $Init
                         }
-                        $Content.foreach{
+                        $Content | ForEach-Object {
                             Write-Result -Object $_
                         }
                         if ($Init.batch_id) {
-                            $Output.Where({ $_.session_id }).foreach{
+                            $Output | Where-Object { $_.session_id } | ForEach-Object {
                                 # Add batch_id
                                 $_.PSObject.Properties.Add(
                                     (New-Object PSNoteProperty('batch_id', $Init.batch_id)))
@@ -897,7 +897,7 @@ function Invoke-RTR {
                     }
                     if ($Request -and $HostParam -eq 'HostIds') {
                         # Capture results and output batch commands
-                        $Request.foreach{
+                        $Request | ForEach-Object {
                             Write-Result -Object $_
                         }
                         $Output
