@@ -154,7 +154,7 @@ function Invoke-HostAction {
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     begin {
-        $Max = if ($Dynamic.ActionName.Value -match '^(hide_host|unhide_host)$') {
+        $Max = if ($Dynamic.Name.Value -match '^(hide_host|unhide_host)$') {
             100
         }
         else {
