@@ -84,7 +84,7 @@ function Send-Sample {
     begin {
         $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
         if (-not $Dynamic.FileName.Value) {
-            $Dynamic.FileName.Value = "$([System.IO.Path]::GetFileName($Dynamic.Path.Value)))"
+            $Dynamic.FileName.Value = "$([System.IO.Path]::GetFileName($Dynamic.Path.Value))"
         }
     }
     process {
