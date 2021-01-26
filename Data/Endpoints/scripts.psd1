@@ -51,8 +51,6 @@
                 path = @{
                     type = "string"
                     required = $true
-                    script = '[System.IO.Path]::IsPathRooted($_)'
-                    scripterror = "Relative paths are not permitted."
                     description = "Path to local file"
                     position = 2
                 }

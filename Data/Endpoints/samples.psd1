@@ -33,8 +33,6 @@
                 "X-CS-USERUUID" = @{}
                 body = @{
                     dynamic = "Path"
-                    script = '[System.IO.Path]::IsPathRooted($_)'
-                    scripterror = "Relative paths are not permitted."
                     description = "Path to local file"
                     pattern = "\.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|js|ko|lnk|o|ocx|mod|msg|mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|vbe|vbs|wsf|xls|xlsx)$"
                     required = $true

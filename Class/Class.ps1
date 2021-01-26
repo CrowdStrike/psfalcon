@@ -21,6 +21,18 @@ class Falcon {
         $this.Schema = $Data.Schema
         $this.PSObject.TypeNames.Insert(0,'Falcon')
     }
+    [string] GetAbsolutePath([string] $Path) {
+        $Output = if (-not [IO.Path]::IsPathRooted($Path)) {
+            # Convert relative paths to absolute paths and respect OS platform
+            $AbsolutePath = Join-Path -Path (Get-Location).Path -ChildPath $Path
+            $AbsolutePath = Join-Path -Path $AbsolutePath -ChildPath '.'
+            [IO.Path]::GetFullPath($AbsolutePath)
+        }
+        else {
+            $Path
+        }
+        return $Output
+    }
     [hashtable] GetEndpoint([string] $Endpoint) {
         $Path = $Endpoint.Split(':')[0]
         $Method = $Endpoint.Split(':')[1]

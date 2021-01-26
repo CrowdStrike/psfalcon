@@ -549,6 +549,9 @@ function Send-PutFile {
         $Endpoints = @('/real-time-response/entities/put-files/v1:post')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
@@ -574,6 +577,9 @@ function Send-Script {
     DynamicParam {
         $Endpoints = @('/real-time-response/entities/scripts/v1:post')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
     }
     process {
         if ($PSBoundParameters.Help) {

@@ -508,7 +508,7 @@ function Invoke-Deploy {
         $Max = 500
         $FileDateTime = Get-Date -Format FileDateTime
         $OutputFile = "$pwd\FalconDeploy_$FileDateTime.csv"
-        $FilePath = $Dynamic.Path.Value
+        $FilePath = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
         $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
         $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
         function Write-Result ($Object, $Step, $BatchId) {

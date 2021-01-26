@@ -681,8 +681,8 @@ function Get-Outfile {
             # Match dynamic parameters to parameters defined by endpoint
             $FileOutput = $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
             ($_.Value.In -eq 'outfile') }).foreach{
-                # Convert relative paths to $pwd
-                $Item.Value -replace '^\.', $pwd
+                # Convert relative paths
+                $Falcon.GetAbsolutePath($Item.Value)
             }
             if ($FileOutput) {
                 # Output file path string

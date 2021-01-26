@@ -206,50 +206,6 @@
             position = 2
         }
     }
-    RtrScript = @{
-        file = @{
-            dynamic = "Path"
-            type = "string"
-            in = "formData"
-            required = $true
-            script = '[System.IO.Path]::IsPathRooted($_)'
-            scripterror = "Relative paths are not permitted."
-            description = "Local path to script file"
-            position = 1
-        }
-        permission_type = @{
-            in = "formData"
-            required = $true
-            enum = @("private","group","public")
-            description = "{0} permission level"
-            position = 2
-        }
-        platform = @{
-            description = "Operating System platform"
-            enum = @("windows","mac","linux")
-            type = "string"
-            in = "formData"
-            required = $true
-            position = 3
-        }
-        name = @{
-            description = "{0} name"
-            in = "formData"
-            position = 4
-        }
-        description = @{
-            description = "{0} description"
-            in = "formData"
-            position = 5
-        }
-        comments_for_audit_log = @{
-            dynamic = "Comment"
-            description = "Audit log comment"
-            max = 4096
-            in = "formData"
-            position = 6
-        }
-    }
     # Swagger-defined Schema, used to create dynamic parameters
     "api.IOCViewRecord" = @{
         policy = @{
