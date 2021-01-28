@@ -51,9 +51,9 @@ function Export-Report {
                 $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
             }
             function Get-SimpleObject ($Object) {
-                ($Object).foreach{
+                $Object | ForEach-Object {
                     $Item = [PSCustomObject] @{}
-                    ($_.PSObject.Properties).foreach{
+                    $_.PSObject.Properties | ForEach-Object {
                         Add-Field -Object $Item -Name $_.Name -Value $_.Value
                     }
                     $Item
@@ -68,17 +68,17 @@ function Export-Report {
         else {
             $Output = switch (($Meta.PSObject.TypeNames).Where({ $_ -notmatch '^System.*$' })) {
                 { $TypeNames.Detection -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
                         $Param = @{
                             Object = $Item
                         }
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'device') {
                                 Add-Field @Param -Name 'device_id' -Value $_.Value.device_id
                             }
                             elseif ($_.Name -eq 'behaviors') {
-                                $TTP = ($_.Value).foreach{
+                                $TTP = $_.Value | ForEach-Object {
                                     "$($_.tactic_id):$($_.technique_id)"
                                 }
                                 Add-Field @Param -Name 'tactic_and_technique' -Value ($TTP -join ', ')
@@ -94,12 +94,12 @@ function Export-Report {
                     }
                 }
                 { $TypeNames.DeviceControl -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
                         $Param = @{
                             Object = $Item
                         }
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
                             }
@@ -116,12 +116,12 @@ function Export-Report {
                     }
                 }
                 { $TypeNames.Firewall -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
                         $Param = @{
                             Object = $Item
                         }
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
                             }
@@ -133,14 +133,14 @@ function Export-Report {
                     }
                 }
                 { $TypeNames.Host -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
                         $Param = @{
                             Object = $Item
                         }
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'device_policies') {
-                                ($_.Value.psobject.properties).foreach{
+                                $_.Value.psobject.properties | ForEach-Object {
                                     Add-Field @Param -Name "$($_.Name)_id" -Value $_.Value.policy_id
                                     Add-Field @Param -Name "$($_.Name)_assigned" -Value $_.Value.assigned_date
                                     $Applied = if ($_.Value.applied -eq $true) {
@@ -170,16 +170,16 @@ function Export-Report {
                     Get-SimpleObject -Object $PSBoundParameters.Object
                 }
                 { $TypeNames.Identifier -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         [PSCustomObject] @{
                             id = $_
                         }
                     }
                 }
                 { $TypeNames.Incident -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($Exclusions.Incident -notcontains $_.Name) {
                                 Add-Field -Object $Item -Name $_.Name -Value $_.Value
                             }
@@ -189,7 +189,7 @@ function Export-Report {
                 }
                 { $TypeNames.IOC -contains $_ } {
                     if ($_ -eq 'api.MsaReplyIOCIDs') {
-                        ($PSBoundParameters.Object).foreach{
+                        $PSBoundParameters.Object | ForEach-Object {
                             [PSCustomObject] @{
                                 type  = ($_).Split(':')[0]
                                 value = ($_).Split(':')[1]
@@ -201,17 +201,17 @@ function Export-Report {
                     }
                 }
                 { $TypeNames.Prevention -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
                         $Param = @{
                             Object = $Item
                         }
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
                             }
                             elseif ($_.Name -eq 'prevention_settings') {
-                                ($_.Value.settings).foreach{
+                                $_.Value.settings | ForEach-Object {
                                     if ($_.type -eq 'toggle') {
                                         Add-Field @Param -Name $_.id -Value $_.Value.enabled
                                     }
@@ -232,17 +232,17 @@ function Export-Report {
                     Get-SimpleObject -Object $PSBoundParameters.Object
                 }
                 { $TypeNames.SensorUpdate -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
                         $Param = @{
                             Object = $Item
                         }
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
                             }
                             elseif ($_.Name -eq 'settings') {
-                                ($_.Value.psobject.properties).foreach{
+                                $_.Value.psobject.properties | ForEach-Object {
                                     Add-Field @Param -Name $_.Name -Value $_.Value
                                 }
                             }
@@ -257,24 +257,24 @@ function Export-Report {
                     Get-SimpleObject -Object $PSBoundParameters.Object
                 }
                 { $TypeNames.Vulnerability -contains $_ } {
-                    ($PSBoundParameters.Object).foreach{
+                    $PSBoundParameters.Object | ForEach-Object {
                         $Item = [PSCustomObject] @{}
                         $Param = @{
                             Object = $Item
                         }
-                        ($_.PSObject.Properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'cve') {
-                                ($_.Value.psobject.properties).foreach{
+                                $_.Value.psobject.properties | ForEach-Object {
                                     Add-Field @Param -Name "cve_$($_.Name)" -Value $_.Value
                                 }
                             }
                             elseif ($_.Name -eq 'app') {
-                                ($_.Value.psobject.properties).foreach{
+                                $_.Value.psobject.properties | ForEach-Object {
                                     Add-Field @Param -Name $_.Name -Value $_.Value
                                 }
                             }
                             elseif ($_.Name -eq 'host_info') {
-                                ($_.Value.psobject.properties).foreach{
+                                $_.Value.psobject.properties | ForEach-Object {
                                     if ($_.Name -eq 'groups') {
                                         Add-Field @Param -Name $_.Name -Value ($_.Value.name -join ', ')
                                     }
@@ -413,7 +413,7 @@ function Get-Queue {
                     throw "No queued sessions available"
                 }
                 foreach ($Session in $Sessions) {
-                    ($Session.Commands).foreach{
+                    $Session.Commands | ForEach-Object {
                         $Object = [PSCustomObject] @{
                             aid                = $Session.aid
                             user_id            = $Session.user_id
@@ -435,7 +435,7 @@ function Get-Queue {
                         $Param = @{
                             Object = $Object
                         }
-                        ($_.psobject.properties).foreach{
+                        $_.PSObject.Properties | ForEach-Object {
                             if ($_.name -eq 'status') {
                                 Add-Field @Param -Name "command_$($_.name)" $_.value
                             }
@@ -468,9 +468,9 @@ function Get-Queue {
                             }
                             $CmdResult = & "Confirm-Falcon$($Permission)Command" @Param
                             if ($CmdResult) {
-                                Write-Host "Gathering results for $($Object.cloud_request_id)..."
-                                (($CmdResult | Select-Object stdout, stderr,
-                                complete).psobject.properties).foreach{
+                                Write-Host "Gathering results for cloud_request_id $($Object.cloud_request_id)..."
+                                ($CmdResult | Select-Object stdout, stderr, complete).PSObject.Properties |
+                                ForEach-Object {
                                     $Object."command_$($_.Name)" = $_.Value
                                 }
                             }
@@ -528,7 +528,7 @@ function Invoke-Deploy {
             }
             foreach ($Result in ($Object | Select-Object aid, session_id, task_id, complete, stdout,
             stderr, errors, offline_queued)) {
-                ($Result.PSObject.Properties).foreach{
+                $Result.PSObject.Properties | ForEach-Object {
                     $Value = if (($_.Name -eq 'errors') -and $_.Value) {
                         "$($_.Value.code): $($_.Value.message)"
                     }
@@ -762,7 +762,7 @@ function Invoke-RTR {
                 $ConfirmCmd = "Confirm-Falcon$($Permission)Command"
             }
             function Write-Result ($Object) {
-                ($Object.PSObject.Properties).foreach{
+                $Object.PSObject.Properties | ForEach-Object {
                     $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
                         # Convert array results into strings
                         $_.Value -join ', '
@@ -1055,7 +1055,7 @@ function Show-Map {
         }
         else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
-            $Param.Query = ($Param.Query).foreach{
+            $Param.Query = $Param.Query | ForEach-Object {
                 $Split = $_ -split ':'
                 $Type = switch ($Split[0]) {
                     'sha256' { 'hash' }
