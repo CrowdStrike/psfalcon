@@ -250,7 +250,7 @@ function Get-AuthPair {
         Outputs a base64 authorization pair for Format-Header
     #>
     [CmdletBinding()]
-    [OutputType()]
+    [OutputType([string])]
     param()
     process {
         if ($Falcon.ClientId -and $Falcon.ClientSecret) {
@@ -486,7 +486,7 @@ function Get-DynamicHelp {
         Endpoints to exclude from results (for redundancies)
     #>
     [CmdletBinding()]
-    [OutputType()]
+    [OutputType([string])]
     param(
         [Parameter(Mandatory = $true)]
         [string] $Command,
@@ -641,7 +641,7 @@ function Get-LoopParam {
         A runtime parameter dictionary to search for input values
     #>
     [CmdletBinding()]
-    [OutputType()]
+    [OutputType([hashtable])]
     param(
         [Parameter(Mandatory = $true)]
         [System.Collections.ArrayList] $Dynamic
@@ -821,7 +821,7 @@ function Get-Query {
                 foreach ($Value in $Item.Value) {
                     # Output "query" values to an array and encode '+' to ensure filter input integrity
                     if ($_.Key) {
-                        if (($Endpoint.path -eq '/indicators/queries/iocs/v1') -and (($_.Key -eq 'type') -or 
+                        if (($Endpoint.path -eq '/indicators/queries/iocs/v1') -and (($_.Key -eq 'type') -or
                         ($_.Key -eq 'value'))) {
                             # Change type/value to types/values for /indicators/queries/iocs/v1:get
                             ,"$($_.Key)s=$($Value -replace '\+','%2B')"
@@ -1045,7 +1045,7 @@ function Invoke-Loop {
         [bool] $Detailed
     )
     begin {
-        function Set-Paging ($Object, $Param, $Count) {
+        function Get-Paging ($Object, $Param, $Count) {
             # Check 'Meta' object from Format-Result for pagination information
             if ($Object.after) {
                 $Param['After'] = $Object.after
@@ -1083,7 +1083,7 @@ function Invoke-Loop {
             $i += $Loop.Request.count) {
                 # Repeat requests if additional results are defined in 'meta'
                 Write-Verbose "[$($MyInvocation.MyCommand.Name)] retrieved $i results"
-                Set-Paging -Object $Loop.Pagination -Param $Param -Count $i
+                Get-Paging -Object $Loop.Pagination -Param $Param -Count $i
                 $Loop = @{
                     Request = & $Command @Param
                     Pagination = $Meta.pagination
@@ -1270,7 +1270,7 @@ function Split-Param {
         A manually-defined maximum number of identifiers per request
     #>
     [CmdletBinding()]
-    [OutputType()]
+    [OutputType([hashtable])]
     param(
         [Parameter(Mandatory = $true)]
         [hashtable] $Param,

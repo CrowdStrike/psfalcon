@@ -344,7 +344,7 @@ function Find-Duplicate {
                     Selection = $PSBoundParameters.Hosts | Select-Object $Criteria
                     Criteria = 'hostname'
                 }
-                $Duplicates = Group-Selection @Param 
+                $Duplicates = Group-Selection @Param
                 if ($Duplicates) {
                     $Duplicates
                 }

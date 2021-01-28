@@ -110,7 +110,7 @@
                 indicators = @{
                     description = "Indicators to graph"
                     type = "array"
-                    in = "query" 
+                    in = "query"
                     required = $true
                     pattern = "(sha256|md5|domain|ipv4|ipv6):.*"
                 }
