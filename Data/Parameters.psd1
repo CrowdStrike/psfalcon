@@ -207,7 +207,7 @@
     }
     "X-CS-USERUUID" = @{
         dynamic = "UserId"
-        in = "query"
+        in = "header"
         required = $true
         description = "Falcon user identifier"
         pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"

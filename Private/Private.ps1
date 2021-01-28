@@ -300,8 +300,8 @@ function Get-Body {
                         Get-Content $Item.Value -Encoding Byte -Raw
                     }
                     $ByteArray = [System.Net.Http.ByteArrayContent]::New($ByteStream)
-                    $ByteArray.Headers.Add('Content-Type', $Endpoint.produces)
-                    Write-Verbose "[$($MyInvocation.MyCommand.Name)] File: $($Item.Value)"
+                    $ByteArray.Headers.Add('Content-Type', $Endpoint.consumes)
+                    Write-Verbose "[Get-Body] File: $($Item.Value)"
                 }
                 else {
                     if (-not($BodyOutput)) {
