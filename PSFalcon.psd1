@@ -124,6 +124,7 @@ FunctionsToExport = @(
     # falconx
     'Get-Report',
     'Get-Submission',
+    'Get-SubmissionQuota',
     'New-Submission',
     'Receive-Artifact',
     'Remove-Report',

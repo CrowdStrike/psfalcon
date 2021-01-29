@@ -104,7 +104,7 @@
         }
         ShowMap = @{
             path = "/intelligence/graph?indicators="
-            method = "POST"
+            method = "post"
             description = "Use your default browser to show indicators on the Indicator Map"
             parameters = @{
                 indicators = @{
@@ -115,6 +115,11 @@
                     pattern = "(sha256|md5|domain|ipv4|ipv6):.*"
                 }
             }
+        }
+        SubmissionQuota = @{
+            path = "/falconx/queries/submissions/v1"
+            method = "get"
+            description = "Display your Falcon X submission quota information"
         }
     }
 }
