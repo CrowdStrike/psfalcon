@@ -3,21 +3,18 @@
         get = @{
             description = "Download a {0}"
             security = "samplestore:read"
-            consumes = "*/*"
             produces = "application/octet-stream"
             parameters = @{
-                "X-CS-USERUUID" = @{}
                 ids = @{
-                    position = 2
                 }
                 outfile_path = @{
-                    position = 3
+                    position = 2
                 }
                 password_protected = @{
                     description = "Archive and set password [default: 'infected']"
-                    position = 4
                     type = "boolean"
                     in = "query"
+                    position = 3
                 }
             }
             responses = @{
@@ -30,27 +27,26 @@
             consumes = "application/octet-stream"
             produces = "application/json"
             parameters = @{
-                "X-CS-USERUUID" = @{}
                 body = @{
                     dynamic = "Path"
                     description = "Path to local file"
                     pattern = "\.(acm|apk|ax|axf|bin|chm|cpl|dll|doc|docx|drv|efi|elf|eml|exe|hta|jar|js|ko|lnk|o|ocx|mod|msg|mui|pdf|pl|ppt|pps|pptx|ppsx|prx|ps1|psd1|psm1|pub|puff|py|rtf|scr|sct|so|svg|svr|swf|sys|tsp|vbe|vbs|wsf|xls|xlsx)$"
                     required = $true
-                    position = 2
+                    position = 1
                 }
                 file_name = @{
                     description = "{0} name"
                     in = "query"
-                    position = 3
+                    position = 2
                 }
                 is_confidential = @{
                     description = "{0} visibility in Falcon MalQuery [default: `$false]"
                     type = "boolean"
                     in = "query"
-                    position = 4
+                    position = 3
                 }
                 comment = @{
-                    position = 5
+                    position = 4
                 }
             }
             responses = @{
@@ -62,10 +58,8 @@
         delete = @{
             description = "Remove {0}s"
             security = "samplestore:write"
-            consumes = "*/*"
             produces = "application/json"
             parameters = @{
-                "X-CS-USERUUID" = @{}
                 ids = @{}
             }
             responses = @{
@@ -83,7 +77,6 @@
             produces = "application/json"
             parameters = @{
                 schema = "samplestore.QuerySamplesRequest"
-                "X-CS-USERUUID" = @{}
             }
             responses = @{
                 "msa.QueryResponse" = @(200,400,403,500)

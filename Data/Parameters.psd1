@@ -205,12 +205,4 @@
         required = $true
         position = 2
     }
-    "X-CS-USERUUID" = @{
-        dynamic = "UserId"
-        in = "header"
-        required = $true
-        description = "Falcon user identifier"
-        pattern = "\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"
-        position = 1
-    }
 }

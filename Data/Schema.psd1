@@ -1150,10 +1150,11 @@
     }
     "samplestore.QuerySamplesRequest" = @{
         sha256s = @{
+            dynamic = "Ids"
             description = "One or more Sha256 values"
             type = "array"
             required = $true
-            position = 2
+            position = 1
             pattern = "\w{64}"
         }
     }

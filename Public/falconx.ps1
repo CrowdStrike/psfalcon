@@ -109,9 +109,6 @@ function New-Submission {
                 }
             }
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
-            $Param['Header'] = @{
-                "Accept-Encoding" = "gzip"
-            }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
         }

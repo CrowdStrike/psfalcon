@@ -89,7 +89,7 @@
             }
         }
         post = @{
-            description = "Submit a {0}"
+            description = "Create a {0}"
             security = "falconx-sandbox:write"
             produces = "application/json"
             consumes = "application/json"
