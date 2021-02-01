@@ -165,6 +165,12 @@
                 include_deleted = @{
                     position = 10
                 }
+                limit = @{
+                    position = 11
+                }
+                offset = @{
+                    position = 12
+                }
             }
             responses = @{
                 "api.MsaReplyIOCIDs" = @(200)
