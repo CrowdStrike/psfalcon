@@ -35,11 +35,6 @@ function Get-Vulnerability {
         $Endpoints = @('/spotlight/queries/vulnerabilities/v1:get', '/spotlight/entities/vulnerabilities/v2:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
-    begin {
-        if (-not($Dynamic.Filter.Value)) {
-            $Dynamic.Filter.Value = "created_timestamp:>'Last 1 day'"
-        }
-    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name

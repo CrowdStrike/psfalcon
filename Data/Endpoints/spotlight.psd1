@@ -29,11 +29,13 @@
     }
     "/spotlight/queries/vulnerabilities/v1" = @{
         get = @{
-            description = "Search for {0}s"
+            description = "Search for {0} identifiers"
             security = "spotlight-vulnerabilities:read"
             produces = "application/json"
             parameters = @{
-                filter = @{}
+                filter = @{
+                    required = $true
+                }
                 sort = @{}
                 limit = @{
                     max = 400
