@@ -305,10 +305,10 @@ function Invoke-AdminCommand {
         }
         else {
             if ($Dynamic.Arguments.value) {
-                $Dynamic.Arguments.value = "$($Dynamic.Command.value) $($Dynamic.Arguments.value)"
+                $Dynamic.Arguments.value = $Dynamic.Command.value, $Dynamic.Arguments.value -join ' '
             }
             else {
-                $Dynamic.Arguments.value = "$($Dynamic.Command.value)"
+                $Dynamic.Arguments.value = $Dynamic.Command.value
             }
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
         }
@@ -358,10 +358,10 @@ function Invoke-Command {
         }
         else {
             if ($Dynamic.Arguments.value) {
-                $Dynamic.Arguments.value = "$($Dynamic.Command.value) $($Dynamic.Arguments.value)"
+                $Dynamic.Arguments.value = $Dynamic.Command.value, $Dynamic.Arguments.value -join ' '
             }
             else {
-                $Dynamic.Arguments.value = "$($Dynamic.Command.value)"
+                $Dynamic.Arguments.value = $Dynamic.Command.value
             }
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
         }
@@ -388,10 +388,10 @@ function Invoke-ResponderCommand {
         }
         else {
             if ($Dynamic.Arguments.value) {
-                $Dynamic.Arguments.value = "$($Dynamic.Command.value) $($Dynamic.Arguments.value)"
+                $Dynamic.Arguments.value = $Dynamic.Command.value, $Dynamic.Arguments.value -join ' '
             }
             else {
-                $Dynamic.Arguments.value = "$($Dynamic.Command.value)"
+                $Dynamic.Arguments.value = $Dynamic.Command.value
             }
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
         }

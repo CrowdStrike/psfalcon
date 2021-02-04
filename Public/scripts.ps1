@@ -746,9 +746,6 @@ function Invoke-RTR {
                     $MaxSleep = $PSBoundParameters.Timeout
                 }
             }
-            if ($PSBoundParameters.Arguments -and ($PSBoundParameters.Arguments -notmatch '^-')) {
-                $PSBoundParameters.Arguments = "'$($PSBoundParameters.Arguments)'"
-            }
             $InvokeCmd = if ($PSBoundParameters.Command -eq 'get' -and $PSBoundParameters.HostIds.count -gt 1) {
                 # Set command for 'get' with multiple hosts
                 "Invoke-FalconBatchGet"
