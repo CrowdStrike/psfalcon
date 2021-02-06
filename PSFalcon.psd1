@@ -12,7 +12,7 @@
 RootModule = 'PSFalcon.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.1'
+ModuleVersion = '2.0.2'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop','Core')
@@ -296,6 +296,7 @@ FunctionsToExport = @(
     'Open-Stream',
     'Search-MalQueryHash',
     'Show-Map',
+    'Show-Module',
 
     # sensors
     'Get-CCID',
@@ -365,12 +366,8 @@ PrivateData = @{
         IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "v2.0.1:
-        * Bugfixes for Get-FalconVulnerability (Issue #20), Invoke-FalconRTR (Issue #19),
-          Send-FalconSample (Issue #18), Invoke-FalconHostAction (Issue #16), 'Receive' commands used to
-          download files (Issue #12), Get-FalconIncident (Issue #11), Get-FalconQueue (Issue #5), and
-          Start-FalconSession (Issue #4) and various parameter related problems (Issue #2).
-        * Added 'Add-FalconHostTag' and 'Remove-FalconHostTag'
+        ReleaseNotes = "v2.0.2:
+        * Added 'Show-FalconModule' to output diagnostic information and removed 'Import' message (Issue #21)
         "
     } # End of PSData hashtable
 

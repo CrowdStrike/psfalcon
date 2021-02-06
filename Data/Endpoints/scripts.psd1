@@ -116,6 +116,9 @@
                 }
             }
         }
+        ShowModule = @{
+            description = "Output PSFalcon diagnostic information"
+        }
         SubmissionQuota = @{
             path = "/falconx/queries/submissions/v1"
             method = "get"

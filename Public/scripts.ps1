@@ -1067,3 +1067,40 @@ function Show-Map {
         }
     }
 }
+function Show-Module {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding(DefaultParameterSetName = 'script:ShowModule')]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('script:ShowModule')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            $Parent = Split-Path -Path $Falcon.GetAbsolutePath($PSScriptRoot) -Parent
+            if (Test-Path "$Parent\PSFalcon.psd1") {
+                $Module = Import-PowerShellDataFile $Parent\PSFalcon.psd1
+                [PSCustomObject] @{
+                    ModuleVersion = "v$($Module.ModuleVersion) {$($Module.GUID)}"
+                    ModulePath = $Parent
+                    UserHome = $HOME
+                    UserPSModulePath = ($env:PSModulePath -split ';') -join ', '
+                    UserSystem = ("PowerShell $($PSVersionTable.PSEdition): v$($PSVersionTable.PSVersion)" +
+                        " [$($PSVersionTable.OS)]")
+                } | Format-List
+            }
+            else {
+                throw "PSFalcon.psd1 missing from default location"
+            }
+        }
+    }
+}

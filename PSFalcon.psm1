@@ -35,4 +35,3 @@ $Data = @{
     }
 }
 $Script:Falcon = [Falcon]::New($Data)
-Write-Host "Imported PSFalcon v$((Import-PowerShellDataFile $PSScriptRoot\PSFalcon.psd1).ModuleVersion)."
