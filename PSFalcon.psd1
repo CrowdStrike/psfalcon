@@ -12,7 +12,7 @@
 RootModule = 'PSFalcon.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.0'
+ModuleVersion = '2.0.1'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop','Core')
@@ -112,6 +112,7 @@ FunctionsToExport = @(
     'Get-Detection',
 
     # devices
+    'Add-HostTag',
     'Edit-HostGroup',
     'Get-Host',
     'Get-HostGroup',
@@ -120,6 +121,7 @@ FunctionsToExport = @(
     'Invoke-HostGroupAction',
     'New-HostGroup',
     'Remove-HostGroup',
+    'Remove-HostTag',
 
     # falconx
     'Get-Report',
@@ -363,25 +365,12 @@ PrivateData = @{
         IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "
-        The initial v2.0.0 release includes the following changes from v1.4.2:
-
-        * Moved to the official CrowdStrike GitHub!
-        * Changed how API endpoint data is stored to decrease complexity as new APIs are added.
-        * Moved from static to dynamic PowerShell parameters based off API endpoint data.
-        * Added additional API endpoints that have been published by CrowdStrike.
-        * Added custom commands designed to perform specific operations: Export-FalconReport,
-          Find-FalconDuplicate, Get-FalconQueue, Invoke-FalconDeploy, Invoke-FalconRTR, Open-FalconStream,
-          Search-FalconMalQueryHash, and Show-FalconMap.
-        * SCRIPT-BREAKING CHANGES:
-        1. Condensed all commands, so instead of having commands involving 'Ids' and 'Info', they're tied into
-           one command and change depending on the given parameters. The 'Detailed' parameter will pass 'Ids' to
-           their related 'Info' endpoints automatically.
-        2. Changed prefix of commands from 'Cs'/'Rtr' to 'Falcon' for consistency and to serve as a mechanism to
-           implicitly notify users that commands operate differently than in v1.4.2.
-        3. Removed 'sub-objects' that come from API responses -- no more 'resources'/'errors', etc. -- all
-           commands output the data directly.
-        4. Various other commands and parameters have been renamed.
+        ReleaseNotes = "v2.0.1:
+        * Bugfixes for Get-FalconVulnerability (Issue #20), Invoke-FalconRTR (Issue #19),
+          Send-FalconSample (Issue #18), Invoke-FalconHostAction (Issue #16), 'Receive' commands used to
+          download files (Issue #12), Get-FalconIncident (Issue #11), Get-FalconQueue (Issue #5), and
+          Start-FalconSession (Issue #4) and various parameter related problems (Issue #2).
+        * Added 'Add-FalconHostTag' and 'Remove-FalconHostTag'
         "
     } # End of PSData hashtable
 

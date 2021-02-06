@@ -67,6 +67,38 @@
             }
         }
     }
+    "/devices/entities/devices/tags/v1" = @{
+        patch = @{
+            description = "Modify {0} Grouping Tags"
+            security = "devices:write"
+            consumes = "application/json"
+            produces = "application/json"
+            parameters = @{
+                device_ids = @{
+                    Dynamic = "Ids"
+                    in = "body"
+                    description = "One or more {0} identifiers"
+                    type = "array"
+                    position = 1
+                    required = $true
+                    pattern = "\w{32}"
+                }
+                tags = @{
+                    description = "One or more Grouping Tag values"
+                    in = "body"
+                    type = "array"
+                    position = 2
+                    required = $true
+                    pattern = "FalconGroupingTags/\w{1,237}"
+                }
+            }
+            responses = @{
+                "msa.ReplyAffectedEntities" = @(400)
+                "msa.ReplyMetaOnly" = @(403,429)
+                default = "msa.EntitiesResponse"
+            }
+        }
+    }
     "/devices/entities/devices/v1" = @{
         get = @{
             description = "Retrieve detailed {0} information"

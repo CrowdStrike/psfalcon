@@ -1,3 +1,36 @@
+function Add-HostTag {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/devices/entities/devices/tags/v1:patch')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    begin {
+        $MaxHosts = 5000
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            $Ids = $Dynamic.Ids.value
+            for ($i = 0; $i -lt $Ids.count; $i += $MaxHosts) {
+                $Dynamic.Ids.value = $Ids[$i..($i + ($MaxHosts - 1))]
+                $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+                $Param.Body['action'] = 'add'
+                Format-Body -Param $Param
+                Invoke-Endpoint @Param
+            }
+        }
+    }
+}
 function Edit-HostGroup {
     <#
     .SYNOPSIS
@@ -254,6 +287,39 @@ function Remove-HostGroup {
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function Remove-HostTag {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/devices/entities/devices/tags/v1:patch')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    begin {
+        $MaxHosts = 5000
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            $Ids = $Dynamic.Ids.value
+            for ($i = 0; $i -lt $Ids.count; $i += $MaxHosts) {
+                $Dynamic.Ids.value = $Ids[$i..($i + ($MaxHosts - 1))]
+                $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+                $Param.Body['action'] = 'remove'
+                Format-Body -Param $Param
+                Invoke-Endpoint @Param
+            }
         }
     }
 }
