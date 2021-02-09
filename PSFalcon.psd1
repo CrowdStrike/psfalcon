@@ -12,7 +12,7 @@
 RootModule = 'PSFalcon.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.2'
+ModuleVersion = '2.0.3'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop','Core')
@@ -366,8 +366,8 @@ PrivateData = @{
         IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "v2.0.2:
-        * Added 'Show-FalconModule' to output diagnostic information and removed 'Import' message (Issue #21)
+        ReleaseNotes = "v2.0.3:
+        * Bugfix for 'Find-FalconDuplicate' not sorting by 'last_seen' (Issue #22)
         "
     } # End of PSData hashtable
 

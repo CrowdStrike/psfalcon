@@ -324,7 +324,7 @@ function Find-Duplicate {
             function Group-Selection ($Selection, $Criteria) {
                 ((($Selection | Group-Object $Criteria).Where({ $_.Count -gt 1 })).Group |
                 Group-Object $Criteria).foreach{
-                    $_.Group | Select-Object -First (($_.Count) - 1)
+                    $_.Group | Sort-Object last_seen | Select-Object -First (($_.Count) - 1)
                 }
             }
         }
