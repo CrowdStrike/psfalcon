@@ -12,7 +12,7 @@
 RootModule = 'PSFalcon.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.3'
+ModuleVersion = '2.0.4'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop','Core')
@@ -366,8 +366,8 @@ PrivateData = @{
         IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "v2.0.3:
-        * Bugfix for 'Find-FalconDuplicate' not sorting by 'last_seen' (Issue #22)
+        ReleaseNotes = "v2.0.4:
+        * Bugfix for Issue #24 - too many host ids being submitted to certain clouds
         "
     } # End of PSData hashtable
 

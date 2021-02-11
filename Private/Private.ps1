@@ -1288,12 +1288,12 @@ function Split-Param {
                 $LongestId = (($Output.Query).Where({ $_ -match 'ids='}) |
                     Measure-Object -Maximum -Property Length).Maximum + 1
                 $IdCount = [Math]::Floor([decimal]((65535 - $PathLength)/$LongestId))
-                if ($IdCount -gt 1000) {
-                    # Set maximum for requests to 1,000
-                    1000
+                if ($IdCount -gt 500) {
+                    # Set maximum for requests to 500
+                    500
                 }
                 else {
-                    # Use maximum below 1,000
+                    # Use maximum below 500
                     $IdCount
                 }
             } elseif ($Endpoint.parameters -and ($Endpoint.Parameters.GetEnumerator().Where({
