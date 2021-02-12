@@ -38,6 +38,28 @@
             produces = "application/json"
             parameters = @{
                 schema = "api.IOCViewRecord"
+                type = @{
+                    in = "body"
+                }
+                value = @{
+                    in = "body"
+                }
+                policy = @{
+                    position = 3
+                }
+                share_level = @{
+                    position = 4
+                }
+                expiration_days = @{
+                    position = 5
+                }
+                source = @{
+                    position = 6
+                }
+                description = @{
+                    position = 7
+                }
+
             }
             responses = @{
                 "api.MsaReplyIOC" = @(200)

@@ -12,7 +12,7 @@
 RootModule = 'PSFalcon.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.4'
+ModuleVersion = '2.0.5'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop','Core')
@@ -366,8 +366,8 @@ PrivateData = @{
         IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "v2.0.4:
-        * Bugfix for Issue #24 - too many host ids being submitted to certain clouds
+        ReleaseNotes = "v2.0.5:
+        * Bugfix for Issue #25 - missing type/value in Get-FalconIOC
         "
     } # End of PSData hashtable
 
