@@ -263,9 +263,8 @@
                 limit = @{
                     max = 5000
                 }
-                offset = @{
-                    type = "string"
-                    description = "Pagination token used to retrieve the next result set"
+                after = @{
+                    position = 6
                 }
             }
             responses = @{
@@ -331,9 +330,8 @@
                 limit = @{
                     max = 5000
                 }
-                offset = @{
-                    type = "string"
-                    description = "Pagination token used to retrieve the next result set"
+                after = @{
+                    position = 6
                 }
             }
             responses = @{
@@ -354,9 +352,8 @@
                 limit = @{
                     max = 5000
                 }
-                offset = @{
-                    type = "string"
-                    description = "Pagination token used to retrieve the next result set"
+                after = @{
+                    position = 6
                 }
             }
             responses = @{
@@ -377,9 +374,8 @@
                 limit = @{
                     max = 5000
                 }
-                offset = @{
-                    type = "string"
-                    description = "Pagination token used to retrieve the next result set"
+                after = @{
+                    position = 6
                 }
             }
             responses = @{

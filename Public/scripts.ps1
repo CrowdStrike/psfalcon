@@ -319,7 +319,7 @@ function Find-Duplicate {
     }
     begin {
         if (-not $PSBoundParameters.Help) {
-            $Criteria = @('device_id', 'hostname', 'first_seen', 'last_seen', 'mac_address')
+            $Criteria = @('device_id', 'hostname', 'first_seen', 'last_seen')
             $InputFields = ($PSBoundParameters.Hosts | Get-Member -MemberType NoteProperty).Name
             function Group-Selection ($Selection, $Criteria) {
                 ((($Selection | Group-Object $Criteria).Where({ $_.Count -gt 1 })).Group |

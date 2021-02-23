@@ -12,7 +12,7 @@
 RootModule = 'PSFalcon.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.5'
+ModuleVersion = '2.0.6'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop','Core')
@@ -288,6 +288,7 @@ FunctionsToExport = @(
     'New-QuickScan',
 
     # scripts
+    'Export-Json',
     'Export-Report',
     'Find-Duplicate',
     'Get-Queue',
@@ -366,8 +367,13 @@ PrivateData = @{
         IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "v2.0.5:
-        * Bugfix for Issue #25 - missing type/value in Get-FalconIOC
+        ReleaseNotes = "v2.0.6:
+        * Removed 'mac_address' as required criteria when using 'Find-FalconDuplicate' to eliminate errors
+          caused when 'mac_address' wasn't seen in a 'Get-FalconHost -Detailed' result
+        * Issue #29: Updated 'Get-FalconFirewallEvent', 'Get-FalconFirewallRule', and 'Get-FalconFirewallGroup'
+          to include 'after' parameter (utilized by Invoke-Loop)
+        * Issue #28: Added additional logic to the dynamic parameter building function (Get-Dictionary) to
+          ensure that 'Get-FalconScore' would have an '-All' parameter
         "
     } # End of PSData hashtable
 

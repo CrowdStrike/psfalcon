@@ -438,7 +438,7 @@ function Get-Dictionary {
                 Add-Parameter -Parameter $_
             }
         }
-        ($Endpoints -match '/queries/').foreach{
+        ($Endpoints -match '(/combined/|/queries/)').foreach{
             if ($Endpoints -match '(/entities/|/combined/)') {
                 # Add 'Detailed' parameter when both 'queries' and 'entities/combined' endpoints are present
                 Add-Parameter @{
