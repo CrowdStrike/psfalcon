@@ -24,18 +24,10 @@ function Request-Token {
             }
             if ($PSBoundParameters.Cloud) {
                 $Falcon.Hostname = switch ($PSBoundParameters.Cloud) {
-                    'eu-1' {
-                        'https://api.eu-1.crowdstrike.com'
-                    }
-                    'us-gov-1' {
-                        'https://api.laggar.gcw.crowdstrike.com'
-                    }
-                    'us-1' {
-                        'https://api.crowdstrike.com'
-                    }
-                    'us-2' {
-                        'https://api.us-2.crowdstrike.com'
-                    }
+                    'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
+                    'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+                    'us-1'     { 'https://api.crowdstrike.com' }
+                    'us-2'     { 'https://api.us-2.crowdstrike.com' }
                 }
             }
             @('ClientId', 'ClientSecret', 'MemberCid') | ForEach-Object {
@@ -63,8 +55,7 @@ function Request-Token {
             if ($Request.access_token) {
                 $Falcon.Expires = (Get-Date).AddSeconds($Request.expires_in)
                 $Falcon.Token = "$($Request.token_type) $($Request.access_token)"
-            }
-            else {
+            } else {
                 Clear-Auth
             }
         }
@@ -87,8 +78,7 @@ function Revoke-Token {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             if ($Falcon.Token -and ($Falcon.Expires -gt (Get-Date))) {
                 $Param = @{
                     Endpoint = $Endpoints[0]

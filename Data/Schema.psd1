@@ -135,9 +135,9 @@
             position = 2
         }
         settings = @{
-            description = "An array of {0} settings"
+            description = "A hashtable of {0} settings"
             parent = "resources"
-            type = "array"
+            type = "object"
             position = 3
         }
         description = @{
@@ -176,13 +176,12 @@
         name = @{
             description = "{0} name"
             parent = "resources"
-            required = $true
             position = 2
         }
         settings = @{
-            description = "An array of {0} settings"
+            description = "A hashtable of {0} settings"
             parent = "resources"
-            type = "array"
+            type = "object"
             position = 3
         }
         description = @{
@@ -530,7 +529,7 @@
             dynamic = "Ids"
             type = "array"
             required = $true
-            position = 1
+            position = 2
             description = "One or more {0} identifiers"
         }
     }
@@ -990,6 +989,39 @@
             position = 4
         }
     }
+    "requests.IoaExclusionCreateReqV1" = @{
+        name = @{
+            description = "{0} name"
+            required = $true
+            position = 1
+        }
+        cl_regex = @{
+            description = "Command line RegEx"
+            required = $true
+            position = 2
+        }
+        ifn_regex = @{
+            description = "Image Filename RegEx"
+            required = $true
+            position = 3
+        }
+        groups = @{
+            dynamic = "GroupIds"
+            description = "One or more Host Group identifiers, or 'all' for all Host Groups"
+            required = $true
+            type = "array"
+            pattern = "(\w{32}|all)"
+            position = 4
+        }
+        description = @{
+            description = "{0} description"
+            position = 5
+        }
+        comment = @{
+            description = "Audit log comment"
+            position = 6
+        }
+    }
     "requests.IoaExclusionUpdateReqV1" = @{
         id = @{
             description = "{0} identifier"
@@ -1055,6 +1087,7 @@
             description = "Host identifier"
             required = $true
             position = 1
+            pattern = "(\w{32}|MAINTENANCE)"
         }
         audit_message = @{
             description = "Audit log comment"

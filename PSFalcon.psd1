@@ -12,7 +12,7 @@
 RootModule = 'PSFalcon.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.6'
+ModuleVersion = '2.0.7'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop','Core')
@@ -107,6 +107,10 @@ FunctionsToExport = @(
     'New-DiscoverGcpAccount',
     'Receive-DiscoverGcpScript',
 
+    # config
+    'Export-Config',
+    'Import-Config',
+
     # detects
     'Edit-Detection',
     'Get-Detection',
@@ -195,6 +199,26 @@ FunctionsToExport = @(
     'Group-MalQuerySample',
     'Invoke-MalQuery',
     'Receive-MalQuerySample',
+
+    # mssp
+    "Add-CIDGroupMember",
+    "Add-GroupRole",
+    "Add-UserGroupMember",
+    "Edit-CIDGroup",
+    "Edit-UserGroup",
+    "Get-CIDGroup",
+    "Get-CIDGroupMember",
+    "Get-GroupRole",
+    "Get-MemberCID",
+    "Get-UserGroup",
+    "Get-UserGroupMember",
+    "New-CIDGroup",
+    "New-UserGroup",
+    "Remove-CIDGroup",
+    "Remove-CIDGroupMember",
+    "Remove-GroupRole",
+    "Remove-UserGroup",
+    "Remove-UserGroupMember",
 
     # oauth2
     'Request-Token',
@@ -288,7 +312,6 @@ FunctionsToExport = @(
     'New-QuickScan',
 
     # scripts
-    'Export-Json',
     'Export-Report',
     'Find-Duplicate',
     'Get-Queue',
@@ -298,6 +321,7 @@ FunctionsToExport = @(
     'Search-MalQueryHash',
     'Show-Map',
     'Show-Module',
+    'Test-Token',
 
     # sensors
     'Get-CCID',
@@ -355,10 +379,11 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('CrowdStrike', 'Falcon', 'OAuth2', 'REST', 'API')
+        Tags = @('CrowdStrike', 'Falcon', 'OAuth2', 'REST', 'API', 'PSEdition_Desktop', 'PSEdition_Core',
+          'Windows', 'Linux', 'MacOS')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/CrowdStrike/psfalcon/blob/master/LICENSE'
 
         # A URL to the main website for this project.
         ProjectUri = 'https://github.com/crowdstrike/psfalcon'
@@ -367,13 +392,89 @@ PrivateData = @{
         IconUri = 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
 
         # ReleaseNotes of this module.
-        ReleaseNotes = "v2.0.6:
-        * Removed 'mac_address' as required criteria when using 'Find-FalconDuplicate' to eliminate errors
-          caused when 'mac_address' wasn't seen in a 'Get-FalconHost -Detailed' result
-        * Issue #29: Updated 'Get-FalconFirewallEvent', 'Get-FalconFirewallRule', and 'Get-FalconFirewallGroup'
-          to include 'after' parameter (utilized by Invoke-Loop)
-        * Issue #28: Added additional logic to the dynamic parameter building function (Get-Dictionary) to
-          ensure that 'Get-FalconScore' would have an '-All' parameter
+        ReleaseNotes = "v2.0.7:
+        General Changes
+        * Added additional 'tags' to module manifest to help with PowerShell Gallery organization.
+        * Added 'LicenseUri' to module manifest.
+        * Added code to close file access methods when uploading files using 'Send' commands. Previously, if an
+          upload failed and another attempt was made you would receive a notification that the file was
+          already being accessed.
+        * Added check during initial module load to enforce TLS 1.2 for connecting to CrowdStrike APIs.
+        * Moved [System.Net.Http] check for PowerShell 5.1 from Invoke-Endpoint to base module load.
+        * Updated base functions in an effort to improve error handling.
+        * Added URI validation check to Invoke-Endpoint to improve error handling.
+
+        Command and Parameter Changes
+        * Re-wrote 'Get-FalconQueue' in an effort to increase performance when dealing with large numbers of
+          results.
+        * Fixed typo in 'Get-FalconIOARule' that was corrupting parameters and '-Help' output of the command.
+        * Changed various 'verbose' outputs to 'debug' to reduce overall output when running with '-Verbose'. Some
+          of the fields were not useful in a 'more information' context, but were for 'debugging'.
+        * Updated the internal function 'Invoke-Loop' to automatically provide the '-Limit' parameter (at the
+          maximum available value) when '-All' is specified with a command and '-Limit' was not included.
+        * Added 'add-rule-group' and 'remove-rule-group' actions to 'Invoke-FalconPreventionPolicyAction' for
+          assigning and removing Custom IOA Rule Groups from Prevention policies.
+        * Removed 'Name' as a required parameter when using the 'Edit' policy commands as it should not be
+          mandatory.
+        * Updated 'Limit' for 'Get-FalconIOC' to 500 to match API.
+        * Fixed 'Invoke-FalconHostGroupAction' to enable adding/removing multiple hosts at one time.
+        * Added a 'pattern' value for 'Get-FalconUninstallToken' to make it clear that a device_id or the value
+          'MAINTENANCE' can be supplied to retrieve an individual uninstall token or the more widely accepted
+          maintenance token.
+        * Added 'Array' parameter (used by 'Import-FalconConfig') to enable creation and modification of multiple
+          items using a single request to the following commands:
+            Edit-FalconDeviceControlPolicy
+            Edit-FalconFirewallPolicy
+            Edit-FalconHostGroup
+            Edit-FalconPreventionPolicy
+            Edit-FalconResponsePolicy
+            Edit-FalconSensorUpdatePolicy
+            New-FalconDeviceControlPolicy
+            New-FalconFirewallPolicy
+            New-FalconHostGroup
+            New-FalconPreventionPolicy
+            New-FalconResponsePolicy
+            New-FalconSensorUpdatePolicy
+        * Changed 'Settings' parameters for 'New-FalconDeviceControlPolicy', 'New-FalconResponsePolicy',
+          'New-FalconSensorUpdatePolicy' and their matching 'Edit' commands to take a hashtable instead of an
+          array to correct bug where policy creation/updates would fail.
+
+        New Commands
+        * Added 'Export-FalconConfig' and 'Import-FalconConfig' commands to export and import exclusions, policies
+          and groups using an archive of Json files.
+        * Added MSSP/Falcon Flight Control commands for new API endpoints:
+          Add-FalconCIDGroupMember
+          Add-FalconGroupRole
+          Add-FalconUserGroupMember
+          Edit-FalconCIDGroup
+          Edit-FalconUserGroup
+          Get-FalconCID
+          Get-FalconCIDGroup
+          Get-FalconCIDGroupMember
+          Get-FalconGroupRole
+          Get-FalconUserGroup
+          Get-FalconUserGroupMember
+          New-FalconCIDGroup
+          New-FalconUserGroup
+          Remove-FalconCIDGroup
+          Remove-FalconCIDGroupMember
+          Remove-FalconGroupRole
+          Remove-FalconUserGroup
+          Remove-FalconUserGroupMember
+
+        GitHub Issues
+        * Issue #13: Creating/modifying multiple objects in one request handled with new 'Array' parameter
+          for commands used with 'Import-FalconConfig'.
+        * Issue #31: Added code to the 'Get-Body' function to .Normalize() text grabbed with 'Get-Content' and
+          prevent errors when the content is converted to Json for API submission.
+        * Issue #33: Changed default permission level for 'runscript' command to Admin when using
+          'Invoke-FalconRTR' to compensate for '-Raw' parameter not working with Active Responder permissions.
+        * Issue #34: Added 'Test-FalconToken' command to display token status and additional client information
+          including 'ClientId', 'Hostname' and 'MemberCid'. Also made various changes to improve general error
+          message production.
+        * Issue #36: Set 'Limit' maximum to 500 for 'Get-FalconIOAExclusion', 'Get-FalconMLExclusion', and
+          'Get-FalconSVExclusion'.
+        * Issue #43: Updated 'ids' and 'value' parameters to correct bugs related to 'Invoke-FalconIncidentAction'.
         "
     } # End of PSData hashtable
 

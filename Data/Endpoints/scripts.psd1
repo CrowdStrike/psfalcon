@@ -1,5 +1,45 @@
 @{
     script = @{
+        CreateGroupArray = @{
+            description = "Create multiple groups in a single request"
+            parameters = @{
+                array = @{
+                    type = "array"
+                    description = "An array of groups to create"
+                    required = $true
+                }
+            }
+        }
+        EditGroupArray = @{
+            description = "Modify multiple groups in a single request"
+            parameters = @{
+                array = @{
+                    type = "array"
+                    description = "An array of groups to modify"
+                    required = $true
+                }
+            }
+        }
+        CreatePolicyArray = @{
+            description = "Create multiple policies in a single request"
+            parameters = @{
+                array = @{
+                    type = "array"
+                    description = "An array of policies to create"
+                    required = $true
+                }
+            }
+        }
+        EditPolicyArray = @{
+            description = "Modify multiple policies in a single request"
+            parameters = @{
+                array = @{
+                    type = "array"
+                    description = "An array of policies to modify"
+                    required = $true
+                }
+            }
+        }
         ExportReport = @{
             description = "Format a response object and output to CSV"
             parameters = @{
@@ -19,17 +59,6 @@
                 }
             }
         }
-        GetQueue = @{
-            description = "Create a report of with status of queued Real-time Response sessions"
-            security = "real-time-response:read, real-time-response:write, real-time-response-admin:write"
-            parameters = @{
-                days = @{
-                    type = "int"
-                    description = "Number of days worth of results to retrieve [default: 7]"
-                    position = 1
-                }
-            }
-        }
         FindDuplicate = @{
             description = "Lists potential duplicates from detailed 'Host' results"
             parameters = @{
@@ -38,6 +67,17 @@
                     description = "Array of detailed 'Host' results"
                     position = 1
                     required = $true
+                }
+            }
+        }
+        GetQueue = @{
+            description = "Create a report of with status of queued Real-time Response sessions"
+            security = "real-time-response:read, real-time-response:write, real-time-response-admin:write"
+            parameters = @{
+                days = @{
+                    type = "int"
+                    description = "Number of days worth of results to retrieve [default: 7]"
+                    position = 1
                 }
             }
         }
@@ -123,6 +163,9 @@
             path = "/falconx/queries/submissions/v1"
             method = "get"
             description = "Display your Falcon X submission quota information"
+        }
+        TestToken = @{
+            description = "Display OAuth2 client and access token information"
         }
     }
 }

@@ -124,18 +124,17 @@ function Invoke-IncidentAction {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            if ($Dynamic."Name".value -eq 'update_status') {
-                if ($Dynamic."Value".value -match '(closed|in_progress|new|reopened)') {
-                    $Dynamic."Value".value = switch ($Dynamic."Value".value) {
-                        'new' { "20" }
-                        'reopened' { "25" }
-                        'in_progress' { "30" }
-                        'closed' { "40" }
+            if ($Dynamic.'Name'.value -eq 'update_status') {
+                if ($Dynamic.'Value'.value -match '(closed|in_progress|new|reopened)') {
+                    $Dynamic.'Value'.value = switch ($Dynamic.'Value'.value) {
+                        'new'         { '20' }
+                        'reopened'    { '25' }
+                        'in_progress' { '30' }
+                        'closed'      { '40' }
                     }
+                } else {
+                    throw "Valid values for 'update_status': 'closed', 'in_progress', 'new', 'reopened'."
                 }
-            }
-            else {
-                throw "Valid values for 'update_status': 'closed', 'in_progress', 'new', 'reopened'."
             }
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }

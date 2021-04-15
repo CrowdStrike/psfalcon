@@ -521,6 +521,20 @@
                 default = "responses.IoaExclusionRespV1"
             }
         }
+        post = @{
+            description = "Create {0}s"
+            security = "self-service-ioa-exclusions:write"
+            produces = "application/json"
+            consumes = "application/json"
+            parameters = @{
+                schema = "requests.IoaExclusionCreateReqV1"
+            }
+            responses = @{
+                "msa.ErrorsOnly" = @(403)
+                "msa.ReplyMetaOnly" = @(429)
+                default = "responses.IoaExclusionRespV1"
+            }
+        }
     }
     "/policy/entities/ml-exclusions/v1" = @{
         get = @{
@@ -594,7 +608,8 @@
             parameters = @{
                 action_name = @{
                     dynamic = "Name"
-                    enum = @("add-host-group","remove-host-group","enable","disable")
+                    enum = @("add-host-group","remove-host-group","add-rule-group","remove-rule-group",
+                        "enable","disable")
                 }
                 ids = @{
                     dynamic = "Id"
@@ -606,7 +621,7 @@
                 }
                 value = @{
                     dynamic = "GroupId"
-                    description = "Host Group identifier"
+                    description = "Host or Custom IOA Group identifier"
                     type = "string"
                     in = "body"
                     parent = "action_parameters"
@@ -661,7 +676,36 @@
             produces = "application/json"
             consumes = "application/json"
             parameters = @{
-                schema = "PolicyCreate"
+                platform_name = @{
+                    description = "Operating System platform"
+                    parent = "resources"
+                    required = $true
+                    enum = @("Windows","Mac","Linux")
+                    position = 1
+                }
+                name = @{
+                    description = "{0} name"
+                    parent = "resources"
+                    required = $true
+                    position = 2
+                }
+                settings = @{
+                    description = "A array of {0} settings"
+                    parent = "resources"
+                    type = "array"
+                    position = 3
+                }
+                description = @{
+                    description = "{0} description"
+                    parent = "resources"
+                    position = 4
+                }
+                clone_id = @{
+                    description = "Clone an existing {0}"
+                    parent = "resources"
+                    position = 5
+                    pattern = "\w{32}"
+                }
             }
             responses = @{
                 "responses.PreventionPoliciesV1" = @(201,400,404,500)
@@ -689,7 +733,29 @@
             produces = "application/json"
             consumes = "application/json"
             parameters = @{
-                schema = "PolicyUpdate"
+                id = @{
+                    required = $true
+                    description = "{0} identifier"
+                    parent = "resources"
+                    in = "body"
+                    position = 1
+                }
+                name = @{
+                    description = "{0} name"
+                    parent = "resources"
+                    position = 2
+                }
+                settings = @{
+                    description = "An array of {0} settings"
+                    parent = "resources"
+                    type = "array"
+                    position = 3
+                }
+                description = @{
+                    description = "{0} description"
+                    parent = "resources"
+                    position = 4
+                }
             }
             responses = @{
                 "responses.PreventionPoliciesV1" = @(200,400,404,500)
@@ -1081,7 +1147,7 @@
                         "pattern_id.desc","pattern_name.asc","pattern_name.desc")
                 }
                 limit = @{
-                    max = 5000
+                    max = 500
                 }
             }
             responses = @{
@@ -1105,7 +1171,7 @@
                         "modified_by.asc","modified_by.desc","value.asc")
                 }
                 limit = @{
-                    max = 5000
+                    max = 500
                 }
             }
             responses = @{
@@ -1249,7 +1315,7 @@
                         "modified_by.asc","modified_by.desc","value.asc")
                 }
                 limit = @{
-                    max = 5000
+                    max = 500
                 }
             }
             responses = @{

@@ -1,4 +1,4 @@
-function Edit-IOAGroup {
+function Add-CIDGroupMember {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
@@ -9,7 +9,7 @@ function Edit-IOAGroup {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/entities/rule-groups/v1:patch')
+        $Endpoints = @('/mssp/entities/cid-group-members/v1:post')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -17,17 +17,11 @@ function Edit-IOAGroup {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                $Param['Header'] = @{
-                    'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
-                }
-                Format-Body -Param $Param
-                Invoke-Endpoint @Param
-            }
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
-function Edit-IOARule {
+function Add-GroupRole {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
@@ -38,7 +32,7 @@ function Edit-IOARule {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/entities/rules/v1:patch')
+        $Endpoints = @('/mssp/entities/mssp-roles/v1:post')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -46,28 +40,22 @@ function Edit-IOARule {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                $Param['Header'] = @{
-                    'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
-                }
-                Format-Body -Param $Param
-                Invoke-Endpoint @Param
-            }
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
-function Get-IOAGroup {
+function Add-UserGroupMember {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/rule-groups/v1:get')]
+    [CmdletBinding()]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/queries/rule-groups/v1:get', '/ioarules/entities/rule-groups/v1:get')
+        $Endpoints = @('/mssp/entities/user-group-members/v1:post')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -75,34 +63,22 @@ function Get-IOAGroup {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Query   = $Endpoints[0]
-                Entity  = $Endpoints[1]
-                Dynamic = $Dynamic
-            }
-            if ($PSBoundParameters.All) {
-                $Param['All'] = $true
-            }
-            if ($PSBoundParameters.Detailed) {
-                $Param['Detailed'] = $true
-            }
-            Invoke-Request @Param
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
-function Get-IOAPlatform {
+function Edit-CIDGroup {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/platforms/v1:get')]
+    [CmdletBinding()]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/queries/platforms/v1:get', '/ioarules/entities/platforms/v1:get')
+        $Endpoints = @('/mssp/entities/cid-groups/v1:patch')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -110,36 +86,45 @@ function Get-IOAPlatform {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Query   = $Endpoints[0]
-                Entity  = $Endpoints[1]
-                Dynamic = $Dynamic
-            }
-            switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
-            }
-            Invoke-Request @Param
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
-function Get-IOARule {
+function Edit-UserGroup {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/rules/v1:get')]
+    [CmdletBinding()]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/queries/rules/v1:get', '/ioarules/entities/rules/v1:get')
+        $Endpoints = @('/mssp/entities/user-groups/v1:patch')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function Get-CIDGroup {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding(DefaultParameterSetName = '/mssp/queries/cid-groups/v1:get')]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/mssp/queries/cid-groups/v1:get', '/mssp/entities/cid-groups/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -165,18 +150,18 @@ function Get-IOARule {
         }
     }
 }
-function Get-IOASeverity {
+function Get-CIDGroupMember {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/pattern-severities/v1:get')]
+    [CmdletBinding(DefaultParameterSetName = '/mssp/queries/cid-group-members/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/queries/pattern-severities/v1:get', '/ioarules/entities/pattern-severities/v1:get')
+        $Endpoints = @('/mssp/queries/cid-group-members/v1:get', '/mssp/entities/cid-group-members/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -202,18 +187,18 @@ function Get-IOASeverity {
         }
     }
 }
-function Get-IOAType {
+function Get-GroupRole {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/rule-types/v1:get')]
+    [CmdletBinding(DefaultParameterSetName = '/mssp/queries/mssp-roles/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/queries/rule-types/v1:get', '/ioarules/entities/rule-types/v1:get')
+        $Endpoints = @('/mssp/queries/mssp-roles/v1:get', '/mssp/entities/mssp-roles/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -239,18 +224,18 @@ function Get-IOAType {
         }
     }
 }
-function New-IOAGroup {
+function Get-MemberCID {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/mssp/queries/children/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/entities/rule-groups/v1:post')
+        $Endpoints = @('/mssp/queries/children/v1:get', '/mssp/entities/children/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -258,28 +243,36 @@ function New-IOAGroup {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                $Param['Header'] = @{
-                    'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
-                }
-                Format-Body -Param $Param
-                Invoke-Endpoint @Param
+            $Param = @{
+                Command = $MyInvocation.MyCommand.Name
+                Query   = $Endpoints[0]
+                Entity  = $Endpoints[1]
+                Dynamic = $Dynamic
             }
+            switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
+                'Detailed' {
+                    $Param['Detailed'] = $true
+                }
+            }
+            Invoke-Request @Param
         }
     }
 }
-function New-IOARule {
+function Get-UserGroup {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/mssp/queries/user-groups/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/entities/rules/v1:post')
+        $Endpoints = @('/mssp/queries/user-groups/v1:get', '/mssp/entities/user-groups/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -287,45 +280,65 @@ function New-IOARule {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                $Param['Header'] = @{
-                    'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
-                }
-                Format-Body -Param $Param
-                Invoke-Endpoint @Param
+            $Param = @{
+                Command = $MyInvocation.MyCommand.Name
+                Query   = $Endpoints[0]
+                Entity  = $Endpoints[1]
+                Dynamic = $Dynamic
             }
+            switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
+                'Detailed' {
+                    $Param['Detailed'] = $true
+                }
+            }
+            Invoke-Request @Param
         }
     }
 }
-function Remove-IOAGroup {
+function Get-UserGroupMember {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/mssp/queries/user-group-members/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/entities/rule-groups/v1:delete')
+        $Endpoints = @('/mssp/queries/user-group-members/v1:get', '/mssp/entities/user-group-members/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
+                '/mssp/entities/user-group-members/v1:get')
+        }
+        elseif ($PSBoundParameters.Id -match '\w{32}') {
+            Invoke-Request -Query $Endpoints[1] -Dynamic $Dynamic
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                $Param['Header'] = @{
-                    'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
-                }
-                Invoke-Endpoint @Param
+            $Param = @{
+                Command = $MyInvocation.MyCommand.Name
+                Query   = $Endpoints[0]
+                Dynamic = $Dynamic
             }
+            switch ($PSBoundParameters.Keys) {
+                'All' {
+                    $Param['All'] = $true
+                }
+                'Detailed' {
+                    $Param['Detailed'] = $true
+                }
+            }
+            Invoke-Request @Param
         }
     }
 }
-function Remove-IOARule {
+function New-CIDGroup {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
@@ -336,7 +349,7 @@ function Remove-IOARule {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/entities/rules/v1:delete')
+        $Endpoints = @('/mssp/entities/cid-groups/v1:post')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -344,16 +357,11 @@ function Remove-IOARule {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                $Param['Header'] = @{
-                    'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
-                }
-                Invoke-Endpoint @Param
-            }
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
-function Test-IOARule {
+function New-UserGroup {
     <#
     .SYNOPSIS
         Additional information is available with the -Help parameter
@@ -364,7 +372,7 @@ function Test-IOARule {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/ioarules/entities/rules/validate/v1:post')
+        $Endpoints = @('/mssp/entities/user-groups/v1:post')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
@@ -372,13 +380,122 @@ function Test-IOARule {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
-                $Param['Header'] = @{
-                    'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
-                }
-                Format-Body -Param $Param
-                Invoke-Endpoint @Param
-            }
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function Remove-CIDGroup {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/mssp/entities/cid-groups/v1:delete')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function Remove-CIDGroupMember {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/mssp/entities/cid-group-members/v1:delete')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function Remove-GroupRole {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/mssp/entities/mssp-roles/v1:delete')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function Remove-UserGroup {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/mssp/entities/user-groups/v1:delete')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function Remove-UserGroupMember {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/mssp/entities/user-group-members/v1:delete')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        else {
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }

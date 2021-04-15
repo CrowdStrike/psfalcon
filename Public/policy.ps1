@@ -9,12 +9,20 @@ function Edit-DeviceControlPolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/device-control/v1:patch')
+        $Endpoints = @('/policy/entities/device-control/v1:patch', 'script:EditPolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -32,12 +40,20 @@ function Edit-FirewallPolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/firewall/v1:patch')
+        $Endpoints = @('/policy/entities/firewall/v1:patch', 'script:EditPolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -101,12 +117,20 @@ function Edit-PreventionPolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/prevention/v1:patch')
+        $Endpoints = @('/policy/entities/prevention/v1:patch', 'script:EditPolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -124,12 +148,20 @@ function Edit-ResponsePolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/response/v1:patch')
+        $Endpoints = @('/policy/entities/response/v1:patch', 'script:EditPolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -147,12 +179,20 @@ function Edit-SensorUpdatePolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/sensor-update/v2:patch')
+        $Endpoints = @('/policy/entities/sensor-update/v2:patch', 'script:EditPolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -790,7 +830,12 @@ function Invoke-PreventionPolicyAction {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.ids = @( $Param.Body.ids )
             if ($Param.Body.action_parameters) {
-                $Param.Body.action_parameters[0].Add('name', 'group_id')
+                $Value = if ($Param.Query -match 'rule-group$') {
+                    'rule_group_id'
+                } else {
+                    'group_id'
+                }
+                $Param.Body.action_parameters[0].Add('name', $Value)
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
@@ -867,12 +912,20 @@ function New-DeviceControlPolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/device-control/v1:post')
+        $Endpoints = @('/policy/entities/device-control/v1:post', 'script:CreatePolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -890,15 +943,48 @@ function New-FirewallPolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/firewall/v1:post')
+        $Endpoints = @('/policy/entities/firewall/v1:post', 'script:CreatePolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
+        }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+        }
+    }
+}
+function New-IOAExclusion {
+    <#
+    .SYNOPSIS
+        Additional information is available with the -Help parameter
+    .LINK
+        https://github.com/crowdstrike/psfalcon
+    #>
+    [CmdletBinding()]
+    [OutputType()]
+    param()
+    DynamicParam {
+        $Endpoints = @('/policy/entities/ioa-exclusions/v1:post')
+        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    }
+    process {
+        if ($PSBoundParameters.Help) {
+            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        } else {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param.Body.groups = @( $Param.Body.groups )
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
     }
 }
@@ -921,7 +1007,10 @@ function New-MLExclusion {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param.Body.groups = @( $Param.Body.groups )
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
     }
 }
@@ -936,12 +1025,20 @@ function New-PreventionPolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/prevention/v1:post')
+        $Endpoints = @('/policy/entities/prevention/v1:post', 'script:CreatePolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -959,12 +1056,20 @@ function New-ResponsePolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/response/v1:post')
+        $Endpoints = @('/policy/entities/response/v1:post', 'script:CreatePolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -982,12 +1087,20 @@ function New-SensorUpdatePolicy {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/policy/entities/sensor-update/v2:post')
+        $Endpoints = @('/policy/entities/sensor-update/v2:post', 'script:CreatePolicyArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -1013,7 +1126,10 @@ function New-SVExclusion {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
         }
         else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param.Body.groups = @( $Param.Body.groups )
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
     }
 }

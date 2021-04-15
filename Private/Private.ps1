@@ -63,8 +63,7 @@ function Format-Header {
         $Authorization = if ($Endpoint.security -match ".*:(read|write)") {
             # Capture cached token value
             $Falcon.token
-        }
-        else {
+        } else {
             # Get basic authorization value
             Get-AuthPair
         }
@@ -72,11 +71,11 @@ function Format-Header {
     process {
         if ($Endpoint.consumes) {
             # Add 'consumes' values as 'Content-Type'
-            $Request.Headers.Add('ContentType',$Endpoint.consumes)
+            $Request.Headers.Add('ContentType', $Endpoint.consumes)
         }
         if ($Endpoint.produces) {
             # Add 'produces' values as 'Accept'
-            $Request.Headers.Add('Accept',$Endpoint.produces)
+            $Request.Headers.Add('Accept', $Endpoint.produces)
         }
         if ($Header) {
             foreach ($Pair in $Header.GetEnumerator()) {
@@ -123,18 +122,15 @@ function Format-Result {
             # Output HTML responses as plain strings
             try {
                 $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
+            } catch {
+                Write-Error $_
             }
-            catch {
-                $_
-            }
-        }
-        elseif ($Response.Result.Content) {
+        } elseif ($Response.Result.Content) {
             # Convert Json responses into PowerShell objects
             try {
                 $Json = ConvertFrom-Json ($Response.Result.Content).ReadAsStringAsync().Result
-            }
-            catch {
-                $_
+            } catch {
+                Write-Error $_
             }
         }
         if ($Json) {
@@ -175,8 +171,7 @@ function Format-Result {
                             batch_id = $Json.batch_id
                             hosts = $Json.resources.PSObject.Properties.Value
                         }
-                    }
-                    else {
+                    } else {
                         # Output undefined sub-objects
                         $Json
                     }
@@ -185,8 +180,7 @@ function Format-Result {
                     if ($Populated[0] -eq 'combined') {
                         # If 'combined', return the results under combined
                         $Json.combined.resources.PSObject.Properties.Value
-                    }
-                    else {
+                    } else {
                         # Output sub-object
                         $Json.($Populated[0])
                     }
@@ -201,14 +195,12 @@ function Format-Result {
                                 }
                                 $Name = if ($_ -eq 'writes') {
                                     $Meta.$_.PSObject.Properties.Name
-                                }
-                                else {
+                                } else {
                                     $_
                                 }
                                 $Value = if ($Name -eq 'resources_affected') {
                                     $Meta.$_.PSObject.Properties.Value
-                                }
-                                else {
+                                } else {
                                     $Meta.$_
                                 }
                                 $MetaValues.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
@@ -224,23 +216,19 @@ function Format-Result {
                     # Output formatted result
                     $Output
                 }
-            }
-            elseif ($HTML) {
+            } elseif ($HTML) {
                 # Output HTML
                 $HTML
-            }
-            elseif ($Response.Result.Content) {
+            } elseif ($Response.Result.Content) {
                 # If unable to convert HTML or Json, output as-is
                 ($Response.Result.Content).ReadAsStringAsync().Result
-            }
-            else {
+            } else {
                 # Output request error
                 $Response.Result.EnsureSuccessStatusCode()
             }
-        }
-        catch {
+        } catch {
             # Output exception
-            $_
+            throw $_
         }
     }
 }
@@ -257,8 +245,7 @@ function Get-AuthPair {
             # Convert cached ClientId/ClientSecret to Base64 for basic auth requests
             "basic $([System.Convert]::ToBase64String(
                 [System.Text.Encoding]::ASCII.GetBytes("$($Falcon.ClientId):$($Falcon.ClientSecret)")))"
-        }
-        else {
+        } else {
             $null
         }
     }
@@ -301,9 +288,17 @@ function Get-Body {
                     }
                     $ByteArray = [System.Net.Http.ByteArrayContent]::New($ByteStream)
                     $ByteArray.Headers.Add('Content-Type', $Endpoint.consumes)
-                    Write-Verbose "[Get-Body] File: $($Item.Value)"
-                }
-                else {
+                    Write-Debug "[Get-Body] File: $($Item.Value)"
+                } else {
+                    if ($Item.Value | Get-Member -MemberType Method | Where-Object { $_.Name -eq 'Normalize'}) {
+                        # Normalize fields created through 'Get-Content' to prevent Json conversion errors
+                        if ($Item.ParameterType.Name -eq 'Array') {
+                            [array] $Item.Value = ($Item.Value).Normalize()
+                        } else {
+                            $Item.Value = ($Item.Value).Normalize()
+                        }
+                        Write-Debug "[Get-Body] Normalized '$($Item.Name)' content"
+                    }
                     if (-not($BodyOutput)) {
                         $BodyOutput = @{}
                     }
@@ -316,8 +311,7 @@ function Get-Body {
                             $Parents[$_.Value.parent] = @{}
                         }
                         $Parents.($_.Value.parent)[$_.Key] = $Item.Value
-                    }
-                    else {
+                    } else {
                         # Add input to hashtable for Json conversion
                         $BodyOutput[$_.Key] = $Item.Value
                     }
@@ -332,10 +326,8 @@ function Get-Body {
         }
         if ($BodyOutput) {
             # Output body table
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] Body: $($BodyOutput.Keys -join ', ')"
             $BodyOutput
-        }
-        elseif ($ByteArray) {
+        } elseif ($ByteArray) {
             # Output ByteStream
             $ByteArray
         }
@@ -374,8 +366,7 @@ function Get-Dictionary {
                 }
                 if ($Output.($_.Value.dynamic)) {
                     $Output.($_.Value.dynamic).Attributes.add($Attribute)
-                }
-                else {
+                } else {
                     $Collection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
                     $Collection.Add($Attribute)
                     $PSType = switch ($_.Value.type) {
@@ -402,8 +393,7 @@ function Get-Dictionary {
                             # Set range min/max for integers
                             $Collection.Add((New-Object Management.Automation.ValidateRangeAttribute(
                                 $_.Value.Min, $_.Value.Max)))
-                        }
-                        elseif ($PSType -eq [string]) {
+                        } elseif ($PSType -eq [string]) {
                             # Set length min/max for strings
                             $Collection.Add((New-Object Management.Automation.ValidateLengthAttribute(
                                     $_.Value.Min, $_.Value.Max)))
@@ -499,8 +489,7 @@ function Get-DynamicHelp {
             # Output name and type
             $Type = if ($_.Value.type) {
                 $_.Value.type
-            }
-            else {
+            } else {
                 'string'
             }
             $Label = "`n  -$($_.Value.dynamic) [$($Type)]"
@@ -515,8 +504,7 @@ function Get-DynamicHelp {
                 $Value = if ($_.Value -is [array]) {
                     # Convert arrays to strings
                     $_.Value -join ', '
-                }
-                else {
+                } else {
                     $_.Value
                 }
                 # Output remaining properties
@@ -583,8 +571,7 @@ function Get-Formdata {
                 $Value = if ($_.Key -eq 'content') {
                     # Collect file content as a string
                     [string] (Get-Content $Item.Value -Raw)
-                }
-                else {
+                } else {
                     $Item.Value
                 }
                 $FormdataOutput[$_.Key] = $Value
@@ -592,7 +579,7 @@ function Get-Formdata {
         }
         if ($FormdataOutput) {
             # Output formdata table
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $(ConvertTo-Json $FormdataOutput)"
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] $(ConvertTo-Json $FormdataOutput)"
             $FormdataOutput
         }
     }
@@ -686,7 +673,7 @@ function Get-Outfile {
             }
             if ($FileOutput) {
                 # Output file path string
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] $FileOutput"
+                Write-Debug "[$($MyInvocation.MyCommand.Name)] $FileOutput"
                 $FileOutput
             }
         }
@@ -770,7 +757,7 @@ function Get-Path {
             }
             if ($PathOutput) {
                 # Output new URI path
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] $PathOutput"
+                Write-Debug "[$($MyInvocation.MyCommand.Name)] $PathOutput"
                 $PathOutput
             }
         }
@@ -825,31 +812,27 @@ function Get-Query {
                         ($_.Key -eq 'value'))) {
                             # Change type/value to types/values for /indicators/queries/iocs/v1:get
                             ,"$($_.Key)s=$($Value -replace '\+','%2B')"
-                        }
-                        else {
+                        } else {
                             ,"$($_.Key)=$($Value -replace '\+','%2B')"
                         }
-                    }
-                    else {
+                    } else {
                         ,"$($Value -replace '\+','%2B')"
                     }
                 }
             }
         }
         if ($QueryOutput) {
-            # Trim pagination tokens for verbose output and output query array
-            $VerboseOutput = (($QueryOutput).foreach{
+            # Trim pagination tokens for debug output and output query array
+            $DebugOutput = (($QueryOutput).foreach{
                 if (($_ -match '^offset=') -and ($_.Length -gt 14)) {
                     "$($_.Substring(0,13))..."
-                }
-                elseif (($_ -match '^after=') -and ($_.Length -gt 13)) {
+                } elseif (($_ -match '^after=') -and ($_.Length -gt 13)) {
                     "$($_.Substring(0,12))..."
-                }
-                else {
+                } else {
                     $_
                 }
             }) -join ', '
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $VerboseOutput"
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] $DebugOutput"
             $QueryOutput
         }
     }
@@ -898,9 +881,6 @@ function Invoke-Endpoint {
         [string] $Path
     )
     begin {
-        if ($PSVersionTable.PSVersion.Major -lt 6) {
-            Add-Type -AssemblyName System.Net.Http
-        }
         if ((-not($Falcon.Token)) -or (($Falcon.Expires) -le (Get-Date).AddSeconds(30)) -and
         ($Endpoint -ne '/oauth2/token:post')) {
             # Check for expired/expiring tokens and force an OAuth2 token request
@@ -909,20 +889,22 @@ function Invoke-Endpoint {
         # Gather endpoint data
         $Target = $Falcon.GetEndpoint($Endpoint)
         $FullUri = if ($Path) {
-            # Append URI path with Hostname and user input
+            # Append URI path to Hostname with user input
             "$($Falcon.Hostname)$($Path)"
-        }
-        else {
-            # Append URI path with Hostname
+        } else {
             "$($Falcon.Hostname)$($Target.Path)"
         }
         Write-Verbose "[$($MyInvocation.MyCommand.Name)] $($Target.Method.ToUpper()) $FullUri"
         if ($Query) {
-            # Appent query inputs to URI path
+            # Add query inputs
             $FullUri += "?$($Query -join '&')"
         }
     }
     process {
+        if (!($FullUri -as [System.Uri]).AbsoluteUri) {
+            # Validate URI path
+            throw "'$FullUri' is not a valid URL. Verify module installation."
+        }
         # Create System.Net.Http base object and append request header
         $Client = [System.Net.Http.HttpClient]::New()
         $Request = [System.Net.Http.HttpRequestMessage]::New($Target.Method.ToUpper(), [System.Uri]::New($FullUri))
@@ -938,7 +920,7 @@ function Invoke-Endpoint {
             # Add timeout value to request if found in query inputs from Real-time Response commands
             $Timeout = [int] (($Query).Where({ $_ -match 'timeout' })).Split('=')[1] + 5
             $Client.Timeout = (New-TimeSpan -Seconds $Timeout).Ticks
-            Write-Verbose ("[$($MyInvocation.MyCommand.Name)] HttpClient timeout set to $($Timeout) seconds")
+            Write-Debug ("[$($MyInvocation.MyCommand.Name)] HttpClient timeout set to $($Timeout) seconds")
         }
         try {
             if ($Formdata) {
@@ -951,8 +933,7 @@ function Invoke-Endpoint {
                         $Filename = [System.IO.Path]::GetFileName($Formdata.$Key)
                         $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
                         $MultiContent.Add($StreamContent, $Key, $Filename)
-                    }
-                    else {
+                    } else {
                         # Add content as strings
                         $StringContent = [System.Net.Http.StringContent]::New($Formdata.$Key)
                         $MultiContent.Add($StringContent, $Key)
@@ -960,13 +941,11 @@ function Invoke-Endpoint {
                 }
                 # Append formdata object to request
                 $Request.Content = $MultiContent
-            }
-            elseif ($Body) {
+            } elseif ($Body) {
                 $Request.Content = if ($Body -is [string]) {
                     # Append Json body to request using endpoint's 'consumes' value
                     [System.Net.Http.StringContent]::New($Body, [System.Text.Encoding]::UTF8, $Target.consumes)
-                }
-                else {
+                } else {
                     # Append body to request directly
                     $Body
                 }
@@ -978,8 +957,7 @@ function Invoke-Endpoint {
                 }
                 $Request.Dispose()
                 $Client.GetByteArrayAsync($FullUri)
-            }
-            else {
+            } else {
                 # Make request
                 $Client.SendAsync($Request)
             }
@@ -989,12 +967,10 @@ function Invoke-Endpoint {
                 if (Test-Path $Outfile) {
                     Get-ChildItem $Outfile | Out-Host
                 }
-            }
-            elseif ($Response.Result) {
+            } elseif ($Response.Result) {
                 # Format responses
                 Format-Result -Response $Response -Endpoint $Endpoint
-            }
-            else {
+            } else {
                 # Output error
                 $PSCmdlet.WriteError(
                     [System.Management.Automation.ErrorRecord]::New(
@@ -1005,16 +981,18 @@ function Invoke-Endpoint {
                     )
                 )
             }
-        }
-        catch {
+        } catch {
             # Output exception
-            $_
+            throw $_
         }
     }
     end {
         if ($Response.Result.Headers) {
             # Wait for 'X-Ratelimit-RetryAfter'
             Wait-RetryAfter $Response.Result.Headers
+        }
+        if ($FileStream) {
+            $FileStream.Close()
         }
         if ($Response) {
             $Response.Dispose()
@@ -1049,20 +1027,30 @@ function Invoke-Loop {
             # Check 'Meta' object from Format-Result for pagination information
             if ($Object.after) {
                 $Param['After'] = $Object.after
-            }
-            else {
+            } else {
                 if ($Object.next_page) {
                     $Param['Offset'] = $Object.offset
-                }
-                else {
+                } else {
                     $Param['Offset'] = if ($Object.offset -match '^\d{1,}$') {
                         $Count
-                    }
-                    else {
+                    } else {
                         $Object.offset
                     }
                 }
             }
+        }
+        if (!$Param.Limit) {
+            $Endpoint = if ((Get-Command $Command).ParameterSets.Name -match 'combined' -and $Param.Detailed) {
+                # Use 'combined' if available and -Detailed was specified
+                'combined'
+            } else {
+                'queries'
+            }
+            # Check for 'limit' parameter and add maximum limit if not present
+            $Param['Limit'] = ((Get-Command $Command).ParameterSets.Where({
+                $_.Name -match $Endpoint }).Parameters.Where({ $_.Name -eq 'Limit' }).Attributes.MaxRange |
+                Group-Object) | Select-Object -ExpandProperty Name -First 1
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] Added maximum 'Limit'"
         }
     }
     process {
@@ -1074,8 +1062,7 @@ function Invoke-Loop {
         if ($Loop.Request -and $Detailed) {
             # Perform secondary request for identifier detail
             & $Command -Ids $Loop.Request
-        }
-        else {
+        } else {
             $Loop.Request
         }
         if ($Loop.Request -and (($Loop.Request.count -lt $Loop.Pagination.total) -or $Loop.Pagination.next_page)) {
@@ -1090,8 +1077,7 @@ function Invoke-Loop {
                 }
                 if ($Loop.Request -and $Detailed) {
                     & $Command -Ids $Loop.Request
-                }
-                else {
+                } else {
                     $Loop.Request
                 }
             }
@@ -1145,8 +1131,7 @@ function Invoke-Request {
         # Set base endpoint based on dynamic input
         $Endpoint = if (($Dynamic.Values).Where({ $_.IsSet -eq $true }).Attributes.ParameterSetName -eq $Entity) {
             $Entity
-        }
-        else {
+        } else {
             $Query
         }
     }
@@ -1176,8 +1161,7 @@ function Invoke-Request {
                 if ($Request -and $Detailed) {
                     # Make secondary request for detail about identifiers
                     & $Command -Ids $Request
-                }
-                else {
+                } else {
                     $Request
                 }
             }
@@ -1215,18 +1199,15 @@ function Read-Meta {
                 ($_.Value.PSObject.Properties).foreach{
                     Read-CountValue -Property $_ -Prefix $ItemPrefix
                 }
-            }
-            elseif ($_.Name -match '(after|offset|total)') {
+            } elseif ($_.Name -match '(after|offset|total)') {
                 $Value = if (($_.Value -is [string]) -and ($_.Value.Length -gt 7)) {
                     "$($_.Value.Substring(0,6))..."
-                }
-                else {
+                } else {
                     $_.Value
                 }
                 $Name = if ($Prefix) {
                     "$($Prefix)_$($_.Name)"
-                }
-                else {
+                } else {
                     $_.Name
                 }
                 if ($Name -and $Value) {
@@ -1291,8 +1272,7 @@ function Split-Param {
                 if ($IdCount -gt 500) {
                     # Set maximum for requests to 500
                     500
-                }
-                else {
+                } else {
                     # Use maximum below 500
                     $IdCount
                 }
@@ -1307,7 +1287,7 @@ function Split-Param {
     }
     process {
         if ($Max -and $Param.Query.count -gt $Max) {
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $Max query values per request"
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max query values per request"
             for ($i = 0; $i -lt $Param.Query.count; $i += $Max) {
                 # Break query inputs into groups that are lower than maximum
                 $Group = @{
@@ -1321,7 +1301,7 @@ function Split-Param {
                 $Group
             }
         } elseif ($Max -and $Param.Body.ids.count -gt $Max) {
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] $Max body values per request"
+            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max body values per request"
             for ($i = 0; $i -lt $Param.Body.ids.count; $i += $Max) {
                 # Break body inputs into groups that are lower than maximum
                 $Group = @{

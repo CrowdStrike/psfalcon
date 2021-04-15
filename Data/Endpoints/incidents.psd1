@@ -54,12 +54,14 @@
                 value = @{
                     description = "Value for the chosen action"
                     parent = "action_parameters"
+                    in = "body"
                     required = $true
                     position = 2
                 }
                 ids = @{
                     description = "One or more {0} identifiers"
                     type = "array"
+                    in = "body"
                     required = $true
                     position = 3
                 }

@@ -42,12 +42,20 @@ function Edit-HostGroup {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/devices/entities/host-groups/v1:patch')
+        $Endpoints = @('/devices/entities/host-groups/v1:patch', 'script:EditGroupArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
@@ -235,9 +243,10 @@ function Invoke-HostGroupAction {
                 $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
                 $Param.Body.action_parameters[0] = @{
                     name  = 'filter'
-                    value = ("(device_id:$(($Param.Body.action_parameters[0].value |
-                        ForEach-Object { "'$_'" }) -join ','))")
+                    value = ("(device_id:[$(($Param.Body.action_parameters[0].value |
+                        ForEach-Object { "'$_'" }) -join ',')])")
                 }
+                $Param.Body.ids = @( $Param.Body.ids )
                 Format-Body -Param $Param
                 Invoke-Endpoint @Param
             }
@@ -255,12 +264,20 @@ function New-HostGroup {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/devices/entities/host-groups/v1:post')
+        $Endpoints = @('/devices/entities/host-groups/v1:post', 'script:CreateGroupArray')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
+        }
+        elseif ($PSBoundParameters.Array) {
+            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
+            $Param['Body'] = @{
+                resources = @( $PSBoundParameters.Array )
+            }
+            Format-Body -Param $Param
+            Invoke-Endpoint @Param
         }
         else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
