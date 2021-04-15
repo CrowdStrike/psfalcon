@@ -8,6 +8,10 @@ function Export-Config {
         to restore configurations to your existing environment, or create copies in another environment.
     .PARAMETER ITEMS
         Items to export from your current CID. Leave unspecified to export the entire list.
+
+        Accepted list:
+        'HostGroup', 'IOAGroup', 'FirewallGroup', 'DeviceControlPolicy', 'FirewallPolicy', 'PreventionPolicy',
+        'ResponsePolicy', 'SensorUpdatePolicy', 'IOAExclusion', 'MLExclusion', 'SVExclusion'
     .EXAMPLE
         PS> Export-FalconConfig
 
