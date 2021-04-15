@@ -801,42 +801,51 @@ function Import-Config {
                     }
                 }
             }
+            foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Key -match '^.*Policy$'})) {
+                if ($Pair.Value.Created -and $Pair.Value.CID) {
+                    Write-Warning "There were existing $($Pair.Key) items. Verify policy precedence!"
+                }
+            }
         }
     }
     end {
-        if (!$PSBoundParameters.Help -and $ConfigData) {
-            $Param = @{
-                Path = (Get-Location).Path
-                ChildPath = "FalconConfig_$(Get-Date -Format FileDateTime).csv"
-            }
-            $OutputFile = Join-Path @Param
-            foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Value.Created })) {
-                $Pair.Value.Created | ForEach-Object {
-                    # Output 'created' results to CSV
-                    [PSCustomObject] @{
-                        type = $Pair.Key
-                        id = if ($_.instance_id) {
-                            $_.instance_id
-                        } else {
-                            $_.id
-                        }
-                        name = if ($_.value) {
-                            $_.value
-                        } else {
-                            $_.name
-                        }
-                        platform_name = if ($_.platform_name) {
-                            $_.platform_name
-                        } elseif ($_.platform) {
-                            $_.platform
-                        } else {
-                            $null
-                        }
-                    } | Export-Csv -Path $OutputFile -NoTypeInformation -Append
+        if (!$PSBoundParameters.Help) {
+            if ($ConfigData.Values.Created) {
+                $Param = @{
+                    Path = (Get-Location).Path
+                    ChildPath = "FalconConfig_$(Get-Date -Format FileDateTime).csv"
                 }
-            }
-            if (Test-Path $OutputFile) {
-                Get-ChildItem -Path $OutputFile
+                $OutputFile = Join-Path @Param
+                foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Value.Created })) {
+                    $Pair.Value.Created | ForEach-Object {
+                        # Output 'created' results to CSV
+                        [PSCustomObject] @{
+                            type = $Pair.Key
+                            id = if ($_.instance_id) {
+                                $_.instance_id
+                            } else {
+                                $_.id
+                            }
+                            name = if ($_.value) {
+                                $_.value
+                            } else {
+                                $_.name
+                            }
+                            platform_name = if ($_.platform_name) {
+                                $_.platform_name
+                            } elseif ($_.platform) {
+                                $_.platform
+                            } else {
+                                $null
+                            }
+                        } | Export-Csv -Path $OutputFile -NoTypeInformation -Append
+                    }
+                }
+                if (Test-Path $OutputFile) {
+                    Get-ChildItem -Path $OutputFile
+                }
+            } else {
+                Write-Warning "No items created."
             }
         }
     }
