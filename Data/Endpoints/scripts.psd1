@@ -20,6 +20,119 @@
                 }
             }
         }
+        CreateIOCArray = @{
+            description = "Create multiple Custom Indicators in a single request"
+            parameters = @{
+                array = @{
+                    type = "array"
+                    description = "An array of Custom Indicators to create"
+                    required = $true
+                    position = 1
+                }
+                comment = @{
+                    description = "Audit log comment"
+                    in = "body"
+                    position = 2
+                }
+                retrodetects = @{
+                    dynamic = "RetroDetects"
+                    in = "query"
+                    type = "boolean"
+                    description = "Generate retroactive detections for hosts that have observed the Custom Indicators"
+                    position = 3
+                }
+                ignore_warnings = @{
+                    in = "query"
+                    type = "boolean"
+                    description = "Ignore warnings and modify all Custom Indicators"
+                    position = 4
+                }
+            }
+        }
+        EditIOCArray = @{
+            description = "Modify multiple Custom Indicators in a single request"
+            parameters = @{
+                filter = @{
+                    description = "Falcon Query Language expression to find and delete Custom Indicators"
+                    parent = "bulk_update"
+                    required = $true
+                    in = "body"
+                    position = 1
+                }
+                action = @{
+                    description = "Action to take when a host observes the Custom Indicator"
+                    parent = "bulk_update"
+                    enum = @("no_action","allow","prevent_no_ui","detect","prevent")
+                    position = 2
+                }
+                platforms = @{
+                    description = "Platform that the Custom Indicator applies to"
+                    parent = "bulk_update"
+                    type = "array"
+                    enum = @("linux","mac","windows")
+                    position = 3
+                }
+                source = @{
+                    description = "The source where this Custom Indicator originated"
+                    parent = "bulk_update"
+                    min = 1
+                    max = 256
+                    position = 4
+                }
+                severity = @{
+                    description = "Severity level to apply to the Custom Indicator"
+                    parent = "bulk_update"
+                    enum = @("informational","low","medium","high","critical")
+                    position = 5
+                }
+                description = @{
+                    description = "Descriptive label for the Custom Indicator"
+                    parent = "bulk_update"
+                    position = 6
+                }
+                tags = @{
+                    description = "List of tags to apply to the Custom Indicator"
+                    parent = "bulk_update"
+                    type = "array"
+                    position = 7
+                }
+                host_groups = @{
+                    description = "One or more Host Group identifiers to assign the Custom Indicator"
+                    parent = "bulk_update"
+                    type = "array"
+                    pattern = "\w{32}"
+                    position = 8
+                }
+                applied_globally = @{
+                    description = "Globally assign the Custom Indicator instead of assigning to specific Host Groups"
+                    parent = "bulk_update"
+                    type = "boolean"
+                    position = 9
+                }
+                expiration = @{
+                    description = "The date on which the Custom Indicator will become inactive. When a Custom Indicator expires, its action is set to 'no_action' but it remains in your list of Custom Indicators."
+                    parent = "bulk_update"
+                    position = 10
+                }
+                comment = @{
+                    in = "body"
+                    position = 11
+                }
+                retrodetects = @{
+                    dynamic = "RetroDetects"
+                    in = "query"
+                    type = "boolean"
+                    description = "Generate retroactive detections for hosts that have observed the Custom Indicators"
+                    position = 12
+                }
+                ignore_warnings = @{
+                    in = "query"
+                    type = "boolean"
+                    description = "Ignore warnings and modify all Custom Indicators"
+                    position = 13
+                }
+            }
+        }
         CreatePolicyArray = @{
             description = "Create multiple policies in a single request"
             parameters = @{
@@ -36,6 +149,26 @@
                 array = @{
                     type = "array"
                     description = "An array of policies to modify"
+                    required = $true
+                }
+            }
+        }
+        CreateReconRuleArray = @{
+            description = "Create multiple Falcon X Recon monitoring rules in a single request"
+            parameters = @{
+                array = @{
+                    type = "array"
+                    description = "An array of rules to create"
+                    required = $true
+                }
+            }
+        }
+        EditReconRuleArray = @{
+            description = "Modify multiple Falcon X Recon monitoring rules in a single request"
+            parameters = @{
+                array = @{
+                    type = "array"
+                    description = "An array of rules to modify"
                     required = $true
                 }
             }
@@ -141,6 +274,11 @@
         OpenStream = @{
             description = "Export recent Event Stream data to a Json file in your current directory"
             security = "streaming:read"
+        }
+        QuickScanQuota = @{
+            description = "Display your Falcon QuickScan quota information"
+            method = "get"
+            path = "/scanner/queries/scans/v1"
         }
         ShowMap = @{
             path = "/intelligence/graph?indicators="

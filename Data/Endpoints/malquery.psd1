@@ -104,7 +104,6 @@
                     required = $true
                 }
                 outfile_path = @{
-                    pattern = "^*\.zip$"
                     position = 2
                 }
             }

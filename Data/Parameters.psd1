@@ -141,6 +141,14 @@
         in = "outfile"
         required = $true
     }
+    permissions = @{
+        description = "Permission level (public: 'All Intel users', private: 'Recon Admins')"
+        enum = @("private","public")
+    }
+    priority = @{
+        description = "{0} priority"
+        enum = @("high","medium","low")
+    }
     q = @{
         description = "Perform a generic substring search across available fields"
         dynamic = "Query"
@@ -188,6 +196,11 @@
         min = 30
         max = 600
         position = 5
+    }
+    topic = @{
+        description = "{0} topic"
+        enum = @("SA_ALIAS","SA_AUTHOR","SA_BIN","SA_BRAND_PRODUCT","SA_CUSTOM","SA_CVE","SA_DOMAIN",
+            "SA_EMAIL","SA_IP","SA_THIRD_PARTY","SA_VIP")
     }
     tracking = @{
         description = "Tracking value"

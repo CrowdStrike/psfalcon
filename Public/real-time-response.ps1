@@ -152,6 +152,11 @@ function Edit-Script {
         $Endpoints = @('/real-time-response/entities/scripts/v1:patch')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        if ($Dynamic.Path.Value) {
+            $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+        }
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name

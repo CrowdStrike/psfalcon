@@ -525,7 +525,9 @@
                     required = $true
                     position = 1
                 }
-                file = @{}
+                file = @{
+                    required = $false
+                }
                 platform = @{
                     description = "Operating System platform"
                     enum = @("windows","mac","linux")

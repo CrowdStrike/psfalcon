@@ -206,6 +206,154 @@
         }
     }
     # Swagger-defined Schema, used to create dynamic parameters
+    "api.IndicatorCreateReqV1" = @{
+        type = @{
+            description = "{0} type"
+            parent = "indicators"
+            enum = @("domain","ipv4","ipv6","md5","sha256")
+            required = $true
+            position = 1
+        }
+        value = @{
+            description = "String representation of the {0}"
+            parent = "indicators"
+            required = $true
+            position = 2
+        }
+        action = @{
+            description = "Action to take when a host observes the {0}"
+            parent = "indicators"
+            required = $true
+            enum = @("no_action","allow","prevent_no_ui","detect","prevent")
+            position = 3
+        }
+        platforms = @{
+            description = "Platform that the {0} applies to"
+            parent = "indicators"
+            type = "array"
+            enum = @("linux","mac","windows")
+            required = $true
+            position = 4
+        }
+        source = @{
+            description = "The source where this {0} originated"
+            parent = "indicators"
+            min = 1
+            max = 256
+            position = 5
+        }
+        severity = @{
+            description = "Severity level to apply to the {0}"
+            parent = "indicators"
+            enum = @("informational","low","medium","high","critical")
+            position = 6
+        }
+        description = @{
+            description = "Descriptive label for the {0}"
+            parent = "indicators"
+            position = 7
+        }
+        "metadata.filename" = @{
+            description = "A common filename, or a filename in your environment (applies to hashes only)"
+            dynamic = "Filename"
+            parent = "indicators"
+            position = 8
+        }
+        tags = @{
+            description = "List of tags to apply to the {0}"
+            parent = "indicators"
+            type = "array"
+            position = 9
+        }
+        host_groups = @{
+            description = "One or more Host Group identifiers to assign the {0}"
+            parent = "indicators"
+            type = "array"
+            pattern = "\w{32}"
+            position = 10
+        }
+        applied_globally = @{
+            description = "Globally assign the {0} instead of assigning to specific Host Groups"
+            parent = "indicators"
+            type = "boolean"
+            position = 11
+        }
+        expiration = @{
+            description = "The date on which the {0} will become inactive"
+            parent = "indicators"
+            position = 12
+        }
+    }
+    "api.IndicatorUpdateReqV1" = @{
+        id = @{
+            description = "{0} identifier"
+            parent = "indicators"
+            pattern = "\w{64}"
+            required = $true
+            position = 1
+        }
+        action = @{
+            description = "Action to take when a host observes the {0}"
+            parent = "indicators"
+            enum = @("no_action","allow","prevent_no_ui","detect","prevent")
+            position = 2
+        }
+        platforms = @{
+            description = "Platform that the {0} applies to"
+            parent = "indicators"
+            type = "array"
+            enum = @("linux","mac","windows")
+            position = 3
+        }
+        source = @{
+            description = "The source where this {0} originated"
+            parent = "indicators"
+            min = 1
+            max = 256
+            position = 4
+        }
+        severity = @{
+            description = "Severity level to apply to the {0}"
+            parent = "indicators"
+            enum = @("informational","low","medium","high","critical")
+            position = 5
+        }
+        description = @{
+            description = "Descriptive label for the {0}"
+            parent = "indicators"
+            position = 6
+        }
+        "metadata.filename" = @{
+            description = "A common filename, or a filename in your environment (applies to hashes only)"
+            dynamic = "Filename"
+            parent = "indicators"
+            position = 7
+        }
+        tags = @{
+            description = "List of tags to apply to the {0}"
+            parent = "indicators"
+            type = "array"
+            position = 8
+        }
+        host_groups = @{
+            description = "One or more Host Group identifiers to assign the {0}"
+            parent = "indicators"
+            type = "array"
+            pattern = "\w{32}"
+            position = 9
+        }
+        applied_globally = @{
+            description = "Globally assign the {0} instead of assigning to specific Host Groups"
+            parent = "indicators"
+            type = "boolean"
+            position = 10
+        }
+        expiration = @{
+            description = "The date on which the {0} will become inactive. When a {0} expires, its action is set to 'no_action' but it remains in your list of {0}s."
+            parent = "indicators"
+            position = 11
+        }
+    }
     "api.IOCViewRecord" = @{
         policy = @{
             description = "Action to perform when the {0} is observed by a Host"
