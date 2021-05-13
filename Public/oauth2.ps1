@@ -15,8 +15,7 @@ function Request-Token {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             if (-not($PSBoundParameters.Cloud)) {
                 if (-not($Falcon.Hostname)) {
                     $PSBoundParameters.Cloud = 'us-1'

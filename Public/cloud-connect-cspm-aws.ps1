@@ -15,19 +15,8 @@ function Get-HorizonAwsAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Query   = $Endpoints[0]
-                Dynamic = $Dynamic
-            }
-            switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-            }
-            Invoke-Request @Param
+        } else {
+            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
 }
@@ -48,8 +37,7 @@ function Get-HorizonAwsLink {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -71,8 +59,7 @@ function New-HorizonAwsAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -91,11 +78,15 @@ function Receive-HorizonAwsScript {
         $Endpoints = @('/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } elseif (Test-Path $Dynamic.Path.Value) {
+            throw "'$($Dynamic.Path.Value)' already exists."
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -117,8 +108,7 @@ function Remove-HorizonAwsAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

@@ -15,8 +15,7 @@ function Edit-FirewallGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -45,8 +44,7 @@ function Edit-FirewallSetting {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -74,8 +72,7 @@ function Get-FirewallEvent {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -83,12 +80,9 @@ function Get-FirewallEvent {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -111,8 +105,7 @@ function Get-FirewallField {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -120,12 +113,9 @@ function Get-FirewallField {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -148,8 +138,7 @@ function Get-FirewallGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -157,12 +146,9 @@ function Get-FirewallGroup {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -185,8 +171,7 @@ function Get-FirewallPlatform {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -194,12 +179,9 @@ function Get-FirewallPlatform {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                } # should this be here?
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -222,8 +204,7 @@ function Get-FirewallRule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -231,12 +212,9 @@ function Get-FirewallRule {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -259,8 +237,7 @@ function Get-FirewallSetting {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -282,8 +259,7 @@ function New-FirewallGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -311,8 +287,7 @@ function Remove-FirewallGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"

@@ -16,8 +16,7 @@ function Get-Report {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -25,13 +24,10 @@ function Get-Report {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
-                'Summary' {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
+                'Summary'  {
                     $Param.Entity = $Endpoints[2]
                     $Param['Modifier'] = 'Summary'
                 }
@@ -57,8 +53,7 @@ function Get-Submission {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -66,12 +61,9 @@ function Get-Submission {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -94,18 +86,15 @@ function Get-SubmissionQuota {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             try {
                 Get-FalconSubmission -Limit 1 -ErrorAction SilentlyContinue | Out-Null
                 if ($Script:Meta.Quota) {
                     $Meta.Quota
-                }
-                else {
+                } else {
                     throw "Unable to retrieve submission quota. Check client permissions."
                 }
-            }
-            catch {
+            } catch {
                 Write-Error $_
             }
         }
@@ -128,11 +117,9 @@ function New-Submission {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Url -and $PSBoundParameters.Sha256) {
+        } elseif ($PSBoundParameters.Url -and $PSBoundParameters.Sha256) {
             throw "Url and Sha256 cannot be combined in a submission."
-        }
-        else {
+        } else {
             if ($Dynamic.EnvironmentId.value) {
                 $Dynamic.EnvironmentId.value = switch ($Dynamic.EnvironmentId.value) {
                     'Android' { 200 }
@@ -162,11 +149,15 @@ function Receive-Artifact {
         $Endpoints = @('/falconx/entities/artifacts/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } elseif (Test-Path $Dynamic.Path.Value) {
+            throw "'$($Dynamic.Path.Value)' already exists."
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -188,8 +179,7 @@ function Remove-Report {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

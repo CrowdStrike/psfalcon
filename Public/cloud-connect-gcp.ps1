@@ -15,8 +15,7 @@ function Get-DiscoverGcpAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -38,13 +37,10 @@ function New-DiscoverGcpAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param.Body.resources = ($Param.Body.resources.parent_id).foreach{
-                    @{
-                        parent_id = $_
-                    }
+                    @{ parent_id = $_ }
                 }
                 Format-Body -Param $Param
                 Invoke-Endpoint @Param
@@ -66,11 +62,15 @@ function Receive-DiscoverGcpScript {
         $Endpoints = @('/cloud-connect-gcp/entities/user-scripts-download/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } elseif (Test-Path $Dynamic.Path.Value) {
+            throw "'$($Dynamic.Path.Value)' already exists."
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

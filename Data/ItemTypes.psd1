@@ -52,6 +52,7 @@
     "^/real-time-response/combined/batch-(active-responder-|admin-)?command/" =
         "batch Real-time Response command"
     "^/real-time-response/entities/(active-responder-|admin-)?command/" = "Real-time Response command"
+    "^/real-time-response/(entities|queries)/(extracted-)?file(-contents)?/" = "Real-time Response 'get' file"
     "^/real-time-response/(entities|queries)/scripts/" = "Real-time Response script"
     "^/real-time-response/(entities|queries)/put-files/" = "Real-time Response 'put' file"
     "^/real-time-response/combined/batch-(init-|refresh-)?session/" = "batch Real-time Response session"

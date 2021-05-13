@@ -15,8 +15,7 @@ function Confirm-DiscoverAwsAccess {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -38,8 +37,7 @@ function Edit-DiscoverAwsAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -63,8 +61,7 @@ function Get-DiscoverAwsAccount {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/cloud-connect-aws/combined/accounts/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -72,12 +69,9 @@ function Get-DiscoverAwsAccount {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[2]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -100,8 +94,7 @@ function Get-DiscoverAwsSettings {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Endpoint -Endpoint $Endpoints[0]
         }
     }
@@ -123,8 +116,7 @@ function New-DiscoverAwsAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -146,8 +138,7 @@ function Remove-DiscoverAwsAccount {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -169,8 +160,7 @@ function Update-DiscoverAwsSettings {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

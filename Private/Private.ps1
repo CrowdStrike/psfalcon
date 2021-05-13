@@ -450,6 +450,15 @@ function Get-Dictionary {
                         description = 'Repeat requests until all available results are retrieved'
                     }
                 }
+                # Add 'Total' switch
+                Add-Parameter @{
+                    total = @{
+                        dynamic = 'Total'
+                        set = $_
+                        type = 'switch'
+                        description = 'Display total result count instead of results'
+                    }
+                }
             }
         }
         # Add 'Help' to all endpoints
@@ -533,7 +542,7 @@ function Get-DynamicHelp {
                     Show-Parameter -Parameter $_
                 }
             }
-            ($_.Parameters).Where({ $_.Name -match '^(All|Detailed)$'}).foreach{
+            ($_.Parameters).Where({ $_.Name -match '^(All|Detailed|Total)$'}).foreach{
                 # Show switch parameters added by Get-Dictionary
                 "`n  -$($_.Name) [switch]`n    $($_.HelpMessage)"
             }
@@ -1097,7 +1106,9 @@ function Invoke-Request {
     .PARAMETER DYNAMIC
         A runtime parameter dictionary to search for user input values
     .PARAMETER DETAILED
-        Toggle the use of 'Detailed' with a command when using Invoke-Loop
+        Toggle the use of 'Detailed' with a command
+    .PARAMETER TOTAL
+        Toggle the use of 'Total' with a command
     .PARAMETER MODIFIER
         The name of a switch parameter used to modify a command when using Invoke-Loop
     .PARAMETER ALL
@@ -1122,6 +1133,9 @@ function Invoke-Request {
         [bool] $Detailed,
 
         [Parameter()]
+        [bool] $Total,
+
+        [Parameter()]
         [string] $Modifier,
 
         [Parameter()]
@@ -1136,7 +1150,7 @@ function Invoke-Request {
         }
     }
     process {
-        if ($All) {
+        if ($All -and !$Total) {
             # Construct parameters and pass to Invoke-Loop
             $LoopParam = @{
                 Command = $Command
@@ -1152,15 +1166,17 @@ function Invoke-Request {
                 $LoopParam.Param[$Modifier] = $true
             }
             Invoke-Loop @LoopParam
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoint -Dynamic $Dynamic)) {
                 # Format Json body and make request
                 Format-Body -Param $Param
                 $Request = Invoke-Endpoint @Param
-                if ($Request -and $Detailed) {
+                if ($Request -and $Detailed -and !$Total) {
                     # Make secondary request for detail about identifiers
                     & $Command -Ids $Request
+                } elseif ($Request -and $Total) {
+                    # Output total result count
+                    $Meta.pagination.total
                 } else {
                     $Request
                 }

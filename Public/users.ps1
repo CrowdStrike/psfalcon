@@ -15,8 +15,7 @@ function Edit-User {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -40,8 +39,7 @@ function Get-User {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/users/queries/user-uuids-by-email/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -49,15 +47,10 @@ function Get-User {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'Usernames' {
-                    $Param.Entity = $Endpoints[2]
-                }
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'       { $Param['All'] = $true }
+                'Total'     { $Param['Total'] = $true }
+                'Detailed'  { $Param['Detailed'] = $true }
+                'Usernames' { $Param.Entity = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -80,8 +73,7 @@ function New-User {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -103,8 +95,7 @@ function Remove-User {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

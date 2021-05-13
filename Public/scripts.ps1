@@ -41,11 +41,9 @@ function Export-Report {
             function Add-Field ($Object, $Name, $Value) {
                 $Value = if ($Value -and $Name -match $TimeRegex) {
                     [datetime] $Value
-                }
-                elseif (($Value -is [object[]]) -and ($Value[0] -is [string])) {
+                } elseif (($Value -is [object[]]) -and ($Value[0] -is [string])) {
                     $Value -join ', '
-                }
-                else {
+                } else {
                     $Value
                 }
                 $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
@@ -64,8 +62,7 @@ function Export-Report {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Output = switch (($Meta.PSObject.TypeNames).Where({ $_ -notmatch '^System.*$' })) {
                 { $TypeNames.Detection -contains $_ } {
                     $PSBoundParameters.Object | ForEach-Object {
@@ -76,17 +73,14 @@ function Export-Report {
                         $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'device') {
                                 Add-Field @Param -Name 'device_id' -Value $_.Value.device_id
-                            }
-                            elseif ($_.Name -eq 'behaviors') {
+                            } elseif ($_.Name -eq 'behaviors') {
                                 $TTP = $_.Value | ForEach-Object {
                                     "$($_.tactic_id):$($_.technique_id)"
                                 }
                                 Add-Field @Param -Name 'tactic_and_technique' -Value ($TTP -join ', ')
-                            }
-                            elseif ($_.Name -eq 'quarantined_files') {
+                            } elseif ($_.Name -eq 'quarantined_files') {
                                 Add-Field @Param -Name 'quarantined_files' -Value $_.Value.id
-                            }
-                            elseif ($Exclusions.Detection -notcontains $_.Name) {
+                            } elseif ($Exclusions.Detection -notcontains $_.Name) {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
@@ -102,13 +96,11 @@ function Export-Report {
                         $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
-                            }
-                            elseif ($_.Name -eq 'settings') {
+                            } elseif ($_.Name -eq 'settings') {
                                 Add-Field @Param -Name 'enforcement_mode' -Value $_.Value.enforcement_mode
                                 Add-Field @Param -Name 'end_user_notification' -Value
                                     $_.Value.end_user_notification
-                            }
-                            else {
+                            } else {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
@@ -124,8 +116,7 @@ function Export-Report {
                         $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
-                            }
-                            else {
+                            } else {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
@@ -145,8 +136,7 @@ function Export-Report {
                                     Add-Field @Param -Name "$($_.Name)_assigned" -Value $_.Value.assigned_date
                                     $Applied = if ($_.Value.applied -eq $true) {
                                         $_.Value.applied_date
-                                    }
-                                    else {
+                                    } else {
                                         $null
                                     }
                                     Add-Field @Param -Name "$($_.Name)_applied" -Value $Applied
@@ -155,11 +145,9 @@ function Export-Report {
                                             $_.Value.uninstall_protection)
                                     }
                                 }
-                            }
-                            elseif ($_.Name -eq 'meta') {
+                            } elseif ($_.Name -eq 'meta') {
                                 Add-Field @Param -Name "$($_.Name)_version" -Value $_.Value.version
-                            }
-                            elseif ($Exclusions.Host -notcontains $_.Name) {
+                            } elseif ($Exclusions.Host -notcontains $_.Name) {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
@@ -195,8 +183,7 @@ function Export-Report {
                                 value = ($_).Split(':')[1]
                             }
                         }
-                    }
-                    else {
+                    } else {
                         Get-SimpleObject -Object $PSBoundParameters.Object
                     }
                 }
@@ -209,19 +196,16 @@ function Export-Report {
                         $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
-                            }
-                            elseif ($_.Name -eq 'prevention_settings') {
+                            } elseif ($_.Name -eq 'prevention_settings') {
                                 $_.Value.settings | ForEach-Object {
                                     if ($_.type -eq 'toggle') {
                                         Add-Field @Param -Name $_.id -Value $_.Value.enabled
-                                    }
-                                    else {
+                                    } else {
                                         Add-Field @Param -Name $_.id -Value (
                                             "$($_.Value.detection):$($_.Value.prevention)")
                                     }
                                 }
-                            }
-                            else {
+                            } else {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
@@ -240,13 +224,11 @@ function Export-Report {
                         $_.PSObject.Properties | ForEach-Object {
                             if ($_.Name -eq 'groups') {
                                 Add-Field @Param -Name $_.Name -Value ($_.Value.id -join ', ')
-                            }
-                            elseif ($_.Name -eq 'settings') {
+                            } elseif ($_.Name -eq 'settings') {
                                 $_.Value.psobject.properties | ForEach-Object {
                                     Add-Field @Param -Name $_.Name -Value $_.Value
                                 }
-                            }
-                            else {
+                            } else {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
@@ -267,26 +249,21 @@ function Export-Report {
                                 $_.Value.psobject.properties | ForEach-Object {
                                     Add-Field @Param -Name "cve_$($_.Name)" -Value $_.Value
                                 }
-                            }
-                            elseif ($_.Name -eq 'app') {
+                            } elseif ($_.Name -eq 'app') {
                                 $_.Value.psobject.properties | ForEach-Object {
                                     Add-Field @Param -Name $_.Name -Value $_.Value
                                 }
-                            }
-                            elseif ($_.Name -eq 'host_info') {
+                            } elseif ($_.Name -eq 'host_info') {
                                 $_.Value.psobject.properties | ForEach-Object {
                                     if ($_.Name -eq 'groups') {
                                         Add-Field @Param -Name $_.Name -Value ($_.Value.name -join ', ')
-                                    }
-                                    else {
+                                    } else {
                                         Add-Field @Param -Name $_.Name -Value $_.Value
                                     }
                                 }
-                            }
-                            elseif ($_.Name -eq 'remediation') {
+                            } elseif ($_.Name -eq 'remediation') {
                                 Add-Field @Param -Name "remediation_ids" -Value ($_.Value.ids -join ', ')
-                            }
-                            else {
+                            } else {
                                 Add-Field @Param -Name $_.Name -Value $_.Value
                             }
                         }
@@ -296,8 +273,7 @@ function Export-Report {
             }
             if ($Output) {
                 $Output | Export-Csv -Path $PSBoundParameters.Path -NoTypeInformation -Append -Force
-            }
-            else {
+            } else {
                 Write-Error "CSV conversion is not available for this request type"
             }
         }
@@ -332,8 +308,7 @@ function Find-Duplicate {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             try {
                 ($Criteria).foreach{
                     if ($InputFields -notcontains $_) {
@@ -347,12 +322,10 @@ function Find-Duplicate {
                 $Duplicates = Group-Selection @Param
                 if ($Duplicates) {
                     $Duplicates
-                }
-                else {
+                } else {
                     Write-Warning "No duplicates found"
                 }
-            }
-            catch {
+            } catch {
                 $_
             }
         }
@@ -506,14 +479,12 @@ function Invoke-Deploy {
                 $Result.PSObject.Properties | ForEach-Object {
                     $Value = if (($_.Name -eq 'errors') -and $_.Value) {
                         "$($_.Value.code): $($_.Value.message)"
-                    }
-                    else {
+                    } else {
                         $_.Value
                     }
                     $Name = if ($_.Name -eq 'task_id') {
                         'cloud_request_id'
-                    }
-                    else {
+                    } else {
                         $_.Name
                     }
                     $Output | Where-Object { $_.aid -eq $Result.aid } | ForEach-Object {
@@ -549,8 +520,7 @@ function Invoke-Deploy {
                     }
                     if ($LocalFile.sha256 -eq $CloudFile.sha256) {
                         Write-Host "Matched hash values between local and cloud files..."
-                    }
-                    else {
+                    } else {
                         foreach ($Item in @('CloudFile', 'LocalFile')) {
                             Write-Host "[$($Item -replace 'File', $null)]"
                             (Get-Variable $Item).Value | Select-Object name, created_timestamp,
@@ -561,8 +531,7 @@ function Invoke-Deploy {
                             [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No"), 0)
                         if ($FileChoice -eq 0) {
                             Write-Host "Proceeding with $($CloudFile.id)..."
-                        }
-                        else {
+                        } else {
                             $RemovePut = Remove-FalconPutFile -FileId $CloudFile.id
                             if ($RemovePut.resources_affected -eq 1) {
                                 Write-Host "Removed cloud file $($CloudFile.id)"
@@ -570,8 +539,7 @@ function Invoke-Deploy {
                         }
                     }
                 }
-            }
-            catch {
+            } catch {
                 $_
             }
         }
@@ -579,11 +547,9 @@ function Invoke-Deploy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif (-not $FilePath) {
+        } elseif (-not $FilePath) {
             Write-Error "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
-        }
-        else {
+        } else {
             try {
                 if (($RemovePut.resources_affected -eq 1) -or (-not $CloudFile)) {
                     Write-Host "Uploading $Filename..."
@@ -669,11 +635,9 @@ function Invoke-Deploy {
                         }
                     }
                 }
-            }
-            catch {
+            } catch {
                 $_
-            }
-            finally {
+            } finally {
                 if (Test-Path $OutputFile) {
                     Get-ChildItem $OutputFile | Out-Host
                 }
@@ -724,8 +688,7 @@ function Invoke-RTR {
             $InvokeCmd = if ($PSBoundParameters.Command -eq 'get' -and $PSBoundParameters.HostIds.count -gt 1) {
                 # Set command for 'get' with multiple hosts
                 "Invoke-FalconBatchGet"
-            }
-            else {
+            } else {
                 # Set command
                 "Invoke-Falcon$($Permission)Command"
             }
@@ -738,30 +701,25 @@ function Invoke-RTR {
                     $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
                         # Convert array results into strings
                         $_.Value -join ', '
-                    }
-                    elseif ($_.Value.code -and $_.Value.message) {
+                    } elseif ($_.Value.code -and $_.Value.message) {
                         # Convert error code and message into string
                         "$($_.Value.code): $($_.Value.message)"
-                    }
-                    else {
+                    } else {
                         $_.Value
                     }
                     $Name = if ($_.Name -eq 'task_id') {
                         # Rename 'task_id'
                         'cloud_request_id'
-                    }
-                    elseif ($_.Name -eq 'queued_command_offline') {
+                    } elseif ($_.Name -eq 'queued_command_offline') {
                         # Rename 'queued_command_offline'
                         'offline_queued'
-                    }
-                    else {
+                    } else {
                         $_.Name
                     }
                     $Item = if ($Object.aid) {
                         # Match using 'aid' for batches
                         $Output | Where-Object { $_.aid -eq $Object.aid }
-                    }
-                    else {
+                    } else {
                         # Assume single host
                         $Output[0]
                     }
@@ -776,8 +734,7 @@ function Invoke-RTR {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             for ($i = 0; $i -lt $PSBoundParameters.HostIds.count; $i += $MaxHosts) {
                 try {
                     [array] $Output = ($PSBoundParameters.HostIds[$i..($i + ($MaxHosts - 1))]).foreach{
@@ -795,20 +752,14 @@ function Invoke-RTR {
                     }
                     # Determine total number of hosts and set request parameters
                     $HostParam = if ($Output.aid.count -eq 1) {
-                        $Output[0].PSObject.Properties.Remove('batch_id')
                         'HostId'
-                    }
-                    else {
+                    } else {
                         'HostIds'
                     }
-                    $Param = @{
-                        $HostParam = $Output.aid
-                    }
+                    $Param = @{ $HostParam = $Output.aid }
                     switch ($PSBoundParameters.Keys) {
-                        'QueueOffline' {
-                            $Param['QueueOffline'] = $PSBoundParameters.$_
-                        }
-                        'Timeout' {
+                        'QueueOffline' { $Param['QueueOffline'] = $PSBoundParameters.$_ }
+                        'Timeout'      {
                             if ($HostParam -eq 'HostIds') {
                                 $Param['Timeout'] = $PSBoundParameters.$_
                             }
@@ -819,8 +770,7 @@ function Invoke-RTR {
                     if ($Init) {
                         $Content = if ($Init.hosts) {
                             $Init.hosts
-                        }
-                        else {
+                        } else {
                             $Init
                         }
                         $Content | ForEach-Object {
@@ -837,8 +787,7 @@ function Invoke-RTR {
                         $SessionType = if ($HostParam -eq 'HostIds') {
                             'BatchId'
                             $IdValue = $Init.batch_id
-                        }
-                        else {
+                        } else {
                             'SessionId'
                             $IdValue = $Init.session_id
                         }
@@ -848,13 +797,14 @@ function Invoke-RTR {
                         switch ($PSBoundParameters.Keys) {
                             # Add user input to command parameters
                             'Command' {
-                                $Param[$_] = $PSBoundParameters.$_
+                                if ($InvokeCmd -ne 'Invoke-FalconBatchGet') {
+                                    $Param[$_] = $PSBoundParameters.$_
+                                }
                             }
                             'Arguments' {
                                 if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                                    $Param['Path'] = $PSBoundParameters.$_
-                                }
-                                else {
+                                    $Param['FilePath'] = $PSBoundParameters.$_
+                                } else {
                                     $Param[$_] = $PSBoundParameters.$_
                                 }
                             }
@@ -867,14 +817,31 @@ function Invoke-RTR {
                         # Perform command request
                         $Request = & $InvokeCmd @Param
                     }
-                    if ($Request -and $HostParam -eq 'HostIds') {
-                        # Capture results and output batch commands
+                    if ($Request -and $InvokeCmd -eq 'Invoke-FalconBatchGet') {
+                        $Output | Where-Object { $_.session_id } | ForEach-Object {
+                            # Add 'batch_get_cmd_req_id' for batch 'get' requests
+                            $_.PSObject.Properties.Add((New-Object PSNoteProperty(
+                                'batch_get_cmd_req_id', $Request.batch_get_cmd_req_id)))
+                        }
+                        # Capture results
+                        $Request | ForEach-Object {
+                            Write-Result -Object $_
+                        }
+                        $Output | ForEach-Object {
+                            if ($_.stdout -eq 'C:\') {
+                                # Remove 'stdout' from initial 'pwd' command to reduce confusion when using 'get'
+                                $_.stdout = $null
+                            }
+                        }
+                        # Output result
+                        $Output
+                    } elseif ($Request -and $HostParam -eq 'HostIds') {
+                        # Capture results and output
                         $Request | ForEach-Object {
                             Write-Result -Object $_
                         }
                         $Output
-                    }
-                    elseif ($Request) {
+                    } elseif ($Request) {
                         # Capture results
                         Write-Result -Object $Request
                         if ($Output.cloud_request_id -and $Output.complete -eq $false -and
@@ -893,8 +860,7 @@ function Invoke-RTR {
                         # Output results
                         $Output
                     }
-                }
-                catch {
+                } catch {
                     $_
                 }
             }
@@ -918,8 +884,7 @@ function Open-Stream {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
+        } elseif (($PSVersionTable.PSVersion.Major -lt 6) -or ($IsWindows -eq $true)) {
             try {
                 $Stream = Get-FalconStream -AppId 'psfalcon' -Format json
                 if ($Stream) {
@@ -940,12 +905,10 @@ function Open-Stream {
                     }"
                     Start-Process -FilePath powershell.exe -ArgumentList $ArgumentList
                 }
-            }
-            catch {
+            } catch {
                 $_
             }
-        }
-        else {
+        } else {
             throw "This command is only compatible with PowerShell on Windows"
         }
     }
@@ -973,8 +936,7 @@ function Search-MalQueryHash {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             try {
                 $Param = @{
                     YaraRule = "import `"hash`"`nrule SearchHash`n{`ncondition:`nhash.sha256(0, filesize) == " +
@@ -997,8 +959,7 @@ function Search-MalQueryHash {
                     }
                     $Result
                 }
-            }
-            catch {
+            } catch {
                 $_
             }
         }
@@ -1024,8 +985,7 @@ function Show-Map {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Query = $Param.Query | ForEach-Object {
                 $Split = $_ -split ':'
@@ -1059,8 +1019,7 @@ function Show-Module {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Parent = Split-Path -Path $Falcon.GetAbsolutePath($PSScriptRoot) -Parent
             if (Test-Path "$Parent\PSFalcon.psd1") {
                 $Module = Import-PowerShellDataFile $Parent\PSFalcon.psd1
@@ -1072,8 +1031,7 @@ function Show-Module {
                     UserSystem = ("PowerShell $($PSVersionTable.PSEdition): v$($PSVersionTable.PSVersion)" +
                         " [$($PSVersionTable.OS)]")
                 } | Format-List
-            }
-            else {
+            } else {
                 throw "PSFalcon.psd1 missing from default location"
             }
         }

@@ -16,8 +16,7 @@ function Get-Actor {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @('/intel/combined/actors/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -25,12 +24,9 @@ function Get-Actor {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[2]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -55,8 +51,7 @@ function Get-Indicator {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/intel/combined/indicators/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -64,12 +59,9 @@ function Get-Indicator {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[2]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -93,8 +85,7 @@ function Get-Intel {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @('/intel/combined/reports/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -102,12 +93,9 @@ function Get-Intel {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[2]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -130,8 +118,7 @@ function Get-Rule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -139,12 +126,9 @@ function Get-Rule {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -164,11 +148,15 @@ function Receive-Intel {
         $Endpoints = @('/intel/entities/report-files/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } elseif (Test-Path $Dynamic.Path.Value) {
+            throw "'$($Dynamic.Path.Value)' already exists."
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -187,16 +175,19 @@ function Receive-Rule {
         $Endpoints = @('/intel/entities/rules-files/v1:get', '/intel/entities/rules-latest-files/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } elseif (Test-Path $Dynamic.Path.Value) {
+            throw "'$($Dynamic.Path.Value)' already exists."
+        } else {
             $Param = Get-Param -Endpoint $PSCmdlet.ParameterSetName -Dynamic $Dynamic
             $Format = if ($Param.Path -match '\.gzip$') {
                 "format=gzip"
-            }
-            else {
+            } else {
                 "format=zip"
             }
             $Param.Query = @($Param.Query, $Format)

@@ -15,8 +15,7 @@ function Get-Behavior {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -24,12 +23,9 @@ function Get-Behavior {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -52,8 +48,7 @@ function Get-Incident {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -61,12 +56,9 @@ function Get-Incident {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -89,17 +81,15 @@ function Get-Score {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
+                'All'   { $Param['All'] = $true }
+                'Total' { $Param['Total'] = $true }
             }
             Invoke-Request @Param
         }
@@ -122,8 +112,7 @@ function Invoke-IncidentAction {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             if ($Dynamic.'Name'.value -eq 'update_status') {
                 if ($Dynamic.'Value'.value -match '(closed|in_progress|new|reopened)') {
                     $Dynamic.'Value'.value = switch ($Dynamic.'Value'.value) {

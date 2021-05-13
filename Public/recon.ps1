@@ -75,6 +75,7 @@ function Get-ReconAction {
             }
             switch ($PSBoundParameters.Keys) {
                 'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
                 'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
@@ -114,6 +115,7 @@ function Get-ReconNotification {
             }
             switch ($PSBoundParameters.Keys) {
                 'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
                 'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
@@ -146,6 +148,7 @@ function Get-ReconRule {
             }
             switch ($PSBoundParameters.Keys) {
                 'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
                 'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param

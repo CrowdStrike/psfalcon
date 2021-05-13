@@ -15,8 +15,7 @@ function Edit-IOAGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -44,8 +43,7 @@ function Edit-IOARule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -73,19 +71,17 @@ function Get-IOAGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
-            if ($PSBoundParameters.All) {
-                $Param['All'] = $true
-            }
-            if ($PSBoundParameters.Detailed) {
-                $Param['Detailed'] = $true
+            switch ($PSBoundParameters.Keys) {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -108,8 +104,7 @@ function Get-IOAPlatform {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -117,12 +112,9 @@ function Get-IOAPlatform {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -145,8 +137,7 @@ function Get-IOARule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -154,12 +145,9 @@ function Get-IOARule {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -182,8 +170,7 @@ function Get-IOASeverity {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -191,12 +178,9 @@ function Get-IOASeverity {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -219,8 +203,7 @@ function Get-IOAType {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -228,12 +211,9 @@ function Get-IOAType {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -256,8 +236,7 @@ function New-IOAGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -285,8 +264,7 @@ function New-IOARule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -314,8 +292,7 @@ function Remove-IOAGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -342,8 +319,7 @@ function Remove-IOARule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"
@@ -370,8 +346,7 @@ function Test-IOARule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic)) {
                 $Param['Header'] = @{
                     'X-CS-USERNAME' = "api-client-id:$($Falcon.ClientId)"

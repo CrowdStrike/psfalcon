@@ -15,8 +15,7 @@ function Edit-HorizonPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -38,8 +37,7 @@ function Edit-HorizonSchedule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -61,18 +59,15 @@ function Get-HorizonPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             if ($PSBoundParameters.Service) {
                 $Request = Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
                 if ($PSBoundParameters.Detailed) {
                     & $MyInvocation.MyCommand.Name -PolicyIds $Request.policy_id
-                }
-                else {
+                } else {
                     $Request
                 }
-            }
-            else {
+            } else {
                 Invoke-Request -Query $Endpoints[1] -Dynamic $Dynamic
             }
         }
@@ -95,8 +90,7 @@ function Get-HorizonSchedule {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

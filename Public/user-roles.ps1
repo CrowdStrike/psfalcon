@@ -15,8 +15,7 @@ function Add-Role {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -40,8 +39,7 @@ function Get-Role {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/user-roles/queries/user-role-ids-by-user-uuid/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -49,15 +47,10 @@ function Get-Role {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'UserId' {
-                    $Param.Query = $Endpoints[2]
-                }
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
+                'UserId'   { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -80,8 +73,7 @@ function Remove-Role {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

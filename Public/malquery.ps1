@@ -15,8 +15,7 @@ function Get-MalQuery {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -38,8 +37,7 @@ function Get-MalQueryQuota {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Endpoint -Endpoint $Endpoints[0]
         }
     }
@@ -61,8 +59,7 @@ function Get-MalQuerySample {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -84,8 +81,7 @@ function Group-MalQuerySample {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -108,8 +104,7 @@ function Invoke-MalQuery {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $PSCmdlet.ParameterSetName -Dynamic $Dynamic
             if ($Param.Body.options) {
                 $Param.Body.options = $Param.Body.options[0]
@@ -133,15 +128,18 @@ function Receive-MalQuerySample {
         $Endpoints = @('/malquery/entities/download-files/v1:get', '/malquery/entities/samples-fetch/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } elseif (Test-Path $Dynamic.Path.Value) {
+            throw "'$($Dynamic.Path.Value)' already exists."
+        } else {
             $Endpoint = if ($Dynamic.Id.Value -match '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}') {
                 $Endpoints[1]
-            }
-            else {
+            } else {
                 $Endpoints[0]
             }
             Invoke-Request -Query $Endpoint -Dynamic $Dynamic

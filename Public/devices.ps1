@@ -18,8 +18,7 @@ function Add-HostTag {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Ids = $Dynamic.Ids.value
             for ($i = 0; $i -lt $Ids.count; $i += $MaxHosts) {
                 $Dynamic.Ids.value = $Ids[$i..($i + ($MaxHosts - 1))]
@@ -48,16 +47,14 @@ function Edit-HostGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -80,8 +77,7 @@ function Get-Host {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -89,13 +85,10 @@ function Get-Host {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
-                'Hidden' {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
+                'Hidden'   {
                     $Param.Query = $Endpoints[2]
                     $Param['Modifier'] = 'Hidden'
                 }
@@ -123,8 +116,7 @@ function Get-HostGroup {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/devices/combined/host-groups/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -132,12 +124,9 @@ function Get-HostGroup {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[2]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -161,20 +150,16 @@ function Get-HostGroupMember {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/devices/combined/host-group-members/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[1]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[1] }
             }
             Invoke-Request @Param
         }
@@ -197,16 +182,14 @@ function Invoke-HostAction {
     begin {
         $Max = if ($Dynamic.Name.Value -match '^(hide_host|unhide_host)$') {
             100
-        }
-        else {
+        } else {
             500
         }
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             foreach ($Param in (Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic -Max $Max)) {
                 Format-Body -Param $Param
                 Invoke-Endpoint @Param
@@ -235,8 +218,7 @@ function Invoke-HostGroupAction {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $HostIds = $Dynamic.HostIds.value
             for ($i = 0; $i -lt $HostIds.count; $i += $MaxHosts) {
                 $Dynamic.HostIds.value = $HostIds[$i..($i + ($MaxHosts - 1))]
@@ -270,16 +252,14 @@ function New-HostGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -301,8 +281,7 @@ function Remove-HostGroup {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -327,8 +306,7 @@ function Remove-HostTag {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Ids = $Dynamic.Ids.value
             for ($i = 0; $i -lt $Ids.count; $i += $MaxHosts) {
                 $Dynamic.Ids.value = $Ids[$i..($i + ($MaxHosts - 1))]

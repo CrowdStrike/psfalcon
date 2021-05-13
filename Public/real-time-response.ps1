@@ -5,7 +5,7 @@ function Confirm-AdminCommand {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/admin-command/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
@@ -20,8 +20,7 @@ function Confirm-AdminCommand {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -41,7 +40,7 @@ function Confirm-Command {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/command/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
@@ -56,8 +55,7 @@ function Confirm-Command {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -88,8 +86,7 @@ function Confirm-GetFile {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $PSCmdlet.ParameterSetName
@@ -98,7 +95,17 @@ function Confirm-GetFile {
             if ($PSBoundParameters.All) {
                 $Param['All'] = $true
             }
-            Invoke-Request @Param
+            $Request = Invoke-Request @Param
+            if ($PSCmdlet.ParameterSetName -eq '/real-time-response/combined/batch-get-command/v1:get') {
+                $Request.PSObject.Properties | ForEach-Object {
+                    $Aid = $_.Name
+                    ($_.Value).PSObject.Properties.Add((New-Object PSNoteProperty(
+                        'aid', $Aid)))
+                    $_.Value
+                }
+            } else {
+                $Request
+            }
         }
     }
 }
@@ -109,7 +116,7 @@ function Confirm-ResponderCommand {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/active-responder-command/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
@@ -124,8 +131,7 @@ function Confirm-ResponderCommand {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -145,7 +151,7 @@ function Edit-Script {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/scripts/v1:patch')]
     [OutputType()]
     param()
     DynamicParam {
@@ -160,11 +166,9 @@ function Edit-Script {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($Dynamic.Path.Value -and -not(Test-Path $Dynamic.Path.Value)) {
+        } elseif ($Dynamic.Path.Value -and -not(Test-Path $Dynamic.Path.Value)) {
             throw "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -180,14 +184,14 @@ function Get-PutFile {
     [OutputType()]
     param()
     DynamicParam {
-        $Endpoints = @('/real-time-response/queries/put-files/v1:get', '/real-time-response/entities/put-files/v1:get')
+        $Endpoints = @('/real-time-response/queries/put-files/v1:get',
+            '/real-time-response/entities/put-files/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -195,12 +199,9 @@ function Get-PutFile {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -225,8 +226,7 @@ function Get-Script {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
- else {
+        } else {
             # Evaluate input and make request
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
@@ -235,12 +235,9 @@ function Get-Script {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -265,8 +262,7 @@ function Get-Session {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -274,15 +270,12 @@ function Get-Session {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'Queue' {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
+                'Queue'    {
                     $Param.Entity = $Endpoints[2]
                     $Param['Modifier'] = 'Queue'
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
-                'All' {
-                    $Param['All'] = $true
                 }
             }
             Invoke-Request @Param
@@ -307,12 +300,10 @@ function Invoke-AdminCommand {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             if ($Dynamic.Arguments.value) {
                 $Dynamic.Arguments.value = $Dynamic.Command.value, $Dynamic.Arguments.value -join ' '
-            }
-            else {
+            } else {
                 $Dynamic.Arguments.value = $Dynamic.Command.value
             }
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
@@ -326,7 +317,7 @@ function Invoke-BatchGet {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/combined/batch-get-command/v1:post')]
     [OutputType()]
     param()
     DynamicParam {
@@ -336,8 +327,7 @@ function Invoke-BatchGet {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -360,12 +350,10 @@ function Invoke-Command {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             if ($Dynamic.Arguments.value) {
                 $Dynamic.Arguments.value = $Dynamic.Command.value, $Dynamic.Arguments.value -join ' '
-            }
-            else {
+            } else {
                 $Dynamic.Arguments.value = $Dynamic.Command.value
             }
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
@@ -390,12 +378,10 @@ function Invoke-ResponderCommand {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             if ($Dynamic.Arguments.value) {
                 $Dynamic.Arguments.value = $Dynamic.Command.value, $Dynamic.Arguments.value -join ' '
-            }
-            else {
+            } else {
                 $Dynamic.Arguments.value = $Dynamic.Command.value
             }
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
@@ -409,18 +395,22 @@ function Receive-GetFile {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/extracted-file-contents/v1:get')]
     [OutputType()]
     param()
     DynamicParam {
         $Endpoints = @('/real-time-response/entities/extracted-file-contents/v1:get')
         return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
     }
+    begin {
+        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+    }
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } elseif (Test-Path $Dynamic.Path.Value) {
+            throw "'$($Dynamic.Path.Value)' already exists."
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -432,7 +422,7 @@ function Remove-Command {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/queued-sessions/command/v1:delete')]
     [OutputType()]
     param()
     DynamicParam {
@@ -442,8 +432,7 @@ function Remove-Command {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -455,7 +444,7 @@ function Remove-GetFile {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/file/v1:delete')]
     [OutputType()]
     param()
     DynamicParam {
@@ -465,8 +454,7 @@ function Remove-GetFile {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -478,7 +466,7 @@ function Remove-PutFile {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/put-files/v1:delete')]
     [OutputType()]
     param()
     DynamicParam {
@@ -488,8 +476,7 @@ function Remove-PutFile {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -501,7 +488,7 @@ function Remove-Script {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/scripts/v1:delete')]
     [OutputType()]
     param()
     DynamicParam {
@@ -511,8 +498,7 @@ function Remove-Script {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -524,7 +510,7 @@ function Remove-Session {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/sessions/v1:delete')]
     [OutputType()]
     param()
     DynamicParam {
@@ -534,8 +520,7 @@ function Remove-Session {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -547,7 +532,7 @@ function Send-PutFile {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/put-files/v1:post')]
     [OutputType()]
     param()
     DynamicParam {
@@ -560,11 +545,9 @@ function Send-PutFile {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif (-not(Test-Path $Dynamic.Path.Value)) {
+        } elseif (-not(Test-Path $Dynamic.Path.Value)) {
             throw "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -576,7 +559,7 @@ function Send-Script {
     .LINK
         https://github.com/crowdstrike/psfalcon
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/scripts/v1:post')]
     [OutputType()]
     param()
     DynamicParam {
@@ -589,11 +572,9 @@ function Send-Script {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif (-not(Test-Path $Dynamic.Path.Value)) {
+        } elseif (-not(Test-Path $Dynamic.Path.Value)) {
             throw "Cannot find path '$($Dynamic.Path.Value)' because it does not exist."
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -616,8 +597,7 @@ function Start-Session {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
         }
     }
@@ -640,8 +620,7 @@ function Update-Session {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $PSCmdlet.ParameterSetName -Dynamic $Dynamic
         }
     }

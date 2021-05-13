@@ -446,12 +446,24 @@ PrivateData = @{
         * Added command for 'zero-trust-assessment' API:
             'Get-FalconZTA'
 
+        New Parameters
+        * Added 'Total' switch to each command that has 'offset' or 'after' values to provide the total result
+          count rather than the actual results
+
         Changed Commands
         * Updated custom indicator commands to match new 'iocs' APIs
             'Edit-FalconIOC'
             'Get-FalconIOC'
             'New-FalconIOC'
             'Remove-FalconIOC'
+        * Updated 'Invoke-FalconRTR' to fix various issues that would cause 'get' requests to fail with more
+          than one host
+        * Modified 'Confirm-FalconGetFile' to reduce the complexity of the output when checking the status
+          of a batch 'get' request -- the command now returns each result with the 'aid' value appended to it
+          rather than being sorted by 'aid' (which required additional object manipulation to access relevant
+          properties)
+        * Added a check before 'Receive' commands that will abort the command and output an error if the file
+          already exists
 
         Removed Commands
         * Removed custom indicator commands that no longer have supported APIs

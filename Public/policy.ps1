@@ -15,16 +15,14 @@ function Edit-DeviceControlPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -46,16 +44,14 @@ function Edit-FirewallPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -77,8 +73,7 @@ function Edit-IOAExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -100,8 +95,7 @@ function Edit-MLExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -123,16 +117,14 @@ function Edit-PreventionPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -154,16 +146,14 @@ function Edit-ResponsePolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -185,16 +175,14 @@ function Edit-SensorUpdatePolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -216,8 +204,7 @@ function Edit-SVExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -239,8 +226,7 @@ function Get-Build {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -264,19 +250,17 @@ function Get-DeviceControlPolicy {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/device-control/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
-            if ($PSBoundParameters.All) {
-                $Param['All'] = $true
-            }
-            if ($PSBoundParameters.Detailed) {
-                $Param.Query = $Endpoints[2]
+            switch ($PSBoundParameters.Keys) {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -301,20 +285,16 @@ function Get-DeviceControlPolicyMember {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/device-control-members/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[1]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[1] }
             }
             Invoke-Request @Param
         }
@@ -338,19 +318,17 @@ function Get-FirewallPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @('/policy/combined/firewall/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
-            if ($PSBoundParameters.All) {
-                $Param['All'] = $true
-            }
-            if ($PSBoundParameters.Detailed) {
-                $Param.Query = $Endpoints[2]
+            switch ($PSBoundParameters.Keys) {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -374,20 +352,16 @@ function Get-FirewallPolicyMember {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/firewall-members/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[1]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[1] }
             }
             Invoke-Request @Param
         }
@@ -410,8 +384,7 @@ function Get-IOAExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -419,12 +392,9 @@ function Get-IOAExclusion {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -447,8 +417,7 @@ function Get-MLExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -456,12 +425,9 @@ function Get-MLExclusion {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -486,19 +452,17 @@ function Get-PreventionPolicy {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/prevention/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
-            if ($PSBoundParameters.All) {
-                $Param['All'] = $true
-            }
-            if ($PSBoundParameters.Detailed) {
-                $Param.Query = $Endpoints[2]
+            switch ($PSBoundParameters.Keys) {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -522,20 +486,16 @@ function Get-PreventionPolicyMember {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/prevention-members/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[1]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[1] }
             }
             Invoke-Request @Param
         }
@@ -560,19 +520,17 @@ function Get-ResponsePolicy {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/response/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
-            if ($PSBoundParameters.All) {
-                $Param['All'] = $true
-            }
-            if ($PSBoundParameters.Detailed) {
-                $Param.Query = $Endpoints[2]
+            switch ($PSBoundParameters.Keys) {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -596,20 +554,16 @@ function Get-ResponsePolicyMember {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/response-members/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[1]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[1] }
             }
             Invoke-Request @Param
         }
@@ -634,19 +588,17 @@ function Get-SensorUpdatePolicy {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/sensor-update/v2:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Entity  = $Endpoints[1]
                 Dynamic = $Dynamic
             }
-            if ($PSBoundParameters.All) {
-                $Param['All'] = $true
-            }
-            if ($PSBoundParameters.Detailed) {
-                $Param.Query = $Endpoints[2]
+            switch ($PSBoundParameters.Keys) {
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[2] }
             }
             Invoke-Request @Param
         }
@@ -671,20 +623,16 @@ function Get-SensorUpdatePolicyMember {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
                 '/policy/combined/sensor-update-members/v1:get')
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param.Query = $Endpoints[1]
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param.Query = $Endpoints[1] }
             }
             Invoke-Request @Param
         }
@@ -707,8 +655,7 @@ function Get-SVExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = @{
                 Command = $MyInvocation.MyCommand.Name
                 Query   = $Endpoints[0]
@@ -716,12 +663,9 @@ function Get-SVExclusion {
                 Dynamic = $Dynamic
             }
             switch ($PSBoundParameters.Keys) {
-                'All' {
-                    $Param['All'] = $true
-                }
-                'Detailed' {
-                    $Param['Detailed'] = $true
-                }
+                'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
+                'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
         }
@@ -744,8 +688,7 @@ function Get-UninstallToken {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -767,8 +710,7 @@ function Invoke-DeviceControlPolicyAction {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.ids = @( $Param.Body.ids )
             if ($Param.Body.action_parameters) {
@@ -796,8 +738,7 @@ function Invoke-FirewallPolicyAction {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.ids = @( $Param.Body.ids )
             if ($Param.Body.action_parameters) {
@@ -825,8 +766,7 @@ function Invoke-PreventionPolicyAction {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.ids = @( $Param.Body.ids )
             if ($Param.Body.action_parameters) {
@@ -859,8 +799,7 @@ function Invoke-ResponsePolicyAction {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.ids = @( $Param.Body.ids )
             if ($Param.Body.action_parameters) {
@@ -889,8 +828,7 @@ function Invoke-SensorUpdatePolicyAction {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.ids = @( $Param.Body.ids )
             if ($Param.Body.action_parameters) {
@@ -918,16 +856,14 @@ function New-DeviceControlPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -949,16 +885,14 @@ function New-FirewallPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1005,8 +939,7 @@ function New-MLExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.groups = @( $Param.Body.groups )
             Format-Body -Param $Param
@@ -1031,16 +964,14 @@ function New-PreventionPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1062,16 +993,14 @@ function New-ResponsePolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1093,16 +1022,14 @@ function New-SensorUpdatePolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        elseif ($PSBoundParameters.Array) {
+        } elseif ($PSBoundParameters.Array) {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param['Body'] = @{
                 resources = @( $PSBoundParameters.Array )
             }
             Format-Body -Param $Param
             Invoke-Endpoint @Param
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1124,8 +1051,7 @@ function New-SVExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
             $Param.Body.groups = @( $Param.Body.groups )
             Format-Body -Param $Param
@@ -1150,8 +1076,7 @@ function Remove-DeviceControlPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1173,8 +1098,7 @@ function Remove-FirewallPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1196,8 +1120,7 @@ function Remove-IOAExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1219,8 +1142,7 @@ function Remove-MLExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1242,8 +1164,7 @@ function Remove-PreventionPolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1265,8 +1186,7 @@ function Remove-ResponsePolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1288,8 +1208,7 @@ function Remove-SensorUpdatePolicy {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1311,8 +1230,7 @@ function Remove-SVExclusion {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1334,8 +1252,7 @@ function Set-DeviceControlPrecedence {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1357,8 +1274,7 @@ function Set-FirewallPrecedence {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1380,8 +1296,7 @@ function Set-PreventionPrecedence {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1403,8 +1318,7 @@ function Set-ResponsePrecedence {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }
@@ -1426,8 +1340,7 @@ function Set-SensorUpdatePrecedence {
     process {
         if ($PSBoundParameters.Help) {
             Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        }
-        else {
+        } else {
             Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
         }
     }

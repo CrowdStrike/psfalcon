@@ -46,6 +46,7 @@ function Get-IOC {
             }
             switch ($PSBoundParameters.Keys) {
                 'All'      { $Param['All'] = $true }
+                'Total'    { $Param['Total'] = $true }
                 'Detailed' { $Param['Detailed'] = $true }
             }
             Invoke-Request @Param
