@@ -419,6 +419,7 @@ PrivateData = @{
 
         # ReleaseNotes of this module.
         ReleaseNotes = "v2.0.8
+
         New Commands
         * Added 'Get-FalconQuickScanQuota' to display QuickScan quota information
         * Added commands for global 'overwatch-dashboards' APIs:
@@ -464,6 +465,7 @@ PrivateData = @{
           properties)
         * Added a check before 'Receive' commands that will abort the command and output an error if the file
           already exists
+        * Added custom indicators to 'Export-FalconConfig' and 'Import-FalconConfig'
 
         Removed Commands
         * Removed custom indicator commands that no longer have supported APIs

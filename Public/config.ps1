@@ -30,7 +30,8 @@ function Export-Config {
         [Parameter(Position = 1,
             ParameterSetName = 'config:Export')]
         [ValidateSet('HostGroup', 'IOAGroup', 'FirewallGroup', 'DeviceControlPolicy', 'FirewallPolicy',
-        'PreventionPolicy', 'ResponsePolicy', 'SensorUpdatePolicy', 'IOAExclusion', 'MLExclusion', 'SVExclusion')]
+            'PreventionPolicy', 'ResponsePolicy', 'SensorUpdatePolicy', 'IOC', 'IOAExclusion', 'MLExclusion',
+            'SVExclusion')]
         [array] $Items
     )
     DynamicParam {
@@ -87,7 +88,7 @@ function Export-Config {
                 'config:Export' }).Parameters.Where({ $_.Name -eq 'Items' }).Attributes.ValidValues
             }
             [array] $Export += switch ($Export) {
-                { $_ -match '^(IOA|ML|SV)Exclusion$' -and $Export -notcontains 'HostGroup' } {
+                { $_ -match '^((IOA|ML|SV)Exclusion|IOC)$' -and $Export -notcontains 'HostGroup' } {
                     'HostGroup'
                 }
                 { $_ -contains 'FirewallGroup' } {
@@ -195,6 +196,13 @@ function Import-Config {
                     'description', 'comment', 'enabled')
                 Export = @('instance_id', 'name')
             }
+            IOC = @{
+                Import = @('id', 'type', 'value')
+                Create = @('type', 'value', 'action', 'platforms', 'source', 'severity', 'description', 'tags',
+                    'applied_globally', 'host_groups', 'expiration')
+                Compare = @('type', 'value')
+                Export = @('id', 'value')
+            }
             MLExclusion = @{
                 Import = @('id', 'value', 'excluded_from', 'groups', 'applied_globally')
                 Compare = @('value')
@@ -285,6 +293,10 @@ function Import-Config {
                             # Output IOA groups from import using 'platform' and 'name' match
                             { $_.platform -eq $Result.platform -and $_.name -eq $Result.name }
                         }
+                        { $_ -eq 'IOC' } {
+                            # Output IOCs from import using 'type' and 'value' match
+                            { $_.type -eq $Result.type -and $_.value -eq $Result.value }
+                        }
                         { $_ -like '*Exclusion' } {
                             # Output exclusions from import using 'value' match
                             { $_.value -eq $Result.value }
@@ -361,8 +373,46 @@ function Import-Config {
             $ImportData = Get-ImportData -Item $Item
             if ($ImportData) {
                 $Content = if ($Item -match '^.*Policy$') {
+                    # Filter to required fields for creating policies
                     $ImportData | Select-Object platform_name, name, description
+                } elseif ($Item -match '^IOC$') {
+                    foreach ($Import in $ImportData) {
+                        $Fields = foreach ($Value in $ConfigFields.$Item.Create) {
+                            # Filter to required fields for 'IOC'
+                            if ($Import.$Value) {
+                                $Value
+                            }
+                        }
+                        $IOC = $Import | Select-Object $Fields
+                        if ($IOC.applied_globally -eq $true) {
+                            # Output 'IOC' for creation if 'applied_globally' is true
+                            $IOC
+                        } elseif ($ConfigData.HostGroup.Created.id -and $IOC.host_groups) {
+                            $Groups = @( $IOC.host_groups ) | ForEach-Object {
+                                # Get group names from 'HostGroup' import
+                                $OldId = $_
+                                $Param = @{
+                                    Item = 'HostGroup'
+                                    Type = 'Import'
+                                    FilterScript = { $_.id -eq $OldId }
+                                }
+                                $Name = (Get-ConfigItem @Param).name
+                                # Match name with created 'HostGroup'
+                                if ($Name) {
+                                    $Param.Type = 'Created'
+                                    $Param.FilterScript = { $_.name -eq $Name }
+                                    (Get-ConfigItem @Param).id
+                                }
+                            }
+                            if ($Groups) {
+                                # Update 'host_groups' with newly created 'HostGroup' ids
+                                $IOC.host_groups = @( $Groups )
+                                $IOC
+                            }
+                        }
+                    }
                 } else {
+                    # Select fields for 'HostGroup'
                     $ImportData | Select-Object name, group_type, description, assignment_rule | ForEach-Object {
                         if ($_.group_type -eq 'static') {
                             $_.PSObject.Properties.Remove('assignment_rule')
@@ -609,6 +659,15 @@ function Import-Config {
                                 $NewGroup
                             }
                         }
+                    }
+                }
+            }
+            foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Key -match '^IOC$' })) {
+                # Create IOCs if corresponding Host Groups were created, or assigned to 'all'
+                $ConfigData.($Pair.Key)['Created'] = Invoke-ConfigArray -Item $Pair.Key
+                if ($ConfigData.($Pair.Key).Created) {
+                    foreach ($Item in $ConfigData.($Pair.Key).Created) {
+                        Write-Host "Created $($Pair.Key) '$($Item.type):$($Item.value)'."
                     }
                 }
             }
