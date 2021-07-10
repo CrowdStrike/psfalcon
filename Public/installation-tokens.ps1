@@ -41,7 +41,6 @@ installation-tokens:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -202,7 +201,6 @@ installation-tokens:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept = 'application/json'
                 ContentType = 'application/json'
             }
         }
@@ -244,7 +242,6 @@ installation-tokens:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{

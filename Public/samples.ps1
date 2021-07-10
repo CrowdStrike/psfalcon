@@ -22,7 +22,6 @@ samplestore:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -92,7 +91,6 @@ samplestore:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{}
             Format   = @{
                 Query = @('comment', 'file_name', 'is_confidential')
                 Body  = @{

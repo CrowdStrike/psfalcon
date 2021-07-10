@@ -52,7 +52,6 @@ detects:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -132,7 +131,6 @@ detects:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Inputs   = $PSBoundParameters
@@ -202,7 +200,6 @@ detects:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{

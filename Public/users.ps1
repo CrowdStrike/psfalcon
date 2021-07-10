@@ -32,7 +32,6 @@ usermgmt:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -86,7 +85,6 @@ usermgmt:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -136,7 +134,6 @@ usermgmt:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -174,7 +171,6 @@ usermgmt:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{

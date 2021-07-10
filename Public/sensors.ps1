@@ -114,7 +114,6 @@ streaming:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -205,7 +204,6 @@ streaming:read
             Endpoint = $Endpoint
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{

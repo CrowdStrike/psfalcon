@@ -31,7 +31,6 @@ devices:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -86,7 +85,6 @@ host-group:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -168,9 +166,6 @@ devices:read
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Headers = @{
-                Accept = 'application/json'
-            }
             Inputs = $PSBoundParameters
             Format = @{
                 Query = @('ids', 'filter', 'sort', 'limit', 'offset')
@@ -370,7 +365,6 @@ devices:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -423,7 +417,6 @@ host-group:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -501,7 +494,6 @@ devices:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{

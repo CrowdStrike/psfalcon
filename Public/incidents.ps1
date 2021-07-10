@@ -57,7 +57,6 @@ incidents:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -134,7 +133,6 @@ incidents:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -196,7 +194,6 @@ incidents:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
@@ -265,13 +262,12 @@ incidents:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
                 Query = @('update_detects', 'overwrite_detects')
                 Body  = @{
-                    root = @('ids')
+                    root              = @('ids')
                     action_parameters = @('name', 'value')
                 }
             }
