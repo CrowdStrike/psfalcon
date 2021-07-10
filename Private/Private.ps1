@@ -9,7 +9,7 @@ function Build-Body {
             $Field = ($_.Key).ToLower()
             $Value = $_.Value
             if ($Field -eq 'body') {
-                # Add 'body' parameter as ByteArrayContent
+                # Add 'body' value as [System.Net.Http.ByteArrayContent]
                 $FullFilePath = $Script:Falcon.Api.Path($_.Value)
                 Write-Verbose "[Build-Body] Content: $FullFilePath)"
                 $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
@@ -32,10 +32,11 @@ function Build-Body {
                     }
                 }
                 $Format.Body.GetEnumerator().Where({ $_.Value -eq $Field }).foreach{
-                    # Create parent object for field
                     if ($_.Key -eq 'root') {
+                        # Add key/value pair directly to 'Body'
                         $Body.Add($Field, $Value)
                     } else {
+                        # Create parent object and add key/value pair
                         if (!$Parents) {
                             $Parents = @{}
                         }
@@ -59,6 +60,7 @@ function Build-Body {
     }
     end {
         if (($Body.Keys | Measure-Object).Count -gt 0) {
+            # Output 'Body' result
             Write-Verbose "[Build-Body]`n$(ConvertTo-Json -InputObject $Body -Depth 8)"
             $Body
         }
@@ -85,6 +87,7 @@ function Build-Formdata {
     }
     end {
         if (($Formdata.Keys | Measure-Object).Count -gt 0) {
+            # Output 'Formdata' result
             Write-Verbose "[Build-Formdata]`n$(ConvertTo-Json -InputObject $Formdata -Depth 8)"
             $Formdata
         }
@@ -102,8 +105,10 @@ function Build-Param {
     )
     begin {
         if (!$Max) {
+            # Set max number of items to 500 if not specified
             $Max = 500
         }
+        # Set baseline request parameters
         $Base = @{
             Path = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
             Method = $Endpoint.Split(':')[1]
@@ -141,10 +146,11 @@ function Build-Param {
                 $Split.Add('Endpoint', $Base.Clone())
                 $Split.Endpoint.Path += "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
                 $Content.GetEnumerator().Where({ $_.Key -ne 'Query' -and $_.Value }).foreach{
-                    # Add 'Body'
+                    # Add 'Body' values
                     if ($_.Key -eq 'Body' -and $Split.Endpoint.Headers.ContentType -eq 'application/json') {
                         $_.Value = ConvertTo-Json -InputObject $_.Value -Depth 8
                     }
+                    # Add 'Formdata' values
                     $Split.Endpoint.Add($_.Key, $_.Value)
                 }
                 ,$Split
@@ -165,16 +171,18 @@ function Build-Param {
                             $Split.Endpoint.Body.Add($_.Key, $_.Value)
                         }
                     } else {
+                        # Add 'Formdata' values
                         $Split.Endpoint.Add($_.Key, $_.Value)
                     }
                 }
                 if ($Split.Endpoint.Headers.ContentType -eq 'application/json') {
+                    # Convert body to Json
                     $Split.Body = ConvertTo-Json -InputObject $Split.Body -Depth 8
                 }
                 ,$Split
             }
         } else {
-            # Use base parameters and add content
+            # Use base parameters, add content and output single parameter set
             $Switches.Add('Endpoint', $Base.Clone())
             if ($Content) {
                 $Content.GetEnumerator().foreach{
@@ -203,7 +211,7 @@ function Build-Query {
         $Inputs.GetEnumerator().Where({ $Format.Query -contains $_.Key }).foreach{
             $Field = ($_.Key).ToLower()
             ($_.Value).foreach{
-                # Output array of strings and HTML-encode '+'
+                # Output array of strings to append to 'Path' and HTML-encode '+'
                 ,"$($Field)=$($_ -replace '\+','%2B')"
             }
         }
@@ -246,7 +254,7 @@ function Invoke-Falcon {
         foreach ($Item in (Build-Param @BuildParam)) {
             if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or
             ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15))) {
-                # Verify authorization
+                # Verify authorization token
                 Request-FalconToken
             }
             $Request = $Script:Falcon.Api.Invoke($Item.Endpoint)
@@ -256,6 +264,7 @@ function Invoke-Falcon {
                     Get-ChildItem $Item.Endpoint.Outfile
                 }
             } elseif ($Request.Result.Content) {
+                # Capture pagination for 'Total' and 'All'
                 $Pagination = (ConvertFrom-Json (
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
                 if ($Pagination -and $Item.Total -eq $true) {
@@ -296,7 +305,7 @@ function Invoke-Loop {
     process {
         for ($i = ($Result | Measure-Object).Count; $Pagination.next_page -or $i -lt $Pagination.total;
         $i += ($Result | Measure-Object).Count) {
-            # Clone endpoint parameters and loop requests
+            # Clone endpoint parameters, capture pagination
             $Clone = $Item.Clone()
             $Clone.Endpoint = $Item.Endpoint.Clone()
             $Page = if ($Pagination.after) {
@@ -320,6 +329,7 @@ function Invoke-Loop {
             } else {
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
+            # Make request, update pagination and output result
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
                 $Pagination = (ConvertFrom-Json (
@@ -332,7 +342,6 @@ function Invoke-Loop {
                 } elseif ($Result) {
                     $Result
                 }
-                
             }
         }
     }
@@ -355,7 +364,7 @@ function Write-Result {
             # Output HTML response as a string
             $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
         } elseif ($Request.Result.Content) {
-            # Convert Json response and collect list of populated fields
+            # Convert Json response
             $Json = ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
             $Verbose += if ($Json.meta) {
                 ($Json.meta.PSObject.Properties).foreach{
@@ -380,6 +389,7 @@ function Write-Result {
         } elseif ($Json) {
             $Content = ($Json.PSObject.Properties).Where({ @('meta', 'errors') -notcontains $_.Name -and
             $_.Value }).foreach{
+                # Gather populated fields from object
                 $_.Name
             }
             if ($Content) {
@@ -389,13 +399,16 @@ function Write-Result {
                         # Output 'combined.resources'
                         ($Json.combined.resources).PSObject.Properties.Value
                     } else {
+                        # Output single field
                         $Json.($Content[0])
                     }
                 } elseif (($Content | Measure-Object).Count -gt 1) {
+                    # Output all fields
                     $Json
                 }
             }
             ($Json.errors).Where({ $_.Values }).foreach{
+                # TODO Test error output and clean up
                 Write-Verbose "[Write-Result] Errors:`n$(ConvertTo-Json -InputObject $_.Values -Depth 8)"
                 ($_.Values).foreach{
                     $PSCmdlet.WriteError(
@@ -415,14 +428,13 @@ function Write-Result {
 }
 function Wait-RetryAfter {
     [CmdletBinding()]
-    [OutputType()]
     param(
         [object] $Request
     )
     process {
         if ($Script:Falcon.Api.LastCode -eq 429 -and $Request.Result.RequestMessage.RequestUri.AbsolutePath -ne
         '/oauth2/token') {
-            # Wait until 'X-Ratelimit-Retryafter'
+            # Convert 'X-Ratelimit-Retryafter' value to seconds and wait
             $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(($Request.Result.Headers.GetEnumerator().Where({
                 $_.Key -eq 'X-Ratelimit-Retryafter' }).Value)).Second
             Write-Verbose "[Wait-RetryAfter] Rate limited for $Wait seconds..."
