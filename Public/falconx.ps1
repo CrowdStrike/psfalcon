@@ -186,6 +186,8 @@ A custom date to use in the analysis environment
 A custom time to use in the analysis environment
 .Parameter DocumentPassword
 Auto-filled for Adobe or Office files that prompt for a password
+.Parameter NetworkSettings
+Network settings to use in the analysis environment
 .Parameter EnableTor
 Route traffic via TOR
 .Parameter UserTags
@@ -229,9 +231,13 @@ falconx-sandbox:write
         [string] $DocumentPassword,
 
         [Parameter(ParameterSetName = '/falconx/entities/submissions/v1:post', Position = 10)]
-        [boolean] $EnableTor,
+        [ValidateSet('default', 'tor', 'simulated', 'offline')]
+        [string] $NetworkSettings,
 
         [Parameter(ParameterSetName = '/falconx/entities/submissions/v1:post', Position = 11)]
+        [boolean] $EnableTor,
+
+        [Parameter(ParameterSetName = '/falconx/entities/submissions/v1:post', Position = 12)]
         [array] $UserTags
     )
     begin {
@@ -245,6 +251,7 @@ falconx-sandbox:write
                     'DocumentPassword' { 'document_password' }
                     'EnableTor'        { 'enable_tor' }
                     'EnvironmentId'    { 'environment_id' }
+                    'NetworkSettings'  { 'network_settings' }
                     'SubmitName'       { 'submit_name' }
                     'SystemDate'       { 'system_date' }
                     'SystemTime'       { 'system_time' }
@@ -270,14 +277,13 @@ falconx-sandbox:write
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/json'
                 ContentType = 'application/json'
             }
             Format   = @{
                 Body = @{
                     root    = @('user_tags')
                     sandbox = @('submit_name', 'system_date', 'action_script', 'environment_id', 'command_line',
-                        'system_time', 'url', 'document_password', 'enable_tor', 'sha256')
+                        'system_time', 'url', 'document_password', 'enable_tor', 'sha256', 'network_settings')
                 }
             }
         }
