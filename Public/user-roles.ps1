@@ -1,80 +1,147 @@
-function Add-Role {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/user-roles/entities/user-roles/v1:post')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
-    }
-    process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
+function Add-FalconRole {
+<#
+.Synopsis
+Assign one or more roles to a user
+.Parameter UserId
+User identifier
+.Parameter Ids
+One or more user roles
+.Role
+usermgmt:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/user-roles/entities/user-roles/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/user-roles/entities/user-roles/v1:post', Mandatory = $true)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $UserId,
+
+        [Parameter(ParameterSetName = '/user-roles/entities/user-roles/v1:post', Mandatory = $true, Position = 2)]
+        [array] $Ids
+    )
+    begin {
+        @('UserId', 'Ids').foreach{
+            if ($PSBoundParameters.$_) {
+                # Rename parameter for API submission
+                $Field = switch ($_) {
+                    'UserId' { 'user_uuid' }
+                    'Ids'    { 'roleIds' }
+                }
+                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
+                [void] $PSBoundParameters.Remove($_)
+            }
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('user_uuid')
+                Body  = @{
+                    root = @('roleIds')
+                }
+            }
         }
     }
+    process {
+        Invoke-Falcon @Param
+    }
 }
-function Get-Role {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
+function Get-FalconRole {
+<#
+.Synopsis
+Display user available roles, information about specific user roles, or roles assigned to a user
+.Parameter UserId
+User Identifier
+.Parameter Ids
+One or more user roles
+.Parameter Detailed
+Retrieve detailed information
+.Role
+usermgmt:read
+#>
     [CmdletBinding(DefaultParameterSetName = '/user-roles/queries/user-role-ids-by-cid/v1:get')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/user-roles/queries/user-role-ids-by-cid/v1:get', '/user-roles/entities/user-roles/v1:get',
-            '/user-roles/queries/user-role-ids-by-user-uuid/v1:get')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    param(
+        [Parameter(ParameterSetName = '/user-roles/queries/user-role-ids-by-user-uuid/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $UserId,
+
+        [Parameter(ParameterSetName = '/user-roles/entities/user-roles/v1:get', Mandatory = $true, Position = 1)]
+        [array] $Ids,
+
+        [Parameter(ParameterSetName = '/user-roles/queries/user-role-ids-by-cid/v1:get')]
+        [Parameter(ParameterSetName = '/user-roles/queries/user-role-ids-by-user-uuid/v1:get')]
+        [switch] $Detailed
+    )
+    begin {
+        if ($PSBoundParameters.UserId) {
+            # Rename parameter for API submission
+            $PSBoundParameters.Add('user_uuid', $PSBoundParameters.UserId)
+            [void] $PSBoundParameters.Remove('UserId')
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('ids', 'user_uuid')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
-                '/user-roles/queries/user-role-ids-by-user-uuid/v1:get')
-        } else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Query   = $Endpoints[0]
-                Entity  = $Endpoints[1]
-                Dynamic = $Dynamic
-            }
-            switch ($PSBoundParameters.Keys) {
-                'All'      { $Param['All'] = $true }
-                'Total'    { $Param['Total'] = $true }
-                'Detailed' { $Param['Detailed'] = $true }
-                'UserId'   { $Param.Query = $Endpoints[2] }
-            }
-            Invoke-Request @Param
-        }
+        Invoke-Falcon @Param
     }
 }
-function Remove-Role {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/user-roles/entities/user-roles/v1:delete')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+function Remove-FalconRole {
+<#
+.Synopsis
+Revoke one or more roles from a user
+.Parameter UserId
+User Identifier
+.Parameter Ids
+One or more user roles
+.Role
+usermgmt:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/user-roles/entities/user-roles/v1:delete')]
+    param(
+        [Parameter(ParameterSetName = '/user-roles/entities/user-roles/v1:delete', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $UserId,
+
+        [Parameter(ParameterSetName = '/user-roles/entities/user-roles/v1:delete', Mandatory = $true,
+            Position = 2)]
+        [array] $Ids
+    )
+    begin {
+        if ($PSBoundParameters.UserId) {
+            # Rename parameter for API submission
+            $PSBoundParameters.Add('user_uuid', $PSBoundParameters.UserId)
+            [void] $PSBoundParameters.Remove('UserId')
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('user_uuid', 'ids')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
-        }
+        Invoke-Falcon @Param
     }
 }

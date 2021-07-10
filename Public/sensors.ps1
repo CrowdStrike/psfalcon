@@ -1,130 +1,219 @@
-function Get-CCID {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
+function Get-FalconCCID {
+<#
+.Synopsis
+Retrieve your customer checksum identifier (CCID)
+.Role
+sensor-installers:read
+#>
     [CmdletBinding(DefaultParameterSetName = '/sensors/queries/installers/ccid/v1:get')]
-    [OutputType()]
     param()
-    DynamicParam {
-        $Endpoints = @('/sensors/queries/installers/ccid/v1:get')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
-    }
-    process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            Invoke-Endpoint -Endpoint $Endpoints[0]
-        }
-    }
-}
-function Get-Installer {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding(DefaultParameterSetName = '/sensors/queries/installers/v1:get')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/sensors/queries/installers/v1:get', '/sensors/entities/installers/v1:get',
-            '/sensors/combined/installers/v1:get')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
-    }
-    process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name -Exclusions @(
-                '/sensors/combined/installers/v1:get')
-        } else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Query   = $Endpoints[0]
-                Entity  = $Endpoints[1]
-                Dynamic = $Dynamic
-            }
-            switch ($PSBoundParameters.Keys) {
-                'All'      { $Param['All'] = $true }
-                'Total'    { $Param['Total'] = $true }
-                'Detailed' { $Param.Query = $Endpoints[2] }
-            }
-            Invoke-Request @Param
-        }
-    }
-}
-function Get-Stream {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding(DefaultParameterSetName = '/sensors/entities/datafeed/v2:get')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/sensors/entities/datafeed/v2:get')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
-    }
-    process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
-        }
-    }
-}
-function Receive-Installer {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/sensors/entities/download-installer/v1:get')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
-    }
     begin {
-        $Dynamic.Path.Value = $Falcon.GetAbsolutePath($Dynamic.Path.Value)
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } elseif (Test-Path $Dynamic.Path.Value) {
-            throw "'$($Dynamic.Path.Value)' already exists."
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
-        }
+        Invoke-Falcon @Param
     }
 }
-function Update-Stream {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/sensors/entities/datafeed-actions/v1/partition:post')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+function Get-FalconInstaller {
+<#
+.Synopsis
+Search for Falcon sensor installers
+.Parameter Ids
+One or more sensor installer identifiers
+.Parameter Filter
+Falcon Query Language expression to limit results
+.Parameter Sort
+Property and direction to sort results
+.Parameter Limit
+Maximum number of results per request
+.Parameter Offset
+Position to begin retrieving results
+.Parameter Detailed
+Retrieve detailed information
+.Parameter All
+Repeat requests until all available results are retrieved
+.Parameter Total
+Display total result count instead of results
+.Role
+sensor-installers:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/sensors/queries/installers/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/sensors/entities/installers/v1:get', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{64}$')]
+        [array] $Ids,
+
+        [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get', Position = 1)]
+        [Parameter(ParameterSetName = '/sensors/combined/installers/v1:get', Position = 1)]
+        [string] $Filter,
+
+        [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get', Position = 2)]
+        [Parameter(ParameterSetName = '/sensors/combined/installers/v1:get', Position = 2)]
+        [string] $Sort,
+
+        [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get', Position = 3)]
+        [Parameter(ParameterSetName = '/sensors/combined/installers/v1:get', Position = 3)]
+        [ValidateRange(1,500)]
+        [int] $Limit,
+
+        [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get', Position = 4)]
+        [Parameter(ParameterSetName = '/sensors/combined/installers/v1:get', Position = 4)]
+        [int] $Offset,
+
+        [Parameter(ParameterSetName = '/sensors/combined/installers/v1:get', Mandatory = $true)]
+        [switch] $Detailed,
+
+        [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get')]
+        [Parameter(ParameterSetName = '/sensors/combined/installers/v1:get')]
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get')]
+        [switch] $Total
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Format   = @{
+                Query = @('sort', 'ids', 'offset', 'limit', 'filter')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
-            $Param.Query = @( $Param.Query, "action_name=refresh_active_stream_session" )
-            Invoke-Endpoint @Param
+        Invoke-Falcon @Param
+    }
+}
+function Get-FalconStream {
+<#
+.Synopsis
+List event streams in your environment
+.Parameter Format
+Format for streaming events [default: json]
+.Parameter Appid
+Label that identifies the connection
+.Role
+streaming:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/sensors/entities/datafeed/v2:get')]
+    param(
+        [Parameter(ParameterSetName = '/sensors/entities/datafeed/v2:get', Mandatory = $true, Position = 1)]
+        [string] $AppId,
+
+        [Parameter(ParameterSetName = '/sensors/entities/datafeed/v2:get', Position = 2)]
+        [ValidateSet('json', 'flatjson')]
+        [string] $Format
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('format', 'appId')
+            }
         }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Receive-FalconInstaller {
+<#
+.Synopsis
+Download sensor installer by SHA256 ID
+.Parameter Id
+Sensor installer identifier
+.Parameter Path
+Destination path
+.Role
+sensor-installers:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/sensors/entities/download-installer/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/sensors/entities/download-installer/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{64}$')]
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/sensors/entities/download-installer/v1:get', Mandatory = $true,
+            Position = 2)]
+        [ValidateScript({
+            if (Test-Path $_) {
+                throw "An item with the specified name $_ already exists."
+            } else {
+                $true
+            }
+        })]
+        [string] $Path
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept      = 'application/octet-stream'
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('id')
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Update-FalconStream {
+<#
+.Synopsis
+Refresh an active event stream
+.Parameter Appid
+Label that identifies the connection
+.Parameter Partition
+Partition number to refresh
+.Role
+streaming:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/sensors/entities/datafeed-actions/v1/{partition}:post')]
+    param(
+        [Parameter(ParameterSetName = '/sensors/entities/datafeed-actions/v1/{partition}:post', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{1,32}$')]
+        [string] $AppId,
+
+        [Parameter(ParameterSetName = '/sensors/entities/datafeed-actions/v1/{partition}:post', Mandatory = $true,
+            Position = 2)]
+        [int] $Partition
+    )
+    begin {
+        $Endpoint = $PSCmdlet.ParameterSetName -replace '{partition}', $PSBoundParameters.Partition
+        $PSBoundParameters.Remove('Partition')
+        [void] $PSBoundParameters.Add('action_name', 'refresh_active_stream_session')
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $Endpoint
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept = 'application/json'
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('action_name', 'appId')
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
     }
 }

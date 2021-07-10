@@ -1,22 +1,34 @@
-function Get-ZTA {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
+function Get-FalconZTA {
+<#
+.Synopsis
+Get Zero Trust Assessment data for one or more hosts
+.Parameter Ids
+One or more host identifiers
+.Role
+zero-trust-assessment:read
+#>
     [CmdletBinding(DefaultParameterSetName = '/zero-trust-assessment/entities/assessments/v1:get')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/zero-trust-assessment/entities/assessments/v1:get')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+    param(
+        [Parameter(ParameterSetName = '/zero-trust-assessment/entities/assessments/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{32}$')]
+        [array] $Ids
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('ids')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
-        }
+        Invoke-Falcon @Param
     }
 }

@@ -1,91 +1,168 @@
-function Request-Token {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
+function Request-FalconToken {
+<#
+.Synopsis
+    Request an OAuth2 access token
+.Parameter ClientId
+    OAuth2 Client Identifier
+.Parameter ClientSecret
+    OAuth2 Client Secret
+.Parameter Hostname
+    CrowdStrike destination hostname [default: 'https://api.crowdstrike.com']
+.Parameter MemberCid
+    Member CID, required when authenticating with a child within a parent/child CID environment
+#>
     [CmdletBinding()]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/oauth2/token:post')
-        return (Get-Dictionary -Endpoints $Endpoints)
+    param(
+        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 1)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $ClientId,
+
+        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 2)]
+        [ValidatePattern('^\w{40}$')]
+        [string] $ClientSecret,
+
+        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 3)]
+        [ValidateSet('https://api.crowdstrike.com', 'https://api.us-2.crowdstrike.com',
+            'https://api.laggar.gcw.crowdstrike.com', 'https://api.eu-1.crowdstrike.com' )]
+        [string] $Hostname,
+
+        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 4)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $MemberCid
+    )
+    begin {
+        function Get-ApiCredential ($Inputs) {
+            $Output = @{}
+            @('ClientId', 'ClientSecret', 'Hostname', 'MemberCid').foreach{
+                $Value = if ($Inputs.$_) {
+                    # Use input
+                    $Inputs.$_
+                } elseif ($Script:Falcon.$_) {
+                    # Use ApiClient value
+                    $Script:Falcon.$_
+                }
+                if (!$Value -and $_ -match '^(ClientId|ClientSecret)$') {
+                    # Prompt for ClientId/ClientSecret
+                    $Value = Read-Host $_
+                } elseif (!$Value -and $_ -eq 'Hostname') {
+                    # Default to 'us-1' cloud
+                    $Value = 'https://api.crowdstrike.com'
+                }
+                if ($Value) {
+                    $Output.Add($_, $Value)
+                }
+            }
+            return $Output
+        }
+        if (!$Script:Falcon) {
+            # Initiate ApiClient and set SslProtocol
+            $Script:Falcon = Get-ApiCredential $PSBoundParameters
+            $Script:Falcon.Add('Api', [ApiClient]::New())
+            $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
+        } else {
+            ($PSBoundParameters).GetEnumerator().foreach{
+                if ($Script:Falcon.($_.Key) -ne $_.Value) {
+                    # Update existing ApiClient with new input
+                    $Script:Falcon.($_.Key) = $_.Value
+                }
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            if (-not($PSBoundParameters.Cloud)) {
-                if (-not($Falcon.Hostname)) {
-                    $PSBoundParameters.Cloud = 'us-1'
-                }
+        $Param = @{
+            Path    = "$($Script:Falcon.Hostname)$(($PSCmdlet.ParameterSetName).Split(':')[0])"
+            Method  = ($PSCmdlet.ParameterSetName).Split(':')[1]
+            Headers = @{
+                Accept      = 'application/json'
+                ContentType = 'application/x-www-form-urlencoded'
             }
-            if ($PSBoundParameters.Cloud) {
-                $Falcon.Hostname = switch ($PSBoundParameters.Cloud) {
-                    'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
-                    'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
-                    'us-1'     { 'https://api.crowdstrike.com' }
-                    'us-2'     { 'https://api.us-2.crowdstrike.com' }
-                }
+            Body = "client_id=$($Script:Falcon.ClientId)&client_secret=$($Script:Falcon.ClientSecret)"
+        }
+        if ($Script:Falcon.MemberCid) {
+            $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
+        }
+        $Response = $Script:Falcon.Api.Invoke($Param)
+        if ($Response.Result) {
+            # Update ApiClient hostname if redirected
+            $Region = $Response.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
+            $Redirect = switch ($Region) {
+                'us-1'     { 'https://api.crowdstrike.com' }
+                'us-2'     { 'https://api.us-2.crowdstrike.com' }
+                'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+                'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
             }
-            @('ClientId', 'ClientSecret', 'MemberCid') | ForEach-Object {
-                if (-not($PSBoundParameters.$_)) {
-                    if ($Falcon.$_) {
-                        $PSBoundParameters.$_ = $Falcon.$_
-                    } elseif ($_ -NE 'MemberCid') {
-                        $Falcon.$_ = Read-Host "$_"
-                    }
+            if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
+                Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
+                $Script:Falcon.Hostname = $Redirect
+            }
+        }
+        if (@(308,429) -contains $Script:Falcon.Api.LastCode) {
+            # Re-run command when redirected or rate limited
+            & $MyInvocation.MyCommand.Name
+        } elseif ($Response) {
+            # Cache access token in ApiClient
+            $Output = Write-Result $Response
+            if ($Output.access_token) {
+                $Token = "$($Output.token_type) $($Output.access_token)"
+                if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
+                    $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization', $Token)
                 } else {
-                    $Falcon.$_ = $PSBoundParameters.$_
+                    $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
                 }
-            }
-            $Param = @{
-                Endpoint = $Endpoints[0]
-                Body     = "client_id=$($Falcon.ClientId)&client_secret=$($Falcon.ClientSecret)"
-            }
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] hostname: $($Falcon.Hostname)"
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] client_id: $($Falcon.ClientId)"
-            if ($Falcon.MemberCid) {
-                $Param.Body += "&member_cid=$($Falcon.MemberCid.ToLower())"
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] member_cid: $($Falcon.MemberCid.ToLower())"
-            }
-            $Request = Invoke-Endpoint @Param
-            if ($Request.access_token) {
-                $Falcon.Expires = (Get-Date).AddSeconds($Request.expires_in)
-                $Falcon.Token = "$($Request.token_type) $($Request.access_token)"
-            } else {
-                Clear-Auth
+                $Script:Falcon.Expiration = (Get-Date).AddSeconds($Output.expires_in)
+                Write-Verbose "[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)"
             }
         }
     }
 }
-function Revoke-Token {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
+function Revoke-FalconToken {
+<#
+.Synopsis
+    Revoke your active OAuth2 token and clear cached credentials
+#>
     [CmdletBinding(DefaultParameterSetName = '/oauth2/revoke:post')]
-    [OutputType()]
     param()
-    DynamicParam {
-        $Endpoints = @('/oauth2/revoke:post')
-        return (Get-Dictionary -Endpoints $Endpoints)
-    }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            if ($Falcon.Token -and ($Falcon.Expires -gt (Get-Date))) {
-                $Param = @{
-                    Endpoint = $Endpoints[0]
-                    Body     = "token=$($Falcon.token -replace 'bearer ', '')"
+        if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
+            # Revoke OAuth2 access token
+            $Param = @{
+                Path    = "$($Script:Falcon.Hostname)$(($PSCmdlet.ParameterSetName).Split(':')[0])"
+                Method  = ($PSCmdlet.ParameterSetName).Split(':')[1]
+                Headers = @{
+                    Accept        = 'application/json'
+                    ContentType   = 'application/x-www-form-urlencoded'
+                    Authorization = "basic $([System.Convert]::ToBase64String(
+                        [System.Text.Encoding]::ASCII.GetBytes(
+                        "$($Script:Falcon.ClientId):$($Script:Falcon.ClientSecret)")))"
                 }
-                Invoke-Endpoint @Param
+                Body    = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -replace
+                    'bearer ', '')"
             }
-            Clear-Auth
+            Write-Result ($Script:Falcon.Api.Invoke($Param))
+        }
+        Remove-Variable -Name Falcon -Scope Script
+    }
+}
+function Test-FalconToken {
+<#
+.Synopsis
+    Display current authorization token information
+#>
+    [CmdletBinding()]
+    param()
+    process {
+        if ($Script:Falcon) {
+            [PSCustomObject] @{
+                Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
+                ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(15))) {
+                    $true
+                } else {
+                    $false
+                }
+                Hostname = $Falcon.Hostname
+                ClientId = $Falcon.ClientId
+                MemberCid = $Falcon.MemberCid
+            }
         }
     }
 }
