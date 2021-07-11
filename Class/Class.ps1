@@ -1,7 +1,6 @@
 class ApiClient {
     [System.Net.Http.HttpClientHandler] $Handler
     [System.Net.Http.HttpClient] $Client
-    [Int32] $LastCode
     ApiClient() {
         $this.Handler = [System.Net.Http.HttpClientHandler]::New()
         $this.Client = [System.Net.Http.HttpClient]::New($this.Handler)
@@ -58,8 +57,8 @@ class ApiClient {
                     }
                     $MultiContent
                 } elseif ($Param.Body -is [string] -and $Param.Headers.ContentType) {
-                        [System.Net.Http.StringContent]::New($Param.Body, [System.Text.Encoding]::UTF8,
-                            $Param.Headers.ContentType)
+                    [System.Net.Http.StringContent]::New($Param.Body, [System.Text.Encoding]::UTF8,
+                        $Param.Headers.ContentType)
                 } elseif ($Param.Body) {
                     $Param.Body
                 }
@@ -69,7 +68,6 @@ class ApiClient {
             Write-Error $_
         }
         if ($Output.Result.StatusCode) {
-            $this.LastCode = $Output.Result.StatusCode.GetHashCode()
             Write-Verbose ("[ApiClient.Invoke] {0}: {1}" -f $Output.Result.StatusCode.GetHashCode(),
                 $Output.Result.StatusCode)
         }

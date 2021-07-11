@@ -451,8 +451,8 @@ function Wait-RetryAfter {
         [object] $Request
     )
     process {
-        if ($Script:Falcon.Api.LastCode -eq 429 -and $Request.Result.RequestMessage.RequestUri.AbsolutePath -ne
-        '/oauth2/token') {
+        if ($Request.Result.StatusCode -and $Request.Result.StatusCode.GetHashCode() -eq 429 -and
+        $Request.Result.RequestMessage.RequestUri.AbsolutePath -ne '/oauth2/token') {
             # Convert 'X-Ratelimit-Retryafter' value to seconds and wait
             $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(($Request.Result.Headers.GetEnumerator().Where({
                 $_.Key -eq 'X-Ratelimit-Retryafter' }).Value)).Second
