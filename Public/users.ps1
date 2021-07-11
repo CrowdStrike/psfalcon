@@ -14,7 +14,7 @@ usermgmt:write
     [CmdletBinding(DefaultParameterSetName = '/users/entities/users/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/users/entities/users/v1:patch', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^"\w{8}-\w{4}-\w{4}-\w{4}-\w{12}"$')]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id,
 
         [Parameter(ParameterSetName = '/users/entities/users/v1:patch', Position = 2)]
@@ -24,13 +24,13 @@ usermgmt:write
         [string] $Lastname
     )
     begin {
-        # Rename parameter for API submission
-        $PSBoundParameters.Add('user_uuid', $PSBoundParameters.Id)
-        [void] $PSBoundParameters.Remove('Id')
+        $Fields = @{
+            Id = 'user_uuid'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -75,15 +75,13 @@ usermgmt:read
         
     )
     begin {
-        if ($PSBoundParameters.Usernames) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('uid', $PSBoundParameters.Usernames)
-            [void] $PSBoundParameters.Remove('Usernames')
+        $Fields = @{
+            Usernames = 'uid'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -126,13 +124,13 @@ usermgmt:write
         [string] $Password
     )
     begin {
-        # Rename parameter for API submission
-        $PSBoundParameters.Add('uid', $PSBoundParameters.Username)
-        [void] $PSBoundParameters.Remove('Username')
+        $Fields = @{
+            Username = 'uid'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -163,13 +161,13 @@ usermgmt:write
         [string] $Id
     )
     begin {
-        # Rename parameter for API submission
-        $PSBoundParameters.Add('user_uuid', $PSBoundParameters.Id)
-        [void] $PSBoundParameters.Remove('Id')
+        $Fields = @{
+            Id = 'user_uuid'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }

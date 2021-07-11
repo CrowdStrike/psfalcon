@@ -207,26 +207,19 @@ malquery:write
         [switch] $Detailed
     )
     begin {
-        @('FilterFiletypes', 'FilterMeta', 'MaxDate', 'MinDate', 'MaxSize', 'MinSize', 'YaraRule').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'FilterFiletypes' { 'filter_filetypes' }
-                    'FilterMeta' { 'filter_meta' }
-                    'MaxDate' { 'max_date' }
-                    'MinDate' { 'min_date' }
-                    'MaxSize' { 'max_size' }
-                    'MinSize' { 'min_size' }
-                    'YaraRule' { 'yara_rule' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            FilterFiletypes = 'filter_filetypes'
+            FilterMeta      = 'filter_meta'
+            MaxDate         = 'max_date'
+            MinDate         = 'min_date'
+            MaxSize         = 'max_size'
+            MinSize         = 'min_size'
+            YaraRule        = 'yara_rule'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -279,12 +272,13 @@ malquery:read
             $Accept = 'application/zip'
             $Endpoint = '/malquery/entities/samples-fetch/v1:get'
         }
-        $PSBoundParameters.Add('ids', $PSBoundParameters.Id)
-        [void] $PSBoundParameters.Remove('Id')
+        $Fields = @{
+            Id = 'ids'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $Endpoint
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 Accept = $Accept
             }

@@ -246,21 +246,14 @@ incidents:write
         [boolean] $OverwriteDetects
     )
     begin {
-        @('OverwriteDetects', 'UpdateDetects').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'OverwriteDetects' { 'overwrite_detects' }
-                    'UpdateDetects'    { 'update_detects' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            OverwriteDetects = 'overwrite_detects'
+            UpdateDetects    = 'update_detects'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }

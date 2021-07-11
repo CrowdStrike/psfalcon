@@ -105,12 +105,13 @@ iocs:read
         [switch] $All
     )
     begin {
-        $PSBoundParameters.Add('device_id', $PSBoundParameters.HostId)
-        [void] $PSBoundParameters.Remove('HostId')
+        $Fields = @{
+            HostId = 'device_id'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }

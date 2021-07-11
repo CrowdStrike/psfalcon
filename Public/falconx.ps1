@@ -241,41 +241,30 @@ falconx-sandbox:write
         [array] $UserTags
     )
     begin {
-        @('ActionScript', 'CommandLine', 'DocumentPassword', 'EnableTor', 'EnvironmentId', 'SubmitName',
-        'SystemTime', 'SystemDate', 'UserTags').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'ActionScript'     { 'action_script' }
-                    'CommandLine'      { 'command_line' }
-                    'DocumentPassword' { 'document_password' }
-                    'EnableTor'        { 'enable_tor' }
-                    'EnvironmentId'    { 'environment_id' }
-                    'NetworkSettings'  { 'network_settings' }
-                    'SubmitName'       { 'submit_name' }
-                    'SystemDate'       { 'system_date' }
-                    'SystemTime'       { 'system_time' }
-                    'UserTags'         { 'user_tags' }
-                }
-                $Value = if ($_ -eq 'EnvironmentId') {
-                    switch ($PSBoundParameters.$_) {
-                        'android'      { 200 }
-                        'ubuntu16_x64' { 300 }
-                        'win7_x64'     { 110 }
-                        'win7_x86'     { 100 }
-                        'win10_x64'    { 160 }
-                    }
-                } else {
-                    $PSBoundParameters.$_
-                }
-                $PSBoundParameters.Add($Field, $Value)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            ActionScript     = 'action_script'
+            CommandLine      = 'command_line'
+            DocumentPassword = 'document_password'
+            EnableTor        = 'enable_tor'
+            EnvironmentId    = 'environment_id'
+            NetworkSettings  = 'network_settings'
+            SubmitName       = 'submit_name'
+            SystemDate       = 'system_date'
+            SystemTime       = 'system_time'
+            UserTags         = 'user_tags'
+        }
+        $PSBoundParameters.EnvironmentId = switch ($PSBoundParameters.EnvironmentId) {
+            # Update 'environment_id' to numerical value
+            'android'      { 200 }
+            'ubuntu16_x64' { 300 }
+            'win7_x64'     { 110 }
+            'win7_x86'     { 100 }
+            'win10_x64'    { 160 }
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -355,12 +344,13 @@ falconx-sandbox:write
         [string] $Id
     )
     begin {
-        $PSBoundParameters.Add('ids', $PSBoundParameters.Id)
-        [void] $PSBoundParameters.Remove('Id')
+        $Fields = @{
+            Id = 'ids'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('ids')
             }

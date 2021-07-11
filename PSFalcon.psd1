@@ -62,6 +62,10 @@
         'Receive-FalconIntel',
         'Receive-FalconRule',
 
+        # ioa.ps1
+        'Get-FalconHorizonIOAEvent',
+        'Get-FalconHorizonIOAUser',
+
         # iocs.ps1
         'Edit-FalconIOC',
         'Get-FalconIOC',
@@ -75,6 +79,26 @@
         'Group-FalconMalQuerySample',
         'Invoke-FalconMalQuery',
         'Receive-FalconMalQuerySample',
+
+        # mssp.ps1
+        'Add-FalconCIDGroupMember',
+        'Add-FalconGroupRole',
+        'Add-FalconUserGroupMember',
+        'Edit-FalconCIDGroup',
+        'Edit-FalconUserGroup',
+        'Get-FalconCIDGroup',
+        'Get-FalconCIDGroupMember',
+        'Get-FalconGroupRole',
+        'Get-FalconMemberCID',
+        'Get-FalconUserGroup',
+        'Get-FalconUserGroupMember',
+        'New-FalconCIDGroup',
+        'New-FalconUserGroup',
+        'Remove-FalconCIDGroup',
+        'Remove-FalconCIDGroupMember',
+        'Remove-FalconGroupRole',
+        'Remove-FalconUserGroup',
+        'Remove-FalconUserGroupMember',
 
         # oauth2.ps1
         'Request-FalconToken',
@@ -90,7 +114,7 @@
         'Receive-FalconSample',
         'Remove-FalconSample',
 
-        # scanner
+        # scanner.ps1
         'Get-FalconQuickScan',
         'Get-FalconQuickScanQuota',
         'New-FalconQuickScan',
@@ -101,6 +125,12 @@
         'Get-FalconStream',
         'Receive-FalconInstaller',
         'Update-FalconStream',
+
+        # settings.ps1
+        'Edit-FalconHorizonPolicy',
+        'Edit-FalconHorizonSchedule',
+        'Get-FalconHorizonPolicy',
+        'Get-FalconHorizonSchedule',
 
         # spotlight.ps1
         'Get-FalconRemediation',

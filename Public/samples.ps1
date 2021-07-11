@@ -14,13 +14,13 @@ samplestore:read
         [array] $Ids
     )
     begin {
-        # Rename parameter for API submission
-        $PSBoundParameters.Add('sha256s', $PSBoundParameters.Ids)
-        [void] $PSBoundParameters.Remove('Ids')
+        $Fields = @{
+            Ids = 'sha256s'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -75,22 +75,15 @@ samplestore:write
         [string] $Comment
     )
     begin {
-        @('Filename', 'IsConfidential', 'Path').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'Filename'       { 'file_name' }
-                    'IsConfidential' { 'is_confidential' }
-                    'Path'           { 'body' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            Filename       = 'file_name'
+            IsConfidential = 'is_confidential'
+            Path           = 'body'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('comment', 'file_name', 'is_confidential')
                 Body  = @{
@@ -136,13 +129,14 @@ samplestore:read
         [boolean] $PasswordProtected
     )
     begin {
-        # Rename parameter for API submission
-        $PSBoundParameters.Add('ids', $PSBoundParameters.Id)
-        [void] $PSBoundParameters.Remove('Id')
+        $Fields = @{
+            Id                = 'ids'
+            PasswordProtected = 'password_protected'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 Accept = 'application/octet-stream'
             }
@@ -172,13 +166,13 @@ samplestore:write
         [string] $Id
     )
     begin {
-        # Rename parameter for API submission
-        $PSBoundParameters.Add('ids', $PSBoundParameters.Id)
-        [void] $PSBoundParameters.Remove('Id')
+        $Fields = @{
+            Id = 'ids'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('ids')
             }

@@ -66,15 +66,13 @@ falconx-actors:read
         [switch] $Total
     )
     begin {
-        if ($PSBoundParameters.Query) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('q', $PSBoundParameters.Query)
-            [void] $PSBoundParameters.Remove('Query')
+        $Fields = @{
+            Query = 'q'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q')
             }
@@ -150,21 +148,14 @@ falconx-indicators:read
         [switch] $Total
     )
     begin {
-        @('IncludeDeleted', 'Q').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'IncludeDeleted' { 'include_deleted' }
-                    'Q'              { 'query' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            IncludeDeleted = 'include_deleted'
+            Query          = 'q'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -248,15 +239,13 @@ falconx-reports:read
         [switch] $Total
     )
     begin {
-        if ($PSBoundParameters.Query) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('q', $PSBoundParameters.Query)
-            [void] $PSBoundParameters.Remove('Query')
+        $Fields = @{
+            Query = 'q'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -353,22 +342,15 @@ falconx-rules:read
         [switch] $Total
     )
     begin {
-        @('Query', 'MinCreatedDate', 'MaxCreatedDate').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'Query'          { 'q' }
-                    'MinCreatedDate' { 'min_created_date' }
-                    'MaxCreatedDate' { 'max_created_date' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            MaxCreatedDate = 'max_created_date'
+            MinCreatedDate = 'min_created_date'
+            Query          = 'q'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('sort', 'limit', 'max_created_date', 'ids', 'offset', 'min_created_date', 'tags',
                     'name', 'description', 'type', 'q')

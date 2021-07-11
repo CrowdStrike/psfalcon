@@ -20,16 +20,14 @@ devices:write
         [array] $Tags
     )
     begin {
-        if ($PSBoundParameters.Ids) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('device_ids', $PSBoundParameters.Ids)
-            $PSBoundParameters.Add('action', 'add')
-            [void] $PSBoundParameters.Remove('Ids')
+        $Fields = @{
+            Ids = 'device_ids'
         }
+        $PSBoundParameters.Add('action', 'add')
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -75,15 +73,13 @@ host-group:write
         [string] $AssignmentRule
     )
     begin {
-        if ($PSBoundParameters.AssignmentRule) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('assignment_rule', $PSBoundParameters.AssignmentRule)
-            [void] $PSBoundParameters.Remove('AssignmentRule')
+        $Fields = @{
+            AssignmentRule = 'assignment_rule'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -355,15 +351,13 @@ devices:write
         [array] $Ids
     )
     begin {
-        if ($PSBoundParameters.Name) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('action_name', $PSBoundParameters.Name)
-            [void] $PSBoundParameters.Remove('Name')
+        $Fields = @{
+            Name = 'action_name'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -407,15 +401,13 @@ host-group:write
         [array] $Ids
     )
     begin {
-        if ($PSBoundParameters.Name) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('action_name', $PSBoundParameters.Name)
-            [void] $PSBoundParameters.Remove('Name')
+        $Fields = @{
+            Name = 'action_name'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -483,16 +475,14 @@ devices:write
         [array] $Tags
     )
     begin {
-        if ($PSBoundParameters.Ids) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('device_ids', $PSBoundParameters.Ids)
-            [void] $PSBoundParameters.Remove('Ids')
-            $PSBoundParameters.Add('action', 'remove')
+        $Fields = @{
+            Ids = 'device_ids'
         }
+        $PSBoundParameters.Add('action', 'remove')
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }

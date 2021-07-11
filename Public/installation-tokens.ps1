@@ -31,15 +31,13 @@ installation-tokens:write
         [boolean] $Revoked
     )
     begin {
-        if ($PSBoundParameters.ExpiresTimestamp) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('expires_timestamp', $PSBoundParameters.ExpiresTimestamp)
-            [void] $PSBoundParameters.Remove('ExpiresTimestamp')
+        $Fields = @{
+            ExpiresTimestamp = 'expires_timestamp'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -232,15 +230,13 @@ installation-tokens:write
         [string] $ExpiresTimestamp
     )
     begin {
-        if ($PSBoundParameters.ExpiresTimestamp) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('expires_timestamp', $PSBoundParameters.ExpiresTimestamp)
-            [void] $PSBoundParameters.Remove('ExpiresTimestamp')
+        $Fields = @{
+            ExpiresTimestamp = 'expires_timestamp'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }

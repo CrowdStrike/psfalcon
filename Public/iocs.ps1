@@ -75,7 +75,8 @@ ioc:write
         [boolean] $AppliedGlobally,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:patch', Position = 11)]
-        [datetime] $Expiration,
+        [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z)$')]
+        [string] $Expiration,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:patch', Position = 12)]
         [string] $Comment,
@@ -87,23 +88,16 @@ ioc:write
         [boolean] $IgnoreWarnings
     )
     begin {
-        @('AppliedGlobally', 'Filename', 'HostGroups', 'IgnoreWarnings').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'AppliedGlobally' { 'applied_globally' }
-                    'Filename'        { 'metadata.filename' }
-                    'HostGroups'      { 'host_groups' }
-                    'IgnoreWarnings'  { 'ignore_warnings' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            AppliedGlobally = 'applied_globally'
+            Filename        = 'metadata.filename'
+            HostGroups      = 'host_groups'
+            IgnoreWarnings  = 'ignore_warnings'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -289,7 +283,8 @@ ioc:write
         [boolean] $AppliedGlobally,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Position = 12)]
-        [datetime] $Expiration,
+        [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z)$')]
+        [string] $Expiration,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Position = 13)]
         [Parameter(ParameterSetName = 'create_array', Position = 2)]
@@ -304,24 +299,17 @@ ioc:write
         [boolean] $IgnoreWarnings
     )
     begin {
-        @('AppliedGlobally', 'Array', 'Filename', 'HostGroups', 'IgnoreWarnings').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'AppliedGlobally' { 'applied_globally' }
-                    'Array'           { 'indicators' }
-                    'Filename'        { 'metadata.filename' }
-                    'HostGroups'      { 'host_groups' }
-                    'IgnoreWarnings'  { 'ignore_warnings' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            AppliedGlobally = 'applied_globally'
+            Array           = 'indicators'
+            Filename        = 'metadata.filename'
+            HostGroups      = 'host_groups'
+            IgnoreWarnings  = 'ignore_warnings'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/iocs/entities/indicators/v1:post'
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }

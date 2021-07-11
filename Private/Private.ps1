@@ -426,6 +426,25 @@ function Write-Result {
         Wait-RetryAfter $Request
     }
 }
+function Update-FieldName {
+    [CmdletBinding()]
+    param(
+        [object] $Fields,
+        [object] $Inputs
+    )
+    process {
+        if ($Fields.Keys -and $Inputs.Keys) {
+            # Update user input field names for API submission
+            ($Fields.Keys).foreach{
+                if ($Inputs.$_) {
+                    $Inputs.Add($Fields.$_, $Inputs.$_)
+                    [void] $Inputs.Remove($_)
+                }
+            }
+        }
+        $Inputs
+    }
+}
 function Wait-RetryAfter {
     [CmdletBinding()]
     param(

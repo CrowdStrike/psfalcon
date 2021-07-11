@@ -36,21 +36,14 @@ detects:write
         [boolean] $ShowInUi
     )
     begin {
-        @('AssignedToUuid', 'ShowInUi').foreach{
-            if ($PSBoundParameters.$_) {
-                # Rename parameter for API submission
-                $Field = switch ($_) {
-                    'AssignedToUuid' { 'assigned_to_uuid' }
-                    'ShowInUi'       { 'show_in_ui' }
-                }
-                $PSBoundParameters.Add($Field, $PSBoundParameters.$_)
-                [void] $PSBoundParameters.Remove($_)
-            }
+        $Fields = @{
+            AssignedToUuid = 'assigned_to_uuid'
+            ShowInUi       = 'show_in_ui'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 ContentType = 'application/json'
             }
@@ -122,10 +115,8 @@ detects:read
         [switch] $Total
     )
     begin {
-        if ($PSBoundParameters.Query) {
-            # Rename parameter for API submission
-            $PSBoundParameters.Add('q', $PSBoundParameters.Query)
-            [void] $PSBoundParameters.Remove('Query')
+        $Fields = @{
+            Query = 'q'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -133,7 +124,7 @@ detects:read
             Headers  = @{
                 ContentType = 'application/json'
             }
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('filter', 'q', 'sort', 'limit', 'offset')
                 Body  = @{
