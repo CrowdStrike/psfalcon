@@ -35,6 +35,15 @@
         'Receive-FalconArtifact',
         'Remove-FalconReport',
 
+        # falcon-complete-dashboards.ps1
+        'Get-FalconCompleteAllowlist',
+        'Get-FalconCompleteBlocklist',
+        'Get-FalconCompleteCollection',
+        'Get-FalconCompleteDetection',
+        'Get-FalconCompleteEscalation',
+        'Get-FalconCompleteIncident',
+        'Get-FalconCompleteRemediation',
+
         # incidents.ps1
         'Get-FalconBehavior',
         'Get-FalconIncident',
@@ -105,8 +114,27 @@
         'Revoke-FalconToken',
         'Test-FalconToken',
 
+        # overwatch-dashboards.ps1
+        'Get-FalconOverWatchEvent',
+        'Get-FalconOverWatchDetection',
+        'Get-FalconOverWatchIncident',
+
         # processes.ps1
         'Get-FalconProcess',
+
+        # recon.ps1
+        'Edit-FalconReconAction',
+        'Edit-FalconReconNotification',
+        'Edit-FalconReconRule',
+        'Get-FalconReconAction',
+        'Get-FalconReconNotification',
+        'Get-FalconReconRule',
+        'Get-FalconReconRulePreview',
+        'New-FalconReconAction',
+        'New-FalconReconRule',
+        'Remove-FalconReconAction',
+        'Remove-FalconReconRule',
+        'Remove-FalconReconNotification',
 
         # samples.ps1
         'Get-FalconSample',
@@ -233,9 +261,17 @@ Command Changes
 
   * Added TLS 1.2 enforcement in 'Request-FalconToken' using [System.Net.Http.HttpClientHandler].
 
+New Commands
+
+  * 'Edit-FalconReconNotification'
+  * 'Get-FalconHorizonIOAEvent'
+  * 'Get-FalconHorizonIOAUser'
+  * 'Get-FalconReconRulePreview'
+  * 'Remove-FalconReconNotification'
+
 Parameter Changes
 
-* Removed '-Help' parameter from all commands as the standard 'Get-Help' now works properly.
+* Removed '-Help' parameter from all commands. 'Get-Help' can be used instead.
 
 GitHub Issues
 

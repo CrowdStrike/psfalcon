@@ -252,44 +252,49 @@ function Invoke-Falcon {
     }
     process {
         foreach ($Item in (Build-Param @BuildParam)) {
-            if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or
-            ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15))) {
-                # Verify authorization token
-                Request-FalconToken
-            }
-            $Request = $Script:Falcon.Api.Invoke($Item.Endpoint)
-            if ($Item.Endpoint.Outfile) {
-                if (Test-Path $Item.Endpoint.Outfile) {
-                    # Display 'Outfile'
-                    Get-ChildItem $Item.Endpoint.Outfile
+            try {
+                if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or
+                ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15))) {
+                    # Verify authorization token
+                    Request-FalconToken
                 }
-            } elseif ($Request.Result.Content) {
-                # Capture pagination for 'Total' and 'All'
-                $Pagination = (ConvertFrom-Json (
-                    $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                if ($Pagination -and $Item.Total -eq $true) {
-                    # Output 'Total'
-                    $Pagination.total
-                } else {
-                    $Result = Write-Result $Request
-                    if ($Result -and $Item.Detailed -eq $true -and $Item.Endpoint.Path -notmatch '/combined/') {
-                        # Output 'Detailed'
-                        & $Command -Ids $Result
-                    } elseif ($Result) {
-                        # Output result
-                        $Result
+                $Request = $Script:Falcon.Api.Invoke($Item.Endpoint)
+                if ($Item.Endpoint.Outfile) {
+                    if (Test-Path $Item.Endpoint.Outfile) {
+                        # Display 'Outfile'
+                        Get-ChildItem $Item.Endpoint.Outfile
                     }
-                    if ($Pagination -and $Item.All -eq $true) {
-                        # Repeat requests until 'meta.pagination.total' is reached
-                        $Param = @{
-                            Request = $Request
-                            Result = $Result
-                            Pagination = $Pagination
-                            Item = $Item
+                } elseif ($Request.Result.Content) {
+                    # Capture pagination for 'Total' and 'All'
+                    $Pagination = (ConvertFrom-Json (
+                        $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
+                    if ($Pagination -and $Item.Total -eq $true) {
+                        # Output 'Total'
+                        $Pagination.total
+                    } else {
+                        $Result = Write-Result $Request
+                        if ($Result -and $Item.Detailed -eq $true -and
+                        $Item.Endpoint.Path -notmatch '/combined/') {
+                            # Output 'Detailed'
+                            & $Command -Ids $Result
+                        } elseif ($Result) {
+                            # Output result
+                            $Result
                         }
-                        Invoke-Loop @Param
+                        if ($Pagination -and $Item.All -eq $true) {
+                            # Repeat requests until 'meta.pagination.total' is reached
+                            $Param = @{
+                                Request = $Request
+                                Result = $Result
+                                Pagination = $Pagination
+                                Item = $Item
+                            }
+                            Invoke-Loop @Param
+                        }
                     }
                 }
+            } catch {
+                Write-Error $_
             }
         }
     }
