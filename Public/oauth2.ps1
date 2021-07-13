@@ -11,7 +11,7 @@ function Request-FalconToken {
 .Parameter MemberCid
     Member CID, required when authenticating with a child within a parent/child CID environment
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/oauth2/token:post')]
     param(
         [Parameter(ParameterSetName = '/oauth2/token:post', Position = 1)]
         [ValidatePattern('^\w{32}$')]
@@ -82,7 +82,10 @@ function Request-FalconToken {
             $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
         }
         $Response = $Script:Falcon.Api.Invoke($Param)
-        if ($Response.Result) {
+        if ($Response.Result.StatusCode -and @(308,429) -contains $Response.Result.StatusCode.GetHashCode()) {
+            # Re-run command when redirected or rate limited
+            & $MyInvocation.MyCommand.Name
+        } elseif ($Response.Result) {
             # Update ApiClient hostname if redirected
             $Region = $Response.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
             $Redirect = switch ($Region) {
@@ -95,21 +98,16 @@ function Request-FalconToken {
                 Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
                 $Script:Falcon.Hostname = $Redirect
             }
-        }
-        if (@(308,429) -contains $Script:Falcon.Api.LastCode) {
-            # Re-run command when redirected or rate limited
-            & $MyInvocation.MyCommand.Name
-        } elseif ($Response) {
-            # Cache access token in ApiClient
-            $Output = Write-Result $Response
-            if ($Output.access_token) {
-                $Token = "$($Output.token_type) $($Output.access_token)"
+            $Result = Write-Result $Response
+            if ($Result.access_token) {
+                # Cache access token in ApiClient
+                $Token = "$($Result.token_type) $($Result.access_token)"
                 if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
                     $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization', $Token)
                 } else {
                     $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
                 }
-                $Script:Falcon.Expiration = (Get-Date).AddSeconds($Output.expires_in)
+                $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
                 Write-Verbose "[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)"
             }
         }

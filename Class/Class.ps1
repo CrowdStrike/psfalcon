@@ -65,11 +65,15 @@ class ApiClient {
                 $this.Client.SendAsync($Message)
             }
         } catch {
-            Write-Error $_
+            throw $_
         }
         if ($Output.Result.StatusCode) {
-            Write-Verbose ("[ApiClient.Invoke] {0}: {1}" -f $Output.Result.StatusCode.GetHashCode(),
-                $Output.Result.StatusCode)
+            $ResponseCode = "$(@($Output.Result.StatusCode.GetHashCode(), $Output.Result.StatusCode) -join ': ')"
+            if ($Output.Result.IsSuccessStatusCode) {
+                Write-Verbose "[ApiClient.Invoke] $ResponseCode"
+            } else {
+                throw $ResponseCode
+            }
         }
         return $Output
     }

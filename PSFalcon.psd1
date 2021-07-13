@@ -35,6 +35,18 @@
         'Receive-FalconArtifact',
         'Remove-FalconReport',
 
+        # fwmgr.ps1
+        'Edit-FalconFirewallGroup',
+        'Edit-FalconFirewallSetting',
+        'Get-FalconFirewallEvent',
+        'Get-FalconFirewallField',
+        'Get-FalconFirewallGroup',
+        'Get-FalconFirewallPlatform',
+        'Get-FalconFirewallRule',
+        'Get-FalconFirewallSetting',
+        'New-FalconFirewallGroup',
+        'Remove-FalconFirewallGroup',
+
         # falcon-complete-dashboards.ps1
         'Get-FalconCompleteAllowlist',
         'Get-FalconCompleteBlocklist',
@@ -74,6 +86,20 @@
         # ioa.ps1
         'Get-FalconHorizonIOAEvent',
         'Get-FalconHorizonIOAUser',
+
+        # ioarules.ps1
+        'Edit-FalconIOAGroup',
+        'Edit-FalconIOARule',
+        'Get-FalconIOAGroup',
+        'Get-FalconIOAPlatform',
+        'Get-FalconIOARule',
+        'Get-FalconIOASeverity',
+        'Get-FalconIOAType',
+        'New-FalconIOAGroup',
+        'New-FalconIOARule',
+        'Remove-FalconIOAGroup',
+        'Remove-FalconIOARule',
+        'Test-FalconIOARule',
 
         # iocs.ps1
         'Edit-FalconIOC',
@@ -241,40 +267,33 @@ General Changes
   will display the 'Get-FalconHost' command, while 'Get-Help -Role devices:write' lists 'Add-FalconHostTag',
   'Invoke-FalconHostAction' and 'Remove-FalconHostTag'. Wildcards (devices:*, *:write) are supported.
 
-Command Changes
-
-* Three different /indicators/ API commands were re-added to the module:
-
-  'Get-FalconIOCHost'
-  'Get-FalconIOCProcess'
-  'Get-FalconIOCTotal'
-  
-  These were originally removed because the /indicators/ APIs were deprecated and replaced with /iocs/, but they
-  have not been replaced with matching commands under the /iocs/ APIs and seem to function properly. They may end
-  up getting removed again when the /indicators/ APIs are fully decommissioned.
-
-* 'Request-FalconToken'
-
-  * Added support for HTTP 308 redirection when requesting an OAuth2 access token. If a user attempts to
-    authenticate using the wrong API hostname, the module will automatically update to the proper location and
-    use that location with future requests.
-
-  * Added TLS 1.2 enforcement in 'Request-FalconToken' using [System.Net.Http.HttpClientHandler].
-
 New Commands
 
-  * 'Edit-FalconReconNotification'
-  * 'Get-FalconHorizonIOAEvent'
-  * 'Get-FalconHorizonIOAUser'
-  * 'Get-FalconReconRulePreview'
-  * 'Remove-FalconReconNotification'
+* 'Edit-FalconReconNotification'
+* 'Get-FalconHorizonIOAEvent'
+* 'Get-FalconHorizonIOAUser'
+* 'Get-FalconReconRulePreview'
+* 'Remove-FalconReconNotification'
 
-Parameter Changes
+Command Changes
 
 * Removed '-Help' parameter from all commands. 'Get-Help' can be used instead.
+* Three different /indicators/ API commands were previously removed by mistake and have been re-added:
+  Get-FalconIOCHost
+  Get-FalconIOCProcess
+  Get-FalconIOCTotal
+
+* Request-FalconToken
+  Added support for HTTP 308 redirection when requesting an OAuth2 access token. If a user attempts to
+  authenticate using the wrong API hostname, the module will automatically update to the proper location and
+  use that location with future requests.
+
+  Added TLS 1.2 enforcement in 'Request-FalconToken' using [System.Net.Http.HttpClientHandler].
+
+* Get-FalconFirewallRule
+  Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
 
 GitHub Issues
-
 * Issue #48: Updated 'Invoke-Loop' private function with Measure-Object counting to eliminate endless loop caused
   when trying to count a single [PSCustomObject].
 
