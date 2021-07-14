@@ -247,7 +247,6 @@ TODO Items (unfinished):
 
 * Update remaining commands.
 * Test and validate all commands.
-* Issue #51: Add '-Content' switch to 'Edit-FalconScript'.
 * Migrate 'Get-Help' content to GitHub for online reference.
 * Add GraphQL support for /identity-protection/ APIs.
 
@@ -332,6 +331,9 @@ Command Changes
 GitHub Issues
 * Issue #48: Updated 'Invoke-Loop' private function with a more explicit counting method to eliminate endless
   loops caused when trying to count a single [PSCustomObject] in PowerShell 5.1.
+
+* Issue #51: Switched 'Edit-FalconScript' and 'Send-FalconScript' to use the 'content' field rather than 'file'
+  after numerous anecdotes of the 'file' parameter not working properly in different clouds.
 
 * Issue #53: Along with 'Request-FalconToken' supporting redirection, it now retries a token request when
   presented with a HTTP 429 or 308 response. The 'Wait-RetryAfter' function was also re-written to re-calculate
