@@ -128,7 +128,7 @@ streaming:read
 function Receive-FalconInstaller {
 <#
 .Synopsis
-Download sensor installer by SHA256 ID
+Download sensor installer by Sha256 ID
 .Parameter Id
 Sensor installer identifier
 .Parameter Path

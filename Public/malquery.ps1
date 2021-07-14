@@ -59,7 +59,7 @@ function Get-FalconMalQuerySample {
 .Synopsis
 Retrieve Falcon MalQuery indexed file metadata by hash
 .Parameter Ids
-One or more SHA256 hash values
+One or more Sha256 hash values
 .Role
 malquery:read
 #>
@@ -88,7 +88,7 @@ function Group-FalconMalQuerySample {
 .Synopsis
 Schedule samples for download
 .Parameter Samples
-One or more SHA256 hash values
+One or more Sha256 hash values
 .Role
 malquery:write
 #>
@@ -242,7 +242,7 @@ function Receive-FalconMalQuerySample {
 .Synopsis
 Download a sample or sample archive from Falcon MalQuery [password: 'infected']
 .Parameter Id
-SHA256 hash value or MalQuery sample archive identifier
+Sha256 hash value or MalQuery sample archive identifier
 .Parameter Path
 Destination path
 .Role

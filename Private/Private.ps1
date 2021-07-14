@@ -249,6 +249,8 @@ function Invoke-Falcon {
                 Write-Verbose "[Invoke-Falcon] Limit: $Limit"
             }
         }
+        # Regex for URL paths that don't need a secondary 'Detailed' request
+        [regex] $NoDetail = '(/combined/|/rule-groups-full/)'
     }
     process {
         foreach ($Item in (Build-Param @BuildParam)) {
@@ -273,8 +275,7 @@ function Invoke-Falcon {
                         $Pagination.total
                     } else {
                         $Result = Write-Result $Request
-                        if ($Result -and $Item.Detailed -eq $true -and
-                        $Item.Endpoint.Path -notmatch '/combined/') {
+                        if ($Result -and $Item.Detailed -eq $true -and $Item.Endpoint.Path -notmatch $NoDetail) {
                             # Output 'Detailed'
                             & $Command -Ids $Result
                         } elseif ($Result) {
@@ -307,6 +308,10 @@ function Invoke-Loop {
         [object] $Pagination,
         [object] $Item
     )
+    begin {
+        # Regex for URL paths that don't need a secondary 'Detailed' request
+        [regex] $NoDetail = '(/combined/|/rule-groups-full/)'
+    }
     process {
         for ($i = ($Result | Measure-Object).Count; $Pagination.next_page -or $i -lt $Pagination.total;
         $i += ($Result | Measure-Object).Count) {
@@ -341,8 +346,7 @@ function Invoke-Loop {
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
                 $Result = Write-Result $Request
                 Write-Verbose "[Invoke-Loop] $i of $($Pagination.Total)"
-                if ($Result -and $Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch
-                '/combined/') {
+                if ($Result -and $Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                     & $Command -Ids $Result
                 } elseif ($Result) {
                     $Result

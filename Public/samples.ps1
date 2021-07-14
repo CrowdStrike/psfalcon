@@ -3,7 +3,7 @@ function Get-FalconSample {
 .Synopsis
 List accessible malware samples
 .Parameter Ids
-One or more SHA256 hash values
+One or more Sha256 hash values
 .Role
 samplestore:read
 #>
@@ -28,6 +28,92 @@ samplestore:read
                 Body = @{
                     root = @('sha256s')
                 }
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Receive-FalconSample {
+<#
+.Synopsis
+Download a malware sample
+.Parameter Id
+Sha256 hash value
+.Parameter Path
+Destination path
+.Parameter PasswordProtected
+Archive and password protect the sample with password 'infected'
+.Role
+samplestore:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:get')]
+    param(
+        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{64}$')]
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true, Position = 2)]
+        [ValidateScript({
+            if (Test-Path $_) {
+                throw "An item with the specified name $_ already exists."
+            } else {
+                $true
+            }
+        })]
+        [string] $Path,
+
+        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Position = 3)]
+        [boolean] $PasswordProtected
+    )
+    begin {
+        $Fields = @{
+            Id                = 'ids'
+            PasswordProtected = 'password_protected'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Headers  = @{
+                Accept = 'application/octet-stream'
+            }
+            Format   = @{
+                Query   = @('ids', 'password_protected')
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Remove-FalconSample {
+<#
+.Synopsis
+Removes a sample, including file, meta and submissions from the collection
+.Parameter Id
+Sha256 hash value
+.Role
+samplestore:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:delete')]
+    param(
+        [Parameter(ParameterSetName = '/samples/entities/samples/v3:delete', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{64}$')]
+        [string] $Id
+    )
+    begin {
+        $Fields = @{
+            Id = 'ids'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Query = @('ids')
             }
         }
     }
@@ -89,92 +175,6 @@ samplestore:write
                 Body  = @{
                     root = @('body')
                 }
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Receive-FalconSample {
-<#
-.Synopsis
-Download a malware sample
-.Parameter Id
-SHA256 hash value
-.Parameter Path
-Destination path
-.Parameter PasswordProtected
-Archive and password protect the sample with password 'infected'
-.Role
-samplestore:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:get')]
-    param(
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^\w{64}$')]
-        [string] $Id,
-
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true, Position = 2)]
-        [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
-        })]
-        [string] $Path,
-
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Position = 3)]
-        [boolean] $PasswordProtected
-    )
-    begin {
-        $Fields = @{
-            Id                = 'ids'
-            PasswordProtected = 'password_protected'
-        }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
-            Format   = @{
-                Query   = @('ids', 'password_protected')
-                Outfile = 'path'
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Remove-FalconSample {
-<#
-.Synopsis
-Removes a sample, including file, meta and submissions from the collection
-.Parameter Id
-SHA256 hash value
-.Role
-samplestore:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:delete')]
-    param(
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:delete', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^\w{64}$')]
-        [string] $Id
-    )
-    begin {
-        $Fields = @{
-            Id = 'ids'
-        }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
             }
         }
     }

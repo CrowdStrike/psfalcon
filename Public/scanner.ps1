@@ -191,7 +191,7 @@ function New-FalconQuickScan {
 Submit a volume of files to Falcon QuickScan for a Machine-Learning judgement. Time required for analysis
 increases with the number of samples in a volume but usually it should take less than 1 minute.
 .Parameter Samples
-One or more SHA256 hash values
+One or more Sha256 hash values
 .Role
 quick-scan:write
 #>

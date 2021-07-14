@@ -148,6 +148,30 @@
         # processes.ps1
         'Get-FalconProcess',
 
+        # real-time-response.ps1
+        'Confirm-FalconAdminCommand',
+        'Confirm-FalconCommand',
+        'Confirm-FalconGetFile',
+        'Confirm-FalconResponderCommand',
+        'Edit-FalconScript',
+        'Get-FalconPutFile',
+        'Get-FalconScript',
+        'Get-FalconSession',
+        'Invoke-FalconAdminCommand',
+        'Invoke-FalconBatchGet',
+        'Invoke-FalconCommand',
+        'Invoke-FalconResponderCommand',
+        'Receive-FalconGetFile',
+        'Remove-FalconCommand',
+        'Remove-FalconGetFile',
+        'Remove-FalconPutFile',
+        'Remove-FalconScript',
+        'Remove-FalconSession',
+        'Send-FalconPutFile',
+        'Send-FalconScript',
+        'Start-FalconSession',
+        'Update-FalconSession',
+
         # recon.ps1
         'Edit-FalconReconAction',
         'Edit-FalconReconNotification',
@@ -293,14 +317,25 @@ Command Changes
 * Get-FalconFirewallRule
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
 
+* Invoke-FalconCommand, Invoke-FalconResponderCommand, Invoke-FalconAdminCommand
+  Re-organized positioning to place SessionId/BatchId in front
+
+* Invoke-FalconBatchGet
+  Re-organized positioning to place BatchId in front
+
+* Remove-FalconGetFile
+  Renamed 'Ids' parameter to 'Id' to reflect single value requirement
+
+* Remove-FalconSession
+  Renamed 'SessionId' to 'Id'
+
 GitHub Issues
-* Issue #48: Updated 'Invoke-Loop' private function with Measure-Object counting to eliminate endless loop caused
-  when trying to count a single [PSCustomObject].
+* Issue #48: Updated 'Invoke-Loop' private function with a more explicit counting method to eliminate endless
+  loops caused when trying to count a single [PSCustomObject] in PowerShell 5.1.
 
 * Issue #53: Along with 'Request-FalconToken' supporting redirection, it now retries a token request when
-  presented with a HTTP 429 response. This eliminates the 'negative wait time' issue. The 'Wait-RetryAfter'
-  function was also re-written to re-calculate the 'X-Cs-WaitRetryAfter' time which seems to have eliminated
-  the negative wait values.
+  presented with a HTTP 429 or 308 response. The 'Wait-RetryAfter' function was also re-written to re-calculate
+  the 'X-Cs-WaitRetryAfter' time. Both of these changes seem to have eliminated the chance of a negative wait time.
 "@
         }
     }
