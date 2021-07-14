@@ -273,7 +273,7 @@ General Changes
 * All 'public' functions (i.e. commands that users type) have been re-written to use static parameters. Dynamic
   parameters were originally used in an effort to decrease the size of the module, but they required the creation
   of a special '-Help' parameter to show help information. Switching back to static parameters allowed for the
-  removal of '-Help', and eliminates inconsistencies in how parameter information is displayed and increases
+  removal of '-Help', eliminated inconsistencies in how parameter information is displayed and increased
   performance.
 
 * The 'Falcon' prefix has been removed from the module manifest and added directly to the function names. This
