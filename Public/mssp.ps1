@@ -454,7 +454,7 @@ mssp:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconMemberCID {
+function Get-FalconMemberCid {
 <#
 .Synopsis
 Search for child CIDs

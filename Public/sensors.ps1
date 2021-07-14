@@ -1,4 +1,4 @@
-function Get-FalconCCID {
+function Get-FalconCcid {
 <#
 .Synopsis
 Retrieve your customer checksum identifier (CCID)

@@ -1,4 +1,4 @@
-function Get-FalconHorizonIOAEvent {
+function Get-FalconHorizonIoaEvent {
 <#
 .Synopsis
 For CSPM IOA events, gets list of IOA events.
@@ -71,7 +71,7 @@ cspm-registration:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconHorizonIOAUser {
+function Get-FalconHorizonIoaUser {
 <#
 .Synopsis
 For CSPM IOA users, gets list of IOA users.

@@ -1,4 +1,4 @@
-function Edit-FalconIOAGroup {
+function Edit-FalconIoaGroup {
 <#
 .Synopsis
 Modify custom IOA rule groups
@@ -60,7 +60,7 @@ custom-ioa:write
         Invoke-Falcon @Param
     }
 }
-function Edit-FalconIOARule {
+function Edit-FalconIoaRule {
 <#
 .Synopsis
 Modify custom IOA rules within an IOA rule group
@@ -114,7 +114,7 @@ custom-ioa:write
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOAGroup {
+function Get-FalconIoaGroup {
 <#
 .Synopsis
 Search for Custom IOA rule groups
@@ -194,7 +194,7 @@ custom-ioa:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOAPlatform {
+function Get-FalconIoaPlatform {
 <#
 .Synopsis
 List Custom IOA platforms
@@ -249,7 +249,7 @@ custom-ioa:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOARule { 
+function Get-FalconIoaRule { 
 <#
 .Synopsis
 Search for Custom IOA rules
@@ -331,7 +331,7 @@ custom-ioa:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOASeverity {
+function Get-FalconIoaSeverity {
 <#
 .Synopsis
 List Custom IOA severity levels
@@ -386,7 +386,7 @@ custom-ioa:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOAType {
+function Get-FalconIoaType {
 <#
 .Synopsis
 List Custom IOA types
@@ -441,7 +441,7 @@ custom-ioa:read
         Invoke-Falcon @Param
     }
 }
-function New-FalconIOAGroup {
+function New-FalconIoaGroup {
 <#
 .Synopsis
 Create a Custom IOA rule group
@@ -490,7 +490,7 @@ custom-ioa:write
         Invoke-Falcon @Param
     }
 }
-function New-FalconIOARule {
+function New-FalconIoaRule {
 <#
 .Synopsis
 Create a Custom IOA rule within a rule group
@@ -567,7 +567,7 @@ custom-ioa:write
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconIOAGroup {
+function Remove-FalconIoaGroup {
 <#
 .Synopsis
 Remove Custom IOA rule groups
@@ -601,7 +601,7 @@ custom-ioa:write
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconIOARule {
+function Remove-FalconIoaRule {
 <#
 .Synopsis
 Remove Custom IOA rules from rule groups
@@ -643,7 +643,7 @@ custom-ioa:write
         Invoke-Falcon @Param
     }
 }
-function Test-FalconIOARule {
+function Test-FalconIoaRule {
 <#
 .Synopsis
 Validate fields and patterns of a Custom IOA rule

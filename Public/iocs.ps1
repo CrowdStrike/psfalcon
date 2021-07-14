@@ -1,4 +1,4 @@
-function Edit-FalconIOC {
+function Edit-FalconIoc {
 <#
 .Synopsis
 Update custom indicators
@@ -32,7 +32,7 @@ Generate retroactive detections for hosts that have observed the custom indicato
 .Parameter IgnoreWarnings
 Ignore warnings and modify all custom indicators
 .Example
-Edit-FalconIOC -Id <id> -Action 'prevent' -Severity 'high'
+Edit-FalconIoc -Id <id> -Action 'prevent' -Severity 'high'
 .Role
 ioc:write
 #>
@@ -115,7 +115,7 @@ ioc:write
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOC {
+function Get-FalconIoc {
 <#
 .Synopsis
 Search for custom indicators
@@ -136,7 +136,7 @@ Repeat requests until all available results are retrieved
 .Parameter Total
 Display total result count instead of results
 .Example
-Get-FalconIOC -Filter "type:'domain'"
+Get-FalconIoc -Filter "type:'domain'"
 .Role
 ioc:read
 #>
@@ -191,7 +191,7 @@ ioc:read
         Invoke-Falcon @Param
     }
 }
-function New-FalconIOC {
+function New-FalconIoc {
 <#
 .Synopsis
 Create custom indicators
@@ -229,11 +229,11 @@ Generate retroactive detections for hosts that have observed the custom indicato
 .Parameter IgnoreWarnings
 Ignore warnings and create all custom indicators
 .Example
-New-FalconIOC -Array @(@{ type = 'domain'; value = 'example.com'; platforms = @('windows'); action = 'detect';
+New-FalconIoc -Array @(@{ type = 'domain'; value = 'example.com'; platforms = @('windows'); action = 'detect';
 severity = 'low'; applied_globally = $true}, @{ type = 'ipv4'; value = '93.184.216.34'; platforms = @('windows',
 'mac','linux'); action = 'detect'; severity = 'low'; host_groups = @('<id>', '<id>')})
 .Example
-New-FalconIOC -Type domain -Value example.com -Platforms windows -Action detect -Severity low -AppliedGlobally
+New-FalconIoc -Type domain -Value example.com -Platforms windows -Action detect -Severity low -AppliedGlobally
 $true
 .Role
 ioc:write
@@ -327,7 +327,7 @@ ioc:write
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconIOC {
+function Remove-FalconIoc {
 <#
 .Synopsis
 Remove custom indicators

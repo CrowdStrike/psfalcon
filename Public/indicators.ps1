@@ -1,4 +1,4 @@
-function Get-FalconIOCHost {
+function Get-FalconIocHost {
 <#
 .Synopsis
 List hosts that have observed a custom indicator
@@ -51,7 +51,7 @@ iocs:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOCProcess {
+function Get-FalconIocProcess {
 <#
 .Synopsis
 Search for process identifiers on a specific host involving a custom indicator
@@ -124,7 +124,7 @@ iocs:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconIOCTotal {
+function Get-FalconIocTotal {
 <#
 .Synopsis
 Provide a count of the total hosts that have observed a custom indicator
