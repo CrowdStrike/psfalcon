@@ -22,8 +22,14 @@ kubernetes-protection:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json'}
-            Format   = @{;Body = @{resources = @('account_id', 'region')}}
+            Headers  = @{
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Body = @{
+                    resources = @('account_id', 'region')
+                }
+            }
         }
     }
     process {
@@ -49,8 +55,12 @@ kubernetes-protection:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('ids')}
+            Headers  = @{
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('ids')
+            }
         }
     }
     process {
@@ -92,8 +102,12 @@ kubernetes-protection:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('ids', 'offset', 'limit', 'status')}
+            Headers  = @{
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('ids', 'offset', 'limit', 'status')
+            }
         }
     }
     process {
@@ -119,8 +133,13 @@ kubernetes-protection:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/yaml';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('cluster_name')}
+            Headers  = @{
+                Accept = 'application/yaml'
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('cluster_name')
+            }
         }
     }
     process {
@@ -172,8 +191,12 @@ kubernetes-protection:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('limit', 'cluster_names', 'account_ids', 'offset', 'cluster_service', 'locations')}
+            Headers  = @{
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('limit', 'cluster_names', 'account_ids', 'offset', 'cluster_service', 'locations')
+            }
         }
     }
     process {
@@ -205,8 +228,12 @@ kubernetes-protection:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('ids', 'region')}
+            Headers  = @{
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('ids', 'region')
+            }
         }
     }
     process {
@@ -233,8 +260,12 @@ kubernetes-protection:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('scan_type')}
+            Headers  = @{
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('scan_type')
+            }
         }
     }
     process {
@@ -258,8 +289,12 @@ kubernetes-protection:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('scan_type')}
+            Headers  = @{
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('scan_type')
+            }
         }
     }
     process {
@@ -286,8 +321,12 @@ kubernetes-protection:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json application/octet-stream'}
-            Format   = @{Query = @('clouds')}
+            Headers  = @{
+                ContentType = 'application/json application/octet-stream'
+            }
+            Format   = @{
+                Query = @('clouds')
+            }
         }
     }
     process {

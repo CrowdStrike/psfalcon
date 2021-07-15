@@ -2,21 +2,24 @@ function Get-FalconSettings {
 <#
 .Synopsis
 Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts
-
 .Role
 cloud-connect-aws:read
 #>
     [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-    
-    )
+    param()
     begin {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json'}
-            Format   = @{;Body = @{root = @('device_id', 'session_id', 'base_command', 'command_string', 'id', 'persist')}}
+            Headers  = @{
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Body = @{
+                    root = @('device_id', 'session_id', 'base_command', 'command_string', 'id', 'persist')
+                }
+            }
         }
     }
     process {
@@ -78,8 +81,16 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json'}
-            Format   = @{Query = @('mode');Body = @{resources = @('rate_limit_time', 'external_id', 'rate_limit_reqs', 'cloudtrail_bucket_region', 'iam_role_arn', 'id', 'cloudtrail_bucket_owner_id')}}
+            Headers  = @{
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('mode')
+                Body  = @{
+                    resources = @('rate_limit_time', 'external_id', 'rate_limit_reqs', 'cloudtrail_bucket_region',
+                        'iam_role_arn', 'id', 'cloudtrail_bucket_owner_id')
+                }
+            }
         }
     }
     process {
@@ -97,7 +108,8 @@ cloud-connect-aws:write
 #>
     [CmdletBinding(DefaultParameterSetName = '')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-aws/entities/verify-account-access/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/entities/verify-account-access/v1:post',
+            Mandatory = $true)]
         [array] $Ids
     )
     begin {
@@ -105,8 +117,12 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json'}
-            Format   = @{Query = @('ids')}
+            Headers  = @{
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('ids')
+            }
         }
     }
     process {
@@ -132,8 +148,12 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json'}
-            Format   = @{Query = @('ids')}
+            Headers  = @{
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Query = @('ids')
+            }
         }
     }
     process {
@@ -188,8 +208,9 @@ cloud-connect-aws:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{}
-            Format   = @{Query = @('sort', 'ids', 'offset', 'limit', 'filter')}
+            Format   = @{
+                Query = @('sort', 'ids', 'offset', 'limit', 'filter')
+            }
         }
     }
     process {
@@ -245,8 +266,15 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json'}
-            Format   = @{;Body = @{resources = @('rate_limit_time', 'external_id', 'rate_limit_reqs', 'cloudtrail_bucket_region', 'iam_role_arn', 'id', 'cloudtrail_bucket_owner_id')}}
+            Headers  = @{
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Body = @{
+                    resources = @('rate_limit_time', 'external_id', 'rate_limit_reqs', 'cloudtrail_bucket_region',
+                        'iam_role_arn', 'id', 'cloudtrail_bucket_owner_id')
+                }
+            }
         }
     }
     process {
@@ -277,8 +305,14 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{Accept = 'application/json';ContentType = 'application/json'}
-            Format   = @{;Body = @{resources = @('cloudtrail_bucket_owner_id', 'static_external_id')}}
+            Headers  = @{
+                ContentType = 'application/json'
+            }
+            Format   = @{
+                Body = @{
+                    resources = @('cloudtrail_bucket_owner_id', 'static_external_id')
+                }
+            }
         }
     }
     process {

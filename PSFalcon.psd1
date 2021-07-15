@@ -12,9 +12,22 @@
     RequiredAssemblies   = @('System.Net.Http')
     ScriptsToProcess     = @('Class/Class.ps1')
     FunctionsToExport    = @(
+        # cspm-registration.ps1
+        'Get-FalconHorizonIoaEvent',
+        'Get-FalconHorizonIoaUser',
+
         # detects.ps1
         'Edit-FalconDetection',
         'Get-FalconDetection',
+
+        # device-control-policies.ps1
+        'Edit-FalconDeviceControlPolicy',
+        'Get-FalconDeviceControlPolicy',
+        'Get-FalconDeviceControlPolicyMember',
+        'Invoke-FalconDeviceControlPolicyAction',
+        'New-FalconDeviceControlPolicy',
+        'Remove-FalconDeviceControlPolicy',
+        'Set-FalconDeviceControlPrecedence',
 
         # devices.ps1
         'Add-FalconHostTag',
@@ -27,27 +40,7 @@
         'Remove-FalconHostGroup',
         'Remove-FalconHostTag',
 
-        # falconx.ps1
-        'Get-FalconReport',
-        'Get-FalconSubmission',
-        'Get-FalconSubmissionQuota',
-        'New-FalconSubmission',
-        'Receive-FalconArtifact',
-        'Remove-FalconReport',
-
-        # fwmgr.ps1
-        'Edit-FalconFirewallGroup',
-        'Edit-FalconFirewallSetting',
-        'Get-FalconFirewallEvent',
-        'Get-FalconFirewallField',
-        'Get-FalconFirewallGroup',
-        'Get-FalconFirewallPlatform',
-        'Get-FalconFirewallRule',
-        'Get-FalconFirewallSetting',
-        'New-FalconFirewallGroup',
-        'Remove-FalconFirewallGroup',
-
-        # falcon-complete-dashboards.ps1
+        # falconcomplete-dashboards.ps1
         'Get-FalconCompleteAllowlist',
         'Get-FalconCompleteBlocklist',
         'Get-FalconCompleteCollection',
@@ -56,13 +49,54 @@
         'Get-FalconCompleteIncident',
         'Get-FalconCompleteRemediation',
 
+         # falconx-actors.ps1
+         'Get-FalconActor',
+
+         # falconx-indicators.ps1
+         'Get-FalconIndicator',
+
+         # falconx-reports.ps1
+         'Get-FalconIntel',
+         'Receive-FalconIntel',
+
+         # falconx-rules.ps1
+         'Get-FalconRule',
+         'Receive-FalconRule',
+
+        # falconx-sandbox.ps1
+        'Get-FalconReport',
+        'Get-FalconSubmission',
+        'Get-FalconSubmissionQuota',
+        'New-FalconSubmission',
+        'Receive-FalconArtifact',
+        'Remove-FalconReport',
+
+        # firewall-management.ps1
+        'Edit-FalconFirewallGroup',
+        'Edit-FalconFirewallPolicy',
+        'Edit-FalconFirewallSetting',
+        'Get-FalconFirewallEvent',
+        'Get-FalconFirewallField',
+        'Get-FalconFirewallGroup',
+        'Get-FalconFirewallPlatform',
+        'Get-FalconFirewallPolicy',
+        'Get-FalconFirewallPolicyMember',
+        'Get-FalconFirewallRule',
+        'Get-FalconFirewallSetting',
+        'Invoke-FalconFirewallPolicyAction',
+        'New-FalconFirewallGroup',
+        'New-FalconFirewallPolicy',
+        'Remove-FalconFirewallGroup',
+        'Remove-FalconFirewallPolicy',
+        'Set-FalconFirewallPrecedence',
+
         # incidents.ps1
         'Get-FalconBehavior',
         'Get-FalconIncident',
         'Get-FalconScore',
         'Invoke-FalconIncidentAction',
 
-        # indicators.ps1
+        # iocs.ps1
         'Get-FalconIocHost',
         'Get-FalconIocProcess',
         'Get-FalconIocTotal',
@@ -74,18 +108,6 @@
         'Get-FalconInstallTokenSettings',
         'New-FalconInstallToken',
         'Remove-FalconInstallToken',
-
-        # intel.ps1
-        'Get-FalconActor',
-        'Get-FalconIndicator',
-        'Get-FalconIntel',
-        'Get-FalconRule',
-        'Receive-FalconIntel',
-        'Receive-FalconRule',
-
-        # ioa.ps1
-        'Get-FalconHorizonIoaEvent',
-        'Get-FalconHorizonIoaUser',
 
         # ioarules.ps1
         'Edit-FalconIoaGroup',
@@ -144,24 +166,6 @@
         'Get-FalconOverWatchEvent',
         'Get-FalconOverWatchDetection',
         'Get-FalconOverWatchIncident',
-
-        # device-control.ps1
-        'Edit-FalconDeviceControlPolicy',
-        'Get-FalconDeviceControlPolicy',
-        'Get-FalconDeviceControlPolicyMember',
-        'Invoke-FalconDeviceControlPolicyAction',
-        'New-FalconDeviceControlPolicy',
-        'Remove-FalconDeviceControlPolicy',
-        'Set-FalconDeviceControlPrecedence',
-
-        # firewall.ps1
-        'Edit-FalconFirewallPolicy',
-        'Get-FalconFirewallPolicy',
-        'Get-FalconFirewallPolicyMember',
-        'Invoke-FalconFirewallPolicyAction',
-        'New-FalconFirewallPolicy',
-        'Remove-FalconFirewallPolicy',
-        'Set-FalconFirewallPrecedence',
 
         # exclusions.ps1
         'Edit-FalconIoaExclusion',

@@ -201,43 +201,55 @@ device-control-policies:read
 function Invoke-FalconDeviceControlPolicyAction {
 <#
 .Synopsis
-Perform the specified action on the Device Control Policies specified in the request
-.Parameter Ids
-One or more XXX identifiers
-.Parameter ActionName
-
+Perform the specified action on Device Control Policies
 .Parameter Name
-
-.Parameter Value
-
+Action to perform
+.Parameter Id
+Device Control policy identifier
+.Parameter GroupId
+Host group identifier
 .Role
 device-control-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Mandatory = $true)]
-        [array] $Ids,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Mandatory = $true,
+            Position = 1)]
         [ValidateSet('add-host-group', 'disable', 'enable', 'remove-host-group')]
-        [string] $ActionName,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Mandatory = $true)]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Mandatory = $true)]
-        [string] $Value
+        [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Position = 3)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $GroupId
     )
     begin {
+        $Fields = @{
+            name = 'action_name'
+        }
+        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+        [void] $PSBoundParameters.Remove('Id')
+        if ($PSBoundParameters.GroupId) {
+            $Action = @{
+                name  = 'group_id'
+                value = @( $PSBoundParameters.GroupId )
+            }
+            $PSBoundParameters.Add('action_parameters', $Action)
+            [void] $PSBoundParameters.Remove('GroupId')
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body = @{
-                    root              = @('ids')
+                Body  = @{
                     action_parameters = @('name', 'value')
+                    root              = @('ids')
                 }
             }
         }
@@ -249,118 +261,53 @@ device-control-policies:write
 function New-FalconDeviceControlPolicy {
 <#
 .Synopsis
-Create Device Control Policies by specifying details about the policy to create
-.Parameter VendorName
-
-.Parameter Name
-
-.Parameter Class
-
-.Parameter Id
-XXX identifier
-.Parameter ProductId
-
-.Parameter EnforcementMode
-
-.Parameter ProductIdDecimal
-
-.Parameter Description
-
-.Parameter SerialNumber
-
-.Parameter EndUserNotification
-
-.Parameter VendorIdDecimal
-
-.Parameter CombinedId
-
-.Parameter CloneId
-
-.Parameter Action
-
-.Parameter ProductName
-
-.Parameter VendorId
-
+Create Device Control policies
+.Parameter Array
+An array of Device Control policies to create in a single request
 .Parameter PlatformName
-
-.Parameter MatchMethod
-
+Operating System platform
+.Parameter Name
+Device Control policy name
+.Parameter Settings
+A hashtable of Device Control policy settings
+.Parameter CloneId
+Clone an existing Device Control policy
 .Role
 device-control-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $VendorName,
+        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $Name,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $Class,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $Id,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $ProductId,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $EnforcementMode,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $ProductIdDecimal,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post')]
-        [string] $Description,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $SerialNumber,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [ValidateSet('TRUE', 'FALSE')]
-        [string] $EndUserNotification,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $VendorIdDecimal,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $CombinedId,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post')]
-        [string] $CloneId,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [ValidateSet('FULL_ACCESS', 'FULL_BLOCK', 'READ_ONLY')]
-        [string] $Action,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $ProductName,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $VendorId,
-
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true, Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true)]
-        [string] $MatchMethod
+        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true, Position = 2)]
+        [string] $Name,
+
+        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Position = 3)]
+        [array] $Settings,
+
+        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Position = 4)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $CloneId
     )
     begin {
+        $Fields = @{
+            Array        = 'resources'
+            CloneId      = 'clone_id'
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    exceptions = @('vendor_name', 'class', 'id', 'product_id', 'product_id_decimal',
-                        'serial_number', 'vendor_id_decimal', 'combined_id', 'product_name', 'vendor_id',
-                        'match_method')
-                    resources = @('name', 'description', 'clone_id', 'platform_name')
-                    settings = @('enforcement_mode', 'end_user_notification')
-                    classes = @('action')
+                    root      = @('resources')
+                    resources = @('name', 'description', 'clone_id', 'platform_name', 'settings')
                 }
             }
         }
@@ -372,15 +319,17 @@ device-control-policies:write
 function Remove-FalconDeviceControlPolicy {
 <#
 .Synopsis
-Delete a set of Device Control Policies by specifying their IDs
+Remove Device Control policies
 .Parameter Ids
-One or more XXX identifiers
+One or more Device Control policy identifiers
 .Role
 device-control-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:delete', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
@@ -400,21 +349,24 @@ device-control-policies:write
 function Set-FalconDeviceControlPrecedence {
 <#
 .Synopsis
-Sets the precedence of Device Control Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
+Set Device Control policy precedence
 .Parameter PlatformName
-
+Operating System platform
 .Parameter Ids
-One or more XXX identifiers
+All Device Control policy identifiers in desired precedence order
 .Role
 device-control-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control-precedence/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/device-control-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/device-control-precedence/v1:post', Mandatory = $true,
+            Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/device-control-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/device-control-precedence/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
