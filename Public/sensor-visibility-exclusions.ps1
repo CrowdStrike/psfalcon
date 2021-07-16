@@ -7,7 +7,7 @@ Sensor Visibility exclusion identifier
 .Parameter Value
 RegEx pattern value
 .Parameter GroupIds
-One or more Host Group identifiers, or 'all' for all Host Groups
+Host group identifier(s) or 'all'
 .Parameter Comment
 Audit log comment
 .Role
@@ -53,7 +53,7 @@ function Get-FalconSvExclusion {
 .Synopsis
 Search for Sensor Visibility exclusions
 .Parameter Ids
-One or more Sensor Visibility exclusion identifiers
+Sensor Visibility exclusion identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -120,31 +120,35 @@ function New-FalconSvExclusion {
 <#
 .Synopsis
 Create the sensor visibility exclusions
-.Parameter Groups
-
 .Parameter Value
-
+RegEx pattern value
+.Parameter GroupIds
+Host group identifier(s) or 'all'
 .Parameter Comment
 Audit log comment
 .Role
 sensor-visibility-exclusions:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post')]
-        [array] $Groups,
-
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post')]
+        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post', Mandatory = $true, Position = 1)]
         [string] $Value,
 
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post')]
+        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post', Mandatory = $true, Position = 2)]
+        [ValidatePattern('^(\w{32}|all)$')]
+        [array] $GroupIds,
+
+        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post', Position = 3)]
         [string] $Comment
     )
     begin {
+        $Fields = @{
+            GroupIds = 'groups'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('groups', 'value', 'comment')
@@ -159,20 +163,20 @@ sensor-visibility-exclusions:write
 function Remove-FalconSvExclusion {
 <#
 .Synopsis
-Delete the sensor visibility exclusions by id
+Delete Sensor Visibility exclusions
 .Parameter Ids
-One or more XXX identifiers
+Sensor Visibility exclusion identifier(s)
 .Parameter Comment
 Audit log comment
 .Role
 sensor-visibility-exclusions:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete', Mandatory = $true, Position = 1)]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete')]
+        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete', Position = 2)]
         [string] $Comment
     )
     begin {
@@ -180,7 +184,9 @@ sensor-visibility-exclusions:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{Query = @('ids', 'comment')}
+            Format   = @{
+                Query = @('ids', 'comment')
+            }
         }
     }
     process {

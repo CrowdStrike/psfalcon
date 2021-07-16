@@ -240,7 +240,7 @@ ioc:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:post')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Mandatory = $true, Position = 1)]
@@ -287,15 +287,15 @@ ioc:write
         [string] $Expiration,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Position = 13)]
-        [Parameter(ParameterSetName = 'create_array', Position = 2)]
+        [Parameter(ParameterSetName = 'array', Position = 2)]
         [string] $Comment,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Position = 14)]
-        [Parameter(ParameterSetName = 'create_array', Position = 3)]
+        [Parameter(ParameterSetName = 'array', Position = 3)]
         [boolean] $Retrodetects,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Position = 15)]
-        [Parameter(ParameterSetName = 'create_array', Position = 4)]
+        [Parameter(ParameterSetName = 'array', Position = 4)]
         [boolean] $IgnoreWarnings
     )
     begin {

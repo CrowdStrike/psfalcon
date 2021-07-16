@@ -143,7 +143,7 @@ function Get-FalconSession {
 .Synopsis
 Search for Real-time Response sessions
 .Parameter Ids
-One or more Real-time Response session identifiers
+Real-time Response session identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -228,7 +228,7 @@ Batch Real-time Response session identifier
 .Parameter FilePath
 Path to file on target Host(s)
 .Parameter OptionalHostIds
-Restrict execution to specific Host identifiers
+Restrict execution to specific Host identifier(s)
 .Parameter Timeout
 Length of time to wait for a result, in seconds
 .Role
@@ -288,7 +288,7 @@ Real-time Response command
 .Parameter Arguments
 Arguments to include with the command
 .Parameter OptionalHostIds
-Restrict execution to specific Host identifiers
+Restrict execution to specific Host identifier(s)
 .Parameter Timeout
 Length of time to wait for a result, in seconds
 .Role
@@ -369,7 +369,7 @@ Real-time Response command
 .Parameter Arguments
 Arguments to include with the command
 .Parameter OptionalHostIds
-Restrict execution to specific Host identifiers
+Restrict execution to specific Host identifier(s)
 .Parameter Timeout
 Length of time to wait for a result, in seconds
 .Role
@@ -624,7 +624,7 @@ Initialize a single-host or batch Real-time Response session
 .Parameter HostId
 Host identifier
 .Parameter HostIds
-One or more host identifiers
+Host identifiers
 .Parameter Timeout
 Length of time to wait for a result, in seconds
 .Parameter ExistingBatchId
@@ -696,7 +696,7 @@ Real-time Response batch session identifier
 .Parameter Timeout
 Length of time to wait for a result, in seconds
 .Parameter HostsToRemove
-Host identifiers to remove from the batch Real-time Response session
+Host identifier(s) to remove from the batch Real-time Response session
 .Parameter QueueOffline
 Add non-responsive hosts to the offline queue
 .Role

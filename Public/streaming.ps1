@@ -1,11 +1,11 @@
 function Get-FalconStream {
 <#
 .Synopsis
-List event streams in your environment
+List event streams
 .Parameter Format
 Format for streaming events [default: json]
 .Parameter Appid
-Label that identifies the connection
+Connection label
 .Role
 streaming:read
 #>
@@ -23,9 +23,6 @@ streaming:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('format', 'appId')
             }
@@ -40,9 +37,9 @@ function Update-FalconStream {
 .Synopsis
 Refresh an active event stream
 .Parameter Appid
-Label that identifies the connection
+Connection label
 .Parameter Partition
-Partition number to refresh
+Partition number
 .Role
 streaming:read
 #>
@@ -65,9 +62,6 @@ streaming:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $Endpoint
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('action_name', 'appId')
             }

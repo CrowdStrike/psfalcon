@@ -1,15 +1,15 @@
 function Request-FalconToken {
 <#
 .Synopsis
-    Request an OAuth2 access token
+Request an OAuth2 access token
 .Parameter ClientId
-    OAuth2 Client Identifier
+OAuth2 Client Identifier
 .Parameter ClientSecret
-    OAuth2 Client Secret
+OAuth2 Client Secret
 .Parameter Hostname
-    CrowdStrike destination hostname [default: 'https://api.crowdstrike.com']
+CrowdStrike destination hostname [default: 'https://api.crowdstrike.com']
 .Parameter MemberCid
-    Member CID, required when authenticating with a child within a parent/child CID environment
+Member CID, required when authenticating with a child within a parent/child CID environment
 #>
     [CmdletBinding(DefaultParameterSetName = '/oauth2/token:post')]
     param(
@@ -116,7 +116,7 @@ function Request-FalconToken {
 function Revoke-FalconToken {
 <#
 .Synopsis
-    Revoke your active OAuth2 token and clear cached credentials
+Revoke your active OAuth2 token and clear cached credentials
 #>
     [CmdletBinding(DefaultParameterSetName = '/oauth2/revoke:post')]
     param()
@@ -144,7 +144,7 @@ function Revoke-FalconToken {
 function Test-FalconToken {
 <#
 .Synopsis
-    Display current authorization token information
+Display cached authorization token information
 #>
     [CmdletBinding()]
     param()

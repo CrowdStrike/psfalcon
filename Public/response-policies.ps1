@@ -17,7 +17,7 @@ response-policies:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:patch')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/response/v1:patch', Mandatory = $true, Position = 1)]
@@ -39,7 +39,7 @@ response-policies:write
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
+            Endpoint = '/policy/entities/response/v1:patch'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
@@ -58,7 +58,7 @@ function Get-FalconResponsePolicy {
 .Synopsis
 Search for Response policies
 .Parameter Ids
-One or more Response policy identifiers
+Response policy identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -201,43 +201,54 @@ response-policies:read
 function Invoke-FalconResponsePolicyAction {
 <#
 .Synopsis
-Perform the specified action on the Response Policies specified in the request
-.Parameter Ids
-One or more XXX identifiers
-.Parameter ActionName
-
+Perform actions on Response policies
 .Parameter Name
-
-.Parameter Value
-
+Action to perform
+.Parameter Id
+Response policy identifier
+.Parameter GroupId
+Host group identifier
 .Role
 response-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/response-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Mandatory = $true)]
-        [array] $Ids,
-
-        [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Mandatory = $true)]
-        [ValidateSet('add-host-group', 'add-rule-group', 'disable', 'enable', 'remove-host-group', 'remove-rule-group')]
-        [string] $ActionName,
-
-        [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Mandatory = $true,
+            Position = 1)]
+        [ValidateSet('add-host-group', 'disable', 'enable', 'remove-host-group')]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Mandatory = $true)]
-        [string] $Value
+        [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Position = 3)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $GroupId
     )
     begin {
+        $Fields = @{
+            name = 'action_name'
+        }
+        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+        [void] $PSBoundParameters.Remove('Id')
+        if ($PSBoundParameters.GroupId) {
+            $Action = @{
+                name  = 'group_id'
+                value = @( $PSBoundParameters.GroupId )
+            }
+            $PSBoundParameters.Add('action_parameters', $Action)
+            [void] $PSBoundParameters.Remove('GroupId')
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body = @{
-                    root = @('ids')
-                    action_parameters = @('name', 'value')
+                Body  = @{
+                    root = @('ids', 'action_parameters')
                 }
             }
         }
@@ -249,52 +260,58 @@ response-policies:write
 function New-FalconResponsePolicy {
 <#
 .Synopsis
-Create Response Policies by specifying details about the policy to create
-.Parameter Description
-
-.Parameter CloneId
-
+Create Response policies
+.Parameter Array
+An array of Response policies to create in a single request
 .Parameter PlatformName
-
+Operating System platform
 .Parameter Name
-
-.Parameter Id
-XXX identifier
-.Parameter Value
-
+Response policy name
+.Parameter Settings
+An array of Response policy settings
+.Parameter Description
+Sensor Update policy description
+.Parameter CloneId
+Clone an existing Response policy
 .Role
 response-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/response/v1:post')]
-        [string] $Description,
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v1:post')]
-        [string] $CloneId,
-
-        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Mandatory = $true, Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Mandatory = $true, Position = 2)]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Mandatory = $true)]
-        [string] $Id,
+        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Position = 3)]
+        [array] $Settings,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Mandatory = $true)]
-        [object] $Value
+        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Position = 4)]
+        [string] $Description,
+
+        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Position = 5)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $CloneId
     )
     begin {
+        $Fields = @{
+            Array        = 'resources'
+            CloneId      = 'clone_id'
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Endpoint = '/policy/entities/response/v2:post'
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    resources = @('description', 'clone_id', 'platform_name', 'name')
-                    settings = @('id', 'value')
+                    resources = @('description', 'clone_id', 'platform_name', 'name', 'settings')
+                    root      = @('resources')
                 }
             }
         }
@@ -306,15 +323,16 @@ response-policies:write
 function Remove-FalconResponsePolicy {
 <#
 .Synopsis
-Delete a set of Response Policies by specifying their IDs
+Delete Response policies
 .Parameter Ids
-One or more XXX identifiers
+Response policy identifier(s)
 .Role
 response-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/response/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/response/v1:delete', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
@@ -334,28 +352,34 @@ response-policies:write
 function Set-FalconResponsePrecedence {
 <#
 .Synopsis
-Sets the precedence of Response Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
+Set Response policy precedence
 .Parameter PlatformName
-
+Operating System platform
 .Parameter Ids
-One or more XXX identifiers
+All Response policy identifiers in desired precedence order
 .Role
 response-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/response-precedence/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/response-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/response-precedence/v1:post', Mandatory = $true,
+            Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/response-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/response-precedence/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
+        $Fields = @{
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('platform_name', 'ids')

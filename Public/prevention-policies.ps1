@@ -17,7 +17,7 @@ prevention-policies:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention/v1:patch')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/prevention/v1:patch', Mandatory = $true, Position = 1)]
@@ -39,7 +39,7 @@ prevention-policies:write
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
+            Endpoint = '/policy/entities/prevention/v1:patch'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
@@ -58,7 +58,7 @@ function Get-FalconPreventionPolicy {
 .Synopsis
 Search for Prevention policies
 .Parameter Ids
-One or more Prevention policy identifiers
+Prevention policy identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -201,43 +201,55 @@ prevention-policies:read
 function Invoke-FalconPreventionPolicyAction {
 <#
 .Synopsis
-Perform the specified action on the Prevention Policies specified in the request
-.Parameter Ids
-One or more XXX identifiers
-.Parameter ActionName
-
+Perform actions on Prevention policies
 .Parameter Name
-
-.Parameter Value
-
+Action to perform
+.Parameter Id
+Prevention policy identifier
+.Parameter GroupId
+Host group identifier
 .Role
 prevention-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Mandatory = $true)]
-        [array] $Ids,
-
-        [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Mandatory = $true)]
-        [ValidateSet('add-host-group', 'add-rule-group', 'disable', 'enable', 'remove-host-group', 'remove-rule-group')]
-        [string] $ActionName,
-
-        [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Mandatory = $true,
+            Position = 1)]
+        [ValidateSet('add-host-group', 'add-rule-group', 'disable', 'enable', 'remove-host-group',
+            'remove-rule-group')]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Mandatory = $true)]
-        [string] $Value
+        [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Position = 3)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $GroupId
     )
     begin {
+        $Fields = @{
+            name = 'action_name'
+        }
+        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+        [void] $PSBoundParameters.Remove('Id')
+        if ($PSBoundParameters.GroupId) {
+            $Action = @{
+                name  = 'group_id'
+                value = @( $PSBoundParameters.GroupId )
+            }
+            $PSBoundParameters.Add('action_parameters', $Action)
+            [void] $PSBoundParameters.Remove('GroupId')
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body = @{
-                    root = @('ids')
-                    action_parameters = @('name', 'value')
+                Body  = @{
+                    root = @('ids', 'action_parameters')
                 }
             }
         }
@@ -249,52 +261,58 @@ prevention-policies:write
 function New-FalconPreventionPolicy {
 <#
 .Synopsis
-Create Prevention Policies by specifying details about the policy to create
-.Parameter Description
-
-.Parameter CloneId
-
+Create Prevention policies
+.Parameter Array
+An array of Prevention policies to create in a single request
 .Parameter PlatformName
-
+Operating System platform
 .Parameter Name
-
-.Parameter Id
-XXX identifier
-.Parameter Value
-
+Prevention policy name
+.Parameter Settings
+An array of Prevention policy settings
+.Parameter Description
+Sensor Update policy description
+.Parameter CloneId
+Clone an existing Prevention policy
 .Role
 prevention-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post')]
-        [string] $Description,
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post')]
-        [string] $CloneId,
-
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Mandatory = $true, Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Mandatory = $true, Position = 2)]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true)]
-        [string] $Id,
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Position = 3)]
+        [array] $Settings,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true)]
-        [object] $Value
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Position = 4)]
+        [string] $Description,
+
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Position = 5)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $CloneId
     )
     begin {
+        $Fields = @{
+            Array        = 'resources'
+            CloneId      = 'clone_id'
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Endpoint = '/policy/entities/prevention/v1:post'
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    resources = @('description', 'clone_id', 'platform_name', 'name')
-                    settings = @('id', 'value')
+                    resources = @('description', 'clone_id', 'platform_name', 'name', 'settings')
+                    root      = @('resources')
                 }
             }
         }
@@ -306,15 +324,16 @@ prevention-policies:write
 function Remove-FalconPreventionPolicy {
 <#
 .Synopsis
-Delete a set of Prevention Policies by specifying their IDs
+Delete Prevention policies
 .Parameter Ids
-One or more XXX identifiers
+Prevention policy identifier(s)
 .Role
 prevention-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:delete', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
@@ -334,28 +353,34 @@ prevention-policies:write
 function Set-FalconPreventionPrecedence {
 <#
 .Synopsis
-Sets the precedence of Prevention Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
+Set Prevention policy precedence
 .Parameter PlatformName
-
+Operating System platform
 .Parameter Ids
-One or more XXX identifiers
+All Prevention policy identifiers in desired precedence order
 .Role
 prevention-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention-precedence/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/prevention-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention-precedence/v1:post', Mandatory = $true,
+            Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention-precedence/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
+        $Fields = @{
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('platform_name', 'ids')

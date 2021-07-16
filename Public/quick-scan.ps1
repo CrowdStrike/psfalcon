@@ -3,7 +3,7 @@ function Get-FalconQuickScan {
 .Synopsis
 Search for QuickScan results
 .Parameter Ids
-One or more QuickScan identifiers
+QuickScan identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -63,101 +63,6 @@ quick-scan:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconQuickScanAggregate {
-<#
-.Synopsis
-Get scans aggregations as specified via json in request body.
-.Parameter Type
-
-.Parameter From
-
-.Parameter TimeZone
-
-.Parameter Name
-
-.Parameter Q
-Perform a generic substring search across available fields
-.Parameter MinDocCount
-
-.Parameter Interval
-
-.Parameter Field
-
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Size
-
-.Parameter To
-
-.Parameter Sort
-Property and direction to sort results
-.Parameter Missing
-
-.Role
-quick-scan:read quick-scan:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Type,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $From,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $TimeZone,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Name,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Q,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [int64] $MinDocCount,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Interval,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Field,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Filter,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [int32] $Size,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $To,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Sort,
-
-        [Parameter(ParameterSetName = '/scanner/aggregates/scans/GET/v1:post', Mandatory = $true)]
-        [string] $Missing
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
-            Format   = @{
-                Body = @{
-                    root = @('type', 'time_zone', 'name', 'q', 'min_doc_count', 'interval', 'field', 'filter',
-                        'size', 'sort', 'missing')
-                    date_ranges = @('from', 'to')
-                }
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
 function Get-FalconQuickScanQuota {
 <#
 .Synopsis
@@ -191,7 +96,7 @@ function New-FalconQuickScan {
 Submit a volume of files to Falcon QuickScan for a Machine-Learning judgement. Time required for analysis
 increases with the number of samples in a volume but usually it should take less than 1 minute.
 .Parameter Samples
-One or more Sha256 hash values
+Sha256 hash value(s)
 .Role
 quick-scan:write
 #>

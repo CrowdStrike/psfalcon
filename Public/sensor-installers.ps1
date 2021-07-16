@@ -5,25 +5,18 @@ Retrieve your customer checksum identifier (CCID)
 .Role
 sensor-installers:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '/sensors/queries/installers/ccid/v1:get')]
+    [CmdletBinding()]
     param()
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-        }
-    }
     process {
-        Invoke-Falcon @Param
+        Invoke-Falcon -Endpoint '/sensors/queries/installers/ccid/v1:get'
     }
 }
 function Get-FalconInstaller {
 <#
 .Synopsis
-Search for Falcon sensor installers
+Search for Falcon Sensor installers
 .Parameter Ids
-One or more sensor installer identifiers
+Sensor installer Sha256 hash value(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -91,9 +84,9 @@ sensor-installers:read
 function Receive-FalconInstaller {
 <#
 .Synopsis
-Download sensor installer by Sha256 ID
+Download a Sensor installer
 .Parameter Id
-Sensor installer identifier
+Sensor installer Sha256 hash value
 .Parameter Path
 Destination path
 .Role
@@ -123,8 +116,7 @@ sensor-installers:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept      = 'application/octet-stream'
-                ContentType = 'application/json'
+                Accept = 'application/octet-stream'
             }
             Format   = @{
                 Query = @('id')

@@ -3,7 +3,7 @@ function Get-FalconBehavior {
 .Synopsis
 Search for behaviors
 .Parameter Ids
-One or more behavior identifiers
+Behavior identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -56,9 +56,6 @@ incidents:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
                 Body  = @{
@@ -76,7 +73,7 @@ function Get-FalconIncident {
 .Synopsis
 Search for incidents
 .Parameter Ids
-One or more incident identifiers
+Incident identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -132,9 +129,6 @@ incidents:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
                 Body  = @{
@@ -193,9 +187,6 @@ incidents:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
@@ -208,14 +199,13 @@ incidents:read
 function Invoke-FalconIncidentAction {
 <#
 .Synopsis
-Perform a set of actions on one or more incidents, such as adding tags or comments or updating the incident
-name or description
+Perform actions on incidents
 .Parameter Name
 Action to perform
 .Parameter Value
 Value for the chosen action
 .Parameter Ids
-One or more incident identifiers
+Incident identifier(s)
 .Parameter UpdateDetects
 Update status of related 'new' detections
 .Parameter OverwriteDetects
@@ -267,7 +257,9 @@ incidents:write
         }
     }
     process {
-        if ($Param.Inputs.Name -eq 'update_status' -and $Param.Inputs.Value -match
+        if ($Param.Inputs.Name -ne 'update_status') {
+            Invoke-Falcon @Param
+        } elseif ($Param.Inputs.Name -eq 'update_status' -and $Param.Inputs.Value -match 
         '^(closed|in_progress|new|reopened)$') {
             $Param.Inputs.Value = switch ($Param.Inputs.Value) {
                 'new'         { '20' }

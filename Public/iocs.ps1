@@ -1,7 +1,7 @@
 function Get-FalconIocHost {
 <#
 .Synopsis
-List hosts that have observed a custom indicator
+List identifiers for Host(s) that have observed a custom indicator
 .Parameter Type
 Custom indicator type
 .Parameter Value
@@ -39,9 +39,6 @@ iocs:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('type', 'offset', 'limit', 'value')
             }
@@ -54,9 +51,9 @@ iocs:read
 function Get-FalconIocProcess {
 <#
 .Synopsis
-Search for process identifiers on a specific host involving a custom indicator
+Search for process identifiers on a specific Host involving a custom indicator
 .Parameter Ids
-One or more process identifiers
+Process identifier(s)
 .Parameter Type
 Custom indicator type
 .Parameter Value
@@ -112,9 +109,6 @@ iocs:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids', 'device_id', 'offset', 'type', 'value', 'limit')
             }
@@ -127,7 +121,7 @@ iocs:read
 function Get-FalconIocTotal {
 <#
 .Synopsis
-Provide a count of the total hosts that have observed a custom indicator
+Provide a count of the total Host(s) that have observed a custom indicator
 .Parameter Type
 Custom indicator type
 .Parameter Value
@@ -151,9 +145,6 @@ iocs:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('type', 'value')
             }
@@ -166,9 +157,9 @@ iocs:read
 function Get-FalconProcess {
 <#
 .Synopsis
-For the provided ProcessID retrieve the process details
+Retrieve process tree information
 .Parameter Ids
-One or more process identifiers
+Process identifier(s)
 .Role
 iocs:read
 #>

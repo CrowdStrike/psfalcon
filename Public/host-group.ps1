@@ -1,15 +1,15 @@
 function Edit-FalconHostGroup {
 <#
 .Synopsis
-Update Host Groups by specifying the ID of the group and details to update
+Modify a Host Group
 .Parameter Id
-The id of the group to update
+Host Group identifier
 .Parameter Name
-The new name of the group
+Host Group name
 .Parameter Description
-The new description of the group
+Host Group description
 .Parameter AssignmentRule
-The new assignment rule of the group. Note: If the group type is static, this field cannot be updated manually
+FQL-based assignment rule, used with dynamic Host Groups
 .Role
 host-group:write
 #>
@@ -36,9 +36,6 @@ host-group:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('assignment_rule', 'id', 'name', 'description')
@@ -53,9 +50,9 @@ host-group:write
 function Get-FalconHostGroup {
 <#
 .Synopsis
-Search for Host Groups in your environment by providing an FQL filter and paging details
+Search for Host Groups
 .Parameter Ids
-One or more Host Group identifiers
+Host Group identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -126,9 +123,9 @@ host-group:read
 function Get-FalconHostGroupMember {
 <#
 .Synopsis
-Search for members of a Host Group in your environment by providing an FQL filter and paging details
+Search for Host Group members
 .Parameter Id
-A Host Group identifier to search for members of
+Host Group identifier
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -197,54 +194,70 @@ host-group:read
 function Invoke-FalconHostGroupAction {
 <#
 .Synopsis
-Perform the specified action on the Host Groups specified in the request
+Perform actions on Host Groups
 .Parameter Name
 The action to perform
-.Parameter Ids
-One or more Host Group identifiers
+.Parameter Id
+Host Group identifier
+.Parameter HostIds
+Host identifier(s)
 .Role
 host-group:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-group-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/devices/entities/host-group-actions/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/devices/entities/host-group-actions/v1:post', Mandatory = $true,
+            Position = 1)]
         [ValidateSet('add-hosts', 'remove-hosts')]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/devices/entities/host-group-actions/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/devices/entities/host-group-actions/v1:post', Mandatory = $true,
+            Position = 2)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/devices/entities/host-group-actions/v1:post', Mandatory = $true,
+            Position = 3)]
+        [ValidatePattern('^\w{32}$')]
+        [array] $HostIds
     )
     begin {
-        $Fields = @{
-            Name = 'action_name'
-        }
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
-            Format   = @{
-                Query = @('action_name')
-                Body  = @{
-                    root              = @('ids')
-                    action_parameters = @('value', 'name')
-                }
+            Path    = ("$($Script:Falcon.Hostname)/devices/entities/host-group-actions/v1?" + 
+                "action_name=$($PSBoundParameters.Name)")
+            Method  = 'post'
+            Headers = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json' 
             }
         }
+        $Body = @{
+            action_parameters = @{
+                name  = 'filter'
+                value = ''
+            }
+            ids = @( $PSBoundParameters.Id )
+        }
+        $Max = 500
     }
     process {
-        Invoke-Falcon @Param
+        for ($i = 0; $i -lt ($PSBoundParameters.HostIds | Measure-Object).Count; $i += $Max) {
+            $Clone = $Param.Clone()
+            $Clone.Add('Body', $Body.Clone())
+            $IdString = ($PSBoundParameters.HostIds[$i..($i + ($Max - 1))] | ForEach-Object {
+                "'$_'"
+            }) -join ','
+            $Clone.Body.action_parameters.value = "(device_id:[$IdString])"
+            Write-Result ($Script:Falcon.Api.Invoke($Clone))
+        }
     }
 }
 function Remove-FalconHostGroup {
 <#
 .Synopsis
-Delete a set of Host Groups by specifying their IDs
+Delete Host Groups
 .Parameter Ids
-One or more Host identifiers
+Host Group identifier(s)
 .Role
 host-group:write
 #>

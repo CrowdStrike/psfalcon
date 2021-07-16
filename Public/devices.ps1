@@ -1,11 +1,11 @@
 function Add-FalconHostTag {
 <#
 .Synopsis
-Append Falcon GroupingTags on one or more hosts
+Add FalconGroupingTags to one or more Host(s)
 .Parameter Ids
-One or more Host identifiers
+Host identifier(s)
 .Parameter Tags
-One or more GroupingTag values
+FalconGroupingTag value(s)
 .Role
 devices:write
 #>
@@ -28,9 +28,6 @@ devices:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('tags', 'device_ids', 'action')
@@ -45,9 +42,9 @@ devices:write
 function Get-FalconHost {
 <#
 .Synopsis
-Search for hosts
+Search for Hosts
 .Parameter Ids
-One or more Host identifiers
+Host identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -123,22 +120,11 @@ devices:read
 function Invoke-FalconHostAction {
 <#
 .Synopsis
-Take various actions on the hosts in your environment. Contain or lift containment on a host. Delete or
-restore a host.
+Perform actions on Hosts
 .Parameter Name
-Specify one of these actions:
-
-contain: This action contains the host, which stops any network communications to locations other than the
-    CrowdStrike cloud and IPs specified in your containment policy
-
-lift_containment: This action lifts containment on the host, which returns its network communications to normal
-
-hide_host: This action will delete a host. After the host is deleted, no new detections for that host will be
-    reported via UI or APIs
-
-unhide_host: This action will restore a host. Detection reporting will resume after the host is restored
+Action to perform
 .Parameter Ids
-One or more Host identifiers
+Host identifier(s)
 .Role
 devices:write
 #>
@@ -162,14 +148,10 @@ devices:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('action_name')
                 Body  = @{
-                    root              = @('ids')
-                    action_parameters = @('name')
+                    root = @('ids')
                 }
             }
             Max = if ($PSBoundParameters.Name -match '^(hide_host|unhide_host)$') {
@@ -186,11 +168,11 @@ devices:write
 function Remove-FalconHostTag {
 <#
 .Synopsis
-Remove Falcon GroupingTags on one or more hosts
+Remove FalconGroupingTags from one or more hosts
 .Parameter Ids
-One or more Host identifiers
+Host identifier(s)
 .Parameter Tags
-One or more GroupingTag values
+FalconGroupingTag value(s)
 .Role
 devices:write
 #>
@@ -213,9 +195,6 @@ devices:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('tags', 'device_ids', 'action')

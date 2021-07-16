@@ -17,7 +17,7 @@ device-control-policies:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control/v1:patch')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control/v1:patch', Mandatory = $true, Position = 1)]
@@ -39,7 +39,7 @@ device-control-policies:write
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
+            Endpoint = '/policy/entities/device-control/v1:patch'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
@@ -58,7 +58,7 @@ function Get-FalconDeviceControlPolicy {
 .Synopsis
 Search for Device Control policies
 .Parameter Ids
-One or more Device Control policy identifiers
+Device Control policy identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -201,7 +201,7 @@ device-control-policies:read
 function Invoke-FalconDeviceControlPolicyAction {
 <#
 .Synopsis
-Perform the specified action on Device Control Policies
+Perform actions on Device Control policies
 .Parameter Name
 Action to perform
 .Parameter Id
@@ -248,8 +248,7 @@ device-control-policies:write
             Format   = @{
                 Query = @('action_name')
                 Body  = @{
-                    action_parameters = @('name', 'value')
-                    root              = @('ids')
+                    root = @('ids', 'action_parameters')
                 }
             }
         }
@@ -277,7 +276,7 @@ device-control-policies:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control/v1:post')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Mandatory = $true, Position = 1)]
@@ -288,7 +287,7 @@ device-control-policies:write
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Position = 3)]
-        [array] $Settings,
+        [object] $Settings,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Position = 4)]
         [ValidatePattern('^\w{32}$')]
@@ -302,12 +301,12 @@ device-control-policies:write
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
+            Endpoint = '/policy/entities/device-control/v1:post'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    root      = @('resources')
                     resources = @('name', 'description', 'clone_id', 'platform_name', 'settings')
+                    root      = @('resources')
                 }
             }
         }
@@ -321,7 +320,7 @@ function Remove-FalconDeviceControlPolicy {
 .Synopsis
 Remove Device Control policies
 .Parameter Ids
-One or more Device Control policy identifiers
+Device Control policy identifier(s)
 .Role
 device-control-policies:write
 #>
@@ -370,10 +369,13 @@ device-control-policies:write
         [array] $Ids
     )
     begin {
+        $Fields = @{
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('platform_name', 'ids')

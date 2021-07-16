@@ -12,285 +12,295 @@
     RequiredAssemblies   = @('System.Net.Http')
     ScriptsToProcess     = @('Class/Class.ps1')
     FunctionsToExport    = @(
-        # cspm-registration.ps1
-        'Get-FalconHorizonIoaEvent',
-        'Get-FalconHorizonIoaUser',
+      # cloud-connect-aws.ps1
 
-        # detects.ps1
-        'Edit-FalconDetection',
-        'Get-FalconDetection',
+      # cspm-registration.ps1
+      'Edit-FalconHorizonPolicy',
+      'Edit-FalconHorizonSchedule',
+      'Get-FalconHorizonIoaEvent',
+      'Get-FalconHorizonIoaUser',
+      'Get-FalconHorizonPolicy',
+      'Get-FalconHorizonSchedule',
 
-        # device-control-policies.ps1
-        'Edit-FalconDeviceControlPolicy',
-        'Get-FalconDeviceControlPolicy',
-        'Get-FalconDeviceControlPolicyMember',
-        'Invoke-FalconDeviceControlPolicyAction',
-        'New-FalconDeviceControlPolicy',
-        'Remove-FalconDeviceControlPolicy',
-        'Set-FalconDeviceControlPrecedence',
+      # custom-ioa.ps1
+      'Edit-FalconIoaGroup',
+      'Edit-FalconIoaRule',
+      'Get-FalconIoaGroup',
+      'Get-FalconIoaPlatform',
+      'Get-FalconIoaRule',
+      'Get-FalconIoaSeverity',
+      'Get-FalconIoaType',
+      'New-FalconIoaGroup',
+      'New-FalconIoaRule',
+      'Remove-FalconIoaGroup',
+      'Remove-FalconIoaRule',
+      'Test-FalconIoaRule',
 
-        # devices.ps1
-        'Add-FalconHostTag',
-        'Edit-FalconHostGroup',
-        'Get-FalconHost',
-        'Get-FalconHostGroup',
-        'Get-FalconHostGroupMember',
-        'Invoke-FalconHostAction',
-        'Invoke-FalconHostGroupAction',
-        'Remove-FalconHostGroup',
-        'Remove-FalconHostTag',
+      # d4c-registration.ps1
 
-        # falconcomplete-dashboards.ps1
-        'Get-FalconCompleteAllowlist',
-        'Get-FalconCompleteBlocklist',
-        'Get-FalconCompleteCollection',
-        'Get-FalconCompleteDetection',
-        'Get-FalconCompleteEscalation',
-        'Get-FalconCompleteIncident',
-        'Get-FalconCompleteRemediation',
+      # detects.ps1
+      'Edit-FalconDetection',
+      'Get-FalconDetection',
 
-         # falconx-actors.ps1
-         'Get-FalconActor',
+      # device-control-policies.ps1
+      'Edit-FalconDeviceControlPolicy',
+      'Get-FalconDeviceControlPolicy',
+      'Get-FalconDeviceControlPolicyMember',
+      'Invoke-FalconDeviceControlPolicyAction',
+      'New-FalconDeviceControlPolicy',
+      'Remove-FalconDeviceControlPolicy',
+      'Set-FalconDeviceControlPrecedence',
 
-         # falconx-indicators.ps1
-         'Get-FalconIndicator',
+      # devices.ps1
+      'Add-FalconHostTag',
+      'Get-FalconHost',
+      'Invoke-FalconHostAction',
+      'Remove-FalconHostTag',
 
-         # falconx-reports.ps1
-         'Get-FalconIntel',
-         'Receive-FalconIntel',
+      # falconcomplete-dashboard.ps1
+      'Get-FalconCompleteAllowlist',
+      'Get-FalconCompleteBlocklist',
+      'Get-FalconCompleteCollection',
+      'Get-FalconCompleteDetection',
+      'Get-FalconCompleteEscalation',
+      'Get-FalconCompleteIncident',
+      'Get-FalconCompleteRemediation',
 
-         # falconx-rules.ps1
-         'Get-FalconRule',
-         'Receive-FalconRule',
+      # falconx-actors.ps1
+      'Get-FalconActor',
 
-        # falconx-sandbox.ps1
-        'Get-FalconReport',
-        'Get-FalconSubmission',
-        'Get-FalconSubmissionQuota',
-        'New-FalconSubmission',
-        'Receive-FalconArtifact',
-        'Remove-FalconReport',
+      # falconx-indicators.ps1
+      'Get-FalconIndicator',
 
-        # firewall-management.ps1
-        'Edit-FalconFirewallGroup',
-        'Edit-FalconFirewallPolicy',
-        'Edit-FalconFirewallSetting',
-        'Get-FalconFirewallEvent',
-        'Get-FalconFirewallField',
-        'Get-FalconFirewallGroup',
-        'Get-FalconFirewallPlatform',
-        'Get-FalconFirewallPolicy',
-        'Get-FalconFirewallPolicyMember',
-        'Get-FalconFirewallRule',
-        'Get-FalconFirewallSetting',
-        'Invoke-FalconFirewallPolicyAction',
-        'New-FalconFirewallGroup',
-        'New-FalconFirewallPolicy',
-        'Remove-FalconFirewallGroup',
-        'Remove-FalconFirewallPolicy',
-        'Set-FalconFirewallPrecedence',
+      # falconx-reports.ps1
+      'Get-FalconIntel',
+      'Receive-FalconIntel',
 
-        # incidents.ps1
-        'Get-FalconBehavior',
-        'Get-FalconIncident',
-        'Get-FalconScore',
-        'Invoke-FalconIncidentAction',
+      # falconx-rules.ps1
+      'Get-FalconRule',
+      'Receive-FalconRule',
 
-        # iocs.ps1
-        'Get-FalconIocHost',
-        'Get-FalconIocProcess',
-        'Get-FalconIocTotal',
+      # falconx-sandbox.ps1
+      'Get-FalconReport',
+      'Get-FalconSubmission',
+      'Get-FalconSubmissionQuota',
+      'New-FalconSubmission',
+      'Receive-FalconArtifact',
+      'Remove-FalconReport',
 
-        # installation-tokens.ps1
-        'Edit-FalconInstallToken',
-        'Get-FalconInstallToken',
-        'Get-FalconInstallTokenEvent',
-        'Get-FalconInstallTokenSettings',
-        'New-FalconInstallToken',
-        'Remove-FalconInstallToken',
+      # firewall-management.ps1
+      'Edit-FalconFirewallGroup',
+      'Edit-FalconFirewallPolicy',
+      'Edit-FalconFirewallSetting',
+      'Get-FalconFirewallEvent',
+      'Get-FalconFirewallField',
+      'Get-FalconFirewallGroup',
+      'Get-FalconFirewallPlatform',
+      'Get-FalconFirewallPolicy',
+      'Get-FalconFirewallPolicyMember',
+      'Get-FalconFirewallRule',
+      'Get-FalconFirewallSetting',
+      'Invoke-FalconFirewallPolicyAction',
+      'New-FalconFirewallGroup',
+      'New-FalconFirewallPolicy',
+      'Remove-FalconFirewallGroup',
+      'Remove-FalconFirewallPolicy',
+      'Set-FalconFirewallPrecedence',
 
-        # ioarules.ps1
-        'Edit-FalconIoaGroup',
-        'Edit-FalconIoaRule',
-        'Get-FalconIoaGroup',
-        'Get-FalconIoaPlatform',
-        'Get-FalconIoaRule',
-        'Get-FalconIoaSeverity',
-        'Get-FalconIoaType',
-        'New-FalconIoaGroup',
-        'New-FalconIoaRule',
-        'Remove-FalconIoaGroup',
-        'Remove-FalconIoaRule',
-        'Test-FalconIoaRule',
+      # host-group.ps1
+      'Edit-FalconHostGroup',
+      'Get-FalconHostGroup',
+      'Get-FalconHostGroupMember',
+      'Invoke-FalconHostGroupAction',
+      'Remove-FalconHostGroup',
 
-        # iocs.ps1
-        'Edit-FalconIoc',
-        'Get-FalconIoc',
-        'New-FalconIoc',
-        'Remove-FalconIoc',
+      # incidents.ps1
+      'Get-FalconBehavior',
+      'Get-FalconIncident',
+      'Get-FalconScore',
+      'Invoke-FalconIncidentAction',
 
-        # malquery.ps1
-        'Get-FalconMalQuery',
-        'Get-FalconMalQueryQuota',
-        'Get-FalconMalQuerySample',
-        'Group-FalconMalQuerySample',
-        'Invoke-FalconMalQuery',
-        'Receive-FalconMalQuerySample',
+      # installation-tokens.ps1
+      'Edit-FalconInstallToken',
+      'Get-FalconInstallToken',
+      'Get-FalconInstallTokenEvent',
+      'Get-FalconInstallTokenSettings',
+      'New-FalconInstallToken',
+      'Remove-FalconInstallToken',
 
-        # mssp.ps1
-        'Add-FalconCidGroupMember',
-        'Add-FalconGroupRole',
-        'Add-FalconUserGroupMember',
-        'Edit-FalconCidGroup',
-        'Edit-FalconUserGroup',
-        'Get-FalconCidGroup',
-        'Get-FalconCidGroupMember',
-        'Get-FalconGroupRole',
-        'Get-FalconMemberCid',
-        'Get-FalconUserGroup',
-        'Get-FalconUserGroupMember',
-        'New-FalconCidGroup',
-        'New-FalconUserGroup',
-        'Remove-FalconCidGroup',
-        'Remove-FalconCidGroupMember',
-        'Remove-FalconGroupRole',
-        'Remove-FalconUserGroup',
-        'Remove-FalconUserGroupMember',
+      # ioc.ps1
+      'Edit-FalconIoc',
+      'Get-FalconIoc',
+      'New-FalconIoc',
+      'Remove-FalconIoc',
 
-        # oauth2.ps1
-        'Request-FalconToken',
-        'Revoke-FalconToken',
-        'Test-FalconToken',
+      # iocs.ps1
+      'Get-FalconIocHost',
+      'Get-FalconIocProcess',
+      'Get-FalconIocTotal',
+      'Get-FalconProcess',
 
-        # overwatch-dashboards.ps1
-        'Get-FalconOverWatchEvent',
-        'Get-FalconOverWatchDetection',
-        'Get-FalconOverWatchIncident',
+      # kubernetes-protection.ps1
 
-        # exclusions.ps1
-        'Edit-FalconIoaExclusion',
-        'Edit-FalconMlExclusion',
-        'Edit-FalconSvExclusion',
-        'Get-FalconIoaExclusion',
-        'Get-FalconMlExclusion',
-        'Get-FalconSvExclusion',
-        'New-FalconMlExclusion',
-        'New-FalconSvExclusion',
-        'Remove-FalconIoaExclusion',
-        'Remove-FalconMlExclusion',
-        'Remove-FalconSvExclusion',
+      # malquery.ps1
+      'Get-FalconMalQuery',
+      'Get-FalconMalQueryQuota',
+      'Get-FalconMalQuerySample',
+      'Group-FalconMalQuerySample',
+      'Invoke-FalconMalQuery',
+      'Receive-FalconMalQuerySample',
 
-        # prevention.ps1
-        'Edit-FalconPreventionPolicy',
-        'Get-FalconPreventionPolicy',
-        'Get-FalconPreventionPolicyMember',
-        'Invoke-FalconPreventionPolicyAction',
-        'New-FalconPreventionPolicy',
-        'Remove-FalconPreventionPolicy',
-        'Set-FalconPreventionPrecedence',
+      # ml-exclusions.ps1
+      'Edit-FalconMlExclusion',
+      'Get-FalconMlExclusion',
+      'New-FalconMlExclusion',
+      'Remove-FalconMlExclusion',
 
-        # response.ps1
-        'Edit-FalconResponsePolicy',
-        'Get-FalconResponsePolicy',
-        'Get-FalconResponsePolicyMember'
-        'Invoke-FalconResponsePolicyAction',
-        'New-FalconResponsePolicy',
-        'Remove-FalconResponsePolicy',
-        'Set-FalconResponsePrecedence',
+      # mssp.ps1
+      'Add-FalconCidGroupMember',
+      'Add-FalconGroupRole',
+      'Add-FalconUserGroupMember',
+      'Edit-FalconCidGroup',
+      'Edit-FalconUserGroup',
+      'Get-FalconCidGroup',
+      'Get-FalconCidGroupMember',
+      'Get-FalconGroupRole',
+      'Get-FalconMemberCid',
+      'Get-FalconUserGroup',
+      'Get-FalconUserGroupMember',
+      'New-FalconCidGroup',
+      'New-FalconUserGroup',
+      'Remove-FalconCidGroup',
+      'Remove-FalconCidGroupMember',
+      'Remove-FalconGroupRole',
+      'Remove-FalconUserGroup',
+      'Remove-FalconUserGroupMember',
 
-        # sensor-update.ps1
-        'Edit-FalconSensorUpdatePolicy',
-        'Get-FalconBuild',
-        'Get-FalconSensorUpdatePolicy',
-        'Get-FalconSensorUpdatePolicyMember',
-        'Get-FalconUninstallToken',
-        'Invoke-FalconSensorUpdatePolicyAction',
-        'New-FalconSensorUpdatePolicy',
-        'Remove-FalconSensorUpdatePolicy',
-        'Set-FalconSensorUpdatePrecedence',
-        
-        # processes.ps1
-        'Get-FalconProcess',
+      # oauth2.ps1
+      'Request-FalconToken',
+      'Revoke-FalconToken',
+      'Test-FalconToken',
 
-        # real-time-response.ps1
-        'Confirm-FalconAdminCommand',
-        'Confirm-FalconCommand',
-        'Confirm-FalconGetFile',
-        'Confirm-FalconResponderCommand',
-        'Edit-FalconScript',
-        'Get-FalconPutFile',
-        'Get-FalconScript',
-        'Get-FalconSession',
-        'Invoke-FalconAdminCommand',
-        'Invoke-FalconBatchGet',
-        'Invoke-FalconCommand',
-        'Invoke-FalconResponderCommand',
-        'Receive-FalconGetFile',
-        'Remove-FalconCommand',
-        'Remove-FalconGetFile',
-        'Remove-FalconPutFile',
-        'Remove-FalconScript',
-        'Remove-FalconSession',
-        'Send-FalconPutFile',
-        'Send-FalconScript',
-        'Start-FalconSession',
-        'Update-FalconSession',
+      # overwatch-dashboard.ps1
+      'Get-FalconOverWatchEvent',
+      'Get-FalconOverWatchDetection',
+      'Get-FalconOverWatchIncident',
 
-        # recon.ps1
-        'Edit-FalconReconAction',
-        'Edit-FalconReconNotification',
-        'Edit-FalconReconRule',
-        'Get-FalconReconAction',
-        'Get-FalconReconNotification',
-        'Get-FalconReconRule',
-        'Get-FalconReconRulePreview',
-        'New-FalconReconAction',
-        'New-FalconReconRule',
-        'Remove-FalconReconAction',
-        'Remove-FalconReconRule',
-        'Remove-FalconReconNotification',
+      # prevention-policies.ps1
+      'Edit-FalconPreventionPolicy',
+      'Get-FalconPreventionPolicy',
+      'Get-FalconPreventionPolicyMember',
+      'Invoke-FalconPreventionPolicyAction',
+      'New-FalconPreventionPolicy',
+      'Remove-FalconPreventionPolicy',
+      'Set-FalconPreventionPrecedence',
 
-        # samples.ps1
-        'Get-FalconSample',
-        'Send-FalconSample',
-        'Receive-FalconSample',
-        'Remove-FalconSample',
+      # quick-scan.ps1
+      'Get-FalconQuickScan',
+      'Get-FalconQuickScanQuota',
+      'New-FalconQuickScan',
 
-        # scanner.ps1
-        'Get-FalconQuickScan',
-        'Get-FalconQuickScanQuota',
-        'New-FalconQuickScan',
+      # real-time-response-admin.ps1
+      'Confirm-FalconAdminCommand',
+      'Edit-FalconScript',
+      'Get-FalconPutFile',
+      'Get-FalconScript',
+      'Invoke-FalconAdminCommand',
+      'Remove-FalconPutFile',
+      'Remove-FalconScript',
+      'Send-FalconPutFile',
+      'Send-FalconScript',
 
-        # sensors.ps1
-        'Get-FalconCcid',
-        'Get-FalconInstaller',
-        'Get-FalconStream',
-        'Receive-FalconInstaller',
-        'Update-FalconStream',
+      # real-time-response.ps1
+      'Confirm-FalconCommand',
+      'Confirm-FalconGetFile',
+      'Confirm-FalconResponderCommand',
+      'Get-FalconSession',
+      'Invoke-FalconBatchGet',
+      'Invoke-FalconCommand',
+      'Invoke-FalconResponderCommand',
+      'Receive-FalconGetFile',
+      'Remove-FalconCommand',
+      'Remove-FalconGetFile',
+      'Remove-FalconSession',
+      'Start-FalconSession',
+      'Update-FalconSession',
 
-        # settings.ps1
-        'Edit-FalconHorizonPolicy',
-        'Edit-FalconHorizonSchedule',
-        'Get-FalconHorizonPolicy',
-        'Get-FalconHorizonSchedule',
+      # recon-monitoring-rules.ps1
+      'Edit-FalconReconAction',
+      'Edit-FalconReconNotification',
+      'Edit-FalconReconRule',
+      'Get-FalconReconAction',
+      'Get-FalconReconNotification',
+      'Get-FalconReconRule',
+      'Get-FalconReconRulePreview',
+      'New-FalconReconAction',
+      'New-FalconReconRule',
+      'Remove-FalconReconAction',
+      'Remove-FalconReconRule',
+      'Remove-FalconReconNotification',
 
-        # spotlight.ps1
-        'Get-FalconRemediation',
-        'Get-FalconVulnerability',
+      # response-policies.ps1
+      'Edit-FalconResponsePolicy',
+      'Get-FalconResponsePolicy',
+      'Get-FalconResponsePolicyMember'
+      'Invoke-FalconResponsePolicyAction',
+      'New-FalconResponsePolicy',
+      'Remove-FalconResponsePolicy',
+      'Set-FalconResponsePrecedence',
 
-        # user-roles.ps1
-        'Add-FalconRole',
-        'Get-FalconRole',
-        'Remove-FalconRole',
+      # samplestore.ps1
+      'Get-FalconSample',
+      'Send-FalconSample',
+      'Receive-FalconSample',
+      'Remove-FalconSample',
 
-        # users.ps1
-        'Edit-FalconUser',
-        'Get-FalconUser',
-        'New-FalconUser',
-        'Remove-FalconUser',
+      # self-service-ioa-exclusions.ps1
+      'Edit-FalconIoaExclusion',
+      'Get-FalconIoaExclusion',
+      'Remove-FalconIoaExclusion',
 
-        # zero-trust-assessment.ps1
-        'Get-FalconZTA'
+      # sensor-installers.ps1
+      'Get-FalconCcid',
+      'Get-FalconInstaller',
+      'Receive-FalconInstaller',
+
+      # sensor-update-policies.ps1
+      'Edit-FalconSensorUpdatePolicy',
+      'Get-FalconBuild',
+      'Get-FalconSensorUpdatePolicy',
+      'Get-FalconSensorUpdatePolicyMember',
+      'Get-FalconUninstallToken',
+      'Invoke-FalconSensorUpdatePolicyAction',
+      'New-FalconSensorUpdatePolicy',
+      'Remove-FalconSensorUpdatePolicy',
+      'Set-FalconSensorUpdatePrecedence',
+
+      # sensor-visibility-exclusions.ps1
+      'Edit-FalconSvExclusion',
+      'Get-FalconSvExclusion',
+      'New-FalconSvExclusion',
+      'Remove-FalconSvExclusion',
+
+      # spotlight-vulnerabilities.ps1
+      'Get-FalconRemediation',
+      'Get-FalconVulnerability',
+
+      # streaming.ps1
+      'Get-FalconStream',
+      'Update-FalconStream',
+
+      # usermgmt.ps1
+      'Add-FalconRole',
+      'Edit-FalconUser',
+      'Get-FalconRole',
+      'Get-FalconUser',
+      'New-FalconUser',
+      'Remove-FalconRole',
+      'Remove-FalconUser',
+
+      # zero-trust-assessment.ps1
+      'Get-FalconZTA'
     )
     CmdletsToExport      = @()
     VariablesToExport    = '*'
@@ -344,10 +354,13 @@ General Changes
   allows users to automatically import the PSFalcon module by using one of the included commands which didn't
   work with the module prefix.
 
-* Reduced overall size and re-organized module manifest (PSFalcon.psd1).
+* Re-organized module manifest (PSFalcon.psd1) and reduced overall size.
 
 * Some of the functions that were previously in the public 'scripts.ps1' have been moved into their respective
   public module scripts ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.)
+
+* 'Public' functions have been reorganized into files that are named for their required permissions (as defined
+  by Falcon API Swagger file).
 
 * Added '.Roles' in-line comment to functions which allows users to 'Get-Help -Role <api_role>' and find
   commands that are available based on required API permission. For instance, typing 'Get-Help -Role devices:read'
@@ -365,6 +378,7 @@ New Commands
 Command Changes
 
 * Removed '-Help' parameter from all commands. 'Get-Help' can be used instead.
+
 * Three different /indicators/ API commands were previously removed by mistake and have been re-added:
   Get-FalconIocHost
   Get-FalconIocProcess
@@ -393,6 +407,7 @@ Command Changes
   Renamed 'SessionId' to 'Id'
 
 GitHub Issues
+
 * Issue #48: Updated 'Invoke-Loop' private function with a more explicit counting method to eliminate endless
   loops caused when trying to count a single [PSCustomObject] in PowerShell 5.1.
 

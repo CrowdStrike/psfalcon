@@ -17,7 +17,7 @@ sensor-update-policies:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v2:patch')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Mandatory = $true, Position = 1)]
@@ -39,7 +39,7 @@ sensor-update-policies:write
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
+            Endpoint = '/policy/entities/sensor-update/v2:patch'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
@@ -56,7 +56,7 @@ sensor-update-policies:write
 function Get-FalconBuild {
 <#
 .Synopsis
-Retrieve available builds for use with Sensor Update Policies
+Retrieve Falcon Sensor builds for assignment in Sensor Update Policies
 .Parameter Platform
 Operating System platform
 .Role
@@ -87,7 +87,7 @@ function Get-FalconSensorUpdatePolicy {
 .Synopsis
 Search for Sensor Update policies
 .Parameter Ids
-One or more Sensor Update policy identifiers
+Sensor Update policy identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -230,7 +230,7 @@ sensor-update-policies:read
 function Get-FalconUninstallToken {
 <#
 .Synopsis
-Retrieve an uninstall or maintenance token
+Retrieve an uninstallation or maintenance token
 .Parameter DeviceId
 Host identifier
 .Parameter AuditMessage
@@ -271,43 +271,54 @@ sensor-update-policies:write
 function Invoke-FalconSensorUpdatePolicyAction {
 <#
 .Synopsis
-Perform the specified action on the Sensor Update Policies specified in the request
-.Parameter Ids
-One or more XXX identifiers
-.Parameter ActionName
-
+Perform actions on Sensor Update policies
 .Parameter Name
-
-.Parameter Value
-
+Action to perform
+.Parameter Id
+Sensor Update policy identifier
+.Parameter GroupId
+Host group identifier
 .Role
 sensor-update-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true)]
-        [array] $Ids,
-
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true,
+        Position = 1)]
         [ValidateSet('add-host-group', 'disable', 'enable', 'remove-host-group')]
-        [string] $ActionName,
-
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true)]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true)]
-        [string] $Value
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Position = 3)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $GroupId
     )
     begin {
+        $Fields = @{
+            name = 'action_name'
+        }
+        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+        [void] $PSBoundParameters.Remove('Id')
+        if ($PSBoundParameters.GroupId) {
+            $Action = @{
+                name  = 'group_id'
+                value = @( $PSBoundParameters.GroupId )
+            }
+            $PSBoundParameters.Add('action_parameters', $Action)
+            [void] $PSBoundParameters.Remove('GroupId')
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body = @{
-                    root = @('ids')
-                    action_parameters = @('name', 'value')
+                Body  = @{
+                    root = @('ids', 'action_parameters')
                 }
             }
         }
@@ -319,55 +330,51 @@ sensor-update-policies:write
 function New-FalconSensorUpdatePolicy {
 <#
 .Synopsis
-Create Sensor Update Policies by specifying details about the policy to create
-
-Create Sensor Update Policies by specifying details about the policy to create with additional support for uninstall protection
-.Parameter Description
-
-.Parameter UninstallProtection
-
+Create Sensor Update policies
+.Parameter Array
+An array of Sensor Update policies to create in a single request
 .Parameter PlatformName
-
+Operating System platform
 .Parameter Name
-
-.Parameter Build
-
+Sensor Update policy name
+.Parameter Settings
+An array of Sensor Update policy settings
+.Parameter Description
+Sensor Update policy description
 .Role
 sensor-update-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v2:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v1:post')]
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post')]
-        [string] $Description,
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post')]
-        [ValidateSet('ENABLED', 'DISABLED', 'MAINTENANCE_MODE', 'IGNORE', 'UNKNOWN')]
-        [string] $UninstallProtection,
-
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v1:post', Mandatory = $true)]
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Mandatory = $true, Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v1:post', Mandatory = $true)]
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Mandatory = $true, Position = 2)]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v1:post')]
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post')]
-        [string] $Build
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Position = 3)]
+        [array] $Settings,
+
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Position = 4)]
+        [string] $Description
     )
     begin {
+        $Fields = @{
+            Array        = 'resources'
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{}
+            Endpoint = '/policy/entities/sensor-update/v2:post'
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    resources = @('description', 'platform_name', 'name')
-                    settings = @('uninstall_protection', 'build')
+                    resources = @('description', 'platform_name', 'name', 'settings')
+                    root =      @('resources')
                 }
             }
         }
@@ -379,15 +386,16 @@ sensor-update-policies:write
 function Remove-FalconSensorUpdatePolicy {
 <#
 .Synopsis
-Delete a set of Sensor Update Policies by specifying their IDs
+Delete Sensor Update policies
 .Parameter Ids
-One or more XXX identifiers
+Sensor Update policy identifier(s)
 .Role
 sensor-update-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v1:delete', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
@@ -407,28 +415,34 @@ sensor-update-policies:write
 function Set-FalconSensorUpdatePrecedence {
 <#
 .Synopsis
-Sets the precedence of Sensor Update Policies based on the order of IDs specified in the request. The first ID specified will have the highest precedence and the last ID specified will have the lowest. You must specify all non-Default Policies for a platform when updating precedence
+Set Sensor Update policy precedence
 .Parameter PlatformName
-
+Operating System platform
 .Parameter Ids
-One or more XXX identifiers
+All Sensor Update policy identifiers in desired precedence order
 .Role
 sensor-update-policies:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update-precedence/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update-precedence/v1:post', Mandatory = $true,
+            Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-precedence/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update-precedence/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
     begin {
+        $Fields = @{
+            PlatformName = 'platform_name'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('platform_name', 'ids')

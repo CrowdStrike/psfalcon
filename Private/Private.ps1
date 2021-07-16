@@ -120,15 +120,17 @@ function Build-Param {
         }
     }
     process {
-        @('Body', 'Formdata', 'Query').foreach{
-            # Create key/value pairs for each "Build-<Input>" function
-            if (!$Content) {
-                $Content = @{}
-            }
-            if ($Format.$_) {
-                $Value = & "Build-$_" -Format $Format -Inputs $Inputs
-                if ($Value) {
-                    $Content.Add($_, $Value)
+        if ($Inputs) {
+            @('Body', 'Formdata', 'Query').foreach{
+                # Create key/value pairs for each "Build-<Input>" function
+                if (!$Content) {
+                    $Content = @{}
+                }
+                if ($Format.$_) {
+                    $Value = & "Build-$_" -Format $Format -Inputs $Inputs
+                    if ($Value) {
+                        $Content.Add($_, $Value)
+                    }
                 }
             }
         }
@@ -233,12 +235,16 @@ function Invoke-Falcon {
         $PSBoundParameters.GetEnumerator().Where({ $_.Key -ne 'Command' }).foreach{
             $BuildParam.Add($_.Key, $_.Value)
         }
-        # Add 'Accept' when not present
         if (!$BuildParam.Headers) {
             $BuildParam.Add('Headers', @{})
         }
         if (!$BuildParam.Headers.Accept) {
+            # Add 'Accept: application/json' when undefined
             $BuildParam.Headers.Add('Accept', 'application/json')
+        }
+        if ($Format.Body -and !$BuildParam.Headers.ContentType) {
+            # Add 'ContentType: application/json' when undefined and 'Body' is present
+            $BuildParam.Headers.Add('ContentType', 'application/json')
         }
         if ($Inputs.All -eq $true -and !$Inputs.Limit) {
             # Add maximum 'Limit' when not present and using 'All'

@@ -3,14 +3,14 @@ function Get-FalconMalQuery {
 .Synopsis
 Check the status and results of an asynchronous request, such as hunt or exact-search
 .Parameter Ids
-One or more MalQuery request identifiers
+MalQuery request identifier(s)
 .Role
 malquery:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/malquery/entities/requests/v1:get')]
     param(
         [Parameter(ParameterSetName = '/malquery/entities/requests/v1:get', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^ \w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $Ids
     )
     begin {
@@ -30,7 +30,7 @@ malquery:read
 function Get-FalconMalQueryQuota {
 <#
 .Synopsis
-Get information about Falcon MalQuery search and download quotas in your environment
+List your Falcon MalQuery search and download quota
 .Role
 malquery:read
 #>
@@ -57,9 +57,9 @@ malquery:read
 function Get-FalconMalQuerySample {
 <#
 .Synopsis
-Retrieve Falcon MalQuery indexed file metadata by hash
+Retrieve Falcon MalQuery indexed file metadata by Sha256 hash
 .Parameter Ids
-One or more Sha256 hash values
+Sha256 hash value(s)
 .Role
 malquery:read
 #>
@@ -88,13 +88,14 @@ function Group-FalconMalQuerySample {
 .Synopsis
 Schedule samples for download
 .Parameter Samples
-One or more Sha256 hash values
+Sha256 hash value(s)
 .Role
 malquery:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/malquery/entities/samples-multidownload/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/malquery/entities/samples-multidownload/v1:post', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/malquery/entities/samples-multidownload/v1:post', Mandatory = $true,
+            Position = 1)]
         [ValidatePattern('^\w{64}$')]
         [array] $Samples
     )
@@ -103,9 +104,6 @@ malquery:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('samples')
@@ -120,15 +118,15 @@ malquery:write
 function Invoke-FalconMalQuery {
 <#
 .Synopsis
-Search Falcon MalQuery with a YARA hunt, exact search or fuzzy search
+Search Falcon MalQuery using a YARA hunt, exact search or fuzzy search
 .Parameter YaraRule
 Schedule a YARA-based search for execution
 .Parameter Type
-Pattern type
+Search pattern type
 .Parameter Value
-Pattern value
+Search pattern value
 .Parameter FilterFiletypes
-File types to include with the result
+File type(s) to include with the result
 .Parameter FilterMeta
 Subset of metadata fields to include in the result
 .Parameter MinSize
@@ -220,9 +218,6 @@ malquery:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('yara_rule')

@@ -1,9 +1,9 @@
 function Edit-FalconInstallToken {
 <#
 .Synopsis
-Updates one or more tokens. Use this endpoint to edit labels, change expiration, revoke, or restore.
+Modify installation token(s)
 .Parameter Ids
-One or more installation token identifiers
+Installation token identifier(s)
 .Parameter Label
 Installation token label
 .Parameter ExpiresTimestamp
@@ -38,9 +38,6 @@ installation-tokens:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids')
                 Body  = @{
@@ -58,7 +55,7 @@ function Get-FalconInstallToken {
 .Synopsis
 Search for installation tokens
 .Parameter Ids
-One or more installation token identifiers
+Installation token identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -124,7 +121,7 @@ function Get-FalconInstallTokenEvent {
 .Synopsis
 Search for installation token audit events
 .Parameter Ids
-One or more installation token audit event identifiers
+Installation token audit event identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -187,24 +184,14 @@ installation-tokens:read
 function Get-FalconInstallTokenSettings {
 <#
 .Synopsis
-Check current installation token settings.
+List current installation token settings
 .Role
 installation-tokens:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '/installation-tokens/entities/customer-settings/v1:get')]
+    [CmdletBinding()]
     param()
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
-        }
-    }
     process {
-        Invoke-Falcon @Param
+        Invoke-Falcon -Endpoint '/installation-tokens/entities/customer-settings/v1:get'
     }
 }
 function New-FalconInstallToken {
@@ -212,7 +199,7 @@ function New-FalconInstallToken {
 .Synopsis
 Create an installation token
 .Parameter Label
-Installation Token label
+Installation token label
 .Parameter ExpiresTimestamp
 Installation token expiration time (RFC-3339)
 .Role
@@ -237,9 +224,6 @@ installation-tokens:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('label', 'expires_timestamp')
@@ -254,9 +238,9 @@ installation-tokens:write
 function Remove-FalconInstallToken {
 <#
 .Synopsis
-Delete installation tokens
+Delete installation token(s)
 .Parameter Ids
-One or more installation token identifiers identifiers
+Installation token identifier(s)
 .Role
 installation-tokens:write
 #>

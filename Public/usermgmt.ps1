@@ -5,7 +5,7 @@ Assign one or more roles to a user
 .Parameter UserId
 User identifier
 .Parameter Ids
-One or more user roles
+User role(s)
 .Role
 usermgmt:write
 #>
@@ -27,9 +27,6 @@ usermgmt:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('user_uuid')
                 Body  = @{
@@ -45,7 +42,7 @@ usermgmt:write
 function Edit-FalconUser {
 <#
 .Synopsis
-Modify an existing users first or last name
+Modify a user's first or last name
 .Parameter Id
 User identifier
 .Parameter Firstname
@@ -75,9 +72,6 @@ usermgmt:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('user_uuid')
                 Body  = @{
@@ -97,7 +91,7 @@ Display user available roles, information about specific user roles, or roles as
 .Parameter UserId
 User Identifier
 .Parameter Ids
-One or more user roles
+User role(s)
 .Parameter Detailed
 Retrieve detailed information
 .Role
@@ -125,9 +119,6 @@ usermgmt:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids', 'user_uuid')
             }
@@ -142,9 +133,9 @@ function Get-FalconUser {
 .Synopsis
 List all User identifiers, display user identifiers by email or show detailed information about users
 .Parameter Ids
-One or more user identifiers
+User identifier(s)
 .Parameter Usernames
-One or more usernames (typically email addresses)
+Username(s)
 .Parameter Detailed
 Retrieve detailed information
 .Role
@@ -173,9 +164,6 @@ usermgmt:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids', 'uid')
             }
@@ -188,9 +176,9 @@ usermgmt:read
 function New-FalconUser {
 <#
 .Synopsis
-Create a new user. After creating a user, assign one or more roles with 'Add-FalconRole'
+Create a user
 .Parameter Username
-Username (typically an email address)
+Username
 .Parameter Firstname
 First name
 .Parameter Lastname
@@ -222,9 +210,6 @@ usermgmt:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('firstName', 'uid', 'password', 'lastName')
@@ -241,9 +226,9 @@ function Remove-FalconRole {
 .Synopsis
 Revoke one or more roles from a user
 .Parameter UserId
-User Identifier
+User identifier
 .Parameter Ids
-One or more user roles
+User role(s)
 .Role
 usermgmt:write
 #>
@@ -266,9 +251,6 @@ usermgmt:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('user_uuid', 'ids')
             }
@@ -281,7 +263,7 @@ usermgmt:write
 function Remove-FalconUser {
 <#
 .Synopsis
-Delete a user permanently
+Delete a user
 .Parameter Id
 User identifier
 .Role
@@ -301,9 +283,6 @@ usermgmt:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('user_uuid')
             }

@@ -7,7 +7,7 @@ Machine Learning exclusion identifier
 .Parameter Value
 RegEx pattern value
 .Parameter GroupIds
-One or more Host Group identifiers, or 'all' for all Host Groups
+Host group identifier(s) or 'all'
 .Parameter Comment
 Audit log comment
 .Role
@@ -53,7 +53,7 @@ function Get-FalconMlExclusion {
 .Synopsis
 Search for Machine Learning exclusions
 .Parameter Ids
-One or more Machine Learning exclusion identifiers
+Machine Learning exclusion identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -119,32 +119,36 @@ ml-exclusions:read
 function New-FalconMlExclusion {
 <#
 .Synopsis
-Create the ML exclusions
-.Parameter Groups
-
+Create a Machine Learning exclusion
 .Parameter Value
-
+RegEx pattern value
+.Parameter GroupIds
+Host group identifier(s) or 'all'
 .Parameter Comment
 Audit log comment
 .Role
 ml-exclusions:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post')]
-        [array] $Groups,
-
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post')]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 1)]
         [string] $Value,
 
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post')]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 2)]
+        [ValidatePattern('^(\w{32}|all)$')]
+        [array] $GroupIds,
+
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Position = 3)]
         [string] $Comment
     )
     begin {
+        $Fields = @{
+            GroupIds = 'groups'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('groups', 'value', 'comment')
@@ -159,20 +163,21 @@ ml-exclusions:write
 function Remove-FalconMlExclusion {
 <#
 .Synopsis
-Delete the ML exclusions by id
+Delete Machine Learning exclusions
 .Parameter Ids
-One or more XXX identifiers
+Machine Learning exclusion identifier(s)
 .Parameter Comment
 Audit log comment
 .Role
 ml-exclusions:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:delete', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:delete')]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:delete', Position = 2)]
         [string] $Comment
     )
     begin {

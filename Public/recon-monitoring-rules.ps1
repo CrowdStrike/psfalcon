@@ -36,9 +36,6 @@ recon-monitoring-rules:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('recipients', 'id', 'status', 'frequency')
@@ -59,15 +56,15 @@ An array of Recon notifications to modify in a single request
 .Parameter Id
 Recon notification identifier
 .Parameter AssignedToUuid
-
+User identifier for assignment
 .Parameter Status
-
+Recon notification status
 .Role
 recon-monitoring-rules:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/notifications/v1:patch')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:patch', Mandatory = $true, Position = 1)]
@@ -89,7 +86,7 @@ recon-monitoring-rules:write
                 Headers = @{
                     ContentType = 'application/json'
                 }
-                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 8
+                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 4
             }
         } else {
             $Fields = @{
@@ -99,9 +96,6 @@ recon-monitoring-rules:write
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-                Headers  = @{
-                    ContentType = 'application/json'
-                }
                 Format   = @{
                     Body = @{
                         root = @('assigned_to_uuid', 'id', 'status')
@@ -139,7 +133,7 @@ recon-monitoring-rules:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:patch')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:patch', Mandatory = $true, Position = 1)]
@@ -168,16 +162,13 @@ recon-monitoring-rules:write
                 Headers = @{
                     ContentType = 'application/json'
                 }
-                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 8
+                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 4
             }
         } else {
             @{
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = $PSBoundParameters
-                Headers  = @{
-                    ContentType = 'application/json'
-                }
                 Format   = @{
                     Body = @{
                         root = @('permissions', 'priority', 'name', 'id', 'filter')
@@ -436,9 +427,9 @@ function Get-FalconReconRulePreview {
 .Synopsis
 Preview Recon monitoring rule notification count and distribution
 .Parameter Filter
-
+Recon monitoring rule filter
 .Parameter Topic
-
+Recon monitoring rule topic
 .Role
 recon-monitoring-rules:read
 #>
@@ -471,12 +462,15 @@ recon-monitoring-rules:read
 function New-FalconReconAction {
 <#
 .Synopsis
-Create actions for a monitoring rule. Accepts a list of actions that will be attached to the monitoring rule.
+Create actions for an existing Recon monitoring rule
 .Parameter RuleId
 Recon monitoring rule identifier
 .Parameter Type
+Recon monitoring rule notification type
 .Parameter Frequency
+Recon monitoring rule notification frequency
 .Parameter Recipients
+Recon monitoring rule notification recipients
 .Role
 recon-monitoring-rules:write
 #>
@@ -505,9 +499,6 @@ recon-monitoring-rules:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root    = @('rule_id')
@@ -541,7 +532,7 @@ recon-monitoring-rules:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:post')]
     param(
-        [Parameter(ParameterSetName = 'create_array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:post', Mandatory = $true, Position = 1)]
@@ -571,16 +562,13 @@ recon-monitoring-rules:write
                 Headers = @{
                     ContentType = 'application/json'
                 }
-                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 8
+                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 4
             }
         } else {
             @{
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = $PSBoundParameters
-                Headers  = @{
-                    ContentType = 'application/json'
-                }
                 Format   = @{
                     Body = @{
                         root = @('permissions', 'priority', 'name', 'filter', 'topic')
@@ -627,13 +615,14 @@ function Remove-FalconReconRule {
 .Synopsis
 Delete Recon monitoring rules
 .Parameter Ids
-One or more Recon monitoring rule identifiers
+Recon monitoring rule identifier(s)
 .Role
 recon-monitoring-rules:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:delete', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $Ids
     )
     begin {

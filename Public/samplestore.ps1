@@ -1,9 +1,9 @@
 function Get-FalconSample {
 <#
 .Synopsis
-List accessible malware samples
+List accessible samples
 .Parameter Ids
-One or more Sha256 hash values
+Sampple Sha256 hash value(s)
 .Role
 samplestore:read
 #>
@@ -21,9 +21,6 @@ samplestore:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('sha256s')
@@ -38,9 +35,9 @@ samplestore:read
 function Receive-FalconSample {
 <#
 .Synopsis
-Download a malware sample
+Download a sample
 .Parameter Id
-Sha256 hash value
+Sample Sha256 hash value
 .Parameter Path
 Destination path
 .Parameter PasswordProtected
@@ -75,10 +72,10 @@ samplestore:read
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{
                 Accept = 'application/octet-stream'
             }
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query   = @('ids', 'password_protected')
                 Outfile = 'path'
@@ -92,9 +89,9 @@ samplestore:read
 function Remove-FalconSample {
 <#
 .Synopsis
-Removes a sample, including file, meta and submissions from the collection
+Delete samples
 .Parameter Id
-Sha256 hash value
+Sample Sha256 hash value
 .Role
 samplestore:write
 #>
@@ -124,18 +121,15 @@ samplestore:write
 function Send-FalconSample {
 <#
 .Synopsis
-Upload a file up to 100MB in size for further cloud analysis
+Upload a sample file up to 100MB in size
 .Parameter Path
 Path to local file
 .Parameter FileName
 Name of the file
 .Parameter IsConfidential
-Defines visibility of this file in Falcon MalQuery, either via the API or the Falcon console.
-
-$true: File is only shown to users within your customer account (default)
-$false: File can be seen by other CrowdStrike customers
+Prohibit sample from being displayed in MalQuery [default: $true]
 .Parameter Comment
-A descriptive comment to identify the file for other users
+Sample comment
 .Role
 samplestore:write
 #>

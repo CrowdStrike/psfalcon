@@ -11,7 +11,7 @@ Command line RegEx
 .Parameter IfnRegex
 Image Filename RegEx
 .Parameter GroupIds
-One or more Host Group identifiers, or 'all' for all Host Groups
+Host Group identifier(s) or 'all'
 .Parameter Description
 Indicator of Attack exclusion description
 .Parameter Comment
@@ -70,7 +70,7 @@ function Get-FalconIoaExclusion {
 .Synopsis
 Search for Indicator of Attack exclusions
 .Parameter Ids
-One or more Indicator of Attack exclusion identifiers
+Indicator of Attack exclusion identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -137,20 +137,22 @@ self-service-ioa-exclusions:read
 function Remove-FalconIoaExclusion {
 <#
 .Synopsis
-Delete the IOA exclusions by id
+Delete Indicator of Attack exclusions
 .Parameter Ids
-One or more XXX identifiers
+Indicator of Attack exclusion identifier(s)
 .Parameter Comment
 Audit log comment
 .Role
 self-service-ioa-exclusions:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/ioa-exclusions/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:delete', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:delete')]
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:delete', Position = 2)]
         [string] $Comment
     )
     begin {

@@ -1,9 +1,9 @@
 function Get-FalconZTA {
 <#
 .Synopsis
-Get Zero Trust Assessment data for one or more hosts
+Search for Zero Trust Assessment results
 .Parameter Ids
-One or more host identifiers
+Host identifier(s)
 .Role
 zero-trust-assessment:read
 #>
@@ -19,9 +19,6 @@ zero-trust-assessment:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids')
             }

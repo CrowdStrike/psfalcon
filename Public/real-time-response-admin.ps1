@@ -125,7 +125,7 @@ function Get-FalconPutFile {
 .Synopsis
 Search for Real-time Response 'put' files
 .Parameter Ids
-One or more 'put' file identifiers
+'Put' file identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -191,7 +191,7 @@ function Get-FalconScript {
 .Synopsis
 Search for custom Real-time Response scripts
 .Parameter Ids
-One or more custom Real-time Response script identifiers
+Custom Real-time Response script identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -265,7 +265,7 @@ Real-time Response command
 .Parameter Arguments
 Arguments to include with the command
 .Parameter OptionalHostIds
-Restrict execution to specific Host identifiers
+Restrict execution to specific Host identifier(s)
 .Parameter Timeout
 Length of time to wait for a result, in seconds
 .Role

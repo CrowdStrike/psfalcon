@@ -5,7 +5,7 @@ Add CID Group members
 .Parameter Id
 CID group identifier
 .Parameter CIDs
-One or more CIDs
+CID(s)
 .Role
 mssp:write
 #>
@@ -27,9 +27,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('cid_group_id', 'cids')
@@ -44,13 +41,13 @@ mssp:write
 function Add-FalconGroupRole {
 <#
 .Synopsis
-Assign role(s) to CID and User Groups
+Assign role(s) between a CID and User Group
 .Parameter CidGroupId
 CID group identifier
 .Parameter UserGroupId
 User Group identifier
 .Parameter RoleIds
-One or more roles
+Role(s)
 .Role
 mssp:write
 #>
@@ -77,9 +74,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('cid_group_id', 'user_group_id', 'role_ids')
@@ -98,7 +92,7 @@ Add User Group members
 .Parameter Id
 User group identifier
 .Parameter UserIds
-One or more User identifiers
+User identifier(s)
 .Role
 mssp:write
 #>
@@ -123,9 +117,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('user_uuids', 'user_group_id')
@@ -140,7 +131,7 @@ mssp:write
 function Edit-FalconCIDGroup {
 <#
 .Synopsis
-Modify CID groups
+Modify a CID group
 .Parameter Id
 CID group identifier
 .Parameter Name
@@ -170,9 +161,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('description', 'cid_group_id', 'name')
@@ -187,7 +175,7 @@ mssp:write
 function Edit-FalconUserGroup {
 <#
 .Synopsis
-Update existing User Group(s)
+Modify a User Group
 .Parameter Id
 User group identifier
 .Parameter Name
@@ -217,9 +205,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('description', 'name', 'user_group_id')
@@ -236,7 +221,7 @@ function Get-FalconCIDGroup {
 .Synopsis
 Search for CID groups
 .Parameter Ids
-One or more CID group identifiers
+CID group identifier(s)
 .Parameter Name
 CID group name
 .Parameter Sort
@@ -305,7 +290,7 @@ function Get-FalconCIDGroupMember {
 .Synopsis
 Search for CID group members
 .Parameter Ids
-One or more CID group identifiers
+CID group identifier(s)
 .Parameter Id
 CID group identifier
 .Parameter Sort
@@ -376,7 +361,7 @@ function Get-FalconGroupRole {
 .Synopsis
 Search for user group roles
 .Parameter Ids
-One or more combined group identifiers [<cid_group_id>:<user_group_id>]
+Combined group identifier(s) [<cid_group_id>:<user_group_id>]
 .Parameter CidGroupId
 CID group identifier
 .Parameter UserGroupId
@@ -459,13 +444,19 @@ function Get-FalconMemberCid {
 .Synopsis
 Search for child CIDs
 .Parameter Ids
-One or more child CID identifiers
+Child CID identifier(s)
 .Parameter Sort
 Property and direction to sort results
 .Parameter Offset
 Position to begin retrieving results
 .Parameter Limit
 Maximum number of results per request
+.Parameter Detailed
+Retrieve detailed information
+.Parameter All
+Repeat requests until all available results are retrieved
+.Parameter Total
+Display total result count instead of results
 .Role
 mssp:read
 #>
@@ -514,7 +505,7 @@ function Get-FalconUserGroup {
 .Synopsis
 Search for user groups
 .Parameter Ids
-One or more user group identifiers
+User group identifier(s)
 .Parameter Name
 User group name
 .Parameter Sort
@@ -583,7 +574,7 @@ function Get-FalconUserGroupMember {
 .Synopsis
 Search for members of a user group, or groups assigned to a user
 .Parameter Ids
-One or more user group identifiers, to find group members
+User group identifier(s), to find group members
 .Parameter UserUuid
 A User identifier, to find group membership
 .Parameter Sort
@@ -652,7 +643,7 @@ mssp:read
 function New-FalconCIDGroup {
 <#
 .Synopsis
-Create CID groups
+Create a CID group
 .Parameter Name
 CID group name
 .Parameter Description
@@ -673,9 +664,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('description', 'name')
@@ -690,7 +678,7 @@ mssp:write
 function New-FalconUserGroup {
 <#
 .Synopsis
-Create User groups
+Create a User group
 .Parameter Name
 User group name
 .Parameter Description
@@ -711,9 +699,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('description', 'name')
@@ -728,9 +713,9 @@ mssp:write
 function Remove-FalconCIDGroup {
 <#
 .Synopsis
-Remove CID groups
+Delete CID group(s)
 .Parameter CidGroupIds
-
+CID group identifier(s)
 .Role
 mssp:write
 #>
@@ -748,9 +733,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('cid_group_ids')
             }
@@ -767,7 +749,7 @@ Remove members from a CID group
 .Parameter Id
 CID group identifier
 .Parameter CIDs
-One or more CIDs
+CID(s)
 .Role
 mssp:write
 #>
@@ -791,9 +773,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('cid_group_id', 'cids')
@@ -808,13 +787,13 @@ mssp:write
 function Remove-FalconGroupRole {
 <#
 .Synopsis
-Remove role assignment(s) between User Groups and CID Groups
+Remove role(s) between a User Group and CID Group
 .Parameter CidGroupId
 CID group identifier
 .Parameter UserGroupId
 User group identifier
 .Parameter RoleIds
-One or more roles (leave blank to remove User Group from CID Group)
+Role(s) (leave blank to remove User Group/CID Group association)
 .Role
 mssp:write
 #>
@@ -841,9 +820,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('cid_group_id', 'user_group_id', 'role_ids')
@@ -858,9 +834,9 @@ mssp:write
 function Remove-FalconUserGroup {
 <#
 .Synopsis
-Remove User groups
+Remove User group(s)
 .Parameter Ids
-One or more user group identifiers
+User group identifier(s)
 .Role
 mssp:write
 #>
@@ -878,9 +854,6 @@ mssp:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('user_group_ids')
             }
@@ -897,7 +870,7 @@ Remove members from a User group
 .Parameter Id
 User group identifier
 .Parameter UserIds
-One or more user identifiers
+User identifier(s)
 .Role
 mssp:write
 #>
@@ -912,13 +885,14 @@ mssp:write
         [array] $UserIds
     )
     begin {
+        $Fields = @{
+            Id      = 'user_group_id'
+            UserIds = 'user_uuids'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     resources = @('user_uuids', 'user_group_id')
