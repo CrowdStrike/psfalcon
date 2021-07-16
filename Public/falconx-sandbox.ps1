@@ -1,9 +1,9 @@
 function Get-FalconReport {
 <#
 .Synopsis
-Search for sandbox reports
+Search for Falcon X Sandbox reports
 .Parameter Ids
-One or more sandbox report identifiers
+Falcon X Sandbox report identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -73,10 +73,9 @@ falconx-sandbox:read
 function Get-FalconSubmission {
 <#
 .Synopsis
-Search for sandbox submissions and check their status. Time required for analysis varies but is usually
-less than 15 minutes.
+Search for Falcon X Sandbox submissions
 .Parameter Ids
-One or more sandbox submission identifiers
+Falcon X Sandbox submission identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -166,16 +165,15 @@ falconx-sandbox:read
 function New-FalconSubmission {
 <#
 .Synopsis
-Submit an uploaded file or a URL for sandbox analysis. Time required for analysis varies but is usually
-less than 15 minutes.
+Submit a sample to the Falcon X Sandbox
 .Parameter EnvironmentId
 Analysis environment
 .Parameter Sha256
-Hash value of the sample to analyze
+Sample Sha256 hash value
 .Parameter Url
 A webpage or file URL
 .Parameter SubmitName
-Name of sample being submitted
+Submission name
 .Parameter ActionScript
 Runtime script for sandbox analysis
 .Parameter CommandLine
@@ -254,7 +252,6 @@ falconx-sandbox:write
             UserTags         = 'user_tags'
         }
         $PSBoundParameters.EnvironmentId = switch ($PSBoundParameters.EnvironmentId) {
-            # Update 'environment_id' to numerical value
             'android'      { 200 }
             'ubuntu16_x64' { 300 }
             'win7_x64'     { 110 }
@@ -265,9 +262,6 @@ falconx-sandbox:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root    = @('user_tags')
@@ -288,7 +282,7 @@ falconx-sandbox:write
 function Receive-FalconArtifact {
 <#
 .Synopsis
-Download IOC packs, PCAP files, and other analysis artifacts.
+Download artifacts from a Falcon X Sandbox report
 .Parameter Id
 Artifact identifier
 .Parameter Path
@@ -332,9 +326,9 @@ falconx-sandbox:read
 function Remove-FalconReport {
 <#
 .Synopsis
-Remove a sandbox report
+Delete a Falcon X Sandbox report
 .Parameter Id
-Sandbox report identifier
+Falcon X Sandbox report identifier
 .Role
 falconx-sandbox:write
 #>

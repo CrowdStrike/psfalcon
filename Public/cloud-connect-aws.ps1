@@ -1,7 +1,7 @@
-function Get-FalconSettings {
+function Get-FalconDiscoverAwsSettings {
 <#
 .Synopsis
-Retrieve a set of Global Settings which are applicable to all provisioned AWS accounts
+Retrieve Global Settings for all provisioned AWS accounts
 .Role
 cloud-connect-aws:read
 #>
@@ -12,14 +12,6 @@ cloud-connect-aws:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
-            Format   = @{
-                Body = @{
-                    root = @('device_id', 'session_id', 'base_command', 'command_string', 'id', 'persist')
-                }
-            }
         }
     }
     process {
@@ -49,7 +41,7 @@ XXX identifier
 .Role
 cloud-connect-aws:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:post')]
         [int64] $RateLimitTime,
@@ -81,9 +73,6 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('mode')
                 Body  = @{
@@ -106,7 +95,7 @@ One or more XXX identifiers
 .Role
 cloud-connect-aws:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/verify-account-access/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/verify-account-access/v1:post',
             Mandatory = $true)]
@@ -117,9 +106,6 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids')
             }
@@ -129,18 +115,20 @@ cloud-connect-aws:write
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconAccounts {
+function Remove-FalconDiscoverAwsAccount {
 <#
 .Synopsis
-Delete a set of AWS Accounts by specifying their IDs
+Delete AWS accounts from Falcon Discover
 .Parameter Ids
-One or more XXX identifiers
+AWS account identifier(s)
 .Role
 cloud-connect-aws:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:delete', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\d{12}$')]
         [array] $Ids
     )
     begin {
@@ -148,9 +136,6 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids')
             }
@@ -160,48 +145,63 @@ cloud-connect-aws:write
         Invoke-Falcon @Param
     }
 }
-function Get-FalconAccounts {
+function Get-FalconDiscoverAWSAccount {
 <#
 .Synopsis
-Retrieve a set of AWS Accounts by specifying their IDs
-
-Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS account IDs which match the filter criteria
-
-Search for provisioned AWS Accounts by providing an FQL filter and paging details. Returns a set of AWS accounts which match the filter criteria
-.Parameter Sort
-Property and direction to sort results
+Search for AWS accounts in Falcon Discover
 .Parameter Ids
-One or more XXX identifiers
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Limit
-Maximum number of results per request
+AWS account identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
+.Parameter Sort
+Property and direction to sort results
+.Parameter Limit
+Maximum number of results per request
+.Parameter Offset
+Position to begin retrieving results
+.Parameter Detailed
+Retrieve detailed information
+.Parameter All
+Repeat requests until all available results are retrieved
+.Parameter Total
+Display total result count instead of results
 .Role
 cloud-connect-aws:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
-        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get')]
-        [string] $Sort,
-
-        [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:get', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\d{12}$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
-        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get')]
-        [int] $Offset,
+        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get', Position = 1)]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get', Position = 1)]
+        [string] $Filter,
 
-        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
-        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get', Position = 2)]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get', Position = 2)]
+        [string] $Sort,
+
+        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get', Position = 3)]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get', Position = 3)]
         [ValidateRange(1, 500)]
         [int] $Limit,
 
+        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get', Position = 4)]
+        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get', Position = 4)]
+        [int] $Offset,
+
+        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get', Mandatory = $true)]
+        [switch] $Detailed,
+
         [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
-        [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get')]
-        [string] $Filter
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
+        [switch] $Total
+
+        
     )
     begin {
         $Param = @{
@@ -238,7 +238,7 @@ XXX identifier
 .Role
 cloud-connect-aws:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:patch')]
         [int64] $RateLimitTime,
@@ -266,9 +266,6 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('rate_limit_time', 'external_id', 'rate_limit_reqs', 'cloudtrail_bucket_region',
@@ -292,7 +289,7 @@ Create or update Global Settings which are applicable to all provisioned AWS acc
 .Role
 cloud-connect-aws:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/settings/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/settings/v1:post')]
         [string] $CloudtrailBucketOwnerId,
@@ -305,9 +302,6 @@ cloud-connect-aws:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('cloudtrail_bucket_owner_id', 'static_external_id')

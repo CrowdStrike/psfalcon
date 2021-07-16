@@ -1,9 +1,9 @@
 function Get-FalconActor {
 <#
 .Synopsis
-Search for actors
+Search for threat actors
 .Parameter Ids
-One or more actor identifiers
+Threat actor identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Query

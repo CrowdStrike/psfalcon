@@ -1,7 +1,7 @@
 function Get-FalconCompleteAllowlist {
 <#
 .Synopsis
-Retrieve allowlist tickets that match the provided filter criteria
+Search for Falcon Complete Allowlist tickets
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -58,7 +58,7 @@ falconcomplete-dashboard:read
 function Get-FalconCompleteBlocklist {
 <#
 .Synopsis
-Retrieve blocklist tickets that match the provided filter criteria
+Search for Falcon Complete Blocklist tickets
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -100,9 +100,6 @@ falconcomplete-dashboard:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
@@ -115,7 +112,7 @@ falconcomplete-dashboard:read
 function Get-FalconCompleteCollection {
 <#
 .Synopsis
-Retrieve device count collection Ids that match the provided FQL filter criteria
+Search for Falcon Complete device collections
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -161,9 +158,6 @@ falconcomplete-dashboard:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
@@ -176,7 +170,7 @@ falconcomplete-dashboard:read
 function Get-FalconCompleteDetection {
 <#
 .Synopsis
-Retrieve DetectionsIds that match the provided FQL filter
+Search for Falcon Complete detections
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -218,9 +212,6 @@ falconcomplete-dashboard:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
@@ -233,7 +224,7 @@ falconcomplete-dashboard:read
 function Get-FalconCompleteEscalation {
 <#
 .Synopsis
-Retrieve escalation tickets that match the provided filter criteria
+Search for Falcon Complete escalations
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -275,9 +266,6 @@ falconcomplete-dashboard:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
@@ -290,7 +278,7 @@ falconcomplete-dashboard:read
 function Get-FalconCompleteIncident {
 <#
 .Synopsis
-Retrieve incidents that match the provided filter criteria
+Search for Falcon Complete incidents
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -332,9 +320,6 @@ falconcomplete-dashboard:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
@@ -347,7 +332,7 @@ falconcomplete-dashboard:read
 function Get-FalconCompleteRemediation {
 <#
 .Synopsis
-Retrieve remediation tickets that match the provided filter criteria
+Search for Falcon Complete remediations
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -389,9 +374,6 @@ falconcomplete-dashboard:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }

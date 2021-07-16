@@ -1,7 +1,7 @@
 function Edit-FalconIoaGroup {
 <#
 .Synopsis
-Modify custom IOA rule groups
+Modify a Custom IOA rule group
 .Parameter Id
 Custom IOA rule group identifier
 .Parameter Name
@@ -46,9 +46,6 @@ custom-ioa:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('description', 'rulegroup_version', 'name', 'enabled', 'id', 'comment')
@@ -119,7 +116,7 @@ function Get-FalconIoaGroup {
 .Synopsis
 Search for Custom IOA rule groups
 .Parameter Ids
-One or more Custom IOA rule group identifiers
+Custom IOA rule group identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Query
@@ -199,7 +196,7 @@ function Get-FalconIoaPlatform {
 .Synopsis
 List Custom IOA platforms
 .Parameter Ids
-One or more Custom IOA platforms
+Custom IOA platform(s)
 .Parameter Limit
 Maximum number of results per request
 .Parameter Offset
@@ -254,7 +251,7 @@ function Get-FalconIoaRule {
 .Synopsis
 Search for Custom IOA rules
 .Parameter Ids
-One or more Custom IOA rule identifiers
+Custom IOA rule identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Query
@@ -316,9 +313,6 @@ custom-ioa:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('limit', 'sort', 'q', 'offset', 'filter')
                 Body  = @{
@@ -336,7 +330,7 @@ function Get-FalconIoaSeverity {
 .Synopsis
 List Custom IOA severity levels
 .Parameter Ids
-One or more Custom IOA severities
+Custom IOA severities
 .Parameter Limit
 Maximum number of results per request
 .Parameter Offset
@@ -352,15 +346,16 @@ custom-ioa:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/pattern-severities/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/ioarules/entities/pattern-severities/v1:get', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/ioarules/entities/pattern-severities/v1:get', Mandatory = $true,
+            Position = 1)]
         [ValidatePattern('^(critical|high|medium|low|informational)$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/ioarules/queries/pattern-severities/v1:get')]
+        [Parameter(ParameterSetName = '/ioarules/queries/pattern-severities/v1:get', Position = 1)]
         [ValidateRange(1,500)]
         [int] $Limit,
 
-        [Parameter(ParameterSetName = '/ioarules/queries/pattern-severities/v1:get')]
+        [Parameter(ParameterSetName = '/ioarules/queries/pattern-severities/v1:get', Position = 2)]
         [string] $Offset,
 
         [Parameter(ParameterSetName = '/ioarules/queries/pattern-severities/v1:get')]
@@ -391,7 +386,7 @@ function Get-FalconIoaType {
 .Synopsis
 List Custom IOA types
 .Parameter Ids
-One or more Custom IOA types
+Custom IOA types
 .Parameter Limit
 Maximum number of results per request
 .Parameter Offset
@@ -476,9 +471,6 @@ custom-ioa:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('description', 'platform', 'name', 'comment')
@@ -570,9 +562,9 @@ custom-ioa:write
 function Remove-FalconIoaGroup {
 <#
 .Synopsis
-Remove Custom IOA rule groups
+Delete Custom IOA rule groups
 .Parameter Ids
-One or more Custom IOA rule group identifiers
+Custom IOA rule group identifier(s)
 .Parameter Comment
 Audit log comment
 .Role
@@ -608,7 +600,7 @@ Remove Custom IOA rules from rule groups
 .Parameter RuleGroupId
 Custom IOA rule group identifier
 .Parameter Ids
-One or more Custom IOA rule identifiers
+Custom IOA rule identifier(s)
 .Parameter Comment
 Audit log comment
 .Role

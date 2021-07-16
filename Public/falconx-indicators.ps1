@@ -72,9 +72,6 @@ falconx-indicators:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'limit', 'filter', 'offset', 'include_deleted', 'q')
                 Body  = @{

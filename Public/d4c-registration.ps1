@@ -15,9 +15,6 @@ d4c-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
@@ -38,7 +35,7 @@ Creates a new account in our system for a customer and generates a script for th
 .Role
 d4c-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:post')]
         [string] $SubscriptionId,
@@ -51,9 +48,6 @@ d4c-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('subscription_id', 'tenant_id')
@@ -74,7 +68,7 @@ XXX identifier
 .Role
 d4c-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch', Mandatory = $true)]
         [ValidatePattern('^[0-9a-z-]{36}$')]
@@ -85,9 +79,6 @@ d4c-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('id')
             }
@@ -108,7 +99,7 @@ One or more XXX identifiers
 .Role
 d4c-registration:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:get')]
         [array] $Ids,
@@ -123,9 +114,6 @@ d4c-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids', 'scan-type')
             }
@@ -173,7 +161,7 @@ Creates a new account in our system for a customer and generates a new service a
 .Role
 d4c-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:post', Mandatory = $true)]
         [string] $ParentId
@@ -183,9 +171,6 @@ d4c-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('parent_id')
@@ -214,9 +199,6 @@ d4c-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('parent_id')
@@ -239,14 +221,13 @@ One or more XXX identifiers
 .Role
 d4c-registration:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:get')]
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:get')]
         [ValidateSet('full', 'dry')]
-        [ValidateLength(3, 4)]
         [string] $ScanType
     )
     begin {
@@ -254,9 +235,6 @@ d4c-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids', 'scan-type')
             }

@@ -1,4 +1,4 @@
-function Remove-FalconAccount {
+function Remove-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Deletes an existing AWS account or organization in our system.
@@ -9,7 +9,7 @@ One or more XXX identifiers
 .Role
 cspm-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete')]
         [array] $Ids,
@@ -63,7 +63,7 @@ cspm-registration:read
         Invoke-Falcon @Param
     }
 }
-function Edit-FalconAccount {
+function Edit-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Patches a existing account in our system for a customer.
@@ -74,7 +74,7 @@ Patches a existing account in our system for a customer.
 .Role
 cspm-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch', Mandatory = $true)]
         [string] $AccountId,
@@ -118,9 +118,6 @@ cspm-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('account_id', 'cloudtrail_region')
@@ -132,7 +129,7 @@ cspm-registration:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconAccount {
+function Get-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Returns information about the current status of an AWS account.
@@ -153,7 +150,7 @@ Position to begin retrieving results
 .Role
 cspm-registration:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
         [ValidateRange(1, 3)]
@@ -186,9 +183,6 @@ cspm-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('limit', 'ids', 'organization-ids', 'scan-type', 'offset', 'group_by', 'status')
             }
@@ -198,7 +192,7 @@ cspm-registration:read
         Invoke-Falcon @Param
     }
 }
-function New-FalconAccount {
+function New-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Creates a new account in our system for a customer and generates a script for them to run in their AWS cloud environment to grant us access.
@@ -227,9 +221,6 @@ cspm-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('cloudtrail_region', 'account_id', 'organization_id')
@@ -301,9 +292,6 @@ cspm-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('cloud_provider', 'limit', 'account_id', 'policy_id', 'offset',
                     'azure_tenant_id', 'user_ids')
@@ -357,9 +345,6 @@ cspm-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('cloud_provider', 'policy_id', 'azure_tenant_id', 'account_id')
             }
@@ -402,9 +387,6 @@ cspm-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('severity', 'policy_id', 'enabled')
@@ -446,9 +428,6 @@ cspm-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     resources = @('cloud_platform', 'scan_schedule')
@@ -509,9 +488,6 @@ cspm-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids', 'service', 'policy-id', 'cloud-platform')
             }
@@ -544,9 +520,6 @@ cspm-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('cloud-platform')
             }
@@ -567,21 +540,27 @@ Update an Azure default subscription_id in our system for given tenant_id
 .Role
 cspm-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(
+        DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch')]
         [ValidatePattern('^[0-9a-z-]{36}$')]
         [string] $TenantId,
 
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
+            Mandatory = $true)]
         [ValidatePattern('^[0-9a-z-]{36}$')]
         [string] $SubscriptionId
     )
     begin {
+        $Fields = @{
+            SubscriptionId = 'subscription_id'
+            TenantId       = 'tenant-id'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('tenant-id', 'subscription_id')
             }
@@ -600,7 +579,7 @@ One or more XXX identifiers
 .Role
 cspm-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:delete', Mandatory = $true)]
         [array] $Ids
@@ -610,9 +589,6 @@ cspm-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('ids')
             }
@@ -631,7 +607,7 @@ Return a script for customer to run in their cloud environment to grant us acces
 .Role
 cspm-registration:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
         [ValidatePattern('^[0-9a-z-]{36}$')]
@@ -665,7 +641,7 @@ XXX identifier
 .Role
 cspm-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
         [ValidatePattern('^[0-9a-z-]{36}$')]
@@ -680,9 +656,6 @@ cspm-registration:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('tenant-id', 'id')
             }
@@ -709,7 +682,7 @@ Maximum number of results per request
 .Role
 cspm-registration:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
         [ValidateSet('full', 'dry')]
@@ -735,9 +708,6 @@ cspm-registration:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('scan-type', 'offset', 'ids', 'status', 'limit')
             }
@@ -758,7 +728,7 @@ Creates a new account in our system for a customer and generates a script for th
 .Role
 cspm-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post')]
         [string] $SubscriptionId,

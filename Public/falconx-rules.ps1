@@ -1,9 +1,9 @@
 function Get-FalconRule {
 <#
 .Synopsis
-Search for intelligence rulesets
+Search for Falcon X rulesets
 .Parameter Ids
-One or more ruleset identifiers
+Ruleset identifier(s)
 .Parameter Type
 Ruleset type
 .Parameter Name

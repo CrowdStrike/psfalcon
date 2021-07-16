@@ -3,7 +3,7 @@ function Edit-FalconDetection {
 .Synopsis
 Modify the state, assignee, and visibility of detections
 .Parameter Ids
-One or more detection identifiers
+Detection identifier(s)
 .Parameter Status
 Detection status
 .Parameter ShowInUi

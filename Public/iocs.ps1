@@ -1,7 +1,7 @@
 function Get-FalconIocHost {
 <#
 .Synopsis
-List identifiers for Host(s) that have observed a custom indicator
+List Host identifiers that have observed a custom indicator
 .Parameter Type
 Custom indicator type
 .Parameter Value
@@ -51,7 +51,7 @@ iocs:read
 function Get-FalconIocProcess {
 <#
 .Synopsis
-Search for process identifiers on a specific Host involving a custom indicator
+Search for process identifiers involving a custom indicator on a specific Host
 .Parameter Ids
 Process identifier(s)
 .Parameter Type
@@ -121,7 +121,7 @@ iocs:read
 function Get-FalconIocTotal {
 <#
 .Synopsis
-Provide a count of the total Host(s) that have observed a custom indicator
+Provide a count of total Host(s) that have observed a custom indicator
 .Parameter Type
 Custom indicator type
 .Parameter Value

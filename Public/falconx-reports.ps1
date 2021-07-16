@@ -3,7 +3,7 @@ function Get-FalconIntel {
 .Synopsis
 Search for intelligence reports
 .Parameter Ids
-One or more intelligence report identifiers
+Intelligence report identifier(s)
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Query
@@ -73,9 +73,6 @@ falconx-reports:read
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q')
             }
