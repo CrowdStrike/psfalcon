@@ -98,9 +98,6 @@ ioc:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('retrodetects', 'ignore_warnings')
                 Body  = @{
@@ -310,9 +307,6 @@ ioc:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/iocs/entities/indicators/v1:post'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Query = @('retrodetects', 'ignore_warnings')
                 Body  = @{
@@ -357,19 +351,16 @@ ioc:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format    = @{
                 Query = @('ids', 'filter', 'comment')
             }
         }
     }
     process {
-        if (!$PSBoundParameters.Filter -and !$PSBoundParameters.Ids) {
-            throw "'Filter' or 'Ids' must be provided."
-        } else {
+        if ($PSBoundParameters.Filter -or $PSBoundParameters.Ids) {
             Invoke-Falcon @Param
+        } else {
+            throw "'Filter' or 'Ids' must be provided."
         }
     }
 }
