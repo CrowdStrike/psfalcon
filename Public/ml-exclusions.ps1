@@ -122,6 +122,8 @@ function New-FalconMlExclusion {
 Create a Machine Learning exclusion
 .Parameter Value
 RegEx pattern value
+.Parameter ExcludedFrom
+Actions to exclude
 .Parameter GroupIds
 Host group identifier(s) or 'all'
 .Parameter Comment
@@ -135,15 +137,20 @@ ml-exclusions:write
         [string] $Value,
 
         [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 2)]
+        [ValidateSet('blocking', 'extraction')]
+        [array] $ExcludedFrom,
+
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 3)]
         [ValidatePattern('^(\w{32}|all)$')]
         [array] $GroupIds,
 
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Position = 3)]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Position = 4)]
         [string] $Comment
     )
     begin {
         $Fields = @{
-            GroupIds = 'groups'
+            ExcludedFrom = 'excluded_from'
+            GroupIds     = 'groups'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -151,7 +158,7 @@ ml-exclusions:write
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    root = @('groups', 'value', 'comment')
+                    root = @('groups', 'value', 'comment', 'excluded_from')
                 }
             }
         }

@@ -354,7 +354,6 @@ THIS BRANCH IS STILL IN PROGRESS -- NOT READY FOR RELEASE
 
 TODO Items (unfinished):
 
-* Update remaining commands.
 * Test and validate all commands.
 * Migrate 'Get-Help' content to GitHub for online reference.
 * Add GraphQL support for /identity-protection/ APIs.

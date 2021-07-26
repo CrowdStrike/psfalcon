@@ -37,7 +37,7 @@ class ApiClient {
                     }
                 }
             } else {
-                $Message = [System.Net.Http.HttpRequestMessage]::New($Param.Method, $Param.Path)
+                $Message = [System.Net.Http.HttpRequestMessage]::New($Param.Method.ToUpper(), $Param.Path)
                 ($Param.Headers).GetEnumerator().foreach{
                     $Message.Headers.Add($_.Key, $_.Value)
                 }
