@@ -448,6 +448,8 @@ GitHub Issues
 * Issue #53: Along with 'Request-FalconToken' supporting redirection, it now retries a token request when
   presented with a HTTP 429 or 308 response. The 'Wait-RetryAfter' function was also re-written to re-calculate
   the 'X-Cs-WaitRetryAfter' time. Both of these changes seem to have eliminated the chance of a negative wait time.
+
+* Issue #54: Updated 'Get-FalconHorizonPolicy' with additional '-Service' names.
 "@
         }
     }
