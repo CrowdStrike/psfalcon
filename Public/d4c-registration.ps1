@@ -1,77 +1,17 @@
-function Get-FalconUserScripts {
+function Edit-FalconDiscoverAzureAccount {
 <#
 .Synopsis
-Return a script for customer to run in their cloud environment to grant us access to their Azure environment
-
-.Role
-d4c-registration:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-    
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function New-FalconAccount {
-<#
-.Synopsis
-Creates a new account in our system for a customer and generates a script for them to run in their cloud environment to grant us access.
-.Parameter SubscriptionId
-
-.Parameter TenantId
-
-.Role
-d4c-registration:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/account/v1:post')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:post')]
-        [string] $SubscriptionId,
-
-        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:post')]
-        [string] $TenantId
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('subscription_id', 'tenant_id')
-                }
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Edit-FalconClientId {
-<#
-.Synopsis
-Update an Azure service account in our system by with the user-created client_id created with the public key weve provided
+Modify the Falcon Discover for Cloud Azure default client identifier
 .Parameter Id
-XXX identifier
+Azure client identifier
 .Role
-d4c-registration:write
+cspm-registration:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch', Mandatory = $true)]
-        [ValidatePattern('^[0-9a-z-]{36}$')]
+        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id
     )
     begin {
@@ -88,32 +28,36 @@ d4c-registration:write
         Invoke-Falcon @Param
     }
 }
-function Get-FalconAccount {
+function Get-FalconDiscoverAzureAccount {
 <#
 .Synopsis
-Return information about Azure account registration
+Search for Falcon Discover for Cloud Azure accounts
 .Parameter Ids
-One or more XXX identifiers
+Azure account identifier(s)
 .Parameter ScanType
-
+Scan type
 .Role
 d4c-registration:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/account/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:get', Position = 2)]
         [ValidateSet('full', 'dry')]
-        [ValidateLength(3, 4)]
         [string] $ScanType
     )
     begin {
+        $Fields = @{
+            ScanType = 'scan-type'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('ids', 'scan-type')
             }
@@ -123,118 +67,36 @@ d4c-registration:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconUserScriptsDownload {
+function Get-FalconDiscoverGcpAccount {
 <#
 .Synopsis
-Return a script for customer to run in their cloud environment to grant us access to their Azure environment as a downloadable attachment
-
-.Role
-d4c-registration:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-    
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/json application/octet-stream'
-            }
-            Format   = @{
-                Query = @('ids', 'scan-type')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function New-FalconAccount {
-<#
-.Synopsis
-Creates a new account in our system for a customer and generates a new service account for them to add access to in their GCP environment to grant us access.
-.Parameter ParentId
-
-.Role
-d4c-registration:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/account/v1:post')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:post', Mandatory = $true)]
-        [string] $ParentId
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('parent_id')
-                }
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconUserScripts {
-<#
-.Synopsis
-Return a script for customer to run in their cloud environment to grant us access to their GCP environment
-
-.Role
-d4c-registration:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-    
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('parent_id')
-                }
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconAccount {
-<#
-.Synopsis
-Returns information about the current status of an GCP account.
+Search for Falcon Discover for Cloud GCP accounts
 .Parameter Ids
-One or more XXX identifiers
+GCP account identifier(s)
 .Parameter ScanType
-
+Scan type
 .Role
 d4c-registration:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/account/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\d{10,}$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:get', Position = 2)]
         [ValidateSet('full', 'dry')]
         [string] $ScanType
     )
     begin {
+        $Fields = @{
+            ScanType = 'scan-type'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('ids', 'scan-type')
             }
@@ -244,17 +106,102 @@ d4c-registration:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconUserScriptsDownload {
+function New-FalconDiscoverAzureAccount {
 <#
 .Synopsis
-Return a script for customer to run in their cloud environment to grant us access to their GCP environment as a downloadable attachment
+Provision Falcon Discover for Cloud Azure accounts
+.Parameter SubscriptionId
+Azure subscription identifier
+.Parameter TenantId
+Azure tenant identifier
+.Role
+d4c-registration:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/account/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:post', Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $SubscriptionId,
 
+        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:post', Position = 2)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $TenantId
+    )
+    begin {
+        $Fields = @{
+            SubscriptionId = 'subscription_id'
+            TenantId       = 'tenant_id'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Body = @{
+                    resources = @('subscription_id', 'tenant_id')
+                }
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function New-FalconDiscoverGcpAccount {
+<#
+.Synopsis
+Provision Falcon Discover for Cloud GCP accounts
+.Parameter ParentId
+ GCP project identifier
+.Role
+d4c-registration:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/account/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:post', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\d{12}$')]
+        [string] $ParentId
+    )
+    begin {
+        $Fields = @{
+            ParentId = 'parent_id'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Body = @{
+                    resources = @('parent_id')
+                }
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Receive-FalconDiscoverAzureScript {
+<#
+.Synopsis
+Download a Bash script which grants Falcon Discover for Cloud access using Azure Cloud Shell
 .Role
 d4c-registration:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/user-scripts-download/v1:get')]
     param(
-    
+        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/user-scripts-download/v1:get',
+            Mandatory = $true, Position = 1)]
+        [ValidatePattern('^*\.sh$')]
+        [ValidateScript({
+            if (Test-Path $_) {
+                throw "An item with the specified name $_ already exists."
+            } else {
+                $true
+            }
+        })]
+        [string] $Path
     )
     begin {
         $Param = @{
@@ -262,10 +209,80 @@ d4c-registration:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Headers  = @{
-                Accept = 'application/json application/octet-stream'
+                Accept = 'application/octet-stream'
             }
             Format   = @{
-                Query = @('ids', 'scan-type')
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Receive-FalconDiscoverGcpScript {
+<#
+.Synopsis
+ Download a Bash script which grants access using GCP CLI
+.Parameter Path
+Destination path
+.Role
+d4c-registration:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/user-scripts-download/v1:get',
+            Mandatory = $true, Position = 1)]
+        [ValidatePattern('^*\.sh$')]
+        [ValidateScript({
+            if (Test-Path $_) {
+                throw "An item with the specified name $_ already exists."
+            } else {
+                $true
+            }
+        })]
+        [string] $Path
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept = 'application/octet-stream'
+            }
+            Format   = @{
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Update-FalconDiscoverAzureAccount {
+<#
+.Synopsis
+Update a Falcon Discover for Cloud Azure service account and client identifier
+.Parameter Id
+Azure account identifier
+.Role
+d4c-registration:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $Id
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Format   = @{
+                Query = @('id')
             }
         }
     }

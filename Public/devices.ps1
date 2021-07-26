@@ -66,7 +66,7 @@ devices:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/devices-scroll/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/devices/entities/devices/v1:get', Position = 1, Mandatory = $true)]
+        [Parameter(ParameterSetName = '/devices/entities/devices/v1:get', Mandatory = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [array] $Ids,
 

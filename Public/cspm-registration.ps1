@@ -1,95 +1,33 @@
-function Remove-FalconHorizonAwsAccount {
-<#
-.Synopsis
-Deletes an existing AWS account or organization in our system.
-.Parameter Ids
-One or more XXX identifiers
-.Parameter OrganizationIds
-
-.Role
-cspm-registration:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete')]
-        [array] $Ids,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete')]
-        [array] $OrganizationIds
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
-            Format   = @{
-                Query = @('ids', 'organization-ids')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconUserScriptsDownload {
-<#
-.Synopsis
-Return a script for customer to run in their cloud environment to grant us access to their AWS environment as a downloadable attachment.
-
-.Role
-cspm-registration:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-    
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/json application/octet-stream'
-            }
-            Format   = @{
-                Query = @('ids', 'organization-ids')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
 function Edit-FalconHorizonAwsAccount {
 <#
 .Synopsis
-Patches a existing account in our system for a customer.
+Modify a Falcon Horizon AWS account
 .Parameter AccountId
-
+AWS account identifier
 .Parameter CloudtrailRegion
-
+AWS region where the account resides
 .Role
 cspm-registration:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\d{12}$')]
         [string] $AccountId,
 
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch', Position = 2)]
         [string] $CloudtrailRegion
     )
     begin {
+        $Fields = @{
+            AccountId        = 'account_id'
+            CloudtrailRegion = 'cloudtrail_region'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     resources = @('account_id', 'cloudtrail_region')
@@ -101,26 +39,174 @@ cspm-registration:write
         Invoke-Falcon @Param
     }
 }
-function Get-FalconConsoleSetupUrls {
+function Edit-FalconHorizonAzureAccount {
 <#
 .Synopsis
-Return a URL for customer to visit in their cloud environment to grant us access to their AWS environment.
-
+Modify the Falcon Horizon Azure default client or subscription identifier
+.Parameter Id
+Azure client identifier
+.Parameter SubscriptionId
+Azure subscription identifier
+.Parameter TenantId
+Azure tenant identifier, required when multiple tenants have been registered
 .Role
-cspm-registration:read
+cspm-registration:write
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
     param(
-    
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $Id,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
+                Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $SubscriptionId,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch', Position = 2)]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
+            Position = 2)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $TenantId
     )
     begin {
+        $Fields = @{
+            SubscriptionId = 'subscription_id'
+            TenantId       = 'tenant-id'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Query = @('tenant-id', 'id', 'subscription_id')
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Edit-FalconDefaultSubscriptionId {
+    <#
+    .Synopsis
+    Modify Falcon Horizon Azure accounts
+    .Parameter SubscriptionId
+    Default subscription identifier for all subscriptions within a tenant
+    .Parameter TenantId
+    Azure tenant identifier
+    .Role
+    cspm-registration:write
+    #>
+        [CmdletBinding(
+            DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch')]
+        param(
+            [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
+                Mandatory = $true, Position = 1)]
+            [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+            [string] $SubscriptionId,
+    
+            [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
+                Position = 2)]
+            [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+            [string] $TenantId
+        )
+        begin {
+            $Fields = @{
+                SubscriptionId = 'subscription_id'
+                TenantId       = 'tenant-id'
+            }
+            $Param = @{
+                Command  = $MyInvocation.MyCommand.Name
+                Endpoint = $PSCmdlet.ParameterSetName
+                Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+                Format   = @{
+                    Query = @('tenant-id', 'subscription_id')
+                }
+            }
+        }
+        process {
+            Invoke-Falcon @Param
+        }
+    }
+function Edit-FalconHorizonPolicy {
+<#
+.Synopsis
+Updates a policy setting - can be used to override policy severity or to disable a policy entirely.
+.Parameter PolicyId
+Falcon Horizon policy identifier
+.Parameter Enabled
+Policy enablement status
+.Parameter Severity
+Severity level
+.Role
+cspm-registration:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/settings/entities/policy/v1:patch')]
+    param(
+        [Parameter(ParameterSetName = '/settings/entities/policy/v1:patch', Mandatory = $true, Position = 1)]
+        [int32] $PolicyId,
+
+        [Parameter(ParameterSetName = '/settings/entities/policy/v1:patch', Mandatory = $true, Position = 2)]
+        [boolean] $Enabled,
+
+        [Parameter(ParameterSetName = '/settings/entities/policy/v1:patch', Mandatory = $true, Position = 3)]
+        [ValidateSet('informational', 'medium', 'high')]
+        [string] $Severity
+    )
+    begin {
+        $Fields = @{
+            PolicyId = 'policy_id'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    resources = @('account_id', 'cloudtrail_region')
+                    resources = @('severity', 'policy_id', 'enabled')
+                }
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Edit-FalconHorizonSchedule {
+<#
+.Synopsis
+Updates Falcon Horizon scan schedule configuration for one or more cloud platforms.
+.Parameter CloudPlatform
+Cloud platform
+.Parameter ScanSchedule
+Scan interval
+.Role
+cspm-registration:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/settings/scan-schedule/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/settings/scan-schedule/v1:post', Mandatory = $true, Position = 1)]
+        [ValidateSet('aws', 'azure', 'gcp')]
+        [string] $CloudPlatform,
+
+        [Parameter(ParameterSetName = '/settings/scan-schedule/v1:post', Mandatory = $true, Position = 2)]
+        [ValidateSet('2h', '6h', '12h', '24h')]
+        [string] $ScanSchedule
+    )
+    begin {
+        $Fields = @{
+            CloudPlatform = 'cloud_platform'
+            ScanSchedule  = 'scan_schedule'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Body = @{
+                    resources = @('cloud_platform', 'scan_schedule')
                 }
             }
         }
@@ -132,57 +218,73 @@ cspm-registration:read
 function Get-FalconHorizonAwsAccount {
 <#
 .Synopsis
-Returns information about the current status of an AWS account.
+Search for Falcon Horizon AWS accounts
+.Parameter Ids
+AWS account identifier(s)
+.Parameter OrganizationIds
+AWS organization identifier(s)
+.Parameter ScanType
+Scan type
+.Parameter Status
+AWS account status
+.Parameter GroupBy
+Field to group by
 .Parameter Limit
 Maximum number of results per request
-.Parameter Ids
-One or more XXX identifiers
-.Parameter OrganizationIds
-
-.Parameter ScanType
-
 .Parameter Offset
 Position to begin retrieving results
-.Parameter GroupBy
-
-.Parameter Status
-
+.Parameter All
+Repeat requests until all available results are retrieved
+.Parameter Total
+Display total result count instead of results
 .Role
 cspm-registration:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
-        [ValidateRange(1, 3)]
-        [int] $Limit,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get', Position = 1)]
+        [ValidatePattern('^\d{12}$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get', Position = 2)]
+        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
         [array] $OrganizationIds,
 
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get', Position = 3)]
         [ValidateSet('full', 'dry')]
-        [ValidateLength(3, 4)]
         [string] $ScanType,
 
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
-        [int] $Offset,
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get', Position = 4)]
+        [ValidateSet('provisioned', 'operational')]
+        [string] $Status,
 
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get', Position = 5)]
         [ValidateSet('organization')]
         [string] $GroupBy,
 
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get', Position = 6)]
+        [ValidateRange(1,500)]
+        [int] $Limit,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get', Position = 7)]
+        [int] $Offset,
+
         [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
-        [ValidateSet('provisioned', 'operational')]
-        [string] $Status
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
+        [switch] $Total
     )
     begin {
+        $Fields = @{
+            GroupBy         = 'group_by'
+            OrganizationIds = 'organization-ids'
+            ScanType        = 'scan-type'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('limit', 'ids', 'organization-ids', 'scan-type', 'offset', 'group_by', 'status')
             }
@@ -192,39 +294,84 @@ cspm-registration:read
         Invoke-Falcon @Param
     }
 }
-function New-FalconHorizonAwsAccount {
+function Get-FalconHorizonAwsLink {
 <#
 .Synopsis
-Creates a new account in our system for a customer and generates a script for them to run in their AWS cloud environment to grant us access.
-.Parameter CloudtrailRegion
-
-.Parameter AccountId
-
-.Parameter OrganizationId
-
+Retrieve a URL that will grant access for Falcon Horizon in AWS
 .Role
-cspm-registration:write
+cspm-registration:read
 #>
-    [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post', Mandatory = $true)]
-        [string] $CloudtrailRegion,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post', Mandatory = $true)]
-        [string] $AccountId,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post', Mandatory = $true)]
-        [string] $OrganizationId
-    )
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get')]
+    param()
     begin {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Get-FalconHorizonAzureAccount {
+<#
+.Synopsis
+Search for Falcon Horizon Azure accounts
+.Parameter Ids
+Azure account identifier(s)
+.Parameter ScanType
+Scan type
+.Parameter Status
+Azure account status
+.Parameter Limit
+Maximum number of results per request
+.Parameter Offset
+Position to begin retrieving results
+.Parameter All
+Repeat requests until all available results are retrieved
+.Parameter Total
+Display total result count instead of results
+.Role
+cspm-registration:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get', Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [array] $Ids,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get', Position = 2)]
+        [ValidateSet('full', 'dry')]
+        [string] $ScanType,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get', Position = 3)]
+        [ValidateSet('provisioned', 'operational')]
+        [string] $Status,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get', Position = 4)]
+        [ValidateRange(1,500)]
+        [int] $Limit,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get', Position = 5)]
+        [int] $Offset,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
+        [switch] $Total
+    )
+    begin {
+        $Fields = @{
+            ScanType        = 'scan-type'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
-                Body = @{
-                    resources = @('cloudtrail_region', 'account_id', 'organization_id')
-                }
+                Query = @('scan-type', 'offset', 'ids', 'status', 'limit')
             }
         }
     }
@@ -250,6 +397,10 @@ Azure tenant identifier
 Maximum number of results per request
 .Parameter Offset
 Position to begin retrieving results
+.Parameter All
+Repeat requests until all available results are retrieved
+.Parameter Total
+Display total result count instead of results
 .Role
 cspm-registration:read
 #>
@@ -278,7 +429,13 @@ cspm-registration:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/ioa/entities/events/v1:get', Position = 7)]
-        [int] $Offset
+        [int] $Offset,
+
+        [Parameter(ParameterSetName = '/ioa/entities/events/v1:get')]
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/ioa/entities/events/v1:get')]
+        [switch] $Total
     )
     begin {
         $Fields = @{
@@ -347,91 +504,6 @@ cspm-registration:read
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('cloud_provider', 'policy_id', 'azure_tenant_id', 'account_id')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Edit-FalconHorizonPolicy {
-<#
-.Synopsis
-Updates a policy setting - can be used to override policy severity or to disable a policy entirely.
-.Parameter PolicyId
-Falcon Horizon policy identifier
-.Parameter Enabled
-Policy enablement status
-.Parameter Severity
-Severity level
-.Role
-cspm-registration:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '/settings/entities/policy/v1:patch')]
-    param(
-        [Parameter(ParameterSetName = '/settings/entities/policy/v1:patch', Mandatory = $true, Position = 1)]
-        [int32] $PolicyId,
-
-        [Parameter(ParameterSetName = '/settings/entities/policy/v1:patch', Mandatory = $true, Position = 2)]
-        [boolean] $Enabled,
-
-        [Parameter(ParameterSetName = '/settings/entities/policy/v1:patch', Mandatory = $true, Position = 3)]
-        [ValidateSet('informational', 'medium', 'high')]
-        [string] $Severity
-    )
-    begin {
-        $Fields = @{
-            PolicyId = 'policy_id'
-        }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('severity', 'policy_id', 'enabled')
-                }
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Edit-FalconHorizonSchedule {
-<#
-.Synopsis
-Updates Falcon Horizon scan schedule configuration for one or more cloud platforms.
-.Parameter CloudPlatform
-Cloud platform
-.Parameter ScanSchedule
-Scan interval
-.Role
-cspm-registration:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '')]
-    param(
-        [Parameter(ParameterSetName = '/settings/scan-schedule/v1:post', Mandatory = $true, Position = 1)]
-        [ValidateSet('aws', 'azure', 'gcp')]
-        [string] $CloudPlatform,
-
-        [Parameter(ParameterSetName = '/settings/scan-schedule/v1:post', Mandatory = $true, Position = 2)]
-        [ValidateSet('2h', '6h', '12h', '24h')]
-        [string] $ScanSchedule
-    )
-    begin {
-        $Fields = @{
-            CloudPlatform = 'cloud_platform'
-            ScanSchedule  = 'scan_schedule'
-        }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cloud_platform', 'scan_schedule')
-                }
             }
         }
     }
@@ -529,40 +601,49 @@ cspm-registration:read
         Invoke-Falcon @Param
     }
 }
-function Edit-FalconDefaultSubscriptionId {
+function New-FalconHorizonAwsAccount {
 <#
 .Synopsis
-Update an Azure default subscription_id in our system for given tenant_id
-.Parameter TenantId
-
-.Parameter SubscriptionId
-
+Provision a Falcon Horizon AWS account
+.Parameter AccountId
+AWS account identifier
+.Parameter OrganizationId
+AWS organization identifier
+.Parameter CloudtrailRegion
+AWS region where the account resides
 .Role
 cspm-registration:write
 #>
-    [CmdletBinding(
-        DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch')]
-        [ValidatePattern('^[0-9a-z-]{36}$')]
-        [string] $TenantId,
+        
 
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
-            Mandatory = $true)]
-        [ValidatePattern('^[0-9a-z-]{36}$')]
-        [string] $SubscriptionId
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post', Mandatory = $true,
+            Position = 1)]
+        [ValidatePattern('^\d{12}$')]
+        [string] $AccountId,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post', Position = 2)]
+        [ValidatePattern('^\d{12}$')]
+        [string] $OrganizationId,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post', Position = 3)]
+        [string] $CloudtrailRegion
     )
     begin {
         $Fields = @{
-            SubscriptionId = 'subscription_id'
-            TenantId       = 'tenant-id'
+            AccountId        = 'account_id'
+            CloudtrailRegion = 'cloudtrail_region'
+            OrganizationId   = 'organization_id'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
-                Query = @('tenant-id', 'subscription_id')
+                Body = @{
+                    resources = @('cloudtrail_region', 'account_id', 'organization_id')
+                }
             }
         }
     }
@@ -570,18 +651,187 @@ cspm-registration:write
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconAccount {
+function New-FalconHorizonAzureAccount {
 <#
 .Synopsis
-Deletes an Azure subscription from the system.
+Provision Falcon Horizon Azure accounts
+.Parameter SubscriptionId
+Azure subscription identifier
+.Parameter TenantId
+Azure tenant identifier
+.Role
+cspm-registration:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post', Position = 1)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $SubscriptionId,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post', Position = 2)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $TenantId
+    )
+    begin {
+        $Fields = @{
+            SubscriptionId = 'subscription_id'
+            TenantId       = 'tenant_id'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Body = @{
+                    resources = @('subscription_id', 'tenant_id')
+                }
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Receive-FalconHorizonAwsScript {
+<#
+.Synopsis
+Download a Bash script which grants Falcon Horizon access using AWS CLI
+.Parameter Path
+Destination path
+.Role
+cspm-registration:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
+            Mandatory = $true, Position = 1)]
+        [ValidatePattern('^*\.sh$')]
+        [ValidateScript({
+            if (Test-Path $_) {
+                throw "An item with the specified name $_ already exists."
+            } else {
+                $true
+            }
+        })]
+        [string] $Path
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Headers  = @{
+                Accept = 'application/octet-stream'
+            }
+            Format   = @{
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Receive-FalconHorizonAzureScript {
+<#
+.Synopsis
+Download a Bash script which grants Falcon Horizon access using Azure Cloud Shell
+.Parameter TenantId
+Azure tenant identifier
+.Role
+cspm-registration:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
+            Mandatory = $true, Position = 1)]
+        [ValidatePattern('^*\.sh$')]
+        [ValidateScript({
+            if (Test-Path $_) {
+                throw "An item with the specified name $_ already exists."
+            } else {
+                $true
+            }
+        })]
+        [string] $Path,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
+            Position = 2)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $TenantId
+    )
+    begin {
+        $Fields = @{
+            TenantId = 'tenant-id'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Headers  = @{
+                Accept = 'application/octet-stream'
+            }
+            Format   = @{
+                Query   = @('tenant-id')
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Remove-FalconHorizonAwsAccount {
+<#
+.Synopsis
+Remove Falcon Horizon AWS accounts
 .Parameter Ids
-One or more XXX identifiers
+AWS account identifier(s)
+.Parameter OrganizationIds
+AWS organization identifier(s)
+.Role
+cspm-registration:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete')]
+    param(
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete', Position = 1)]
+        [ValidatePattern('^\d{12}$')]
+        [array] $Ids,
+
+        [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete', Position = 2)]
+        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
+        [array] $OrganizationIds
+    )
+    begin {
+        $Fields = @{
+            OrganizationIds = 'organization-ids'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Query = @('ids', 'organization-ids')
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
+function Remove-FalconHorizonAzureAccount {
+<#
+.Synopsis
+Remove Falcon Horizon Azure accounts
+.Parameter Ids
+Azure account identifier(s)
 .Role
 cspm-registration:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:delete', Mandatory = $true)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $Ids
     )
     begin {
@@ -591,163 +841,6 @@ cspm-registration:write
             Inputs   = $PSBoundParameters
             Format   = @{
                 Query = @('ids')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconUserScriptsDownload {
-<#
-.Synopsis
-Return a script for customer to run in their cloud environment to grant us access to their Azure environment as a downloadable attachment
-.Parameter TenantId
-
-.Role
-cspm-registration:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
-        [ValidatePattern('^[0-9a-z-]{36}$')]
-        [string] $TenantId
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/json application/octet-stream'
-            }
-            Format   = @{
-                Query = @('tenant-id')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Edit-FalconClientId {
-<#
-.Synopsis
-Update an Azure service account in our system by with the user-created client_id created with the public key weve provided
-.Parameter TenantId
-
-.Parameter Id
-XXX identifier
-.Role
-cspm-registration:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
-        [ValidatePattern('^[0-9a-z-]{36}$')]
-        [string] $TenantId,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch', Mandatory = $true)]
-        [ValidatePattern('^[0-9a-z-]{36}$')]
-        [string] $Id
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('tenant-id', 'id')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconAccount {
-<#
-.Synopsis
-Return information about Azure account registration
-.Parameter ScanType
-
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Ids
-One or more XXX identifiers
-.Parameter Status
-
-.Parameter Limit
-Maximum number of results per request
-.Role
-cspm-registration:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
-        [ValidateSet('full', 'dry')]
-        [ValidateLength(3, 4)]
-        [string] $ScanType,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
-        [int] $Offset,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
-        [array] $Ids,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
-        [ValidateSet('provisioned', 'operational')]
-        [string] $Status,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
-        [ValidateRange(1, 3)]
-        [int] $Limit
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('scan-type', 'offset', 'ids', 'status', 'limit')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function New-FalconAccount {
-<#
-.Synopsis
-Creates a new account in our system for a customer and generates a script for them to run in their cloud environment to grant us access.
-.Parameter SubscriptionId
-
-.Parameter TenantId
-
-.Role
-cspm-registration:write
-#>
-    [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post')]
-    param(
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post')]
-        [string] $SubscriptionId,
-
-        [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post')]
-        [string] $TenantId
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
-            Format   = @{
-                Body = @{
-                    resources = @('subscription_id', 'tenant_id')
-                }
             }
         }
     }

@@ -121,7 +121,7 @@ samplestore:write
 function Send-FalconSample {
 <#
 .Synopsis
-Upload a sample file up to 100MB in size
+Upload a sample file up to 256MB in size
 .Parameter Path
 Path to local file
 .Parameter FileName

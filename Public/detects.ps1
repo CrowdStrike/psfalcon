@@ -44,9 +44,6 @@ detects:write
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Format   = @{
                 Body = @{
                     root = @('show_in_ui', 'comment', 'assigned_to_uuid', 'status', 'ids')
@@ -121,9 +118,6 @@ detects:read
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Headers  = @{
-                ContentType = 'application/json'
-            }
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('filter', 'q', 'sort', 'limit', 'offset')

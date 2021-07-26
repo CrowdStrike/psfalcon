@@ -13,14 +13,32 @@
     ScriptsToProcess     = @('Class/Class.ps1')
     FunctionsToExport    = @(
       # cloud-connect-aws.ps1
+      'Confirm-FalconDiscoverAwsAccess',
+      'Edit-FalconDiscoverAwsAccount',
+      'Get-FalconDiscoverAwsAccount',
+      'Get-FalconDiscoverAwsSettings',
+      'New-FalconDiscoverAwsAccount',
+      'Remove-FalconDiscoverAwsAccount',
+      'Update-FalconDiscoverAwsSettings',
 
       # cspm-registration.ps1
+      'Edit-FalconHorizonAwsAccount',
+      'Edit-FalconHorizonAzureAccount',
       'Edit-FalconHorizonPolicy',
       'Edit-FalconHorizonSchedule',
+      'Get-FalconHorizonAwsAccount',
+      'Get-FalconHorizonAwsLink',
+      'Get-FalconHorizonAzureAccount',
       'Get-FalconHorizonIoaEvent',
       'Get-FalconHorizonIoaUser',
       'Get-FalconHorizonPolicy',
       'Get-FalconHorizonSchedule',
+      'New-FalconHorizonAwsAccount',
+      'New-FalconHorizonAzureAccount',
+      'Receive-FalconHorizonAwsScript',
+      'Receive-FalconHorizonAzureScript',
+      'Remove-FalconHorizonAwsAccount',
+      'Remove-FalconHorizonAzureAccount',
 
       # custom-ioa.ps1
       'Edit-FalconIoaGroup',
@@ -37,6 +55,14 @@
       'Test-FalconIoaRule',
 
       # d4c-registration.ps1
+      'Edit-FalconDiscoverAzureAccount',
+      'Get-FalconDiscoverAzureAccount',
+      'Get-FalconDiscoverGcpAccount',
+      'New-FalconDiscoverAzureAccount',
+      'New-FalconDiscoverGcpAccount',
+      'Receive-FalconDiscoverAzureScript',
+      'Receive-FalconDiscoverGcpScript',
+      'Update-FalconDiscoverAzureAccount',
 
       # detects.ps1
       'Edit-FalconDetection',
@@ -369,17 +395,19 @@ General Changes
 
 New Commands
 
+* 'Edit-FalconDiscoverAzureAccount'
 * 'Edit-FalconReconNotification'
 * 'Get-FalconHorizonIOAEvent'
 * 'Get-FalconHorizonIOAUser'
 * 'Get-FalconReconRulePreview'
+* 'Receive-FalconDiscoverAzureScript'
 * 'Remove-FalconReconNotification'
 
 Command Changes
 
 * Removed '-Help' parameter from all commands. 'Get-Help' can be used instead.
 
-* Three different /indicators/ API commands were previously removed by mistake and have been re-added:
+* Three different '/indicators/' API commands were previously removed by mistake and have been re-added:
   Get-FalconIocHost
   Get-FalconIocProcess
   Get-FalconIocTotal
@@ -395,16 +423,19 @@ Command Changes
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
 
 * Invoke-FalconCommand, Invoke-FalconResponderCommand, Invoke-FalconAdminCommand
-  Re-organized positioning to place SessionId/BatchId in front
+  Re-organized positioning to place '-SessionId'/'-BatchId' in front
 
 * Invoke-FalconBatchGet
-  Re-organized positioning to place BatchId in front
+  Re-organized positioning to place '-BatchId' in front
 
 * Remove-FalconGetFile
   Renamed 'Ids' parameter to 'Id' to reflect single value requirement
 
 * Remove-FalconSession
   Renamed 'SessionId' to 'Id'
+
+* Edit-FalconHorizonAzureAccount
+  Added parameters to utilize additional '/cloud-connect-cspm-azure/entities/default-subscription-id/v1' endpoint
 
 GitHub Issues
 
