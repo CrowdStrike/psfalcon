@@ -167,6 +167,15 @@
       'Get-FalconProcess',
 
       # kubernetes-protection.ps1
+      'Edit-FalconContainerAwsAccount',
+      'Get-FalconContainerAwsAccount',
+      'Get-FalconContainerCloud',
+      'Get-FalconContainerCluster',
+      'Invoke-FalconContainerScan',
+      'New-FalconContainerAwsAccount',
+      'New-FalconContainerKey',
+      'Receive-FalconContainerYaml',
+      'Remove-FalconContainerAwsAccount',
 
       # malquery.ps1
       'Get-FalconMalQuery',
