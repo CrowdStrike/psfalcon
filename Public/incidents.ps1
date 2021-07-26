@@ -25,7 +25,7 @@ incidents:read
     param(
         [Parameter(ParameterSetName = '/incidents/entities/behaviors/GET/v1:post', Mandatory = $true,
             Position = 1)]
-        [ValidatePattern('^ind:\w{32}:\d+$')]
+        [ValidatePattern('^ind:\w{32}:(\d|\-)+$')]
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 1)]
