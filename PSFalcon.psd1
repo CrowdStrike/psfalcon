@@ -401,6 +401,12 @@ General Changes
   will display the 'Get-FalconHost' command, while 'Get-Help -Role devices:write' lists 'Add-FalconHostTag',
   'Invoke-FalconHostAction' and 'Remove-FalconHostTag'. Wildcards (devices:*, *:write) are supported.
 
+* Modified 'meta' output from commands when no other output is available. Previously, if the field
+  'writes' was present under 'meta', the command result would output the sub-field 'resources_affected'. Now the
+  command will output the entire 'writes' property, leading to a result of '@{ writes = @{ resources_affected =
+  [int] }}' rather than '@{ resources_affected = [int] }'. This will allow for the output of unexpected results,
+  though it may impact existing scripts.
+
 New Commands
 
 * 'Edit-FalconDiscoverAzureAccount'

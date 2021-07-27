@@ -41,26 +41,26 @@ class ApiClient {
                 ($Param.Headers).GetEnumerator().foreach{
                     $Message.Headers.Add($_.Key, $_.Value)
                 }
-                $Message.Content = if ($Param.Formdata) {
-                    $MultiContent = [System.Net.Http.MultipartFormDataContent]::New()
-                    ($Param.Formdata.Keys).foreach{
-                        if ($_ -match '^(file|upfile)$') {
-                            $FileStream = [System.IO.FileStream]::New($this.Path($Param.Formdata.$_),
+                if ($Param.Formdata) {
+                    $Message.Content = [System.Net.Http.MultipartFormDataContent]::New()
+                    ($Param.Formdata).GetEnumerator().foreach{
+                        if ($_.Key -match '^(file|upfile)$') {
+                            $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),
                                 [System.IO.FileMode]::Open)
-                            $Filename = [System.IO.Path]::GetFileName($this.Path($Param.Formdata.$_))
+                            $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
                             $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
-                            $MultiContent.Add($StreamContent, $_, $Filename)
+                            $Message.Content.Add($StreamContent, $_.Key, $Filename)
                         } else {
-                            $StringContent = [System.Net.Http.StringContent]::New($Formdata.$_)
-                            $MultiContent.Add($StringContent, $_)
+                            $Message.Content.Add([System.Net.Http.StringContent]::New($_.Value), $_.Key)
                         }
                     }
-                    $MultiContent
-                } elseif ($Param.Body -is [string] -and $Param.Headers.ContentType) {
-                    [System.Net.Http.StringContent]::New($Param.Body, [System.Text.Encoding]::UTF8,
-                        $Param.Headers.ContentType)
                 } elseif ($Param.Body) {
-                    $Param.Body
+                    $Message.Content = if ($Param.Body -is [string] -and $Param.Headers.ContentType) {
+                        [System.Net.Http.StringContent]::New($Param.Body, [System.Text.Encoding]::UTF8,
+                            $Param.Headers.ContentType)
+                    } else {
+                        $Param.Body
+                    }
                 }
                 $this.Client.SendAsync($Message)
             }

@@ -73,15 +73,19 @@ function Build-Formdata {
         [object] $Inputs
     )
     process {
-        $Inputs.GetEnumerator().Where({ $Format.Formdata.Values -match "^$($_.Key)$" }).foreach{
+        $Inputs.GetEnumerator().Where({ $Format.Formdata -contains $_.Key }).foreach{
             if (!$Formdata) {
                 $Formdata = @{}
             }
-            $Formdata[$_.Key] = if ($_.Key -eq 'content') {
+            $Field = ($_.Key).ToLower()
+            $Value = if ($Field -eq 'content') {
                 # Collect file content as a string
                 [string] (Get-Content ($Script:Falcon.Api.Path($_.Value)) -Raw)
             } else {
                 $_.Value
+            }
+            if ($Field -and $Value) {
+                $Formdata[$Field] = $Value
             }
         }
     }
@@ -105,7 +109,7 @@ function Build-Param {
     )
     begin {
         if (!$Max) {
-            # Set max number of items to 500 if not specified
+            # Set maximum 'query'/'body.ids' values when left undefined
             $Max = 500
         }
         # Set baseline request parameters
@@ -122,13 +126,13 @@ function Build-Param {
     process {
         if ($Inputs) {
             @('Body', 'Formdata', 'Query').foreach{
-                # Create key/value pairs for each "Build-<Input>" function
-                if (!$Content) {
-                    $Content = @{}
-                }
+                # Create key/value pairs for each 'Build' function
                 if ($Format.$_) {
                     $Value = & "Build-$_" -Format $Format -Inputs $Inputs
                     if ($Value) {
+                        if (!$Content) {
+                            $Content = @{}
+                        }
                         $Content.Add($_, $Value)
                     }
                 }
@@ -142,6 +146,7 @@ function Build-Param {
             }
         }
         if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
+            Write-Verbose "[Build-Param] Splitting into groups of $Max query values"
             for ($i = 0; $i -lt ($Content.Query | Measure-Object).Count; $i += $Max) {
                 # Split 'Query' values into groups
                 $Split = $Switches.Clone()
@@ -158,6 +163,7 @@ function Build-Param {
                 ,$Split
             }
         } elseif ($Content.Body -and ($Content.Body.ids | Measure-Object).Count -gt $Max) {
+            Write-Verbose "[Build-Param] Splitting into groups of $Max 'ids'"
             for ($i = 0; $i -lt ($Content.Body.ids | Measure-Object).Count; $i += $Max) {
                 # Split 'Body' content into groups using 'ids'
                 $Split = $Switches.Clone()
@@ -373,6 +379,8 @@ function Write-Result {
                 ,"$($_.Key)=$($_.Value)"
             })
         }
+        # 'meta' fields to exclude from output when no other results are found
+        [regex] $ExcludeMeta = '^(entity|pagination|powered_by|query_time|trace_id)$'
     }
     process {
         if ($Request.Result.Content -match '^<') {
@@ -382,6 +390,7 @@ function Write-Result {
             # Convert Json response
             $Json = ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
             $Verbose += if ($Json.meta) {
+                # Capture 'meta' values for verbose output
                 ($Json.meta.PSObject.Properties).foreach{
                     $Parent = 'meta'
                     if ($_.Value -is [PSCustomObject]) {
@@ -396,36 +405,38 @@ function Write-Result {
             }
         }
         if ($Verbose) {
-            # Output verbose response header
             Write-Verbose "[Write-Result] $($Verbose -join ', ')"
         }
         if ($HTML) {
             $HTML
         } elseif ($Json) {
-            $Content = ($Json.PSObject.Properties).Where({ @('meta', 'errors') -notcontains $_.Name -and
+            $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch '^(errors|meta)$' -and
             $_.Value }).foreach{
-                # Gather populated fields from object
+                # Gather field names from result, not including 'errors' and 'meta'
                 $_.Name
             }
-            if ($Content) {
-                Write-Verbose "[Write-Result] $($Content -join ', ')"
-                if (($Content | Measure-Object).Count -eq 1) {
-                    if ($Content[0] -eq 'combined') {
-                        # Output 'combined.resources'
-                        ($Json.combined.resources).PSObject.Properties.Value
-                    } else {
-                        # Output single field
-                        $Json.($Content[0])
-                    }
-                } elseif (($Content | Measure-Object).Count -gt 1) {
-                    # Output all fields
-                    $Json
+            if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
+                if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
+                    # Output 'combined.resources'
+                    ($Json.$ResultFields[0].resources).PSObject.Properties.Value
+                } else {
+                    # Output single field
+                    $Json.$ResultFields[0]
+                }
+            } elseif ($ResultFields) {
+                # Export all fields
+                $Json | Select-Object $ResultFields
+            } else {
+                # Output relevant 'meta' values
+                $MetaFields = ($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch $ExcludeMeta }).foreach{
+                    $_.Name
+                }
+                if ($MetaFields) {
+                    $Json.meta | Select-Object $MetaFields
                 }
             }
-            ($Json.errors).Where({ $_.Values }).foreach{
-                # TODO Test error output and clean up
-                Write-Verbose "[Write-Result] Errors:`n$(ConvertTo-Json -InputObject $_.Values -Depth 8)"
-                ($_.Values).foreach{
+            ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                ($_.Value).foreach{
                     $PSCmdlet.WriteError(
                         [System.Management.Automation.ErrorRecord]::New(
                             [Exception]::New("$($_.code): $($_.message)"),
