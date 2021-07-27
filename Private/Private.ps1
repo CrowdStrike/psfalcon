@@ -77,15 +77,11 @@ function Build-Formdata {
             if (!$Formdata) {
                 $Formdata = @{}
             }
-            $Field = ($_.Key).ToLower()
-            $Value = if ($Field -eq 'content') {
+            $Formdata[($_.Key).ToLower()] = if ($_.Key -eq 'content') {
                 # Collect file content as a string
                 [string] (Get-Content ($Script:Falcon.Api.Path($_.Value)) -Raw)
             } else {
                 $_.Value
-            }
-            if ($Field -and $Value) {
-                $Formdata[$Field] = $Value
             }
         }
     }
