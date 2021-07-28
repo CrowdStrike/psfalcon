@@ -675,10 +675,17 @@ real-time-response:read
         }
     }
     process {
-        Invoke-Falcon @Param
+        $Request = Invoke-Falcon @Param
+        if ($Request.batch_id -and $Request.resources) {
+            [PSCustomObject] @{
+                batch_id = $Request.batch_id
+                hosts    = $Request.resources.PSObject.Properties.Value
+            }
+        } else {
+            $Request
+        }
     }
 }
-
 function Update-FalconSession {
 <#
 .Synopsis

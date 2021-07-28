@@ -74,7 +74,7 @@ cloud-connect-aws:write
         [int64] $RateLimitTime,
 
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:patch', Position = 7)]
-        [integer] $RateLimitReqs
+        [int] $RateLimitReqs
     )
     begin {
         $Fields = @{
@@ -245,7 +245,7 @@ cloud-connect-aws:write
         [int64] $RateLimitTime,
 
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:post', Position = 8)]
-        [integer] $RateLimitReqs
+        [int] $RateLimitReqs
     )
     begin {
         $Fields = @{

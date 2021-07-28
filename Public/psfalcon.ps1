@@ -1,7 +1,7 @@
 function Invoke-FalconRTR {
 <#
 .Synopsis
-Start Real-time Response session(s) in groups of 500 hosts, execute a command and output the result
+Start Real-time Response session(s), execute a command and output the result(s)
 .Parameter Command
 Real-time Response command
 .Parameter Arguments
@@ -14,10 +14,6 @@ Host Group identifier containing hosts to target
 Length of time to wait for a result, in seconds
 .Parameter QueueOffline
 Add non-responsive Hosts to the offline queue
-.Role
-real-time-response:read
-.Role
-real-time-response:write
 .Role
 real-time-response-admin:write
 #>
@@ -34,7 +30,7 @@ real-time-response-admin:write
         [Parameter(ParameterSetName = 'HostIds', Position = 3)]
         [Parameter(ParameterSetName = 'GroupId', Position = 3)]
         [ValidateRange(30,600)]
-        [integer] $Timeout,
+        [int] $Timeout,
 
         [Parameter(ParameterSetName = 'HostIds')]
         [Parameter(ParameterSetName = 'GroupId')]
@@ -141,7 +137,9 @@ real-time-response-admin:write
                 } else {
                     'HostIds'
                 }
-                $Param = @{ $HostParam = $Output.aid }
+                $Param = @{
+                    $HostParam = $Output.aid
+                }
                 switch ($PSBoundParameters.Keys) {
                     'QueueOffline' { $Param['QueueOffline'] = $PSBoundParameters.$_ }
                     'Timeout'      {

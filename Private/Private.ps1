@@ -414,10 +414,10 @@ function Write-Result {
             if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
                 if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
                     # Output 'combined.resources'
-                    ($Json.$ResultFields[0].resources).PSObject.Properties.Value
+                    ($Json.($ResultFields[0]).resources).PSObject.Properties.Value
                 } else {
                     # Output single field
-                    $Json.$ResultFields[0]
+                    $Json.($ResultFields[0])
                 }
             } elseif ($ResultFields) {
                 # Export all fields
