@@ -230,6 +230,9 @@
       'Remove-FalconPreventionPolicy',
       'Set-FalconPreventionPrecedence',
 
+      # psfalcon.psd1
+      'Invoke-FalconRTR',
+
       # quick-scan.ps1
       'Get-FalconQuickScan',
       'Get-FalconQuickScanQuota',
@@ -390,9 +393,6 @@ General Changes
 
 * Re-organized module manifest (PSFalcon.psd1) and reduced overall size.
 
-* Some of the functions that were previously in the public 'scripts.ps1' have been moved into their respective
-  public module scripts ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.)
-
 * 'Public' functions have been reorganized into files that are named for their required permissions (as defined
   by Falcon API Swagger file).
 
@@ -406,6 +406,11 @@ General Changes
   command will output the entire 'writes' property, leading to a result of '@{ writes = @{ resources_affected =
   [int] }}' rather than '@{ resources_affected = [int] }'. This will allow for the output of unexpected results,
   though it may impact existing scripts.
+
+* Renamed 'scripts.ps1' to 'psfalcon.ps1' to make it clear that the functions inside are PSFalcon-specific.
+
+* Some of the functions that were previously in the public 'scripts.ps1' have been moved into their respective
+  public module scripts ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.)
 
 New Commands
 
@@ -426,30 +431,34 @@ Command Changes
   Get-FalconIocProcess
   Get-FalconIocTotal
 
+* Edit-FalconHorizonAzureAccount
+  Added parameters to utilize additional '/cloud-connect-cspm-azure/entities/default-subscription-id/v1' endpoint.
+
+* Get-FalconFirewallRule
+  Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
+
+* Invoke-FalconCommand, Invoke-FalconResponderCommand, Invoke-FalconAdminCommand
+  Re-organized positioning to place '-SessionId' and '-BatchId' in front.
+
+* Invoke-FalconBatchGet
+  Re-organized positioning to place '-BatchId' in front.
+
+* Invoke-FalconRTR
+  Added '-GroupId' to run a Real-time Response command against a Host Group. Parameter positioning has been
+  re-organized to compensate.
+
+* Remove-FalconGetFile
+  Renamed '-Ids' parameter to '-Id' to reflect single value requirement.
+
+* Remove-FalconSession
+  Renamed '-SessionId' to '-Id'.
+
 * Request-FalconToken
   Added support for HTTP 308 redirection when requesting an OAuth2 access token. If a user attempts to
   authenticate using the wrong API hostname, the module will automatically update to the proper location and
   use that location with future requests.
 
   Added TLS 1.2 enforcement in 'Request-FalconToken' using [System.Net.Http.HttpClientHandler].
-
-* Get-FalconFirewallRule
-  Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
-
-* Invoke-FalconCommand, Invoke-FalconResponderCommand, Invoke-FalconAdminCommand
-  Re-organized positioning to place '-SessionId'/'-BatchId' in front
-
-* Invoke-FalconBatchGet
-  Re-organized positioning to place '-BatchId' in front
-
-* Remove-FalconGetFile
-  Renamed 'Ids' parameter to 'Id' to reflect single value requirement
-
-* Remove-FalconSession
-  Renamed 'SessionId' to 'Id'
-
-* Edit-FalconHorizonAzureAccount
-  Added parameters to utilize additional '/cloud-connect-cspm-azure/entities/default-subscription-id/v1' endpoint
 
 GitHub Issues
 
