@@ -23,11 +23,12 @@ function Build-Body {
                 if (!$Body) {
                     $Body = @{}
                 }
-                if ($Value | Get-Member -MemberType Method | Where-Object { $_.Name -eq 'Normalize' }) {
-                    # Normalize values to avoid Json conversion errors
+                if (($Value -is [array] -or $Value -is [string]) -and $Value | Get-Member -MemberType Method |
+                Where-Object { $_.Name -eq 'Normalize' }) {
+                    # Normalize values to avoid Json conversion errors when 'Get-Content' was used
                     if ($Value -is [array]) {
                         $Value = [array] ($Value).Normalize()
-                    } else {
+                    } elseif ($Value -is [string]) {
                         $Value = ($Value).Normalize()
                     }
                 }
@@ -401,9 +402,24 @@ function Write-Result {
             }
         }
         if ($Verbose) {
+            # Output response header and 'meta'
             Write-Verbose "[Write-Result] $($Verbose -join ', ')"
         }
+        ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+            ($_.Value).foreach{
+                # Output errors
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::New(
+                        [Exception]::New("$($_.code): $($_.message)"),
+                        $Json.meta.trace_id,
+                        [System.Management.Automation.ErrorCategory]::NotSpecified,
+                        $Request
+                    )
+                )
+            }
+        }
         if ($HTML) {
+            # Output HTML content
             $HTML
         } elseif ($Json) {
             $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch '^(errors|meta)$' -and
@@ -429,18 +445,6 @@ function Write-Result {
                 }
                 if ($MetaFields) {
                     $Json.meta | Select-Object $MetaFields
-                }
-            }
-            ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                ($_.Value).foreach{
-                    $PSCmdlet.WriteError(
-                        [System.Management.Automation.ErrorRecord]::New(
-                            [Exception]::New("$($_.code): $($_.message)"),
-                            $Json.meta.trace_id,
-                            [System.Management.Automation.ErrorCategory]::NotSpecified,
-                            $Request
-                        )
-                    )
                 }
             }
         }

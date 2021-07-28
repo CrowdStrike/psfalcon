@@ -309,11 +309,11 @@ real-time-response-admin:write
     begin {
         $CommandString = if ($PSBoundParameters.Arguments) {
             @($PSBoundParameters.Command, $PSBoundParameters.Arguments) -join ' '
-            $PSBoundParameters.Remove('Arguments')
+            [void] $PSBoundParameters.Remove('Arguments')
         } else {
             $PSBoundParameters.Command
         }
-        [void] $PSBoundParameters.Add('command_string', $CommandString)
+        $PSBoundParameters.Add('command_string', $CommandString)
         $Fields = @{
             BatchId         = 'batch_id'
             Command         = 'base_command'
