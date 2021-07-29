@@ -69,10 +69,9 @@ class ApiClient {
         }
         if ($Output.Result.StatusCode) {
             $ResponseCode = "$(@($Output.Result.StatusCode.GetHashCode(), $Output.Result.StatusCode) -join ': ')"
-            if ($Output.Result.IsSuccessStatusCode) {
-                Write-Verbose "[ApiClient.Invoke] $ResponseCode"
-            } else {
-                throw $ResponseCode
+            Write-Verbose "[ApiClient.Invoke] $ResponseCode"
+            if (!$Output.Result.Content) {
+                Write-Error $ResponseCode
             }
         }
         return $Output

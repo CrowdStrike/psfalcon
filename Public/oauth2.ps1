@@ -37,13 +37,24 @@ Member CID, required when authenticating with a child within a parent/child CID 
                 $Value = if ($Inputs.$_) {
                     # Use input
                     $Inputs.$_
-                } elseif ($Script:Falcon.$_) {
+                } elseif ($null -ne $Script:Falcon.$_) {
                     # Use ApiClient value
                     $Script:Falcon.$_
                 }
                 if (!$Value -and $_ -match '^(ClientId|ClientSecret)$') {
-                    # Prompt for ClientId/ClientSecret
+                    # Prompt for ClientId/ClientSecret and validate input
                     $Value = Read-Host $_
+                    $BaseError = 'Cannot validate argument on parameter "{0}". The argument "{1}" does not ' +
+                        'match the "{2}" pattern. Supply an argument that matches "{2}" and try the command again.'
+                    $ValidPattern = if ($_ -eq 'ClientId') {
+                        '^\w{32}$'
+                    } else {
+                        '^\w{40}$'
+                    }
+                    if ($Value -notmatch $ValidPattern) {
+                        $InvalidValue = $BaseError -f $_, $Value, $ValidPattern
+                        throw $InvalidValue
+                    }
                 } elseif (!$Value -and $_ -eq 'Hostname') {
                     # Default to 'us-1' cloud
                     $Value = 'https://api.crowdstrike.com'
@@ -60,7 +71,7 @@ Member CID, required when authenticating with a child within a parent/child CID 
             $Script:Falcon.Add('Api', [ApiClient]::New())
             $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
         } else {
-            ($PSBoundParameters).GetEnumerator().foreach{
+            (Get-ApiCredential $PSBoundParameters).GetEnumerator().foreach{
                 if ($Script:Falcon.($_.Key) -ne $_.Value) {
                     # Update existing ApiClient with new input
                     $Script:Falcon.($_.Key) = $_.Value
@@ -69,47 +80,56 @@ Member CID, required when authenticating with a child within a parent/child CID 
         }
     }
     process {
-        $Param = @{
-            Path    = "$($Script:Falcon.Hostname)$(($PSCmdlet.ParameterSetName).Split(':')[0])"
-            Method  = ($PSCmdlet.ParameterSetName).Split(':')[1]
-            Headers = @{
-                Accept      = 'application/json'
-                ContentType = 'application/x-www-form-urlencoded'
-            }
-            Body = "client_id=$($Script:Falcon.ClientId)&client_secret=$($Script:Falcon.ClientSecret)"
-        }
-        if ($Script:Falcon.MemberCid) {
-            $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
-        }
-        $Response = $Script:Falcon.Api.Invoke($Param)
-        if ($Response.Result.StatusCode -and @(308,429) -contains $Response.Result.StatusCode.GetHashCode()) {
-            # Re-run command when redirected or rate limited
-            & $MyInvocation.MyCommand.Name
-        } elseif ($Response.Result) {
-            # Update ApiClient hostname if redirected
-            $Region = $Response.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
-            $Redirect = switch ($Region) {
-                'us-1'     { 'https://api.crowdstrike.com' }
-                'us-2'     { 'https://api.us-2.crowdstrike.com' }
-                'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
-                'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
-            }
-            if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
-                Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
-                $Script:Falcon.Hostname = $Redirect
-            }
-            $Result = Write-Result $Response
-            if ($Result.access_token) {
-                # Cache access token in ApiClient
-                $Token = "$($Result.token_type) $($Result.access_token)"
-                if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
-                    $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization', $Token)
-                } else {
-                    $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
+        if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
+            $Param = @{
+                Path    = "$($Script:Falcon.Hostname)$(($PSCmdlet.ParameterSetName).Split(':')[0])"
+                Method  = ($PSCmdlet.ParameterSetName).Split(':')[1]
+                Headers = @{
+                    Accept      = 'application/json'
+                    ContentType = 'application/x-www-form-urlencoded'
                 }
-                $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
-                Write-Verbose "[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)"
+                Body = "client_id=$($Script:Falcon.ClientId)&client_secret=$($Script:Falcon.ClientSecret)"
             }
+            if ($Script:Falcon.MemberCid) {
+                $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
+            }
+            $Response = $Script:Falcon.Api.Invoke($Param)
+            if ($Response.Result.StatusCode -and @(308,429) -contains $Response.Result.StatusCode.GetHashCode()) {
+                # Re-run command when redirected or rate limited
+                & $MyInvocation.MyCommand.Name
+            } elseif ($Response.Result) {
+                # Update ApiClient hostname if redirected
+                $Region = $Response.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
+                $Redirect = switch ($Region) {
+                    'us-1'     { 'https://api.crowdstrike.com' }
+                    'us-2'     { 'https://api.us-2.crowdstrike.com' }
+                    'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+                    'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
+                }
+                if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
+                    Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
+                    $Script:Falcon.Hostname = $Redirect
+                }
+                $Result = Write-Result $Response
+                if ($Result.access_token) {
+                    # Cache access token in ApiClient
+                    $Token = "$($Result.token_type) $($Result.access_token)"
+                    if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
+                        $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization', $Token)
+                    } else {
+                        $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
+                    }
+                    $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
+                    Write-Verbose "[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)"
+                } else {
+                    @('ClientId', 'ClientSecret', 'MemberCid').foreach{
+                        [void] $Script:Falcon.Remove("$_")
+                    }
+                    [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
+                }
+            }
+        } else {
+            throw 'Missing required credentials.'
         }
     }
 }
@@ -138,7 +158,10 @@ Revoke your active OAuth2 token and clear cached credentials
             }
             Write-Result ($Script:Falcon.Api.Invoke($Param))
         }
-        Remove-Variable -Name Falcon -Scope Script
+        @('ClientId', 'ClientSecret', 'MemberCid').foreach{
+            [void] $Script:Falcon.Remove("$_")
+        }
+        [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
     }
 }
 function Test-FalconToken {

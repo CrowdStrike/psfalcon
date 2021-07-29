@@ -269,7 +269,15 @@ real-time-response:write
         }
     }
     process {
-        Invoke-Falcon @Param
+        $Request = Invoke-Falcon @Param
+        if ($Request.batch_id -and $Request.resources) {
+            [PSCustomObject] @{
+                batch_get_cmd_req_id = $Request.batch_get_cmd_req_id
+                hosts                = $Request.combined.resources.PSObject.Properties.Value
+            }
+        } else {
+            $Request
+        }
     }
 }
 function Invoke-FalconCommand {

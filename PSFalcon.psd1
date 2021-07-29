@@ -352,20 +352,11 @@
             IconUri      = 
                 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
             ReleaseNotes = @"
-
-THIS BRANCH IS STILL IN PROGRESS -- NOT READY FOR RELEASE
-
-TODO Items (unfinished):
-
-* Test and validate all commands.
-* Migrate 'Get-Help' content to GitHub for online reference.
-* Add GraphQL support for /identity-protection/ APIs.
-
 General Changes
 
 * Changed [Falcon] class to [ApiClient] class. The new [ApiClient] class is generic and can work with other APIs,
-  which enables the use of [ApiClient] as a standalone script that can be directly called to interact with
-  different APIs.
+  which helps enable the use of [ApiClient] as a standalone script that can be directly called to interact with
+  different APIs if people would like to re-use the code.
 
 * The new [ApiClient] class includes a '.Path()' method which converts relative file paths into absolute file
   paths in a cross-platform compatible way and the '.Invoke()' method which accepts a hashtable of parameters.
@@ -381,7 +372,24 @@ General Changes
 * Reorganized how CrowdStrike Falcon API authorization information is kept within the [ApiClient] object during
   script use.
 
-* All 'public' functions (i.e. commands that users type) have been re-written to use static parameters. Dynamic
+* Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1' to make it clear that the functions inside are
+  PSFalcon-specific.
+
+* Functions that were previously in 'Public\scripts.ps1' have been moved into their respective public script
+  files ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.) where it made logical sense.
+
+* Re-organized module manifest (PSFalcon.psd1) and reduced overall size.
+
+* 'Private' functions have been re-written to reduce complexity and size of the module.
+
+* The 'Invoke-Loop' function now has an error message meant to inform the user when a loop ends due to
+  hitting the maximum result limit from a particular API. Now when '-All' stops at 10,000 results but there
+  are additional results remaining, it will be more obvious why it's happening.
+
+* 'Public' functions have been reorganized into files that are named for their required permissions (as defined
+  by Falcon API Swagger file).
+
+* All 'Public' functions (commands that users type) have been re-written to use static parameters. Dynamic
   parameters were originally used in an effort to decrease the size of the module, but they required the creation
   of a special '-Help' parameter to show help information. Switching back to static parameters allowed for the
   removal of '-Help', eliminated inconsistencies in how parameter information is displayed and increased
@@ -391,26 +399,16 @@ General Changes
   allows users to automatically import the PSFalcon module by using one of the included commands which didn't
   work with the module prefix.
 
-* Re-organized module manifest (PSFalcon.psd1) and reduced overall size.
-
-* 'Public' functions have been reorganized into files that are named for their required permissions (as defined
-  by Falcon API Swagger file).
-
 * Added '.Roles' in-line comment to functions which allows users to 'Get-Help -Role <api_role>' and find
   commands that are available based on required API permission. For instance, typing 'Get-Help -Role devices:read'
   will display the 'Get-FalconHost' command, while 'Get-Help -Role devices:write' lists 'Add-FalconHostTag',
   'Invoke-FalconHostAction' and 'Remove-FalconHostTag'. Wildcards (devices:*, *:write) are supported.
 
-* Modified 'meta' output from commands when no other output is available. Previously, if the field
+* Slightly modified 'meta' output from commands when no other output is available. Previously, if the field
   'writes' was present under 'meta', the command result would output the sub-field 'resources_affected'. Now the
   command will output the entire 'writes' property, leading to a result of '@{ writes = @{ resources_affected =
   [int] }}' rather than '@{ resources_affected = [int] }'. This will allow for the output of unexpected results,
   though it may impact existing scripts.
-
-* Renamed 'scripts.ps1' to 'psfalcon.ps1' to make it clear that the functions inside are PSFalcon-specific.
-
-* Some of the functions that were previously in the public 'scripts.ps1' have been moved into their respective
-  public module scripts ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.)
 
 New Commands
 
@@ -443,7 +441,14 @@ Command Changes
 * Invoke-FalconBatchGet
   Re-organized positioning to place '-BatchId' in front.
 
+  Changed output format so that, nstead of returning the entire Json response, the result will have the properties
+  'batch_get_cmd_req_id' and 'hosts' (similar to how Start-FalconSession displays a batch session result).
+
 * Invoke-FalconRTR
+  Removed all 'single host' Real-time Response code. Now 'Invoke-FalconRTR' uses batch sessions whether you've
+  submitted a single device or multiple. This should have minimal impact on the use of the command, but makes
+  much simpler to support and allow for the addition of other functionality.
+
   Added '-GroupId' to run a Real-time Response command against a Host Group. Parameter positioning has been
   re-organized to compensate.
 

@@ -170,7 +170,7 @@ incidents:read
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 3)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,2500)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 4)]

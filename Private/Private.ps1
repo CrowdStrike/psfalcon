@@ -324,9 +324,13 @@ function Invoke-Loop {
     process {
         for ($i = ($Result | Measure-Object).Count; $Pagination.next_page -or $i -lt $Pagination.total;
         $i += ($Result | Measure-Object).Count) {
-            # Clone endpoint parameters, capture pagination
+            # Output running count
+            $TotalCount = $Pagination.total
+            Write-Verbose "[Invoke-Loop] $i of $TotalCount"
+            # Clone endpoint parameters
             $Clone = $Item.Clone()
             $Clone.Endpoint = $Item.Endpoint.Clone()
+            # Update pagination
             $Page = if ($Pagination.after) {
                 @('after', $Pagination.after)
             } elseif ($Pagination.next_page) {
@@ -338,8 +342,7 @@ function Invoke-Loop {
             }
             $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match "$($Page[0])=\d{1,}") {
                 # If offset was input, continue from that value
-                $Current = [regex]::Match(
-                    $Clone.Endpoint.Path, 'offset=(\d+)(^&)?').Captures.Value
+                $Current = [regex]::Match($Clone.Endpoint.Path, 'offset=(\d+)(^&)?').Captures.Value
                 $Page[1] += [int] $Current.Split('=')[-1]
                 $Clone.Endpoint.Path -replace $Current, ($Page -join '=')
             } elseif ($Clone.Endpoint.Path -match "$Endpoint^") {
@@ -348,17 +351,21 @@ function Invoke-Loop {
             } else {
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
-            # Make request, update pagination and output result
+            # Make request, capture new pagination detail and output result
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
                 $Pagination = (ConvertFrom-Json (
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
                 $Result = Write-Result $Request
-                Write-Verbose "[Invoke-Loop] $i of $($Pagination.Total)"
                 if ($Result -and $Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                     & $Command -Ids $Result
                 } elseif ($Result) {
                     $Result
+                } else {
+                    $ErrorMessage = ("[Invoke-Loop] Results limited by API " +
+                        "'$(($Item.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.hostname, $null)' " +
+                        "($i of $TotalCount).")
+                    Write-Error $ErrorMessage
                 }
             }
         }
@@ -405,19 +412,6 @@ function Write-Result {
             # Output response header and 'meta'
             Write-Verbose "[Write-Result] $($Verbose -join ', ')"
         }
-        ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-            ($_.Value).foreach{
-                # Output errors
-                $PSCmdlet.WriteError(
-                    [System.Management.Automation.ErrorRecord]::New(
-                        [Exception]::New("$($_.code): $($_.message)"),
-                        $Json.meta.trace_id,
-                        [System.Management.Automation.ErrorCategory]::NotSpecified,
-                        $Request
-                    )
-                )
-            }
-        }
         if ($HTML) {
             # Output HTML content
             $HTML
@@ -445,6 +439,19 @@ function Write-Result {
                 }
                 if ($MetaFields) {
                     $Json.meta | Select-Object $MetaFields
+                }
+            }
+            ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                ($_.Value).foreach{
+                    # Output errors
+                    $PSCmdlet.WriteError(
+                        [System.Management.Automation.ErrorRecord]::New(
+                            [Exception]::New("$($_.code): $($_.message)"),
+                            $Json.meta.trace_id,
+                            [System.Management.Automation.ErrorCategory]::NotSpecified,
+                            $Request
+                        )
+                    )
                 }
             }
         }
