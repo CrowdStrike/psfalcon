@@ -252,6 +252,63 @@ host-group:write
         }
     }
 }
+function New-FalconHostGroup {
+<#
+.Synopsis
+Create Host Groups
+.Parameter Array
+An array of Host Groups to create in a single request
+.Parameter GroupType
+Host Group type
+.Parameter Name
+Host Group name
+.Parameter Description
+Host Group description
+.Parameter AssignmentRule
+Assignment rule for 'dynamic' Host Groups
+.Role
+host-group:write
+#>
+    [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:post')]
+    param(
+        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [array] $Array,
+
+        [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:post', Mandatory = $true, Position = 1)]
+        [ValidateSet('static', 'dynamic')]
+        [string] $GroupType,
+
+        [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:post', Mandatory = $true, Position = 2)]
+        [string] $Name,
+
+        [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:post', Position = 3)]
+        [string] $Description,
+
+        [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:post', Position = 4)]
+        [string] $AssignmentRule
+    )
+    begin {
+        $Fields = @{
+            Array          = 'resources'
+            AssignmentRule = 'assignment_rule'
+            GroupType      = 'group_type'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = '/devices/entities/host-groups/v1:post'
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Body = @{
+                    resources = @('name', 'description', 'group_type', 'assignment_rule')
+                    root      = @('resources')
+                }
+            }
+        }
+    }
+    process {
+        Invoke-Falcon @Param
+    }
+}
 function Remove-FalconHostGroup {
 <#
 .Synopsis

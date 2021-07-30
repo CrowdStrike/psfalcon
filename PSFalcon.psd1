@@ -138,6 +138,7 @@
       'Get-FalconHostGroup',
       'Get-FalconHostGroupMember',
       'Invoke-FalconHostGroupAction',
+      'New-FalconHostGroup',
       'Remove-FalconHostGroup',
 
       # incidents.ps1
@@ -372,19 +373,23 @@ General Changes
 * Reorganized how CrowdStrike Falcon API authorization information is kept within the [ApiClient] object during
   script use.
 
-* Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1' to make it clear that the functions inside are
-  PSFalcon-specific.
+* The module no-longer outputs to 'Write-Debug', meaning that the '-Debug' parameter will no longer provide
+  any additional information. Everything that was within the debug output shows up under '-Verbose'. This change
+  was made to prevent prompting that happens in PowerShell 5.1 while still showing the same level of output
+  when requested.
 
-* Functions that were previously in 'Public\scripts.ps1' have been moved into their respective public script
-  files ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.) where it made logical sense.
+* 'Write-Verbose' output has been slightly modified. Responses from the APIs include response header information
+  that was previously not visible.
 
 * Re-organized module manifest (PSFalcon.psd1) and reduced overall size.
 
 * 'Private' functions have been re-written to reduce complexity and size of the module.
 
-* The 'Invoke-Loop' function now has an error message meant to inform the user when a loop ends due to
-  hitting the maximum result limit from a particular API. Now when '-All' stops at 10,000 results but there
-  are additional results remaining, it will be more obvious why it's happening.
+* Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1' to make it clear that the functions inside are
+  PSFalcon-specific.
+
+* Functions that were previously in 'Public\scripts.ps1' have been moved into their respective public script
+  files ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.) where it made logical sense.
 
 * 'Public' functions have been reorganized into files that are named for their required permissions (as defined
   by Falcon API Swagger file).
@@ -410,24 +415,52 @@ General Changes
   [int] }}' rather than '@{ resources_affected = [int] }'. This will allow for the output of unexpected results,
   though it may impact existing scripts.
 
+* The 'Invoke-Loop' function now has an error message meant to inform the user when a loop ends due to
+  hitting the maximum result limit from a particular API. Now when '-All' stops at 10,000 results but there
+  are additional results remaining, it will be more obvious why it's happening.
+
 New Commands
 
-* 'Edit-FalconDiscoverAzureAccount'
-* 'Edit-FalconReconNotification'
-* 'Get-FalconHorizonIOAEvent'
-* 'Get-FalconHorizonIOAUser'
-* 'Get-FalconReconRulePreview'
-* 'Receive-FalconDiscoverAzureScript'
-* 'Remove-FalconReconNotification'
+* cspm-registration
+  'Edit-FalconHorizonAwsAccount'
+  'Get-FalconHorizonIoaEvent'
+  'Get-FalconHorizonIoaUser'
+  'Get-FalconReconRulePreview'
+
+* d4c-registration
+  'Edit-FalconDiscoverAzureAccount'
+  'Receive-FalconDiscoverAzureScript'
+
+* iocs
+  'Get-FalconIocHost'
+  'Get-FalconIocProcess'
+  'Get-FalconIocTotal'
+
+* kubernetes-protection
+  'Edit-FalconContainerAwsAccount'
+  'Get-FalconContainerAwsAccount'
+  'Get-FalconContainerCloud'
+  'Get-FalconContainerCluster'
+  'Invoke-FalconContainerScan'
+  'Edit-FalconDiscoverAzureAccount'
+  'Edit-FalconReconNotification'
+  'New-FalconContainerAwsAccount'
+  'New-FalconContainerKey'
+  'Receive-FalconContainerYaml'
+  'Remove-FalconContainerAwsAccount'
+
+* recon-monitoring-rules
+  'Edit-FalconReconNotification'
+  'Get-FalconReconRulePreview'
 
 Command Changes
 
 * Removed '-Help' parameter from all commands. 'Get-Help' can be used instead.
 
 * Three different '/indicators/' API commands were previously removed by mistake and have been re-added:
-  Get-FalconIocHost
-  Get-FalconIocProcess
-  Get-FalconIocTotal
+  'Get-FalconIocHost'
+  'Get-FalconIocProcess'
+  'Get-FalconIocTotal'
 
 * Edit-FalconHorizonAzureAccount
   Added parameters to utilize additional '/cloud-connect-cspm-azure/entities/default-subscription-id/v1' endpoint.
