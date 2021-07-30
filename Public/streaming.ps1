@@ -56,8 +56,8 @@ streaming:read
     )
     begin {
         $Endpoint = $PSCmdlet.ParameterSetName -replace '{partition}', $PSBoundParameters.Partition
-        $PSBoundParameters.Remove('Partition')
-        [void] $PSBoundParameters.Add('action_name', 'refresh_active_stream_session')
+        [void] $PSBoundParameters.Remove('Partition')
+        $PSBoundParameters.Add('action_name', 'refresh_active_stream_session')
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $Endpoint

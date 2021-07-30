@@ -1,4 +1,4 @@
-function Add-FalconCIDGroupMember {
+function Add-FalconCidGroupMember {
 <#
 .Synopsis
 Add CID Group members
@@ -128,7 +128,7 @@ mssp:write
         Invoke-Falcon @Param
     }
 }
-function Edit-FalconCIDGroup {
+function Edit-FalconCidGroup {
 <#
 .Synopsis
 Modify a CID group
@@ -216,7 +216,7 @@ mssp:write
         Invoke-Falcon @Param
     }
 }
-function Get-FalconCIDGroup {
+function Get-FalconCidGroup {
 <#
 .Synopsis
 Search for CID groups
@@ -285,7 +285,7 @@ mssp:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconCIDGroupMember {
+function Get-FalconCidGroupMember {
 <#
 .Synopsis
 Search for CID group members
@@ -640,7 +640,7 @@ mssp:read
         Invoke-Falcon @Param
     }
 }
-function New-FalconCIDGroup {
+function New-FalconCidGroup {
 <#
 .Synopsis
 Create a CID group
@@ -710,7 +710,7 @@ mssp:write
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconCIDGroup {
+function Remove-FalconCidGroup {
 <#
 .Synopsis
 Delete CID group(s)
@@ -742,7 +742,7 @@ mssp:write
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconCIDGroupMember {
+function Remove-FalconCidGroupMember {
 <#
 .Synopsis
 Remove members from a CID group

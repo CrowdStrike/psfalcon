@@ -339,7 +339,7 @@
       'Remove-FalconUser',
 
       # zero-trust-assessment.ps1
-      'Get-FalconZTA'
+      'Get-FalconZta'
     )
     CmdletsToExport      = @()
     VariablesToExport    = '*'
@@ -443,7 +443,6 @@ New Commands
   'Get-FalconContainerCluster'
   'Invoke-FalconContainerScan'
   'Edit-FalconDiscoverAzureAccount'
-  'Edit-FalconReconNotification'
   'New-FalconContainerAwsAccount'
   'New-FalconContainerKey'
   'Receive-FalconContainerYaml'
@@ -475,7 +474,7 @@ Command Changes
   Re-organized positioning to place '-BatchId' in front.
 
   Changed output format so that, nstead of returning the entire Json response, the result will have the properties
-  'batch_get_cmd_req_id' and 'hosts' (similar to how Start-FalconSession displays a batch session result).
+  'batch_get_cmd_req_id' and 'hosts' (similar to how 'Start-FalconSession' displays a batch session result).
 
 * Invoke-FalconRTR
   Removed all 'single host' Real-time Response code. Now 'Invoke-FalconRTR' uses batch sessions whether you've

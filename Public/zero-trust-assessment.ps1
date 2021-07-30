@@ -1,4 +1,4 @@
-function Get-FalconZTA {
+function Get-FalconZta {
 <#
 .Synopsis
 Search for Zero Trust Assessment results

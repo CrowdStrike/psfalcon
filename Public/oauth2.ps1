@@ -141,7 +141,8 @@ Revoke your active OAuth2 token and clear cached credentials
     [CmdletBinding(DefaultParameterSetName = '/oauth2/revoke:post')]
     param()
     process {
-        if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
+        if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter -and
+        $Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             # Revoke OAuth2 access token
             $Param = @{
                 Path    = "$($Script:Falcon.Hostname)$(($PSCmdlet.ParameterSetName).Split(':')[0])"
@@ -153,15 +154,14 @@ Revoke your active OAuth2 token and clear cached credentials
                         [System.Text.Encoding]::ASCII.GetBytes(
                         "$($Script:Falcon.ClientId):$($Script:Falcon.ClientSecret)")))"
                 }
-                Body    = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -replace
-                    'bearer ', '')"
+                Body    = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
             Write-Result ($Script:Falcon.Api.Invoke($Param))
+            [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
         @('ClientId', 'ClientSecret', 'MemberCid').foreach{
             [void] $Script:Falcon.Remove("$_")
         }
-        [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
     }
 }
 function Test-FalconToken {

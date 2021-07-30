@@ -116,8 +116,10 @@ function Build-Param {
             Headers = $Headers
         }
         $Switches = @{}
-        $Inputs.GetEnumerator().Where({ $_.Key -match '^(Total|All|Detailed)$' }).foreach{
-            $Switches.Add($_.Key, $_.Value)
+        if ($Inputs) {
+            $Inputs.GetEnumerator().Where({ $_.Key -match '^(Total|All|Detailed)$' }).foreach{
+                $Switches.Add($_.Key, $_.Value)
+            }
         }
     }
     process {
@@ -262,42 +264,42 @@ function Invoke-Falcon {
         [regex] $NoDetail = '(/combined/|/rule-groups-full/)'
     }
     process {
-        foreach ($Item in (Build-Param @BuildParam)) {
+        foreach ($ParamSet in (Build-Param @BuildParam)) {
             try {
                 if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or
                 ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15))) {
                     # Verify authorization token
                     Request-FalconToken
                 }
-                $Request = $Script:Falcon.Api.Invoke($Item.Endpoint)
-                if ($Item.Endpoint.Outfile) {
-                    if (Test-Path $Item.Endpoint.Outfile) {
+                $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
+                if ($ParamSet.Endpoint.Outfile) {
+                    if (Test-Path $ParamSet.Endpoint.Outfile) {
                         # Display 'Outfile'
-                        Get-ChildItem $Item.Endpoint.Outfile
+                        Get-ChildItem $ParamSet.Endpoint.Outfile
                     }
                 } elseif ($Request.Result.Content) {
                     # Capture pagination for 'Total' and 'All'
                     $Pagination = (ConvertFrom-Json (
                         $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                    if ($Pagination -and $Item.Total -eq $true) {
+                    if ($ParamSet.Total -eq $true -and $Pagination) {
                         # Output 'Total'
                         $Pagination.total
                     } else {
                         $Result = Write-Result $Request
-                        if ($Result -and $Item.Detailed -eq $true -and $Item.Endpoint.Path -notmatch $NoDetail) {
+                        if ($Result -and $ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch
+                        $NoDetail) {
                             # Output 'Detailed'
                             & $Command -Ids $Result
-                        } elseif ($Result) {
+                        } else {
                             # Output result
                             $Result
                         }
-                        if ($Pagination -and $Item.All -eq $true) {
-                            # Repeat requests until 'meta.pagination.total' is reached
+                        if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt $Pagination.total) {
+                            # Repeat requests
                             $Param = @{
-                                Request = $Request
-                                Result = $Result
+                                ParamSet   = $ParamSet
                                 Pagination = $Pagination
-                                Item = $Item
+                                Result     = $Result
                             }
                             Invoke-Loop @Param
                         }
@@ -312,10 +314,14 @@ function Invoke-Falcon {
 function Invoke-Loop {
     [CmdletBinding()]
     param(
-        [object] $Request,
-        [object] $Result,
+        [Parameter(Mandatory = $true)]
+        [object] $ParamSet,
+
+        [Parameter(Mandatory = $true)]
         [object] $Pagination,
-        [object] $Item
+
+        [Parameter(Mandatory = $true)]
+        [object] $Result
     )
     begin {
         # Regex for URL paths that don't need a secondary 'Detailed' request
@@ -324,13 +330,10 @@ function Invoke-Loop {
     process {
         for ($i = ($Result | Measure-Object).Count; $Pagination.next_page -or $i -lt $Pagination.total;
         $i += ($Result | Measure-Object).Count) {
-            # Output running count
-            $TotalCount = $Pagination.total
-            Write-Verbose "[Invoke-Loop] $i of $TotalCount"
-            # Clone endpoint parameters
-            $Clone = $Item.Clone()
-            $Clone.Endpoint = $Item.Endpoint.Clone()
-            # Update pagination
+            Write-Verbose "[Invoke-Loop] $i of $($Pagination.total)"
+            # Clone endpoint parameters and update pagination
+            $Clone = $ParamSet.Clone()
+            $Clone.Endpoint = $ParamSet.Endpoint.Clone()
             $Page = if ($Pagination.after) {
                 @('after', $Pagination.after)
             } elseif ($Pagination.next_page) {
@@ -351,11 +354,9 @@ function Invoke-Loop {
             } else {
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
-            # Make request, capture new pagination detail and output result
+            # Make request, capture new pagination and output result
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
-                $Pagination = (ConvertFrom-Json (
-                    $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
                 $Result = Write-Result $Request
                 if ($Result -and $Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                     & $Command -Ids $Result
@@ -364,9 +365,11 @@ function Invoke-Loop {
                 } else {
                     $ErrorMessage = ("[Invoke-Loop] Results limited by API " +
                         "'$(($Item.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.hostname, $null)' " +
-                        "($i of $TotalCount).")
+                        "($i of $($Pagination.total)).")
                     Write-Error $ErrorMessage
                 }
+                $Pagination = (ConvertFrom-Json (
+                    $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
             }
         }
     }
