@@ -89,7 +89,7 @@ host-group:read
 
         [Parameter(ParameterSetName = '/devices/queries/host-groups/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/devices/combined/host-groups/v1:get', Position = 3)]
-        [ValidateRange(1, 5000)]
+        [ValidateRange(1, 500)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/devices/queries/host-groups/v1:get')]
@@ -160,7 +160,7 @@ host-group:read
 
         [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get', Position = 4)]
         [Parameter(ParameterSetName = '/devices/combined/host-group-members/v1:get', Position = 4)]
-        [ValidateRange(1, 5000)]
+        [ValidateRange(1, 500)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get', Position = 5)]
