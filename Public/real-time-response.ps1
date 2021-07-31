@@ -187,7 +187,7 @@ real-time-response:read
 
         [Parameter(ParameterSetName = '/real-time-response/entities/queued-sessions/GET/v1:post',
             Mandatory = $true)]
-        [array] $Queue,
+        [switch] $Queue,
 
         [Parameter(ParameterSetName = '/real-time-response/queries/sessions/v1:get')]
         [switch] $Detailed,

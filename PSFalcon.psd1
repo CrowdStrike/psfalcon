@@ -185,6 +185,7 @@
       'Group-FalconMalQuerySample',
       'Invoke-FalconMalQuery',
       'Receive-FalconMalQuerySample',
+      'Search-FalconMalQueryHash',
 
       # ml-exclusions.ps1
       'Edit-FalconMlExclusion',
@@ -232,7 +233,9 @@
       'Set-FalconPreventionPrecedence',
 
       # psfalcon.psd1
+      'Get-FalconQueue',
       'Invoke-FalconRTR',
+      'Show-FalconModule',
 
       # quick-scan.ps1
       'Get-FalconQuickScan',

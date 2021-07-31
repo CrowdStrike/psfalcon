@@ -214,14 +214,44 @@ function Build-Query {
         [object] $Format,
         [object] $Inputs
     )
+    begin {
+        # Regex pattern for matching 'last [int] days/hours'
+        [regex] $Relative = '(last (?<Int>\d{1,}) (day[s]?|hour[s]?))'
+    }
     process {
         $Inputs.GetEnumerator().Where({ $Format.Query -contains $_.Key }).foreach{
             $Field = ($_.Key).ToLower()
             ($_.Value).foreach{
+                $Value = $_
+                if ($Field -eq 'filter' -and $Value -match $Relative) {
+                    # Convert 'last [int] days/hours' to Rfc3339
+                    $Value | Select-String $Relative -AllMatches | ForEach-Object {
+                        foreach ($Match in $_.Matches.Value) {
+                            [int] $Int = $Match -replace $Relative, '${Int}'
+                            $Int = if ($Match -match 'day') {
+                                $Int * -24
+                            } else {
+                                $Int * -1
+                            }
+                            $Value = $Value -replace $Match, (Convert-Rfc3339 $Hours)
+                        }
+                    }
+                }
                 # Output array of strings to append to 'Path' and HTML-encode '+'
-                ,"$($Field)=$($_ -replace '\+','%2B')"
+                ,"$($Field)=$($Value -replace '\+','%2B')"
             }
         }
+    }
+}
+function Convert-Rfc3339 {
+    [CmdletBinding()]
+    param(
+        [int] $Hours
+    )
+    process {
+        # Return Rfc3339 timestamp for $Hours from Get-Date
+        $Utc = "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
+        $Utc -replace '\.\d+Z$','Z'
     }
 }
 function Invoke-Falcon {

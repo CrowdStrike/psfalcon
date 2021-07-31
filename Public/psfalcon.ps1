@@ -1,3 +1,113 @@
+function Get-FalconQueue {
+<#
+.Synopsis
+Create a Real-time Response offline queue report
+.Parameter Days
+Days worth of results to retrieve [default: 7]
+.Role
+real-time-response-admin:write
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 1)]
+        [int] $Days
+    )
+    begin {
+        function Get-CommandArray ([string] $Permission) {
+            # Retrieve 'ValidValues' for 'Command' parameter
+            (Get-Command "Invoke-Falcon$($Permission)Command").Parameters.GetEnumerator().Where({
+                $_.Key -eq 'Command' }).Value.Attributes.ValidValues
+        }
+        # Retrieve available Real-time Response command lists, by permission level
+        @($null, 'Responder', 'Admin').foreach{
+            $Name = if ($_ -eq $null) {
+                'ReadOnly'
+            } else {
+                $_
+            }
+            $Value = switch ($Name) {
+                'ReadOnly'  { Get-CommandArray -Permission $null }
+                'Responder' { Get-CommandArray -Permission $_ | Where-Object { $ReadOnly -notcontains $_ } }
+                'Admin'     { Get-CommandArray -Permission $_ | Where-Object { $ReadOnly -notcontains $_ -and
+                    $Responder -notcontains $_ }
+                }
+            }
+            New-Variable -Name $Name -Value $Value
+        }
+        function Add-Field ($Object, $Name, $Value) {
+            $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
+        }
+        $Days = if ($PSBoundParameters.Days) {
+            $PSBoundParameters.Days
+        } else {
+            7
+        }
+        $OutputFile = Join-Path -Path ([Environment]::CurrentDirectory) -ChildPath "FalconQueue_$(
+            Get-Date -Format FileDateTime).csv"
+        $Filter = "(deleted_at:null+commands_queued:1),(created_at:>'last $Days days'+commands_queued:1)"
+    }
+    process {
+        try {
+            Get-FalconSession -Filter $Filter -All -Verbose | ForEach-Object {
+                Get-FalconSession -Ids $_ -Queue -Verbose | ForEach-Object {
+                    foreach ($Session in $_) {
+                        $Session.Commands | ForEach-Object {
+                            $Object = [PSCustomObject] @{
+                                aid                = $Session.aid
+                                user_id            = $Session.user_id
+                                user_uuid          = $Session.user_uuid
+                                session_id         = $Session.id
+                                session_created_at = $Session.created_at
+                                session_deleted_at = $Session.deleted_at
+                                session_updated_at = $Session.updated_at
+                                session_status     = $Session.status
+                                command_complete   = $false
+                                command_stdout     = $null
+                                command_stderr     = $null
+                            }
+                            $_.PSObject.Properties | ForEach-Object {
+                                $Name = if ($_.Name -match '^(created_at|deleted_at|status|updated_at)$') {
+                                    "command_$($_.Name)"
+                                } else {
+                                    $_.Name
+                                }
+                                Add-Field -Object $Object -Name $Name -Value $_.Value
+                            }
+                            if ($Object.command_status -eq 'FINISHED') {
+                                $Permission = if ($Admin -contains $Object.base_command) {
+                                    'Admin'
+                                } elseif ($Responder -contains $Object.base_command) {
+                                    'Responder'
+                                } else {
+                                    $null
+                                }
+                                $Param = @{
+                                    CloudRequestId = $Object.cloud_request_id
+                                    Verbose        = $true
+                                    ErrorAction    = 'SilentlyContinue'
+                                }
+                                $CmdResult = & "Confirm-Falcon$($Permission)Command" @Param
+                                if ($CmdResult) {
+                                    ($CmdResult | Select-Object stdout, stderr, complete).PSObject.Properties |
+                                    ForEach-Object {
+                                        $Object."command_$($_.Name)" = $_.Value
+                                    }
+                                }
+                            }
+                            $Object | Export-Csv $OutputFile -Append -NoTypeInformation -Force
+                        }
+                    }
+                }
+            }
+        } catch {
+            throw $_
+        } finally {
+            if (Test-Path $OutputFile) {
+                Get-ChildItem $OutputFile | Out-Host
+            }
+        }
+    }
+}
 function Invoke-FalconRTR {
 <#
 .Synopsis
@@ -21,6 +131,11 @@ real-time-response-admin:write
     param(
         [Parameter(ParameterSetName = 'HostIds', Mandatory = $true, Position = 1)]
         [Parameter(ParameterSetName = 'GroupId', Mandatory = $true, Position = 1)]
+        [ValidateSet('cat', 'cd', 'clear', 'cp', 'csrutil', 'encrypt', 'env', 'eventlog', 'filehash', 'get',
+            'getsid', 'history', 'ifconfig', 'ipconfig', 'kill', 'ls', 'map', 'memdump', 'mkdir', 'mount', 'mv',
+            'netstat', 'ps', 'put', 'reg delete', 'reg load', 'reg query', 'reg set', 'reg unload', 'restart',
+            'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap', 'update history', 'update install',
+            'update list', 'users', 'xmemdump', 'zip')]
         [string] $Command,
 
         [Parameter(ParameterSetName = 'HostIds', Position = 2)]
@@ -202,6 +317,32 @@ real-time-response-admin:write
             }
         } catch {
             throw $_
+        }
+    }
+}
+function Show-FalconModule {
+<#
+.Synopsis
+Output information about your PSFalcon installation
+#>
+    [CmdletBinding()]
+    param()
+    begin {
+        $Parent = Split-Path -Path $Script:Falcon.Api.Path($PSScriptRoot) -Parent
+    }
+    process {
+        if (Test-Path "$Parent\PSFalcon.psd1") {
+            $Module = Import-PowerShellDataFile $Parent\PSFalcon.psd1
+            [PSCustomObject] @{
+                ModuleVersion    = "v$($Module.ModuleVersion) {$($Module.GUID)}"
+                ModulePath       = $Parent
+                UserHome         = $HOME
+                UserPSModulePath = ($env:PSModulePath -split ';') -join ', '
+                UserSystem       = ("PowerShell $($PSVersionTable.PSEdition): v$($PSVersionTable.PSVersion)" +
+                    " [$($PSVersionTable.OS)]")
+            }
+        } else {
+            throw "Cannot find 'PSFalcon.psd1'"
         }
     }
 }

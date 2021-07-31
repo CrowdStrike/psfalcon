@@ -286,3 +286,50 @@ malquery:read
         Invoke-Falcon @Param
     }
 }
+function Search-FalconMalQueryHash {
+<#
+.Synopsis
+Perform a simple MalQuery YARA search for a Sha256 hash
+.Parameter Sha256
+Sha256 hash value
+.Role
+malquery:write
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [ValidatePattern('^\w{64}$')]
+        [string] $Sha256
+    )
+    begin {
+        $Sleep = 5
+        $MaxSleep = 30
+    }
+    process {
+        try {
+            $Param = @{
+                YaraRule = "import `"hash`"`nrule SearchHash`n{`ncondition:`nhash.sha256(0, filesize) == " +
+                "`"$($PSBoundParameters.Sha256)`"`n}"
+                FilterMeta = 'sha256', 'type', 'label', 'family'
+            }
+            $Request = Invoke-FalconMalQuery @Param
+            if ($Request.reqid) {
+                $Param = @{
+                    Ids = $Request.reqid
+                    OutVariable = 'Result'
+                }
+                if ((Get-FalconMalQuery @Param).status -EQ 'inprogress') {
+                    do {
+                        Start-Sleep -Seconds $Sleep
+                        $i += $Sleep
+                    } until (
+                        ((Get-FalconMalQuery @Param).status -NE 'inprogress') -or ($i -ge $MaxSleep)
+                    )
+                }
+                $Result
+            }
+        } catch {
+            $_
+        }
+    }
+}
