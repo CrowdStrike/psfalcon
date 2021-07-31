@@ -452,7 +452,7 @@ real-time-response:write
 function Receive-FalconGetFile {
 <#
 .Synopsis
-Download a Real-time Response 'get' file
+Download a password protected .7z archive containing a Real-time Response 'get' file [password: 'infected']
 .Parameter Sha256
 Sha256 hash value of file to download
 .Parameter SessionId

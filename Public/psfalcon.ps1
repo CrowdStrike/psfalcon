@@ -1,7 +1,7 @@
 function Get-FalconQueue {
 <#
 .Synopsis
-Create a Real-time Response offline queue report
+Create a report of Real-time Response commands in the offline queue
 .Parameter Days
 Days worth of results to retrieve [default: 7]
 .Role
@@ -13,30 +13,6 @@ real-time-response-admin:write
         [int] $Days
     )
     begin {
-        function Get-CommandArray ([string] $Permission) {
-            # Retrieve 'ValidValues' for 'Command' parameter
-            (Get-Command "Invoke-Falcon$($Permission)Command").Parameters.GetEnumerator().Where({
-                $_.Key -eq 'Command' }).Value.Attributes.ValidValues
-        }
-        # Retrieve available Real-time Response command lists, by permission level
-        @($null, 'Responder', 'Admin').foreach{
-            $Name = if ($_ -eq $null) {
-                'ReadOnly'
-            } else {
-                $_
-            }
-            $Value = switch ($Name) {
-                'ReadOnly'  { Get-CommandArray -Permission $null }
-                'Responder' { Get-CommandArray -Permission $_ | Where-Object { $ReadOnly -notcontains $_ } }
-                'Admin'     { Get-CommandArray -Permission $_ | Where-Object { $ReadOnly -notcontains $_ -and
-                    $Responder -notcontains $_ }
-                }
-            }
-            New-Variable -Name $Name -Value $Value
-        }
-        function Add-Field ($Object, $Name, $Value) {
-            $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
-        }
         $Days = if ($PSBoundParameters.Days) {
             $PSBoundParameters.Days
         } else {
@@ -71,22 +47,16 @@ real-time-response-admin:write
                                 } else {
                                     $_.Name
                                 }
-                                Add-Field -Object $Object -Name $Name -Value $_.Value
+                                $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $_.Value)))
                             }
                             if ($Object.command_status -eq 'FINISHED') {
-                                $Permission = if ($Admin -contains $Object.base_command) {
-                                    'Admin'
-                                } elseif ($Responder -contains $Object.base_command) {
-                                    'Responder'
-                                } else {
-                                    $null
-                                }
+                                $ConfirmCmd = Get-RtrCommand $Object.base_command -ConfirmCommand
                                 $Param = @{
                                     CloudRequestId = $Object.cloud_request_id
                                     Verbose        = $true
                                     ErrorAction    = 'SilentlyContinue'
                                 }
-                                $CmdResult = & "Confirm-Falcon$($Permission)Command" @Param
+                                $CmdResult = & $ConfirmCmd @Param
                                 if ($CmdResult) {
                                     ($CmdResult | Select-Object stdout, stderr, complete).PSObject.Properties |
                                     ForEach-Object {
@@ -108,6 +78,231 @@ real-time-response-admin:write
         }
     }
 }
+function Invoke-FalconDeploy {
+<#
+.Synopsis
+Deploy and run an executable using Real-time Response
+.Parameter Path
+Path to local file
+.Parameter Arguments
+Arguments to include when running the executable
+.Parameter Timeout
+Length of time to wait for a result, in seconds
+.Parameter QueueOffline
+Add non-responsive Hosts to the offline queue
+.Parameter HostIds
+Host identifier(s)
+.Parameter GroupId
+Host Group identifier
+.Role
+real-time-response-admin:write
+#>
+    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'HostIds')]
+    param(
+        [Parameter(ParameterSetName = 'HostIds', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'GroupId', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            if (Test-Path $_) {
+                $true
+            } else {
+                throw "Cannot find path '$_' because it does not exist."
+            }
+        })]
+        [string] $Path,
+
+        [Parameter(ParameterSetName = 'HostIds', Position = 2)]
+        [Parameter(ParameterSetName = 'GroupId', Position = 2)]
+        [string] $Arguments,
+
+        [Parameter(ParameterSetName = 'HostIds', Position = 3)]
+        [Parameter(ParameterSetName = 'GroupId', Position = 3)]
+        [ValidateRange(30,600)]
+        [int] $Timeout,
+
+        [Parameter(ParameterSetName = 'HostIds')]
+        [Parameter(ParameterSetName = 'GroupId')]
+        [boolean] $QueueOffline,
+
+        [Parameter(ParameterSetName = 'HostIds', Mandatory = $true)]
+        [ValidatePattern('^\w{32}$')]
+        [array] $HostIds,
+
+        [Parameter(ParameterSetName = 'GroupId', Mandatory = $true)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $GroupId
+    )
+    begin {
+        # Fields to collect from 'Put' files list
+        $PutFields = @('id', 'name', 'created_timestamp', 'modified_timestamp', 'sha256')
+        function Write-RtrResult ($Object, $Step, $BatchId) {
+            # Create output, append results and output to CSV
+            $Output = foreach ($Item in $Object) {
+                [PSCustomObject] @{
+                    aid              = $Item.aid
+                    batch_id         = $BatchId
+                    session_id       = $null
+                    cloud_request_id = $null
+                    deployment_step  = $Step
+                    complete         = $false
+                    offline_queued   = $false
+                    errors           = $null
+                    stderr           = $null
+                    stdout           = $null
+                }
+            }
+            Get-RtrResult -Object $Object -Output $Output | Export-Csv $OutputFile -Append -NoTypeInformation
+        }
+        # Set output file and executable details
+        $OutputFile = Join-Path -Path ([Environment]::CurrentDirectory) -ChildPath "FalconDeploy_$(
+            Get-Date -Format FileDateTime).csv"
+        $FilePath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
+        $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
+        $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
+        [array] $HostArray = if ($PSBoundParameters.GroupId) {
+            try {
+                # Find Host Group member identifiers
+                Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId
+            } catch {
+                throw $_
+            }
+        } else {
+            # Use provided Host identifiers
+            $PSBoundParameters.HostIds
+        }
+        if ($HostArray) {
+            try {
+                Write-Host "Checking cloud for existing file..."
+                $CloudFile = Get-FalconPutFile -Filter "name:['$Filename']" -Detailed | Select-Object $PutFields |
+                ForEach-Object {
+                    [PSCustomObject] @{
+                        id                 = $_.id
+                        name               = $_.name
+                        created_timestamp  = [datetime] $_.created_timestamp
+                        modified_timestamp = [datetime] $_.modified_timestamp
+                        sha256             = $_.sha256
+                    }
+                }
+                $LocalFile = Get-ChildItem $FilePath | Select-Object CreationTime, Name, LastWriteTime |
+                ForEach-Object {
+                    [PSCustomObject] @{
+                        name               = $_.Name
+                        created_timestamp  = $_.CreationTime
+                        modified_timestamp = $_.LastWriteTime
+                        sha256             = ((Get-FileHash -Algorithm SHA256 -Path $FilePath).Hash).ToLower()
+                    }
+                }
+                if ($LocalFile -and $CloudFile) {
+                    if ($LocalFile.sha256 -eq $CloudFile.sha256) {
+                        Write-Host "Matched hash values between local and cloud files..."
+                    } else {
+                        Write-Host "[CloudFile]"
+                        $CloudFile | Select-Object name, created_timestamp, modified_timestamp, sha256 |
+                            Format-List | Out-Host
+                        Write-Host "[LocalFile]"
+                        $LocalFile | Select-Object name, created_timestamp, modified_timestamp, sha256 |
+                            Format-List | Out-Host
+                        $FileChoice = $host.UI.PromptForChoice(
+                            "'$Filename' exists in your 'Put' Files. Use existing version?", $null,
+                            [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No"), 0)
+                        if ($FileChoice -eq 0) {
+                            Write-Host "Proceeding with CloudFile: $($CloudFile.id)..."
+                        } else {
+                            $RemovePut = Remove-FalconPutFile -Id $CloudFile.id
+                            if ($RemovePut.writes.resources_affected -eq 1) {
+                                Write-Host "Removed CloudFile: $($CloudFile.id)"
+                            }
+                        }
+                    }
+                }
+            } catch {
+                throw $_
+            }
+        }
+    }
+    process {
+        if ($HostArray) {
+            $AddPut = if ($RemovePut.writes.resources_affected -eq 1 -or !$CloudFile) {
+                Write-Host "Uploading $Filename..."
+                $Param = @{
+                    Path        = $FilePath
+                    Name        = $Filename
+                    Description = "$ProcessName"
+                    Comment     = 'PSFalcon: Invoke-FalconDeploy'
+                }
+                Send-FalconPutFile @Param
+            }
+            if ($AddPut.writes.resources_affected -ne 1 -and !$CloudFile.id) {
+                throw "Upload failed."
+            }
+            try {
+                for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 500) {
+                    $Param = @{
+                        HostIds = $HostArray[$i..($i + 499)]
+                    }
+                    switch -Regex ($PSBoundParameters.Keys) {
+                        '(QueueOffline|Timeout)' { $Param[$_] = $PSBoundParameters.$_ }
+                    }
+                    $Session = Start-FalconSession @Param
+                    $SessionHosts = if ($Session) {
+                        # Output result to CSV and return list of successful 'session_start' hosts
+                        Write-RtrResult -Object $Session.hosts -Step 'session_start' -BatchId $Session.batch_id
+                        ($Session.hosts | Where-Object { $_.complete -eq $true -or
+                            $_.offline_queued -eq $true }).aid
+                    }
+                    $PutHosts = if ($SessionHosts) {
+                        # Invoke 'put' on successful hosts
+                        Write-Host "Sending $Filename to $(($SessionHosts | Measure-Object).Count) host(s)..."
+                        $Param = @{
+                            BatchId         = $Session.batch_id
+                            Command         = 'put'
+                            Arguments       = "$Filename"
+                            OptionalHostIds = $SessionHosts
+                        }
+                        if ($PSBoundParameters.Timeout) {
+                            $Param['Timeout'] = $PSBoundParameters.Timeout
+                        }
+                        $CmdPut = Invoke-FalconAdminCommand @Param
+                        if ($CmdPut) {
+                            # Output result to CSV and return list of successful 'put_file' hosts
+                            Write-RtrResult -Object $CmdPut -Step 'put_file' -BatchId $Session.batch_id
+                            ($CmdPut | Where-Object { $_.stdout -eq 'Operation completed successfully.' -or
+                                $_.offline_queued -eq $true }).aid
+                        }
+                    }
+                    if ($PutHosts) {
+                        # Invoke 'run'
+                        Write-Host "Starting $Filename on $(($PutHosts | Measure-Object).Count) host(s)..."
+                        $Arguments = "\$Filename"
+                        if ($PSBoundParameters.Arguments) {
+                            $Arguments += " -CommandLine=`"$($PSBoundParameters.Arguments)`""
+                        }
+                        $Param = @{
+                            BatchId         = $Session.batch_id
+                            Command         = 'run'
+                            Arguments       = $Arguments
+                            OptionalHostIds = $PutHosts
+                        }
+                        if ($PSBoundParameters.Timeout) {
+                            $Param['Timeout'] = $PSBoundParameters.Timeout
+                        }
+                        $CmdRun = Invoke-FalconAdminCommand @Param
+                        if ($CmdRun) {
+                            # Output result to CSV
+                            Write-RtrResult -Object $CmdRun -Step 'run_file' -BatchId $Session.batch_id
+                        }
+                    }
+                }
+            } catch {
+                throw $_
+            } finally {
+                if (Test-Path $OutputFile) {
+                    Get-ChildItem $OutputFile | Out-Host
+                }
+            }
+        }
+    }
+}
 function Invoke-FalconRTR {
 <#
 .Synopsis
@@ -116,14 +311,14 @@ Start Real-time Response session(s), execute a command and output the result(s)
 Real-time Response command
 .Parameter Arguments
 Arguments to include with the command
-.Parameter HostIds
-Host identifier(s) to target
-.Parameter GroupId
-Host Group identifier containing hosts to target
 .Parameter Timeout
 Length of time to wait for a result, in seconds
 .Parameter QueueOffline
 Add non-responsive Hosts to the offline queue
+.Parameter HostIds
+Host identifier(s)
+.Parameter GroupId
+Host Group identifier
 .Role
 real-time-response-admin:write
 #>
@@ -160,11 +355,6 @@ real-time-response-admin:write
         [string] $GroupId
     )
     begin {
-        function Get-CommandArray ([string] $Permission) {
-            # Retrieve 'ValidValues' for 'Command' parameter
-            (Get-Command "Invoke-Falcon$($Permission)Command").Parameters.GetEnumerator().Where({
-                $_.Key -eq 'Command' }).Value.Attributes.ValidValues
-        }
         function Initialize-Output ([array] $HostIds) {
             # Create initial array of output for each host
             ($HostIds).foreach{
@@ -182,35 +372,10 @@ real-time-response-admin:write
                 if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
                     $Item.PSObject.Properties.Add((New-Object PSNoteProperty('batch_get_cmd_req_id', $null)))
                 }
-                $Item
-            }
-        }
-        function Get-Result ($Object) {
-            foreach ($Item in $Object) {
-                # Update output with result data
-                ($Item | Select-Object $RtrFields).PSObject.Properties | Where-Object { $_.Value } |
-                ForEach-Object {
-                    $Field = if ($_.Name -eq 'task_id') {
-                        # Rename 'task_id' to 'cloud_request_id'
-                        'cloud_request_id'
-                    } else {
-                        $_.Name
-                    }
-                    $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
-                        # Convert array result into string
-                        $_.Value -join ', '
-                    } elseif ($_.Value.code -and $_.Value.message) {
-                        # Convert error code and message into string
-                        (($_.Value).foreach{
-                            "$($_.code): $($_.message)"
-                        }) -join ', '
-                    } else {
-                        $_.Value
-                    }
-                    $Output | Where-Object { $_.aid -eq $Item.aid } | ForEach-Object {
-                        $_.$Field = $Value
-                    }
+                if ($PSBoundParameters.GroupId) {
+                    $Item.PSObject.Properties.Add((New-Object PSNoteProperty('batch_get_cmd_req_id', $null)))
                 }
+                $Item
             }
         }
         if ($PSBoundParameters.Timeout -and $PSBoundParameters.Command -eq 'runscript' -and
@@ -218,40 +383,12 @@ real-time-response-admin:write
             # Force 'Timeout' into 'Arguments' when using 'runscript'
             $PSBoundParameters.Arguments += " -Timeout=$($PSBoundParameters.Timeout)"
         }
-        # Retrieve available Real-time Response command lists, by permission level
-        @($null, 'Responder', 'Admin').foreach{
-            $Name = if ($_ -eq $null) {
-                'ReadOnly'
-            } else {
-                $_
-            }
-            $Value = switch ($Name) {
-                'ReadOnly'  { Get-CommandArray -Permission $null }
-                'Responder' { Get-CommandArray -Permission $_ | Where-Object { $ReadOnly -notcontains $_ } }
-                'Admin'     { Get-CommandArray -Permission $_ | Where-Object { $ReadOnly -notcontains $_ -and
-                    $Responder -notcontains $_ }
-                }
-            }
-            New-Variable -Name $Name -Value $Value
-        }
-        # Set Real-time Response command using $Permission
+        # Determine Real-time Response command to invoke
         $InvokeCmd = if ($PSBoundParameters.Command -eq 'get') {
             'Invoke-FalconBatchGet'
         } else {
-            $Permission = if ($PSBoundParameters.Command -eq 'runscript') {
-                # Force 'Admin' for 'runscript'
-                'Admin'
-            } else {
-                switch ($PSBoundParameters.Command) {
-                    { $Admin -contains $_ }     { 'Admin' }
-                    { $Responder -contains $_ } { 'Responder' }
-                    default                     { $null }
-                }
-            }
-            "Invoke-Falcon$($Permission)Command"
+            Get-RtrCommand $PSBoundParameters.Command
         }
-        # Real-time Response fields to capture from results
-        $RtrFields = @('aid', 'complete', 'errors', 'offline_queued', 'session_id', 'stderr', 'stdout', 'task_id')
     }
     process {
         $HostArray = if ($PSBoundParameters.GroupId) {
@@ -268,9 +405,9 @@ real-time-response-admin:write
         try {
             for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 500) {
                 # Create baseline output and define request parameters
-                [array] $Output = Initialize-Output $HostArray[$i..($i + 499)]
+                [array] $Group = Initialize-Output $HostArray[$i..($i + 499)]
                 $InitParam = @{
-                    HostIds = $Output.aid
+                    HostIds = $Group.aid
                 }
                 if ($PSBoundParameters.QueueOffline) {
                     $InitParam['QueueOffline'] = $PSBoundParameters.QueueOffline
@@ -293,27 +430,29 @@ real-time-response-admin:write
                         $_['Timeout'] = $PSBoundParameters.Timeout
                     }
                 }
-                # Request session
+                # Request session and capture initialization result
                 $InitRequest = Start-FalconSession @InitParam
-                Get-Result -Object $InitRequest.hosts
+                $InitResult = Get-RtrResult -Object $InitRequest.hosts -Output $Group
                 if ($InitRequest.batch_id) {
-                    $Output | Where-Object { $_.session_id } | ForEach-Object {
+                    $InitResult | Where-Object { $_.session_id } | ForEach-Object {
                         # Add batch_id to initialized sessions
                         $_.batch_id = $InitRequest.batch_id
                     }
-                    # Perform command request
+                    # Perform command request and capture result
                     $CmdRequest = & $InvokeCmd @CmdParam -BatchId $InitRequest.batch_id
-                    Get-Result -Object $CmdRequest
+                    $CmdResult = Get-RtrResult -Object $CmdRequest -Output $InitResult
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet' -and $CmdRequest.batch_get_cmd_req_id) {
-                        $Output | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
+                        $CmdResult | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
                             # Add 'batch_get_cmd_req_id' and remove 'stdout' from session
                             $_.PSObject.Properties.Add((New-Object PSNoteProperty('batch_get_cmd_req_id',
                                 $CmdRequest.batch_get_cmd_req_id)))
                             $_.stdout = $null
                         }
                     }
+                    $CmdResult
+                } else {
+                    $InitResult
                 }
-                $Output
             }
         } catch {
             throw $_

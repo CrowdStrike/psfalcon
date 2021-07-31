@@ -234,6 +234,7 @@
 
       # psfalcon.psd1
       'Get-FalconQueue',
+      'Invoke-FalconDeploy',
       'Invoke-FalconRTR',
       'Show-FalconModule',
 
@@ -387,6 +388,9 @@ General Changes
 * Re-organized module manifest (PSFalcon.psd1) and reduced overall size.
 
 * 'Private' functions have been re-written to reduce complexity and size of the module.
+
+* Moved the Rfc3339 conversion function that converts 'last [int] days/hours' to 'Private.psd1' as
+  'Convert-Rfc3339'. Also removed decimal second values from the final output.
 
 * Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1' to make it clear that the functions inside are
   PSFalcon-specific.

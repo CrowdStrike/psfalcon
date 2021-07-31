@@ -254,6 +254,96 @@ function Convert-Rfc3339 {
         $Utc -replace '\.\d+Z$','Z'
     }
 }
+function Get-RtrCommand {
+    [CmdletBinding()]
+    param(
+        [string] $Command,
+        [switch] $ConfirmCommand
+    )
+    begin {
+        function Get-CommandArray ([string] $Permission) {
+            # Retrieve 'ValidValues' for 'Command' parameter
+            (Get-Command "Invoke-Falcon$($Permission)Command").Parameters.GetEnumerator().Where({
+                $_.Key -eq 'Command' }).Value.Attributes.ValidValues
+        }
+    }
+    process {
+        # Determine command to invoke using $Command and permission level
+        $Result = if ($Command -eq 'runscript') {
+            # Force 'Admin' for 'runscript' command
+            'Invoke-FalconAdminCommand'
+        } else {
+            # Create table of Real-time Response commands organized by permission level
+            $Commands = @{}
+            @($null, 'Responder', 'Admin').foreach{
+                $Key = if ($_ -eq $null) {
+                    'ReadOnly'
+                } else {
+                    $_
+                }
+                $Commands[$Key] = Get-CommandArray $_
+            }
+            # Filter 'Responder' and 'Admin' to unique command(s)
+            $Commands.Responder = $Commands.Responder | Where-Object { $Commands.ReadOnly -notcontains $_ }
+            $Commands.Admin = $Commands.Admin | Where-Object { $Commands.ReadOnly -notcontains $_ -and
+                $Commands.Responder -notcontains $_ }
+            $Commands.GetEnumerator().Where({ $_.Value -contains $Command }).foreach{
+                if ($_.Key -eq 'ReadOnly') {
+                    'Invoke-FalconCommand'
+                } else {
+                    "Invoke-Falcon$($_.Key)Command"
+                }
+            }
+        }
+    }
+    end {
+        if ($PSBoundParameters.ConfirmCommand) {
+            # Output 'Confirm' command
+            $Result -replace 'Invoke', 'Confirm'
+        } else {
+            $Result
+        }
+    }
+}
+function Get-RtrResult {
+    [CmdletBinding()]
+    param(
+        [object] $Object,
+        [object] $Output
+    )
+    begin {
+        # Real-time Response fields to capture from results
+        $RtrFields = @('aid', 'complete', 'errors', 'offline_queued', 'session_id', 'stderr', 'stdout', 'task_id')
+    }
+    process {
+        # Update $Output with results from $Object
+        foreach ($Result in ($Object | Select-Object $RtrFields)) {
+            $Result.PSObject.Properties | Where-Object { $_.Value } | ForEach-Object {
+                $Value = $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
+                    # Convert array result into string
+                    $_.Value -join ', '
+                } elseif ($_.Value.code -and $_.Value.message) {
+                    # Convert error code and message into string
+                    (($_.Value).foreach{ "$($_.code): $($_.message)" }) -join ', '
+                } else {
+                    $_.Value
+                }
+                $Name = if ($_.Name -eq 'task_id') {
+                    # Rename 'task_id' to 'cloud_request_id'
+                    'cloud_request_id'
+                } else {
+                    $_.Name
+                }
+                $Output | Where-Object { $_.aid -eq $Result.aid } | ForEach-Object {
+                    $_.$Name = $Value
+                }
+            }
+        }
+    }
+    end {
+        return $Output
+    }
+}
 function Invoke-Falcon {
     [CmdletBinding()]
     param(
