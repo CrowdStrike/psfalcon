@@ -1,9 +1,99 @@
+function Find-FalconDuplicate {
+<#
+.Synopsis
+Find duplicate hosts within your Falcon environment
+.Description
+If the 'Hosts' parameter is not provided, all Host information will be retrieved. An error will be displayed if
+required fields 'cid', 'device_id', 'first_seen', 'last_seen', 'hostname' and any defined 'filter' value are
+not present.
+
+Hosts are grouped by 'cid', 'hostname' and any defined 'filter' value, then sorted by 'last_seen' time. Any
+result other than the one with the most recent 'last_seen' time is considered a duplicate host and is returned
+within the output.
+.Parameter Hosts
+Array of 'Get-FalconHost -Detailed' results
+.Parameter Filter
+Property to determine duplicate Host(s) in addition to 'hostname'
+.Role
+devices:write
+.Example
+PS> Find-FalconDuplicate
+
+Retrieve a list of all hosts and output potential duplicates using the 'hostname' field.
+.Example
+PS>$Duplicates = Find-FalconDuplicate -Filter 'mac_address'
+PS>Invoke-FalconHostAction -Name hide_host -Ids $Duplicates.device_id
+
+Find duplicate Hosts using 'hostname' and 'mac_address', then hide results within the Falcon console.
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 1)]
+        [array] $Hosts,
+
+        [Parameter(Position = 2)]
+        [ValidateSet('external_ip', 'local_ip', 'mac_address', 'os_version', 'platform_name', 'serial_number')]
+        [string] $Filter
+    )
+    begin {
+        function Group-Selection ($Object, $GroupBy) {
+            ($Object | Group-Object $GroupBy).Where({ $_.Count -gt 1 -and $_.Name }).foreach{
+                $_.Group | Sort-Object last_seen | Select-Object -First (($_.Count) - 1)
+            }
+        }
+        # Comparison criteria and required properties for host results
+        $Criteria = @('cid', 'hostname')
+        $Required = @('cid', 'device_id', 'first_seen', 'last_seen', 'hostname')
+        if ($PSBoundParameters.Filter) {
+            $Criteria += $PSBoundParameters.Filter
+            $Required += $PSBoundParameters.Filter
+        }
+        # Create filter for excluding results with empty $Criteria values
+        $FilterScript = { (($Criteria).foreach{ "`$_.$($_)" }) -join ' -and ' }
+    }
+    process {
+        $HostArray = if (!$PSBoundParameters.Hosts) {
+            # Retreive Host details
+            Get-FalconHost -Detailed -All
+        } else {
+            $PSBoundParameters.Hosts
+        }
+        ($Required).foreach{
+            if (($HostArray | Get-Member -MemberType NoteProperty).Name -notcontains $_) {
+                # Verify required properties are present
+                throw "Missing required property '$_'."
+            }
+        }
+        # Group, sort and output result
+        $Param = @{
+            Object  = $HostArray | Select-Object $Required | Where-Object -FilterScript $FilterScript
+            GroupBy = $Criteria
+        }
+        $Output = Group-Selection @Param
+    }
+    end {
+        if ($Output) {
+            $Output
+        } else {
+            Write-Warning "No duplicates found."
+        }
+    }
+}
 function Get-FalconQueue {
 <#
 .Synopsis
 Create a report of Real-time Response commands in the offline queue
+.Description
+Creates a CSV of pending Real-time Response commands and their related session information. Sessions within the
+offline queue expire 7 days after creation by default. Sessions can have additional commands appended to them
+to extend their expiration time.
 .Parameter Days
 Days worth of results to retrieve [default: 7]
+.Example
+PS>Get-FalconQueue -Days 14
+
+Output pending Real-time Response sessions in the offline queue that were created within the last 14 days. Any
+sessions that expired at the end of the default 7 day period will not be displayed.
 .Role
 real-time-response-admin:write
 #>
@@ -82,6 +172,16 @@ function Invoke-FalconDeploy {
 <#
 .Synopsis
 Deploy and run an executable using Real-time Response
+.Description
+'Put' files will be checked for identical file names, and if any are found, the Sha256 hash values will be
+compared between your local and cloud files. If they are different, a prompt will appear asking which file to use.
+
+If the file is not present in 'Put' files, it will be uploaded.
+
+Once uploaded, a Real-time Response session will be started for the designated Host(s), the file will be 'put'
+into the root drive, and 'run' if successfully transferred.
+
+Details of each step will be output to a CSV file in the current directory.
 .Parameter Path
 Path to local file
 .Parameter Arguments
@@ -96,6 +196,10 @@ Host identifier(s)
 Host Group identifier
 .Role
 real-time-response-admin:write
+.Example
+PS>Invoke-FalconDeploy -Path C:\files\example.exe -HostIds <id>, <id>
+
+The file 'example.exe' will be 'put' and 'run' on <id> and <id>.
 #>
     [CmdletBinding()]
     [CmdletBinding(DefaultParameterSetName = 'HostIds')]
@@ -321,6 +425,11 @@ Host identifier(s)
 Host Group identifier
 .Role
 real-time-response-admin:write
+.Example
+PS>Invoke-FalconRTR runscript "-CloudFile='HelloWorld'" -HostIds <id>, <id>
+
+The command 'runscript' will be used to execute the previously-created Response Script called 'HelloWorld'
+on <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = 'HostIds')]
     param(
@@ -459,10 +568,48 @@ real-time-response-admin:write
         }
     }
 }
+function Show-FalconMap {
+<#
+.Synopsis
+Use your default browser to display indicators on the Falcon X Indicator Map. Invalid indicator values are ignored.
+.Parameter Indicators
+Real-time Response command
+.Example
+PS>Show-FalconMap -Indicators 93.184.216.34, example.com, <sha256_hash>
+
+The default browser will open and the indicator map will be displayed for "ip:93.184.216.34", "domain:example.com",
+and "hash:<sha256_hash>".
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [array] $Indicators
+    )
+    begin {
+        $FalconUI = "$($Script:Falcon.Hostname -replace 'api', 'falcon')"
+        $Inputs = ($PSBoundParameters.Indicators).foreach{
+            $Type = Confirm-String $_
+            $Value = if ($Type -match '^(domain|md5|sha256)$') {
+                $_.ToLower()
+            } else {
+                $_
+            }
+            if ($Type) {
+                "$($Type):'$Value'"
+            }
+        }
+    }
+    process {
+        Start-Process "$($FalconUI)/intelligence/graph?indicators=$($Inputs -join ',')"
+    }
+}
 function Show-FalconModule {
 <#
 .Synopsis
-Output information about your PSFalcon installation
+Display information about your PSFalcon installation.
+.Description
+Outputs an object containing module, user and system version information that is helpful for diagnosing problems
+with the PSFalcon module.
 #>
     [CmdletBinding()]
     param()

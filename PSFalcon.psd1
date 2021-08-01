@@ -233,9 +233,11 @@
       'Set-FalconPreventionPrecedence',
 
       # psfalcon.psd1
+      'Find-FalconDuplicate',
       'Get-FalconQueue',
       'Invoke-FalconDeploy',
       'Invoke-FalconRTR',
+      'Show-FalconMap',
       'Show-FalconModule',
 
       # quick-scan.ps1
@@ -392,6 +394,9 @@ General Changes
 * Moved the Rfc3339 conversion function that converts 'last [int] days/hours' to 'Private.psd1' as
   'Convert-Rfc3339'. Also removed decimal second values from the final output.
 
+* Added 'Confirm-String' to output 'type' based on RegEx matching. Used to validate values in commands like
+  'Show-FalconMap'. This will probably be worked in to validate relevant values in other commands in the future.
+
 * Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1' to make it clear that the functions inside are
   PSFalcon-specific.
 
@@ -471,6 +476,20 @@ Command Changes
 * Edit-FalconHorizonAzureAccount
   Added parameters to utilize additional '/cloud-connect-cspm-azure/entities/default-subscription-id/v1' endpoint.
 
+* Find-FalconDuplicate
+  Updated command to retrieve Host results when not provided. This allows the command to find potential duplicates
+  using the provided '-Hosts' value (so existing scripts will continue to function) or by simply running
+  'Find-FalconDuplicate' by itself to both retrieve, and analyze values for duplicates using 'hostname'.
+
+  Added '-Filter' parameter to use additional property to determine whether a device is a duplicate. For example, 
+  'Find-FalconDuplicate -Filter mac_address' will output a list of duplicates that have identical 'hostname' and
+  'mac_address' values.
+
+  Updated to exclude devices with empty values (both 'hostname' and provided '-Filter').
+
+  Updated output to include 'cid' to avoid potential problems if 'Find-FalconDuplicate' is used within a
+  parent-level CID.
+
 * Get-FalconFirewallRule
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
 
@@ -483,13 +502,17 @@ Command Changes
   Changed output format so that, nstead of returning the entire Json response, the result will have the properties
   'batch_get_cmd_req_id' and 'hosts' (similar to how 'Start-FalconSession' displays a batch session result).
 
+* Invoke-FalconDeploy
+  Added '-GroupId' to run the command against a Host Group. Parameter positioning has been re-organized to
+  compensate.
+
 * Invoke-FalconRTR
+  Added '-GroupId' to run a Real-time Response command against a Host Group. Parameter positioning has been
+  re-organized to compensate.
+
   Removed all 'single host' Real-time Response code. Now 'Invoke-FalconRTR' uses batch sessions whether you've
   submitted a single device or multiple. This should have minimal impact on the use of the command, but makes
   much simpler to support and allow for the addition of other functionality.
-
-  Added '-GroupId' to run a Real-time Response command against a Host Group. Parameter positioning has been
-  re-organized to compensate.
 
 * Remove-FalconGetFile
   Renamed '-Ids' parameter to '-Id' to reflect single value requirement.

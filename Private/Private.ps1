@@ -243,6 +243,45 @@ function Build-Query {
         }
     }
 }
+function Confirm-String {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string] $String
+    )
+    begin {
+        # RegEx patterns
+        $RegEx = @{
+            md5    = [regex] '^[A-Fa-f0-9]{32}$'
+            sha256 = [regex] '^[A-Fa-f0-9]{64}$'
+            ipv4   = [regex] '^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.'
+            ipv6   = [regex] '^[0-9a-fA-F]{1,4}:'
+            domain = [regex] '^((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}$'
+        }
+    }
+    process {
+        $Output = ($RegEx.GetEnumerator()).foreach{
+            if ($String -match $_.Value) {
+                if ($_.Key -match '^(ipv4|ipv6)$') {
+                    if (($String -as [System.Net.IPAddress] -as [bool]) -eq $true) {
+                        # Use initial RegEx match, then validate IP and return type
+                        $_.Key
+                    }
+                } else {
+                    # Return type
+                    $_.Key
+                }
+            }
+        }
+    }
+    end {
+        if ($Output) {
+            Write-Verbose "[Confirm-String] $($Output): $String"
+            $Output
+        }
+    }
+}
 function Convert-Rfc3339 {
     [CmdletBinding()]
     param(
