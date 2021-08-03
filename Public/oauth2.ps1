@@ -6,27 +6,36 @@ Request an OAuth2 access token
 OAuth2 Client Identifier
 .Parameter ClientSecret
 OAuth2 Client Secret
+.Parameter Cloud
+CrowdStrike destination 'cloud' [default: 'us-1']
 .Parameter Hostname
-CrowdStrike destination hostname [default: 'https://api.crowdstrike.com']
+CrowdStrike API destination hostname
 .Parameter MemberCid
 Member CID, required when authenticating with a child within a parent/child CID environment
 #>
-    [CmdletBinding(DefaultParameterSetName = '/oauth2/token:post')]
+    [CmdletBinding(DefaultParameterSetName = 'Hostname')]
     param(
-        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 1)]
+        [Parameter(ParameterSetName = 'Cloud', Position = 1)]
+        [Parameter(ParameterSetName = 'Hostname', Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $ClientId,
 
-        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 2)]
+        [Parameter(ParameterSetName = 'Cloud', Position = 2)]
+        [Parameter(ParameterSetName = 'Hostname', Position = 2)]
         [ValidatePattern('^\w{40}$')]
         [string] $ClientSecret,
 
-        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 3)]
+        [Parameter(ParameterSetName = 'Cloud', Position = 3)]
+        [ValidateSet('eu-1', 'us-gov-1', 'us-1', 'us-2')]
+        [string] $Cloud,
+
+        [Parameter(ParameterSetName = 'Hostname', Position = 3)]
         [ValidateSet('https://api.crowdstrike.com', 'https://api.us-2.crowdstrike.com',
             'https://api.laggar.gcw.crowdstrike.com', 'https://api.eu-1.crowdstrike.com' )]
         [string] $Hostname,
 
-        [Parameter(ParameterSetName = '/oauth2/token:post', Position = 4)]
+        [Parameter(ParameterSetName = 'Cloud', Position = 4)]
+        [Parameter(ParameterSetName = 'Hostname', Position = 4)]
         [ValidatePattern('^\w{32}$')]
         [string] $MemberCid
     )
@@ -65,11 +74,24 @@ Member CID, required when authenticating with a child within a parent/child CID 
             }
             return $Output
         }
+        if ($PSBoundParameters.Cloud) {
+            # Convert 'Cloud' to 'Hostname'
+            $Value = switch ($PSBoundParameters.Cloud) {
+                'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
+                'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+                'us-1'     { 'https://api.crowdstrike.com' }
+                'us-2'     { 'https://api.us-2.crowdstrike.com' }
+            }
+            $PSBoundParameters.Add('Hostname', $Value)
+            [void] $PSBoundParameters.Remove('Cloud')
+        }
         if (!$Script:Falcon) {
-            # Initiate ApiClient and set SslProtocol
+            # Initiate ApiClient, set SslProtocol and UserAgent
             $Script:Falcon = Get-ApiCredential $PSBoundParameters
             $Script:Falcon.Add('Api', [ApiClient]::New())
             $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("crowdstrike-psfalcon/$(
+                (Get-Module -Name PSFalcon).Version.ToString())")
         } else {
             (Get-ApiCredential $PSBoundParameters).GetEnumerator().foreach{
                 if ($Script:Falcon.($_.Key) -ne $_.Value) {
@@ -82,8 +104,8 @@ Member CID, required when authenticating with a child within a parent/child CID 
     process {
         if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             $Param = @{
-                Path    = "$($Script:Falcon.Hostname)$(($PSCmdlet.ParameterSetName).Split(':')[0])"
-                Method  = ($PSCmdlet.ParameterSetName).Split(':')[1]
+                Path    = "$($Script:Falcon.Hostname)/oauth2/token"
+                Method  = 'post'
                 Headers = @{
                     Accept      = 'application/json'
                     ContentType = 'application/x-www-form-urlencoded'

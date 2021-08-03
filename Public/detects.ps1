@@ -125,6 +125,7 @@ detects:read
                     root = @('ids')
                 }
             }
+            Max      = 1000
         }
     }
     process {

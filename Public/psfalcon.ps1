@@ -626,6 +626,7 @@ with the PSFalcon module.
                 UserPSModulePath = ($env:PSModulePath -split ';') -join ', '
                 UserSystem       = ("PowerShell $($PSVersionTable.PSEdition): v$($PSVersionTable.PSVersion)" +
                     " [$($PSVersionTable.OS)]")
+                UserAgent        = $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ToString()
             }
         } else {
             throw "Cannot find 'PSFalcon.psd1'"

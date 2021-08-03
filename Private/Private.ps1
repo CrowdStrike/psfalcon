@@ -107,7 +107,7 @@ function Build-Param {
     begin {
         if (!$Max) {
             # Set maximum 'query'/'body.ids' values when left undefined
-            $Max = 500
+            $Max = Set-IdMaximum -Inputs $Inputs
         }
         # Set baseline request parameters
         $Base = @{
@@ -184,7 +184,7 @@ function Build-Param {
                 }
                 if ($Split.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
-                    $Split.Body = ConvertTo-Json -InputObject $Split.Body -Depth 8
+                    $Split.Endpoint.Body = ConvertTo-Json -InputObject $Split.Body -Depth 8
                 }
                 ,$Split
             }
@@ -416,7 +416,6 @@ function Invoke-Falcon {
                 $_.Name -eq $Endpoint }).Parameters.Where({ $_.Name -eq 'Limit' }).Attributes.MaxRange
             if ($Limit) {
                 $Inputs.Add('Limit', $Limit)
-                Write-Verbose "[Invoke-Falcon] Limit: $Limit"
             }
         }
         # Regex for URL paths that don't need a secondary 'Detailed' request
@@ -445,22 +444,24 @@ function Invoke-Falcon {
                         $Pagination.total
                     } else {
                         $Result = Write-Result $Request
-                        if ($Result -and $ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch
-                        $NoDetail) {
-                            # Output 'Detailed'
-                            & $Command -Ids $Result
-                        } else {
-                            # Output result
-                            $Result
-                        }
-                        if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt $Pagination.total) {
-                            # Repeat requests
-                            $Param = @{
-                                ParamSet   = $ParamSet
-                                Pagination = $Pagination
-                                Result     = $Result
+                        if ($null -ne $Result) {
+                            if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
+                                # Output 'Detailed'
+                                & $Command -Ids $Result
+                            } else {
+                                # Output result
+                                $Result
                             }
-                            Invoke-Loop @Param
+                            if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt
+                            $Pagination.total) {
+                                # Repeat requests
+                                $Param = @{
+                                    ParamSet   = $ParamSet
+                                    Pagination = $Pagination
+                                    Result     = $Result
+                                }
+                                Invoke-Loop @Param
+                            }
                         }
                     }
                 }
@@ -517,19 +518,40 @@ function Invoke-Loop {
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
                 $Result = Write-Result $Request
-                if ($Result -and $Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
-                    & $Command -Ids $Result
-                } elseif ($Result) {
-                    $Result
+                if ($null -ne $Result) {
+                    if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
+                        & $Command -Ids $Result
+                    } else {
+                        $Result
+                    }
                 } else {
                     $ErrorMessage = ("[Invoke-Loop] Results limited by API " +
-                        "'$(($Item.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.hostname, $null)' " +
+                        "'$(($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname, $null)' " +
                         "($i of $($Pagination.total)).")
                     Write-Error $ErrorMessage
                 }
                 $Pagination = (ConvertFrom-Json (
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
             }
+        }
+    }
+}
+function Set-IdMaximum {
+    [CmdletBinding()]
+    [OutputType([int])]
+    param(
+        [object] $Inputs
+    )
+    process {
+        $IdCount = if ($Inputs.ids) {
+            # Find maximum number of 'ids' using equivalent of 500 32-character ids
+            [Math]::Floor([decimal](18500/(($Inputs.ids | Measure-Object -Maximum -Property Length).Maximum + 5)))
+        }
+        if ($IdCount -and $IdCount -lt 500) {
+            # Output maximum, no greater than 500
+            $IdCount
+        } else {
+            500
         }
     }
 }

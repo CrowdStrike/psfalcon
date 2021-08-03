@@ -360,7 +360,6 @@
                 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
             ReleaseNotes = @"
 General Changes
-
 * Changed [Falcon] class to [ApiClient] class. The new [ApiClient] class is generic and can work with other APIs,
   which helps enable the use of [ApiClient] as a standalone script that can be directly called to interact with
   different APIs if people would like to re-use the code.
@@ -432,7 +431,6 @@ General Changes
   are additional results remaining, it will be more obvious why it's happening.
 
 New Commands
-
 * cspm-registration
   'Edit-FalconHorizonAwsAccount'
   'Get-FalconHorizonIoaEvent'
@@ -465,7 +463,6 @@ New Commands
   'Get-FalconReconRulePreview'
 
 Command Changes
-
 * Removed '-Help' parameter from all commands. 'Get-Help' can be used instead.
 
 * Three different '/indicators/' API commands were previously removed by mistake and have been re-added:
@@ -521,14 +518,23 @@ Command Changes
   Renamed '-SessionId' to '-Id'.
 
 * Request-FalconToken
+  Added '-Hostname' parameter and set it as the new default way to enter an API target. '-Cloud' is still present,
+  but will manually need to be specified in order to use the previous 'us-1', 'us-2', 'eu-1' and 'us-gov-1'
+  values. This was changed because the OAuth2 API Client refers to 'Hostname' and it made more sense to use
+  that as the default. This will also be more friendly for importing credential sets from password management
+  solutions as all three values can be directly copied from the OAuth2 API Client creation screen.
+
   Added support for HTTP 308 redirection when requesting an OAuth2 access token. If a user attempts to
   authenticate using the wrong API hostname, the module will automatically update to the proper location and
   use that location with future requests.
 
-  Added TLS 1.2 enforcement in 'Request-FalconToken' using [System.Net.Http.HttpClientHandler].
+  Added TLS 1.2 enforcement in 'Request-FalconToken' using [System.Net.Http.HttpClientHandler] that is applied
+  to all requests made with the PSFalcon module.
+
+  Added custom 'crowdstrike-psfalcon/<version>' user-agent string in 'Request-FalconToken' using
+  [System.Net.Http.HttpClient] that is applied to all requests made with the PSFalcon module.
 
 GitHub Issues
-
 * Issue #48: Updated 'Invoke-Loop' private function with a more explicit counting method to eliminate endless
   loops caused when trying to count a single [PSCustomObject] in PowerShell 5.1.
 
@@ -540,6 +546,9 @@ GitHub Issues
   the 'X-Cs-WaitRetryAfter' time. Both of these changes seem to have eliminated the chance of a negative wait time.
 
 * Issue #54: Updated 'Get-FalconHorizonPolicy' with additional '-Service' names.
+
+* Issue #62: Added 'user-agent' string during creation of [ApiClient] object. The new 'user-agent' value is
+  used with every PSFalcon request.
 "@
         }
     }
