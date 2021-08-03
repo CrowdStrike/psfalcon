@@ -358,7 +358,7 @@ function Get-RtrResult {
         # Update $Output with results from $Object
         foreach ($Result in ($Object | Select-Object $RtrFields)) {
             $Result.PSObject.Properties | Where-Object { $_.Value } | ForEach-Object {
-                $Value = $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
+                $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
                     # Convert array result into string
                     $_.Value -join ', '
                 } elseif ($_.Value.code -and $_.Value.message) {

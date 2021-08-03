@@ -105,10 +105,10 @@ devices:read
     )
     begin {
         $Param = @{
-            Command = $MyInvocation.MyCommand.Name
+            Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs = $PSBoundParameters
-            Format = @{
+            Inputs   = $PSBoundParameters
+            Format   = @{
                 Query = @('ids', 'filter', 'sort', 'limit', 'offset')
             }
         }
