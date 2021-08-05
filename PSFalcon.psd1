@@ -233,6 +233,7 @@
       'Set-FalconPreventionPrecedence',
 
       # psfalcon.psd1
+      'Export-FalconConfig',
       'Find-FalconDuplicate',
       'Get-FalconQueue',
       'Invoke-FalconDeploy',
@@ -430,6 +431,9 @@ General Changes
   hitting the maximum result limit from a particular API. Now when '-All' stops at 10,000 results but there
   are additional results remaining, it will be more obvious why it's happening.
 
+* Updated the '-Array' parameter to validate objects within the array for required fields when submitting multiple
+  policies/groups/rules/notifications to create/edit in one request.
+
 New Commands
 * cspm-registration
   'Edit-FalconHorizonAwsAccount'
@@ -473,6 +477,10 @@ Command Changes
 * Edit-FalconHorizonAzureAccount
   Added parameters to utilize additional '/cloud-connect-cspm-azure/entities/default-subscription-id/v1' endpoint.
 
+* Export-FalconConfig
+  Changed archive name to 'FalconConfig_<FileDate>.zip' rather than 'FalconConfig_<FileDateTime>.zip'. This should
+  make it easier to write scripts that do something with the 'FalconConfig' archive.
+
 * Find-FalconDuplicate
   Updated command to retrieve Host results when not provided. This allows the command to find potential duplicates
   using the provided '-Hosts' value (so existing scripts will continue to function) or by simply running
@@ -489,6 +497,13 @@ Command Changes
 
 * Get-FalconFirewallRule
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
+
+* Import-FalconConfig
+  Added input checking for '-Path' to match 'FalconConfig_<FileDate>.zip' instead of only '.zip'.
+
+  Added warning when creating 'IoaGroup' to make it clear that Custom IOA Rule Groups are not assigned to
+  Prevention policies. This is due to a lack of a reference to assigned IOA Rule Groups in Prevention
+  policies--there's no way to tell what they're currently assigned to in order to assign them in the future.
 
 * Invoke-FalconCommand, Invoke-FalconResponderCommand, Invoke-FalconAdminCommand
   Re-organized positioning to place '-SessionId' and '-BatchId' in front.

@@ -228,7 +228,7 @@ host-group:write
             Method  = 'post'
             Headers = @{
                 Accept      = 'application/json'
-                ContentType = 'application/json' 
+                ContentType = 'application/json'
             }
         }
         $Body = @{
@@ -272,6 +272,17 @@ host-group:write
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            foreach ($Item in $_) {
+                foreach ($Property in @('group_type', 'name')) {
+                    if ($Item.PSObject.Properties.Name -contains $Property) {
+                        $true
+                    } else {
+                        throw "'$Property' is required for each group."
+                    }
+                }
+            }
+        })]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:post', Mandatory = $true, Position = 1)]

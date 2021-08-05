@@ -65,6 +65,17 @@ recon-monitoring-rules:write
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/notifications/v1:patch')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            foreach ($Item in $_) {
+                foreach ($Property in @('id', 'assigned_to_uuid', 'status')) {
+                    if ($Item.PSObject.Properties.Name -contains $Property) {
+                        $true
+                    } else {
+                        throw "'$Property' is required for each notification."
+                    }
+                }
+            }
+        })]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:patch', Mandatory = $true, Position = 1)]
@@ -134,6 +145,17 @@ recon-monitoring-rules:write
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:patch')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            foreach ($Item in $_) {
+                foreach ($Property in @('id', 'name', 'filter', 'priority', 'permissions')) {
+                    if ($Item.PSObject.Properties.Name -contains $Property) {
+                        $true
+                    } else {
+                        throw "'$Property' is required for each rule."
+                    }
+                }
+            }
+        })]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:patch', Mandatory = $true, Position = 1)]
@@ -533,6 +555,17 @@ recon-monitoring-rules:write
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            foreach ($Item in $_) {
+                foreach ($Property in @('name', 'topic', 'filter', 'priority', 'permissions')) {
+                    if ($Item.PSObject.Properties.Name -contains $Property) {
+                        $true
+                    } else {
+                        throw "'$Property' is required for each rule."
+                    }
+                }
+            }
+        })]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:post', Mandatory = $true, Position = 1)]

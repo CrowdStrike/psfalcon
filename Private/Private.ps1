@@ -111,8 +111,8 @@ function Build-Param {
         }
         # Set baseline request parameters
         $Base = @{
-            Path = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
-            Method = $Endpoint.Split(':')[1]
+            Path    = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
+            Method  = $Endpoint.Split(':')[1]
             Headers = $Headers
         }
         $Switches = @{}
@@ -167,7 +167,7 @@ function Build-Param {
                 # Split 'Body' content into groups using 'ids'
                 $Split = $Switches.Clone()
                 $Split.Add('Endpoint', $Base.Clone())
-                $Split.Add('Body', @{ ids = $Content.Body.ids[$i..($i + ($Max - 1))] })
+                $Split.Endpoint.Add('Body', @{ ids = $Content.Body.ids[$i..($i + ($Max - 1))] })
                 $Content.GetEnumerator().Where({ $_.Value }).foreach{
                     if ($_.Key -eq 'Query') {
                         # Add 'Query' values
@@ -184,7 +184,7 @@ function Build-Param {
                 }
                 if ($Split.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
-                    $Split.Endpoint.Body = ConvertTo-Json -InputObject $Split.Body -Depth 8
+                    $Split.Endpoint.Body = ConvertTo-Json -InputObject $Split.Endpoint.Body -Depth 8
                 }
                 ,$Split
             }

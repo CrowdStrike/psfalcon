@@ -1,3 +1,127 @@
+function Export-FalconReport {
+<#
+.Synopsis
+Format a response object and output to CSV
+.Parameter Path
+Destination path
+.Parameter Object
+A result object to format (can be passed via pipeline)
+#>
+param()
+begin {}
+process {}
+end {}
+}
+function Export-FalconConfig {
+<#
+.Synopsis
+Create an archive containing exported Falcon configuration files
+.Description
+Uses various PSFalcon commands to gather and export Groups, Policies and Exclusions as a collection of Json files
+within a zip archive. The exported files can be used with 'Import-FalconConfig' to restore configurations to your
+existing CID, or create them in another CID.
+.Parameter Items
+Items to export from your current CID; leave blank to export all available items
+.Example
+PS>Export-FalconConfig
+
+Creates '.\FalconConfig_<FileDate>.zip' with all available configuration files.
+.Example
+PS>Export-FalconConfig -Items HostGroup, FirewallGroup, FirewallPolicy
+
+Creates '.\FalconConfig_<FileDate>.zip' with HostGroup, FirewallGroup (including Firewall Rules),
+and FirewallPolicy configuration files.
+#>
+    [CmdletBinding(DefaultParameterSetName = 'ExportItems')]
+    param(
+        [Parameter(ParameterSetName = 'ExportItems', Position = 1)]
+        [ValidateSet('HostGroup', 'IoaGroup', 'FirewallGroup', 'DeviceControlPolicy', 'FirewallPolicy',
+            'PreventionPolicy', 'ResponsePolicy', 'SensorUpdatePolicy', 'Ioc', 'IoaExclusion', 'MlExclusion',
+            'SvExclusion')]
+        [array] $Items
+    )
+    begin {
+        function Get-ItemContent ($Item) {
+            # Request content for provided 'Item'
+            Write-Host "Exporting '$Item'..."
+            $ItemFile = Join-Path -Path $Location -ChildPath "$Item.json"
+            $Param = @{
+                Detailed = $true
+                All = $true
+            }
+            $FileContent = if ($Item -match '^(DeviceControl|Firewall|Prevention|Response|SensorUpdate)Policy$') {
+                # Create policy exports in 'platform_name' order to retain precedence
+                @('Windows','Mac','Linux').foreach{
+                    & "Get-Falcon$($Item)" @Param -Filter "platform_name:'$_'+name:!'platform_default'" 2>$null
+                }
+            } else {
+                & "Get-Falcon$($Item)" @Param 2>$null
+            }
+            if ($FileContent -and $Item -eq 'FirewallPolicy') {
+                # Export firewall settings
+                Write-Host "Exporting 'FirewallSetting'..."
+                $Settings = Get-FalconFirewallSetting -Ids $FileContent.id 2>$null
+                foreach ($Result in $Settings) {
+                    ($FileContent | Where-Object { $_.id -eq $Result.policy_id }).PSObject.Properties.Add(
+                        (New-Object PSNoteProperty('settings', $Result)))
+                }
+            }
+            if ($FileContent) {
+                # Export results to json file and output created file name
+                ConvertTo-Json -InputObject @( $FileContent ) -Depth 16 | Out-File -FilePath $ItemFile -Append
+                $ItemFile
+            }
+        }
+        # Get current location
+        $Location = [Environment]::CurrentDirectory
+        $Export = if ($PSBoundParameters.Items) {
+            # Use specified items
+            $PSBoundParameters.Items
+        } else {
+            # Use items in 'ValidateSet' when not provided
+            (Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({ $_.Name -eq
+            'ExportItems' }).Parameters.Where({ $_.Name -eq 'Items' }).Attributes.ValidValues
+        }
+        # Set output archive path
+        $ArchiveFile = Join-Path $Location -ChildPath "FalconConfig_$(Get-Date -Format FileDate).zip"
+    }
+    process {
+        if (Test-Path $ArchiveFile) {
+            throw "An item with the specified name $ArchiveFile already exists."
+        }
+        [array] $Export += switch ($Export) {
+            { $_ -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and $Export -notcontains 'HostGroup' } {
+                # Force 'HostGroup' when exporting Exclusions or IOCs
+                'HostGroup'
+            }
+            { $_ -contains 'FirewallGroup' } {
+                # Force 'FirewallRule' when exporting 'FirewallGroup'
+                'FirewallRule'
+            }
+        }
+        $JsonFiles = foreach ($Item in $Export) {
+            # Retrieve results, export to Json and capture file name
+            ,(Get-ItemContent -Item $Item)
+        }
+        if ($JsonFiles) {
+            # Archive Json exports with content
+            $Param = @{
+                Path = (Get-ChildItem | Where-Object { $JsonFiles -contains $_.FullName -and
+                    $_.Length -gt 0 }).FullName
+                DestinationPath = $ArchiveFile
+            }
+            Compress-Archive @Param
+            if (Test-Path $ArchiveFile) {
+                # Display created archive
+                Get-ChildItem $ArchiveFile
+            }
+            if (Test-Path $JsonFiles) {
+                # Remove Json files when archived
+                Remove-Item -Path $JsonFiles -Force
+            }
+        }
+    }
+}
 function Find-FalconDuplicate {
 <#
 .Synopsis

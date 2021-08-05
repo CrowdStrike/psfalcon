@@ -238,6 +238,17 @@ ioc:write
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            foreach ($Item in $_) {
+                foreach ($Property in @('type', 'value', 'action', 'platforms')) {
+                    if ($Item.PSObject.Properties.Name -contains $Property) {
+                        $true
+                    } else {
+                        throw "'$Property' is required for each indicator."
+                    }
+                }
+            }
+        })]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Mandatory = $true, Position = 1)]

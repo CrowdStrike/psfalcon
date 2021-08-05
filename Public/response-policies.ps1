@@ -18,6 +18,15 @@ response-policies:write
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:patch')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            foreach ($Item in $_) {
+                if ($Item.PSObject.Properties.Name -contains 'id') {
+                    $true
+                } else {
+                    throw "'id' is required for each policy."
+                }
+            }
+        })]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/response/v1:patch', Mandatory = $true, Position = 1)]
@@ -279,6 +288,17 @@ response-policies:write
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            foreach ($Item in $_) {
+                foreach ($Property in @('platform_name', 'name')) {
+                    if ($Item.PSObject.Properties.Name -contains $Property) {
+                        $true
+                    } else {
+                        throw "'$Property' is required for each policy."
+                    }
+                }
+            }
+        })]
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Mandatory = $true, Position = 1)]
