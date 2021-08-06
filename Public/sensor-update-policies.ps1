@@ -9,7 +9,7 @@ Sensor Update policy identifier
 .Parameter Name
 Sensor Update policy name
 .Parameter Settings
-An array of Sensor Update policy settings
+Hashtable of Sensor Update policy settings
 .Parameter Description
 Sensor Update policy description
 .Role
@@ -37,7 +37,7 @@ sensor-update-policies:write
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Position = 3)]
-        [array] $Settings,
+        [object] $Settings,
 
         [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Position = 4)]
         [string] $Description
@@ -313,10 +313,12 @@ sensor-update-policies:write
         $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $Action = @{
-                name  = 'group_id'
-                value = @( $PSBoundParameters.GroupId )
-            }
+            $Action = @(
+                @{
+                    name  = 'group_id'
+                    value = $PSBoundParameters.GroupId
+                }
+            )
             $PSBoundParameters.Add('action_parameters', $Action)
             [void] $PSBoundParameters.Remove('GroupId')
         }
@@ -347,7 +349,7 @@ Operating System platform
 .Parameter Name
 Sensor Update policy name
 .Parameter Settings
-An array of Sensor Update policy settings
+Hashtable of Sensor Update policy settings
 .Parameter Description
 Sensor Update policy description
 .Role
@@ -377,7 +379,7 @@ sensor-update-policies:write
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Position = 3)]
-        [array] $Settings,
+        [object] $Settings,
 
         [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Position = 4)]
         [string] $Description

@@ -1,245 +1,145 @@
-function Build-Body {
+function Build-Content {
     [CmdletBinding()]
+    [OutputType([hashtable])]
     param(
         [object] $Format,
         [object] $Inputs
-    )
-    process {
-        $Inputs.GetEnumerator().Where({ $Format.Body.Values -match $_.Key }).foreach{
-            $Field = ($_.Key).ToLower()
-            $Value = $_.Value
-            if ($Field -eq 'body') {
-                # Add 'body' value as [System.Net.Http.ByteArrayContent]
-                $FullFilePath = $Script:Falcon.Api.Path($_.Value)
-                Write-Verbose "[Build-Body] Content: $FullFilePath)"
-                $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
-                    Get-Content $FullFilePath -AsByteStream
-                } else {
-                    Get-Content $FullFilePath -Encoding Byte -Raw
-                }
-                $ByteArray = [System.Net.Http.ByteArrayContent]::New($ByteStream)
-                $ByteArray.Headers.Add('Content-Type', $Headers.ContentType)
-            } else {
-                if (!$Body) {
-                    $Body = @{}
-                }
-                if (($Value -is [array] -or $Value -is [string]) -and $Value | Get-Member -MemberType Method |
-                Where-Object { $_.Name -eq 'Normalize' }) {
-                    # Normalize values to avoid Json conversion errors when 'Get-Content' was used
-                    if ($Value -is [array]) {
-                        $Value = [array] ($Value).Normalize()
-                    } elseif ($Value -is [string]) {
-                        $Value = ($Value).Normalize()
-                    }
-                }
-                $Format.Body.GetEnumerator().Where({ $_.Value -eq $Field }).foreach{
-                    if ($_.Key -eq 'root') {
-                        # Add key/value pair directly to 'Body'
-                        $Body.Add($Field, $Value)
-                    } else {
-                        # Create parent object and add key/value pair
-                        if (!$Parents) {
-                            $Parents = @{}
-                        }
-                        if (!$Parents.($_.Key)) {
-                            $Parents[$_.Key] = @{}
-                        }
-                        $Parents.($_.Key).Add($Field, $Value)
-                    }
-                }
-            }
-        }
-        if ($ByteArray) {
-            # Output ByteArray content
-            $ByteArray
-        } elseif ($Parents) {
-            $Parents.GetEnumerator().foreach{
-                # Add parents as arrays in output
-                $Body[$_.Key] = @( $_.Value )
-            }
-        }
-    }
-    end {
-        if (($Body.Keys | Measure-Object).Count -gt 0) {
-            # Output 'Body' result
-            Write-Verbose "[Build-Body]`n$(ConvertTo-Json -InputObject $Body -Depth 8)"
-            $Body
-        }
-    }
-}
-function Build-Formdata {
-    [CmdletBinding()]
-    param(
-        [object] $Format,
-        [object] $Inputs
-    )
-    process {
-        $Inputs.GetEnumerator().Where({ $Format.Formdata -contains $_.Key }).foreach{
-            if (!$Formdata) {
-                $Formdata = @{}
-            }
-            $Formdata[($_.Key).ToLower()] = if ($_.Key -eq 'content') {
-                # Collect file content as a string
-                [string] (Get-Content ($Script:Falcon.Api.Path($_.Value)) -Raw)
-            } else {
-                $_.Value
-            }
-        }
-    }
-    end {
-        if (($Formdata.Keys | Measure-Object).Count -gt 0) {
-            # Output 'Formdata' result
-            Write-Verbose "[Build-Formdata]`n$(ConvertTo-Json -InputObject $Formdata -Depth 8)"
-            $Formdata
-        }
-    }
-}
-function Build-Param {
-    [CmdletBinding()]
-    [OutputType([array])]
-    param(
-        [string] $Endpoint,
-        [object] $Headers,
-        [object] $Format,
-        [object] $Inputs,
-        [int] $Max
     )
     begin {
-        if (!$Max) {
-            # Set maximum 'query'/'body.ids' values when left undefined
-            $Max = Set-IdMaximum -Inputs $Inputs
+        function Build-Body ($Format, $Inputs) {
+            $Body = @{}
+            $Inputs.GetEnumerator().Where({ $Format.Body.Values -match $_.Key }).foreach{
+                $Field = ($_.Key).ToLower()
+                $Value = $_.Value
+                if ($Field -eq 'body') {
+                    # Add 'body' value as [System.Net.Http.ByteArrayContent]
+                    $FullFilePath = $Script:Falcon.Api.Path($_.Value)
+                    Write-Verbose "[Build-Body] Content: $FullFilePath"
+                    $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
+                        Get-Content $FullFilePath -AsByteStream
+                    } else {
+                        Get-Content $FullFilePath -Encoding Byte -Raw
+                    }
+                    $ByteArray = [System.Net.Http.ByteArrayContent]::New($ByteStream)
+                    $ByteArray.Headers.Add('Content-Type', $Headers.ContentType)
+                } else {
+                    if (!$Body) {
+                        $Body = @{}
+                    }
+                    if (($Value -is [array] -or $Value -is [string]) -and $Value | Get-Member -MemberType Method |
+                    Where-Object { $_.Name -eq 'Normalize' }) {
+                        # Normalize values to avoid Json conversion errors when 'Get-Content' was used
+                        if ($Value -is [array]) {
+                            $Value = [array] ($Value).Normalize()
+                        } elseif ($Value -is [string]) {
+                            $Value = ($Value).Normalize()
+                        }
+                    }
+                    $Format.Body.GetEnumerator().Where({ $_.Value -eq $Field }).foreach{
+                        if ($_.Key -eq 'root') {
+                            # Add key/value pair directly to 'Body'
+                            $Body.Add($Field, $Value)
+                        } else {
+                            # Create parent object and add key/value pair
+                            if (!$Parents) {
+                                $Parents = @{}
+                            }
+                            if (!$Parents.($_.Key)) {
+                                $Parents[$_.Key] = @{}
+                            }
+                            $Parents.($_.Key).Add($Field, $Value)
+                        }
+                    }
+                }
+            }
+            if ($ByteArray) {
+                # Return 'ByteArray' object
+                $ByteArray
+            } else {
+                if ($Parents) {
+                    $Parents.GetEnumerator().foreach{
+                        # Add parents as arrays in 'Body'
+                        $Body[$_.Key] = @( $_.Value )
+                    }
+                }
+                if (($Body.Keys | Measure-Object).Count -gt 0) {
+                    # Return 'Body' object
+                    $Body
+                }
+            }
         }
-        # Set baseline request parameters
-        $Base = @{
-            Path    = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
-            Method  = $Endpoint.Split(':')[1]
-            Headers = $Headers
+        function Build-Formdata ($Format, $Inputs) {
+            $Formdata = @{}
+            $Inputs.GetEnumerator().Where({ $Format.Formdata -contains $_.Key }).foreach{
+                $Formdata[($_.Key).ToLower()] = if ($_.Key -eq 'content') {
+                    # Collect file content as a string
+                    [string] (Get-Content ($Script:Falcon.Api.Path($_.Value)) -Raw)
+                } else {
+                    $_.Value
+                }
+            }
+            if (($Formdata.Keys | Measure-Object).Count -gt 0) {
+                # Return 'Formdata' object
+                $Formdata
+            }
         }
-        $Switches = @{}
-        if ($Inputs) {
-            $Inputs.GetEnumerator().Where({ $_.Key -match '^(Total|All|Detailed)$' }).foreach{
-                $Switches.Add($_.Key, $_.Value)
+        function Build-Query ($Format, $Inputs) {
+            # Regex pattern for matching 'last [int] days/hours'
+            [regex] $Relative = '(last (?<Int>\d{1,}) (day[s]?|hour[s]?))'
+            [array] $Query = $Inputs.GetEnumerator().Where({ $Format.Query -contains $_.Key }).foreach{
+                $Field = ($_.Key).ToLower()
+                ($_.Value).foreach{
+                    $Value = $_
+                    if ($Field -eq 'filter' -and $Value -match $Relative) {
+                        # Convert 'last [int] days/hours' to Rfc3339
+                        $Value | Select-String $Relative -AllMatches | ForEach-Object {
+                            foreach ($Match in $_.Matches.Value) {
+                                [int] $Int = $Match -replace $Relative, '${Int}'
+                                $Int = if ($Match -match 'day') {
+                                    $Int * -24
+                                } else {
+                                    $Int * -1
+                                }
+                                $Value = $Value -replace $Match, (Convert-Rfc3339 $Hours)
+                            }
+                        }
+                    }
+                    # Output array of strings to append to 'Path' and HTML-encode '+'
+                    ,"$($Field)=$($Value -replace '\+','%2B')"
+                }
+            }
+            if ($Query) {
+                # Return 'Query' array
+                $Query
             }
         }
     }
     process {
         if ($Inputs) {
-            @('Body', 'Formdata', 'Query').foreach{
-                # Create key/value pairs for each 'Build' function
+            $Content = @{}
+            @('Body', 'Formdata', 'Outfile', 'Query').foreach{
                 if ($Format.$_) {
-                    $Value = & "Build-$_" -Format $Format -Inputs $Inputs
-                    if ($Value) {
-                        if (!$Content) {
-                            $Content = @{}
+                    $Value = if ($_ -eq 'Outfile') {
+                        # Get absolute path for 'OutFile'
+                        $Outfile = $Inputs.GetEnumerator().Where({ $Format.Outfile -eq $_.Key }).Value
+                        if ($Outfile) {
+                            $Script:Falcon.Api.Path($Outfile)
                         }
+                    } else {
+                        # Get value(s) from each 'Build' function
+                        & "Build-$_" -Format $Format -Inputs $Inputs
+                    }
+                    if ($Value) {
                         $Content.Add($_, $Value)
                     }
                 }
             }
         }
-        if ($Format.Outfile) {
-            $Inputs.GetEnumerator().Where({ $Format.Outfile -eq $_.Key }).foreach{
-                # Convert 'Outfile' to absolute path
-                $Outfile = $Script:Falcon.Api.Path($_.Value)
-                $Content.Add('Outfile', $Outfile)
-            }
-        }
-        if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
-            Write-Verbose "[Build-Param] Splitting into groups of $Max query values"
-            for ($i = 0; $i -lt ($Content.Query | Measure-Object).Count; $i += $Max) {
-                # Split 'Query' values into groups
-                $Split = $Switches.Clone()
-                $Split.Add('Endpoint', $Base.Clone())
-                $Split.Endpoint.Path += "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
-                $Content.GetEnumerator().Where({ $_.Key -ne 'Query' -and $_.Value }).foreach{
-                    # Add 'Body' values
-                    if ($_.Key -eq 'Body' -and $Split.Endpoint.Headers.ContentType -eq 'application/json') {
-                        $_.Value = ConvertTo-Json -InputObject $_.Value -Depth 8
-                    }
-                    # Add 'Formdata' values
-                    $Split.Endpoint.Add($_.Key, $_.Value)
-                }
-                ,$Split
-            }
-        } elseif ($Content.Body -and ($Content.Body.ids | Measure-Object).Count -gt $Max) {
-            Write-Verbose "[Build-Param] Splitting into groups of $Max 'ids'"
-            for ($i = 0; $i -lt ($Content.Body.ids | Measure-Object).Count; $i += $Max) {
-                # Split 'Body' content into groups using 'ids'
-                $Split = $Switches.Clone()
-                $Split.Add('Endpoint', $Base.Clone())
-                $Split.Endpoint.Add('Body', @{ ids = $Content.Body.ids[$i..($i + ($Max - 1))] })
-                $Content.GetEnumerator().Where({ $_.Value }).foreach{
-                    if ($_.Key -eq 'Query') {
-                        # Add 'Query' values
-                        $Split.Endpoint.Path += "?$($_.Value -join '&')"
-                    } elseif ($_.Key -eq 'Body') {
-                        # Add other 'Body' values
-                        ($_.Value).GetEnumerator().Where({ $_.Key -ne 'ids' }).foreach{
-                            $Split.Endpoint.Body.Add($_.Key, $_.Value)
-                        }
-                    } else {
-                        # Add 'Formdata' values
-                        $Split.Endpoint.Add($_.Key, $_.Value)
-                    }
-                }
-                if ($Split.Endpoint.Headers.ContentType -eq 'application/json') {
-                    # Convert body to Json
-                    $Split.Endpoint.Body = ConvertTo-Json -InputObject $Split.Endpoint.Body -Depth 8
-                }
-                ,$Split
-            }
-        } else {
-            # Use base parameters, add content and output single parameter set
-            $Switches.Add('Endpoint', $Base.Clone())
-            if ($Content) {
-                $Content.GetEnumerator().foreach{
-                    if ($_.Key -eq 'Query') {
-                        $Switches.Endpoint.Path += "?$($_.Value -join '&')"
-                    } else {
-                        if ($_.Key -eq 'Body' -and $Switches.Endpoint.Headers.ContentType -eq 'application/json') {
-                            $_.Value = ConvertTo-Json -InputObject $_.Value -Depth 8
-                        }
-                        $Switches.Endpoint.Add($_.Key, $_.Value)
-                    }
-                }
-            }
-            $Switches
-        }
     }
-}
-function Build-Query {
-    [CmdletBinding()]
-    [OutputType([array])]
-    param(
-        [object] $Format,
-        [object] $Inputs
-    )
-    begin {
-        # Regex pattern for matching 'last [int] days/hours'
-        [regex] $Relative = '(last (?<Int>\d{1,}) (day[s]?|hour[s]?))'
-    }
-    process {
-        $Inputs.GetEnumerator().Where({ $Format.Query -contains $_.Key }).foreach{
-            $Field = ($_.Key).ToLower()
-            ($_.Value).foreach{
-                $Value = $_
-                if ($Field -eq 'filter' -and $Value -match $Relative) {
-                    # Convert 'last [int] days/hours' to Rfc3339
-                    $Value | Select-String $Relative -AllMatches | ForEach-Object {
-                        foreach ($Match in $_.Matches.Value) {
-                            [int] $Int = $Match -replace $Relative, '${Int}'
-                            $Int = if ($Match -match 'day') {
-                                $Int * -24
-                            } else {
-                                $Int * -1
-                            }
-                            $Value = $Value -replace $Match, (Convert-Rfc3339 $Hours)
-                        }
-                    }
-                }
-                # Output array of strings to append to 'Path' and HTML-encode '+'
-                ,"$($Field)=$($Value -replace '\+','%2B')"
-            }
+    end {
+        if (($Content.Keys | Measure-Object).Count -gt 0) {
+            # Return 'Content' table
+            $Content
         }
     }
 }
@@ -291,6 +191,94 @@ function Convert-Rfc3339 {
         # Return Rfc3339 timestamp for $Hours from Get-Date
         $Utc = "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
         $Utc -replace '\.\d+Z$','Z'
+    }
+}
+function Get-ParamSet {
+    [CmdletBinding()]
+    [OutputType()]
+    param(
+        [string] $Endpoint,
+        [object] $Headers,
+        [object] $Inputs,
+        [object] $Format,
+        [int] $Max
+    )
+    begin {
+        # Get baseline switch and endpoint parameters
+        $Switches = @{}
+        $Inputs.GetEnumerator().Where({ $_.Key -match '^(All|Detailed|Total)$' }).foreach{
+            $Switches.Add($_.Key, $_.Value)
+        }
+        $Base = @{
+            Path    = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
+            Method  = $Endpoint.Split(':')[1]
+            Headers = $Headers
+        }
+        if (!$Max) {
+            $IdCount = if ($Inputs.ids) {
+                # Find maximum number of 'ids' using equivalent of 500 32-character ids
+                [Math]::Floor([decimal](18500/(($Inputs.ids |
+                    Measure-Object -Maximum -Property Length).Maximum + 5)))
+            }
+            $Max = if ($IdCount -and $IdCount -lt 500) {
+                # Output maximum, no greater than 500
+                $IdCount
+            } else {
+                500
+            }
+        }
+        # Get 'Content' from user input
+        $Content = Build-Content -Inputs $Inputs -Format $Format
+    }
+    process {
+        if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
+            Write-Verbose "[Build-Param] Creating groups of $Max query values"
+            for ($i = 0; $i -lt ($Content.Query | Measure-Object).Count; $i += $Max) {
+                # Split 'Query' values into groups
+                $Split = $Switches.Clone()
+                $Split.Add('Endpoint', $Base.Clone())
+                $Split.Endpoint.Path += "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                $Content.GetEnumerator().Where({ $_.Key -ne 'Query' -and $_.Value }).foreach{
+                    # Add values other than 'Query'
+                    $Split.Endpoint.Add($_.Key, $_.Value)
+                }
+                ,$Split
+            }
+        } elseif ($Content.Body -and ($Content.Body.ids | Measure-Object).Count -gt $Max) {
+            Write-Verbose "[Build-Param] Creating groups of $Max 'ids'"
+            for ($i = 0; $i -lt ($Content.Body.ids | Measure-Object).Count; $i += $Max) {
+                # Split 'Body' content into groups using 'ids'
+                $Split = $Switches.Clone()
+                $Split.Add('Endpoint', $Base.Clone())
+                $Split.Endpoint.Add('Body', @{ ids = $Content.Body.ids[$i..($i + ($Max - 1))] })
+                $Content.GetEnumerator().Where({ $_.Value }).foreach{
+                    # Add values other than 'Body.ids'
+                    if ($_.Key -eq 'Query') {
+                        $Split.Endpoint.Path += "?$($_.Value -join '&')"
+                    } elseif ($_.Key -eq 'Body') {
+                        ($_.Value).GetEnumerator().Where({ $_.Key -ne 'ids' }).foreach{
+                            $Split.Endpoint.Body.Add($_.Key, $_.Value)
+                        }
+                    } else {
+                        $Split.Endpoint.Add($_.Key, $_.Value)
+                    }
+                }
+                ,$Split
+            }
+        } else {
+            # Use base parameters, add content and output single parameter set
+            $Switches.Add('Endpoint', $Base.Clone())
+            if ($Content) {
+                $Content.GetEnumerator().foreach{
+                    if ($_.Key -eq 'Query') {
+                        $Switches.Endpoint.Path += "?$($_.Value -join '&')"
+                    } else {
+                        $Switches.Endpoint.Add($_.Key, $_.Value)
+                    }
+                }
+            }
+            $Switches
+        }
     }
 }
 function Get-RtrCommand {
@@ -394,21 +382,21 @@ function Invoke-Falcon {
         [int] $Max
     )
     begin {
-        # Gather parameters for Build-Param
-        $BuildParam = @{}
+        # Gather parameters for 'Get-ParamSet'
+        $GetParam = @{}
         $PSBoundParameters.GetEnumerator().Where({ $_.Key -ne 'Command' }).foreach{
-            $BuildParam.Add($_.Key, $_.Value)
+            $GetParam.Add($_.Key, $_.Value)
         }
-        if (!$BuildParam.Headers) {
-            $BuildParam.Add('Headers', @{})
+        if (!$GetParam.Headers) {
+            $GetParam.Add('Headers', @{})
         }
-        if (!$BuildParam.Headers.Accept) {
+        if (!$GetParam.Headers.Accept) {
             # Add 'Accept: application/json' when undefined
-            $BuildParam.Headers.Add('Accept', 'application/json')
+            $GetParam.Headers.Add('Accept', 'application/json')
         }
-        if ($Format.Body -and !$BuildParam.Headers.ContentType) {
+        if ($Format.Body -and !$GetParam.Headers.ContentType) {
             # Add 'ContentType: application/json' when undefined and 'Body' is present
-            $BuildParam.Headers.Add('ContentType', 'application/json')
+            $GetParam.Headers.Add('ContentType', 'application/json')
         }
         if ($Inputs.All -eq $true -and !$Inputs.Limit) {
             # Add maximum 'Limit' when not present and using 'All'
@@ -422,19 +410,21 @@ function Invoke-Falcon {
         [regex] $NoDetail = '(/combined/|/rule-groups-full/)'
     }
     process {
-        foreach ($ParamSet in (Build-Param @BuildParam)) {
+        foreach ($ParamSet in (Get-ParamSet @GetParam)) {
             try {
                 if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or
                 ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15))) {
                     # Verify authorization token
                     Request-FalconToken
                 }
+                if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
+                    # Convert body to Json
+                    $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Depth 8
+                }
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
-                if ($ParamSet.Endpoint.Outfile) {
-                    if (Test-Path $ParamSet.Endpoint.Outfile) {
-                        # Display 'Outfile'
-                        Get-ChildItem $ParamSet.Endpoint.Outfile
-                    }
+                if ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
+                    # Display 'Outfile'
+                    Get-ChildItem $ParamSet.Endpoint.Outfile
                 } elseif ($Request.Result.Content) {
                     # Capture pagination for 'Total' and 'All'
                     $Pagination = (ConvertFrom-Json (
@@ -533,25 +523,6 @@ function Invoke-Loop {
                 $Pagination = (ConvertFrom-Json (
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
             }
-        }
-    }
-}
-function Set-IdMaximum {
-    [CmdletBinding()]
-    [OutputType([int])]
-    param(
-        [object] $Inputs
-    )
-    process {
-        $IdCount = if ($Inputs.ids) {
-            # Find maximum number of 'ids' using equivalent of 500 32-character ids
-            [Math]::Floor([decimal](18500/(($Inputs.ids | Measure-Object -Maximum -Property Length).Maximum + 5)))
-        }
-        if ($IdCount -and $IdCount -lt 500) {
-            # Output maximum, no greater than 500
-            $IdCount
-        } else {
-            500
         }
     }
 }

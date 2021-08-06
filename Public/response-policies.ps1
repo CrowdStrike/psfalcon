@@ -243,10 +243,12 @@ response-policies:write
         $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $Action = @{
-                name  = 'group_id'
-                value = @( $PSBoundParameters.GroupId )
-            }
+            $Action = @(
+                @{
+                    name  = 'group_id'
+                    value = $PSBoundParameters.GroupId
+                }
+            )
             $PSBoundParameters.Add('action_parameters', $Action)
             [void] $PSBoundParameters.Remove('GroupId')
         }
@@ -301,17 +303,17 @@ response-policies:write
         })]
         [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Mandatory = $true, Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Mandatory = $true, Position = 2)]
+        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Mandatory = $true, Position = 2)]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Position = 3)]
+        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Position = 3)]
         [array] $Settings,
 
-        [Parameter(ParameterSetName = '/policy/entities/response/v2:post', Position = 4)]
+        [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Position = 4)]
         [string] $Description,
 
         [Parameter(ParameterSetName = '/policy/entities/response/v1:post', Position = 5)]
@@ -326,7 +328,7 @@ response-policies:write
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = '/policy/entities/response/v2:post'
+            Endpoint = '/policy/entities/response/v1:post'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{

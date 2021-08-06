@@ -9,7 +9,7 @@ Device Control policy identifier
 .Parameter Name
 Device Control policy name
 .Parameter Settings
-An array of Device Control policy settings
+Hashtable of Device Control policy settings
 .Parameter Description
 Device Control policy description
 .Role
@@ -37,7 +37,7 @@ device-control-policies:write
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control/v1:patch', Position = 3)]
-        [array] $Settings,
+        [object] $Settings,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control/v1:patch', Position = 4)]
         [string] $Description
@@ -243,10 +243,12 @@ device-control-policies:write
         $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $Action = @{
-                name  = 'group_id'
-                value = @( $PSBoundParameters.GroupId )
-            }
+            $Action = @(
+                @{
+                    name  = 'group_id'
+                    value = $PSBoundParameters.GroupId
+                }
+            )
             $PSBoundParameters.Add('action_parameters', $Action)
             [void] $PSBoundParameters.Remove('GroupId')
         }
@@ -277,7 +279,7 @@ Operating System platform
 .Parameter Name
 Device Control policy name
 .Parameter Settings
-A hashtable of Device Control policy settings
+Hashtable of Device Control policy settings
 .Parameter CloneId
 Clone an existing Device Control policy
 .Role

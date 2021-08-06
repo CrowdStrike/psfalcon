@@ -244,10 +244,12 @@ prevention-policies:write
         $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $Action = @{
-                name  = 'group_id'
-                value = @( $PSBoundParameters.GroupId )
-            }
+            $Action = @(
+                @{
+                    name  = 'group_id'
+                    value = $PSBoundParameters.GroupId
+                }
+            )
             $PSBoundParameters.Add('action_parameters', $Action)
             [void] $PSBoundParameters.Remove('GroupId')
         }

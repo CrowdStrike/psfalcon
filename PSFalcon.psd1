@@ -234,8 +234,10 @@
 
       # psfalcon.psd1
       'Export-FalconConfig',
+      'Export-FalconReport',
       'Find-FalconDuplicate',
       'Get-FalconQueue',
+      'Import-FalconConfig',
       'Invoke-FalconDeploy',
       'Invoke-FalconRTR',
       'Show-FalconMap',

@@ -99,7 +99,7 @@ custom-ioa:write
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    root = @('rulegroup_id', 'comment', 'rule_updates')
+                    root = @('rulegroup_id', 'comment', 'rule_updates', 'rulegroup_version')
                 }
             }
         }
@@ -547,7 +547,7 @@ custom-ioa:write
             Format   = @{
                 Body = @{
                     root = @('rulegroup_id', 'disposition_id', 'comment', 'description', 'pattern_severity',
-                        'ruletype_id', 'field_values')
+                        'ruletype_id', 'field_values', 'name')
                 }
             }
         }
