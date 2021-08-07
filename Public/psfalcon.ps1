@@ -7,10 +7,57 @@ Destination path
 .Parameter Object
 A result object to format (can be passed via pipeline)
 #>
-param()
-begin {}
-process {}
-end {}
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 1)]
+        [ValidatePattern('\.csv$')]
+        [ValidateScript({
+            if (Test-Path $_) {
+                throw "An item with the specified name $_ already exists."
+            } else {
+                $true
+            }
+        })]
+        [string] $Path,
+
+        [Parameter(Mandatory = $true, ValueFromPipeLine = $true, Position = 2)]
+        [object] $Object
+    )
+    begin {
+        if ($PSBoundParameters.Path) {
+            $OutputPath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
+        }
+    }
+    process {
+        $Output = $PSBoundParameters.Object | ForEach-Object {
+            if ($_ -is [System.Management.Automation.PSCustomObject]) {
+                $_.PSObject.Members | Where-Object { $_.MemberType -eq 'NoteProperty' } | ForEach-Object {
+                    if ($_.TypeNameOfValue -eq 'System.Management.Automation.PSCustomObject') {
+                        # $Prefix = $_.Name
+                    } elseif ($_.TypeNameOfValue -eq 'System.Object[]') {
+                        # $_.Value = $_.Value -join ','
+                    }
+                }
+                $_
+            } elseif ($_ -is [string]) {
+                # Output array of [string] values as 'ids'
+                [PSCustomObject] @{
+                    id = $_
+                }
+            }
+        }
+        if ($PSBoundParameters.Path) {
+            # Output to $Path as CSV
+            $Output | Export-Csv -Path $OutputPath -NoTypeInformation -Append
+        } else {
+            $Output
+        }
+    }
+    end {
+        if ($PSBoundParameters.Path -and (Test-Path $OutputPath)) {
+            Get-ChildItem $OutputPath
+        }
+    }
 }
 function Export-FalconConfig {
 <#
