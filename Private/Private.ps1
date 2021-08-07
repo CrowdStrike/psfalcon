@@ -14,7 +14,7 @@ function Build-Content {
                 if ($Field -eq 'body') {
                     # Add 'body' value as [System.Net.Http.ByteArrayContent]
                     $FullFilePath = $Script:Falcon.Api.Path($_.Value)
-                    Write-Verbose "[Build-Body] Content: $FullFilePath"
+                    Write-Verbose "[Build-Body] '$FullFilePath'"
                     $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
                         Get-Content $FullFilePath -AsByteStream
                     } else {
@@ -64,6 +64,7 @@ function Build-Content {
                 }
                 if (($Body.Keys | Measure-Object).Count -gt 0) {
                     # Return 'Body' object
+                    Write-Verbose "[Build-Body] $(ConvertTo-Json -InputObject $Body -Depth 8 -Compress)"
                     $Body
                 }
             }
@@ -80,6 +81,7 @@ function Build-Content {
             }
             if (($Formdata.Keys | Measure-Object).Count -gt 0) {
                 # Return 'Formdata' object
+                Write-Verbose "[Build-Formdata] $(ConvertTo-Json -InputObject $Formdata -Depth 8 -Compress)"
                 $Formdata
             }
         }

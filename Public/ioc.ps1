@@ -109,6 +109,9 @@ ioc:write
         }
     }
     process {
+        if (!$PSBoundParameters.HostGroups -and !$PSBoundParameters.AppliedGlobally) {
+            throw "'HostGroups' or 'AppliedGlobally' must be provided."
+        }
         Invoke-Falcon @Param
     }
 }

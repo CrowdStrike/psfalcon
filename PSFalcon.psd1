@@ -501,8 +501,6 @@ Command Changes
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
 
 * Import-FalconConfig
-  Added input checking for '-Path' to match 'FalconConfig_<FileDate>.zip' instead of only '.zip'.
-
   Added warning when creating 'IoaGroup' to make it clear that Custom IOA Rule Groups are not assigned to
   Prevention policies. This is due to a lack of a reference to assigned IOA Rule Groups in Prevention
   policies--there's no way to tell what they're currently assigned to in order to assign them in the future.
