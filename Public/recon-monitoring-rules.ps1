@@ -184,7 +184,7 @@ recon-monitoring-rules:write
                 Headers = @{
                     ContentType = 'application/json'
                 }
-                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Compress
+                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 8
             }
         } else {
             @{
