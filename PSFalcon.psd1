@@ -505,6 +505,10 @@ Command Changes
   Prevention policies. This is due to a lack of a reference to assigned IOA Rule Groups in Prevention
   policies--there's no way to tell what they're currently assigned to in order to assign them in the future.
 
+  Added '-Force' parameter to assign imported items to matching Host Groups that are present within the target CID.
+
+  Added warning messages ('[missing_assignment]') when items are unable to be created due to missing Host Groups.
+
 * Invoke-FalconCommand, Invoke-FalconResponderCommand, Invoke-FalconAdminCommand
   Re-organized positioning to place '-SessionId' and '-BatchId' in front.
 
