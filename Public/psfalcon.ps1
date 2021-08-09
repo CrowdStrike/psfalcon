@@ -2,14 +2,42 @@ function Export-FalconReport {
 <#
 .Synopsis
 Format a response object and output to CSV
+.Description
+Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with
+each column having an appended 'prefix'--and exports the result the designated file path.
+
+For instance, if the object contains a property called 'device_policies', and that contains other objects called
+'prevention' and 'sensor_update', the result will contain properties labelled 'device_policies.prevention' and
+'device_policies.sensor_update' with additional '.<field_name>' values for any sub-properties of those objects.
+
+When the result contains an array with similarly named properties, it will attempt to add each sub-property
+with an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example,
+@{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed
+under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
+becomes part of the column.
+
+The '-WhatIf' parameter will display what would be written to CSV without creating the CSV file.
 .Parameter Path
 Destination path
 .Parameter Object
-A result object to format (can be passed via pipeline)
+Response object to format
+.Example
+PS>$Example = Get-FalconHost -Filter "hostname:'EXAMPLE-PC'"
+PS>Export-FalconReport -Path .\EXAMPLE-PC.csv -Object $Example
+
+Creates '.\EXAMPLE-PC.csv' with column 'id' and the 'device_id' value for a device with the hostname 'EXAMPLE-PC'.
+.Example
+PS>Get-FalconHost -Filter "hostname:'EXAMPLE-PC'" -Detailed | Export-FalconReport -Path .\EXAMPLE-PC.csv
+
+Creates '.\EXAMPLE-PC.csv' with all of the device details for a device with the hostname 'EXAMPLE-PC'.
+.Example
+PS>Get-FalconHost -Detailed -All | Select-Object cid, device_id, hostname | Export-FalconReport .\Hostnames.csv
+
+Creates '.\Hostnames.csv' with the 'cid', 'device_id' and 'hostname' for all devices in your environment.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        [Parameter(Position = 1)]
+        [Parameter(Mandatory = $true, Position = 1)]
         [ValidatePattern('\.csv$')]
         [ValidateScript({
             if (Test-Path $_) {
@@ -27,73 +55,105 @@ A result object to format (can be passed via pipeline)
         if ($PSBoundParameters.Path) {
             $OutputPath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
         }
-        function Add-Field ($Object, $Name, $Value) {
-            # Add property to [PSCustomObject]
-            $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
-        }
-        function Get-Array ($Object, $Output) {
-            if ($Object -is [System.Management.Automation.PSCustomObject]) {
-                $ObjectParam = @{
-                    Object = $Object
-                    Output = $Output
-                    Prefix = $Object.PSObject.Properties.Name
+        function Get-Array ($Array, $Output, $Name) {
+            foreach ($Item in $Array) {
+                if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+                    # Add sub-objects to output
+                    $IdField = $Item.PSObject.Properties.Name -match '^(id|(device|policy)_id)$'
+                    if ($IdField) {
+                        $ObjectParam = @{
+                            Object = $Item | Select-Object -ExcludeProperty $IdField
+                            Output = $Output
+                            Prefix = "$($Name).$($Item.$IdField)"
+                        }
+                        Get-PSObject @ObjectParam
+                    } else {
+                        $ObjectParam = @{
+                            Object = $Item
+                            Output = $Output
+                            Prefix = $Name
+                        }
+                        Get-PSObject @ObjectParam
+                    }
+                } else {
+                    # Add property to output as 'name'
+                    $AddParam = @{
+                        Object = $Output
+                        Name   = $Name
+                        Value  = $Item -join ','
+                    }
+                    Add-Property @AddParam
                 }
-                Get-CustomObject @ObjectParam
-            } elseif ($Object -is [System.Array]) {
-                Get-Array -Object $Object -Output $Output
-            } else {
-                $FieldParam = @{
-                    Object = $Output
-                    Name   = $_.PSObject.Properties.Name
-                    Value  = $_.PSObject.Properties.Value -join ','
-                }
-                Add-Field @FieldParam
             }
         }
         function Get-PSObject ($Object, $Output, $Prefix) {
-            $Object | ForEach-Object {
-                if ($_.PSObject.Properties.Value -is [System.Management.Automation.PSCustomObject]) {
-                    $ObjectParam = @{
-                        Object = $_
+            foreach ($Item in ($Object.PSObject.Properties | Where-Object { $_.MemberType -eq 'NoteProperty' })) {
+                if ($Item.Value.PSObject.TypeNames -contains 'System.Object[]') {
+                    # Add array members to output with 'prefix.name'
+                    $ArrayParam = @{
+                        Array  = $Item.Value
                         Output = $Output
-                        Prefix = $Object.PSObject.Properties.Name
+                        Name   = if ($Prefix) {
+                            "$($Prefix).$($Item.Name)"
+                        } else {
+                            $Item.Name
+                        }
                     }
-                    Get-CustomObject @ObjectParam
-                } elseif ($_ -is [System.Array]) {
-                    Get-Array -Object $_ -Output $Output
+                    Get-Array @ArrayParam
+                } elseif ($Item.Value.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+                    # Add sub-objects to output with 'prefix.name'
+                    $ObjectParam = @{
+                        Object = $Item.Value
+                        Output = $Output
+                        Prefix = if ($Prefix) {
+                            "$($Prefix).$($Item.Name)"
+                        } else {
+                            $Item.Name
+                        }
+                    }
+                    Get-PSObject @ObjectParam
                 } else {
-                    $FieldParam = @{
+                    # Add property to output with 'prefix.name'
+                    $AddParam = @{
                         Object = $Output
                         Name   = if ($Prefix) {
-                            "$($Prefix).$($_.PSObject.Properties.Name)"
+                            "$($Prefix).$($Item.Name)"
                         } else {
-                            $_.PSObject.Properties.Name
+                            $Item.Name
                         }
-                        Value  = $_.PSObject.Properties.Value
+                        Value  = $Item.Value
                     }
-                    Add-Field @FieldParam
+                    Add-Property @AddParam
                 }
             }
         }
+        # Create output object
         $Output = [PSCustomObject] @{}
+        
     }
     process {
-        $PSBoundParameters.Object.PSObject.Properties | ForEach-Object {
-            if ($_.Value -is [System.Management.Automation.PSCustomObject]) {
-                Get-PSObject -Object $_.Value -Output $Output
+        foreach ($Item in $PSBoundParameters.Object) {
+            if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+                # Add sorted properties to output
+                Get-PSObject -Object $Item -Output $Output
             } else {
-                Add-Field -Object $Output -Name 'id' -Value $_
+                # Add strings to output as 'id'
+                $AddParam = @{
+                    Object = $Output
+                    Name   = 'id'
+                    Value  = $Item
+                }
+                Add-Property @AddParam
             }
         }
-        if ($PSBoundParameters.Path) {
-            # Output to $Path as CSV
+        if ($PSCmdlet.ShouldProcess($Path)) {
             $Output | Export-Csv -Path $OutputPath -NoTypeInformation -Append
         } else {
-            $Output
+            $Output | Out-Host
         }
     }
     end {
-        if ($PSBoundParameters.Path -and (Test-Path $OutputPath)) {
+        if (Test-Path $OutputPath) {
             Get-ChildItem $OutputPath
         }
     }
@@ -477,10 +537,6 @@ modify existing items (including 'default' policies).
                 Import = @('id', 'value', 'groups', 'applied_globally')
                 Compare = @('value')
             }
-        }
-        function Add-Field ($Object, $Name, $Value) {
-            # Add property to [PSCustomObject]
-            $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
         }
         function Compare-ImportData ($Item) {
             if ($ConfigData.$Item.Cid) {
@@ -1013,7 +1069,7 @@ modify existing items (including 'default' policies).
                             Invoke-ConfigItem @Param | ForEach-Object {
                                 if ($_.writes.resources_affected -eq 1) {
                                     # Append 'settings' to 'FirewallPolicy'
-                                    Add-Field -Object $Policy -Name 'settings' -Value $Import.settings
+                                    Add-Property -Object $Policy -Name 'settings' -Value $Import.settings
                                     Write-Host "Applied settings to $($Pair.Key) '$($Policy.name)'."
                                 }
                             }

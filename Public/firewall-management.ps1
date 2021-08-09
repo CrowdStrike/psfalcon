@@ -924,10 +924,11 @@ firewall-management:write
             Endpoint = '/policy/entities/firewall/v1:post'
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
-                Body = @{
-                    resources = @('description', 'clone_id', 'platform_name', 'name')
+                Body  = @{
+                    resources = @('description', 'platform_name', 'name')
                     root      = @('resources')
                 }
+                Query = @('clone_id')
             }
         }
     }

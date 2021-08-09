@@ -31,7 +31,7 @@ Member CID, required when authenticating with a child within a parent/child CID 
 
         [Parameter(ParameterSetName = 'Hostname', Position = 3)]
         [ValidateSet('https://api.crowdstrike.com', 'https://api.us-2.crowdstrike.com',
-            'https://api.laggar.gcw.crowdstrike.com', 'https://api.eu-1.crowdstrike.com' )]
+            'https://api.laggar.gcw.crowdstrike.com', 'https://api.eu-1.crowdstrike.com')]
         [string] $Hostname,
 
         [Parameter(ParameterSetName = 'Cloud', Position = 4)]

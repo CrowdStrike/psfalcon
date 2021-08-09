@@ -1,3 +1,15 @@
+function Add-Property {
+    [CmdletBinding()]
+    param(
+        [object] $Object,
+        [string] $Name,
+        [object] $Value
+    )
+    process {
+        # Add property to [PSCustomObject]
+        $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
+    }
+}
 function Build-Content {
     [CmdletBinding()]
     [OutputType([hashtable])]

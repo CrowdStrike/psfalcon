@@ -355,6 +355,7 @@
     AliasesToExport      = @()
     PrivateData          = @{
         PSData = @{
+            Prerelease   = 'alpha'
             Tags         = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
                 'Windows','Linux','MacOS')
             LicenseUri   = 'https://github.com/CrowdStrike/psfalcon/blob/master/LICENSE'
@@ -483,6 +484,16 @@ Command Changes
   Changed archive name to 'FalconConfig_<FileDate>.zip' rather than 'FalconConfig_<FileDateTime>.zip'. This should
   make it easier to write scripts that do something with the 'FalconConfig' archive.
 
+* Export-FalconReport
+  Completely re-written to display results based on the type of object, rather than static 'properties' of a
+  result. This effectively means the command is no longer 'hard-coded' to display results a certain way, and
+  instead displays them dynamically depending on the type of object, allowing all properties to be exported to
+  CSV with 'prefix.property' style column naming. When an array is encountered that has multiple objects with
+  'id' or 'policy_id' fields, it is inserted into the prefix. See 'Get-Help Export-FalconReport' for more
+  explanation.
+
+  Added '-WhatIf' support to show the resulting export rather than exporting to CSV.
+
 * Find-FalconDuplicate
   Updated command to retrieve Host results when not provided. This allows the command to find potential duplicates
   using the provided '-Hosts' value (so existing scripts will continue to function) or by simply running
@@ -492,7 +503,7 @@ Command Changes
   'Find-FalconDuplicate -Filter mac_address' will output a list of duplicates that have identical 'hostname' and
   'mac_address' values.
 
-  Updated to exclude devices with empty values (both 'hostname' and provided '-Filter').
+  Updated to exclude devices with empty values (both 'hostname' and any provided '-Filter').
 
   Updated output to include 'cid' to avoid potential problems if 'Find-FalconDuplicate' is used within a
   parent-level CID.
@@ -566,8 +577,16 @@ GitHub Issues
 
 * Issue #54: Updated 'Get-FalconHorizonPolicy' with additional '-Service' names.
 
+* Issue #59: Updated 'New-Falcon...Policy' commands to use 'clone_id' values in the appropriate places (in the
+  URL path for 'Firewall' and the 'body' for everything else).
+
 * Issue #62: Added 'user-agent' string during creation of [ApiClient] object. The new 'user-agent' value is
   used with every PSFalcon request.
+
+* Issue #63: Modified the way the 'maximum URL length' is calculated when not provided by a PSFalcon command in
+  order to avoid unexpected 'URL too long' HTML response errors from differences between cloud environments. Now,
+  instead of using the maximum value of 65,535 characters, the script evaluates based on 500 32-character 'ids'
+  (18,500 characters with field naming and join characters).
 "@
         }
     }
