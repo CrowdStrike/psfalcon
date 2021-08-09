@@ -1,1368 +1,664 @@
-function Clear-Auth {
-    <#
-    .SYNOPSIS
-        Removes cached authentication and token information
-    #>
+function Add-Property {
     [CmdletBinding()]
-    [OutputType()]
-    param()
-    process {
-        @('Hostname', 'ClientId', 'ClientSecret', 'MemberCid', 'Token').foreach{
-            if ($Falcon.$_) {
-                $Falcon.$_ = $null
-            }
-        }
-        $Falcon.Expires = Get-Date
-    }
-}
-function Format-Body {
-    <#
-    .SYNOPSIS
-        Converts a 'splat' hashtable body from Get-Param into Json
-    .PARAMETER PARAM
-        Parameter hashtable
-    #>
-    [CmdletBinding()]
-    [OutputType()]
     param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Param
+        [object] $Object,
+        [string] $Name,
+        [object] $Value
     )
     process {
-        if ($Param.Body -and ($Falcon.GetEndpoint($Param.Endpoint).consumes -eq 'application/json')) {
-            # Check 'consumes' value for endpoint and convert body values to Json
-            $Param.Body = ConvertTo-Json $Param.Body -Depth 8
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $($Param.Body)"
-        }
+        # Add property to [PSCustomObject]
+        $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $Value)))
     }
 }
-function Format-Header {
-    <#
-    .SYNOPSIS
-        Adds header values to request from endpoint and user input
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER REQUEST
-        Request object
-    .PARAMETER HEADER
-        Additional header values to add from user input
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [object] $Request,
-
-        [Parameter()]
-        [hashtable] $Header
-    )
-    begin {
-        $Authorization = if ($Endpoint.security -match ".*:(read|write)") {
-            # Capture cached token value
-            $Falcon.token
-        } else {
-            # Get basic authorization value
-            Get-AuthPair
-        }
-    }
-    process {
-        if ($Endpoint.consumes) {
-            # Add 'consumes' values as 'Content-Type'
-            $Request.Headers.Add('ContentType', $Endpoint.consumes)
-        }
-        if ($Endpoint.produces) {
-            # Add 'produces' values as 'Accept'
-            $Request.Headers.Add('Accept', $Endpoint.produces)
-        }
-        if ($Header) {
-            foreach ($Pair in $Header.GetEnumerator()) {
-                # Add additional header inputs
-                $Request.Headers.Add($Pair.Key, $Pair.Value)
-            }
-        }
-        if ($Authorization) {
-            # Add authorization
-            $Request.Headers.Add('Authorization', $Authorization)
-        }
-        # Output debug
-        $DebugHeader = ($Request.Headers.GetEnumerator()).Where({ $_.Key -NE 'Authorization' }).foreach{
-            "$($_.Key): '$($_.Value)'" } -join ', '
-        Write-Debug "[$($MyInvocation.MyCommand.Name)] $DebugHeader"
-    }
-}
-function Format-Result {
-    <#
-    .SYNOPSIS
-        Flattens and formats a response from the Falcon API
-    .PARAMETER RESPONSE
-        Response object from a Falcon API request
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [object] $Response,
-
-        [Parameter(Mandatory = $true)]
-        [string] $Endpoint
-    )
-    begin {
-        # Capture StatusCode from response
-        $StatusCode = $Response.Result.StatusCode.GetHashCode()
-        $Schema = if ($StatusCode) {
-            # Determine 'schema' type from StatusCode
-            $Falcon.GetResponse($Endpoint, $StatusCode)
-        }
-        if ($Response.Result.Content -match '^<') {
-            # Output HTML responses as plain strings
-            try {
-                $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
-            } catch {
-                Write-Error $_
-            }
-        } elseif ($Response.Result.Content) {
-            # Convert Json responses into PowerShell objects
-            try {
-                $Json = ConvertFrom-Json ($Response.Result.Content).ReadAsStringAsync().Result
-            } catch {
-                Write-Error $_
-            }
-        }
-        if ($Json) {
-            # Capture 'meta' information to private variable for processing with Invoke-Loop
-            Read-Meta -Object $Json -Endpoint $Endpoint -TypeName $Schema
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] `r`n$($Json | ConvertTo-Json -Depth 16)"
-        }
-    }
-    process {
-        try {
-            if ($Json) {
-                # Count populated sub-objects in API response
-                $Populated = ($Json.PSObject.Properties).Where({ ($_.Name -ne 'meta') -and
-                ($_.Name -ne 'errors') }).foreach{
-                    if ($_.Value) {
-                        $_.Name
-                    }
-                }
-                ($Json.PSObject.Properties).Where({ ($_.Name -eq 'errors') }).foreach{
-                    if ($_.Value) {
-                        ($_.Value).foreach{
-                            $PSCmdlet.WriteError(
-                                [System.Management.Automation.ErrorRecord]::New(
-                                    [Exception]::New("$($_.code): $($_.message)"),
-                                    $Meta.trace_id,
-                                    [System.Management.Automation.ErrorCategory]::NotSpecified,
-                                    $Response.Result
-                                )
-                            )
-                        }
-                    }
-                }
-                # Format response to output only relevant fields, instead of entire object
-                $Output = if ($Populated.count -gt 1) {
-                    # For Real-time Response batch session creation, create custom object
-                    if ($Populated -eq 'batch_id' -and 'resources') {
-                        [PSCustomObject] @{
-                            batch_id = $Json.batch_id
-                            hosts = $Json.resources.PSObject.Properties.Value
-                        }
-                    } else {
-                        # Output undefined sub-objects
-                        $Json
-                    }
-                }
-                elseif ($Populated.count -eq 1) {
-                    if ($Populated[0] -eq 'combined') {
-                        # If 'combined', return the results under combined
-                        $Json.combined.resources.PSObject.Properties.Value
-                    } else {
-                        # Output sub-object
-                        $Json.($Populated[0])
-                    }
-                }
-                else {
-                    if ($Meta) {
-                        ($Meta.PSObject.Properties.Name).foreach{
-                            # Output fields from 'meta' that aren't pagination/diagnostic related
-                            if ($_ -notmatch '(entity|pagination|powered_by|query_time|trace_id)' -and $Meta.$_) {
-                                if (-not($MetaValues)) {
-                                    $MetaValues = [PSCustomObject] @{}
-                                }
-                                $Name = if ($_ -eq 'writes') {
-                                    $Meta.$_.PSObject.Properties.Name
-                                } else {
-                                    $_
-                                }
-                                $Value = if ($Name -eq 'resources_affected') {
-                                    $Meta.$_.PSObject.Properties.Value
-                                } else {
-                                    $Meta.$_
-                                }
-                                $MetaValues.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
-                            }
-                        }
-                        if ($MetaValues) {
-                            # Output meta values
-                            $MetaValues
-                        }
-                    }
-                }
-                if ($Output) {
-                    # Output formatted result
-                    $Output
-                }
-            } elseif ($HTML) {
-                # Output HTML
-                $HTML
-            } elseif ($Response.Result.Content) {
-                # If unable to convert HTML or Json, output as-is
-                ($Response.Result.Content).ReadAsStringAsync().Result
-            } else {
-                # Output request error
-                $Response.Result.EnsureSuccessStatusCode()
-            }
-        } catch {
-            # Output exception
-            throw $_
-        }
-    }
-}
-function Get-AuthPair {
-    <#
-    .SYNOPSIS
-        Outputs a base64 authorization pair for Format-Header
-    #>
-    [CmdletBinding()]
-    [OutputType([string])]
-    param()
-    process {
-        if ($Falcon.ClientId -and $Falcon.ClientSecret) {
-            # Convert cached ClientId/ClientSecret to Base64 for basic auth requests
-            "basic $([System.Convert]::ToBase64String(
-                [System.Text.Encoding]::ASCII.GetBytes("$($Falcon.ClientId):$($Falcon.ClientSecret)")))"
-        } else {
-            $null
-        }
-    }
-}
-function Get-Body {
-    <#
-    .SYNOPSIS
-        Outputs body parameters from input
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic
-    )
-    begin {
-        if ($PSVersionTable.PSVersion.Major -lt 6) {
-            Add-Type -AssemblyName System.Net.Http
-        }
-    }
-    process {
-        foreach ($Item in $Dynamic.Values.Where({ $_.IsSet -eq $true })) {
-            # Match dynamic parameters to parameters defined by endpoint
-            $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
-            ((-not $_.Value.in) -or ($_.Value.in -eq 'body')) -and ($_.Value.type -ne 'switch') }).foreach{
-                if ($_.Key -eq 'body') {
-                    # Convert files sent as 'body' to ByteStream and upload
-                    $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
-                        Get-Content $Item.Value -AsByteStream
-                    }
-                    else {
-                        Get-Content $Item.Value -Encoding Byte -Raw
-                    }
-                    $ByteArray = [System.Net.Http.ByteArrayContent]::New($ByteStream)
-                    $ByteArray.Headers.Add('Content-Type', $Endpoint.consumes)
-                    Write-Debug "[Get-Body] File: $($Item.Value)"
-                } else {
-                    if ($Item.Value | Get-Member -MemberType Method | Where-Object { $_.Name -eq 'Normalize'}) {
-                        # Normalize fields created through 'Get-Content' to prevent Json conversion errors
-                        if ($Item.ParameterType.Name -eq 'Array') {
-                            [array] $Item.Value = ($Item.Value).Normalize()
-                        } else {
-                            $Item.Value = ($Item.Value).Normalize()
-                        }
-                        Write-Debug "[Get-Body] Normalized '$($Item.Name)' content"
-                    }
-                    if (-not($BodyOutput)) {
-                        $BodyOutput = @{}
-                    }
-                    if ($_.Value.parent) {
-                        if (-not($Parents)) {
-                            # Construct table to hold child input
-                            $Parents = @{}
-                        }
-                        if (-not($Parents.($_.Value.parent))) {
-                            $Parents[$_.Value.parent] = @{}
-                        }
-                        $Parents.($_.Value.parent)[$_.Key] = $Item.Value
-                    } else {
-                        # Add input to hashtable for Json conversion
-                        $BodyOutput[$_.Key] = $Item.Value
-                    }
-                }
-            }
-        }
-        if ($Parents) {
-            $Parents.GetEnumerator().foreach{
-                # Add "Parent" object as array to body
-                $BodyOutput[$_.Key] = @( $_.Value )
-            }
-        }
-        if ($BodyOutput) {
-            # Output body table
-            $BodyOutput
-        } elseif ($ByteArray) {
-            # Output ByteStream
-            $ByteArray
-        }
-    }
-}
-function Get-Dictionary {
-    <#
-    .SYNOPSIS
-        Creates a dynamic parameter dictionary
-    .PARAMETER ENDPOINTS
-        An array of 'path:method' endpoint values
-    #>
-    [CmdletBinding()]
-    [OutputType([System.Management.Automation.RuntimeDefinedParameterDictionary])]
-    param(
-        [Parameter(Mandatory = $true)]
-        [array] $Endpoints
-    )
-    begin {
-        # Create parameter dictionary
-        $Output = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-        function Add-Parameter ($Parameter) {
-            ($Parameter.GetEnumerator()).foreach{
-                # Create parameters defined by endpoint
-                $Attribute = New-Object System.Management.Automation.ParameterAttribute
-                $Attribute.ParameterSetName = $_.Value.set
-                $Attribute.Mandatory = $_.Value.required
-                if ($_.Value.description) {
-                    $Attribute.HelpMessage = $_.Value.description
-                }
-                if ($_.Value.position) {
-                    $Attribute.Position = $_.Value.position
-                }
-                if ($_.Value.pipeline) {
-                    $Attribute.ValueFromPipeline = $_.Value.pipeline
-                }
-                if ($Output.($_.Value.dynamic)) {
-                    $Output.($_.Value.dynamic).Attributes.add($Attribute)
-                } else {
-                    $Collection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
-                    $Collection.Add($Attribute)
-                    $PSType = switch ($_.Value.type) {
-                        'array' { [array] }
-                        'boolean' { [bool] }
-                        'double' { [double] }
-                        'integer' { [int] }
-                        'int32' { [Int32] }
-                        'int64' { [Int64] }
-                        'object' { [object] }
-                        'switch' { [switch] }
-                        default { [string] }
-                    }
-                    if ($_.Value.required -eq $false) {
-                        $Collection.Add((New-Object Management.Automation.ValidateNotNullOrEmptyAttribute))
-                    }
-                    if ($_.Value.enum) {
-                        $ValidSet = New-Object System.Management.Automation.ValidateSetAttribute($_.Value.enum)
-                        $ValidSet.IgnoreCase = $false
-                        $Collection.Add($ValidSet)
-                    }
-                    if ($_.Value.min -and $_.Value.max) {
-                        if ($PSType -eq [int]) {
-                            # Set range min/max for integers
-                            $Collection.Add((New-Object Management.Automation.ValidateRangeAttribute(
-                                $_.Value.Min, $_.Value.Max)))
-                        } elseif ($PSType -eq [string]) {
-                            # Set length min/max for strings
-                            $Collection.Add((New-Object Management.Automation.ValidateLengthAttribute(
-                                    $_.Value.Min, $_.Value.Max)))
-                        }
-                    }
-                    if ($_.Value.pattern) {
-                        # Set RegEx validation pattern
-                        $Collection.Add((New-Object Management.Automation.ValidatePatternAttribute(
-                            ($_.Value.pattern).ToString())))
-                    }
-                    if ($_.Value.script) {
-                        # Set ValidationScript
-                        $ValidScript = New-Object Management.Automation.ValidateScriptAttribute(
-                            [scriptblock]::Create($_.Value.script))
-                        if ($_.Value.scripterror -and $ValidScript.ErrorMessage) {
-                            $ValidScript.ErrorMessage = $_.Value.scripterror
-                        }
-                        $Collection.Add($ValidScript)
-                    }
-                    # Add parameter to dictionary
-                    $RunParam = New-Object System.Management.Automation.RuntimeDefinedParameter(
-                        $_.Value.dynamic, $PSType, $Collection)
-                    $Output.Add($_.Value.dynamic, $RunParam)
-                }
-            }
-        }
-    }
-    process {
-        ($Endpoints).foreach{
-            ($Falcon.GetEndpoint($_).Parameters).foreach{
-                # Add parameters from each endpoint
-                Add-Parameter -Parameter $_
-            }
-        }
-        ($Endpoints -match '(/combined/|/queries/)').foreach{
-            if ($Endpoints -match '(/entities/|/combined/)') {
-                # Add 'Detailed' parameter when both 'queries' and 'entities/combined' endpoints are present
-                Add-Parameter @{
-                    detailed = @{
-                        dynamic = 'Detailed'
-                        set = $_
-                        type = 'switch'
-                        description = 'Retrieve detailed information'
-                    }
-                }
-            }
-            if ($Output.Offset -or $Output.After) {
-                # Add 'All' switch when using a 'queries' endpoint that has pagination parameters
-                Add-Parameter @{
-                    all = @{
-                        dynamic = 'All'
-                        set = $_
-                        type = 'switch'
-                        description = 'Repeat requests until all available results are retrieved'
-                    }
-                }
-                # Add 'Total' switch
-                Add-Parameter @{
-                    total = @{
-                        dynamic = 'Total'
-                        set = $_
-                        type = 'switch'
-                        description = 'Display total result count instead of results'
-                    }
-                }
-            }
-        }
-        # Add 'Help' to all endpoints
-        Add-Parameter @{
-            help = @{
-                dynamic = 'Help'
-                set = 'psfalcon:help'
-                type = 'switch'
-                required = $true
-                description = 'Output dynamic help information'
-            }
-        }
-        # Output dictionary
-        return $Output
-    }
-}
-function Get-DynamicHelp {
-    <#
-    .SYNOPSIS
-        Outputs basic information about dynamic parameters
-    .PARAMETER COMMAND
-        PSFalcon command name(s)
-    .PARAMETER EXCLUSIONS
-        Endpoints to exclude from results (for redundancies)
-    #>
-    [CmdletBinding()]
-    [OutputType([string])]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $Command,
-
-        [Parameter()]
-        [array] $Exclusions
-    )
-    begin {
-        function Show-Parameter ($Parameter) {
-            # Output name and type
-            $Type = if ($_.Value.type) {
-                $_.Value.type
-            } else {
-                'string'
-            }
-            $Label = "`n  -$($_.Value.dynamic) [$($Type)]"
-            if ($_.Value.required -eq $true) {
-                # Output required status
-                $Label += " <Required>"
-            }
-            # Output description
-            $Label + "`n    $($_.Value.description)"
-            (($_.Value).GetEnumerator().Where({ $_.Key -match '(enum|min|max|pattern|position)' }) |
-            Sort-Object { $_.Key }).foreach{
-                $Value = if ($_.Value -is [array]) {
-                    # Convert arrays to strings
-                    $_.Value -join ', '
-                } else {
-                    $_.Value
-                }
-                # Output remaining properties
-                "      $($Falcon.Culture.ToTitleCase($_.Key)) : $Value"
-            }
-        }
-    }
-    process {
-        # Gather endpoint names from $Command
-        ((Get-Command $Command).ParameterSets.Where({ ($_.Name -ne 'psfalcon:help') -and
-        ($Exclusions -notcontains $_.Name) })).foreach{
-            $Ref = $Falcon.GetEndpoint($_.Name)
-            # Output endpoint description and permission
-            "`n# $($Ref.description)"
-            if ($Ref.security) {
-                "  Requires $($Ref.security)"
-            }
-            if ($Ref.parameters) {
-                (($Ref.parameters).GetEnumerator().Where({ $_.Value.type -ne 'switch' }) |
-                Sort-Object { $_.Value.position }).foreach{
-                    # Output parameters from endpoint based on position
-                    Show-Parameter -Parameter $_
-                }
-                ($Ref.Parameters).GetEnumerator().Where({ $_.Value.type -eq 'switch' }).foreach{
-                    # Output switch parameters from endpoint
-                    Show-Parameter -Parameter $_
-                }
-            }
-            ($_.Parameters).Where({ $_.Name -match '^(All|Detailed|Total)$'}).foreach{
-                # Show switch parameters added by Get-Dictionary
-                "`n  -$($_.Name) [switch]`n    $($_.HelpMessage)"
-            }
-        }
-        "`n"
-    }
-}
-function Get-Formdata {
-    <#
-    .SYNOPSIS
-        Outputs 'Formdata' dictionary from input
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic
-    )
-    process {
-        foreach ($Item in $Dynamic.Values.Where({ $_.IsSet -eq $true })) {
-            # Match dynamic parameters to parameters defined by endpoint
-            $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
-            ($_.Value.In -eq 'formdata') }).foreach{
-                # Construct formdata table
-                if (-not($FormdataOutput)) {
-                    $FormdataOutput = @{}
-                }
-                $Value = if ($_.Key -eq 'content') {
-                    # Collect file content as a string
-                    [string] (Get-Content $Item.Value -Raw)
-                } else {
-                    $Item.Value
-                }
-                $FormdataOutput[$_.Key] = $Value
-            }
-        }
-        if ($FormdataOutput) {
-            # Output formdata table
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $(ConvertTo-Json $FormdataOutput)"
-            $FormdataOutput
-        }
-    }
-}
-function Get-Header {
-    <#
-    .SYNOPSIS
-        Outputs a hashtable of header values from input
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic
-    )
-    process {
-        foreach ($Item in $Dynamic.Values.Where({ $_.IsSet -eq $true })) {
-            # Match dynamic parameters to parameters defined by endpoint
-            $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
-            ($_.Value.In -eq 'header') }).foreach{
-                # Construct header table
-                if (-not($HeaderOutput)) {
-                    $HeaderOutput = @{}
-                }
-                $HeaderOutput[$_.Key] = $Item.Value
-            }
-        }
-        if ($HeaderOutput) {
-            # Output header table
-            $HeaderOutput
-        }
-    }
-}
-function Get-LoopParam {
-    <#
-    .SYNOPSIS
-        Creates a 'splat' hashtable for Invoke-Loop
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    #>
+function Build-Content {
     [CmdletBinding()]
     [OutputType([hashtable])]
     param(
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic
+        [object] $Format,
+        [object] $Inputs
     )
     begin {
-        $Output = @{}
-    }
-    process {
-        foreach ($Item in ($Dynamic.Values).Where({ ($_.IsSet -eq $true) -and
-        ($_.Name -notmatch '(offset|after|all|detailed)') })) {
-            # Add dynamic inputs, but exclude parameters that will break Invoke-Loop
-            $Output[$Item.Name] = $Item.Value
-        }
-        $Output
-    }
-}
-function Get-Outfile {
-    <#
-    .SYNOPSIS
-        Corrects relative user path inputs for 'outfile' content
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic
-    )
-    process {
-        foreach ($Item in $Dynamic.Values.Where({ $_.IsSet -eq $true })) {
-            # Match dynamic parameters to parameters defined by endpoint
-            $FileOutput = $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
-            ($_.Value.In -eq 'outfile') }).foreach{
-                # Convert relative paths
-                $Falcon.GetAbsolutePath($Item.Value)
-            }
-            if ($FileOutput) {
-                # Output file path string
-                Write-Debug "[$($MyInvocation.MyCommand.Name)] $FileOutput"
-                $FileOutput
-            }
-        }
-    }
-}
-function Get-Param {
-    <#
-    .SYNOPSIS
-        Creates a 'splat' hashtable for Invoke-Endpoint
-    .PARAMETER ENDPOINT
-        Falcon endpoint name
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    .PARAMETER MAX
-        A maximum number of identifiers per request
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic,
-
-        [Parameter()]
-        [int] $Max
-    )
-    begin {
-        # Construct output table and gather information about endpoint
-        $Output = @{
-            Endpoint = $Endpoint
-        }
-        $Target = $Falcon.GetEndpoint($Endpoint)
-    }
-    process {
-        @('Body', 'Formdata', 'Header', 'Outfile', 'Path', 'Query').foreach{
-            # Create key/value pairs for each "Get-<Input>" function
-            $Value = & "Get-$_" -Endpoint $Target -Dynamic $Dynamic
-            if ($Value) {
-                $Output[$_] = $Value
-            }
-        }
-        # Pass parameter sets to Split-Param
-        $Param = @{
-            Param = $Output
-        }
-        if ($Max) {
-            $Param['Max'] = $Max
-        }
-        Split-Param @Param
-    }
-}
-function Get-Path {
-    <#
-    .SYNOPSIS
-        Modifies an endpoint 'path' value based on input
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic
-    )
-    begin {
-        $PathOutput = $Endpoint.Path
-    }
-    process {
-        foreach ($Item in $Dynamic.Values.Where({ $_.IsSet -eq $true })) {
-            # Match dynamic parameters to parameters defined by endpoint
-            $PathOutput = $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
-            ($_.Value.In -eq 'path') }).foreach{
-                $Endpoint.path -replace $_.Key, $Item.Value
-            }
-            if ($PathOutput) {
-                # Output new URI path
-                Write-Debug "[$($MyInvocation.MyCommand.Name)] $PathOutput"
-                $PathOutput
-            }
-        }
-    }
-}
-function Get-Query {
-    <#
-    .SYNOPSIS
-        Outputs an array of query values from user input
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for input values
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Endpoint,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic
-    )
-    begin {
-        # Check for relative "last X days/hours" filter values and convert them to RFC-3339
-        if ($Dynamic.Filter.Value) {
-            $Relative = "(last (?<Int>\d{1,}) (day[s]?|hour[s]?))"
-            if ($Dynamic.Filter.Value -match $Relative) {
-                $Dynamic.Filter.Value | Select-String $Relative -AllMatches | ForEach-Object {
-                    foreach ($Match in $_.Matches.Value) {
-                        [int] $Int = $Match -replace $Relative, '${Int}'
-                        if ($Match -match "day") {
-                            $Int = $Int * -24
-                        } else {
-                            $Int = $Int * -1
-                        }
-                        $Dynamic.Filter.Value = $Dynamic.Filter.Value -replace $Match, $Falcon.Rfc3339($Int)
-                    }
-                }
-            }
-        }
-    }
-    process {
-        $QueryOutput = foreach ($Item in ($Dynamic.Values).Where({ $_.IsSet -eq $true })) {
-            # Match dynamic parameters to parameters defined by endpoint
-            $Endpoint.parameters.GetEnumerator().Where({ ($_.Value.dynamic -eq $Item.Name) -and
-            ($_.Value.in -eq 'query') }).foreach{
-                foreach ($Value in $Item.Value) {
-                    # Output "query" values to an array and encode '+' to ensure filter input integrity
-                    if ($_.Key) {
-                        if (($Endpoint.path -eq '/indicators/queries/iocs/v1') -and (($_.Key -eq 'type') -or
-                        ($_.Key -eq 'value'))) {
-                            # Change type/value to types/values for /indicators/queries/iocs/v1:get
-                            ,"$($_.Key)s=$($Value -replace '\+','%2B')"
-                        } else {
-                            ,"$($_.Key)=$($Value -replace '\+','%2B')"
-                        }
+        function Build-Body ($Format, $Inputs) {
+            $Body = @{}
+            $Inputs.GetEnumerator().Where({ $Format.Body.Values -match $_.Key }).foreach{
+                $Field = ($_.Key).ToLower()
+                $Value = $_.Value
+                if ($Field -eq 'body') {
+                    # Add 'body' value as [System.Net.Http.ByteArrayContent]
+                    $FullFilePath = $Script:Falcon.Api.Path($_.Value)
+                    Write-Verbose "[Build-Body] '$FullFilePath'"
+                    $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
+                        Get-Content $FullFilePath -AsByteStream
                     } else {
-                        ,"$($Value -replace '\+','%2B')"
+                        Get-Content $FullFilePath -Encoding Byte -Raw
+                    }
+                    $ByteArray = [System.Net.Http.ByteArrayContent]::New($ByteStream)
+                    $ByteArray.Headers.Add('Content-Type', $Headers.ContentType)
+                } else {
+                    if (!$Body) {
+                        $Body = @{}
+                    }
+                    if (($Value -is [array] -or $Value -is [string]) -and $Value | Get-Member -MemberType Method |
+                    Where-Object { $_.Name -eq 'Normalize' }) {
+                        # Normalize values to avoid Json conversion errors when 'Get-Content' was used
+                        if ($Value -is [array]) {
+                            $Value = [array] ($Value).Normalize()
+                        } elseif ($Value -is [string]) {
+                            $Value = ($Value).Normalize()
+                        }
+                    }
+                    $Format.Body.GetEnumerator().Where({ $_.Value -eq $Field }).foreach{
+                        if ($_.Key -eq 'root') {
+                            # Add key/value pair directly to 'Body'
+                            $Body.Add($Field, $Value)
+                        } else {
+                            # Create parent object and add key/value pair
+                            if (!$Parents) {
+                                $Parents = @{}
+                            }
+                            if (!$Parents.($_.Key)) {
+                                $Parents[$_.Key] = @{}
+                            }
+                            $Parents.($_.Key).Add($Field, $Value)
+                        }
                     }
                 }
             }
-        }
-        if ($QueryOutput) {
-            # Trim pagination tokens for debug output and output query array
-            $DebugOutput = (($QueryOutput).foreach{
-                if (($_ -match '^offset=') -and ($_.Length -gt 14)) {
-                    "$($_.Substring(0,13))..."
-                } elseif (($_ -match '^after=') -and ($_.Length -gt 13)) {
-                    "$($_.Substring(0,12))..."
-                } else {
-                    $_
-                }
-            }) -join ', '
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $DebugOutput"
-            $QueryOutput
-        }
-    }
-}
-function Invoke-Endpoint {
-    <#
-    .SYNOPSIS
-        Makes a request to a Falcon API endpoint
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER HEADER
-        Header key/value pair user input
-    .PARAMETER QUERY
-        An array of string values to append to the URI path
-    .PARAMETER BODY
-        User body string input
-    .PARAMETER FORMDATA
-        Formdata dictionary from user input
-    .PARAMETER OUTFILE
-        Path for 'outfile' output
-    .PARAMETER PATH
-        A modified 'path' value to use in place of the endpoint-defined string
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string] $Endpoint,
-
-        [Parameter()]
-        [hashtable] $Header,
-
-        [Parameter()]
-        [array] $Query,
-
-        [Parameter()]
-        [object] $Body,
-
-        [Parameter()]
-        [System.Collections.IDictionary] $Formdata,
-
-        [Parameter()]
-        [string] $Outfile,
-
-        [Parameter()]
-        [string] $Path
-    )
-    begin {
-        if ((-not($Falcon.Token)) -or (($Falcon.Expires) -le (Get-Date).AddSeconds(30)) -and
-        ($Endpoint -ne '/oauth2/token:post')) {
-            # Check for expired/expiring tokens and force an OAuth2 token request
-            Request-FalconToken
-        }
-        # Gather endpoint data
-        $Target = $Falcon.GetEndpoint($Endpoint)
-        $FullUri = if ($Path) {
-            # Append URI path to Hostname with user input
-            "$($Falcon.Hostname)$($Path)"
-        } else {
-            "$($Falcon.Hostname)$($Target.Path)"
-        }
-        Write-Verbose "[$($MyInvocation.MyCommand.Name)] $($Target.Method.ToUpper()) $FullUri"
-        if ($Query) {
-            # Add query inputs
-            $FullUri += "?$($Query -join '&')"
-        }
-    }
-    process {
-        if (!($FullUri -as [System.Uri]).AbsoluteUri) {
-            # Validate URI path
-            throw "'$FullUri' is not a valid URL. Verify module installation."
-        }
-        # Create System.Net.Http base object and append request header
-        $Client = [System.Net.Http.HttpClient]::New()
-        $Request = [System.Net.Http.HttpRequestMessage]::New($Target.Method.ToUpper(), [System.Uri]::New($FullUri))
-        $Param = @{
-            Endpoint = $Target
-            Request = $Request
-        }
-        if ($Header) {
-            $Param['Header'] = $Header
-        }
-        Format-Header @Param
-        if ($Query -match 'timeout') {
-            # Add timeout value to request if found in query inputs from Real-time Response commands
-            $Timeout = [int] (($Query).Where({ $_ -match 'timeout' })).Split('=')[1] + 5
-            $Client.Timeout = (New-TimeSpan -Seconds $Timeout).Ticks
-            Write-Debug ("[$($MyInvocation.MyCommand.Name)] HttpClient timeout set to $($Timeout) seconds")
-        }
-        try {
-            if ($Formdata) {
-                # Create formdata object
-                $MultiContent = [System.Net.Http.MultipartFormDataContent]::New()
-                foreach ($Key in $Formdata.Keys) {
-                    if ($Key -match '(file|upfile)') {
-                        # Append files defined by dynamic parameters
-                        $FileStream = [System.IO.FileStream]::New($Formdata.$Key, [System.IO.FileMode]::Open)
-                        $Filename = [System.IO.Path]::GetFileName($Formdata.$Key)
-                        $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
-                        $MultiContent.Add($StreamContent, $Key, $Filename)
-                    } else {
-                        # Add content as strings
-                        $StringContent = [System.Net.Http.StringContent]::New($Formdata.$Key)
-                        $MultiContent.Add($StringContent, $Key)
+            if ($ByteArray) {
+                # Return 'ByteArray' object
+                $ByteArray
+            } else {
+                if ($Parents) {
+                    $Parents.GetEnumerator().foreach{
+                        # Add parents as arrays in 'Body'
+                        $Body[$_.Key] = @( $_.Value )
                     }
                 }
-                # Append formdata object to request
-                $Request.Content = $MultiContent
-            } elseif ($Body) {
-                $Request.Content = if ($Body -is [string]) {
-                    # Append Json body to request using endpoint's 'consumes' value
-                    [System.Net.Http.StringContent]::New($Body, [System.Text.Encoding]::UTF8, $Target.consumes)
-                } else {
-                    # Append body to request directly
+                if (($Body.Keys | Measure-Object).Count -gt 0) {
+                    # Return 'Body' object
+                    Write-Verbose "[Build-Body] $(ConvertTo-Json -InputObject $Body -Depth 8 -Compress)"
                     $Body
                 }
             }
-            $Response = if ($Outfile) {
-                # Add 'outfile' to header and receive payload
-                ($Request.Headers.GetEnumerator()).foreach{
-                    $Client.DefaultRequestHeaders.Add($_.Key, $_.Value)
+        }
+        function Build-Formdata ($Format, $Inputs) {
+            $Formdata = @{}
+            $Inputs.GetEnumerator().Where({ $Format.Formdata -contains $_.Key }).foreach{
+                $Formdata[($_.Key).ToLower()] = if ($_.Key -eq 'content') {
+                    # Collect file content as a string
+                    [string] (Get-Content ($Script:Falcon.Api.Path($_.Value)) -Raw)
+                } else {
+                    $_.Value
                 }
-                $Request.Dispose()
-                $Client.GetByteArrayAsync($FullUri)
-            } else {
-                # Make request
-                $Client.SendAsync($Request)
             }
-            if ($Response.Result -is [System.Byte[]]) {
-                # Write file payload to 'outfile' path
-                [System.IO.File]::WriteAllBytes($Outfile, ($Response.Result))
-                if (Test-Path $Outfile) {
-                    Get-ChildItem $Outfile | Out-Host
+            if (($Formdata.Keys | Measure-Object).Count -gt 0) {
+                # Return 'Formdata' object
+                Write-Verbose "[Build-Formdata] $(ConvertTo-Json -InputObject $Formdata -Depth 8 -Compress)"
+                $Formdata
+            }
+        }
+        function Build-Query ($Format, $Inputs) {
+            # Regex pattern for matching 'last [int] days/hours'
+            [regex] $Relative = '(last (?<Int>\d{1,}) (day[s]?|hour[s]?))'
+            [array] $Query = $Inputs.GetEnumerator().Where({ $Format.Query -contains $_.Key }).foreach{
+                $Field = ($_.Key).ToLower()
+                ($_.Value).foreach{
+                    $Value = $_
+                    if ($Field -eq 'filter' -and $Value -match $Relative) {
+                        # Convert 'last [int] days/hours' to Rfc3339
+                        $Value | Select-String $Relative -AllMatches | ForEach-Object {
+                            foreach ($Match in $_.Matches.Value) {
+                                [int] $Int = $Match -replace $Relative, '${Int}'
+                                $Int = if ($Match -match 'day') {
+                                    $Int * -24
+                                } else {
+                                    $Int * -1
+                                }
+                                $Value = $Value -replace $Match, (Convert-Rfc3339 $Hours)
+                            }
+                        }
+                    }
+                    # Output array of strings to append to 'Path' and HTML-encode '+'
+                    ,"$($Field)=$($Value -replace '\+','%2B')"
                 }
-            } elseif ($Response.Result) {
-                # Format responses
-                Format-Result -Response $Response -Endpoint $Endpoint
-            } else {
-                # Output error
-                $PSCmdlet.WriteError(
-                    [System.Management.Automation.ErrorRecord]::New(
-                        [Exception]::New("Unable to contact $($Falcon.Hostname)"),
-                        "psfalcon_connection_failure",
-                        [System.Management.Automation.ErrorCategory]::ConnectionError,
-                        $Response
-                    )
-                )
             }
-        } catch {
-            # Output exception
-            throw $_
+            if ($Query) {
+                # Return 'Query' array
+                $Query
+            }
+        }
+    }
+    process {
+        if ($Inputs) {
+            $Content = @{}
+            @('Body', 'Formdata', 'Outfile', 'Query').foreach{
+                if ($Format.$_) {
+                    $Value = if ($_ -eq 'Outfile') {
+                        # Get absolute path for 'OutFile'
+                        $Outfile = $Inputs.GetEnumerator().Where({ $Format.Outfile -eq $_.Key }).Value
+                        if ($Outfile) {
+                            $Script:Falcon.Api.Path($Outfile)
+                        }
+                    } else {
+                        # Get value(s) from each 'Build' function
+                        & "Build-$_" -Format $Format -Inputs $Inputs
+                    }
+                    if ($Value) {
+                        $Content.Add($_, $Value)
+                    }
+                }
+            }
         }
     }
     end {
-        if ($Response.Result.Headers) {
-            # Wait for 'X-Ratelimit-RetryAfter'
-            Wait-RetryAfter $Response.Result.Headers
+        if (($Content.Keys | Measure-Object).Count -gt 0) {
+            # Return 'Content' table
+            $Content
         }
-        if ($FileStream) {
-            $FileStream.Close()
+    }
+}
+function Confirm-String {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string] $String
+    )
+    begin {
+        # RegEx patterns
+        $RegEx = @{
+            md5    = [regex] '^[A-Fa-f0-9]{32}$'
+            sha256 = [regex] '^[A-Fa-f0-9]{64}$'
+            ipv4   = [regex] '^([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.'
+            ipv6   = [regex] '^[0-9a-fA-F]{1,4}:'
+            domain = [regex] '^((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}$'
         }
-        if ($Response) {
-            $Response.Dispose()
+    }
+    process {
+        $Output = ($RegEx.GetEnumerator()).foreach{
+            if ($String -match $_.Value) {
+                if ($_.Key -match '^(ipv4|ipv6)$') {
+                    if (($String -as [System.Net.IPAddress] -as [bool]) -eq $true) {
+                        # Use initial RegEx match, then validate IP and return type
+                        $_.Key
+                    }
+                } else {
+                    # Return type
+                    $_.Key
+                }
+            }
+        }
+    }
+    end {
+        if ($Output) {
+            Write-Verbose "[Confirm-String] $($Output): $String"
+            $Output
+        }
+    }
+}
+function Convert-Rfc3339 {
+    [CmdletBinding()]
+    param(
+        [int] $Hours
+    )
+    process {
+        # Return Rfc3339 timestamp for $Hours from Get-Date
+        $Utc = "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
+        $Utc -replace '\.\d+Z$','Z'
+    }
+}
+function Get-ParamSet {
+    [CmdletBinding()]
+    [OutputType()]
+    param(
+        [string] $Endpoint,
+        [object] $Headers,
+        [object] $Inputs,
+        [object] $Format,
+        [int] $Max
+    )
+    begin {
+        # Get baseline switch and endpoint parameters
+        $Switches = @{}
+        $Inputs.GetEnumerator().Where({ $_.Key -match '^(All|Detailed|Total)$' }).foreach{
+            $Switches.Add($_.Key, $_.Value)
+        }
+        $Base = @{
+            Path    = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
+            Method  = $Endpoint.Split(':')[1]
+            Headers = $Headers
+        }
+        if (!$Max) {
+            $IdCount = if ($Inputs.ids) {
+                # Find maximum number of 'ids' using equivalent of 500 32-character ids
+                [Math]::Floor([decimal](18500/(($Inputs.ids |
+                    Measure-Object -Maximum -Property Length).Maximum + 5)))
+            }
+            $Max = if ($IdCount -and $IdCount -lt 500) {
+                # Output maximum, no greater than 500
+                $IdCount
+            } else {
+                500
+            }
+        }
+        # Get 'Content' from user input
+        $Content = Build-Content -Inputs $Inputs -Format $Format
+    }
+    process {
+        if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
+            Write-Verbose "[Build-Param] Creating groups of $Max query values"
+            for ($i = 0; $i -lt ($Content.Query | Measure-Object).Count; $i += $Max) {
+                # Split 'Query' values into groups
+                $Split = $Switches.Clone()
+                $Split.Add('Endpoint', $Base.Clone())
+                $Split.Endpoint.Path += "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                $Content.GetEnumerator().Where({ $_.Key -ne 'Query' -and $_.Value }).foreach{
+                    # Add values other than 'Query'
+                    $Split.Endpoint.Add($_.Key, $_.Value)
+                }
+                ,$Split
+            }
+        } elseif ($Content.Body -and ($Content.Body.ids | Measure-Object).Count -gt $Max) {
+            Write-Verbose "[Build-Param] Creating groups of $Max 'ids'"
+            for ($i = 0; $i -lt ($Content.Body.ids | Measure-Object).Count; $i += $Max) {
+                # Split 'Body' content into groups using 'ids'
+                $Split = $Switches.Clone()
+                $Split.Add('Endpoint', $Base.Clone())
+                $Split.Endpoint.Add('Body', @{ ids = $Content.Body.ids[$i..($i + ($Max - 1))] })
+                $Content.GetEnumerator().Where({ $_.Value }).foreach{
+                    # Add values other than 'Body.ids'
+                    if ($_.Key -eq 'Query') {
+                        $Split.Endpoint.Path += "?$($_.Value -join '&')"
+                    } elseif ($_.Key -eq 'Body') {
+                        ($_.Value).GetEnumerator().Where({ $_.Key -ne 'ids' }).foreach{
+                            $Split.Endpoint.Body.Add($_.Key, $_.Value)
+                        }
+                    } else {
+                        $Split.Endpoint.Add($_.Key, $_.Value)
+                    }
+                }
+                ,$Split
+            }
+        } else {
+            # Use base parameters, add content and output single parameter set
+            $Switches.Add('Endpoint', $Base.Clone())
+            if ($Content) {
+                $Content.GetEnumerator().foreach{
+                    if ($_.Key -eq 'Query') {
+                        $Switches.Endpoint.Path += "?$($_.Value -join '&')"
+                    } else {
+                        $Switches.Endpoint.Add($_.Key, $_.Value)
+                    }
+                }
+            }
+            $Switches
+        }
+    }
+}
+function Get-RtrCommand {
+    [CmdletBinding()]
+    param(
+        [string] $Command,
+        [switch] $ConfirmCommand
+    )
+    begin {
+        function Get-CommandArray ([string] $Permission) {
+            # Retrieve 'ValidValues' for 'Command' parameter
+            (Get-Command "Invoke-Falcon$($Permission)Command").Parameters.GetEnumerator().Where({
+                $_.Key -eq 'Command' }).Value.Attributes.ValidValues
+        }
+    }
+    process {
+        # Determine command to invoke using $Command and permission level
+        $Result = if ($Command -eq 'runscript') {
+            # Force 'Admin' for 'runscript' command
+            'Invoke-FalconAdminCommand'
+        } else {
+            # Create table of Real-time Response commands organized by permission level
+            $Commands = @{}
+            @($null, 'Responder', 'Admin').foreach{
+                $Key = if ($_ -eq $null) {
+                    'ReadOnly'
+                } else {
+                    $_
+                }
+                $Commands[$Key] = Get-CommandArray $_
+            }
+            # Filter 'Responder' and 'Admin' to unique command(s)
+            $Commands.Responder = $Commands.Responder | Where-Object { $Commands.ReadOnly -notcontains $_ }
+            $Commands.Admin = $Commands.Admin | Where-Object { $Commands.ReadOnly -notcontains $_ -and
+                $Commands.Responder -notcontains $_ }
+            $Commands.GetEnumerator().Where({ $_.Value -contains $Command }).foreach{
+                if ($_.Key -eq 'ReadOnly') {
+                    'Invoke-FalconCommand'
+                } else {
+                    "Invoke-Falcon$($_.Key)Command"
+                }
+            }
+        }
+    }
+    end {
+        if ($PSBoundParameters.ConfirmCommand) {
+            # Output 'Confirm' command
+            $Result -replace 'Invoke', 'Confirm'
+        } else {
+            $Result
+        }
+    }
+}
+function Get-RtrResult {
+    [CmdletBinding()]
+    param(
+        [object] $Object,
+        [object] $Output
+    )
+    begin {
+        # Real-time Response fields to capture from results
+        $RtrFields = @('aid', 'complete', 'errors', 'offline_queued', 'session_id', 'stderr', 'stdout', 'task_id')
+    }
+    process {
+        # Update $Output with results from $Object
+        foreach ($Result in ($Object | Select-Object $RtrFields)) {
+            $Result.PSObject.Properties | Where-Object { $_.Value } | ForEach-Object {
+                $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
+                    # Convert array result into string
+                    $_.Value -join ', '
+                } elseif ($_.Value.code -and $_.Value.message) {
+                    # Convert error code and message into string
+                    (($_.Value).foreach{ "$($_.code): $($_.message)" }) -join ', '
+                } else {
+                    $_.Value
+                }
+                $Name = if ($_.Name -eq 'task_id') {
+                    # Rename 'task_id' to 'cloud_request_id'
+                    'cloud_request_id'
+                } else {
+                    $_.Name
+                }
+                $Output | Where-Object { $_.aid -eq $Result.aid } | ForEach-Object {
+                    $_.$Name = $Value
+                }
+            }
+        }
+    }
+    end {
+        return $Output
+    }
+}
+function Invoke-Falcon {
+    [CmdletBinding()]
+    param(
+        [string] $Command,
+        [string] $Endpoint,
+        [object] $Headers,
+        [object] $Inputs,
+        [object] $Format,
+        [int] $Max
+    )
+    begin {
+        # Gather parameters for 'Get-ParamSet'
+        $GetParam = @{}
+        $PSBoundParameters.GetEnumerator().Where({ $_.Key -ne 'Command' }).foreach{
+            $GetParam.Add($_.Key, $_.Value)
+        }
+        if (!$GetParam.Headers) {
+            $GetParam.Add('Headers', @{})
+        }
+        if (!$GetParam.Headers.Accept) {
+            # Add 'Accept: application/json' when undefined
+            $GetParam.Headers.Add('Accept', 'application/json')
+        }
+        if ($Format.Body -and !$GetParam.Headers.ContentType) {
+            # Add 'ContentType: application/json' when undefined and 'Body' is present
+            $GetParam.Headers.Add('ContentType', 'application/json')
+        }
+        if ($Inputs.All -eq $true -and !$Inputs.Limit) {
+            # Add maximum 'Limit' when not present and using 'All'
+            $Limit = (Get-Command $Command).ParameterSets.Where({
+                $_.Name -eq $Endpoint }).Parameters.Where({ $_.Name -eq 'Limit' }).Attributes.MaxRange
+            if ($Limit) {
+                $Inputs.Add('Limit', $Limit)
+            }
+        }
+        # Regex for URL paths that don't need a secondary 'Detailed' request
+        [regex] $NoDetail = '(/combined/|/rule-groups-full/)'
+    }
+    process {
+        foreach ($ParamSet in (Get-ParamSet @GetParam)) {
+            try {
+                if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or
+                ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15))) {
+                    # Verify authorization token
+                    Request-FalconToken
+                }
+                if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
+                    # Convert body to Json
+                    $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Depth 8
+                }
+                $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
+                if ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
+                    # Display 'Outfile'
+                    Get-ChildItem $ParamSet.Endpoint.Outfile
+                } elseif ($Request.Result.Content) {
+                    # Capture pagination for 'Total' and 'All'
+                    $Pagination = (ConvertFrom-Json (
+                        $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
+                    if ($ParamSet.Total -eq $true -and $Pagination) {
+                        # Output 'Total'
+                        $Pagination.total
+                    } else {
+                        $Result = Write-Result $Request
+                        if ($null -ne $Result) {
+                            if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
+                                # Output 'Detailed'
+                                & $Command -Ids $Result
+                            } else {
+                                # Output result
+                                $Result
+                            }
+                            if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt
+                            $Pagination.total) {
+                                # Repeat requests
+                                $Param = @{
+                                    ParamSet   = $ParamSet
+                                    Pagination = $Pagination
+                                    Result     = $Result
+                                }
+                                Invoke-Loop @Param
+                            }
+                        }
+                    }
+                }
+            } catch {
+                Write-Error $_
+            }
         }
     }
 }
 function Invoke-Loop {
-    <#
-    .SYNOPSIS
-        Watches 'meta' results to repeat command requests
-    .PARAMETER COMMAND
-        The PSFalcon command to repeat
-    .PARAMETER PARAM
-        Parameters to include when running the command
-    .PARAMETER DETAILED
-        Toggle the 'Detailed' switch during command request
-    #>
     [CmdletBinding()]
-    [OutputType()]
     param(
         [Parameter(Mandatory = $true)]
-        [string] $Command,
+        [object] $ParamSet,
 
         [Parameter(Mandatory = $true)]
-        [hashtable] $Param,
+        [object] $Pagination,
 
-        [Parameter()]
-        [bool] $Detailed
+        [Parameter(Mandatory = $true)]
+        [object] $Result
     )
     begin {
-        function Get-Paging ($Object, $Param, $Count) {
-            # Check 'Meta' object from Format-Result for pagination information
-            if ($Object.after) {
-                $Param['After'] = $Object.after
+        # Regex for URL paths that don't need a secondary 'Detailed' request
+        [regex] $NoDetail = '(/combined/|/rule-groups-full/)'
+    }
+    process {
+        for ($i = ($Result | Measure-Object).Count; $Pagination.next_page -or $i -lt $Pagination.total;
+        $i += ($Result | Measure-Object).Count) {
+            Write-Verbose "[Invoke-Loop] $i of $($Pagination.total)"
+            # Clone endpoint parameters and update pagination
+            $Clone = $ParamSet.Clone()
+            $Clone.Endpoint = $ParamSet.Endpoint.Clone()
+            $Page = if ($Pagination.after) {
+                @('after', $Pagination.after)
+            } elseif ($Pagination.next_page) {
+                @('offset', $Pagination.offset)
+            } elseif ($Pagination.offset -match '^\d{1,}$') {
+                @('offset', $i)
             } else {
-                if ($Object.next_page) {
-                    $Param['Offset'] = $Object.offset
-                } else {
-                    $Param['Offset'] = if ($Object.offset -match '^\d{1,}$') {
-                        $Count
+                @('offset', $Pagination.offset)
+            }
+            $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match "$($Page[0])=\d{1,}") {
+                # If offset was input, continue from that value
+                $Current = [regex]::Match($Clone.Endpoint.Path, 'offset=(\d+)(^&)?').Captures.Value
+                $Page[1] += [int] $Current.Split('=')[-1]
+                $Clone.Endpoint.Path -replace $Current, ($Page -join '=')
+            } elseif ($Clone.Endpoint.Path -match "$Endpoint^") {
+                # Add pagination
+                "$($Clone.Endpoint.Path)?$($Page -join '=')"
+            } else {
+                "$($Clone.Endpoint.Path)&$($Page -join '=')"
+            }
+            # Make request, capture new pagination and output result
+            $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
+            if ($Request.Result.Content) {
+                $Result = Write-Result $Request
+                if ($null -ne $Result) {
+                    if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
+                        & $Command -Ids $Result
                     } else {
-                        $Object.offset
+                        $Result
+                    }
+                } else {
+                    $ErrorMessage = ("[Invoke-Loop] Results limited by API " +
+                        "'$(($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname, $null)' " +
+                        "($i of $($Pagination.total)).")
+                    Write-Error $ErrorMessage
+                }
+                $Pagination = (ConvertFrom-Json (
+                    $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
+            }
+        }
+    }
+}
+function Write-Result {
+    [CmdletBinding()]
+    param (
+        [object] $Request
+    )
+    begin {
+        $Verbose = if ($Request.Result.Headers) {
+            # Capture response header for verbose output
+            ($Request.Result.Headers.GetEnumerator().foreach{
+                ,"$($_.Key)=$($_.Value)"
+            })
+        }
+        # 'meta' fields to exclude from output when no other results are found
+        [regex] $ExcludeMeta = '^(entity|pagination|powered_by|query_time|trace_id)$'
+    }
+    process {
+        if ($Request.Result.Content -match '^<') {
+            # Output HTML response as a string
+            $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
+        } elseif ($Request.Result.Content) {
+            # Convert Json response
+            $Json = ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
+            $Verbose += if ($Json.meta) {
+                # Capture 'meta' values for verbose output
+                ($Json.meta.PSObject.Properties).foreach{
+                    $Parent = 'meta'
+                    if ($_.Value -is [PSCustomObject]) {
+                        $Parent += ".$($_.Name)"
+                        ($_.Value.PSObject.Properties).foreach{
+                            ,"$($Parent).$($_.Name)=$($_.Value)"
+                        }
+                    } elseif ($_.Name -ne 'trace_id') {
+                        ,"$($Parent).$($_.Name)=$($_.Value)"
                     }
                 }
             }
         }
-        if (!$Param.Limit) {
-            $Endpoint = if ((Get-Command $Command).ParameterSets.Name -match 'combined' -and $Param.Detailed) {
-                # Use 'combined' if available and -Detailed was specified
-                'combined'
+        if ($Verbose) {
+            # Output response header and 'meta'
+            Write-Verbose "[Write-Result] $($Verbose -join ', ')"
+        }
+        if ($HTML) {
+            # Output HTML content
+            $HTML
+        } elseif ($Json) {
+            $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch '^(errors|meta)$' -and
+            $_.Value }).foreach{
+                # Gather field names from result, not including 'errors' and 'meta'
+                $_.Name
+            }
+            if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
+                if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
+                    # Output 'combined.resources'
+                    ($Json.($ResultFields[0]).resources).PSObject.Properties.Value
+                } else {
+                    # Output single field
+                    $Json.($ResultFields[0])
+                }
+            } elseif ($ResultFields) {
+                # Export all fields
+                $Json | Select-Object $ResultFields
             } else {
-                'queries'
-            }
-            # Check for 'limit' parameter and add maximum limit if not present
-            $Param['Limit'] = ((Get-Command $Command).ParameterSets.Where({
-                $_.Name -match $Endpoint }).Parameters.Where({ $_.Name -eq 'Limit' }).Attributes.MaxRange |
-                Group-Object) | Select-Object -ExpandProperty Name -First 1
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] Added maximum 'Limit'"
-        }
-    }
-    process {
-        # Perform initial request
-        $Loop = @{
-            Request = & $Command @Param
-            Pagination = $Meta.pagination
-        }
-        if ($Loop.Request -and $Detailed) {
-            # Perform secondary request for identifier detail
-            & $Command -Ids $Loop.Request
-        } else {
-            $Loop.Request
-        }
-        if ($Loop.Request -and (($Loop.Request.count -lt $Loop.Pagination.total) -or $Loop.Pagination.next_page)) {
-            for ($i = $Loop.Request.count; ($Loop.Pagination.next_page -or ($i -lt $Loop.Pagination.total));
-            $i += $Loop.Request.count) {
-                # Repeat requests if additional results are defined in 'meta'
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] retrieved $i results"
-                Get-Paging -Object $Loop.Pagination -Param $Param -Count $i
-                $Loop = @{
-                    Request = & $Command @Param
-                    Pagination = $Meta.pagination
-                }
-                if ($Loop.Request -and $Detailed) {
-                    & $Command -Ids $Loop.Request
-                } else {
-                    $Loop.Request
-                }
-            }
-        }
-    }
-}
-function Invoke-Request {
-    <#
-    .SYNOPSIS
-        Determines request type and submits to Invoke-Loop or Invoke-Endpoint
-    .PARAMETER COMMAND
-        PSFalcon command calling Invoke-Request [required for -All and -Detailed]
-    .PARAMETER QUERY
-        The Falcon endpoint that for 'queries' operations
-    .PARAMETER ENTITY
-        The Falcon endpoint that for 'entities' operations
-    .PARAMETER DYNAMIC
-        A runtime parameter dictionary to search for user input values
-    .PARAMETER DETAILED
-        Toggle the use of 'Detailed' with a command
-    .PARAMETER TOTAL
-        Toggle the use of 'Total' with a command
-    .PARAMETER MODIFIER
-        The name of a switch parameter used to modify a command when using Invoke-Loop
-    .PARAMETER ALL
-        Toggle the use of Invoke-Loop to repeat command requests
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter()]
-        [string] $Command,
-
-        [Parameter(Mandatory = $true)]
-        [string] $Query,
-
-        [Parameter()]
-        [string] $Entity,
-
-        [Parameter(Mandatory = $true)]
-        [System.Collections.ArrayList] $Dynamic,
-
-        [Parameter()]
-        [bool] $Detailed,
-
-        [Parameter()]
-        [bool] $Total,
-
-        [Parameter()]
-        [string] $Modifier,
-
-        [Parameter()]
-        [switch] $All
-    )
-    begin {
-        # Set base endpoint based on dynamic input
-        $Endpoint = if (($Dynamic.Values).Where({ $_.IsSet -eq $true }).Attributes.ParameterSetName -eq $Entity) {
-            $Entity
-        } else {
-            $Query
-        }
-    }
-    process {
-        if ($All -and !$Total) {
-            # Construct parameters and pass to Invoke-Loop
-            $LoopParam = @{
-                Command = $Command
-                Param = Get-LoopParam -Dynamic $Dynamic
-            }
-            if ($Endpoint -match '/combined/.*:get$') {
-                $LoopParam.Param['Detailed'] = $true
-            }
-            if ($Detailed) {
-                $LoopParam['Detailed'] = $true
-            }
-            if ($Modifier) {
-                $LoopParam.Param[$Modifier] = $true
-            }
-            Invoke-Loop @LoopParam
-        } else {
-            foreach ($Param in (Get-Param -Endpoint $Endpoint -Dynamic $Dynamic)) {
-                # Format Json body and make request
-                Format-Body -Param $Param
-                $Request = Invoke-Endpoint @Param
-                if ($Request -and $Detailed -and !$Total) {
-                    # Make secondary request for detail about identifiers
-                    & $Command -Ids $Request
-                } elseif ($Request -and $Total) {
-                    # Output total result count
-                    $Meta.pagination.total
-                } else {
-                    $Request
-                }
-            }
-        }
-    }
-}
-function Read-Meta {
-    <#
-    .SYNOPSIS
-        Outputs verbose 'meta' information and creates $Script:Meta for loop processing
-    .PARAMETER OBJECT
-        Object from a Falcon API request
-    .PARAMETER ENDPOINT
-        Falcon endpoint
-    .PARAMETER TYPENAME
-        Optional 'meta' object typename, sourced from API response code/definition
-    #>
-    [CmdletBinding()]
-    [OutputType()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [object] $Object,
-
-        [Parameter(Mandatory = $true)]
-        [string] $Endpoint,
-
-        [Parameter()]
-        [string] $TypeName
-    )
-    begin {
-        function Read-CountValue ($Property, $Prefix) {
-            # Output 'meta' values
-            if ($_.Value -is [PSCustomObject]) {
-                $ItemPrefix = $_.Name
-                ($_.Value.PSObject.Properties).foreach{
-                    Read-CountValue -Property $_ -Prefix $ItemPrefix
-                }
-            } elseif ($_.Name -match '(after|offset|total)') {
-                $Value = if (($_.Value -is [string]) -and ($_.Value.Length -gt 7)) {
-                    "$($_.Value.Substring(0,6))..."
-                } else {
-                    $_.Value
-                }
-                $Name = if ($Prefix) {
-                    "$($Prefix)_$($_.Name)"
-                } else {
+                # Output relevant 'meta' values
+                $MetaFields = ($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch $ExcludeMeta }).foreach{
                     $_.Name
                 }
-                if ($Name -and $Value) {
-                    "$($Name): $($Value)"
+                if ($MetaFields) {
+                    $Json.meta | Select-Object $MetaFields
+                }
+            }
+            ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                ($_.Value).foreach{
+                    # Output errors
+                    $PSCmdlet.WriteError(
+                        [System.Management.Automation.ErrorRecord]::New(
+                            [Exception]::New("$($_.code): $($_.message)"),
+                            $Json.meta.trace_id,
+                            [System.Management.Automation.ErrorCategory]::NotSpecified,
+                            $Request
+                        )
+                    )
                 }
             }
         }
-    }
-    process {
-        Write-Debug "[$($MyInvocation.MyCommand.Name)] $($StatusCode): $TypeName"
-        if ($Object.meta) {
-            # Create script 'meta' variable for internal reference
-            $Script:Meta = $Object.meta
-            if ($TypeName) {
-                # Set object typename to 'schema' from response
-                $Meta.PSObject.TypeNames.Insert(0,$TypeName)
-            }
-        }
-        if ($Meta) {
-            if ($Meta.trace_id) {
-                # Output trace_id
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] trace_id: $($Meta.trace_id)"
-            }
-            $CountInfo = (($Meta.PSObject.Properties).foreach{
-                # Output pagination
-                Read-CountValue $_
-            }) -join ', '
-            if ($CountInfo) {
-                Write-Verbose "[$($MyInvocation.MyCommand.Name)] $CountInfo"
-            }
-        }
+        # Check for rate limiting
+        Wait-RetryAfter $Request
     }
 }
-function Split-Param {
-    <#
-    .SYNOPSIS
-        Splits 'splat' hashtables into smaller groups to avoid API limitations
-    .PARAMETER PARAM
-        Parameter hashtable
-    .PARAMETER MAX
-        A manually-defined maximum number of identifiers per request
-    #>
+function Update-FieldName {
     [CmdletBinding()]
-    [OutputType([hashtable])]
     param(
-        [Parameter(Mandatory = $true)]
-        [hashtable] $Param,
-
-        [Parameter()]
-        [int] $Max
+        [object] $Fields,
+        [object] $Inputs
     )
-    begin {
-        if (-not($Max)) {
-            # Gather endpoint information
-            $Endpoint = $Falcon.GetEndpoint($Param.Endpoint)
-            $Max = if ($Output.Query -match 'ids=') {
-                # Calculate URL length based on hostname, endpoint path and input
-                $PathLength = ("$($Falcon.Hostname)$($Endpoint.Path)").Length
-                $LongestId = (($Output.Query).Where({ $_ -match 'ids='}) |
-                    Measure-Object -Maximum -Property Length).Maximum + 1
-                $IdCount = [Math]::Floor([decimal]((65535 - $PathLength)/$LongestId))
-                if ($IdCount -gt 500) {
-                    # Set maximum for requests to 500
-                    500
-                } else {
-                    # Use maximum below 500
-                    $IdCount
-                }
-            } elseif ($Endpoint.parameters -and ($Endpoint.Parameters.GetEnumerator().Where({
-            $_.Key -eq 'ids' }).Value.max -gt 0)) {
-                # Use maximum defined by endpoint
-                $Endpoint.parameters.GetEnumerator().Where({ $_.Key -eq 'ids' }).Value.max
-            } else {
-                $null
-            }
-        }
-    }
     process {
-        if ($Max -and $Param.Query.count -gt $Max) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max query values per request"
-            for ($i = 0; $i -lt $Param.Query.count; $i += $Max) {
-                # Break query inputs into groups that are lower than maximum
-                $Group = @{
-                    Query = $Param.Query[$i..($i + ($Max - 1))]
+        if ($Fields.Keys -and $Inputs.Keys) {
+            # Update user input field names for API submission
+            ($Fields.Keys).foreach{
+                if ($Inputs.$_) {
+                    $Inputs.Add($Fields.$_, $Inputs.$_)
+                    [void] $Inputs.Remove($_)
                 }
-                ($Param.Keys).foreach{
-                    if ($_ -ne 'Query') {
-                        $Group[$_] = $Param.$_
-                    }
-                }
-                $Group
             }
-        } elseif ($Max -and $Param.Body.ids.count -gt $Max) {
-            Write-Debug "[$($MyInvocation.MyCommand.Name)] $Max body values per request"
-            for ($i = 0; $i -lt $Param.Body.ids.count; $i += $Max) {
-                # Break body inputs into groups that are lower than maximum
-                $Group = @{
-                    Body = @{
-                        ids = $Param.Body.ids[$i..($i + ($Max - 1))]
-                    }
-                }
-                ($Param.Keys).foreach{
-                    if ($_ -ne 'Body') {
-                        $Group[$_] = $Param.$_
-                    } else {
-                        (($Param.$_).Keys).foreach{
-                            if ($_ -ne 'ids') {
-                                $Group.Body[$_] = $Param.Body.$_
-                            }
-                        }
-                    }
-                }
-                $Group
-            }
-        } else {
-            # If maximum is not exceeded, output as-is
-            $Param
         }
+        $Inputs
     }
 }
 function Wait-RetryAfter {
-    <#
-    .SYNOPSIS
-        Checks a Falcon API response for rate limiting and waits
-    .PARAMETER HEADERS
-        Response headers from Falcon endpoint
-    #>
     [CmdletBinding()]
-    [OutputType()]
     param(
-        [Parameter(Mandatory = $true)]
-        [object] $Headers
+        [object] $Request
     )
     process {
-        if ($Headers.Key -contains 'X-Ratelimit-RetryAfter') {
-            # Determine wait time from response header and sleep
-            $RetryAfter = (($Headers.GetEnumerator()).Where({ $_.Key -eq 'X-Ratelimit-RetryAfter' })).Value
-            $Wait = ($RetryAfter - ([int] (Get-Date -UFormat %s) + 1))
-            Write-Verbose "[$($MyInvocation.MyCommand.Name)] rate limited for $Wait seconds"
+        if ($Request.Result.StatusCode -and $Request.Result.StatusCode.GetHashCode() -eq 429 -and
+        $Request.Result.RequestMessage.RequestUri.AbsolutePath -ne '/oauth2/token') {
+            # Convert 'X-Ratelimit-Retryafter' value to seconds and wait
+            $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(($Request.Result.Headers.GetEnumerator().Where({
+                $_.Key -eq 'X-Ratelimit-Retryafter' }).Value)).Second
+            Write-Verbose "[Wait-RetryAfter] Rate limited for $Wait seconds..."
             Start-Sleep -Seconds $Wait
         }
     }

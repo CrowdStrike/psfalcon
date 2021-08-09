@@ -1,110 +1,185 @@
-function Edit-IOC {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:patch')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/iocs/entities/indicators/v1:patch')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+function Get-FalconIocHost {
+<#
+.Synopsis
+List Host identifiers that have observed a custom indicator
+.Parameter Type
+Custom indicator type
+.Parameter Value
+Custom indicator value
+.Parameter Limit
+Maximum number of results per request
+.Parameter Offset
+Position to begin retrieving results
+.Parameter All
+Repeat requests until all available results are retrieved
+.Role
+iocs:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/indicators/queries/devices/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Mandatory = $true, Position = 1)]
+        [ValidateSet('domain', 'ipv4', 'ipv6', 'md5', 'sha256')]
+        [string] $Type,
+
+        [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Mandatory = $true, Position = 2)]
+        [string] $Value,
+
+        [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Position = 3)]
+        [string] $Offset,
+
+        [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Position = 4)]
+        [ValidateRange(1,100)]
+        [string] $Limit,
+
+        [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get')]
+        [switch] $All
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Format   = @{
+                Query = @('type', 'offset', 'limit', 'value')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
-        }
+        Invoke-Falcon @Param
     }
 }
-function Get-IOC {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding(DefaultParameterSetName = '/iocs/queries/indicators/v1:get')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/iocs/queries/indicators/v1:get', '/iocs/entities/indicators/v1:get') # '/iocs/combined/indicators/v1:get'
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+function Get-FalconIocProcess {
+<#
+.Synopsis
+Search for process identifiers involving a custom indicator on a specific Host
+.Parameter Ids
+Process identifier(s)
+.Parameter Type
+Custom indicator type
+.Parameter Value
+Custom indicator value
+.Parameter HostId
+Host identifier
+.Parameter Limit
+Maximum number of results per request
+.Parameter Offset
+Position to begin retrieving results
+.Parameter Detailed
+Retrieve detailed information
+.Parameter All
+Repeat requests until all available results are retrieved
+.Role
+iocs:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/indicators/queries/processes/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/processes/entities/processes/v1:get', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^pid:\w{32}:\d{1,}$')]
+        [array] $Ids,
+
+        [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Mandatory = $true, Position = 1)]
+        [ValidateSet('domain', 'ipv4', 'ipv6', 'md5', 'sha256')]
+        [string] $Type,
+
+        [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Mandatory = $true, Position = 2)]
+        [string] $Value,
+
+        [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Mandatory = $true, Position = 3)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $HostId,
+
+        [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Position = 4)]
+        [string] $Offset,
+
+        [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Position = 5)]
+        [ValidateRange(1,100)]
+        [string] $Limit,
+
+        [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get')]
+        [switch] $Detailed,
+
+        [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get')]
+        [switch] $All
+    )
+    begin {
+        $Fields = @{
+            HostId = 'device_id'
+        }
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Query = @('ids', 'device_id', 'offset', 'type', 'value', 'limit')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Query   = $Endpoints[0]
-                Entity  = $Endpoints[1]
-                Dynamic = $Dynamic
-            }
-            switch ($PSBoundParameters.Keys) {
-                'All'      { $Param['All'] = $true }
-                'Total'    { $Param['Total'] = $true }
-                'Detailed' { $Param['Detailed'] = $true }
-            }
-            Invoke-Request @Param
-        }
+        Invoke-Falcon @Param
     }
 }
-function New-IOC {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:post')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/iocs/entities/indicators/v1:post', 'script:CreateIOCArray')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+function Get-FalconIocTotal {
+<#
+.Synopsis
+Provide a count of total Host(s) that have observed a custom indicator
+.Parameter Type
+Custom indicator type
+.Parameter Value
+Custom indicator value
+.Role
+iocs:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/indicators/aggregates/devices-count/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidateSet('domain', 'ipv4', 'ipv6', 'md5', 'sha256')]
+        [string] $Type,
+
+        [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true,
+            Position = 2)]
+        [string] $Value
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Format   = @{
+                Query = @('type', 'value')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } elseif ($PSBoundParameters.Array) {
-            $Param = Get-Param -Endpoint $Endpoints[0] -Dynamic $Dynamic
-            $Body = @{
-                indicators = @( $PSBoundParameters.Array )
-            }
-            if ($Param.Body.Comment) {
-                $Body['comment'] = $Param.Body.Comment
-            }
-            $Param.Body = $Body
-            Format-Body -Param $Param
-            Invoke-Endpoint @Param
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
-        }
+        Invoke-Falcon @Param
     }
 }
-function Remove-IOC {
-    <#
-    .SYNOPSIS
-        Additional information is available with the -Help parameter
-    .LINK
-        https://github.com/crowdstrike/psfalcon
-    #>
-    [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:delete')]
-    [OutputType()]
-    param()
-    DynamicParam {
-        $Endpoints = @('/iocs/entities/indicators/v1:delete')
-        return (Get-Dictionary -Endpoints $Endpoints -OutVariable Dynamic)
+function Get-FalconProcess {
+<#
+.Synopsis
+Retrieve process tree information
+.Parameter Ids
+Process identifier(s)
+.Role
+iocs:read
+#>
+    [CmdletBinding(DefaultParameterSetName = '/processes/entities/processes/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/processes/entities/processes/v1:get', Mandatory = $true, Position = 1)]
+        [ValidatePattern('^pid:\w{32}:\d{1,}$')]
+        [array] $Ids
+    )
+    begin {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = $PSBoundParameters
+            Format   = @{
+                Query = @('ids')
+            }
+        }
     }
     process {
-        if ($PSBoundParameters.Help) {
-            Get-DynamicHelp -Command $MyInvocation.MyCommand.Name
-        } else {
-            Invoke-Request -Query $Endpoints[0] -Dynamic $Dynamic
-        }
+        Invoke-Falcon @Param
     }
 }
