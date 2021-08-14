@@ -26,12 +26,8 @@ category configured to 'BLOCK_ALL', including an exception for 'combined_id' '12
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                if ($Item.PSObject.Properties.Name -contains 'id') {
-                    $true
-                } else {
-                    throw "'id' is required for each policy."
-                }
+            foreach ($Object in $_) {
+                Confirm-Object -Object $Object -Required 'id'
             }
         })]
         [array] $Array,

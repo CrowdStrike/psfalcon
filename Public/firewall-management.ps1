@@ -59,38 +59,14 @@ each of the existing rules. Finally, request the change to the rule group to add
 
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Mandatory = $true, Position = 2)]
         [ValidateScript({
-            $DiffRequired = @('op','path','value')
-            $DiffAllowed = @('add', 'remove', 'replace')
             foreach ($Object in $_) {
-                ($DiffRequired).foreach{
-                    if ($Object.Keys -notcontains $_) {
-                        $Message = "'DiffOperations' tables must contain 'op', 'path' and 'value'."
-                        $Message += " [{$(($Object.GetEnumerator()).foreach{
-                            "$($_.Key):'$($_.Value)'"
-                        } -join ',')}]"
-                        throw $Message
-                    } else {
-                        $true
-                    }
-                    if ($DiffAllowed -notcontains $Object.op) {
-                        $Message = "The 'op' property in 'DiffOperations' accepts the values"
-                        $Message += " $(($DiffAllowed).foreach{ "'$_'" } -join ', ')"
-                        $Message += ". [{$(($Object.GetEnumerator()).foreach{
-                            "$($_.Key):'$($_.Value)'"
-                        } -join ',')}]"
-                        throw $Message
-                    }
+                $Param = @{
+                    Object   = $_
+                    Required = @('op','path','value')
                 }
-                ($Object.Keys).foreach{
-                    if ($DiffRequired -notcontains $_) {
-                        $Message = "'DiffOperations' contains unexpected field '$_'."
-                        $Message += " [{$(($Object.GetEnumerator()).foreach{
-                            "$($_.Key):'$($_.Value)'"
-                        } -join ',')}]"
-                        throw $Message
-                    } else {
-                        $true
-                    }
+                Confirm-Object @Param
+                if ($_.op -notmatch '^(add|remove|replace)$') {
+                    throw "'$($_.op)' is not an allowed 'op'."
                 }
             }
         })]
@@ -181,12 +157,8 @@ Change the name of Firewall policy <id> to 'Name Changed'.
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                if ($Item.PSObject.Properties.Name -contains 'id') {
-                    $true
-                } else {
-                    throw "'id' is required for each policy."
-                }
+            foreach ($Object in $_) {
+                Confirm-Object -Object $Object -Required 'id'
             }
         })]
         [array] $Array,

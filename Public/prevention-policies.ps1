@@ -27,12 +27,8 @@ Modify Prevention policy <id> to enable 'EndUserNotifications' and 'NextGenAV', 
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                if ($Item.PSObject.Properties.Name -contains 'id') {
-                    $true
-                } else {
-                    throw "'id' is required for each policy."
-                }
+            foreach ($Object in $_) {
+                Confirm-Object -Object $Object -Required 'id'
             }
         })]
         [array] $Array,

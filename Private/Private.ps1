@@ -171,6 +171,65 @@ function Build-Content {
         }
     }
 }
+function Confirm-Object {
+    [CmdletBinding()]
+    [OutputType([boolean])]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [object] $Object,
+
+        [Parameter(Mandatory = $true, Position = 2)]
+        [array] $Required,
+
+        [Parameter(Position = 3)]
+        [array] $Allowed
+    )
+    begin {
+        # Create object string
+        $ObjectString = Get-ObjectString $Object
+    }
+    process {
+        if ($Object -is [hashtable]) {
+            ($Required).foreach{
+                # Verify object contains required fields
+                if ($Object.Keys -notcontains $_) {
+                    throw "Missing '$_'. $ObjectString"
+                } else {
+                    $true
+                }
+            }
+            if ($Allowed) {
+                ($Object.Keys).foreach{
+                    if ($Allowed -notcontains $_) {
+                        # Error if field is not in allowed list
+                        throw "Unexpected '$_'. $ObjectString"
+                    } else {
+                        $true
+                    }
+                }
+            }
+        } elseif ($Object -is [PSCustomObject]) {
+            ($Required).foreach{
+                # Verify object contains required fields
+                if ($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name -notcontains $_) {
+                    throw "Missing '$_'. $ObjectString"
+                } else {
+                    $true
+                }
+            }
+            if ($Allowed) {
+                ($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name).foreach{
+                    if ($Allowed -notcontains $_) {
+                        # Error if field is not in allowed list
+                        throw "Unexpected '$_'. $ObjectString"
+                    } else {
+                        $true
+                    }
+                }
+            }
+        }
+    }
+}
 function Confirm-String {
     [CmdletBinding()]
     [OutputType([string])]
@@ -217,8 +276,8 @@ function Convert-Rfc3339 {
     )
     process {
         # Return Rfc3339 timestamp for $Hours from Get-Date
-        $Utc = "$([Xml.XmlConvert]::ToString((Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc))"
-        $Utc -replace '\.\d+Z$','Z'
+        "$([Xml.XmlConvert]::ToString(
+            (Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc) -replace '\.\d+Z$','Z')"
     }
 }
 function Get-ParamSet {
@@ -308,6 +367,25 @@ function Get-ParamSet {
                 }
             }
             $Switches
+        }
+    }
+}
+function Get-ObjectString {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [object] $Object
+    )
+    process {
+        # Output string representation of [hashtable] or [PSCustomObject]
+        if ($Object -is [hashtable]) {
+            "@{$((($Object.GetEnumerator()).foreach{ "$($_.Key)='$($_.Value)'" }) -join ';')}"
+        } elseif ($Object -is [PSCustomObject]) {
+            "@{$((($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' })).foreach{
+                "$($_.Name)='$($_.Value)'" }) -join ';')}"
+        } else {
+            throw "[Get-ObjectString: Unexpected object type]"
         }
     }
 }
