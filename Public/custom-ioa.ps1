@@ -251,7 +251,7 @@ Retrieve detailed results for Custom IOA rule groups <id> and <id>.
     }
     process {
         Invoke-Falcon @Param | ForEach-Object {
-            if ($null -eq $_.version) {
+            if ($_.version -and $null -eq $_.version) {
                 $_.version = 0
             }
             $_

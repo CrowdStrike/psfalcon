@@ -881,15 +881,12 @@ Return detailed information about Firewall rules <id> and <id>.
         }
     }
     process {
-        # req 
-        # req where version
         Invoke-Falcon @Param | ForEach-Object {
-            if ($null -eq $_.version) {
+            if ($_.version -and $null -eq $_.version) {
                 $_.version = 0
             }
             $_
         }
-        # req
     }
 }
 function Get-FalconFirewallSetting {
