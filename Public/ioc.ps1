@@ -38,7 +38,8 @@ ioc:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{64}$')]
         [string] $Id,
 
@@ -129,6 +130,8 @@ Property and direction to sort results
 Maximum number of results per request
 .Parameter Offset
 Position to begin retrieving results
+.Parameter After
+Pagination token to retrieve the next set of results
 .Parameter Detailed
 Retrieve detailed information
 .Parameter All
@@ -167,6 +170,10 @@ ioc:read
         [Parameter(ParameterSetName = '/iocs/combined/indicator/v1:get', Position = 4)]
         [int] $Offset,
 
+        [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get', Position = 5)]
+        [Parameter(ParameterSetName = '/iocs/combined/indicator/v1:get', Position = 5)]
+        [string] $After,
+
         [Parameter(ParameterSetName = '/iocs/combined/indicator/v1:get', Mandatory = $true)]
         [switch] $Detailed,
 
@@ -183,7 +190,7 @@ ioc:read
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Format   = @{
-                Query = @('ids', 'filter', 'offset', 'limit', 'sort')
+                Query = @('ids', 'filter', 'offset', 'limit', 'sort', 'after')
             }
         }
     }

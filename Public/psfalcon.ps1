@@ -287,11 +287,12 @@ Property to determine duplicate Host(s) in addition to 'hostname'
 .Role
 devices:write
 .Example
-PS> Find-FalconDuplicate
+PS>Find-FalconDuplicate
 
 Retrieve a list of all hosts and output potential duplicates using the 'hostname' field.
 .Example
-PS>$Duplicates = Find-FalconDuplicate -Filter 'mac_address'
+PS>$Hosts = Get-FalconHost -Detailed -All
+PS>$Duplicates = Find-FalconDuplicate -Hosts $Hosts -Filter 'mac_address'
 PS>Invoke-FalconHostAction -Name hide_host -Ids $Duplicates.device_id
 
 Find duplicate Hosts using 'hostname' and 'mac_address', then hide results within the Falcon console.
@@ -946,27 +947,23 @@ modify existing items (including 'default' policies).
                                 if ($Created.enabled -eq $false -and $Rule.enabled -eq $true) {
                                     # Enable IOA Rule
                                     $Created.enabled = $true
-                                    $Version = [string] (Get-FalconIoaGroup -Ids ($NewGroup.id)).version
-                                    if ($Version) {
-                                        $Param = @{
-                                            Command = 'Edit-FalconIoaRule'
-                                            Content = @{
-                                                RulegroupId      = $NewGroup.id
-                                                RuleUpdates      = $Created
-                                                RulegroupVersion = $Version
-                                                Comment          = if ($Rule.comment) {
-                                                    $Rule.comment
-                                                } else {
-                                                    "Enabled $FileDate by 'Import-FalconConfig'"
-                                                }
+                                    $Param = @{
+                                        Command = 'Edit-FalconIoaRule'
+                                        Content = @{
+                                            RulegroupId      = $NewGroup.id
+                                            RuleUpdates      = $Created
+                                            Comment          = if ($Rule.comment) {
+                                                $Rule.comment
+                                            } else {
+                                                "Enabled $FileDate by 'Import-FalconConfig'"
                                             }
                                         }
-                                        $Enabled = Invoke-ConfigItem @Param
-                                        if ($Enabled) {
-                                            # Output enable rule request result
-                                            $Enabled
-                                            Write-Host "Enabled IoaRule '$($Created.name)'."
-                                        }
+                                    }
+                                    $Enabled = Invoke-ConfigItem @Param
+                                    if ($Enabled) {
+                                        # Output enable rule request result
+                                        $Enabled
+                                        Write-Host "Enabled IoaRule '$($Created.name)'."
                                     }
                                 } else {
                                     # Output create rule request result
@@ -977,35 +974,31 @@ modify existing items (including 'default' policies).
                     }
                     if ($Import.enabled -eq $true) {
                         # Enable IOA Group
-                        $Version = [string] (Get-FalconIoaGroup -Ids ($NewGroup.id)).version
-                        if ($Version) {
-                            $Param = @{
-                                Command = 'Edit-FalconIoaGroup'
-                                Content = @{
-                                    Id               = $NewGroup.id
-                                    Name             = $NewGroup.name
-                                    Enabled          = $true
-                                    RulegroupVersion = $Version
-                                    Description      = if ($NewGroup.description) {
-                                        $NewGroup.description
-                                    } else {
-                                        "Imported $FileDate by 'Import-FalconConfig'"
-                                    }
-                                    Comment = if ($NewGroup.comment) {
-                                        $NewGroup.comment
-                                    } else {
-                                        "Enabled $FileDate by 'Import-FalconConfig'"
-                                    }
+                        $Param = @{
+                            Command = 'Edit-FalconIoaGroup'
+                            Content = @{
+                                Id               = $NewGroup.id
+                                Name             = $NewGroup.name
+                                Enabled          = $true
+                                Description      = if ($NewGroup.description) {
+                                    $NewGroup.description
+                                } else {
+                                    "Imported $FileDate by 'Import-FalconConfig'"
+                                }
+                                Comment = if ($NewGroup.comment) {
+                                    $NewGroup.comment
+                                } else {
+                                    "Enabled $FileDate by 'Import-FalconConfig'"
                                 }
                             }
-                            $Enabled = Invoke-ConfigItem @Param
-                            if ($Enabled) {
-                                # Output enabled result and warn that 'IoaGroup' was not assigned
-                                $Enabled
-                                Write-Host "Enabled IoaGroup '$($Enabled.name)'."
-                                Write-Warning ("IoaGroup '$($Enabled.name)' was not assigned to a " +
-                                    "Prevention policy.")
-                            }
+                        }
+                        $Enabled = Invoke-ConfigItem @Param
+                        if ($Enabled) {
+                            # Output enabled result and warn that 'IoaGroup' was not assigned
+                            $Enabled
+                            Write-Host "Enabled IoaGroup '$($Enabled.name)'."
+                            Write-Warning ("IoaGroup '$($Enabled.name)' was not assigned to a " +
+                                "Prevention policy.")
                         }
                     } else {
                         # Output group creation result
@@ -1462,7 +1455,7 @@ The file 'example.exe' will be 'put' and 'run' on <id> and <id>.
         }
     }
 }
-function Invoke-FalconRTR {
+function Invoke-FalconRtr {
 <#
 .Synopsis
 Start Real-time Response session(s), execute a command and output the result(s)
@@ -1481,10 +1474,9 @@ Host Group identifier
 .Role
 real-time-response-admin:write
 .Example
-PS>Invoke-FalconRTR runscript "-CloudFile='HelloWorld'" -HostIds <id>, <id>
+PS>Invoke-FalconRtr runscript "-CloudFile='HelloWorld'" -HostIds <id>, <id>
 
-The command 'runscript' will be used to execute the previously-created Response Script called 'HelloWorld'
-on <id> and <id>.
+Real-time Response will use 'runscript' to execute the 'CloudFile' script named 'HelloWorld' on <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = 'HostIds')]
     param(

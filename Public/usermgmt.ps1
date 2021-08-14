@@ -8,6 +8,10 @@ User identifier
 User role(s)
 .Role
 usermgmt:write
+.Example
+PS>Add-FalconRole -Ids falconhost_admin, intel_admin -UserId <id>
+
+Assign 'falconhost_admin' and 'intel_admin' to user <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/user-roles/entities/user-roles/v1:post')]
     param(
@@ -51,10 +55,15 @@ First name
 Last name
 .Role
 usermgmt:write
+.Example
+PS>Edit-FalconUser -Id <id> -FirstName Jane -LastName Doe
+
+Set the first and last name for user <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/users/entities/users/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/users/entities/users/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/users/entities/users/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id,
 
@@ -96,6 +105,14 @@ User role(s)
 Retrieve detailed information
 .Role
 usermgmt:read
+.Example
+PS>Get-FalconRole -Detailed
+
+List available user roles, their descriptions and display names.
+.Example
+PS>Get-FalconRole -UserId <id>
+
+List assigned user roles for user <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/user-roles/queries/user-role-ids-by-cid/v1:get')]
     param(
@@ -140,6 +157,15 @@ Username(s)
 Retrieve detailed information
 .Role
 usermgmt:read
+.Example
+PS>Get-FalconUser -Detailed
+
+List all users, their information and related identifiers.
+.Example
+PS>Get-FalconUser -Ids <id>, <id>
+
+List information and related identifiers for users <id> and <id>.
+
 #>
     [CmdletBinding(DefaultParameterSetName = '/users/queries/user-uuids-by-cid/v1:get')]
     param(
@@ -187,6 +213,10 @@ Last name
 If left blank, the user will be emailed a link to set their password (recommended)
 .Role
 usermgmt:write
+.Example
+PS>New-FalconUser -Username jane.doe@example.com
+
+Create user 'jane.doe@example.com' and email them a link to set their password.
 #>
     [CmdletBinding(DefaultParameterSetName = '/users/entities/users/v1:post')]
     param(
@@ -231,6 +261,10 @@ User identifier
 User role(s)
 .Role
 usermgmt:write
+.Example
+PS>Remove-FalconRole -Ids falconhost_admin, intel_admin -UserId <id>
+
+Remove 'falconhost_admin' and 'intel_admin' roles from user <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/user-roles/entities/user-roles/v1:delete')]
     param(
@@ -268,6 +302,10 @@ Delete a user
 User identifier
 .Role
 usermgmt:write
+.Example
+PS>Remove-FalconUser -Id <id>
+
+Delete user <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/users/entities/users/v1:delete')]
     param(

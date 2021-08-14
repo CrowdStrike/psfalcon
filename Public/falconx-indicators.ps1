@@ -22,6 +22,19 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconx-indicators:read
+.Example
+PS>Get-FalconIndicator -Filter "type:'domain'" -Detailed
+
+Return the first set of detailed results for 'domain' indicators.
+.Example
+PS>Get-FalconIndicator -Ids <id>, <id>
+
+List information about indicators <id> and <id>.
+.Example
+PS>Get-FalconIndicator -Filter "last_updated:>=1427846400" -Sort "last_updated|asc" -Detailed
+
+Return the first set of detailed results--sorted by 'last_updated' in ascending order--for indicators updated
+after 1427846400 (Unix time).
 #>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/indicators/v1:get')]
     param(
@@ -38,6 +51,9 @@ falconx-indicators:read
 
         [Parameter(ParameterSetName = '/intel/queries/indicators/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/intel/combined/indicators/v1:get', Position = 3)]
+        [ValidateSet('id|asc', 'id|desc', 'indicator|asc', 'indicator|desc', 'type|asc', 'type|desc',
+            'published_date|asc', 'published_date|desc', 'last_updated|asc', 'last_updated|desc',
+            '_marker|asc', '_marker|desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/intel/queries/indicators/v1:get', Position = 4)]

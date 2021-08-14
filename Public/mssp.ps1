@@ -11,7 +11,8 @@ mssp:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-group-members/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/mssp/entities/cid-group-members/v1:post', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/mssp/entities/cid-group-members/v1:post', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -99,7 +100,7 @@ mssp:write
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-group-members/v1:post')]
     param(
         [Parameter(ParameterSetName = '/mssp/entities/user-group-members/v1:post', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -143,7 +144,8 @@ mssp:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-groups/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/mssp/entities/cid-groups/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/mssp/entities/cid-groups/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -187,7 +189,8 @@ mssp:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-groups/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/mssp/entities/user-groups/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/mssp/entities/user-groups/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -314,7 +317,8 @@ mssp:read
         [ValidatePattern('^\w{32}$')]
         [array] $Ids,
 
-        [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -756,7 +760,7 @@ mssp:write
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-group-members/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/mssp/entities/cid-group-members/v1:delete', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -876,11 +880,13 @@ mssp:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-group-members/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/mssp/entities/user-group-members/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/mssp/entities/user-group-members/v1:delete', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
-        [Parameter(ParameterSetName = '/mssp/entities/user-group-members/v1:delete', Mandatory = $true)]
+        [Parameter(ParameterSetName = '/mssp/entities/user-group-members/v1:delete', Mandatory = $true,
+            Position = 2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $UserIds
     )

@@ -14,6 +14,14 @@ An array of Prevention policy settings
 Prevention policy description
 .Role
 prevention-policies:write
+.Example
+PS>$Settings = @(@{ id = 'EndUserNotifications'; value = @{ enabled = $true }}, @{ id = 'OnSensorMLSlider';
+value = @{ detection = 'AGGRESSIVE'; prevention = 'MODERATE' }}, @{ id = 'NextGenAV'; value =
+@{ enabled = $true }})
+PS>Edit-FalconPreventionPolicy -Id <id> -Settings $Settings
+
+Modify Prevention policy <id> to enable 'EndUserNotifications' and 'NextGenAV', and set 'OnSensorMLSlider' to
+'detection: AGGRESSIVE', 'prevention: MODERATE'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention/v1:patch')]
     param(
@@ -29,7 +37,8 @@ prevention-policies:write
         })]
         [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -84,6 +93,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 prevention-policies:read
+.Example
+PS>Get-FalconPreventionPolicy -Filter "name:!'platform_default'" -Detailed -All
+
+Return detailed information about all Prevention policies not named 'platform_default'.
+.Example
+PS>Get-FalconPreventionPolicy -Ids <id>, <id>
+
+Return detailed information about Prevention policies <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/prevention/v1:get')]
     param(
@@ -158,11 +175,17 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 prevention-policies:read
+.Example
+PS>Get-FalconPreventionPolicyMember -Id <id> -All
+
+Return all identifiers for hosts in the Prevention policy <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/prevention-members/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/queries/prevention-members/v1:get', Position = 1)]
-        [Parameter(ParameterSetName = '/policy/combined/prevention-members/v1:get', Position = 1)]
+        [Parameter(ParameterSetName = '/policy/queries/prevention-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/combined/prevention-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -219,6 +242,14 @@ Prevention policy identifier
 Host group identifier
 .Role
 prevention-policies:write
+.Example
+PS>Invoke-FalconPreventionPolicyAction -Name add-rule-group -Id <policy_id> -GroupId <group_id>
+
+Add the Custom IOA rule group <group_id> to Prevention policy <policy_id>.
+.Example
+PS>Invoke-FalconPreventionPolicyAction -Name enable -Id <policy_id>
+
+Enable Prevention policy <policy_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention-actions/v1:post')]
     param(
@@ -229,7 +260,7 @@ prevention-policies:write
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/prevention-actions/v1:post', Mandatory = $true,
-            Position = 2)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 2)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -244,13 +275,12 @@ prevention-policies:write
         $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $Action = @(
+            $PSBoundParameters.Add('action_parameters', @(
                 @{
                     name  = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
-            )
-            $PSBoundParameters.Add('action_parameters', $Action)
+            ))
             [void] $PSBoundParameters.Remove('GroupId')
         }
         $Param = @{
@@ -287,6 +317,14 @@ Sensor Update policy description
 Clone an existing Prevention policy
 .Role
 prevention-policies:write
+.Example
+PS>$Settings = @(@{ id = 'EndUserNotifications'; value = @{ enabled = $true }}, @{ id = 'OnSensorMLSlider';
+value = @{ detection = 'AGGRESSIVE'; prevention = 'MODERATE' }}, @{ id = 'NextGenAV'; value =
+@{ enabled = $true }})
+PS>New-FalconPreventionPolicy -PlatformName Windows -Name Example -Settings $Settings
+
+Create Prevention policy 'Example' for Windows hosts, with 'EndUserNotifications' and 'NextGenAV' enabled, and
+set 'OnSensorMLSlider' to 'detection: AGGRESSIVE', 'prevention: MODERATE'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention/v1:post')]
     param(
@@ -351,6 +389,10 @@ Delete Prevention policies
 Prevention policy identifier(s)
 .Role
 prevention-policies:write
+.Example
+PS>Remove-FalconPreventionPolicy -Ids <id>, <id>
+
+Delete Prevention policies <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention/v1:delete')]
     param(
@@ -376,12 +418,20 @@ function Set-FalconPreventionPrecedence {
 <#
 .Synopsis
 Set Prevention policy precedence
+.Description
+All Prevention policy identifiers must be supplied in order (with the exception of the 'platform_default' policy)
+to define policy precedence.
 .Parameter PlatformName
 Operating System platform
 .Parameter Ids
 All Prevention policy identifiers in desired precedence order
 .Role
 prevention-policies:write
+.Example
+PS>Set-FalconPreventionPrecedence -PlatformName Windows -Ids <id_1>, <id_2>, <id_3>
+
+Set the Prevention policy precedence for 'Windows' policies in order <id_1>, <id_2>, <id_3>. All policy
+identifiers must be supplied.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/prevention-precedence/v1:post')]
     param(

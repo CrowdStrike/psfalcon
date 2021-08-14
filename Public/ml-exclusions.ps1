@@ -12,10 +12,15 @@ Host group identifier(s) or 'all'
 Audit log comment
 .Role
 ml-exclusions:write
+.Example
+PS>Edit-FalconMlExclusion -Id <id> -Value '/foo*'
+
+Modify the existing Machine Learning exclusion <id> to set the 'value' to '/foo*'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -70,6 +75,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 ml-exclusions:read
+.Example
+PS>Get-FalconMlExclusion -Detailed
+
+Return the first set of detailed results about Machine Learning exclusions.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/ml-exclusions/v1:get')]
     param(
@@ -130,6 +139,10 @@ Host group identifier(s) or 'all'
 Audit log comment
 .Role
 ml-exclusions:write
+.Example
+PS>New-FalconMlExclusion -Value '/foo' -ExcludedFrom blocking, extraction -GroupIds all -Comment 'creating foo'
+
+Create a Machine Learning exclusion with the value '/foo' and assign it to all hosts in your CID.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:post')]
     param(
@@ -177,6 +190,10 @@ Machine Learning exclusion identifier(s)
 Audit log comment
 .Role
 ml-exclusions:write
+.Example
+PS>Remove-FalconMlExclusion -Ids <id>, <id>
+
+Delete Machine Learning exclusions <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:delete')]
     param(

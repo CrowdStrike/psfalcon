@@ -6,6 +6,10 @@ Get the total number of OverWatch events across all customers
 Falcon Query Language expression to limit results
 .Role
 overwatch-dashboard:read
+.Example
+PS>Get-FalconOverWatchEvent -Filter "detect_time:>'now-48h'"
+
+Retrieve the total number of Falcon OverWatch events across all customers in the last 48 hours.
 #>
     [CmdletBinding(DefaultParameterSetName = '/overwatch-dashboards/aggregates/ow-events-global-counts/v1:get')]
     param(
@@ -35,6 +39,10 @@ Get the total number of detections pushed across all customers
 Falcon Query Language expression to limit results
 .Role
 overwatch-dashboard:read
+.Example
+PS>Get-FalconOverWatchDetection -Filter "detect_time:>'now-48h'"
+
+Retrieve the total number of Falcon OverWatch detections across all customers in the last 48 hours.
 #>
     [CmdletBinding(DefaultParameterSetName = '/overwatch-dashboards/aggregates/detections-global-counts/v1:get')]
     param(
@@ -64,6 +72,10 @@ Get the total number of incidents pushed across all customers
 Falcon Query Language expression to limit results
 .Role
 overwatch-dashboard:read
+.Example
+PS>Get-FalconOverWatchIncident -Filter "detect_time:>'now-48h'"
+
+Retrieve the total number of Falcon OverWatch incidents across all customers in the last 48 hours.
 #>
     [CmdletBinding(DefaultParameterSetName = '/overwatch-dashboards/aggregates/incidents-global-counts/v1:get')]
     param(

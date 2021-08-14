@@ -14,6 +14,10 @@ User identifier for assignment
 Detection comment
 .Role
 detects:write
+.Example
+PS>Edit-FalconDetection -Ids <id>, <id> -Status 'in_progress' -AssignedToUuid <uuid>
+
+Assign detections <id> and <id> to user <uuid> and set the status to 'in_progress'.
 #>
     [CmdletBinding(DefaultParameterSetName =  '/detects/entities/detects/v2:patch')]
     param(
@@ -79,6 +83,15 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 detects:read
+.Example
+PS>Get-FalconDetection -Detailed
+
+Return the first set of detailed detection results.
+.Example
+PS>Get-FalconDetection -Filter "status:'new'+first_behavior:>'2020-01-01'" -Sort first_behavior.desc
+
+Retrieve the first set of identifiers for detections with 'status' 'new' and a 'first_behavior' occuring after
+2020-01-01, sorted in descending order of 'first_behavior'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/detects/queries/detects/v1:get')]
     param(

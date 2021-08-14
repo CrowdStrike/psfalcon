@@ -16,6 +16,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconcomplete-dashboard:read
+.Example
+PS>Get-FalconCompleteAllowlist
+
+Return the first set of identifiers for Falcon Complete Allowlist tickets.
+.Example
+PS>Get-FalconCompleteAllowlist -Total
+
+Return the total number of Falcon Complete Allowlist tickets.
 #>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get')]
     param(
@@ -30,7 +38,7 @@ falconcomplete-dashboard:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get')]
         [switch] $All,
@@ -70,6 +78,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconcomplete-dashboard:read
+.Example
+PS>Get-FalconCompleteBlocklist
+
+Return the first set of identifiers for Falcon Complete Blocklist tickets.
+.Example
+PS>Get-FalconCompleteBlocklist -Total
+
+Return the total number of Falcon Complete Blocklist tickets.
 #>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get')]
     param(
@@ -84,7 +100,7 @@ falconcomplete-dashboard:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get')]
         [switch] $All,
@@ -124,6 +140,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconcomplete-dashboard:read
+.Example
+PS>Get-FalconCompleteCollection
+
+Return the first set of identifiers for Falcon Complete device collections.
+.Example
+PS>Get-FalconCompleteCollection -Total
+
+Return the total number of Falcon Complete device collections.
 #>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
     param(
@@ -142,7 +166,7 @@ falconcomplete-dashboard:read
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
             Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
         [switch] $All,
@@ -182,6 +206,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconcomplete-dashboard:read
+.Example
+PS>Get-FalconCompleteDetection
+
+Return the first set of identifiers for Falcon Complete detections.
+.Example
+PS>Get-FalconCompleteDetection -Total
+
+Return the total number of Falcon Complete detections.
 #>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get')]
     param(
@@ -196,7 +228,7 @@ falconcomplete-dashboard:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get')]
         [switch] $All,
@@ -236,6 +268,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconcomplete-dashboard:read
+.Example
+PS>Get-FalconCompleteEscalation
+
+Return the first set of identifiers for Falcon Complete escalations.
+.Example
+PS>Get-FalconCompleteEscalation -Total
+
+Return the total number of Falcon Complete escalations.
 #>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get')]
     param(
@@ -250,7 +290,7 @@ falconcomplete-dashboard:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get')]
         [switch] $All,
@@ -290,6 +330,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconcomplete-dashboard:read
+.Example
+PS>Get-FalconCompleteIncident
+
+Return the first set of identifiers for Falcon Complete incidents.
+.Example
+PS>Get-FalconCompleteIncident -Total
+
+Return the total number of Falcon Complete incidents.
 #>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get')]
     param(
@@ -300,7 +348,7 @@ falconcomplete-dashboard:read
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get', Position = 3)]
         [ValidateRange(1,500)]
@@ -344,6 +392,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconcomplete-dashboard:read
+.Example
+PS>Get-FalconCompleteRemediation
+
+Return the first set of identifiers for Falcon Complete remediations.
+.Example
+PS>Get-FalconCompleteRemediation -Total
+
+Return the total number of Falcon Complete remediations.
 #>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get')]
     param(
@@ -358,7 +414,7 @@ falconcomplete-dashboard:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get')]
         [switch] $All,

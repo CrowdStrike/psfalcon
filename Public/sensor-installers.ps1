@@ -1,14 +1,18 @@
 function Get-FalconCcid {
 <#
 .Synopsis
-Retrieve your customer checksum identifier (CCID)
+Retrieve your Customer Checksum Identifier (CCID)
+.Description
+Returns your Customer Checksum Identifier, which is requested during the installation of the Falcon Sensor.
 .Role
 sensor-installers:read
+.Example
+PS>Get-FalconCcid
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/sensors/queries/installers/ccid/v1:get')]
     param()
     process {
-        Invoke-Falcon -Endpoint '/sensors/queries/installers/ccid/v1:get'
+        Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName
     }
 }
 function Get-FalconInstaller {
@@ -33,6 +37,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 sensor-installers:read
+.Example
+PS>Get-FalconInstaller -Filter "platform:'linux'" -Detailed -All
+
+Return detailed information about all available Falcon Sensor installers for Linux.
+.Example
+PS>Get-FalconInstaller -Ids <id>, <id>
+
+Retrieve detailed information about Falcon Sensor installers <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/sensors/queries/installers/v1:get')]
     param(
@@ -84,18 +96,27 @@ sensor-installers:read
 function Receive-FalconInstaller {
 <#
 .Synopsis
-Download a Sensor installer
+Download a Falcon Sensor installer
 .Parameter Id
 Sensor installer Sha256 hash value
 .Parameter Path
 Destination path
 .Role
 sensor-installers:read
+.Example
+PS>Receive-FalconInstaller -Id <sha256> -Path .\WindowsSensor.exe
+
+Download the 'WindowsSensor.exe' package matching <sha256> to your local directory.
+.Example
+PS>Get-FalconInstaller -Filter "os:'Amazon Linux'" -Sort release_date -Limit 1 -Detailed | ForEach-Object {
+    Receive-FalconInstaller -Id $_.sha256 -Path $_.name }
+
+Find and download the most recent Falcon Sensor installer package for 'Amazon Linux' to your local directory.
 #>
     [CmdletBinding(DefaultParameterSetName = '/sensors/entities/download-installer/v1:get')]
     param(
         [Parameter(ParameterSetName = '/sensors/entities/download-installer/v1:get', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{64}$')]
         [string] $Id,
 

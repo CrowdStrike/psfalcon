@@ -6,6 +6,10 @@ Search for Zero Trust Assessment results
 Host identifier(s)
 .Role
 zero-trust-assessment:read
+.Example
+PS>Get-FalconZta -Ids <id>, <id>
+
+Retrieve Zero Trust Assessment results for hosts <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/zero-trust-assessment/entities/assessments/v1:get')]
     param(

@@ -239,7 +239,7 @@
       'Get-FalconQueue',
       'Import-FalconConfig',
       'Invoke-FalconDeploy',
-      'Invoke-FalconRTR',
+      'Invoke-FalconRtr',
       'Show-FalconMap',
       'Show-FalconModule',
 
@@ -364,85 +364,56 @@
                 'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
             ReleaseNotes = @"
 General Changes
-* Changed [Falcon] class to [ApiClient] class. The new [ApiClient] class is generic and can work with other APIs,
-  which helps enable the use of [ApiClient] as a standalone script that can be directly called to interact with
-  different APIs if people would like to re-use the code.
 
-* The new [ApiClient] class includes a '.Path()' method which converts relative file paths into absolute file
-  paths in a cross-platform compatible way and the '.Invoke()' method which accepts a hashtable of parameters.
-  [ApiClient] will process the key/value pairs of 'Path', 'Method', 'Headers', 'Outfile', 'Formdata' and 'Body'.
-  It produces a [System.Net.Http.HttpResponseMessage] which can then be converted for use with other functions.
+* Changed class [Falcon] to [ApiClient]. [ApiClient] is generic and can work with other APIs, which helps enable
+  the use of [ApiClient] for other scripts or modules. It includes a '.Path()' method to convert relative to
+  absolute filepaths, and '.Invoke()' which accepts a hashtable of parameters ('Path', 'Method', 'Headers',
+  'Outfile', 'Formdata' and 'Body') and produces a [System.Net.Http.HttpResponseMessage].
 
-* [ApiClient] uses a single [System.Net.Http.HttpClient] instead of rebuilding the HttpClient during each request,
-  which follows Microsoft's recommendations and _greatly_ increases performance.
+* [ApiClient] now uses a single [System.Net.Http.HttpClient] and [System.Net.Http.HttpClientHandler] instead of
+  rebuilding during each request, which follows Microsoft's recommendations and _greatly_ increases performance.
 
-* Incorporated [System.Net.Http.HttpClientHandler] into [ApiClient] to enable future compatibility with Proxy
-  settings and support 'SslProtocols' enforcement.
+* PSFalcon no longer outputs to 'Write-Debug', meaning that the '-Debug' parameter will no longer provide
+  any additional information. Similar output is provided to 'Write-Verbose' instead. 'Write-Verbose' output has
+  been modified to include response header information that was not previously visible.
 
-* Reorganized how CrowdStrike Falcon API authorization information is kept within the [ApiClient] object during
-  script use.
+* Re-wrote and re-organized the module manifest (PSFalcon.psd1) and 'Private' functions (Private.ps1).
 
-* The module no-longer outputs to 'Write-Debug', meaning that the '-Debug' parameter will no longer provide
-  any additional information. Everything that was within the debug output shows up under '-Verbose'. This change
-  was made to prevent prompting that happens in PowerShell 5.1 while still showing the same level of output
-  when requested.
-
-* 'Write-Verbose' output has been slightly modified. Responses from the APIs include response header information
-  that was previously not visible.
-
-* Re-organized module manifest (PSFalcon.psd1) and reduced overall size.
-
-* 'Private' functions have been re-written to reduce complexity and size of the module.
-
-* Moved the Rfc3339 conversion function that converts 'last [int] days/hours' to 'Private.psd1' as
-  'Convert-Rfc3339'. Also removed decimal second values from the final output.
+* Removed decimal second values from output when converting from relative time ('last 1 days') to RFC-3339.
 
 * Added 'Confirm-String' to output 'type' based on RegEx matching. Used to validate values in commands like
   'Show-FalconMap'. This will probably be worked in to validate relevant values in other commands in the future.
 
-* Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1' to make it clear that the functions inside are
-  PSFalcon-specific.
+* The 'Invoke-Loop' function (which powers the '-All' parameter) now produces an error when a loop ends and there
+  are results remaining (API limit).
 
-* Functions that were previously in 'Public\scripts.ps1' have been moved into their respective public script
-  files ('Test-FalconToken', 'Get-FalconQuickScanQuota', etc.) where it made logical sense.
+* Renamed 'Public' scripts to be organized by their permission (rather than URL path) and included some commands
+  that were previously in 'Public\scripts.ps1'. Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1'.
 
-* 'Public' functions have been reorganized into files that are named for their required permissions (as defined
-  by Falcon API Swagger file).
-
-* All 'Public' functions (commands that users type) have been re-written to use static parameters. Dynamic
-  parameters were originally used in an effort to decrease the size of the module, but they required the creation
-  of a special '-Help' parameter to show help information. Switching back to static parameters allowed for the
-  removal of '-Help', eliminated inconsistencies in how parameter information is displayed and increased
-  performance.
-
-* The 'Falcon' prefix has been removed from the module manifest and added directly to the function names. This
-  allows users to automatically import the PSFalcon module by using one of the included commands which didn't
-  work with the module prefix.
+* All 'Public' functions (commands that users type) have been re-written to use static parameters, which removed
+  the custom '-Help' parameter and supports the use of 'Get-Help'.
 
 * Added '.Roles' in-line comment to functions which allows users to 'Get-Help -Role <api_role>' and find
   commands that are available based on required API permission. For instance, typing 'Get-Help -Role devices:read'
   will display the 'Get-FalconHost' command, while 'Get-Help -Role devices:write' lists 'Add-FalconHostTag',
   'Invoke-FalconHostAction' and 'Remove-FalconHostTag'. Wildcards (devices:*, *:write) are supported.
 
-* Slightly modified 'meta' output from commands when no other output is available. Previously, if the field
-  'writes' was present under 'meta', the command result would output the sub-field 'resources_affected'. Now the
-  command will output the entire 'writes' property, leading to a result of '@{ writes = @{ resources_affected =
-  [int] }}' rather than '@{ resources_affected = [int] }'. This will allow for the output of unexpected results,
-  though it may impact existing scripts.
-
-* The 'Invoke-Loop' function now has an error message meant to inform the user when a loop ends due to
-  hitting the maximum result limit from a particular API. Now when '-All' stops at 10,000 results but there
-  are additional results remaining, it will be more obvious why it's happening.
+* Modified 'meta' output from commands. Previously, if the field 'writes' was present under 'meta', the command
+  result would output the sub-field 'resources_affected'. Now the command will output 'writes', leading to a
+  result of '@{ writes = @{ resources_affected = [int] }}' rather than '@{ resources_affected = [int] }'. This
+  will allow for the output of unexpected results, but may impact existing scripts.
 
 * Updated the '-Array' parameter to validate objects within the array for required fields when submitting multiple
   policies/groups/rules/notifications to create/edit in one request.
 
+* Updated commands with an '-Id' parameter to accept 'Id' from the pipeline (property and value).
+
 New Commands
+
 * cspm-registration
   'Edit-FalconHorizonAwsAccount'
   'Get-FalconHorizonIoaEvent'
   'Get-FalconHorizonIoaUser'
-  'Get-FalconReconRulePreview'
 
 * d4c-registration
   'Edit-FalconDiscoverAzureAccount'
@@ -470,38 +441,24 @@ New Commands
   'Get-FalconReconRulePreview'
 
 Command Changes
-* Removed '-Help' parameter from all commands. 'Get-Help' can be used instead.
-
-* Three different '/indicators/' API commands were previously removed by mistake and have been re-added:
-  'Get-FalconIocHost'
-  'Get-FalconIocProcess'
-  'Get-FalconIocTotal'
 
 * Edit-FalconHorizonAzureAccount
-  Added parameters to utilize additional '/cloud-connect-cspm-azure/entities/default-subscription-id/v1' endpoint.
+  Added parameters to utilize '/cloud-connect-cspm-azure/entities/default-subscription-id/v1'.
 
 * Export-FalconConfig
-  Changed archive name to 'FalconConfig_<FileDate>.zip' rather than 'FalconConfig_<FileDateTime>.zip'. This should
-  make it easier to write scripts that do something with the 'FalconConfig' archive.
+  Changed archive name to 'FalconConfig_<FileDate>.zip' from 'FalconConfig_<FileDateTime>.zip'.
 
 * Export-FalconReport
-  Completely re-written to display results based on the type of object, rather than static 'properties' of a
-  result. This effectively means the command is no longer 'hard-coded' to display results a certain way, and
-  instead displays them dynamically depending on the type of object, allowing all properties to be exported to
-  CSV with 'prefix.property' style column naming. When an array is encountered that has multiple objects with
-  'id' or 'policy_id' fields, it is inserted into the prefix. See 'Get-Help Export-FalconReport' for more
-  explanation.
+  Re-written to display results based on the object, rather than static 'properties' of a result, meaning it is
+  no longer 'hard-coded' to display results a certain way. See 'Get-Help Export-FalconReport' for more explanation.
 
   Added '-WhatIf' support to show the resulting export rather than exporting to CSV.
 
 * Find-FalconDuplicate
-  Updated command to retrieve Host results when not provided. This allows the command to find potential duplicates
-  using the provided '-Hosts' value (so existing scripts will continue to function) or by simply running
-  'Find-FalconDuplicate' by itself to both retrieve, and analyze values for duplicates using 'hostname'.
+  Updated command to retrieve Host results automatically when '-Hosts' is not provided.
 
-  Added '-Filter' parameter to use additional property to determine whether a device is a duplicate. For example, 
-  'Find-FalconDuplicate -Filter mac_address' will output a list of duplicates that have identical 'hostname' and
-  'mac_address' values.
+  Added '-Filter' parameter to use additional property to determine whether a device is a duplicate. See 'Get-Help
+  Find-FalconDuplicate' for more information.
 
   Updated to exclude devices with empty values (both 'hostname' and any provided '-Filter').
 
@@ -511,12 +468,31 @@ Command Changes
 * Get-FalconFirewallRule
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
 
+* Edit-FalconFirewallGroup
+  Updated to retrieve required values from existing rule group when not provided. Removed '-Tracking' as it is now
+  added automatically.
+
+* Edit-FalconFirewallSetting
+  Renamed '-PolicyId' to '-Id'.
+
+  Updated to retrieve required required values from existing policy settings when not provided. Removed
+  '-Tracking' as it is now added automatically.
+
+  Removed '-IsDefaultPolicy' parameter as it doesn't seem to do anything.
+
+* Edit-FalconIoaGroup
+  Updated to retrieve required required values from existing policy settings when not provided. Removed
+  '-RulegroupVersion' as it is now added automatically.
+
+* Edit-FalconIoaRule
+  Updated to retrieve required required values from existing policy settings when not provided. Removed
+  '-RulegroupVersion' as it is now added automatically.
+
 * Import-FalconConfig
   Added warning when creating 'IoaGroup' to make it clear that Custom IOA Rule Groups are not assigned to
-  Prevention policies. This is due to a lack of a reference to assigned IOA Rule Groups in Prevention
-  policies--there's no way to tell what they're currently assigned to in order to assign them in the future.
+  Prevention policies (due to a limitation in data from the related APIs).
 
-  Added '-Force' parameter to assign imported items to matching Host Groups that are present within the target CID.
+  Added '-Force' parameter to assign items to matching Host Groups (by 'name') that are present within the CID.
 
   Added warning messages ('[missing_assignment]') when items are unable to be created due to missing Host Groups.
 
@@ -533,13 +509,18 @@ Command Changes
   Added '-GroupId' to run the command against a Host Group. Parameter positioning has been re-organized to
   compensate.
 
+* Edit-FalconIoaGroup
+  Updated to retrieve required values from existing rule group when not provided.
+
+* Edit-FalconIoaRule
+  Updated to retrieve required values from existing rule when not provided.
+
 * Invoke-FalconRTR
   Added '-GroupId' to run a Real-time Response command against a Host Group. Parameter positioning has been
   re-organized to compensate.
 
-  Removed all 'single host' Real-time Response code. Now 'Invoke-FalconRTR' uses batch sessions whether you've
-  submitted a single device or multiple. This should have minimal impact on the use of the command, but makes
-  much simpler to support and allow for the addition of other functionality.
+  Removed all 'single host' Real-time Response code. Now 'Invoke-FalconRTR' always uses batch sessions, which
+  should have minimal impact on the use of the command, but is easier to support.
 
 * Remove-FalconGetFile
   Renamed '-Ids' parameter to '-Id' to reflect single value requirement.
@@ -548,45 +529,36 @@ Command Changes
   Renamed '-SessionId' to '-Id'.
 
 * Request-FalconToken
-  Added '-Hostname' parameter and set it as the new default way to enter an API target. '-Cloud' is still present,
-  but will manually need to be specified in order to use the previous 'us-1', 'us-2', 'eu-1' and 'us-gov-1'
-  values. This was changed because the OAuth2 API Client refers to 'Hostname' and it made more sense to use
-  that as the default. This will also be more friendly for importing credential sets from password management
-  solutions as all three values can be directly copied from the OAuth2 API Client creation screen.
+  Added '-Hostname' parameter and set as default. '-Cloud' is still available, but needs to be specified with a
+  'us-1', 'us-2', 'eu-1' or 'us-gov-1' value.
 
-  Added support for HTTP 308 redirection when requesting an OAuth2 access token. If a user attempts to
-  authenticate using the wrong API hostname, the module will automatically update to the proper location and
-  use that location with future requests.
+  Added support for redirection when requesting an OAuth2 access token. PSFalcon will use 'X-Cs-Region' from
+  response when provided 'Hostname' does not match.
 
-  Added TLS 1.2 enforcement in 'Request-FalconToken' using [System.Net.Http.HttpClientHandler] that is applied
-  to all requests made with the PSFalcon module.
+  Added TLS 1.2 enforcement and custom 'crowdstrike-psfalcon/<version>' user-agent string.
 
-  Added custom 'crowdstrike-psfalcon/<version>' user-agent string in 'Request-FalconToken' using
-  [System.Net.Http.HttpClient] that is applied to all requests made with the PSFalcon module.
+  Added 'ClientId', 'ClientSecret', 'Hostname', and 'Cloud' as named properties that can be passed through the
+  pipeline.
+
+* Send-FalconSample
+  Added support for uploading archives.
 
 GitHub Issues
 * Issue #48: Updated 'Invoke-Loop' private function with a more explicit counting method to eliminate endless
-  loops caused when trying to count a single [PSCustomObject] in PowerShell 5.1.
+  loops in PowerShell 5.1.
 
-* Issue #51: Switched 'Edit-FalconScript' and 'Send-FalconScript' to use the 'content' field rather than 'file'
-  after numerous anecdotes of the 'file' parameter not working properly in different clouds.
+* Issue #51: Switched 'Edit-FalconScript' and 'Send-FalconScript' to use the 'content' field rather than 'file'.
 
-* Issue #53: Along with 'Request-FalconToken' supporting redirection, it now retries a token request when
-  presented with a HTTP 429 or 308 response. The 'Wait-RetryAfter' function was also re-written to re-calculate
-  the 'X-Cs-WaitRetryAfter' time. Both of these changes seem to have eliminated the chance of a negative wait time.
+* Issue #53: 'Wait-RetryAfter' function was re-written to re-calculate the 'X-Cs-WaitRetryAfter' time.
 
 * Issue #54: Updated 'Get-FalconHorizonPolicy' with additional '-Service' names.
 
-* Issue #59: Updated 'New-Falcon...Policy' commands to use 'clone_id' values in the appropriate places (in the
-  URL path for 'Firewall' and the 'body' for everything else).
+* Issue #59: Updated 'New-Falcon...Policy' commands to use 'clone_id' values in the appropriate places.
 
-* Issue #62: Added 'user-agent' string during creation of [ApiClient] object. The new 'user-agent' value is
-  used with every PSFalcon request.
+* Issue #62: Added 'user-agent' to 'Request-FalconToken'.
 
-* Issue #63: Modified the way the 'maximum URL length' is calculated when not provided by a PSFalcon command in
-  order to avoid unexpected 'URL too long' HTML response errors from differences between cloud environments. Now,
-  instead of using the maximum value of 65,535 characters, the script evaluates based on 500 32-character 'ids'
-  (18,500 characters with field naming and join characters).
+* Issue #63: Modified the way the 'maximum URL length' is calculated to avoid unexpected 'URL too long' HTML
+  response errors from differences between cloud environments.
 "@
         }
     }

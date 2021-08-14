@@ -24,6 +24,15 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconx-actors:read
+.Example
+PS>Get-FalconActor -Filter "target_countries:'united states'+target_countries:'canada'+target_industries:
+'government'" -Detailed
+
+Return the first set of detailed results for actors that have targeted government in the United States and Canada.
+.Example
+PS>Get-FalconActor -Ids <id>, <id>
+
+List information about actors <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/actors/v1:get')]
     param(
@@ -40,6 +49,10 @@ falconx-actors:read
 
         [Parameter(ParameterSetName = '/intel/queries/actors/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/intel/combined/actors/v1:get', Position = 3)]
+        [ValidateSet('name|asc', 'name|desc', 'target_countries|asc', 'target_countries|desc',
+            'target_industries|asc', 'target_industries|desc', 'type|asc', 'type|desc', 'created_date|asc',
+            'created_date|desc', 'last_activity_date|asc', 'last_activity_date|desc', 'last_modified_date|asc',
+            'last_modified_date|desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/intel/queries/actors/v1:get', Position = 4)]

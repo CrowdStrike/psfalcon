@@ -22,7 +22,21 @@ function Build-Content {
             $Body = @{}
             $Inputs.GetEnumerator().Where({ $Format.Body.Values -match $_.Key }).foreach{
                 $Field = ($_.Key).ToLower()
-                $Value = $_.Value
+                $Value = if ($_.Value -is [string] -and $_.Value -eq 'null') {
+                    # Convert [string] values of 'null' to null values
+                    $null
+                } elseif ($_.Value -is [array]) {
+                    ,($_.Value).foreach{
+                        if ($_ -is [string] -and $_ -eq 'null') {
+                            # Convert [string] values of 'null' to null values
+                            $null
+                        } else {
+                            $_
+                        }
+                    }
+                } else {
+                    $_.Value
+                }
                 if ($Field -eq 'body') {
                     # Add 'body' value as [System.Net.Http.ByteArrayContent]
                     $FullFilePath = $Script:Falcon.Api.Path($_.Value)
@@ -220,8 +234,10 @@ function Get-ParamSet {
     begin {
         # Get baseline switch and endpoint parameters
         $Switches = @{}
-        $Inputs.GetEnumerator().Where({ $_.Key -match '^(All|Detailed|Total)$' }).foreach{
-            $Switches.Add($_.Key, $_.Value)
+        if ($Inputs) {
+            $Inputs.GetEnumerator().Where({ $_.Key -match '^(All|Detailed|Total)$' }).foreach{
+                $Switches.Add($_.Key, $_.Value)
+            }
         }
         $Base = @{
             Path    = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
@@ -660,6 +676,11 @@ function Wait-RetryAfter {
                 $_.Key -eq 'X-Ratelimit-Retryafter' }).Value)).Second
             Write-Verbose "[Wait-RetryAfter] Rate limited for $Wait seconds..."
             Start-Sleep -Seconds $Wait
+        }
+    }
+    end {
+        if ($Request) {
+            $Request.Dispose()
         }
     }
 }

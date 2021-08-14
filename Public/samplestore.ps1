@@ -1,11 +1,19 @@
 function Get-FalconSample {
 <#
 .Synopsis
-List accessible samples
+List detailed information about accessible sample files
 .Parameter Ids
-Sampple Sha256 hash value(s)
+Sample Sha256 hash value(s)
 .Role
 samplestore:read
+.Example
+PS>Get-FalconSample -Detailed
+
+Retrieve the first set of identifiers for samples that are accessible using your OAuth2 API Client.
+.Example
+PS>Get-FalconSample -Ids <id>, <id>
+
+List information about samples <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/samples/queries/samples/GET/v1:post')]
     param(
@@ -44,10 +52,15 @@ Destination path
 Archive and password protect the sample with password 'infected'
 .Role
 samplestore:read
+.Example
+PS>Receive-FalconSample -Id <id> -Path sample.exe
+
+Download sample <id> as 'sample.exe'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:get')]
     param(
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{64}$')]
         [string] $Id,
 
@@ -94,6 +107,10 @@ Delete samples
 Sample Sha256 hash value
 .Role
 samplestore:write
+.Example
+PS>Remove-FalconSample -Ids <id>, <id>
+
+Delete samples <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:delete')]
     param(
@@ -122,6 +139,9 @@ function Send-FalconSample {
 <#
 .Synopsis
 Upload a sample file up to 256MB in size
+.Description
+A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon X Sandbox or
+Falcon QuickScan.
 .Parameter Path
 Path to local file
 .Parameter FileName
@@ -132,6 +152,14 @@ Prohibit sample from being displayed in MalQuery [default: $true]
 Sample comment
 .Role
 samplestore:write
+.Example
+PS>Send-FalconSample -Path virus.exe -Comment 'bad file'
+
+Upload 'virus.exe' with the comment 'bad file'.
+.Example
+PS>Send-FalconSample -Path samples.zip
+
+Upload 'samples.zip' containing multiple samples in a single archive.
 #>
     [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:post')]
     param(
@@ -155,17 +183,31 @@ samplestore:write
         [string] $Comment
     )
     begin {
+        if (!$PSBoundParameters.FileName) {
+            $PSBoundParameters.Add('FileName',([System.IO.Path]::GetFileName($PSBoundParameters.Path)))
+        }
         $Fields = @{
-            Filename       = 'file_name'
+            FileName       = if ($PSBoundParameters.Path -match '\.zip$') {
+                'name'
+            } else {
+                'file_name'
+            }
             IsConfidential = 'is_confidential'
             Path           = 'body'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
+            Endpoint = if ($PSBoundParameters.Path -match '\.zip$') {
+                '/archives/entities/archives/v1:post'
+            } else {
+                $PSCmdlet.ParameterSetName
+            }
+            Headers  = @{
+                ContentType = 'application/octet-stream'
+            }
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
-                Query = @('comment', 'file_name', 'is_confidential')
+                Query = @('comment', 'file_name', 'name', 'is_confidential')
                 Body  = @{
                     root = @('body')
                 }

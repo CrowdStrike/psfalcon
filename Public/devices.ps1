@@ -8,6 +8,10 @@ Host identifier(s)
 FalconGroupingTag value(s)
 .Role
 devices:write
+.Example
+PS>Add-FalconHostTag -Ids <id>, <id> -Tags 'FalconGroupingTags/Example', 'FalconGroupingTags/Test'
+
+Add 'FalconGroupingTags/Example' and 'FalconGroupingTags/Test' to hosts <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices/tags/v1:patch')]
     param(
@@ -63,6 +67,18 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 devices:read
+.Example
+PS>Get-FalconHost -Filter "platform_name:'Windows'" -Detailed -All
+
+Return detailed results for all 'Windows' hosts.
+.Example
+PS>Get-FalconHost -Filter "hostname:['EXAMPLE-PC']" -Detailed
+
+Return detailed results for the host named 'EXAMPLE-PC' (exact match).
+.Example
+PS>Get-FalconHost -Ids <id>, <id>
+
+Return detailed results for hosts <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/devices-scroll/v1:get')]
     param(
@@ -85,7 +101,6 @@ devices:read
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 4)]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 4)]
-        [ValidateScript({ $_ -notmatch '^\d{1,}$' })]
         [string] $Offset,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Mandatory = $true)]
@@ -127,6 +142,14 @@ Action to perform
 Host identifier(s)
 .Role
 devices:write
+.Example
+PS>Invoke-FalconHostAction -Name contain -Ids <id>, <id>
+
+Send a network containment request for hosts <id> and <id>.
+.Example
+PS>Invoke-FalconHostAction -Name hide_host -Ids <id>, <id>
+
+Hide the hosts <id> and <id> from the Falcon console. Hidden hosts can be found using 'Get-FalconHost -Hidden'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices-actions/v2:post')]
     param(
@@ -175,6 +198,10 @@ Host identifier(s)
 FalconGroupingTag value(s)
 .Role
 devices:write
+.Example
+PS>Remove-FalconHostTag -Ids <id>, <id> -Tags 'FalconGroupingTags/Example', 'FalconGroupingTags/Test'
+
+Remove 'FalconGroupingTags/Example' and 'FalconGroupingTags/Test' from hosts <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices/tags/v1:patch')]
     param(

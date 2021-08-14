@@ -18,10 +18,15 @@ Indicator of Attack exclusion description
 Audit log comment
 .Role
 self-service-ioa-exclusions:write
+.Example
+PS>Edit-FalconIoaExclusion -Id <id> -IfnRegex '.*\\Windows\\System32\\choice1\.exe'
+
+Modify the existing Indicator of Attack exclusion <id> to set 'ifn_regex' to '.*\\Windows\\System32\\choice1\.exe'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ioa-exclusions/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -87,6 +92,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 self-service-ioa-exclusions:read
+.Example
+PS>Get-FalconIoaExclusion -Detailed
+
+Return the first set of detailed results about Indicator of Attack exclusions.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/ioa-exclusions/v1:get')]
     param(
@@ -144,6 +153,10 @@ Indicator of Attack exclusion identifier(s)
 Audit log comment
 .Role
 self-service-ioa-exclusions:write
+.Example
+PS>Remove-FalconIoaExclusion -Ids <id>, <id>
+
+Delete Indicator of Attack exclusions <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ioa-exclusions/v1:delete')]
     param(

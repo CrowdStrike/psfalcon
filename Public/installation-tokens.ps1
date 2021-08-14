@@ -7,11 +7,20 @@ Installation token identifier(s)
 .Parameter Label
 Installation token label
 .Parameter ExpiresTimestamp
-Installation token expiration time (RFC-3339)
+Installation token expiration time (RFC-3339), or 'null'
 .Parameter Revoked
 Set revocation status of the installation token
 .Role
 installation-tokens:write
+.Example
+PS>Edit-FalconInstallToken -Ids <id>, <id> -Revoked $true
+
+Revoke the installation tokens <id> and <id>.
+.Example
+PS>Edit-FalconInstallToken -Ids <id> -Label 'Token no expiration' -ExpiresTimeStamp null
+
+Changes the label of installation token <id> to 'Token no expiration' and removes the existing expiration time,
+meaning the token will never expire.
 #>
     [CmdletBinding(DefaultParameterSetName = '/installation-tokens/entities/tokens/v1:patch')]
     param(
@@ -24,7 +33,7 @@ installation-tokens:write
         [string] $Label,
 
         [Parameter(ParameterSetName = '/installation-tokens/entities/tokens/v1:patch', Position = 3)]
-        [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z$')]
+        [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
         [string] $ExpiresTimestamp,
 
         [Parameter(ParameterSetName = '/installation-tokens/entities/tokens/v1:patch', Position = 4)]
@@ -72,6 +81,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 installation-tokens:read
+.Example
+PS>Get-FalconInstallToken -Detailed
+
+Displays installation tokens and related information.
+.Example
+PS>Get-FalconInstallToken -Ids <id>
+
+Displays information about the installation token <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/installation-tokens/queries/tokens/v1:get')]
     param(
@@ -138,6 +155,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 installation-tokens:read
+.Example
+PS>Get-FalconInstallTokenEvent -Detailed -All
+
+Show all available installation token audit events with detail.
 #>
     [CmdletBinding(DefaultParameterSetName = '/installation-tokens/queries/audit-events/v1:get')]
     param(
@@ -185,13 +206,16 @@ function Get-FalconInstallTokenSettings {
 <#
 .Synopsis
 List current installation token settings
+.Description
+Returns the maximum number of allowed installation tokens, and whether or not they are required for installation
+of the Falcon Sensor.
 .Role
 installation-tokens:read
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/installation-tokens/entities/customer-settings/v1:get')]
     param()
     process {
-        Invoke-Falcon -Endpoint '/installation-tokens/entities/customer-settings/v1:get'
+        Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName
     }
 }
 function New-FalconInstallToken {
@@ -201,9 +225,13 @@ Create an installation token
 .Parameter Label
 Installation token label
 .Parameter ExpiresTimestamp
-Installation token expiration time (RFC-3339)
+Installation token expiration time (RFC-3339), or 'null'
 .Role
 installation-tokens:write
+.Example
+PS>New-FalconInstallToken -Label 'My Token' -ExpiresTimestamp '2021-12-31T00:00:00Z'
+
+Creates the installation token 'My Token', which expires on 2021-12-31 at 00:00:00 UTC.
 #>
     [CmdletBinding(DefaultParameterSetName = '/installation-tokens/entities/tokens/v1:post')]
     param(
@@ -213,7 +241,7 @@ installation-tokens:write
 
         [Parameter(ParameterSetName = '/installation-tokens/entities/tokens/v1:post', Mandatory = $true,
             Position = 2)]
-        [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z$')]
+        [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
         [string] $ExpiresTimestamp
     )
     begin {
@@ -243,6 +271,10 @@ Delete installation token(s)
 Installation token identifier(s)
 .Role
 installation-tokens:write
+.Example
+PS>Remove-FalconInstallToken -Ids <id>, <id>
+
+Delete installation tokens <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/installation-tokens/entities/tokens/v1:delete')]
     param(

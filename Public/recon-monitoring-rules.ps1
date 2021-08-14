@@ -15,7 +15,8 @@ recon-monitoring-rules:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/actions/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id,
 
@@ -78,7 +79,8 @@ recon-monitoring-rules:write
         })]
         [array] $Array,
 
-        [Parameter(ParameterSetName = '/recon/entities/notifications/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/recon/entities/notifications/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{76}$')]
         [string] $Id,
 
@@ -158,7 +160,8 @@ recon-monitoring-rules:write
         })]
         [array] $Array,
 
-        [Parameter(ParameterSetName = '/recon/entities/rules/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/recon/entities/rules/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id,
 
@@ -251,7 +254,7 @@ recon-monitoring-rules:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/recon/queries/actions/v1:get', Position = 5)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/recon/queries/actions/v1:get')]
         [switch] $Detailed,
@@ -416,7 +419,7 @@ recon-monitoring-rules:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/recon/queries/rules/v1:get', Position = 5)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/recon/queries/rules/v1:get')]
         [switch] $Detailed,

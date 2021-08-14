@@ -32,6 +32,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconx-rules:read
+.Example
+PS>Get-FalconRule -Filter "type=yara-master&min_created_date=1509494400" -Limit 3
+
+Search for 3 'yara-master' rule sets created after 1509494400 (Unix time).
+.Example
+PS>Get-FalconRule -Ids <id>, <id>
+
+List detailed information about rulesets <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/rules/v1:get')]
     param(
@@ -113,10 +121,19 @@ Ruleset type, used to retrieve the latest ruleset
 Destination path
 .Role
 falconx-rules:read
+.Example
+PS>Receive-FalconRule -Type yara-master -Path yara-master.zip
+
+Download the latest 'yara-master' rule set as 'yara-master.zip'.
+.Example
+PS>Receive-FalconRule -Id <id> -Path rules.zip
+
+Download ruleset <id> as 'rules.zip'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/intel/entities/rules-files/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/intel/entities/rules-files/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/intel/entities/rules-files/v1:get', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [int] $Id,
 
         [Parameter(ParameterSetName = '/intel/entities/rules-latest-files/v1:get', Mandatory = $true,
@@ -128,7 +145,7 @@ falconx-rules:read
         [Parameter(ParameterSetName = '/intel/entities/rules-files/v1:get', Mandatory = $true, Position = 2)]
         [Parameter(ParameterSetName = '/intel/entities/rules-latest-files/v1:get', Mandatory = $true,
             Position = 2)]
-        [ValidatePattern('\.(gzip|zip)$')]
+        [ValidatePattern('\.(gz|gzip|zip)$')]
         [ValidateScript({
             if (Test-Path $_) {
                 throw "An item with the specified name $_ already exists."
@@ -139,7 +156,7 @@ falconx-rules:read
         [string] $Path
     )
     begin {
-        if ($PSBoundParameters.Path -match '\.gzip$') {
+        if ($PSBoundParameters.Path -match '\.(gz|gzip)$') {
             $PSBoundParameters.Add('format', 'gzip')
             $Accept = 'application/gzip'
         } else {

@@ -2,40 +2,55 @@ function Request-FalconToken {
 <#
 .Synopsis
 Request an OAuth2 access token
+.Description
+Requests an OAuth2 access token. If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and
+'Cloud'/'Hostname') and token are cached for re-use.
+
+If an active OAuth2 access token is due to expire in less than 15 seconds, a new token will automatically be
+requested using your cached credentials.
 .Parameter ClientId
 OAuth2 Client Identifier
 .Parameter ClientSecret
 OAuth2 Client Secret
 .Parameter Cloud
-CrowdStrike destination 'cloud' [default: 'us-1']
+CrowdStrike Cloud [default: 'us-1']
 .Parameter Hostname
-CrowdStrike API destination hostname
+CrowdStrike API Hostname
 .Parameter MemberCid
-Member CID, required when authenticating with a child within a parent/child CID environment
+Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control')
+.Example
+PS>Request-FalconToken -ClientId <string> -ClientSecret <string> -Cloud 'us-1'
+
+Authenticate with the 'us-1' cloud using the provided 'ClientId' and 'ClientSecret' values.
+.Example
+PS>Request-FalconToken -ClientId <string> -ClientSecret <string> -Hostname 'https://api.us-2.crowdstrike.com'
+    -MemberCid <string>
+
+Authenticate with 'MemberCid' in the 'us-2' cloud using the provided 'ClientId' and 'ClientSecret' values.
 #>
     [CmdletBinding(DefaultParameterSetName = 'Hostname')]
     param(
-        [Parameter(ParameterSetName = 'Cloud', Position = 1)]
-        [Parameter(ParameterSetName = 'Hostname', Position = 1)]
+        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $ClientId,
 
-        [Parameter(ParameterSetName = 'Cloud', Position = 2)]
-        [Parameter(ParameterSetName = 'Hostname', Position = 2)]
+        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 2)]
+        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 2)]
         [ValidatePattern('^\w{40}$')]
         [string] $ClientSecret,
 
-        [Parameter(ParameterSetName = 'Cloud', Position = 3)]
+        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 3)]
         [ValidateSet('eu-1', 'us-gov-1', 'us-1', 'us-2')]
         [string] $Cloud,
 
-        [Parameter(ParameterSetName = 'Hostname', Position = 3)]
+        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 3)]
         [ValidateSet('https://api.crowdstrike.com', 'https://api.us-2.crowdstrike.com',
             'https://api.laggar.gcw.crowdstrike.com', 'https://api.eu-1.crowdstrike.com')]
         [string] $Hostname,
 
-        [Parameter(ParameterSetName = 'Cloud', Position = 4)]
-        [Parameter(ParameterSetName = 'Hostname', Position = 4)]
+        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 4)]
+        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 4)]
         [ValidatePattern('^\w{32}$')]
         [string] $MemberCid
     )
@@ -158,7 +173,10 @@ Member CID, required when authenticating with a child within a parent/child CID 
 function Revoke-FalconToken {
 <#
 .Synopsis
-Revoke your active OAuth2 token and clear cached credentials
+Revoke your active OAuth2 access token
+.Description
+Revokes your active OAuth2 access token and clears cached credential information ('ClientId', 'ClientSecret',
+'MemberCid', 'Cloud'/'Hostname') from the module.
 #>
     [CmdletBinding(DefaultParameterSetName = '/oauth2/revoke:post')]
     param()
@@ -189,7 +207,14 @@ Revoke your active OAuth2 token and clear cached credentials
 function Test-FalconToken {
 <#
 .Synopsis
-Display cached authorization token information
+Display your OAuth2 access token status
+.Description
+Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname', 'ClientId' and
+'MemberCid' values.
+.Example
+PS>(Test-FalconToken).Token
+
+Return OAuth2 access token status ([boolean]).
 #>
     [CmdletBinding()]
     param()

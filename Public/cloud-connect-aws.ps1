@@ -182,15 +182,8 @@ cloud-connect-aws:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/combined/settings/v1:get')]
     param()
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-        }
-    }
     process {
-        Invoke-Falcon @Param
+        Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName
     }
 }
 function New-FalconDiscoverAwsAccount {

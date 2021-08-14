@@ -20,6 +20,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 quick-scan:read
+.Example
+PS>Get-FalconQuickScan -Filter "created_timestamp:>'Last 7 days'" -Detailed
+
+Retrieve detailed information about QuickScans performed within the last 7 days.
+.Example
+PS>Get-FalconQuickScan -Ids <id>, <id>
+
+Retrieve detailed information about QuickScans <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/scanner/queries/scans/v1:get')]
     param(
@@ -38,7 +46,7 @@ quick-scan:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get')]
         [switch] $Detailed,
@@ -69,8 +77,10 @@ function Get-FalconQuickScanQuota {
 Display your monthly Falcon QuickScan quota
 .Role
 quick-scan:read
+.Example
+PS>Get-FalconQuickScan
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/scanner/queries/scans/v1:get')]
     param()
     begin {
         $Param = @{
@@ -95,10 +105,17 @@ function New-FalconQuickScan {
 .Synopsis
 Submit a volume of files to Falcon QuickScan for a Machine-Learning judgement. Time required for analysis
 increases with the number of samples in a volume but usually it should take less than 1 minute.
+.Description
+'Sha256' values are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be uploaded
+before they can be used with Falcon QuickScan.
 .Parameter Samples
 Sha256 hash value(s)
 .Role
 quick-scan:write
+.Example
+PS>New-FalconQuickScan -Samples <id>, <id>
+
+Perform a Machine-Learning analysis on samples <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/scanner/entities/scans/v1:post')]
     param(

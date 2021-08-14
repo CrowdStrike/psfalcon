@@ -14,6 +14,13 @@ Hashtable of Device Control policy settings
 Device Control policy description
 .Role
 device-control-policies:write
+.Example
+PS>$Settings = @{ enforcement_mode = 'MONITOR_ENFORCE'; classes = @( @{ id = 'MASS_STORAGE'; action = 'BLOCK_ALL';
+exceptions = @(@{ combined_id = '1234_5678_000000000000'; action = 'BLOCK_WRITE_EXECUTE' })})}
+PS>Edit-FalconDeviceControlPolicy -Id <id> -Settings $Settings
+
+Modify Device Control policy <id> and set 'enforcement_mode' to 'MONITOR_ENFORCE', with the 'MASS_STORAGE'
+category configured to 'BLOCK_ALL', including an exception for 'combined_id' '1234_5678_000000000000'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control/v1:patch')]
     param(
@@ -29,7 +36,8 @@ device-control-policies:write
         })]
         [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -84,6 +92,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 device-control-policies:read
+.Example
+PS>Get-FalconDeviceControlPolicy -Filter "name:!'platform_default'" -Detailed -All
+
+Return detailed information about all Device Control policies not named 'platform_default'.
+.Example
+PS>Get-FalconDeviceControlPolicy -Ids <id>, <id>
+
+Return detailed information about Device Control policies <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/device-control/v1:get')]
     param(
@@ -158,11 +174,17 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 device-control-policies:read
+.Example
+PS>Get-FalconDeviceControlPolicyMember -Id <id> -All
+
+Return all identifiers for hosts in the Device Control policy <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/device-control-members/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/queries/device-control-members/v1:get', Position = 1)]
-        [Parameter(ParameterSetName = '/policy/combined/device-control-members/v1:get', Position = 1)]
+        [Parameter(ParameterSetName = '/policy/queries/device-control-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/combined/device-control-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -219,6 +241,14 @@ Device Control policy identifier
 Host group identifier
 .Role
 device-control-policies:write
+.Example
+PS>Invoke-FalconDeviceControlPolicyAction -Name add-host-group -Id <policy_id> -GroupId <group_id>
+
+Add the Host Group <group_id> to Device Control policy <policy_id>.
+.Example
+PS>Invoke-FalconDeviceControlPolicyAction -Name enable -Id <policy_id>
+
+Enable Device Control policy <policy_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control-actions/v1:post')]
     param(
@@ -228,7 +258,7 @@ device-control-policies:write
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control-actions/v1:post', Mandatory = $true,
-            Position = 2)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 2)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -243,13 +273,12 @@ device-control-policies:write
         $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $Action = @(
+            $PSBoundParameters.Add('action_parameters', @(
                 @{
                     name  = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
-            )
-            $PSBoundParameters.Add('action_parameters', $Action)
+            ))
             [void] $PSBoundParameters.Remove('GroupId')
         }
         $Param = @{
@@ -284,6 +313,14 @@ Hashtable of Device Control policy settings
 Clone an existing Device Control policy
 .Role
 device-control-policies:write
+.Example
+PS>$Settings = @{ enforcement_mode = 'MONITOR_ENFORCE'; classes = @( @{ id = 'MASS_STORAGE'; action = 'BLOCK_ALL';
+    exceptions = @(@{ combined_id = '1234_5678_000000000000'; action = 'BLOCK_WRITE_EXECUTE' })})}
+PS>New-FalconDeviceControlPolicy -PlatformName Windows -Name Example -Settings $Settings
+
+Create Device Control policy 'Example' for Windows hosts, with an 'enforcement_mode' of 'MONITOR_ENFORCE', and the
+'MASS_STORAGE' category configured to 'BLOCK_ALL', including an exception for 'combined_id'
+'1234_5678_000000000000'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control/v1:post')]
     param(
@@ -345,6 +382,10 @@ Remove Device Control policies
 Device Control policy identifier(s)
 .Role
 device-control-policies:write
+.Example
+PS>Remove-FalconDeviceControlPolicy -Ids <id>, <id>
+
+Delete Device Control policies <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control/v1:delete')]
     param(
@@ -371,12 +412,20 @@ function Set-FalconDeviceControlPrecedence {
 <#
 .Synopsis
 Set Device Control policy precedence
+.Description
+All Device Control policy identifiers must be supplied in order (with the exception of the 'platform_default'
+policy) to define policy precedence.
 .Parameter PlatformName
 Operating System platform
 .Parameter Ids
 All Device Control policy identifiers in desired precedence order
 .Role
 device-control-policies:write
+.Example
+PS>Set-FalconDeviceControlPrecedence -PlatformName Windows -Ids <id_1>, <id_2>, <id_3>
+
+Set the Device Control policy precedence for 'Windows' policies in order <id_1>, <id_2>, <id_3>. All policy
+identifiers must be supplied.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/device-control-precedence/v1:post')]
     param(

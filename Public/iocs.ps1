@@ -25,7 +25,7 @@ iocs:read
         [string] $Value,
 
         [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Position = 3)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Position = 4)]
         [ValidateRange(1,100)]
@@ -89,7 +89,7 @@ iocs:read
         [string] $HostId,
 
         [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Position = 5)]
         [ValidateRange(1,100)]

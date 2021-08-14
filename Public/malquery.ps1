@@ -6,6 +6,10 @@ Check the status and results of an asynchronous request, such as hunt or exact-s
 MalQuery request identifier(s)
 .Role
 malquery:read
+.Example
+PS>Get-FalconMalQuery -Ids <id>, <id>
+
+Return detailed status of MalQuery request <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/malquery/entities/requests/v1:get')]
     param(
@@ -33,8 +37,12 @@ function Get-FalconMalQueryQuota {
 List your Falcon MalQuery search and download quota
 .Role
 malquery:read
+.Example
+PS>Get-FalconMalQueryQuota
+
+Return MalQuery search and download quota information.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/malquery/aggregates/quotas/v1:get')]
     param()
     begin {
         $Param = @{
@@ -62,6 +70,10 @@ Retrieve Falcon MalQuery indexed file metadata by Sha256 hash
 Sha256 hash value(s)
 .Role
 malquery:read
+.Example
+PS>Get-FalconMalQuerySample -Ids <id>, <id>
+
+Retrieve detailed information about MalQuery samples <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/malquery/entities/metadata/v1:get')]
     param(
@@ -86,11 +98,17 @@ malquery:read
 function Group-FalconMalQuerySample {
 <#
 .Synopsis
-Schedule samples for download
+Schedule MalQuery samples for download
 .Parameter Samples
 Sha256 hash value(s)
 .Role
 malquery:write
+.Example
+PS>$Request = Group-FalconMalQuerySample -Samples <sha256>, <sha256>
+
+Request an archive of MalQuery samples <sha256> and <sha256>. 'Get-FalconMalQuery' can be used to check the
+status of the request contained in the variable '$Request', and 'Receive-FalconMalQuerySample' can be used to
+download the archive once the request is complete.
 #>
     [CmdletBinding(DefaultParameterSetName = '/malquery/entities/samples-multidownload/v1:post')]
     param(
@@ -145,6 +163,24 @@ Search MalQuery quickly but with more potential for false positives
 Retrieve detailed information
 .Role
 malquery:write
+.Example
+PS>Invoke-FalconMalQuery -FilterFiletypes pe32 -MaxSize 1200KB -FilterMeta sha256, label, family -YaraRule "
+    rule CrowdStrike_16142_01 : wiper { strings: $ = { 41 61 43 63 64 44 65 46 66 47 68 69 4B 4C 6C 4D 6D 6E 4E
+    6F 4F 70 50 72 52 73 53 54 74 55 75 56 76 77 57 78 79 5A 7A 33 32 2E 5C 45 62 67 6A 48 49 20 5F 59 51 42 3A
+    22 2F 40 } condition: all of them and filesize < 800KB }"
+
+Perform a MalQuery YARA Hunt for a hex value and return 'sha256', 'label' and 'family' for PE32 files under
+1,200KB.
+.Example
+PS>Invoke-FalconMalQuery -FilterMeta sha256, type, size -FilterFiletypes pe32, pe64 -MaxSize 1200KB -MinDate
+    2017/01/01 -Limit 20 -Type hex -Value 8948208b480833ca33f989502489482889782c8bd7
+
+Perform a MalQuery exact search for a hex value and return 'sha256', 'type' and 'size' for a maximum of 20 PE32
+and PE64 files under 1,200KB, created after 2017/01/01.
+.Example
+PS>Invoke-FalconMalQuery -Limit 3 -Type ascii -Value ".8@bVn7r&k" -Fuzzy
+
+Perform a MalQuery fuzzy search for a string value and return the first 3 results.
 #>
     [CmdletBinding(DefaultParameterSetName = '/malquery/queries/exact-search/v1:post')]
     param(
@@ -242,6 +278,15 @@ Sha256 hash value or MalQuery sample archive identifier
 Destination path
 .Role
 malquery:read
+.Example
+PS>Receive-FalconMalQuerySample -Id $Request.reqid -Path infected.zip
+
+Download the archive previously requested and saved to the variable '$Request' by 'Group-FalconMalQuerySample' as
+'infected.zip' in your local directory.
+.Example
+PS>Receive-FalconMalQuerySample -Id <sha256> -Path infected.exe
+
+Download MalQuery sample <sha256> as 'infected.exe' in your local directory.
 #>
     [CmdletBinding(DefaultParameterSetName = '/malquery/entities/download-files/v1:get')]
     param(
@@ -289,15 +334,21 @@ malquery:read
 function Search-FalconMalQueryHash {
 <#
 .Synopsis
-Perform a simple MalQuery YARA search for a Sha256 hash
+Perform a simple MalQuery YARA Hunt for a Sha256 hash
+.Description
+Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 30 seconds--for a result.
 .Parameter Sha256
 Sha256 hash value
 .Role
 malquery:write
+.Example
+PS>Search-FalconMalQueryHash -Sha256 <sha256>
+
+Perform a YARA Hunt in MalQuery for the SHA256 hash value <sha256>.
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = '/malquery/queries/hunt/v1:post')]
     param(
-        [Parameter(Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/malquery/queries/hunt/v1:post', Mandatory = $true, Position = 1)]
         [ValidatePattern('^\w{64}$')]
         [string] $Sha256
     )
@@ -318,12 +369,12 @@ malquery:write
                     Ids = $Request.reqid
                     OutVariable = 'Result'
                 }
-                if ((Get-FalconMalQuery @Param).status -EQ 'inprogress') {
+                if ((Get-FalconMalQuery @Param).status -eq 'inprogress') {
                     do {
                         Start-Sleep -Seconds $Sleep
                         $i += $Sleep
                     } until (
-                        ((Get-FalconMalQuery @Param).status -NE 'inprogress') -or ($i -ge $MaxSleep)
+                        ((Get-FalconMalQuery @Param).status -ne 'inprogress') -or ($i -ge $MaxSleep)
                     )
                 }
                 $Result

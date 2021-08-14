@@ -6,6 +6,10 @@ Retrieve remediation detail
 Remediation identifier(s)
 .Role
 spotlight-vulnerabilities:read
+.Example
+PS>Get-FalconRemediation -Ids <id>, <id>
+
+List detailed information about remediations <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/spotlight/entities/remediations/v2:get')]
     param(
@@ -48,10 +52,16 @@ Retrieve detailed information
 Repeat requests until all available results are retrieved
 .Parameter Total
 Display total result count instead of results
-.Example
-Get-FalconVulnerability -Filter "created_timestamp:>'2020-01-01T00:00:00Z'"
 .Role
 spotlight-vulnerabilities:read
+.Example
+PS>Get-FalconVulnerability -Filter "created_timestamp:>'last 7 days'" -Detailed -All
+
+Search for all vulnerabilities opened within the last 7 days and display detailed information.
+.Example
+PS>Get-FalconVulnerability -Ids <id>, <id>
+
+List detailed information about vulnerabilities <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/spotlight/queries/vulnerabilities/v1:get')]
     param(

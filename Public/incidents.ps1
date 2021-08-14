@@ -20,6 +20,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 incidents:read
+.Example
+PS>Get-FalconBehavior -Detailed
+
+Return the first set of detailed behavior results.
+.Example
+PS>Get-FalconBehavior -Ids <id>, <id>
+
+Return detailed information for behaviors <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/incidents/queries/behaviors/v1:get')]
     param(
@@ -40,7 +48,7 @@ incidents:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get')]
         [switch] $Detailed,
@@ -90,6 +98,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 incidents:read
+.Example
+PS>Get-FalconIncident -Detailed
+
+Return the first set of detailed incident results.
+.Example
+PS>Get-FalconIncident -Ids <id>, <id>
+
+Return detailed information for incidents <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/incidents/queries/incidents/v1:get')]
     param(
@@ -113,7 +129,7 @@ incidents:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get')]
         [switch] $Detailed,
@@ -159,6 +175,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 incidents:read
+.Example
+PS>Get-FalconScore -Detailed
+
+Return the first set of detailed CrowdScore results.
 #>
     [CmdletBinding(DefaultParameterSetName = '/incidents/combined/crowdscores/v1:get')]
     param(
@@ -174,7 +194,7 @@ incidents:read
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 4)]
-        [string] $Offset,
+        [int] $Offset,
 
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get')]
         [switch] $All,
@@ -212,6 +232,10 @@ Update status of related 'new' detections
 Replace existing status for related detections
 .Role
 incidents:write
+.Example
+PS>Invoke-FalconIncidentAction -Name update_status -Value in_progress -Ids <id>, <id>
+
+Update the status of incidents <id> and <id> to 'in_progress'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/incidents/entities/incident-actions/v1:post')]
     param(

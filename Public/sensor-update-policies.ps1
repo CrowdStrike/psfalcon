@@ -14,6 +14,10 @@ Hashtable of Sensor Update policy settings
 Sensor Update policy description
 .Role
 sensor-update-policies:write
+.Example
+PS>Edit-FalconSensorUpdatePolicy -Id <id> -Settings @{ uninstall_protection = 'DISABLED' }
+
+Modify Sensor Update policy <id> to disable 'uninstall_protection'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v2:patch')]
     param(
@@ -29,7 +33,8 @@ sensor-update-policies:write
         })]
         [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -70,6 +75,11 @@ Retrieve Falcon Sensor builds for assignment in Sensor Update Policies
 Operating System platform
 .Role
 sensor-update-policies:read
+.Example
+PS>Get-FalconBuild -Platform 'windows'
+
+Return the available Falcon Sensor build values for Windows, which can be used for setting 'build' values in a
+Sensor Update policy.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/combined/sensor-update-builds/v1:get')]
     param(
@@ -113,6 +123,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 sensor-update-policies:read
+.Example
+PS>Get-FalconSensorUpdatePolicy -Filter "name:!'platform_default'" -Detailed -All
+
+Return detailed information about all Sensor Update policies not named 'platform_default'.
+.Example
+PS>Get-FalconSensorUpdatePolicy -Ids <id>, <id>
+
+Return detailed information about Sensor Update policies <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/sensor-update/v1:get')]
     param(
@@ -187,11 +205,17 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 sensor-update-policies:read
+.Example
+PS>Get-FalconSensorUpdatePolicyMember -Id <id> -All
+
+Return all identifiers for hosts in the Sensor Update policy <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/sensor-update-members/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get', Position = 1)]
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get', Position = 1)]
+        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -246,6 +270,14 @@ Host identifier
 Audit log comment
 .Role
 sensor-update-policies:write
+.Example
+PS>Get-FalconUninstallToken -DeviceId <id>
+
+Return the uninstallation token for host <id>.
+.Example
+PS>Get-FalconUninstallToken -DeviceId MAINTENANCE
+
+Return the maintenance token that applies to any host within a given policy.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/combined/reveal-uninstall-token/v1:post')]
     param(
@@ -289,16 +321,24 @@ Sensor Update policy identifier
 Host group identifier
 .Role
 sensor-update-policies:write
+.Example
+PS>Invoke-FalconSensorUpdatePolicyAction -Name add-host-group -Id <policy_id> -GroupId <group_id>
+
+Add the Host Group <group_id> to Sensor Update policy <policy_id>.
+.Example
+PS>Invoke-FalconSensorUpdatePolicyAction -Name enable -Id <policy_id>
+
+Enable Sensor Update policy <policy_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update-actions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true,
-        Position = 1)]
+            Position = 1)]
         [ValidateSet('add-host-group', 'disable', 'enable', 'remove-host-group')]
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true,
-            Position = 2)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 2)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -313,13 +353,12 @@ sensor-update-policies:write
         $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $Action = @(
+            $PSBoundParameters.Add('action_parameters', @(
                 @{
                     name  = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
-            )
-            $PSBoundParameters.Add('action_parameters', $Action)
+            ))
             [void] $PSBoundParameters.Remove('GroupId')
         }
         $Param = @{
@@ -354,6 +393,12 @@ Hashtable of Sensor Update policy settings
 Sensor Update policy description
 .Role
 sensor-update-policies:write
+.Example
+PS>$Settings = @{ build = <id>; uninstall_protection = 'ENABLED' }
+PS>New-FalconSensorUpdatePolicy -PlatformName Windows -Name Example -Settings $Settings
+
+Create Sensor Update policy 'Example' for Windows hosts, with the build version <id> and 'uninstall_protection'
+enabled. 'Get-FalconBuild' can be used to find 'build' values.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v2:post')]
     param(
@@ -413,6 +458,10 @@ Delete Sensor Update policies
 Sensor Update policy identifier(s)
 .Role
 sensor-update-policies:write
+.Example
+PS>Remove-FalconSensorUpdatePolicy -Ids <id>, <id>
+
+Delete Sensor Update policies <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v1:delete')]
     param(
@@ -438,12 +487,20 @@ function Set-FalconSensorUpdatePrecedence {
 <#
 .Synopsis
 Set Sensor Update policy precedence
+.Description
+All Sensor Update policy identifiers must be supplied in order (with the exception of the 'platform_default'
+policy) to define policy precedence.
 .Parameter PlatformName
 Operating System platform
 .Parameter Ids
 All Sensor Update policy identifiers in desired precedence order
 .Role
 sensor-update-policies:write
+.Example
+PS>Set-FalconSensorUpdatePrecedence -PlatformName Windows -Ids <id_1>, <id_2>, <id_3>
+
+Set the Sensor Update policy precedence for 'Windows' policies in order <id_1>, <id_2>, <id_3>. All policy
+identifiers must be supplied.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update-precedence/v1:post')]
     param(

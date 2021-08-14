@@ -8,6 +8,10 @@ Format for streaming events [default: json]
 Connection label
 .Role
 streaming:read
+.Example
+PS>Get-FalconStream -AppId psfalcon
+
+Start an event stream named 'psfalcon'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/sensors/entities/datafeed/v2:get')]
     param(
@@ -42,6 +46,10 @@ Connection label
 Partition number
 .Role
 streaming:read
+.Example
+PS>Update-FalconStream -AppId psfalcon -Partition 0
+
+Refresh the active event stream 'psfalcon'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/sensors/entities/datafeed-actions/v1/{partition}:post')]
     param(

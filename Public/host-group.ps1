@@ -12,10 +12,19 @@ Host Group description
 FQL-based assignment rule, used with dynamic Host Groups
 .Role
 host-group:write
+.Example
+PS>Edit-FalconHostGroup -Id <id> -Name 'New Name'
+
+Change the name of Host Group <id> to 'New Name'.
+.Example
+PS>Edit-FalconHostGroup -Id <id> -AssignmentRule "platform_name:'Windows'"
+
+Change the assignment rule of Host Group <id> to "platform_name:'Windows'".
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:patch', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:patch', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -69,6 +78,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 host-group:read
+.Example
+PS>Get-FalconHostGroup -Detailed
+
+Return the first set of detailed Host Group results.
+.Example
+PS>Get-FalconHostGroup -Ids <id>, <id>
+
+Return detailed information about Host Groups <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/host-groups/v1:get')]
     param(
@@ -142,11 +159,17 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 host-group:read
+.Example
+PS>Get-FalconHostGroupMember -Id <id> -All
+
+Return all identifiers for hosts in Host Group <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/host-group-members/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get', Position = 1)]
-        [Parameter(ParameterSetName = '/devices/combined/host-group-members/v1:get', Position = 1)]
+        [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/devices/combined/host-group-members/v1:get',
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -195,6 +218,8 @@ function Invoke-FalconHostGroupAction {
 <#
 .Synopsis
 Perform actions on Host Groups
+.Description
+Adds or removes hosts from Host Groups in batches of 500.
 .Parameter Name
 The action to perform
 .Parameter Id
@@ -203,6 +228,10 @@ Host Group identifier
 Host identifier(s)
 .Role
 host-group:write
+.Example
+PS>Invoke-FalconHostGroupAction -Name add-hosts -Id <id> -HostIds <host_id>, <host_id>
+
+Add hosts <host_id> and <host_id> to Host Group <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-group-actions/v1:post')]
     param(
@@ -212,7 +241,7 @@ host-group:write
         [string] $Name,
 
         [Parameter(ParameterSetName = '/devices/entities/host-group-actions/v1:post', Mandatory = $true,
-            Position = 2)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 2)]
         [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
@@ -268,6 +297,14 @@ Host Group description
 Assignment rule for 'dynamic' Host Groups
 .Role
 host-group:write
+.Example
+PS>New-FalconHostGroup -GroupType static -Name 'Test Group 45' -Description 'A demo group'
+
+Create a static Host Group called 'Test Group 45' with the description 'A demo group'.
+.Example
+PS>New-FalconHostGroup -GroupType dynamic -Name Windows -AssignmentRule "platform_name:'Windows'"
+
+Create a dynamic Host Group called 'Windows' with the assignment rule "platform_name:'Windows'".
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:post')]
     param(
@@ -296,6 +333,13 @@ host-group:write
         [string] $Description,
 
         [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:post', Position = 4)]
+        [ValidateScript({
+            if ($PSBoundParameters.GroupType -eq 'static') {
+                throw "'AssignmentRule' can only be used with GroupType 'dynamic'."
+            } else {
+                $true
+            }
+        })]
         [string] $AssignmentRule
     )
     begin {
@@ -328,6 +372,10 @@ Delete Host Groups
 Host Group identifier(s)
 .Role
 host-group:write
+.Example
+PS>Remove-FalconHostGroup -Ids <id>, <id>
+
+Delete Host Groups <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:delete')]
     param(

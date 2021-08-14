@@ -24,6 +24,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 falconx-reports:read
+.Example
+PS>Get-FalconReport -Filter "target_countries:'united states'+target_industries:'government'"
+
+Search for identifiers of reports where the target is government entities in the United States.
+.Example
+PS>Get-FalconReport -Ids <id>, <id>
+
+Get information about reports <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/reports/v1:get')]
     param(
@@ -40,6 +48,9 @@ falconx-reports:read
 
         [Parameter(ParameterSetName = '/intel/queries/reports/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/intel/combined/reports/v1:get', Position = 3)]
+        [ValidateSet('name|asc', 'name|desc', 'target_countries|asc', 'target_countries|desc',
+            'target_industries|asc', 'target_industries|desc', 'type|asc', 'type|desc', 'created_date|asc',
+            'created_date|desc', 'last_modified_date|asc', 'last_modified_date|desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/intel/queries/reports/v1:get', Position = 4)]
@@ -95,7 +106,8 @@ falconx-reports:read
 #>
     [CmdletBinding(DefaultParameterSetName = '/intel/entities/report-files/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/intel/entities/report-files/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/intel/entities/report-files/v1:get', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\d{2,}$')]
         [string] $Id,
 
