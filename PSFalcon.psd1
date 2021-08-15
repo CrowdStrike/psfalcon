@@ -164,8 +164,6 @@
       # iocs.ps1
       'Get-FalconIocHost',
       'Get-FalconIocProcess',
-      'Get-FalconIocTotal',
-      'Get-FalconProcess',
 
       # kubernetes-protection.ps1
       'Edit-FalconContainerAwsAccount',
@@ -422,7 +420,6 @@ New Commands
 * iocs
   'Get-FalconIocHost'
   'Get-FalconIocProcess'
-  'Get-FalconIocTotal'
 
 * kubernetes-protection
   'Edit-FalconContainerAwsAccount'
@@ -444,6 +441,26 @@ Command Changes
 
 * Edit-FalconHorizonAzureAccount
   Added parameters to utilize '/cloud-connect-cspm-azure/entities/default-subscription-id/v1'.
+
+* Edit-FalconFirewallGroup
+  Updated to retrieve required values from existing rule group when not provided. Removed '-Tracking' as it is now
+  added automatically.
+
+* Edit-FalconFirewallSetting
+  Renamed '-PolicyId' to '-Id'.
+
+  Updated to retrieve required required values from existing policy settings when not provided. Removed
+  '-Tracking' as it is now added automatically.
+
+  Removed '-IsDefaultPolicy' parameter as it doesn't seem to do anything.
+
+* Edit-FalconIoaGroup
+  Updated to retrieve required required values from existing policy settings when not provided. Removed
+  '-RulegroupVersion' as it is now added automatically.
+
+* Edit-FalconIoaRule
+  Updated to retrieve required required values from existing policy settings when not provided. Removed
+  '-RulegroupVersion' as it is now added automatically.
 
 * Export-FalconConfig
   Changed archive name to 'FalconConfig_<FileDate>.zip' from 'FalconConfig_<FileDateTime>.zip'.
@@ -468,25 +485,11 @@ Command Changes
 * Get-FalconFirewallRule
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
 
-* Edit-FalconFirewallGroup
-  Updated to retrieve required values from existing rule group when not provided. Removed '-Tracking' as it is now
-  added automatically.
+* Get-FalconIocHost
+  Added '-Total' to provide the functionality of the command 'Get-FalconIocTotal'.
 
-* Edit-FalconFirewallSetting
-  Renamed '-PolicyId' to '-Id'.
-
-  Updated to retrieve required required values from existing policy settings when not provided. Removed
-  '-Tracking' as it is now added automatically.
-
-  Removed '-IsDefaultPolicy' parameter as it doesn't seem to do anything.
-
-* Edit-FalconIoaGroup
-  Updated to retrieve required required values from existing policy settings when not provided. Removed
-  '-RulegroupVersion' as it is now added automatically.
-
-* Edit-FalconIoaRule
-  Updated to retrieve required required values from existing policy settings when not provided. Removed
-  '-RulegroupVersion' as it is now added automatically.
+* Get-FalconIocProcess
+  Added '-Ids' to provide the functionality of the command 'Get-FalconProcess'.
 
 * Import-FalconConfig
   Added warning when creating 'IoaGroup' to make it clear that Custom IOA Rule Groups are not assigned to

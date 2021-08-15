@@ -67,14 +67,8 @@ recon-monitoring-rules:write
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('id', 'assigned_to_uuid', 'status')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each notification."
-                    }
-                }
+            foreach ($Object in $_) {
+                Confirm-Object -Object $Object -Required @('id', 'assigned_to_uuid', 'status')
             }
         })]
         [array] $Array,
@@ -91,21 +85,26 @@ recon-monitoring-rules:write
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:patch', Mandatory = $true, Position = 3)]
         [string] $Status
     )
-    begin {
-        $Param = if ($PSBoundParameters.Array) {
-            @{
+    process {
+        if ($PSBoundParameters.Array) {
+            # Edit notifications in batches of 500
+            $Param = @{
                 Path    = '/recon/entities/notifications/v1'
                 Method  = 'patch'
                 Headers = @{
                     ContentType = 'application/json'
                 }
-                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 8
+            }
+            for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
+                $Group = $PSBoundParameters.Array[$i..($i + 499)]
+                $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
+                Write-Result ($Script:Falcon.Api.Invoke($Param))
             }
         } else {
             $Fields = @{
                 AssignedToUuid = 'assigned_to_uuid'
             }
-            @{
+            $Param = @{
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
@@ -115,12 +114,6 @@ recon-monitoring-rules:write
                     }
                 }
             }
-        }
-    }
-    process {
-        if ($PSBoundParameters.Array) {
-            $Script:Falcon.Api.Invoke($Param)
-        } else {
             Invoke-Falcon @Param
         }
     }
@@ -140,7 +133,7 @@ Falcon Query Language expression to limit results
 .Parameter Priority
 Recon monitoring rule priority
 .Parameter Permissions
-Permission level (public: 'All Intel users', private: 'Recon Admins')
+Permission level [public: 'All Intel users', private: 'Recon Admins']
 .Role
 recon-monitoring-rules:write
 #>
@@ -148,14 +141,15 @@ recon-monitoring-rules:write
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('id', 'name', 'filter', 'priority', 'permissions')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each rule."
-                    }
+            foreach ($Object in $_) {
+                Confirm-Object -Object $Object -Required @('id', 'name', 'filter', 'priority', 'permissions')
+                $Param = @{
+                    Object    = $Object
+                    Command   = 'Edit-FalconReconRule'
+                    Endpoint  = '/recon/entities/rules/v1:patch'
+                    Parameter = @('permissions', 'priority')
                 }
+                Confirm-Value @Param
             }
         })]
         [array] $Array,
@@ -179,18 +173,23 @@ recon-monitoring-rules:write
         [ValidateSet('private', 'public')]
         [string] $Permissions
     )
-    begin {
-        $Param = if ($PSBoundParameters.Array) {
-            @{
+    process {
+        if ($PSBoundParameters.Array) {
+            # Edit rules in batches of 500
+            $Param = @{
                 Path    = '/recon/entities/rules/v1'
                 Method  = 'patch'
                 Headers = @{
                     ContentType = 'application/json'
                 }
-                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 8
+            }
+            for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
+                $Group = $PSBoundParameters.Array[$i..($i + 499)]
+                $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
+                Write-Result ($Script:Falcon.Api.Invoke($Param))
             }
         } else {
-            @{
+            $Param = @{
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = $PSBoundParameters
@@ -200,12 +199,6 @@ recon-monitoring-rules:write
                     }
                 }
             }
-        }
-    }
-    process {
-        if ($PSBoundParameters.Array) {
-            $Script:Falcon.Api.Invoke($Param)
-        } else {
             Invoke-Falcon @Param
         }
     }
@@ -234,6 +227,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 recon-monitoring-rules:read
+.Example
+PS>Get-FalconReconAction -Detailed
+
+Return the first set of detailed Recon action results.
+.Example
+PS>Get-FalconReconAction -Ids <id>, <id>
+
+Retrieve detailed information about Recon actions <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/actions/v1:get')]
     param(
@@ -312,6 +313,14 @@ Translate to English
 Include raw intelligence content and translate to English
 .Role
 recon-monitoring-rules:read
+.Example
+PS>Get-FalconReconNotification -Detailed
+
+Return the first set of detailed Recon notification results.
+.Example
+PS>Get-FalconReconNotification -Ids <id>, <id>
+
+Retrieve detailed information about Recon notifications <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/notifications/v1:get')]
     param(
@@ -396,6 +405,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 recon-monitoring-rules:read
+.Example
+PS>Get-FalconReconRule -Detailed
+
+Return the first set of detailed Recon monitoring rule results.
+.Example
+PS>Get-FalconReconRule -Ids <id>, <id>
+
+Retrieve detailed information about Recon monitoring rules <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/rules/v1:get')]
     param(
@@ -551,7 +568,7 @@ Falcon Query Language expression to limit results
 .Parameter Priority
 Recon monitoring rule priority
 .Parameter Permissions
-Permission level (public: 'All Intel users', private: 'Recon Admins')
+Permission level [public: 'All Intel users', private: 'Recon Admins']
 .Role
 recon-monitoring-rules:write
 #>
@@ -559,14 +576,15 @@ recon-monitoring-rules:write
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('name', 'topic', 'filter', 'priority', 'permissions')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each rule."
-                    }
+            foreach ($Object in $_) {
+                Confirm-Object -Object $Object -Required @('name', 'topic', 'filter', 'priority', 'permissions')
+                $Param = @{
+                    Object    = $Object
+                    Command   = 'New-FalconReconRule'
+                    Endpoint  = '/recon/entities/rules/v1:post'
+                    Parameter = @('permissions', 'priority', 'topic')
                 }
+                Confirm-Value @Param
             }
         })]
         [array] $Array,
@@ -590,18 +608,23 @@ recon-monitoring-rules:write
         [ValidateSet('private', 'public')]
         [string] $Permissions
     )
-    begin {
-        $Param = if ($PSBoundParameters.Array) {
-            @{
+    process {
+        if ($PSBoundParameters.Array) {
+            # Create rules in batches of 500
+            $Param = @{
                 Path    = '/recon/entities/rules/v1'
                 Method  = 'post'
                 Headers = @{
                     ContentType = 'application/json'
                 }
-                Body    = ConvertTo-Json -InputObject @( $PSBoundParameters.Array ) -Depth 8
+            }
+            for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
+                $Group = $PSBoundParameters.Array[$i..($i + 499)]
+                $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
+                Write-Result ($Script:Falcon.Api.Invoke($Param))
             }
         } else {
-            @{
+            $Param = @{
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = $PSBoundParameters
@@ -611,10 +634,8 @@ recon-monitoring-rules:write
                      }
                 }
             }
+            Invoke-Falcon @Param
         }
-    }
-    process {
-        Invoke-Falcon @Param
     }
 }
 function Remove-FalconReconAction {
@@ -625,10 +646,15 @@ Delete an action from a Recon monitoring rule
 Recon action identifier
 .Role
 recon-monitoring-rules:write
+.Example
+PS>Remove-FalconReconAction -Id <id>
+
+Delete Recon action <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/actions/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/recon/entities/actions/v1:delete', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/recon/entities/actions/v1:delete', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id
     )
@@ -654,6 +680,10 @@ Delete Recon monitoring rules
 Recon monitoring rule identifier(s)
 .Role
 recon-monitoring-rules:write
+.Example
+PS>Remove-FalconReconRule -Ids <id>, <id>
+
+Delete Recon monitoring rules <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:delete')]
     param(
@@ -683,6 +713,10 @@ Delete Recon notifications. Notifications cannot be recovered after they are del
 One or more Recon notification identifiers
 .Role
 recon-monitoring-rules:write
+.Example
+PS>Remove-FalconNotification -Ids <id>, <id>
+
+Delete Recon notifications <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/notifications/v1:delete')]
     param(

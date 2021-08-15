@@ -12,16 +12,30 @@ Maximum number of results per request
 Position to begin retrieving results
 .Parameter All
 Repeat requests until all available results are retrieved
+.Parameter Total
+Display the total result count instead of results
 .Role
 iocs:read
+.Example
+PS>Get-FalconIocHost -Type domain -Value example.com
+
+List the first set of host identifiers that observed the 'domain' indicator 'example.com'.
+.Example
+PS>Get-FalconIocHost -Type domain -Value example.com -Total
+
+Display a total count of hosts that observed the 'domain' indicator 'example.com'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/indicators/queries/devices/v1:get')]
     param(
         [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true,
+            Position = 1)]
         [ValidateSet('domain', 'ipv4', 'ipv6', 'md5', 'sha256')]
         [string] $Type,
 
         [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Mandatory = $true, Position = 2)]
+        [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true,
+            Position = 2)]
         [string] $Value,
 
         [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get', Position = 3)]
@@ -32,7 +46,10 @@ iocs:read
         [string] $Limit,
 
         [Parameter(ParameterSetName = '/indicators/queries/devices/v1:get')]
-        [switch] $All
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true)]
+        [switch] $Total
     )
     begin {
         $Param = @{
@@ -70,6 +87,15 @@ Retrieve detailed information
 Repeat requests until all available results are retrieved
 .Role
 iocs:read
+.Example
+PS>Get-FalconIocProcess -Type domain -Value example.com -HostId <id>
+
+Retrieve the first set of process identifiers for host <id> that include the event related to the custom 'domain'
+indicator 'example.com'.
+.Example
+PS>Get-FalconIocProcess -Ids <id>, <id>
+
+Retrieve summary information about process identifiers <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/indicators/queries/processes/v1:get')]
     param(
@@ -111,71 +137,6 @@ iocs:read
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('ids', 'device_id', 'offset', 'type', 'value', 'limit')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconIocTotal {
-<#
-.Synopsis
-Provide a count of total Host(s) that have observed a custom indicator
-.Parameter Type
-Custom indicator type
-.Parameter Value
-Custom indicator value
-.Role
-iocs:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '/indicators/aggregates/devices-count/v1:get')]
-    param(
-        [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true,
-            Position = 1)]
-        [ValidateSet('domain', 'ipv4', 'ipv6', 'md5', 'sha256')]
-        [string] $Type,
-
-        [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true,
-            Position = 2)]
-        [string] $Value
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('type', 'value')
-            }
-        }
-    }
-    process {
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconProcess {
-<#
-.Synopsis
-Retrieve process tree information
-.Parameter Ids
-Process identifier(s)
-.Role
-iocs:read
-#>
-    [CmdletBinding(DefaultParameterSetName = '/processes/entities/processes/v1:get')]
-    param(
-        [Parameter(ParameterSetName = '/processes/entities/processes/v1:get', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^pid:\w{32}:\d{1,}$')]
-        [array] $Ids
-    )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
             }
         }
     }

@@ -1,13 +1,17 @@
 function Add-FalconCidGroupMember {
 <#
 .Synopsis
-Add CID Group members
+Add CID group members
 .Parameter Id
 CID group identifier
 .Parameter CIDs
 CID(s)
 .Role
 mssp:write
+.Example
+PS>Add-FalconCidGroupMember -Id <id> -CIDs <cid>, <cid>
+
+Add CIDs <cid> and <cid> to CID group <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-group-members/v1:post')]
     param(
@@ -42,7 +46,7 @@ mssp:write
 function Add-FalconGroupRole {
 <#
 .Synopsis
-Assign role(s) between a CID and User Group
+Assign role(s) between a CID and user group
 .Parameter CidGroupId
 CID group identifier
 .Parameter UserGroupId
@@ -51,6 +55,10 @@ User Group identifier
 Role(s)
 .Role
 mssp:write
+.Example
+PS>Add-FalconGroupRole -CidGroupId <cid_group_id> -UserGroupId <user_group_id> -RoleIds <role_id>, <role_id>
+
+Assign roles <role_id> and <role_id> between CID group <cid_group_id> and user group <user_group_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/mssp-roles/v1:post')]
     param(
@@ -89,13 +97,17 @@ mssp:write
 function Add-FalconUserGroupMember {
 <#
 .Synopsis
-Add User Group members
+Add user group members
 .Parameter Id
 User group identifier
 .Parameter UserIds
 User identifier(s)
 .Role
 mssp:write
+.Example
+PS>Add-FalconUserGroupMember -Id <id> -UserIds <uuid>, <uuid>
+
+Add users <uuid> and <uuid> to user group <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-group-members/v1:post')]
     param(
@@ -141,6 +153,10 @@ CID group name
 CID group description
 .Role
 mssp:write
+.Example
+PS>Edit-FalconCidGroup -Id <id> -Name 'Updated Name' -Description 'Updated name for manual testing'
+
+Change the name of CID group <id> to 'Updated Name'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-groups/v1:patch')]
     param(
@@ -177,7 +193,7 @@ mssp:write
 function Edit-FalconUserGroup {
 <#
 .Synopsis
-Modify a User Group
+Modify a user group
 .Parameter Id
 User group identifier
 .Parameter Name
@@ -186,6 +202,10 @@ User group name
 User group description
 .Role
 mssp:write
+.Example
+PS>Edit-FalconUserGroup -Id <id> -Name 'Updated Name' -Description 'Updated name for manual testing'
+
+Change the name of user group <id> to 'Updated Name'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-groups/v1:patch')]
     param(
@@ -241,6 +261,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 mssp:read
+.Example
+PS>Get-FalconCidGroup
+
+Return the first set of CID group identifiers.
+.Example
+PS>Get-FalconCidGroup -Ids <id>, <id>
+
+Retrieve detailed information about CID groups <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/queries/cid-groups/v1:get')]
     param(
@@ -294,8 +322,8 @@ function Get-FalconCidGroupMember {
 Search for CID group members
 .Parameter Ids
 CID group identifier(s)
-.Parameter Id
-CID group identifier
+.Parameter CID
+CID
 .Parameter Sort
 Property and direction to sort results
 .Parameter Limit
@@ -310,6 +338,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 mssp:read
+.Example
+PS>Get-FalconCidGroupMember -Ids <id>, <id>
+
+List the members of CID groups <id> and <id>.
+.Example
+PS>Get-FalconCidGroupMember -CID <id> -Detailed
+
+List the CID groups in which CID <id> is a member, along with its other members.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/queries/cid-group-members/v1:get')]
     param(
@@ -320,7 +356,7 @@ mssp:read
         [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Mandatory = $true,
             ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string] $CID,
 
         [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Position = 2)]
         [ValidateSet('last_modified_timestamp')]
@@ -344,7 +380,7 @@ mssp:read
     )
     begin {
         $Fields = @{
-            Id  = 'cid'
+            CID = 'cid'
             Ids = 'cid_group_ids'
         }
         $Param = @{
@@ -386,6 +422,11 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 mssp:read
+.Example
+PS>Get-FalconGroupRole -Ids <cid>:<user_group_id>>, <cid>:<user_group_id>
+
+List the role assignments for the groups with the combined identifiers <cid>:<user_group_id> and
+<cid>:<user_group_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/queries/mssp-roles/v1:get')]
     param(
@@ -463,6 +504,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 mssp:read
+.Example
+PS>Get-FalconMemberCid -All
+
+List all available member CIDs.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/queries/children/v1:get')]
     param(
@@ -526,6 +571,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 mssp:read
+.Example
+PS>Get-FalconUserGroup -All
+
+Retrieve all user group identifiers.
+.Example
+PS>Get-FalconUserGroup -Ids <id>, <id>
+
+Retrieve detailed information about user groups <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/queries/user-groups/v1:get')]
     param(
@@ -579,8 +632,8 @@ function Get-FalconUserGroupMember {
 Search for members of a user group, or groups assigned to a user
 .Parameter Ids
 User group identifier(s), to find group members
-.Parameter UserUuid
-A User identifier, to find group membership
+.Parameter UserId
+A user identifier, to find group membership
 .Parameter Sort
 Property and direction to sort results
 .Parameter Limit
@@ -595,6 +648,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 mssp:read
+.Example
+PS>Get-FalconUserGroupMember -Id <id>
+
+List the first set of members in user group <id>.
+.Example
+PS>Get-FalconUserGroupMember -UserId <id> -Detailed
+
+List the user groups in which user <id> is a member, along with its other members.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/queries/user-group-members/v1:get')]
     param(
@@ -654,6 +715,10 @@ CID group name
 CID group description
 .Role
 mssp:write
+.Example
+PS>New-FalconCidGroup -Name 'Manual Testing' -Description 'Manual Testing'
+
+Create a CID group named 'Manual Testing'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-groups/v1:post')]
     param(
@@ -682,13 +747,17 @@ mssp:write
 function New-FalconUserGroup {
 <#
 .Synopsis
-Create a User group
+Create a user group
 .Parameter Name
 User group name
 .Parameter Description
 User group description
 .Role
 mssp:write
+.Example
+PS>New-FalconUserGroup -Name 'Manual Testing' -Description 'Manual Testing'
+
+Create a user group named 'Manual Testing'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-groups/v1:post')]
     param(
@@ -722,6 +791,10 @@ Delete CID group(s)
 CID group identifier(s)
 .Role
 mssp:write
+.Example
+PS>Remove-FalconCidGroup -Ids <id>, <id>
+
+Delete CID groups <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-groups/v1:delete')]
     param(
@@ -756,6 +829,10 @@ CID group identifier
 CID(s)
 .Role
 mssp:write
+.Example
+PS>Remove-FalconCidGroupMember -Id <id> -CIDs <cid>, <cid>
+
+Remove CIDs <cid> and <cid> from CID group <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/cid-group-members/v1:delete')]
     param(
@@ -791,15 +868,23 @@ mssp:write
 function Remove-FalconGroupRole {
 <#
 .Synopsis
-Remove role(s) between a User Group and CID Group
+Remove role(s) between a user group and CID group
 .Parameter CidGroupId
 CID group identifier
 .Parameter UserGroupId
 User group identifier
 .Parameter RoleIds
-Role(s) (leave blank to remove User Group/CID Group association)
+Role(s), or leave blank to remove user group/CID group association
 .Role
 mssp:write
+.Example
+PS>Remove-FalconGroupRole -CidGroupId <cid_group_id> -UserGroupId <user_group_id> -RoleIds <role_id>, <role_id>
+
+Remove roles <role_id> and <role_id> between CID group <cid_group_id> and user group <user_group_id>.
+.Example
+PS>Remove-FalconGroupRole -CidGroupId <cid_group_id> -UserGroupId <user_group_id>
+
+Remove association between CID group <cid_group_id> and user group <user_group_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/mssp-roles/v1:delete')]
     param(
@@ -811,7 +896,7 @@ mssp:write
         [ValidatePattern('^\w{32}$')]
         [string] $UserGroupId,
 
-        [Parameter(ParameterSetName = '/mssp/entities/mssp-roles/v1:delete', Mandatory = $true, Position = 3)]
+        [Parameter(ParameterSetName = '/mssp/entities/mssp-roles/v1:delete', Position = 3)]
         [array] $RoleIds
     )
     begin {
@@ -838,11 +923,15 @@ mssp:write
 function Remove-FalconUserGroup {
 <#
 .Synopsis
-Remove User group(s)
+Remove user group(s)
 .Parameter Ids
 User group identifier(s)
 .Role
 mssp:write
+.Example
+PS>Remove-FalconUserGroup -Ids <id>, <id>
+
+Delete user groups <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-groups/v1:delete')]
     param(
@@ -870,13 +959,17 @@ mssp:write
 function Remove-FalconUserGroupMember {
 <#
 .Synopsis
-Remove members from a User group
+Remove members from a user group
 .Parameter Id
 User group identifier
 .Parameter UserIds
 User identifier(s)
 .Role
 mssp:write
+.Example
+PS>Remove-FalconUserGroupMember -Id <id> -UserIds <uuid>, <uuid>
+
+Remove users <uuid> and <uuid> from user group <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/mssp/entities/user-group-members/v1:delete')]
     param(

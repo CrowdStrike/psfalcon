@@ -186,7 +186,7 @@ function Confirm-Object {
     )
     begin {
         # Create object string
-        $ObjectString = Get-ObjectString $Object
+        $ObjectString = ConvertTo-Json -InputObject $Object -Compress
     }
     process {
         if ($Object -is [hashtable]) {
@@ -225,6 +225,46 @@ function Confirm-Object {
                     } else {
                         $true
                     }
+                }
+            }
+        }
+    }
+}
+function Confirm-Value {
+    [CmdletBinding()]
+    [OutputType([boolean])]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [object] $Object,
+
+        [Parameter(Mandatory = $true, Position = 2)]
+        [string] $Command,
+
+        [Parameter(Mandatory = $true, Position = 3)]
+        [string] $Endpoint,
+
+        [Parameter(Mandatory = $true, Position = 4)]
+        [array] $Parameter,
+
+        [Parameter(Position = 5)]
+        [object] $Format
+    )
+    begin {
+        # Create object string
+        $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+    }
+    process {
+        ($Parameter).foreach{
+            $Property = if ($Format -and $Format.$_) {
+                $Format.$_
+            } else {
+                $_
+            }
+            if ($Object.$Property) {
+                # Verify that 'ValidValues' contains provided value
+                $Valid = Get-ValidValues -Command $Command -Endpoint $Endpoint -Parameter $_
+                if ($Valid -notcontains $Object.$Property) {
+                    throw "'$($Object.$Property)' is not a valid '$Property' value. $ObjectString"
                 }
             }
         }
@@ -271,6 +311,7 @@ function Confirm-String {
 }
 function Convert-Rfc3339 {
     [CmdletBinding()]
+    [OutputType([string])]
     param(
         [int] $Hours
     )
@@ -280,9 +321,22 @@ function Convert-Rfc3339 {
             (Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc) -replace '\.\d+Z$','Z')"
     }
 }
+function Get-ValidValues {
+    [CmdletBinding()]
+    [OutputType([array])]
+    param(
+        [string] $Command,
+        [string] $Endpoint,
+        [string] $Parameter
+    )
+    process {
+        # Return 'ValidValues' from parameter of a given command
+        (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
+            $_.Name -eq $Parameter }).Attributes.ValidValues
+    }
+}
 function Get-ParamSet {
     [CmdletBinding()]
-    [OutputType()]
     param(
         [string] $Endpoint,
         [object] $Headers,
@@ -370,38 +424,13 @@ function Get-ParamSet {
         }
     }
 }
-function Get-ObjectString {
-    [CmdletBinding()]
-    [OutputType([string])]
-    param(
-        [Parameter(Mandatory = $true, Position = 1)]
-        [object] $Object
-    )
-    process {
-        # Output string representation of [hashtable] or [PSCustomObject]
-        if ($Object -is [hashtable]) {
-            "@{$((($Object.GetEnumerator()).foreach{ "$($_.Key)='$($_.Value)'" }) -join ';')}"
-        } elseif ($Object -is [PSCustomObject]) {
-            "@{$((($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' })).foreach{
-                "$($_.Name)='$($_.Value)'" }) -join ';')}"
-        } else {
-            throw "[Get-ObjectString: Unexpected object type]"
-        }
-    }
-}
 function Get-RtrCommand {
     [CmdletBinding()]
+    [OutputType([string])]
     param(
         [string] $Command,
         [switch] $ConfirmCommand
     )
-    begin {
-        function Get-CommandArray ([string] $Permission) {
-            # Retrieve 'ValidValues' for 'Command' parameter
-            (Get-Command "Invoke-Falcon$($Permission)Command").Parameters.GetEnumerator().Where({
-                $_.Key -eq 'Command' }).Value.Attributes.ValidValues
-        }
-    }
     process {
         # Determine command to invoke using $Command and permission level
         $Result = if ($Command -eq 'runscript') {
@@ -416,7 +445,8 @@ function Get-RtrCommand {
                 } else {
                     $_
                 }
-                $Commands[$Key] = Get-CommandArray $_
+                $Commands[$Key] = (Get-Command "Invoke-Falcon$($_)Command").Parameters.GetEnumerator().Where({
+                    $_.Key -eq 'Command' }).Value.Attributes.ValidValues
             }
             # Filter 'Responder' and 'Admin' to unique command(s)
             $Commands.Responder = $Commands.Responder | Where-Object { $Commands.ReadOnly -notcontains $_ }

@@ -31,10 +31,12 @@ Audit log comment
 Generate retroactive detections for hosts that have observed the custom indicator
 .Parameter IgnoreWarnings
 Ignore warnings and modify all custom indicators
-.Example
-Edit-FalconIoc -Id <id> -Action 'prevent' -Severity 'high'
 .Role
 ioc:write
+.Example
+PS>Edit-FalconIoc -Id <id> -Action prevent -Severity high
+
+Change custom indicator <id> and set 'action' to 'prevent' and 'severity' to 'high'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:patch')]
     param(
@@ -138,10 +140,16 @@ Retrieve detailed information
 Repeat requests until all available results are retrieved
 .Parameter Total
 Display total result count instead of results
-.Example
-Get-FalconIoc -Filter "type:'domain'"
 .Role
 ioc:read
+.Example
+PS>Get-FalconIoc -Filter "type:'sha256'"
+
+List the first set of identifiers for 'sha256' custom indicators.
+.Example
+PS>Get-FalconIoc -Filter "type:'domain'+value:'example.com'" -Detailed
+
+List detailed information about the 'domain' custom indicator with the value 'example.com'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/iocs/queries/indicators/v1:get')]
     param(
@@ -235,28 +243,45 @@ Audit log comment
 Generate retroactive detections for hosts that have observed the custom indicator
 .Parameter IgnoreWarnings
 Ignore warnings and create all custom indicators
-.Example
-New-FalconIoc -Array @(@{ type = 'domain'; value = 'example.com'; platforms = @('windows'); action = 'detect';
-severity = 'low'; applied_globally = $true}, @{ type = 'ipv4'; value = '93.184.216.34'; platforms = @('windows',
-'mac','linux'); action = 'detect'; severity = 'low'; host_groups = @('<id>', '<id>')})
-.Example
-New-FalconIoc -Type domain -Value example.com -Platforms windows -Action detect -Severity low -AppliedGlobally
-$true
 .Role
 ioc:write
+.Example
+PS>$IOCs = @(@{ type = 'domain'; value = 'example.com'; platforms = @('windows'); action = 'detect';
+    severity = 'low'; applied_globally = $true}, @{ type = 'ipv4'; value = '93.184.216.34'; platforms = @(
+    'windows','mac','linux'); action = 'detect'; severity = 'low'; host_groups = @('<id>', '<id>')})
+PS>New-FalconIoc -Array $IOCs
+
+Create a 'domain' and 'ipv4' custom indicator for 'example.com' and its related IP address in a single request.
+.Example
+PS>New-FalconIoc -Type domain -Value example.com -Platforms windows -Action detect -Severity low
+    -AppliedGlobally $true
+
+Create the 'domain' custom indicator for 'example.com' and set it to generate detections of 'low' severity
+for all Windows hosts.
 #>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('type', 'value', 'action', 'platforms')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each indicator."
-                    }
+            $Patterns = @{
+                expiration  = '^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z)$'
+                host_groups = '^\w{32}$'
+            }
+            foreach ($Object in $_) {
+                Confirm-Object -Object $Object -Required @('type', 'value', 'action', 'platforms')
+                $Param = @{
+                    Object    = $Object
+                    Command   = 'New-FalconIoc'
+                    Endpoint  = '/iocs/entities/indicators/v1:post'
+                    Parameter = @('action', 'platforms', 'severity', 'type')
                 }
+                Confirm-Value @Param
+                foreach ($Pair in $Patterns.GetEnumerator()) {
+                    if ($Object.($Pair.Key) -and ($Object.($Pair.Key) -notmatch $Pair.Value)) {
+                        $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+                        throw "'$($Object.($Pair.Key))' is not a valid '$($Pair.Key)' value. $ObjectString"
+                    }
+                } # TODO: Create 'Confirm-Pattern' function for 'ValidatePattern'
             }
         })]
         [array] $Array,
@@ -354,6 +379,14 @@ Falcon Query Language expression to find custom indicators for removal (takes pr
 Audit log comment
 .Role
 ioc:write
+.Example
+PS>Remove-FalconIoc -Ids <id>, <id>
+
+Delete custom indicators <id> and <id>.
+.Example
+PS>Remove-FalconIoc -Filter "type:'domain'+value:'example.com'"
+
+Delete custom indicators matching 'type: domain' and 'value: example.com'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:delete')]
     param(

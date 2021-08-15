@@ -60,13 +60,10 @@ each of the existing rules. Finally, request the change to the rule group to add
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Mandatory = $true, Position = 2)]
         [ValidateScript({
             foreach ($Object in $_) {
-                $Param = @{
-                    Object   = $_
-                    Required = @('op','path','value')
-                }
-                Confirm-Object @Param
-                if ($_.op -notmatch '^(add|remove|replace)$') {
-                    throw "'$($_.op)' is not an allowed 'op'."
+                Confirm-Object -Object $Object -Required @('op','path','value')
+                if ($Object.op -notmatch '^(add|remove|replace)$') {
+                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+                    throw "'$($Object.op)' is not a valid 'op' value. $ObjectString"
                 }
             }
         })]
@@ -159,6 +156,10 @@ Change the name of Firewall policy <id> to 'Name Changed'.
         [ValidateScript({
             foreach ($Object in $_) {
                 Confirm-Object -Object $Object -Required 'id'
+                if ($Object.id -notmatch '^\w{32}$') {
+                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+                    throw "'$($Object.id)' is not a valid 'id' value. $ObjectString"
+                }
             }
         })]
         [array] $Array,

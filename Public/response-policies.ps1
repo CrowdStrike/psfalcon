@@ -27,6 +27,10 @@ Modify Response policy <id> to enable 'CustomScripts' and disable 'GetCommand'.
         [ValidateScript({
             foreach ($Object in $_) {
                 Confirm-Object -Object $Object -Required 'id'
+                if ($Object.id -notmatch '^\w{32}$') {
+                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+                    throw "'$($Object.id)' is not a valid 'id' value. $ObjectString"
+                }
             }
         })]
         [array] $Array,
