@@ -44,7 +44,7 @@ PS>$RuleVersions = @('null') + $Rules.version
 PS>Edit-FalconFirewallGroup -Id $Group.id -DiffOperations $DiffOperations -RuleIds $RuleIds
     -RuleVersions $RuleVersions
 
-Set '$DiffOperations' to 'add' a the rule 'First rule in a group' to the top of the existing rules, gather and save
+Set '$DiffOperations' to 'add' the rule 'First rule in a group' to the top of the existing rules, gather and save
 the existing rule group to '$Group', then use '$Group' to collect and save information about the existing rules
 in that group to '$Rules'. Create '$RuleIds' with the 'temp_id' value (as a string) and add the existing
 'rule_ids', then create '$RuleVersions' with 'null' for the rule being created, followed by the 'rule_versions' for

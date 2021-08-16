@@ -994,11 +994,9 @@ modify existing items (including 'default' policies).
                         }
                         $Enabled = Invoke-ConfigItem @Param
                         if ($Enabled) {
-                            # Output enabled result and warn that 'IoaGroup' was not assigned
+                            # Output enabled result
                             $Enabled
                             Write-Host "Enabled IoaGroup '$($Enabled.name)'."
-                            Write-Warning ("IoaGroup '$($Enabled.name)' was not assigned to a " +
-                                "Prevention policy.")
                         }
                     } else {
                         # Output group creation result
@@ -1117,8 +1115,7 @@ modify existing items (including 'default' policies).
                             }
                         }
                     }
-                    <# Future code for assigning custom IOA Rule Groups to Prevention policies
-                    foreach ($Group in $Import.unknown_property) {
+                    foreach ($Group in $Import.ioa_rule_groups) {
                         # Assign IOA Rule Groups to Prevention policies
                         $Param = @{
                             Item = 'IoaGroup'
@@ -1136,19 +1133,19 @@ modify existing items (including 'default' policies).
                             $Param = @{
                                 Command = "Invoke-Falcon$($Pair.Key)Action"
                                 Content = @{
-                                    Name = "add-rule-group"
+                                    Name = 'add-rule-group'
                                     Id = $Policy.id
                                     GroupId = $GroupId
                                 }
                             }
                             Invoke-ConfigItem @Param | ForEach-Object {
-                                if ($_.unknown_property) {
-                                    # Update 'unknown_property' for policy
-                                    $Policy.unknown_property = $_.unknown_property
+                                if ($_.ioa_rule_groups) {
+                                    # Update 'ioa_rule_groups' for policy
+                                    $Policy.ioa_rule_groups = $_.ioa_rule_groups
                                 }
                             }
                         }
-                    } #>
+                    }
                     if ($Import.enabled -eq $true -and $Policy.enabled -eq $false) {
                         $Param = @{
                             Command = "Invoke-Falcon$($Pair.Key)Action"
