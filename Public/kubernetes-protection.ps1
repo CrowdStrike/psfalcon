@@ -269,15 +269,8 @@ kubernetes-protection:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/integration/api-key/v1:post')]
     param()
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-        }
-    }
     process {
-        Invoke-Falcon @Param
+        Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName
     }
 }
 function Receive-FalconContainerYaml {

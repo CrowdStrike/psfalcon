@@ -51,6 +51,10 @@ Azure subscription identifier
 Azure tenant identifier, required when multiple tenants have been registered
 .Role
 cspm-registration:write
+.Example
+PS>Edit-FalconHorizonAzureAccount -Id <id> -TenantId <tenant_id>
+
+Modify Falcon Horizon Azure account <id> to set the default tenant <tenant_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
     param(
@@ -100,6 +104,10 @@ Policy enablement status
 Severity level
 .Role
 cspm-registration:write
+.Example
+PS>Edit-FalconHorizonPolicy -PolicyId <id> -Enabled $true -Severity medium
+
+Enable Falcon Horizon policy <id> and set the 'severity' to 'medium'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/settings/entities/policy/v1:patch')]
     param(
@@ -142,6 +150,10 @@ Cloud platform
 Scan interval
 .Role
 cspm-registration:write
+.Example
+PS>Edit-FalconHorizonSchedule -CloudPlatform aws -ScanSchedule 2h
+
+Set the assessment schedule for AWS accounts to '2h' (2 hours).
 #>
     [CmdletBinding(DefaultParameterSetName = '/settings/scan-schedule/v1:post')]
     param(
@@ -177,6 +189,8 @@ function Get-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Search for Falcon Horizon AWS accounts
+.Description
+A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
 .Parameter Ids
 AWS account identifier(s)
 .Parameter OrganizationIds
@@ -197,6 +211,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 cspm-registration:read
+.Example
+PS>Get-FalconHorizonAwsAccount -Ids <id>, <id>
+
+Verify the provisioning status of AWS accounts <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
@@ -258,18 +276,16 @@ function Get-FalconHorizonAwsLink {
 Retrieve a URL that will grant access for Falcon Horizon in AWS
 .Role
 cspm-registration:read
+.Example
+PS>$Link = Get-FalconHorizonAwsLink
+PS>Start-Process $Link.url
+
+Save the access URL as '$Link', then open it using your default browser.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get')]
     param()
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-        }
-    }
     process {
-        Invoke-Falcon @Param
+        Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName
     }
 }
 function Get-FalconHorizonAzureAccount {
@@ -292,6 +308,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 cspm-registration:read
+.Example
+PS>Get-FalconHorizonAzureAccount -Ids <id>, <id>
+
+Verify the provisioning status of Azure accounts <id> and <id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
     param(
@@ -485,6 +505,14 @@ Cloud platform
 Retrieve detailed information
 .Role
 cspm-registration:read
+.Example
+PS>Get-FalconHorizonPolicy -Ids <id>, <id>
+
+Retrieve detailed information about Falcon Horizon policies <id> and <id>.
+.Example
+PS>Get-FalconHorizonPolicy -Service <service_name>
+
+Retrieve a Falcon Horizon policy identifier by service <service_name>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/settings/entities/policy/v1:get')]
     param(
@@ -538,6 +566,14 @@ Returns Falcon Horizon scan schedule configuration for one or more cloud platfor
 Cloud platform
 .Role
 cspm-registration:read
+.Example
+PS>Get-FalconHorizonSchedule
+
+Retrieve the assessment schedule for Falcon Horizon.
+.Example
+PS>Get-FalconHorizonSchedule -CloudPlatform aws
+
+Retrieve the assessment schedule for AWS accounts in Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/settings/scan-schedule/v1:get')]
     param(
@@ -574,6 +610,14 @@ AWS organization identifier
 AWS region where the account resides
 .Role
 cspm-registration:write
+.Example
+PS>New-FalconHorizonAwsAccount -AccountId <id>
+
+Register AWS account <id> in Falcon Horizon.
+.Example
+PS>New-FalconHorizonAwsAccount -AccountId <id> -OrganizationId <organization_id>
+
+Register AWS account <id> within organization <organization_id>.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post')]
     param(
@@ -622,6 +666,10 @@ Azure subscription identifier
 Azure tenant identifier
 .Role
 cspm-registration:write
+.Example
+PS>New-FalconHorizonAzureAccount -SubscriptionId <id> -TenantId <tenant_id>
+
+Provision Azure subscription <id> within tenant <tenant_id> in Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:post')]
     param(
@@ -661,6 +709,10 @@ Download a Bash script which grants Falcon Horizon access using AWS CLI
 Destination path
 .Role
 cspm-registration:read
+.Example
+PS>Receive-FalconHorizonAwsScript -Path .\aws_provision.sh
+
+Download 'aws_provision.sh' which can be run (using AWS CLI Version 2) to provide access to Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     param(
@@ -752,6 +804,14 @@ AWS account identifier(s)
 AWS organization identifier(s)
 .Role
 cspm-registration:write
+.Example
+PS>Remove-FalconHorizonAwsAccount -Ids <id>, <id>
+
+Remove AWS accounts <id> and <id> from Falcon Horizon.
+.Example
+PS>Remove-FalconHorizonAwsAccount -OrganizationIds <id>
+
+Remove AWS organization <id> from Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:delete')]
     param(
@@ -788,6 +848,10 @@ Remove Falcon Horizon Azure accounts
 Azure account identifier(s)
 .Role
 cspm-registration:write
+.Example
+PS>Remove-FalconHorizonAzureAccount -Ids <id>, <id>
+
+Remove Azure accounts <id> and <id> from Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:delete')]
     param(

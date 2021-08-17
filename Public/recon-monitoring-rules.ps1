@@ -25,6 +25,7 @@ recon-monitoring-rules:write
         [string] $Frequency,
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true, Position = 3)]
+        [ValidatePattern("^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")]
         [array] $Recipients,
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true, Position = 4)]
