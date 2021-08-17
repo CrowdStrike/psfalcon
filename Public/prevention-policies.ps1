@@ -28,11 +28,14 @@ Modify Prevention policy <id> to enable 'EndUserNotifications' and 'NextGenAV', 
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required 'id'
-                if ($Object.id -notmatch '^\w{32}$') {
-                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
-                    throw "'$($Object.id)' is not a valid 'id' value. $ObjectString"
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'Edit-FalconPreventionPolicy'
+                    Endpoint = '/policy/entities/prevention/v1:patch'
+                    Required = @('id')
+                    Pattern  = @('id')
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,
@@ -330,14 +333,18 @@ set 'OnSensorMLSlider' to 'detection: AGGRESSIVE', 'prevention: MODERATE'.
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('platform_name', 'name')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each policy."
+            foreach ($Object in $_) {
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'New-FalconPreventionPolicy'
+                    Endpoint = '/policy/entities/prevention/v1:post'
+                    Required = @('name','platform_name')
+                    Content  = @('platform_name')
+                    Format   = @{
+                        platform_name = 'PlatformName'
                     }
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,

@@ -171,20 +171,45 @@ function Build-Content {
         }
     }
 }
-function Confirm-Object {
+function Confirm-Parameter {
     [CmdletBinding()]
     [OutputType([boolean])]
     param(
-        [Parameter(Mandatory = $true, Position = 1)]
+        [Parameter(Mandatory = $true)]
         [object] $Object,
 
-        [Parameter(Mandatory = $true, Position = 2)]
+        [Parameter(Mandatory = $true)]
+        [string] $Command,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Endpoint,
+
+        [Parameter()]
         [array] $Required,
 
-        [Parameter(Position = 3)]
-        [array] $Allowed
+        [Parameter()]
+        [array] $Allowed,
+
+        [Parameter()]
+        [array] $Content,
+
+        [Parameter()]
+        [array] $Pattern,
+
+        [Parameter()]
+        [object] $Format
     )
     begin {
+        function Get-ValidPattern ($Command, $Endpoint, $Parameter) {
+            # Return 'ValidPattern' from parameter of a given command
+            (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
+                $_.Name -eq $Parameter }).Attributes.RegexPattern
+        }
+        function Get-ValidValues ($Command, $Endpoint, $Parameter) {
+            # Return 'ValidValues' from parameter of a given command
+            (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
+                $_.Name -eq $Parameter }).Attributes.ValidValues
+        }
         # Create object string
         $ObjectString = ConvertTo-Json -InputObject $Object -Compress
     }
@@ -228,43 +253,33 @@ function Confirm-Object {
                 }
             }
         }
-    }
-}
-function Confirm-Value {
-    [CmdletBinding()]
-    [OutputType([boolean])]
-    param(
-        [Parameter(Mandatory = $true, Position = 1)]
-        [object] $Object,
-
-        [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Command,
-
-        [Parameter(Mandatory = $true, Position = 3)]
-        [string] $Endpoint,
-
-        [Parameter(Mandatory = $true, Position = 4)]
-        [array] $Parameter,
-
-        [Parameter(Position = 5)]
-        [object] $Format
-    )
-    begin {
-        # Create object string
-        $ObjectString = ConvertTo-Json -InputObject $Object -Compress
-    }
-    process {
-        ($Parameter).foreach{
-            $Property = if ($Format -and $Format.$_) {
+        ($Content).foreach{
+            $Parameter = if ($Format -and $Format.$_) {
+                # Match property name with parameter name
                 $Format.$_
             } else {
                 $_
             }
-            if ($Object.$Property) {
+            if ($Object.$_) {
                 # Verify that 'ValidValues' contains provided value
-                $Valid = Get-ValidValues -Command $Command -Endpoint $Endpoint -Parameter $_
-                if ($Valid -notcontains $Object.$Property) {
-                    throw "'$($Object.$Property)' is not a valid '$Property' value. $ObjectString"
+                $ValidValues = Get-ValidValues -Command $Command -Endpoint $Endpoint -Parameter $Parameter
+                if ($ValidValues -notcontains $Object.$_) {
+                    throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
+                }
+            }
+        }
+        ($Pattern).foreach{
+            $Parameter = if ($Format -and $Format.$_) {
+                # Match property name with parameter name
+                $Format.$_
+            } else {
+                $_
+            }
+            if ($Object.$_) {
+                # Verify provided value matches 'ValidPattern'
+                $ValidPattern = Get-ValidPattern -Command $Command -Endpoint $Endpoint -Parameter $Parameter
+                if ($Object.$_ -notmatch $ValidPattern) {
+                    throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
                 }
             }
         }
@@ -319,20 +334,6 @@ function Convert-Rfc3339 {
         # Return Rfc3339 timestamp for $Hours from Get-Date
         "$([Xml.XmlConvert]::ToString(
             (Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc) -replace '\.\d+Z$','Z')"
-    }
-}
-function Get-ValidValues {
-    [CmdletBinding()]
-    [OutputType([array])]
-    param(
-        [string] $Command,
-        [string] $Endpoint,
-        [string] $Parameter
-    )
-    process {
-        # Return 'ValidValues' from parameter of a given command
-        (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
-            $_.Name -eq $Parameter }).Attributes.ValidValues
     }
 }
 function Get-ParamSet {

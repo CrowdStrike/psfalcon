@@ -263,25 +263,19 @@ for all Windows hosts.
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            $Patterns = @{
-                expiration  = '^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z)$'
-                host_groups = '^\w{32}$'
-            }
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required @('type', 'value', 'action', 'platforms')
                 $Param = @{
-                    Object    = $Object
-                    Command   = 'New-FalconIoc'
-                    Endpoint  = '/iocs/entities/indicators/v1:post'
-                    Parameter = @('action', 'platforms', 'severity', 'type')
-                }
-                Confirm-Value @Param
-                foreach ($Pair in $Patterns.GetEnumerator()) {
-                    if ($Object.($Pair.Key) -and ($Object.($Pair.Key) -notmatch $Pair.Value)) {
-                        $ObjectString = ConvertTo-Json -InputObject $Object -Compress
-                        throw "'$($Object.($Pair.Key))' is not a valid '$($Pair.Key)' value. $ObjectString"
+                    Object   = $Object
+                    Command  = 'New-FalconIoc'
+                    Endpoint = '/iocs/entities/indicators/v1:post'
+                    Required = @('type', 'value', 'action', 'platforms')
+                    Content  = @('action', 'platforms', 'severity', 'type')
+                    Pattern  = @('expiration', 'host_groups')
+                    Format   = @{
+                        host_groups = 'HostGroups'
                     }
-                } # TODO: Create 'Confirm-Pattern' function for 'ValidatePattern'
+                }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,

@@ -68,7 +68,17 @@ recon-monitoring-rules:write
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required @('id', 'assigned_to_uuid', 'status')
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'Edit-FalconReconNotification'
+                    Endpoint = '/recon/entities/notifications/v1:patch'
+                    Required = @('id', 'assigned_to_uuid', 'status')
+                    Pattern  = @('id', 'assigned_to_uuid')
+                    Format   = @{
+                        assigned_to_uuid = 'AssignedToUuid'
+                    }
+                }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,
@@ -142,14 +152,15 @@ recon-monitoring-rules:write
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required @('id', 'name', 'filter', 'priority', 'permissions')
                 $Param = @{
-                    Object    = $Object
-                    Command   = 'Edit-FalconReconRule'
-                    Endpoint  = '/recon/entities/rules/v1:patch'
-                    Parameter = @('permissions', 'priority')
+                    Object   = $Object
+                    Command  = 'Edit-FalconReconRule'
+                    Endpoint = '/recon/entities/rules/v1:patch'
+                    Required = @('id', 'name', 'filter', 'priority', 'permissions')
+                    Content  = @('permissions', 'priority')
+                    Pattern  = @('id')
                 }
-                Confirm-Value @Param
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,
@@ -577,14 +588,14 @@ recon-monitoring-rules:write
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required @('name', 'topic', 'filter', 'priority', 'permissions')
                 $Param = @{
-                    Object    = $Object
-                    Command   = 'New-FalconReconRule'
-                    Endpoint  = '/recon/entities/rules/v1:post'
-                    Parameter = @('permissions', 'priority', 'topic')
+                    Object   = $Object
+                    Command  = 'New-FalconReconRule'
+                    Endpoint = '/recon/entities/rules/v1:post'
+                    Required = @('name', 'topic', 'filter', 'priority', 'permissions')
+                    Content  = @('permissions', 'priority', 'topic')
                 }
-                Confirm-Value @Param
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,

@@ -60,7 +60,13 @@ each of the existing rules. Finally, request the change to the rule group to add
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Mandatory = $true, Position = 2)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required @('op','path','value')
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'Edit-FalconFirewallGroup'
+                    Endpoint = '/fwmgr/entities/rule-groups/v1:patch'
+                    Required = @('op', 'path', 'value')
+                }
+                Confirm-Parameter @Param
                 if ($Object.op -notmatch '^(add|remove|replace)$') {
                     $ObjectString = ConvertTo-Json -InputObject $Object -Compress
                     throw "'$($Object.op)' is not a valid 'op' value. $ObjectString"
@@ -155,11 +161,14 @@ Change the name of Firewall policy <id> to 'Name Changed'.
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required 'id'
-                if ($Object.id -notmatch '^\w{32}$') {
-                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
-                    throw "'$($Object.id)' is not a valid 'id' value. $ObjectString"
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'Edit-FalconFirewallPolicy'
+                    Endpoint = '/policy/entities/firewall/v1:patch'
+                    Required = @('id')
+                    Pattern  = @('id')
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,
@@ -1067,14 +1076,18 @@ Create Firewall policy 'Cloned Policy' by cloning the existing Firewall policy <
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('platform_name', 'name')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each policy."
+            foreach ($Object in $_) {
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'New-FalconFirewallPolicy'
+                    Endpoint = '/policy/entities/firewall/v1:post'
+                    Required = @('name', 'platform_name')
+                    Content  = @('platform_name')
+                    Format   = @{
+                        platform_name = 'PlatformName'
                     }
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,

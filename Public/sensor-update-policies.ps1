@@ -24,11 +24,14 @@ Modify Sensor Update policy <id> to disable 'uninstall_protection'.
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required 'id'
-                if ($Object.id -notmatch '^\w{32}$') {
-                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
-                    throw "'$($Object.id)' is not a valid 'id' value. $ObjectString"
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'Edit-FalconSensorUpdatePolicy'
+                    Endpoint = '/policy/entities/sensor-update/v2:patch'
+                    Required = @('id')
+                    Pattern  = @('id')
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,
@@ -404,14 +407,18 @@ enabled. 'Get-FalconBuild' can be used to find 'build' values.
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('platform_name', 'name')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each policy."
+            foreach ($Object in $_) {
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'New-FalconSensorUpdatePolicy'
+                    Endpoint = '/policy/entities/sensor-update/v2:post'
+                    Required = @('name','platform_name')
+                    Content  = @('platform_name')
+                    Format   = @{
+                        platform_name = 'PlatformName'
                     }
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,

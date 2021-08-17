@@ -26,11 +26,14 @@ Modify Response policy <id> to enable 'CustomScripts' and disable 'GetCommand'.
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
             foreach ($Object in $_) {
-                Confirm-Object -Object $Object -Required 'id'
-                if ($Object.id -notmatch '^\w{32}$') {
-                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
-                    throw "'$($Object.id)' is not a valid 'id' value. $ObjectString"
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'Edit-FalconResponsePolicy'
+                    Endpoint = '/policy/entities/response/v1:patch'
+                    Required = @('id')
+                    Pattern  = @('id')
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,
@@ -324,14 +327,18 @@ Create Response policy 'Example' for Windows hosts, with 'CustomScripts' and 'Ge
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('platform_name', 'name')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each policy."
+            foreach ($Object in $_) {
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'New-FalconResponsePolicy'
+                    Endpoint = '/policy/entities/response/v1:post'
+                    Required = @('name','platform_name')
+                    Content  = @('platform_name')
+                    Format   = @{
+                        platform_name = 'PlatformName'
                     }
                 }
+                Confirm-Parameter @Param
             }
         })]
         [array] $Array,

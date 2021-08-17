@@ -310,13 +310,21 @@ Create a dynamic Host Group called 'Windows' with the assignment rule "platform_
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            foreach ($Item in $_) {
-                foreach ($Property in @('group_type', 'name')) {
-                    if ($Item.PSObject.Properties.Name -contains $Property) {
-                        $true
-                    } else {
-                        throw "'$Property' is required for each group."
+            foreach ($Object in $_) {
+                $Param = @{
+                    Object   = $Object
+                    Command  = 'New-FalconHostGroup'
+                    Endpoint = '/devices/entities/host-groups/v1:post'
+                    Required = @('group_type', 'name')
+                    Content  = @('group_type')
+                    Format   = @{
+                        group_type = 'GroupType'
                     }
+                }
+                Confirm-Parameter @Param
+                if ($Object.group_type -eq 'static' -and $Object.assignment_rule) {
+                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+                    throw "'assignment_rule' can only be used with 'group_type = dynamic'. $ObjectString"
                 }
             }
         })]
