@@ -2,6 +2,8 @@ function Confirm-FalconDiscoverAwsAccess {
 <#
 .Synopsis
 Performs an Access Verification check on the specified Falcon Discover for Cloud AWS Account IDs
+.Description
+Requires 'cloud-connect-aws:write'.
 .Parameter Ids
 AWS account identifier(s)
 .Role
@@ -32,6 +34,8 @@ function Edit-FalconDiscoverAwsAccount {
 <#
 .Synopsis
 Update Falcon Discover for Cloud AWS Accounts by specifying the ID of the account and details to update
+.Description
+Requires 'cloud-connect-aws:write'.
 .Parameter Id
 AWS account identifier
 .Parameter ExternalId
@@ -105,6 +109,8 @@ function Get-FalconDiscoverAwsAccount {
 <#
 .Synopsis
 Search for Falcon Discover for Cloud AWS accounts
+.Description
+Requires 'cloud-connect-aws:read'.
 .Parameter Ids
 AWS account identifier(s)
 .Parameter Filter
@@ -177,6 +183,8 @@ function Get-FalconDiscoverAwsSettings {
 <#
 .Synopsis
 Retrieve Global Settings for all provisioned AWS accounts in Falcon Discover for Cloud
+.Description
+Requires 'cloud-connect-aws:read'.
 .Role
 cloud-connect-aws:read
 #>
@@ -190,6 +198,8 @@ function New-FalconDiscoverAwsAccount {
 <#
 .Synopsis
 Provision Falcon Discover for Cloud AWS Accounts by specifying details about the accounts to provision
+.Description
+Requires 'cloud-connect-aws:write'.
 .Parameter Id
 AWS account identifier
 .Parameter Mode
@@ -270,6 +280,8 @@ function Remove-FalconDiscoverAwsAccount {
 <#
 .Synopsis
 Delete Falcon Discover for Cloud AWS accounts
+.Description
+Requires 'cloud-connect-aws:write'.
 .Parameter Ids
 AWS account identifier(s)
 .Role
@@ -300,6 +312,8 @@ function Update-FalconDiscoverAwsSettings {
 <#
 .Synopsis
 Create or update Global Settings which are applicable to all provisioned Falcon Discover for Cloud AWS accounts
+.Description
+Requires 'cloud-connect-aws:write'.
 .Parameter CloudtrailBucketOwnerId
 AWS account identifier containing cloudtrail logs
 .Parameter StaticExternalId

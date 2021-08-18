@@ -2,6 +2,8 @@ function Edit-FalconDeviceControlPolicy {
 <#
 .Synopsis
 Modify Device Control policies
+.Description
+Requires 'device-control-policies:write'.
 .Parameter Array
 An array of Device Control policies to modify in a single request
 .Parameter Id
@@ -77,6 +79,8 @@ function Get-FalconDeviceControlPolicy {
 <#
 .Synopsis
 Search for Device Control policies
+.Description
+Requires 'device-control-policies:read'.
 .Parameter Ids
 Device Control policy identifier(s)
 .Parameter Filter
@@ -159,6 +163,8 @@ function Get-FalconDeviceControlPolicyMember {
 <#
 .Synopsis
 Search for members of Device Control policies
+.Description
+Requires 'device-control-policies:read'.
 .Parameter Id
 Device Control policy identifier
 .Parameter Filter
@@ -236,6 +242,8 @@ function Invoke-FalconDeviceControlPolicyAction {
 <#
 .Synopsis
 Perform actions on Device Control policies
+.Description
+Requires 'device-control-policies:write'.
 .Parameter Name
 Action to perform
 .Parameter Id
@@ -304,6 +312,8 @@ function New-FalconDeviceControlPolicy {
 <#
 .Synopsis
 Create Device Control policies
+.Description
+Requires 'device-control-policies:write'.
 .Parameter Array
 An array of Device Control policies to create in a single request
 .Parameter PlatformName
@@ -385,6 +395,8 @@ function Remove-FalconDeviceControlPolicy {
 <#
 .Synopsis
 Remove Device Control policies
+.Description
+Requires 'device-control-policies:write'.
 .Parameter Ids
 Device Control policy identifier(s)
 .Role
@@ -420,6 +432,8 @@ function Set-FalconDeviceControlPrecedence {
 .Synopsis
 Set Device Control policy precedence
 .Description
+Requires 'device-control-policies:write'.
+
 All Device Control policy identifiers must be supplied in order (with the exception of the 'platform_default'
 policy) to define policy precedence.
 .Parameter PlatformName

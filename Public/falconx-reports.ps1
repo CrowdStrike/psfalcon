@@ -2,6 +2,8 @@ function Get-FalconIntel {
 <#
 .Synopsis
 Search for intelligence reports
+.Description
+Requires 'falconx-reports:read'.
 .Parameter Ids
 Intelligence report identifier(s)
 .Parameter Filter
@@ -97,6 +99,8 @@ function Receive-FalconIntel {
 <#
 .Synopsis
 Download an intelligence report
+.Description
+Requires 'falconx-reports:read'.
 .Parameter Id
 Intelligence report identifier
 .Parameter Path

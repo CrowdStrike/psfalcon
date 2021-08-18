@@ -2,6 +2,8 @@ function Edit-FalconResponsePolicy {
 <#
 .Synopsis
 Modify Response policies
+.Description
+Requires 'response-policies:write'.
 .Parameter Array
 An array of Response policies to modify in a single request
 .Parameter Id
@@ -76,6 +78,8 @@ function Get-FalconResponsePolicy {
 <#
 .Synopsis
 Search for Response policies
+.Description
+Requires 'response-policies:read'.
 .Parameter Ids
 Response policy identifier(s)
 .Parameter Filter
@@ -158,6 +162,8 @@ function Get-FalconResponsePolicyMember {
 <#
 .Synopsis
 Search for members of Response policies
+.Description
+Requires 'response-policies:read'.
 .Parameter Id
 Response policy identifier
 .Parameter Filter
@@ -235,6 +241,8 @@ function Invoke-FalconResponsePolicyAction {
 <#
 .Synopsis
 Perform actions on Response policies
+.Description
+Requires 'response-policies:write'.
 .Parameter Name
 Action to perform
 .Parameter Id
@@ -302,6 +310,8 @@ function New-FalconResponsePolicy {
 <#
 .Synopsis
 Create Response policies
+.Description
+Requires 'response-policies:write'.
 .Parameter Array
 An array of Response policies to create in a single request
 .Parameter PlatformName
@@ -386,6 +396,8 @@ function Remove-FalconResponsePolicy {
 <#
 .Synopsis
 Delete Response policies
+.Description
+Requires 'response-policies:write'.
 .Parameter Ids
 Response policy identifier(s)
 .Role
@@ -420,6 +432,8 @@ function Set-FalconResponsePrecedence {
 .Synopsis
 Set Response policy precedence
 .Description
+Requires 'response-policies:write'.
+
 All Response policy identifiers must be supplied in order (with the exception of the 'platform_default' policy)
 to define policy precedence.
 .Parameter PlatformName

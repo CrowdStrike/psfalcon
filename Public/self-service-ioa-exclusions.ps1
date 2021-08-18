@@ -2,6 +2,8 @@ function Edit-FalconIoaExclusion {
 <#
 .Synopsis
 Modify Indicator of Attack exclusions
+.Description
+Requires 'self-service-ioa-exclusions:write'.
 .Parameter Id
 Indicator of Attack exclusion identifier
 .Parameter Name
@@ -74,6 +76,8 @@ function Get-FalconIoaExclusion {
 <#
 .Synopsis
 Search for Indicator of Attack exclusions
+.Description
+Requires 'self-service-ioa-exclusions:read'.
 .Parameter Ids
 Indicator of Attack exclusion identifier(s)
 .Parameter Filter
@@ -147,6 +151,8 @@ function Remove-FalconIoaExclusion {
 <#
 .Synopsis
 Delete Indicator of Attack exclusions
+.Description
+Requires 'self-service-ioa-exclusions:write'.
 .Parameter Ids
 Indicator of Attack exclusion identifier(s)
 .Parameter Comment

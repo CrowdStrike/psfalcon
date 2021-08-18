@@ -2,6 +2,8 @@ function Get-FalconBehavior {
 <#
 .Synopsis
 Search for behaviors
+.Description
+Requires 'incidents:read'.
 .Parameter Ids
 Behavior identifier(s)
 .Parameter Filter
@@ -80,6 +82,8 @@ function Get-FalconIncident {
 <#
 .Synopsis
 Search for incidents
+.Description
+Requires 'incidents:read'.
 .Parameter Ids
 Incident identifier(s)
 .Parameter Filter
@@ -161,6 +165,8 @@ function Get-FalconScore {
 <#
 .Synopsis
 Search for CrowdScore values
+.Description
+Requires 'incidents:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -220,6 +226,8 @@ function Invoke-FalconIncidentAction {
 <#
 .Synopsis
 Perform actions on incidents
+.Description
+Requires 'incidents:write'.
 .Parameter Name
 Action to perform
 .Parameter Value

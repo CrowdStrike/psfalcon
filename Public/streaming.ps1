@@ -2,6 +2,8 @@ function Get-FalconStream {
 <#
 .Synopsis
 List event streams
+.Description
+Requires 'streaming:read'.
 .Parameter Format
 Format for streaming events [default: json]
 .Parameter Appid
@@ -40,6 +42,8 @@ function Update-FalconStream {
 <#
 .Synopsis
 Refresh an active event stream
+.Description
+Requires 'streaming:read'.
 .Parameter Appid
 Connection label
 .Parameter Partition

@@ -2,6 +2,8 @@ function Edit-FalconReconAction {
 <#
 .Synopsis
 Update an action for a Recon monitoring rule
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter Id
 Recon rule action identifier
 .Parameter Frequency
@@ -53,6 +55,8 @@ function Edit-FalconReconNotification {
 <#
 .Synopsis
 Update Recon notification status or assignee
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter Array
 An array of Recon notifications to modify in a single request
 .Parameter Id
@@ -133,6 +137,8 @@ function Edit-FalconReconRule {
 <#
 .Synopsis
 Update Recon monitoring rules
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter Array
 An array of Recon rules to modify in a single request
 .Parameter Id
@@ -219,6 +225,8 @@ function Get-FalconReconAction {
 <#
 .Synopsis
 Search for Recon actions
+.Description
+Requires 'recon-monitoring-rules:read'.
 .Parameter Ids
 One or more Recon action identifiers
 .Parameter Filter
@@ -299,6 +307,8 @@ function Get-FalconReconNotification {
 <#
 .Synopsis
 Search for Recon notifications
+.Description
+Requires 'recon-monitoring-rules:read'.
 .Parameter Ids
 One or more Recon action identifiers
 .Parameter Filter
@@ -397,6 +407,8 @@ function Get-FalconReconRule {
 <#
 .Synopsis
 Search for Recon monitoring rules
+.Description
+Requires 'recon-monitoring-rules:read'.
 .Parameter Ids
 One or more Recon monitoring rule identifiers
 .Parameter Filter
@@ -480,6 +492,8 @@ function Get-FalconReconRulePreview {
 <#
 .Synopsis
 Preview Recon monitoring rule notification count and distribution
+.Description
+Requires 'recon-monitoring-rules:read'.
 .Parameter Filter
 Recon monitoring rule filter
 .Parameter Topic
@@ -517,6 +531,8 @@ function New-FalconReconAction {
 <#
 .Synopsis
 Create actions for an existing Recon monitoring rule
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter RuleId
 Recon monitoring rule identifier
 .Parameter Type
@@ -569,6 +585,8 @@ function New-FalconReconRule {
 <#
 .Synopsis
 Create Recon monitoring rules
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter Array
 An array of Recon rules to create in a single request
 .Parameter Name
@@ -654,6 +672,8 @@ function Remove-FalconReconAction {
 <#
 .Synopsis
 Delete an action from a Recon monitoring rule
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter Id
 Recon action identifier
 .Role
@@ -688,6 +708,8 @@ function Remove-FalconReconRule {
 <#
 .Synopsis
 Delete Recon monitoring rules
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter Ids
 Recon monitoring rule identifier(s)
 .Role
@@ -721,6 +743,8 @@ function Remove-FalconNotification {
 <#
 .Synopsis
 Delete Recon notifications. Notifications cannot be recovered after they are deleted.
+.Description
+Requires 'recon-monitoring-rules:write'.
 .Parameter Ids
 One or more Recon notification identifiers
 .Role

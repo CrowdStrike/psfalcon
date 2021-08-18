@@ -3,6 +3,8 @@ function Get-FalconCcid {
 .Synopsis
 Retrieve your Customer Checksum Identifier (CCID)
 .Description
+Requires 'sensor-installers:read'.
+
 Returns your Customer Checksum Identifier, which is requested during the installation of the Falcon Sensor.
 .Role
 sensor-installers:read
@@ -19,6 +21,8 @@ function Get-FalconInstaller {
 <#
 .Synopsis
 Search for Falcon Sensor installers
+.Description
+Requires 'sensor-installers:read'.
 .Parameter Ids
 Sensor installer Sha256 hash value(s)
 .Parameter Filter
@@ -97,6 +101,8 @@ function Receive-FalconInstaller {
 <#
 .Synopsis
 Download a Falcon Sensor installer
+.Description
+Requires 'sensor-installers:read'.
 .Parameter Id
 Sensor installer Sha256 hash value
 .Parameter Path

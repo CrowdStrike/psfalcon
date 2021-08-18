@@ -2,6 +2,8 @@ function Get-FalconReport {
 <#
 .Synopsis
 Search for Falcon X Sandbox reports
+.Description
+Requires 'falconx-sandbox:read'.
 .Parameter Ids
 Falcon X Sandbox report identifier(s)
 .Parameter Filter
@@ -82,6 +84,8 @@ function Get-FalconSubmission {
 <#
 .Synopsis
 Search for Falcon X Sandbox submissions
+.Description
+Requires 'falconx-sandbox:read'.
 .Parameter Ids
 Falcon X Sandbox submission identifier(s)
 .Parameter Filter
@@ -155,6 +159,8 @@ function Get-FalconSubmissionQuota {
 <#
 .Synopsis
 Display your monthly Falcon X sandbox submission quota
+.Description
+Requires 'falconx-sandbox:read'.
 .Role
 falconx-sandbox:read
 .Example
@@ -185,6 +191,8 @@ function New-FalconSubmission {
 .Synopsis
 Submit a sample to the Falcon X Sandbox
 .Description
+Requires 'falconx-sandbox:write'.
+
 'Sha256' values are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be uploaded
 before they can be provided to the Falcon X Sandbox.
 .Parameter EnvironmentId
@@ -310,6 +318,8 @@ function Receive-FalconArtifact {
 .Synopsis
 Download artifacts from a Falcon X Sandbox report
 .Description
+Requires 'falconx-sandbox:read'.
+
 Artifact identifier values can be retrieved for specific Falcon X Sandbox reports using 'Get-FalconReport'.
 .Parameter Id
 Artifact identifier
@@ -361,6 +371,8 @@ function Remove-FalconReport {
 <#
 .Synopsis
 Delete a Falcon X Sandbox report
+.Description
+Requires 'falconx-sandbox:write'.
 .Parameter Id
 Falcon X Sandbox report identifier
 .Role

@@ -2,6 +2,8 @@ function Edit-FalconSvExclusion {
 <#
 .Synopsis
 Modify Sensor Visibility exclusions
+.Description
+Requires 'sensor-visibility-exclusions:write'.
 .Parameter Id
 Sensor Visibility exclusion identifier
 .Parameter Value
@@ -57,6 +59,8 @@ function Get-FalconSvExclusion {
 <#
 .Synopsis
 Search for Sensor Visibility exclusions
+.Description
+Requires 'sensor-visibility-exclusions:read'.
 .Parameter Ids
 Sensor Visibility exclusion identifier(s)
 .Parameter Filter
@@ -128,7 +132,9 @@ Return the first set of detailed results about Sensor Visibility exclusions.
 function New-FalconSvExclusion {
 <#
 .Synopsis
-Create the sensor visibility exclusions
+Create sensor visibility exclusions
+.Description
+Requires 'sensor-visibility-exclusions:write'.
 .Parameter Value
 RegEx pattern value
 .Parameter GroupIds
@@ -177,6 +183,8 @@ function Remove-FalconSvExclusion {
 <#
 .Synopsis
 Delete Sensor Visibility exclusions
+.Description
+Requires 'sensor-visibility-exclusions:write'.
 .Parameter Ids
 Sensor Visibility exclusion identifier(s)
 .Parameter Comment

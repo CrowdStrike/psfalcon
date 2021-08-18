@@ -1,7 +1,9 @@
 function Get-FalconRemediation {
 <#
 .Synopsis
-Retrieve remediation detail
+Retrieve detail about remediations specified in a vulnerability
+.Description
+Requires 'spotlight-vulnerabilities:read'.
 .Parameter Ids
 Remediation identifier(s)
 .Role
@@ -36,6 +38,8 @@ function Get-FalconVulnerability {
 <#
 .Synopsis
 Search for vulnerabilities
+.Description
+Requires 'spotlight-vulnerabilities:read'.
 .Parameter Ids
 Vulnerability identifier(s)
 .Parameter Filter

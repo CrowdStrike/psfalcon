@@ -2,6 +2,8 @@ function Edit-FalconDetection {
 <#
 .Synopsis
 Modify the state, assignee, and visibility of detections
+.Description
+Requires 'detects:write'.
 .Parameter Ids
 Detection identifier(s)
 .Parameter Status
@@ -63,6 +65,8 @@ function Get-FalconDetection {
 <#
 .Synopsis
 Search for detections
+.Description
+Requires 'detects:read'.
 .Parameter Ids
 Retrieve information for specific detection identifiers
 .Parameter Filter

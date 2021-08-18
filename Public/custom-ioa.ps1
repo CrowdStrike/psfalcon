@@ -3,6 +3,8 @@ function Edit-FalconIoaGroup {
 .Synopsis
 Modify a Custom IOA rule group
 .Description
+Requires 'custom-ioa:write'.
+
 All fields (plus 'rulegroup_version') are required when making a Custom IOA rule group change. PSFalcon adds
 missing values automatically using data from your existing rule group.
 .Parameter Id
@@ -79,6 +81,8 @@ function Edit-FalconIoaRule {
 .Synopsis
 Modify custom IOA rules within an IOA rule group
 .Description
+Requires 'custom-ioa:write'.
+
 All fields are required (plus 'rulegroup_version') when making a Custom IOA rule group change. PSFalcon adds
 missing values automatically using data from your existing rule group.
 
@@ -169,6 +173,8 @@ function Get-FalconIoaGroup {
 <#
 .Synopsis
 Search for Custom IOA rule groups
+.Description
+Requires 'custom-ioa:read'.
 .Parameter Ids
 Custom IOA rule group identifier(s)
 .Parameter Filter
@@ -262,6 +268,8 @@ function Get-FalconIoaPlatform {
 <#
 .Synopsis
 List Custom IOA platforms
+.Description
+Requires 'custom-ioa:read'.
 .Parameter Ids
 Custom IOA platform(s)
 .Parameter Limit
@@ -325,6 +333,8 @@ function Get-FalconIoaRule {
 <#
 .Synopsis
 Search for Custom IOA rules
+.Description
+Requires 'custom-ioa:read'.
 .Parameter Ids
 Custom IOA rule identifier(s)
 .Parameter Filter
@@ -412,6 +422,8 @@ function Get-FalconIoaSeverity {
 <#
 .Synopsis
 List Custom IOA severity levels
+.Description
+Requires 'custom-ioa:read'.
 .Parameter Ids
 Custom IOA severities
 .Parameter Limit
@@ -476,6 +488,8 @@ function Get-FalconIoaType {
 <#
 .Synopsis
 List Custom IOA types
+.Description
+Requires 'custom-ioa:read'.
 .Parameter Ids
 Custom IOA types
 .Parameter Limit
@@ -539,6 +553,8 @@ function New-FalconIoaGroup {
 <#
 .Synopsis
 Create a Custom IOA rule group
+.Description
+Requires 'custom-ioa:write'.
 .Parameter Platform
 Operating System platform
 .Parameter Name
@@ -590,6 +606,8 @@ function New-FalconIoaRule {
 .Synopsis
 Create a Custom IOA rule within a rule group
 .Description
+Requires 'custom-ioa:write'.
+
 'RuleTypeId' and 'DispositionId' values can be found using 'Get-FalconIoaType -Detailed' under the 'id' and
 'disposition_map' properties.
 .Parameter RulegroupId
@@ -676,6 +694,8 @@ function Remove-FalconIoaGroup {
 <#
 .Synopsis
 Delete Custom IOA rule groups
+.Description
+Requires 'custom-ioa:write'.
 .Parameter Ids
 Custom IOA rule group identifier(s)
 .Parameter Comment
@@ -714,6 +734,8 @@ function Remove-FalconIoaRule {
 <#
 .Synopsis
 Remove Custom IOA rules from rule groups
+.Description
+Requires 'custom-ioa:write'.
 .Parameter RuleGroupId
 Custom IOA rule group identifier
 .Parameter Ids
@@ -760,6 +782,8 @@ function Test-FalconIoaRule {
 <#
 .Synopsis
 Validate fields and patterns of a Custom IOA rule
+.Description
+Requires 'custom-ioa:write'.
 .Parameter Fields
 An array of Custom IOA Rule properties
 .Role

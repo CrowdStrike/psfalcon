@@ -2,6 +2,8 @@ function Get-FalconCompleteAllowlist {
 <#
 .Synopsis
 Search for Falcon Complete Allowlist tickets
+.Description
+Requires 'falconcomplete-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -64,6 +66,8 @@ function Get-FalconCompleteBlocklist {
 <#
 .Synopsis
 Search for Falcon Complete Blocklist tickets
+.Description
+Requires 'falconcomplete-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -126,6 +130,8 @@ function Get-FalconCompleteCollection {
 <#
 .Synopsis
 Search for Falcon Complete device collections
+.Description
+Requires 'falconcomplete-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -192,6 +198,8 @@ function Get-FalconCompleteDetection {
 <#
 .Synopsis
 Search for Falcon Complete detections
+.Description
+Requires 'falconcomplete-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -254,6 +262,8 @@ function Get-FalconCompleteEscalation {
 <#
 .Synopsis
 Search for Falcon Complete escalations
+.Description
+Requires 'falconcomplete-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -316,6 +326,8 @@ function Get-FalconCompleteIncident {
 <#
 .Synopsis
 Search for Falcon Complete incidents
+.Description
+Requires 'falconcomplete-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort
@@ -378,6 +390,8 @@ function Get-FalconCompleteRemediation {
 <#
 .Synopsis
 Search for Falcon Complete remediations
+.Description
+Requires 'falconcomplete-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Sort

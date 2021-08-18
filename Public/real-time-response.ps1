@@ -3,6 +3,8 @@ function Confirm-FalconCommand {
 .Synopsis
 Get status of an executed read-only command on a single host
 .Description
+Requires 'real-time-response:read'.
+
 Confirms the status of an executed 'read-only' command. The single-host Real-time Response APIs (used when creating
 sessions with single hosts) require that commands be confirmed to 'acknowledge' that they have been processed as
 part of your API-based workflow. Failing to confirm commands can lead to unexpected results, like the
@@ -54,6 +56,8 @@ function Confirm-FalconGetFile {
 <#
 .Synopsis
 Check the status of a Real-time Response 'get' command request
+.Description
+Requires 'real-time-response:write'.
 .Parameter SessionId
 Real-time Response session identifier
 .Parameter BatchGetCmdReqId
@@ -118,6 +122,8 @@ function Confirm-FalconResponderCommand {
 .Synopsis
 Get status of an executed active-responder command on a single host
 .Description
+Requires 'real-time-response:write'.
+
 Confirms the status of an executed 'active-responder' command. The single-host Real-time Response APIs (used when
 creating sessions with single hosts) require that commands be confirmed to 'acknowledge' that they have been
 processed as part of your API-based workflow. Failing to confirm commands can lead to unexpected results, like the
@@ -171,10 +177,12 @@ function Get-FalconSession {
 .Synopsis
 Search for Real-time Response sessions
 .Description
+Requires 'real-time-response:read'.
+
 Real-time Response sessions are segmented by permission, meaning that only sessions that were created using your
 OAuth2 API Client will be visible.
 
-'Get-FalconQueue' can be used to find and export information about all sessions in the 'offline queue'.
+'Get-FalconQueue' can be used to find and export information about sessions in the 'offline queue'.
 .Parameter Ids
 Real-time Response session identifier(s)
 .Parameter Filter
@@ -203,8 +211,8 @@ Retrieve the first set of detailed results for Real-time Response sessions creat
 PS>Get-FalconSession -Ids <id>, <id> -Queue
 
 Retrieve the detailed information about Real-time Response sessions <id> and <id>, created using your OAuth2
-API Client and added to the 'offline queue'. 'Get-FalconQueue' can be used to output detail about all sessions
-that are accessible within the 'offline queue'.
+API Client and added to the 'offline queue'. 'Get-FalconQueue' can be used to output detail about sessions in the
+'offline queue'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/real-time-response/queries/sessions/v1:get')]
     param(
@@ -264,7 +272,9 @@ function Invoke-FalconBatchGet {
 .Synopsis
 Issue a Real-time Response batch 'get' command to an existing batch session
 .Description
-Once the 'get' command has been issued, a 'batch_get_cmd_req_id' property will be created. That value is used
+Requires 'real-time-response:write'.
+
+When a 'get' command has been issued, the 'batch_get_cmd_req_id' property will be returned. That value is used
 to verify the completion of the file transfer using 'Confirm-FalconBatchGet'.
 .Parameter BatchId
 Batch Real-time Response session identifier
@@ -337,6 +347,8 @@ function Invoke-FalconCommand {
 .Synopsis
 Issue a Real-time Response read-only command to an existing single-host or batch session
 .Description
+Requires 'real-time-response:read'.
+
 Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id' or
 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 .Parameter SessionId
@@ -426,6 +438,8 @@ function Invoke-FalconResponderCommand {
 .Synopsis
 Issue a Real-time Response active-responder command to an existing single-host or batch session
 .Description
+Requires 'real-time-response:write'.
+
 Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id' or
 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 .Parameter SessionId
@@ -524,6 +538,8 @@ function Receive-FalconGetFile {
 .Synopsis
 Download a password protected .7z archive containing a Real-time Response 'get' file [password: 'infected']
 .Description
+Requires 'real-time-response:write'.
+
 'Sha256' and 'SessionId' values can be found using 'Confirm-FalconGetFile'. 'Invoke-FalconAdminCommand' can be
 used to issue a 'get' command to a single-host, and 'Invoke-FalconBatchGet' can be used for multiple hosts within
 existing Real-time Response session.
@@ -602,6 +618,8 @@ function Remove-FalconCommand {
 <#
 .Synopsis
 Remove a Real-time Response command from a queued session
+.Description
+Requires 'real-time-response:read'.
 .Parameter SessionId
 Real-time Response session identifier
 .Parameter CloudRequestId
@@ -649,6 +667,8 @@ function Remove-FalconGetFile {
 .Synopsis
 Remove Real-time Response 'get' files
 .Description
+Requires 'real-time-response:write'.
+
 Delete files previously retrieved during a Real-time Response session. The required 'Id' and 'SessionId' values
 are contained in the results of 'Start-FalconSession' and 'Invoke-FalconAdminCommand' or 'Invoke-FalconBatchGet'
 commands.
@@ -698,6 +718,8 @@ function Remove-FalconSession {
 <#
 .Synopsis
 Delete a Real-time Response session
+.Description
+Requires 'real-time-response:read'.
 .Parameter Id
 Real-time Response session identifier
 .Role
@@ -736,6 +758,8 @@ function Start-FalconSession {
 .Synopsis
 Initialize a single-host or batch Real-time Response session
 .Description
+Requires 'real-time-response:read'.
+
 Real-time Response sessions require Host identifier values, which can be found using 'Get-FalconHost'. Sessions
 that are successfully started return a 'session_id' (for single hosts) or 'batch_id' (multiple hosts) value which
 can be used to issue commands that will be processed by the hosts in the session. Commands can be issued using
@@ -818,6 +842,8 @@ function Update-FalconSession {
 .Synopsis
 Refresh a single-host or batch Real-time Response session to prevent expiration
 .Description
+Requires 'real-time-response:read'.
+
 Real-time Response sessions expire after 10 minutes by default. Any commands that were issued to a session that
 take longer than 10 minutes will not return results without refreshing the session to keep it alive until the
 command process completes.

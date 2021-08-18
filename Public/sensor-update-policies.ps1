@@ -2,6 +2,8 @@ function Edit-FalconSensorUpdatePolicy {
 <#
 .Synopsis
 Modify Sensor Update policies
+.Description
+Requires 'sensor-update-policies:write'.
 .Parameter Array
 An array of Sensor Update policies to modify in a single request
 .Parameter Id
@@ -74,6 +76,8 @@ function Get-FalconBuild {
 <#
 .Synopsis
 Retrieve Falcon Sensor builds for assignment in Sensor Update Policies
+.Description
+Requires 'sensor-update-policies:read'.
 .Parameter Platform
 Operating System platform
 .Role
@@ -81,8 +85,7 @@ sensor-update-policies:read
 .Example
 PS>Get-FalconBuild -Platform 'windows'
 
-Return the available Falcon Sensor build values for Windows, which can be used for setting 'build' values in a
-Sensor Update policy.
+Return the available Falcon Sensor build values for Windows.
 #>
     [CmdletBinding(DefaultParameterSetName = '/policy/combined/sensor-update-builds/v1:get')]
     param(
@@ -108,6 +111,8 @@ function Get-FalconSensorUpdatePolicy {
 <#
 .Synopsis
 Search for Sensor Update policies
+.Description
+Requires 'sensor-update-policies:read'.
 .Parameter Ids
 Sensor Update policy identifier(s)
 .Parameter Filter
@@ -190,6 +195,8 @@ function Get-FalconSensorUpdatePolicyMember {
 <#
 .Synopsis
 Search for members of Sensor Update policies
+.Description
+Requires 'sensor-update-policies:read'.
 .Parameter Id
 Sensor Update policy identifier
 .Parameter Filter
@@ -267,6 +274,8 @@ function Get-FalconUninstallToken {
 <#
 .Synopsis
 Retrieve an uninstallation or maintenance token
+.Description
+Requires 'sensor-update-policies:write'.
 .Parameter DeviceId
 Host identifier
 .Parameter AuditMessage
@@ -316,6 +325,8 @@ function Invoke-FalconSensorUpdatePolicyAction {
 <#
 .Synopsis
 Perform actions on Sensor Update policies
+.Description
+Requires 'sensor-update-policies:write'.
 .Parameter Name
 Action to perform
 .Parameter Id
@@ -384,6 +395,8 @@ function New-FalconSensorUpdatePolicy {
 <#
 .Synopsis
 Create Sensor Update policies
+.Description
+Requires 'sensor-update-policies:write'.
 .Parameter Array
 An array of Sensor Update policies to create in a single request
 .Parameter PlatformName
@@ -461,6 +474,8 @@ function Remove-FalconSensorUpdatePolicy {
 <#
 .Synopsis
 Delete Sensor Update policies
+.Description
+Requires 'sensor-update-policies:write'.
 .Parameter Ids
 Sensor Update policy identifier(s)
 .Role
@@ -495,6 +510,8 @@ function Set-FalconSensorUpdatePrecedence {
 .Synopsis
 Set Sensor Update policy precedence
 .Description
+Requires 'sensor-update-policies:write'.
+
 All Sensor Update policy identifiers must be supplied in order (with the exception of the 'platform_default'
 policy) to define policy precedence.
 .Parameter PlatformName

@@ -2,6 +2,8 @@ function Get-FalconZta {
 <#
 .Synopsis
 Search for Zero Trust Assessment results
+.Description
+Requires 'zero-trust-assessment:read'.
 .Parameter Ids
 Host identifier(s)
 .Role

@@ -273,6 +273,8 @@ function Find-FalconDuplicate {
 .Synopsis
 Find duplicate hosts within your Falcon environment
 .Description
+Requires 'devices:read' and 'devices:write'.
+
 If the 'Hosts' parameter is not provided, all Host information will be retrieved. An error will be displayed if
 required fields 'cid', 'device_id', 'first_seen', 'last_seen', 'hostname' and any defined 'filter' value are
 not present.
@@ -284,8 +286,6 @@ within the output.
 Array of 'Get-FalconHost -Detailed' results
 .Parameter Filter
 Property to determine duplicate Host(s) in addition to 'hostname'
-.Role
-devices:write
 .Example
 PS>Find-FalconDuplicate
 
@@ -355,6 +355,8 @@ function Get-FalconQueue {
 .Synopsis
 Create a report of Real-time Response commands in the offline queue
 .Description
+Requires 'real-time-response-admin:read' and 'real-time-response-admin:write'.
+
 Creates a CSV of pending Real-time Response commands and their related session information. Sessions within the
 offline queue expire 7 days after creation by default. Sessions can have additional commands appended to them
 to extend their expiration time.
@@ -365,8 +367,6 @@ PS>Get-FalconQueue -Days 14
 
 Output pending Real-time Response sessions in the offline queue that were created within the last 14 days. Any
 sessions that expired at the end of the default 7 day period will not be displayed.
-.Role
-real-time-response-admin:write
 #>
     [CmdletBinding()]
     param(
@@ -1218,6 +1218,8 @@ function Invoke-FalconDeploy {
 .Synopsis
 Deploy and run an executable using Real-time Response
 .Description
+Requires 'real-time-response-admin:write'.
+
 'Put' files will be checked for identical file names, and if any are found, the Sha256 hash values will be
 compared between your local and cloud files. If they are different, a prompt will appear asking which file to use.
 
@@ -1239,8 +1241,6 @@ Add non-responsive Hosts to the offline queue
 Host identifier(s)
 .Parameter GroupId
 Host Group identifier
-.Role
-real-time-response-admin:write
 .Example
 PS>Invoke-FalconDeploy -Path C:\files\example.exe -HostIds <id>, <id>
 
@@ -1456,6 +1456,9 @@ function Invoke-FalconRtr {
 <#
 .Synopsis
 Start Real-time Response session(s), execute a command and output the result(s)
+.Description
+Requires 'real-time-response:read', 'real-time-response:write' or 'real-time-response-admin:write' depending
+on 'Command' provided.
 .Parameter Command
 Real-time Response command
 .Parameter Arguments
@@ -1468,8 +1471,6 @@ Add non-responsive Hosts to the offline queue
 Host identifier(s)
 .Parameter GroupId
 Host Group identifier
-.Role
-real-time-response-admin:write
 .Example
 PS>Invoke-FalconRtr runscript "-CloudFile='HelloWorld'" -HostIds <id>, <id>
 

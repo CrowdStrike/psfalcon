@@ -2,6 +2,8 @@ function Add-FalconHostTag {
 <#
 .Synopsis
 Add FalconGroupingTags to one or more Host(s)
+.Description
+Requires 'devices:write'.
 .Parameter Ids
 Host identifier(s)
 .Parameter Tags
@@ -47,6 +49,8 @@ function Get-FalconHost {
 <#
 .Synopsis
 Search for Hosts
+.Description
+Requires 'devices:read'.
 .Parameter Ids
 Host identifier(s)
 .Parameter Filter
@@ -136,6 +140,8 @@ function Invoke-FalconHostAction {
 <#
 .Synopsis
 Perform actions on Hosts
+.Description
+Requires 'devices:write'.
 .Parameter Name
 Action to perform
 .Parameter Ids
@@ -192,6 +198,8 @@ function Remove-FalconHostTag {
 <#
 .Synopsis
 Remove FalconGroupingTags from one or more hosts
+.Description
+Requires 'devices:write'.
 .Parameter Ids
 Host identifier(s)
 .Parameter Tags

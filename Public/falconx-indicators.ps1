@@ -2,6 +2,8 @@ function Get-FalconIndicator {
 <#
 .Synopsis
 Search for intelligence indicators
+.Description
+Requires 'falconx-indicators:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Parameter Query

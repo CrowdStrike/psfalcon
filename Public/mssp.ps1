@@ -2,6 +2,8 @@ function Add-FalconCidGroupMember {
 <#
 .Synopsis
 Add CID group members
+.Description
+Requires 'mssp:write'.
 .Parameter Id
 CID group identifier
 .Parameter CIDs
@@ -47,6 +49,8 @@ function Add-FalconGroupRole {
 <#
 .Synopsis
 Assign role(s) between a CID and user group
+.Description
+Requires 'mssp:write'.
 .Parameter CidGroupId
 CID group identifier
 .Parameter UserGroupId
@@ -98,6 +102,8 @@ function Add-FalconUserGroupMember {
 <#
 .Synopsis
 Add user group members
+.Description
+Requires 'mssp:write'.
 .Parameter Id
 User group identifier
 .Parameter UserIds
@@ -145,6 +151,8 @@ function Edit-FalconCidGroup {
 <#
 .Synopsis
 Modify a CID group
+.Description
+Requires 'mssp:write'.
 .Parameter Id
 CID group identifier
 .Parameter Name
@@ -194,6 +202,8 @@ function Edit-FalconUserGroup {
 <#
 .Synopsis
 Modify a user group
+.Description
+Requires 'mssp:write'.
 .Parameter Id
 User group identifier
 .Parameter Name
@@ -243,6 +253,8 @@ function Get-FalconCidGroup {
 <#
 .Synopsis
 Search for CID groups
+.Description
+Requires 'mssp:read'.
 .Parameter Ids
 CID group identifier(s)
 .Parameter Name
@@ -320,6 +332,8 @@ function Get-FalconCidGroupMember {
 <#
 .Synopsis
 Search for CID group members
+.Description
+Requires 'mssp:read'.
 .Parameter Ids
 CID group identifier(s)
 .Parameter CID
@@ -400,6 +414,8 @@ function Get-FalconGroupRole {
 <#
 .Synopsis
 Search for user group roles
+.Description
+Requires 'mssp:read'.
 .Parameter Ids
 Combined group identifier(s) [<cid_group_id>:<user_group_id>]
 .Parameter CidGroupId
@@ -488,6 +504,8 @@ function Get-FalconMemberCid {
 <#
 .Synopsis
 Search for child CIDs
+.Description
+Requires 'mssp:read'.
 .Parameter Ids
 Child CID identifier(s)
 .Parameter Sort
@@ -553,6 +571,8 @@ function Get-FalconUserGroup {
 <#
 .Synopsis
 Search for user groups
+.Description
+Requires 'mssp:read'.
 .Parameter Ids
 User group identifier(s)
 .Parameter Name
@@ -630,6 +650,8 @@ function Get-FalconUserGroupMember {
 <#
 .Synopsis
 Search for members of a user group, or groups assigned to a user
+.Description
+Requires 'mssp:read'.
 .Parameter Ids
 User group identifier(s), to find group members
 .Parameter UserId
@@ -709,6 +731,8 @@ function New-FalconCidGroup {
 <#
 .Synopsis
 Create a CID group
+.Description
+Requires 'mssp:write'.
 .Parameter Name
 CID group name
 .Parameter Description
@@ -748,6 +772,8 @@ function New-FalconUserGroup {
 <#
 .Synopsis
 Create a user group
+.Description
+Requires 'mssp:write'.
 .Parameter Name
 User group name
 .Parameter Description
@@ -787,6 +813,8 @@ function Remove-FalconCidGroup {
 <#
 .Synopsis
 Delete CID group(s)
+.Description
+Requires 'mssp:write'.
 .Parameter CidGroupIds
 CID group identifier(s)
 .Role
@@ -823,6 +851,8 @@ function Remove-FalconCidGroupMember {
 <#
 .Synopsis
 Remove members from a CID group
+.Description
+Requires 'mssp:write'.
 .Parameter Id
 CID group identifier
 .Parameter CIDs
@@ -869,6 +899,8 @@ function Remove-FalconGroupRole {
 <#
 .Synopsis
 Remove role(s) between a user group and CID group
+.Description
+Requires 'mssp:write'.
 .Parameter CidGroupId
 CID group identifier
 .Parameter UserGroupId
@@ -924,6 +956,8 @@ function Remove-FalconUserGroup {
 <#
 .Synopsis
 Remove user group(s)
+.Description
+Requires 'mssp:write'.
 .Parameter Ids
 User group identifier(s)
 .Role
@@ -960,6 +994,8 @@ function Remove-FalconUserGroupMember {
 <#
 .Synopsis
 Remove members from a user group
+.Description
+Requires 'mssp:write'.
 .Parameter Id
 User group identifier
 .Parameter UserIds

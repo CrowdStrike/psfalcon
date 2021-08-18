@@ -2,6 +2,8 @@ function Edit-FalconContainerAwsAccount {
 <#
 .Synopsis
 Modify Falcon Container Security AWS accounts
+.Description
+Requires 'kubernetes-protection:write'.
 .Parameter Ids
 AWS account identifier(s)
 .Parameter Region
@@ -37,6 +39,8 @@ function Get-FalconContainerAwsAccount {
 <#
 .Synopsis
 Search for Falcon Container Security AWS accounts
+.Description
+Requires 'kubernetes-protection:read'.
 .Parameter Ids
 AWS account identifier(s)
 .Parameter Status
@@ -92,6 +96,8 @@ function Get-FalconContainerCloud {
 <#
 .Synopsis
 List cloud provider locations acknowledged by Falcon Container Security
+.Description
+Requires 'kubernetes-protection:read'.
 .Parameter Clouds
 Cloud provider(s)
 .Role
@@ -121,6 +127,8 @@ function Get-FalconContainerCluster {
 <#
 .Synopsis
 List clusters acknowledged by Falcon Container Security
+.Description
+Requires 'kubernetes-protection:read'.
 .Parameter Ids
 Cluster account identifier(s)
 .Parameter Locations
@@ -190,6 +198,8 @@ function Invoke-FalconContainerScan {
 <#
 .Synopsis
 Initiate a scan of your Kubernetes footprint
+.Description
+Requires 'kubernetes-protection:write'.
 .Parameter ScanType
 Scan type
 .Role
@@ -223,6 +233,8 @@ function New-FalconContainerAwsAccount {
 <#
 .Synopsis
 Provision Falcon Container Security accounts
+.Description
+Requires 'kubernetes-protection:write'.
 .Parameter Id
 AWS account identifier
 .Parameter Region
@@ -264,6 +276,8 @@ function New-FalconContainerKey {
 <#
 .Synopsis
 Regenerate the API key for Docker registry integrations
+.Description
+Requires 'kubernetes-protection:write'.
 .Role
 kubernetes-protection:write
 #>
@@ -277,6 +291,8 @@ function Receive-FalconContainerYaml {
 <#
 .Synopsis
 Download a sample Helm values.yaml file
+.Description
+Requires 'kubernetes-protection:read'.
 .Parameter ClusterName
 Cluster name
 .Parameter Path
@@ -327,6 +343,8 @@ function Remove-FalconContainerAwsAccount {
 <#
 .Synopsis
 Remove Falcon Container Security AWS accounts
+.Description
+Requires 'kubernetes-protection:write'.
 .Parameter Ids
 AWS account identifier(s)
 .Role

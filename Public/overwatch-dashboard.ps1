@@ -2,6 +2,8 @@ function Get-FalconOverWatchEvent {
 <#
 .Synopsis
 Get the total number of OverWatch events across all customers
+.Description
+Requires 'overwatch-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Role
@@ -35,6 +37,8 @@ function Get-FalconOverWatchDetection {
 <#
 .Synopsis
 Get the total number of detections pushed across all customers
+.Description
+Requires 'overwatch-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Role
@@ -68,6 +72,8 @@ function Get-FalconOverWatchIncident {
 <#
 .Synopsis
 Get the total number of incidents pushed across all customers
+.Description
+Requires 'overwatch-dashboard:read'.
 .Parameter Filter
 Falcon Query Language expression to limit results
 .Role

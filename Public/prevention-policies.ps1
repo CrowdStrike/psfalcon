@@ -2,6 +2,8 @@ function Edit-FalconPreventionPolicy {
 <#
 .Synopsis
 Modify Prevention policies
+.Description
+Requires 'prevention-policies:write'.
 .Parameter Array
 An array of Prevention policies to modify in a single request
 .Parameter Id
@@ -78,6 +80,8 @@ function Get-FalconPreventionPolicy {
 <#
 .Synopsis
 Search for Prevention policies
+.Description
+Requires 'prevention-policies:read'.
 .Parameter Ids
 Prevention policy identifier(s)
 .Parameter Filter
@@ -160,6 +164,8 @@ function Get-FalconPreventionPolicyMember {
 <#
 .Synopsis
 Search for members of Prevention policies
+.Description
+Requires 'prevention-policies:read'.
 .Parameter Id
 Prevention policy identifier
 .Parameter Filter
@@ -237,6 +243,8 @@ function Invoke-FalconPreventionPolicyAction {
 <#
 .Synopsis
 Perform actions on Prevention policies
+.Description
+Requires 'prevention-policies:write'.
 .Parameter Name
 Action to perform
 .Parameter Id
@@ -306,6 +314,8 @@ function New-FalconPreventionPolicy {
 <#
 .Synopsis
 Create Prevention policies
+.Description
+Requires 'prevention-policies:write'.
 .Parameter Array
 An array of Prevention policies to create in a single request
 .Parameter PlatformName
@@ -392,6 +402,8 @@ function Remove-FalconPreventionPolicy {
 <#
 .Synopsis
 Delete Prevention policies
+.Description
+Requires 'prevention-policies:write'.
 .Parameter Ids
 Prevention policy identifier(s)
 .Role
@@ -426,6 +438,8 @@ function Set-FalconPreventionPrecedence {
 .Synopsis
 Set Prevention policy precedence
 .Description
+Requires 'prevention-policies:write'.
+
 All Prevention policy identifiers must be supplied in order (with the exception of the 'platform_default' policy)
 to define policy precedence.
 .Parameter PlatformName

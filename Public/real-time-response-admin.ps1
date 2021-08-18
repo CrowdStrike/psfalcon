@@ -3,6 +3,8 @@ function Confirm-FalconAdminCommand {
 .Synopsis
 Get status of an executed admin command on a single host
 .Description
+Requires 'real-time-response-admin:write'.
+
 Confirms the status of an executed 'admin' command. The single-host Real-time Response APIs (used when creating
 sessions with single hosts) require that commands be confirmed to 'acknowledge' that they have been processed as
 part of your API-based workflow. Failing to confirm commands can lead to unexpected results, like the
@@ -54,6 +56,8 @@ function Edit-FalconScript {
 <#
 .Synopsis
 Modify a Real-time Response script
+.Description
+Requires 'real-time-response-admin:write'.
 .Parameter Id
 Real-time Response script identifier
 .Parameter Path
@@ -139,6 +143,8 @@ function Get-FalconPutFile {
 <#
 .Synopsis
 Search for Real-time Response 'put' files
+.Description
+Requires 'real-time-response-admin:write'.
 .Parameter Ids
 'Put' file identifier(s)
 .Parameter Filter
@@ -209,6 +215,8 @@ function Get-FalconScript {
 <#
 .Synopsis
 Search for custom Real-time Response scripts
+.Description
+Requires 'real-time-response-admin:write'.
 .Parameter Ids
 Custom Real-time Response script identifier(s)
 .Parameter Filter
@@ -280,6 +288,8 @@ function Invoke-FalconAdminCommand {
 .Synopsis
 Issue a Real-time Response admin command to an existing single-host or batch session
 .Description
+Requires 'real-time-response-admin:write'.
+
 Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id' or
 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 .Parameter SessionId
@@ -371,6 +381,8 @@ function Remove-FalconPutFile {
 <#
 .Synopsis
 Remove a Real-time Response 'put' file
+.Description
+Requires 'real-time-response-admin:write'.
 .Parameter Id
 Real-time Response 'put' file identifier
 .Role
@@ -408,6 +420,8 @@ function Remove-FalconScript {
 <#
 .Synopsis
 Remove a custom Real-time Response script
+.Description
+Requires 'real-time-response-admin:write'.
 .Parameter Id
 Real-time Response script identifier
 .Role
@@ -445,6 +459,8 @@ function Send-FalconPutFile {
 <#
 .Synopsis
 Upload a Real-time Response 'put' file
+.Description
+Requires 'real-time-response-admin:write'.
 .Parameter Path
 Path to local file
 .Parameter Name
@@ -508,6 +524,8 @@ function Send-FalconScript {
 <#
 .Synopsis
 Upload a custom Real-time Response script
+.Description
+Requires 'real-time-response-admin:write'.
 .Parameter Path
 Path to local file
 .Parameter Platform

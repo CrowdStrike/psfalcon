@@ -2,6 +2,8 @@ function Get-FalconQuickScan {
 <#
 .Synopsis
 Search for QuickScan results
+.Description
+Requires 'quick-scan:read'.
 .Parameter Ids
 QuickScan identifier(s)
 .Parameter Filter
@@ -75,6 +77,8 @@ function Get-FalconQuickScanQuota {
 <#
 .Synopsis
 Display your monthly Falcon QuickScan quota
+.Description
+Requires 'quick-scan:read'.
 .Role
 quick-scan:read
 .Example
@@ -106,14 +110,16 @@ function New-FalconQuickScan {
 Submit a volume of files to Falcon QuickScan for a Machine-Learning judgement. Time required for analysis
 increases with the number of samples in a volume but usually it should take less than 1 minute.
 .Description
+Requires 'quick-scan:write'.
+
 'Sha256' values are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be uploaded
 before they can be used with Falcon QuickScan.
-.Parameter Samples
+.Parameter Ids
 Sha256 hash value(s)
 .Role
 quick-scan:write
 .Example
-PS>New-FalconQuickScan -Samples <id>, <id>
+PS>New-FalconQuickScan -Ids <id>, <id>
 
 Perform a Machine-Learning analysis on samples <id> and <id>.
 #>
@@ -121,13 +127,16 @@ Perform a Machine-Learning analysis on samples <id> and <id>.
     param(
         [Parameter(ParameterSetName = '/scanner/entities/scans/v1:post', Mandatory = $true, Position = 1)]
         [ValidatePattern('^\w{64}$')]
-        [array] $Samples
+        [array] $Ids
     )
     begin {
+        $Fields = @{
+            Ids = 'samples'
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('samples')

@@ -2,6 +2,8 @@ function Edit-FalconInstallToken {
 <#
 .Synopsis
 Modify installation token(s)
+.Description
+Requires 'installation-tokens:write'.
 .Parameter Ids
 Installation token identifier(s)
 .Parameter Label
@@ -63,6 +65,8 @@ function Get-FalconInstallToken {
 <#
 .Synopsis
 Search for installation tokens
+.Description
+Requires 'installation-tokens:read'.
 .Parameter Ids
 Installation token identifier(s)
 .Parameter Filter
@@ -137,6 +141,8 @@ function Get-FalconInstallTokenEvent {
 <#
 .Synopsis
 Search for installation token audit events
+.Description
+Requires 'installation-tokens:read'.
 .Parameter Ids
 Installation token audit event identifier(s)
 .Parameter Filter
@@ -202,11 +208,13 @@ Show all available installation token audit events with detail.
         Invoke-Falcon @Param
     }
 }
-function Get-FalconInstallTokenSettings {
+function Get-FalconInstallTokenSetting {
 <#
 .Synopsis
 List current installation token settings
 .Description
+Requires 'installation-tokens:read'.
+
 Returns the maximum number of allowed installation tokens, and whether or not they are required for installation
 of the Falcon Sensor.
 .Role
@@ -222,6 +230,8 @@ function New-FalconInstallToken {
 <#
 .Synopsis
 Create an installation token
+.Description
+Requires 'installation-tokens:write'.
 .Parameter Label
 Installation token label
 .Parameter ExpiresTimestamp
@@ -267,6 +277,8 @@ function Remove-FalconInstallToken {
 <#
 .Synopsis
 Delete installation token(s)
+.Description
+Requires 'installation-tokens:write'.
 .Parameter Ids
 Installation token identifier(s)
 .Role

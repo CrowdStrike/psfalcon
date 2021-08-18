@@ -3,6 +3,8 @@ function Edit-FalconFirewallGroup {
 .Synopsis
 Modify Firewall rule groups
 .Description
+Requires 'firewall-management:write'.
+
 All fields (plus 'rulegroup_version') are required when making a Firewall rule group change. PSFalcon
 adds missing values automatically using data from your existing rule group.
 
@@ -141,6 +143,8 @@ function Edit-FalconFirewallPolicy {
 <#
 .Synopsis
 Modify Firewall policies
+.Description
+Requires 'firewall-management:write'.
 .Parameter Array
 An array of Firewall policies to modify in a single request
 .Parameter Id
@@ -209,6 +213,8 @@ function Edit-FalconFirewallSetting {
 .Synopsis
 Modify Firewall policy settings
 .Description
+Requires 'firewall-management:write'.
+
 All fields are required to modify Firewall policy settings. PSFalcon adds missing values automatically
 using data from your existing policy.
 
@@ -308,6 +314,8 @@ function Get-FalconFirewallEvent {
 <#
 .Synopsis
 Search for Firewall events
+.Description
+Requires 'firewall-management:read'.
 .Parameter Ids
 Firewall event identifier(s)
 .Parameter Filter
@@ -393,6 +401,8 @@ function Get-FalconFirewallField {
 <#
 .Synopsis
 Search for Firewall fields
+.Description
+Requires 'firewall-management:read'.
 .Parameter Ids
 Firewall field identifier(s)
 .Parameter PlatformId
@@ -463,6 +473,8 @@ function Get-FalconFirewallGroup {
 <#
 .Synopsis
 Search for Firewall rule groups
+.Description
+Requires 'firewall-management:read'.
 .Parameter Ids
 Firewall rule group identifier(s)
 .Parameter Filter
@@ -548,6 +560,8 @@ function Get-FalconFirewallPlatform {
 <#
 .Synopsis
 Search for Firewall platforms
+.Description
+Requires 'firewall-management:read'.
 .Parameter Ids
 Firewall platform identifier(s)
 .Parameter Limit
@@ -610,6 +624,8 @@ function Get-FalconFirewallPolicy {
 <#
 .Synopsis
 Search for Firewall policies
+.Description
+Requires 'firewall-management:read'.
 .Parameter Ids
 Firewall policy identifier(s)
 .Parameter Filter
@@ -692,6 +708,8 @@ function Get-FalconFirewallPolicyMember {
 <#
 .Synopsis
 Search for Firewall policy members
+.Description
+Requires 'firewall-management:read'.
 .Parameter Id
 Firewall policy identifier
 .Parameter Filter
@@ -770,6 +788,8 @@ function Get-FalconFirewallRule {
 <#
 .Synopsis
 Search for Firewall rules
+.Description
+Requires 'firewall-management:read'.
 .Parameter Ids
 Firewall rule identifier(s)
 .Parameter PolicyId
@@ -875,6 +895,8 @@ function Get-FalconFirewallSetting {
 <#
 .Synopsis
 List general settings for a Firewall policy
+.Description
+Requires 'firewall-management:read'.
 .Parameter Ids
 Firewall policy identifier(s)
 .Role
@@ -908,6 +930,8 @@ function Invoke-FalconFirewallPolicyAction {
 <#
 .Synopsis
 Perform actions on Firewall policies
+.Description
+Requires 'firewall-management:write'.
 .Parameter Name
 Action to perform
 .Parameter Id
@@ -976,6 +1000,8 @@ function New-FalconFirewallGroup {
 <#
 .Synopsis
 Create Firewall rule groups
+.Description
+Requires 'firewall-management:write'.
 .Parameter Name
 Firewall rule group name
 .Parameter Enabled
@@ -1051,6 +1077,8 @@ function New-FalconFirewallPolicy {
 <#
 .Synopsis
 Create Firewall policies
+.Description
+Requires 'firewall-management:write'.
 .Parameter Array
 An array of Firewall policies to create in a single request
 .Parameter PlatformName
@@ -1133,6 +1161,8 @@ function Remove-FalconFirewallGroup {
 <#
 .Synopsis
 Remove Firewall rule groups
+.Description
+Requires 'firewall-management:write'.
 .Parameter Ids
 Firewall rule group identifier(s)
 .Parameter Comment
@@ -1170,6 +1200,8 @@ function Remove-FalconFirewallPolicy {
 <#
 .Synopsis
 Delete Firewall policies
+.Description
+Requires 'firewall-management:write'.
 .Parameter Ids
 Firewall policy identifier(s)
 .Role
@@ -1204,6 +1236,8 @@ function Set-FalconFirewallPrecedence {
 .Synopsis
 Set Firewall policy precedence
 .Description
+Requires 'firewall-management:write'.
+
 All Firewall policy identifiers must be supplied in order (with the exception of the 'platform_default' policy)
 to define policy precedence.
 .Parameter PlatformName

@@ -2,6 +2,8 @@ function Get-FalconActor {
 <#
 .Synopsis
 Search for threat actors
+.Description
+Requires 'falconx-actors:read'.
 .Parameter Ids
 Threat actor identifier(s)
 .Parameter Filter

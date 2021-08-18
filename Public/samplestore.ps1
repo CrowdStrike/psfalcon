@@ -2,14 +2,12 @@ function Get-FalconSample {
 <#
 .Synopsis
 List detailed information about accessible sample files
+.Description
+Requires 'samplestore:read'.
 .Parameter Ids
 Sample Sha256 hash value(s)
 .Role
 samplestore:read
-.Example
-PS>Get-FalconSample -Detailed
-
-Retrieve the first set of identifiers for samples that are accessible using your OAuth2 API Client.
 .Example
 PS>Get-FalconSample -Ids <id>, <id>
 
@@ -44,6 +42,8 @@ function Receive-FalconSample {
 <#
 .Synopsis
 Download a sample
+.Description
+Requires 'samplestore:read'.
 .Parameter Id
 Sample Sha256 hash value
 .Parameter Path
@@ -103,6 +103,8 @@ function Remove-FalconSample {
 <#
 .Synopsis
 Delete samples
+.Description
+Requires 'samplestore:write'.
 .Parameter Id
 Sample Sha256 hash value
 .Role
@@ -140,6 +142,8 @@ function Send-FalconSample {
 .Synopsis
 Upload a sample file up to 256MB in size
 .Description
+Requires 'samplestore:write'.
+
 A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon X Sandbox or
 Falcon QuickScan.
 .Parameter Path

@@ -2,6 +2,8 @@ function Edit-FalconMlExclusion {
 <#
 .Synopsis
 Modify Machine Learning exclusions
+.Description
+Requires 'ml-exclusions:write'.
 .Parameter Id
 Machine Learning exclusion identifier
 .Parameter Value
@@ -57,6 +59,8 @@ function Get-FalconMlExclusion {
 <#
 .Synopsis
 Search for Machine Learning exclusions
+.Description
+Requires 'ml-exclusions:read'.
 .Parameter Ids
 Machine Learning exclusion identifier(s)
 .Parameter Filter
@@ -129,6 +133,8 @@ function New-FalconMlExclusion {
 <#
 .Synopsis
 Create a Machine Learning exclusion
+.Description
+Requires 'ml-exclusions:write'.
 .Parameter Value
 RegEx pattern value
 .Parameter ExcludedFrom
@@ -184,6 +190,8 @@ function Remove-FalconMlExclusion {
 <#
 .Synopsis
 Delete Machine Learning exclusions
+.Description
+Requires 'ml-exclusions:write'.
 .Parameter Ids
 Machine Learning exclusion identifier(s)
 .Parameter Comment

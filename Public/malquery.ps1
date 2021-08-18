@@ -2,6 +2,8 @@ function Get-FalconMalQuery {
 <#
 .Synopsis
 Check the status and results of an asynchronous request, such as hunt or exact-search
+.Description
+Requires 'malquery:read'.
 .Parameter Ids
 MalQuery request identifier(s)
 .Role
@@ -35,6 +37,8 @@ function Get-FalconMalQueryQuota {
 <#
 .Synopsis
 List your Falcon MalQuery search and download quota
+.Description
+Requires 'malquery:read'.
 .Role
 malquery:read
 .Example
@@ -66,6 +70,8 @@ function Get-FalconMalQuerySample {
 <#
 .Synopsis
 Retrieve Falcon MalQuery indexed file metadata by Sha256 hash
+.Description
+Requires 'malquery:read'.
 .Parameter Ids
 Sha256 hash value(s)
 .Role
@@ -99,6 +105,8 @@ function Group-FalconMalQuerySample {
 <#
 .Synopsis
 Schedule MalQuery samples for download
+.Description
+Requires 'malquery:write'.
 .Parameter Samples
 Sha256 hash value(s)
 .Role
@@ -137,6 +145,8 @@ function Invoke-FalconMalQuery {
 <#
 .Synopsis
 Search Falcon MalQuery using a YARA hunt, exact search or fuzzy search
+.Description
+Requires 'malquery:write'.
 .Parameter YaraRule
 Schedule a YARA-based search for execution
 .Parameter Type
@@ -272,6 +282,8 @@ function Receive-FalconMalQuerySample {
 <#
 .Synopsis
 Download a sample or sample archive from Falcon MalQuery [password: 'infected']
+.Description
+Requires 'malquery:read'.
 .Parameter Id
 Sha256 hash value or MalQuery sample archive identifier
 .Parameter Path
@@ -336,6 +348,8 @@ function Search-FalconMalQueryHash {
 .Synopsis
 Perform a simple MalQuery YARA Hunt for a Sha256 hash
 .Description
+Requires 'malquery:write'.
+
 Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 30 seconds--for a result.
 .Parameter Sha256
 Sha256 hash value

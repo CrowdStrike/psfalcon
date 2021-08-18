@@ -2,6 +2,8 @@ function Edit-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Modify a Falcon Horizon AWS account
+.Description
+Requires 'cspm-registration:write'.
 .Parameter AccountId
 AWS account identifier
 .Parameter CloudtrailRegion
@@ -43,6 +45,8 @@ function Edit-FalconHorizonAzureAccount {
 <#
 .Synopsis
 Modify the Falcon Horizon Azure default client or subscription identifier
+.Description
+Requires 'cspm-registration:write'.
 .Parameter Id
 Azure client identifier
 .Parameter SubscriptionId
@@ -96,6 +100,8 @@ function Edit-FalconHorizonPolicy {
 <#
 .Synopsis
 Updates a policy setting - can be used to override policy severity or to disable a policy entirely.
+.Description
+Requires 'cspm-registration:write'.
 .Parameter PolicyId
 Falcon Horizon policy identifier
 .Parameter Enabled
@@ -144,6 +150,8 @@ function Edit-FalconHorizonSchedule {
 <#
 .Synopsis
 Updates Falcon Horizon scan schedule configuration for one or more cloud platforms.
+.Description
+Requires 'cspm-registration:write'.
 .Parameter CloudPlatform
 Cloud platform
 .Parameter ScanSchedule
@@ -190,6 +198,8 @@ function Get-FalconHorizonAwsAccount {
 .Synopsis
 Search for Falcon Horizon AWS accounts
 .Description
+Requires 'cspm-registration:read'.
+
 A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
 .Parameter Ids
 AWS account identifier(s)
@@ -274,6 +284,8 @@ function Get-FalconHorizonAwsLink {
 <#
 .Synopsis
 Retrieve a URL that will grant access for Falcon Horizon in AWS
+.Description
+Requires 'cspm-registration:read'.
 .Role
 cspm-registration:read
 .Example
@@ -292,6 +304,8 @@ function Get-FalconHorizonAzureAccount {
 <#
 .Synopsis
 Search for Falcon Horizon Azure accounts
+.Description
+Requires 'cspm-registration:read'.
 .Parameter Ids
 Azure account identifier(s)
 .Parameter ScanType
@@ -361,6 +375,8 @@ function Get-FalconHorizonIoaEvent {
 <#
 .Synopsis
 For CSPM IOA events, gets list of IOA events.
+.Description
+Requires 'cspm-registration:read'.
 .Parameter CloudPlatform
 Cloud platform
 .Parameter PolicyId
@@ -441,6 +457,8 @@ function Get-FalconHorizonIoaUser {
 <#
 .Synopsis
 For CSPM IOA users, gets list of IOA users.
+.Description
+Requires 'cspm-registration:read'.
 .Parameter CloudPlatform
 Cloud platform
 .Parameter PolicyId
@@ -493,6 +511,8 @@ function Get-FalconHorizonPolicy {
 <#
 .Synopsis
 Returns information about current Falcon Horizon policy settings.
+.Description
+Requires 'cspm-registration:read'.
 .Parameter Ids
 One or more Falcon Horizon policy identifiers
 .Parameter PolicyId
@@ -562,6 +582,8 @@ function Get-FalconHorizonSchedule {
 <#
 .Synopsis
 Returns Falcon Horizon scan schedule configuration for one or more cloud platforms.
+.Description
+Requires 'cspm-registration:read'.
 .Parameter CloudPlatform
 Cloud platform
 .Role
@@ -602,6 +624,8 @@ function New-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Provision a Falcon Horizon AWS account
+.Description
+Requires 'cspm-registration:write'.
 .Parameter AccountId
 AWS account identifier
 .Parameter OrganizationId
@@ -660,6 +684,8 @@ function New-FalconHorizonAzureAccount {
 <#
 .Synopsis
 Provision Falcon Horizon Azure accounts
+.Description
+Requires 'cspm-registration:write'.
 .Parameter SubscriptionId
 Azure subscription identifier
 .Parameter TenantId
@@ -705,6 +731,8 @@ function Receive-FalconHorizonAwsScript {
 <#
 .Synopsis
 Download a Bash script which grants Falcon Horizon access using AWS CLI
+.Description
+Requires 'cspm-registration:read'.
 .Parameter Path
 Destination path
 .Role
@@ -749,6 +777,8 @@ function Receive-FalconHorizonAzureScript {
 <#
 .Synopsis
 Download a Bash script which grants Falcon Horizon access using Azure Cloud Shell
+.Description
+Requires 'cspm-registration:read'.
 .Parameter TenantId
 Azure tenant identifier
 .Role
@@ -798,6 +828,8 @@ function Remove-FalconHorizonAwsAccount {
 <#
 .Synopsis
 Remove Falcon Horizon AWS accounts
+.Description
+Requires 'cspm-registration:write'.
 .Parameter Ids
 AWS account identifier(s)
 .Parameter OrganizationIds
@@ -844,6 +876,8 @@ function Remove-FalconHorizonAzureAccount {
 <#
 .Synopsis
 Remove Falcon Horizon Azure accounts
+.Description
+Requires 'cspm-registration:write'.
 .Parameter Ids
 Azure account identifier(s)
 .Role

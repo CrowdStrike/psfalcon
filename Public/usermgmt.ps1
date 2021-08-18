@@ -2,6 +2,8 @@ function Add-FalconRole {
 <#
 .Synopsis
 Assign one or more roles to a user
+.Description
+Requires 'usermgmt:write'.
 .Parameter UserId
 User identifier
 .Parameter Ids
@@ -47,6 +49,8 @@ function Edit-FalconUser {
 <#
 .Synopsis
 Modify a user's first or last name
+.Description
+Requires 'usermgmt:write'.
 .Parameter Id
 User identifier
 .Parameter Firstname
@@ -97,6 +101,8 @@ function Get-FalconRole {
 <#
 .Synopsis
 Display user available roles, information about specific user roles, or roles assigned to a user
+.Description
+Requires 'usermgmt:read'.
 .Parameter UserId
 User Identifier
 .Parameter Ids
@@ -149,6 +155,8 @@ function Get-FalconUser {
 <#
 .Synopsis
 List all User identifiers, display user identifiers by email or show detailed information about users
+.Description
+Requires 'usermgmt:read'.
 .Parameter Ids
 User identifier(s)
 .Parameter Usernames
@@ -203,6 +211,8 @@ function New-FalconUser {
 <#
 .Synopsis
 Create a user
+.Description
+Requires 'usermgmt:write'.
 .Parameter Username
 Username
 .Parameter Firstname
@@ -255,6 +265,8 @@ function Remove-FalconRole {
 <#
 .Synopsis
 Revoke one or more roles from a user
+.Description
+Requires 'usermgmt:write'.
 .Parameter UserId
 User identifier
 .Parameter Ids
@@ -298,6 +310,8 @@ function Remove-FalconUser {
 <#
 .Synopsis
 Delete a user
+.Description
+Requires 'usermgmt:write'.
 .Parameter Id
 User identifier
 .Role

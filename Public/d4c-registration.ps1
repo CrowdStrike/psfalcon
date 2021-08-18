@@ -2,10 +2,12 @@ function Edit-FalconDiscoverAzureAccount {
 <#
 .Synopsis
 Modify the Falcon Discover for Cloud Azure default client identifier
+.Description
+Requires 'd4c-registration:write'.
 .Parameter Id
 Azure client identifier
 .Role
-cspm-registration:write
+d4c-registration:write
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch')]
     param(
@@ -32,6 +34,8 @@ function Get-FalconDiscoverAzureAccount {
 <#
 .Synopsis
 Search for Falcon Discover for Cloud Azure accounts
+.Description
+Requires 'd4c-registration:read'.
 .Parameter Ids
 Azure account identifier(s)
 .Parameter ScanType
@@ -71,6 +75,8 @@ function Get-FalconDiscoverGcpAccount {
 <#
 .Synopsis
 Search for Falcon Discover for Cloud GCP accounts
+.Description
+Requires 'd4c-registration:read'.
 .Parameter Ids
 GCP account identifier(s)
 .Parameter ScanType
@@ -110,6 +116,8 @@ function New-FalconDiscoverAzureAccount {
 <#
 .Synopsis
 Provision Falcon Discover for Cloud Azure accounts
+.Description
+Requires 'd4c-registration:write'.
 .Parameter SubscriptionId
 Azure subscription identifier
 .Parameter TenantId
@@ -151,6 +159,8 @@ function New-FalconDiscoverGcpAccount {
 <#
 .Synopsis
 Provision Falcon Discover for Cloud GCP accounts
+.Description
+Requires 'd4c-registration:write'.
 .Parameter ParentId
  GCP project identifier
 .Role
@@ -186,6 +196,8 @@ function Receive-FalconDiscoverAzureScript {
 <#
 .Synopsis
 Download a Bash script which grants Falcon Discover for Cloud access using Azure Cloud Shell
+.Description
+Requires 'd4c-registration:read'.
 .Role
 d4c-registration:read
 #>
@@ -224,6 +236,8 @@ function Receive-FalconDiscoverGcpScript {
 <#
 .Synopsis
  Download a Bash script which grants access using GCP CLI
+ .Description
+Requires 'd4c-registration:read'.
 .Parameter Path
 Destination path
 .Role
@@ -264,6 +278,8 @@ function Update-FalconDiscoverAzureAccount {
 <#
 .Synopsis
 Update a Falcon Discover for Cloud Azure service account and client identifier
+.Description
+Requires 'd4c-registration:write'.
 .Parameter Id
 Azure account identifier
 .Role

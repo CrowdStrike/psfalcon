@@ -2,6 +2,8 @@ function Edit-FalconIoc {
 <#
 .Synopsis
 Update custom indicators
+.Description
+Requires 'ioc:write'.
 .Parameter Id
 Custom indicator identifier
 .Parameter Action
@@ -122,6 +124,8 @@ function Get-FalconIoc {
 <#
 .Synopsis
 Search for custom indicators
+.Description
+Requires 'ioc:read'.
 .Parameter Ids
 One or more custom indicator identifiers
 .Parameter Filter
@@ -210,6 +214,8 @@ function New-FalconIoc {
 <#
 .Synopsis
 Create custom indicators
+.Description
+Requires 'ioc:write'.
 .Parameter Array
 An array of custom indicators to create in a single request
 .Parameter Type
@@ -365,6 +371,8 @@ function Remove-FalconIoc {
 <#
 .Synopsis
 Remove custom indicators
+.Description
+Requires 'ioc:write'.
 .Parameter Ids
 One or more custom indicator identifiers
 .Parameter Filter

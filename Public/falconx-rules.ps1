@@ -2,6 +2,8 @@ function Get-FalconRule {
 <#
 .Synopsis
 Search for Falcon X rulesets
+.Description
+Requires 'falconx-rules:read'.
 .Parameter Ids
 Ruleset identifier(s)
 .Parameter Type
@@ -113,6 +115,8 @@ function Receive-FalconRule {
 <#
 .Synopsis
 Download the most recent ruleset, or a specific ruleset
+.Description
+Requires 'falconx-rules:read'.
 .Parameter Id
 Ruleset identifier, used for a specific ruleset
 .Parameter Type
