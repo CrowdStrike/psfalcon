@@ -151,7 +151,7 @@
       'Edit-FalconInstallToken',
       'Get-FalconInstallToken',
       'Get-FalconInstallTokenEvent',
-      'Get-FalconInstallTokenSettings',
+      'Get-FalconInstallTokenSetting',
       'New-FalconInstallToken',
       'Remove-FalconInstallToken',
 
