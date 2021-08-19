@@ -82,7 +82,7 @@ each of the existing rules. Finally, request the change to the rule group to add
         [array] $RuleIds,
 
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Position = 4)]
-        [ValidatePattern('^(null|\d{1,})$')]
+        [ValidatePattern('^(null|\d+)$')]
         [array] $RuleVersions,
 
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Position = 6)]

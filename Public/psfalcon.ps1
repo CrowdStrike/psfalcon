@@ -1545,16 +1545,16 @@ Real-time Response will use 'runscript' to execute the 'CloudFile' script named 
         }
     }
     process {
-        $HostArray = if ($PSBoundParameters.GroupId) {
+        [array] $HostArray = if ($PSBoundParameters.GroupId) {
             try {
                 # Find Host Group member identifiers
-                Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId
+                ,(Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId)
             } catch {
                 throw $_
             }
         } else {
             # Use provided Host identifiers
-            $PSBoundParameters.HostIds
+            ,$PSBoundParameters.HostIds
         }
         try {
             for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 500) {

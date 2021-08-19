@@ -14,6 +14,10 @@ One or more email addresses
 Recon rule action status
 .Role
 recon-monitoring-rules:write
+.Example
+PS>Edit-FalconReconAction -Id <id> -Frequency weekly
+
+Change Recon action <id> to a weekly frequency.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/actions/v1:patch')]
     param(
@@ -153,6 +157,15 @@ Recon monitoring rule priority
 Permission level [public: 'All Intel users', private: 'Recon Admins']
 .Role
 recon-monitoring-rules:write
+.Example
+PS>Edit-FalconReconRule -Id <id> -Name example_updated -Priority medium
+
+Change the name and priority of Recon rule <id>.
+.Example
+PS>$Rules = @(@{ id = '<id>'; priority = 'high' }, @{ id = '<id>'; priority = 'high' })
+PS>Edit-FalconReconRule -Array $Rules
+
+Change the priority of rules <id> and <id> in a single request.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:patch')]
     param(
@@ -338,11 +351,19 @@ recon-monitoring-rules:read
 .Example
 PS>Get-FalconReconNotification -Detailed
 
-Return the first set of detailed Recon notification results.
+Return the first set of summary-level Recon notifications.
 .Example
-PS>Get-FalconReconNotification -Ids <id>, <id>
+PS>Get-FalconReconNotification -Ids <id>, <id> -Intel
 
-Retrieve detailed information about Recon notifications <id> and <id>.
+Retrieve raw intelligence for Recon notifications <id> and <id>.
+.Example
+PS>Get-FalconReconNotification -Ids <id>, <id> -Translate
+
+Retrieve detail for Recon notifications <id> and <id>, translated to English.
+.Example
+PS>Get-FalconReconNotification -Ids <id>, <id> -Combined
+
+Retrieve raw intelligence for Recon notifications <id> and <id>, translated to English.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/notifications/v1:get')]
     param(
@@ -494,22 +515,26 @@ function Get-FalconReconRulePreview {
 Preview Recon monitoring rule notification count and distribution
 .Description
 Requires 'recon-monitoring-rules:read'.
-.Parameter Filter
-Recon monitoring rule filter
 .Parameter Topic
 Recon monitoring rule topic
+.Parameter Filter
+Recon monitoring rule filter
 .Role
 recon-monitoring-rules:read
+.Example
+PS>Get-FalconReconRulePreview -Topic SA_AUTHOR -Filter "author:'example_author'"
+
+Preview the potential results for a filtered 'SA_AUTHOR' Recon rule.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/aggregates/rules-preview/GET/v1:post')]
     param(
         [Parameter(ParameterSetName = '/recon/aggregates/rules-preview/GET/v1:post', Mandatory = $true,
             Position = 1)]
-        [string] $Filter,
+        [string] $Topic,
 
         [Parameter(ParameterSetName = '/recon/aggregates/rules-preview/GET/v1:post', Mandatory = $true,
             Position = 2)]
-        [string] $Topic
+        [string] $Filter
     )
     begin {
         $Param = @{
@@ -543,6 +568,10 @@ Recon monitoring rule notification frequency
 Recon monitoring rule notification recipients
 .Role
 recon-monitoring-rules:write
+.Example
+PS>New-FalconReconAction -RuleId <id> -Type email -Frequency daily -Recipients jane.doe@example.com
+
+Configure Recon rule <id> to email daily updates to 'jane.doe@example.com'.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/actions/v1:post')]
     param(
@@ -601,6 +630,18 @@ Recon monitoring rule priority
 Permission level [public: 'All Intel users', private: 'Recon Admins']
 .Role
 recon-monitoring-rules:write
+.Example
+PS>New-FalconReconRule -Name Example -Topic SA_AUTHOR -Filter "author:'example_author'" -Priority low
+    -Permissions Private
+
+Create a filtered 'SA_AUTHOR' rule with low priority and make it accessible to 'Recon Admins'.
+.Example
+PS>$Rules = @(@{ name = 'example_1'; topic = 'SA_BRAND_PRODUCT'; filter = "phrase:'example_phrase'";
+    priority = 'low'; permissions = 'private' }, @{ name = 'example_2'; topic = 'SA_BIN'; filter = "ccbin:'1234'";
+    priority = 'medium'; permissions = 'public' })
+PS>New-FalconReconRule -Array $Rules
+
+Create multiple Recon monitoring rules in a single request.
 #>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:post')]
     param(

@@ -10,6 +10,10 @@ AWS account identifier
 AWS region where the account resides
 .Role
 cspm-registration:write
+.Example
+PS>Edit-FalconHorizonAwsAccount -AccountId <id> -CloudtrailRegion <string>
+
+Update the 'cloudtrail_region' for AWS account <id> in Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
@@ -222,9 +226,13 @@ Display total result count instead of results
 .Role
 cspm-registration:read
 .Example
+PS>Get-FalconHorizonAwsAccount
+
+Return the first set of AWS account identifiers within Falcon Horizon.
+.Example
 PS>Get-FalconHorizonAwsAccount -Ids <id>, <id>
 
-Verify the provisioning status of AWS accounts <id> and <id>.
+View detailed information about AWS accounts <id> and <id> within Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
@@ -286,13 +294,17 @@ function Get-FalconHorizonAwsLink {
 Retrieve a URL that will grant access for Falcon Horizon in AWS
 .Description
 Requires 'cspm-registration:read'.
+
+Once logging in to the provided link using your AWS administrator credentials, use the 'Create Stack' button
+to grant access.
 .Role
 cspm-registration:read
 .Example
 PS>$Link = Get-FalconHorizonAwsLink
 PS>Start-Process $Link.url
 
-Save the access URL as '$Link', then open it using your default browser.
+Save the access URL as '$Link', then open it using your default browser. Once authenticated, use 'Create Stack'
+to grant access.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get')]
     param()
@@ -323,9 +335,13 @@ Display total result count instead of results
 .Role
 cspm-registration:read
 .Example
+PS>Get-FalconHorizonAzureAccount
+
+Return the first set of Azure account identifiers within Falcon Horizon.
+.Example
 PS>Get-FalconHorizonAzureAccount -Ids <id>, <id>
 
-Verify the provisioning status of Azure accounts <id> and <id>.
+View detailed information about Azure accounts <id> and <id> within Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/account/v1:get')]
     param(
@@ -356,7 +372,7 @@ Verify the provisioning status of Azure accounts <id> and <id>.
     )
     begin {
         $Fields = @{
-            ScanType        = 'scan-type'
+            ScanType = 'scan-type'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -397,6 +413,10 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 cspm-registration:read
+.Example
+PS>Get-FalconHorizonIoaEvent -PolicyId <id> -CloudPlatform aws
+
+Return Falcon Horizon IOA events for policy <id> within AWS.
 #>
     [CmdletBinding(DefaultParameterSetName = '/ioa/entities/events/v1:get')]
     param(
@@ -405,7 +425,7 @@ cspm-registration:read
         [string] $CloudPlatform,
 
         [Parameter(ParameterSetName = '/ioa/entities/events/v1:get', Mandatory = $true, Position = 2)]
-        [ValidatePattern('^\d{*}$')]
+        [ValidatePattern('^\d+$')]
         [string] $PolicyId,
 
         [Parameter(ParameterSetName = '/ioa/entities/events/v1:get', Position = 3)]
@@ -469,6 +489,10 @@ Cloud account identifier
 Azure tenant identifier
 .Role
 cspm-registration:read
+.Example
+PS>Get-FalconHorizonIoaUser -PolicyId <id> -CloudPlatform aws
+
+Return Falcon Horizon IOA users for policy <id> within AWS.
 #>
     [CmdletBinding(DefaultParameterSetName = '/ioa/entities/users/v1:get')]
     param(
@@ -477,7 +501,7 @@ cspm-registration:read
         [string] $CloudPlatform,
 
         [Parameter(ParameterSetName = '/ioa/entities/users/v1:get', Mandatory = $true, Position = 2)]
-        [ValidatePattern('^\d{*}$')]
+        [ValidatePattern('^\d+$')]
         [string] $PolicyId,
 
         [Parameter(ParameterSetName = '/ioa/entities/users/v1:get', Position = 3)]
@@ -537,11 +561,11 @@ Retrieve a Falcon Horizon policy identifier by service <service_name>.
     [CmdletBinding(DefaultParameterSetName = '/settings/entities/policy/v1:get')]
     param(
         [Parameter(ParameterSetName = '/settings/entities/policy-details/v1:get', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^\d{*}$')]
+        [ValidatePattern('^\d+$')]
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/settings/entities/policy/v1:get', Position = 1)]
-        [ValidatePattern('^\d{*}$')]
+        [ValidatePattern('^\d+$')]
         [string] $PolicyId,
 
         [Parameter(ParameterSetName = '/settings/entities/policy/v1:get', Position = 2)]
@@ -550,7 +574,7 @@ Retrieve a Falcon Horizon policy identifier by service <service_name>.
             'GuardDuty', 'IAM', 'Identity', 'KMS', 'KeyVault', 'Kinesis', 'Kubernetes', 'Lambda', 'LoadBalancer',
             'Monitor', 'NLB/ALB', 'NetworkSecurityGroup', 'PostgreSQL', 'RDS', 'Redshift', 'S3', 'SES', 'SNS',
             'SQLDatabase', 'SQLServer', 'SQS', 'SSM', 'Serverless Application Repository', 'StorageAccount',
-            'Subscriptions', 'VirtualMachine', 'VirtualNetwork')]
+            'Subscriptions', 'VirtualMachine', 'VirtualNetwork', IgnoreCase = $false)]
         [string] $Service,
 
         [Parameter(ParameterSetName = '/settings/entities/policy/v1:get', Position = 3)]
@@ -783,6 +807,10 @@ Requires 'cspm-registration:read'.
 Azure tenant identifier
 .Role
 cspm-registration:read
+.Example
+PS>Receive-FalconHorizonAzureScript -Path .\azure_provision.sh
+
+Download 'azure_provision.sh' which can be run (using Azure Cloud Shell) to provide access to Falcon Horizon.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
     param(

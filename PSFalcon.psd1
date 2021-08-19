@@ -16,10 +16,10 @@
       'Confirm-FalconDiscoverAwsAccess',
       'Edit-FalconDiscoverAwsAccount',
       'Get-FalconDiscoverAwsAccount',
-      'Get-FalconDiscoverAwsSettings',
+      'Get-FalconDiscoverAwsSetting',
       'New-FalconDiscoverAwsAccount',
       'Remove-FalconDiscoverAwsAccount',
-      'Update-FalconDiscoverAwsSettings',
+      'Update-FalconDiscoverAwsSetting',
 
       # cspm-registration.ps1
       'Edit-FalconHorizonAwsAccount',
@@ -55,7 +55,6 @@
       'Test-FalconIoaRule',
 
       # d4c-registration.ps1
-      'Edit-FalconDiscoverAzureAccount',
       'Get-FalconDiscoverAzureAccount',
       'Get-FalconDiscoverGcpAccount',
       'New-FalconDiscoverAzureAccount',
@@ -353,7 +352,6 @@
     AliasesToExport      = @()
     PrivateData          = @{
         PSData = @{
-            Prerelease   = 'alpha'
             Tags         = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
                 'Windows','Linux','MacOS')
             LicenseUri   = 'https://github.com/CrowdStrike/psfalcon/blob/master/LICENSE'
@@ -414,7 +412,6 @@ New Commands
   'Get-FalconHorizonIoaUser'
 
 * d4c-registration
-  'Edit-FalconDiscoverAzureAccount'
   'Receive-FalconDiscoverAzureScript'
 
 * iocs
@@ -438,29 +435,24 @@ New Commands
   'Get-FalconReconRulePreview'
 
 Command Changes
-
 * Edit-FalconHorizonAzureAccount
   Added parameters to utilize '/cloud-connect-cspm-azure/entities/default-subscription-id/v1'.
 
 * Edit-FalconFirewallGroup
-  Updated to retrieve required values from existing rule group when not provided. Removed '-Tracking' as it is now
-  added automatically.
+  Updated to retrieve required values when not provided. Removed '-Tracking'.
 
 * Edit-FalconFirewallSetting
   Renamed '-PolicyId' to '-Id'.
 
-  Updated to retrieve required required values from existing policy settings when not provided. Removed
-  '-Tracking' as it is now added automatically.
+  Updated to retrieve required required values when not provided. Removed '-Tracking'.
 
   Removed '-IsDefaultPolicy' parameter as it doesn't seem to do anything.
 
 * Edit-FalconIoaGroup
-  Updated to retrieve required required values from existing policy settings when not provided. Removed
-  '-RulegroupVersion' as it is now added automatically.
+  Updated to retrieve required required values when not provided. Removed '-RulegroupVersion'.
 
 * Edit-FalconIoaRule
-  Updated to retrieve required required values from existing policy settings when not provided. Removed
-  '-RulegroupVersion' as it is now added automatically.
+  Updated to retrieve required required values when not provided. Removed '-RulegroupVersion'.
 
 * Export-FalconConfig
   Changed archive name to 'FalconConfig_<FileDate>.zip' from 'FalconConfig_<FileDateTime>.zip'.
@@ -482,8 +474,14 @@ Command Changes
   Updated output to include 'cid' to avoid potential problems if 'Find-FalconDuplicate' is used within a
   parent-level CID.
 
+* Get-FalconDiscoverAwsSettings
+  Renamed to 'Get-FalconDiscoverAwsSetting'.
+
 * Get-FalconFirewallRule
   Added '-PolicyId' parameter to return rules (in precedence order) from a specific policy.
+
+* Get-FalconInstallTokenSettings
+  Renamed to 'Get-FalconInstallTokenSetting'.
 
 * Get-FalconIocHost
   Added '-Total' to provide the functionality of the command 'Get-FalconIocTotal'.
@@ -545,6 +543,9 @@ Command Changes
 
 * Send-FalconSample
   Added support for uploading archives.
+
+* Update-FalconDiscoverAwsSettings
+  Renamed to 'Update-FalconDiscoverAwsSetting'.
 
 GitHub Issues
 * Issue #48: Updated 'Invoke-Loop' private function with a more explicit counting method to eliminate endless

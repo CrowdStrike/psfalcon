@@ -8,6 +8,10 @@ Requires 'cloud-connect-aws:write'.
 AWS account identifier(s)
 .Role
 cloud-connect-aws:write
+.Example
+PS>Confirm-FalconDiscoverAwsAccess -Ids <id>, <id>
+
+Verify account access status for AWS accounts <id> and <id> within Falcon Discover for Cloud.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/verify-account-access/v1:post')]
     param(
@@ -52,6 +56,10 @@ Number of seconds between requests defined by 'RateLimitReqs'
 Maximum number of requests within 'RateLimitTime'
 .Role
 cloud-connect-aws:write
+.Example
+PS>Edit-FalconDiscoverAwsAccount -Id <id> -CloudtrailBucketOwnerId <id>
+
+Change the 'cloudtrail_bucket_owner_id' for AWS account <id> within Falcon Discover for Cloud.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:patch')]
     param(
@@ -129,6 +137,14 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .Role
 cloud-connect-aws:read
+.Example
+PS>Get-FalconDiscoverAwsAccount
+
+Return the first set of AWS account identifiers from Falcon Discover for Cloud.
+.Example
+PS>Get-FalconDiscoverAwsAccount -Ids <id>, <id>
+
+Retrieve detailed information about AWS accounts <id> and <id> from Falcon Discover for Cloud.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
     param(
@@ -179,7 +195,7 @@ cloud-connect-aws:read
         Invoke-Falcon @Param
     }
 }
-function Get-FalconDiscoverAwsSettings {
+function Get-FalconDiscoverAwsSetting {
 <#
 .Synopsis
 Retrieve Global Settings for all provisioned AWS accounts in Falcon Discover for Cloud
@@ -187,6 +203,10 @@ Retrieve Global Settings for all provisioned AWS accounts in Falcon Discover for
 Requires 'cloud-connect-aws:read'.
 .Role
 cloud-connect-aws:read
+.Example
+PS>Get-FalconDiscoverAwsSetting
+
+Returns the global settings for all provisioned AWS accounts in Falcon Discover for Cloud.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/combined/settings/v1:get')]
     param()
@@ -218,6 +238,15 @@ Number of seconds between requests defined by 'RateLimitReqs'
 Maximum number of requests within 'RateLimitTime'
 .Role
 cloud-connect-aws:write
+.Example
+PS>New-FalconDiscoverAwsAccount -Id <id> -Mode cloudformation
+
+Add AWS account <id> to Falcon Discover for Cloud using the 'cloudformation' provisioning mode.
+.Example
+PS>New-FalconDiscoverAwsAccount -Id <id> -IamRoleArn <string> -ExternalId <external_id>
+
+Add AWS account <id> with your pre-defined IAM role ARN and External ID to Falcon Discover for Cloud using the
+'manual' provisioning mode.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:post')]
     param(
@@ -286,6 +315,10 @@ Requires 'cloud-connect-aws:write'.
 AWS account identifier(s)
 .Role
 cloud-connect-aws:write
+.Example
+PS>Remove-FalconDiscoverAwsAccount -Ids <id>, <id>
+
+Remove AWS accounts <id> and <id> from Falcon Discover for Cloud.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:delete')]
     param(
@@ -308,10 +341,11 @@ cloud-connect-aws:write
         Invoke-Falcon @Param
     }
 }
-function Update-FalconDiscoverAwsSettings {
+function Update-FalconDiscoverAwsSetting {
 <#
 .Synopsis
-Create or update Global Settings which are applicable to all provisioned Falcon Discover for Cloud AWS accounts
+Create or update Global Settings which are applicable to all newly-provisioned Falcon Discover for Cloud AWS
+accounts
 .Description
 Requires 'cloud-connect-aws:write'.
 .Parameter CloudtrailBucketOwnerId
@@ -320,6 +354,11 @@ AWS account identifier containing cloudtrail logs
 Default external identifier to apply to AWS accounts
 .Role
 cloud-connect-aws:write
+.Example
+PS>Update-FalconDiscoverAwsSetting -CloudtrailBucketOwnerId <id>
+
+Set the 'cloudtrail_bucket_owner_id' to <id> for all newly-provisioned AWS accounts within Falcon Discover for
+Cloud.
 #>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/settings/v1:post')]
     param(

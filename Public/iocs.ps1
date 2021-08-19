@@ -104,7 +104,7 @@ Retrieve summary information about process identifiers <id> and <id>.
     [CmdletBinding(DefaultParameterSetName = '/indicators/queries/processes/v1:get')]
     param(
         [Parameter(ParameterSetName = '/processes/entities/processes/v1:get', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^pid:\w{32}:\d{1,}$')]
+        [ValidatePattern('^pid:\w{32}:\d+$')]
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/indicators/queries/processes/v1:get', Mandatory = $true, Position = 1)]
