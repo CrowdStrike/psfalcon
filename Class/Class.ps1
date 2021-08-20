@@ -22,8 +22,8 @@ class ApiClient {
                 "$($_.Key): $($_.Value)"
             }) -join ', ')"
         }
-        $Output = try {
-            if ($Param.Outfile) {
+        try {
+            $Output = if ($Param.Outfile) {
                 ($Param.Headers).GetEnumerator().foreach{
                     $this.Client.DefaultRequestHeaders.Add($_.Key, $_.Value)
                 }
@@ -64,15 +64,12 @@ class ApiClient {
                 }
                 $this.Client.SendAsync($Message)
             }
+            if ($Output.Result.StatusCode) {
+                Write-Verbose "[ApiClient.Invoke] $(@($Output.Result.StatusCode.GetHashCode(),
+                    $Output.Result.StatusCode) -join ': ')"
+            }
         } catch {
             throw $_
-        }
-        if ($Output.Result.StatusCode) {
-            $ResponseCode = "$(@($Output.Result.StatusCode.GetHashCode(), $Output.Result.StatusCode) -join ': ')"
-            Write-Verbose "[ApiClient.Invoke] $ResponseCode"
-            if (!$Output.Result.Content) {
-                Write-Error $ResponseCode
-            }
         }
         return $Output
     }

@@ -237,6 +237,7 @@
       'Import-FalconConfig',
       'Invoke-FalconDeploy',
       'Invoke-FalconRtr',
+      'Send-FalconWebhook',
       'Show-FalconMap',
       'Show-FalconModule',
 
@@ -431,6 +432,9 @@ New Commands
   'New-FalconContainerKey'
   'Receive-FalconContainerYaml'
   'Remove-FalconContainerAwsAccount'
+
+* psfalcon
+  'Send-FalconWebhook'
 
 * recon-monitoring-rules
   'Edit-FalconReconNotification'

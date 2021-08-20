@@ -678,80 +678,85 @@ function Write-Result {
                 ,"$($_.Key)=$($_.Value)"
             })
         }
-        # 'meta' fields to exclude from output when no other results are found
-        [regex] $ExcludeMeta = '^(entity|pagination|powered_by|query_time|trace_id)$'
     }
     process {
-        if ($Request.Result.Content -match '^<') {
-            # Output HTML response as a string
-            $HTML = ($Response.Result.Content).ReadAsStringAsync().Result
-        } elseif ($Request.Result.Content) {
-            # Convert Json response
-            $Json = ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
-            $Verbose += if ($Json.meta) {
-                # Capture 'meta' values for verbose output
-                ($Json.meta.PSObject.Properties).foreach{
-                    $Parent = 'meta'
-                    if ($_.Value -is [PSCustomObject]) {
-                        $Parent += ".$($_.Name)"
-                        ($_.Value.PSObject.Properties).foreach{
+        if ($Request.Result.Content) {
+            if ($Request.Result.Content.Headers.ContentType -eq 'text/html') {
+                # Output HTML response as a string
+                $HTML = ($Request.Result.Content).ReadAsStringAsync().Result
+            } elseif ($Request.Result.Content.Headers.ContentType -eq 'application/json') {
+                # Convert Json response
+                $Json = ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
+                $Verbose += if ($Json.meta) {
+                    # Capture 'meta' values for verbose output
+                    ($Json.meta.PSObject.Properties).foreach{
+                        $Parent = 'meta'
+                        if ($_.Value -is [PSCustomObject]) {
+                            $Parent += ".$($_.Name)"
+                            ($_.Value.PSObject.Properties).foreach{
+                                ,"$($Parent).$($_.Name)=$($_.Value)"
+                            }
+                        } elseif ($_.Name -ne 'trace_id') {
                             ,"$($Parent).$($_.Name)=$($_.Value)"
                         }
-                    } elseif ($_.Name -ne 'trace_id') {
-                        ,"$($Parent).$($_.Name)=$($_.Value)"
+                    }
+                }
+            } else {
+                # Error if not 'application/json' or 'text/html'
+                $Request
+                throw "[Write-Result] Unexpected 'ContentType'."
+            }
+            if ($HTML) {
+                # Output HTML content
+                $HTML
+            } elseif ($Json) {
+                if ($Verbose) {
+                    # Output response header and 'meta'
+                    Write-Verbose "[Write-Result] $($Verbose -join ', ')"
+                }
+                $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch '^(errors|meta)$' -and
+                $_.Value }).foreach{
+                    # Gather field names from result, not including 'errors' and 'meta'
+                    $_.Name
+                }
+                if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
+                    if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
+                        # Output 'combined.resources'
+                        ($Json.($ResultFields[0]).resources).PSObject.Properties.Value
+                    } else {
+                        # Output single field
+                        $Json.($ResultFields[0])
+                    }
+                } elseif ($ResultFields) {
+                    # Export all fields
+                    $Json | Select-Object $ResultFields
+                } else {
+                    # Output relevant 'meta' values
+                    $MetaFields = ($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch ('^(entity|' +
+                    'pagination|powered_by|query_time|trace_id)$') }).foreach{
+                        $_.Name
+                    }
+                    if ($MetaFields) {
+                        $Json.meta | Select-Object $MetaFields
+                    }
+                }
+                ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                    ($_.Value).foreach{
+                        # Output errors
+                        $PSCmdlet.WriteError(
+                            [System.Management.Automation.ErrorRecord]::New(
+                                [Exception]::New("$($_.code): $($_.message)"),
+                                $Json.meta.trace_id,
+                                [System.Management.Automation.ErrorCategory]::NotSpecified,
+                                $Request
+                            )
+                        )
                     }
                 }
             }
+            # Check for rate limiting
+            Wait-RetryAfter $Request
         }
-        if ($Verbose) {
-            # Output response header and 'meta'
-            Write-Verbose "[Write-Result] $($Verbose -join ', ')"
-        }
-        if ($HTML) {
-            # Output HTML content
-            $HTML
-        } elseif ($Json) {
-            $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch '^(errors|meta)$' -and
-            $_.Value }).foreach{
-                # Gather field names from result, not including 'errors' and 'meta'
-                $_.Name
-            }
-            if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
-                if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
-                    # Output 'combined.resources'
-                    ($Json.($ResultFields[0]).resources).PSObject.Properties.Value
-                } else {
-                    # Output single field
-                    $Json.($ResultFields[0])
-                }
-            } elseif ($ResultFields) {
-                # Export all fields
-                $Json | Select-Object $ResultFields
-            } else {
-                # Output relevant 'meta' values
-                $MetaFields = ($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch $ExcludeMeta }).foreach{
-                    $_.Name
-                }
-                if ($MetaFields) {
-                    $Json.meta | Select-Object $MetaFields
-                }
-            }
-            ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                ($_.Value).foreach{
-                    # Output errors
-                    $PSCmdlet.WriteError(
-                        [System.Management.Automation.ErrorRecord]::New(
-                            [Exception]::New("$($_.code): $($_.message)"),
-                            $Json.meta.trace_id,
-                            [System.Management.Automation.ErrorCategory]::NotSpecified,
-                            $Request
-                        )
-                    )
-                }
-            }
-        }
-        # Check for rate limiting
-        Wait-RetryAfter $Request
     }
 }
 function Update-FieldName {

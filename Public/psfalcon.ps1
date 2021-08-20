@@ -1437,6 +1437,60 @@ function Invoke-FalconRtr {
         }
     }
 }
+function Send-FalconWebhook {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [ValidateSet('Slack')]
+        [string] $Type,
+
+        [Parameter(Mandatory = $true, Position = 2)]
+        [System.Uri] $Path,
+
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true,
+            Position = 3)]
+        [object] $Object
+    )
+    begin {
+        $Content = switch ($PSBoundParameters.Type) {
+            'Slack' {
+                ConvertTo-Json -InputObject @{
+                    username = "PSFalcon [$($Script:Falcon.ClientId)]"
+                    icon_url = 'https://github.com/CrowdStrike/psfalcon/blob/master/icon.png'
+                    text     = ConvertTo-Json -InputObject $Object -Depth 8
+                }
+            }
+        }
+        $Token = if ($Content) {
+            # Remove default Falcon authorization token
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization
+            [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
+        }
+    }
+    process {
+        if ($Content) {
+            try {
+                $Param = @{
+                    Path    = $PSBoundParameters.Path
+                    Method  = 'post'
+                    Headers = @{
+                        ContentType = 'application/json'
+                    }
+                    Body = $Content
+                }
+                Write-Result ($Script:Falcon.Api.Invoke($Param))
+            } catch {
+                throw $_
+            }
+        }
+    }
+    end {
+        if ($Token -and !$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
+            # Restore default Falcon authorization token
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization', $Token)
+        }
+    }
+}
 function Show-FalconMap {
     [CmdletBinding()]
     param(
