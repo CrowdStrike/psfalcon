@@ -5379,14 +5379,13 @@ PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
       <command:verb>Export</command:verb>
       <command:noun>FalconReport</command:noun>
       <maml:description>
-        <maml:para>Format a response object and output to CSV</maml:para>
+        <maml:para>Format a response object and output to console or CSV</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
       <maml:para>Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with each column having an appended 'prefix'--and exports the result the designated file path.</maml:para>
       <maml:para>For instance, if the object contains a property called 'device_policies', and that contains other objects called 'prevention' and 'sensor_update', the result will contain properties labelled 'device_policies.prevention' and 'device_policies.sensor_update' with additional '.&lt;field_name&gt;' values for any sub-properties of those objects.</maml:para>
       <maml:para>When the result contains an array with similarly named properties, it will attempt to add each sub-property with an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example, @{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it becomes part of the column.</maml:para>
-      <maml:para>The '-WhatIf' parameter will display what would be written to CSV without creating the CSV file.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5415,28 +5414,6 @@ PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
-          <maml:name>WhatIf</maml:name>
-          <maml:description>
-            <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
-          </maml:description>
-          <dev:type>
-            <maml:name>SwitchParameter</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>False</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
-          <maml:name>Confirm</maml:name>
-          <maml:description>
-            <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
-          </maml:description>
-          <dev:type>
-            <maml:name>SwitchParameter</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>False</dev:defaultValue>
-        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -5464,30 +5441,6 @@ PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
-        <maml:name>WhatIf</maml:name>
-        <maml:description>
-          <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-        <dev:type>
-          <maml:name>SwitchParameter</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>False</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
-        <maml:name>Confirm</maml:name>
-        <maml:description>
-          <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-        <dev:type>
-          <maml:name>SwitchParameter</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>False</dev:defaultValue>
-      </command:parameter>
     </command:parameters>
     <command:inputTypes />
     <command:returnValues />
@@ -5500,16 +5453,16 @@ PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Example = Get-FalconHost -Filter "hostname:'EXAMPLE-PC'"
-PS&gt;Export-FalconReport -Path .\EXAMPLE-PC.csv -Object $Example</dev:code>
+Export-FalconReport -Path .\EXAMPLE-PC.csv -Object $Example</dev:code>
         <dev:remarks>
           <maml:para>Creates '.\EXAMPLE-PC.csv' with column 'id' and the 'device_id' value for a device with the hostname 'EXAMPLE-PC'.</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>Get-FalconHost -Filter "hostname:'EXAMPLE-PC'" -Detailed | Export-FalconReport -Path .\EXAMPLE-PC.csv</dev:code>
+        <dev:code>Get-FalconHost -Filter "hostname:'EXAMPLE-PC'" -Detailed | Export-FalconReport</dev:code>
         <dev:remarks>
-          <maml:para>Creates '.\EXAMPLE-PC.csv' with all of the device details for a device with the hostname 'EXAMPLE-PC'.</maml:para>
+          <maml:para>Outputs the device details for a device with the hostname 'EXAMPLE-PC'.</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>

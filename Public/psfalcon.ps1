@@ -1,7 +1,7 @@
 function Export-FalconReport {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        [Parameter(Mandatory = $true, Position = 1)]
+        [Parameter(Position = 1)]
         [ValidatePattern('\.csv$')]
         [ValidateScript({
             if (Test-Path $_) {
@@ -110,14 +110,16 @@ function Export-FalconReport {
                 Add-Property @AddParam
             }
         }
-        if ($PSCmdlet.ShouldProcess($Path)) {
+        if ($OutputPath) {
+            # Output to CSV
             $Output | Export-Csv -Path $OutputPath -NoTypeInformation -Append
         } else {
-            $Output | Out-Host
+            # Output to console
+            $Output
         }
     }
     end {
-        if (Test-Path $OutputPath) {
+        if ($OutputPath -and (Test-Path $OutputPath)) {
             Get-ChildItem $OutputPath
         }
     }
@@ -1454,10 +1456,10 @@ function Send-FalconWebhook {
     begin {
         $Content = switch ($PSBoundParameters.Type) {
             'Slack' {
-                ConvertTo-Json -InputObject @{
+                $Payload = @{
                     username = "PSFalcon [$($Script:Falcon.ClientId)]"
                     icon_url = 'https://github.com/CrowdStrike/psfalcon/blob/master/icon.png'
-                    text     = ConvertTo-Json -InputObject $Object -Depth 8
+                    attachments = Export-FalconReport -Object $Object -
                 }
             }
         }
