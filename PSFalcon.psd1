@@ -7,7 +7,7 @@
     CompanyName          = 'CrowdStrike'
     Copyright            = '(c) CrowdStrike. All rights reserved.'
     Description          = 'PowerShell for the CrowdStrike Falcon OAuth2 APIs'
-    HelpInfoURI          = 'https://github.com/crowdstrike/psfalcon/blob/master/README.md'
+    HelpInfoURI          = 'https://github.com/CrowdStrike/psfalcon/tree/master/en-US/'
     PowerShellVersion    = '5.1'
     RequiredAssemblies   = @('System.Net.Http')
     ScriptsToProcess     = @('Class/Class.ps1')
