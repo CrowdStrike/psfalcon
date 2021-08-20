@@ -1391,8 +1391,8 @@
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Settings = @{ enforcement_mode = 'MONITOR_ENFORCE'; classes = @( @{ id = 'MASS_STORAGE'; action = 'BLOCK_ALL';
-exceptions = @(@{ combined_id = '1234_5678_000000000000'; action = 'BLOCK_WRITE_EXECUTE' })})}
-PS&gt;Edit-FalconDeviceControlPolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
+    exceptions = @(@{ combined_id = '1234_5678_000000000000'; action = 'BLOCK_WRITE_EXECUTE' })})}
+Edit-FalconDeviceControlPolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
         <dev:remarks>
           <maml:para>Modify Device Control policy &lt;id&gt; and set 'enforcement_mode' to 'MONITOR_ENFORCE', with the 'MASS_STORAGE' category configured to 'BLOCK_ALL', including an exception for 'combined_id' '1234_5678_000000000000'.</maml:para>
         </dev:remarks>
@@ -1759,7 +1759,7 @@ PS&gt;Edit-FalconDeviceControlPolicy -Id &lt;id&gt; -Settings $Settings</dev:cod
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$DiffOperations = @(@{ op = 'replace'; path = '/enabled'; value = $true })
-PS&gt;Edit-FalconFirewallGroup -Id &lt;id&gt; -DiffOperations $DiffOperations</dev:code>
+Edit-FalconFirewallGroup -Id &lt;id&gt; -DiffOperations $DiffOperations</dev:code>
         <dev:remarks>
           <maml:para>Use 'DiffOperations' to 'enable' the Custom IOA rule group &lt;id&gt;.</maml:para>
         </dev:remarks>
@@ -1771,11 +1771,11 @@ PS&gt;Edit-FalconFirewallGroup -Id &lt;id&gt; -DiffOperations $DiffOperations</d
     address_family = 'NONE'; protocol = '6'; fields = @(@{ name = 'network_location'; type = 'set';
     values = @( 'ANY' )}); local_address = @(@{ address = '*'; netmask = 0 }); remote_address = @(@{
     address = '*'; netmask = 0 })}})
-PS&gt;$Group = Get-FalconFirewallGroup -Ids &lt;id&gt;
-PS&gt;$Rules = Get-FalconFirewallRule -Ids $Group.rule_ids
-PS&gt;$RuleIds = @('1') + $Group.rule_ids
-PS&gt;$RuleVersions = @('null') + $Rules.version
-PS&gt;Edit-FalconFirewallGroup -Id $Group.id -DiffOperations $DiffOperations -RuleIds $RuleIds
+$Group = Get-FalconFirewallGroup -Ids &lt;id&gt;
+$Rules = Get-FalconFirewallRule -Ids $Group.rule_ids
+$RuleIds = @('1') + $Group.rule_ids
+$RuleVersions = @('null') + $Rules.version
+Edit-FalconFirewallGroup -Id $Group.id -DiffOperations $DiffOperations -RuleIds $RuleIds
     -RuleVersions $RuleVersions</dev:code>
         <dev:remarks>
           <maml:para>Set '$DiffOperations' to 'add' the rule 'First rule in a group' to the top of the existing rules, gather and save the existing rule group to '$Group', then use '$Group' to collect and save information about the existing rules in that group to '$Rules'. Create '$RuleIds' with the 'temp_id' value (as a string) and add the existing 'rule_ids', then create '$RuleVersions' with 'null' for the rule being created, followed by the 'rule_versions' for each of the existing rules. Finally, request the change to the rule group to add the rule using related variables.</maml:para>
@@ -2127,7 +2127,7 @@ PS&gt;Edit-FalconFirewallGroup -Id $Group.id -DiffOperations $DiffOperations -Ru
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
         <dev:code>$Settings = Get-FalconFirewallSetting -Ids &lt;id&gt;
-PS&gt;Edit-FalconFirewallSetting -PolicyId $Settings.id -RuleGroupIds ($Settings.rule_group_ids + &lt;rule_group_id&gt;)</dev:code>
+Edit-FalconFirewallSetting -PolicyId $Settings.id -RuleGroupIds ($Settings.rule_group_ids + &lt;rule_group_id&gt;)</dev:code>
         <dev:remarks>
           <maml:para>Modify Firewall policy &lt;id&gt; to add &lt;rule_group_id&gt; at the end of the existing assigned rule groups.</maml:para>
         </dev:remarks>
@@ -3193,7 +3193,7 @@ PS&gt;Edit-FalconFirewallSetting -PolicyId $Settings.id -RuleGroupIds ($Settings
     <maml:description>
       <maml:para>Requires 'custom-ioa:write'.</maml:para>
       <maml:para>All fields are required (plus 'rulegroup_version') when making a Custom IOA rule group change. PSFalcon adds missing values automatically using data from your existing rule group.</maml:para>
-      <maml:para>If an existing rule is submitted within 'rule_updates', it will be filtered to the required properties ('comment', 'description', 'disposition_id', 'enabled', 'field_values', 'instance_id', 'name', and  'pattern_severity') including those under 'field_values' ('name', 'label', 'type' and 'values').</maml:para>
+      <maml:para>If an existing rule is submitted within 'rule_updates', it will be filtered to the required properties ('comment', 'description', 'disposition_id', 'enabled', 'field_values', 'instance_id', 'name', and 'pattern_severity') including those under 'field_values' ('name', 'label', 'type' and 'values').</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3285,11 +3285,10 @@ PS&gt;Edit-FalconFirewallSetting -PolicyId $Settings.id -RuleGroupIds ($Settings
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Group = Get-FalconIoaGroup -Ids &lt;id&gt;
-PS&gt;$Rule = $Group.rules | Where-Object { $_.name -eq 'BugRule' }
-PS&gt;$Rule.enabled = $true
-PS&gt;($Rule.field_values | Where-Object {
-    $_.name -eq 'GrandparentImageFilename' }).values[0].value = '.+updatebug.exe'
-PS&gt;Edit-FalconIoaRule -RulegroupId $Group.id -RuleUpdates $Rule</dev:code>
+$Rule = $Group.rules | Where-Object { $_.name -eq 'BugRule' }
+$Rule.enabled = $true
+($Rule.field_values | Where-Object { $_.name -eq 'GrandparentImageFilename' }).values[0].value = '.+updatebug.exe'
+Edit-FalconIoaRule -RulegroupId $Group.id -RuleUpdates $Rule</dev:code>
         <dev:remarks>
           <maml:para>Capture the existing Custom IOA rule group data as '$Group', then save the rule to update as '$Rule'. Change 'enabled' to '$true', and set the 'GrandParentImageFilename' value as '.+updatebug.exe', then submit it as a change within the existing Custom IOA rule group.</maml:para>
         </dev:remarks>
@@ -3956,9 +3955,9 @@ PS&gt;Edit-FalconIoaRule -RulegroupId $Group.id -RuleUpdates $Rule</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Settings = @(@{ id = 'EndUserNotifications'; value = @{ enabled = $true }}, @{ id = 'OnSensorMLSlider';
-value = @{ detection = 'AGGRESSIVE'; prevention = 'MODERATE' }}, @{ id = 'NextGenAV'; value =
-@{ enabled = $true }})
-PS&gt;Edit-FalconPreventionPolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
+    value = @{ detection = 'AGGRESSIVE'; prevention = 'MODERATE' }}, @{ id = 'NextGenAV'; value = @{
+    enabled = $true }})
+Edit-FalconPreventionPolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
         <dev:remarks>
           <maml:para>Modify Prevention policy &lt;id&gt; to enable 'EndUserNotifications' and 'NextGenAV', and set 'OnSensorMLSlider' to 'detection: AGGRESSIVE', 'prevention: MODERATE'.</maml:para>
         </dev:remarks>
@@ -4419,7 +4418,7 @@ PS&gt;Edit-FalconPreventionPolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
         <dev:code>$Rules = @(@{ id = '&lt;id&gt;'; priority = 'high' }, @{ id = '&lt;id&gt;'; priority = 'high' })
-PS&gt;Edit-FalconReconRule -Array $Rules</dev:code>
+Edit-FalconReconRule -Array $Rules</dev:code>
         <dev:remarks>
           <maml:para>Change the priority of rules &lt;id&gt; and &lt;id&gt; in a single request.</maml:para>
         </dev:remarks>
@@ -4579,9 +4578,9 @@ PS&gt;Edit-FalconReconRule -Array $Rules</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>$Settings = @(@{ id = 'CustomScripts'; value = @{ enabled = $true }}, @{ id = 'GetCommand';
-value = @{ enabled = $false }})
-PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
+        <dev:code>$Settings = @(@{ id = 'CustomScripts'; value = @{ enabled = $true }}, @{ id = 'GetCommand'; value = @{
+    enabled = $false }})
+Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
         <dev:remarks>
           <maml:para>Modify Response policy &lt;id&gt; to enable 'CustomScripts' and disable 'GetCommand'.</maml:para>
         </dev:remarks>
@@ -5390,7 +5389,7 @@ PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Export-FalconReport</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Path</maml:name>
           <maml:description>
             <maml:para>Destination path</maml:para>
@@ -5414,10 +5413,32 @@ PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
+          <maml:name>Confirm</maml:name>
+          <maml:description>
+            <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
+          <maml:name>WhatIf</maml:name>
+          <maml:description>
+            <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para>Destination path</maml:para>
@@ -5440,6 +5461,30 @@ PS&gt;Edit-FalconResponsePolicy -Id &lt;id&gt; -Settings $Settings</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
+        <maml:name>Confirm</maml:name>
+        <maml:description>
+          <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
+        <maml:name>WhatIf</maml:name>
+        <maml:description>
+          <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes />
@@ -5562,8 +5607,8 @@ Export-FalconReport -Path .\EXAMPLE-PC.csv -Object $Example</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
         <dev:code>$Hosts = Get-FalconHost -Detailed -All
-PS&gt;$Duplicates = Find-FalconDuplicate -Hosts $Hosts -Filter 'mac_address'
-PS&gt;Invoke-FalconHostAction -Name hide_host -Ids $Duplicates.device_id</dev:code>
+$Duplicates = Find-FalconDuplicate -Hosts $Hosts -Filter 'mac_address'
+Invoke-FalconHostAction -Name hide_host -Ids $Duplicates.device_id</dev:code>
         <dev:remarks>
           <maml:para>Find duplicate Hosts using 'hostname' and 'mac_address', then hide results within the Falcon console.</maml:para>
         </dev:remarks>
@@ -12479,7 +12524,7 @@ PS&gt;Invoke-FalconHostAction -Name hide_host -Ids $Duplicates.device_id</dev:co
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Link = Get-FalconHorizonAwsLink
-PS&gt;Start-Process $Link.url</dev:code>
+Start-Process $Link.url</dev:code>
         <dev:remarks>
           <maml:para>Save the access URL as '$Link', then open it using your default browser. Once authenticated, use 'Create Stack' to grant access.</maml:para>
         </dev:remarks>
@@ -15668,9 +15713,9 @@ PS&gt;Start-Process $Link.url</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <dev:code>Get-FalconInstallTokenSetting</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Returns installation token details.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -24249,7 +24294,7 @@ PS&gt;Start-Process $Link.url</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>Get-FalconSubmissionQuota</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Returns Falcon X Sandbox quota information.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -28715,7 +28760,7 @@ PS&gt;Start-Process $Link.url</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Settings = @{ enforcement_mode = 'MONITOR_ENFORCE'; classes = @( @{ id = 'MASS_STORAGE'; action = 'BLOCK_ALL';
     exceptions = @(@{ combined_id = '1234_5678_000000000000'; action = 'BLOCK_WRITE_EXECUTE' })})}
-PS&gt;New-FalconDeviceControlPolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
+New-FalconDeviceControlPolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
         <dev:remarks>
           <maml:para>Create Device Control policy 'Example' for Windows hosts, with an 'enforcement_mode' of 'MONITOR_ENFORCE', and the 'MASS_STORAGE' category configured to 'BLOCK_ALL', including an exception for 'combined_id' '1234_5678_000000000000'.</maml:para>
         </dev:remarks>
@@ -29307,7 +29352,7 @@ PS&gt;New-FalconDeviceControlPolicy -PlatformName Windows -Name Example -Setting
     protocol = '*'; fields = @(@{ name = 'network_location'; type = 'set'; values = @( 'ANY' ) });
     local_address = @(@{ address = '*'; netmask = 0 }); remote_address = @(@{ address = '93.184.216.34';
     netmask = 32 })})
-PS&gt;New-FalconFirewallGroup -Name Example -Enabled $true -Rules $Rules</dev:code>
+New-FalconFirewallGroup -Name Example -Enabled $true -Rules $Rules</dev:code>
         <dev:remarks>
           <maml:para>Create a Firewall rule group named 'Example' for Windows hosts, with a rule named 'Block example.com' that blocks outbound IPv4 traffic to the associated IP address (93.184.216.34).</maml:para>
         </dev:remarks>
@@ -30292,8 +30337,8 @@ PS&gt;New-FalconFirewallGroup -Name Example -Enabled $true -Rules $Rules</dev:co
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$FieldValues = @{ name = 'GrandparentImageFilename'; type = 'excludable'; values = @(@{ label = 'include';
     value = '.+bug.exe' })}
-PS&gt;New-FalconIoaRule -RulegroupId &lt;id&gt; -Name BugRule -PatternSeverity critical -RuletypeId 5 -DispositionId 30
--FieldValues $FieldValues</dev:code>
+New-FalconIoaRule -RulegroupId &lt;id&gt; -Name BugRule -PatternSeverity critical -RuletypeId 5 -DispositionId 30
+    -FieldValues $FieldValues</dev:code>
         <dev:remarks>
           <maml:para>Create Custom IOA rule 'BugRule' within rule group &lt;id&gt;.</maml:para>
         </dev:remarks>
@@ -30756,7 +30801,7 @@ PS&gt;New-FalconIoaRule -RulegroupId &lt;id&gt; -Name BugRule -PatternSeverity c
         <dev:code>$IOCs = @(@{ type = 'domain'; value = 'example.com'; platforms = @('windows'); action = 'detect';
     severity = 'low'; applied_globally = $true}, @{ type = 'ipv4'; value = '93.184.216.34'; platforms = @(
     'windows','mac','linux'); action = 'detect'; severity = 'low'; host_groups = @('&lt;id&gt;', '&lt;id&gt;')})
-PS&gt;New-FalconIoc -Array $IOCs</dev:code>
+New-FalconIoc -Array $IOCs</dev:code>
         <dev:remarks>
           <maml:para>Create a 'domain' and 'ipv4' custom indicator for 'example.com' and its related IP address in a single request.</maml:para>
         </dev:remarks>
@@ -31085,9 +31130,9 @@ PS&gt;New-FalconIoc -Array $IOCs</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Settings = @(@{ id = 'EndUserNotifications'; value = @{ enabled = $true }}, @{ id = 'OnSensorMLSlider';
-value = @{ detection = 'AGGRESSIVE'; prevention = 'MODERATE' }}, @{ id = 'NextGenAV'; value =
-@{ enabled = $true }})
-PS&gt;New-FalconPreventionPolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
+    value = @{ detection = 'AGGRESSIVE'; prevention = 'MODERATE' }}, @{ id = 'NextGenAV'; value =
+    @{ enabled = $true }})
+New-FalconPreventionPolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
         <dev:remarks>
           <maml:para>Create Prevention policy 'Example' for Windows hosts, with 'EndUserNotifications' and 'NextGenAV' enabled, and set 'OnSensorMLSlider' to 'detection: AGGRESSIVE', 'prevention: MODERATE'.</maml:para>
         </dev:remarks>
@@ -31477,7 +31522,7 @@ PS&gt;New-FalconPreventionPolicy -PlatformName Windows -Name Example -Settings $
         <dev:code>$Rules = @(@{ name = 'example_1'; topic = 'SA_BRAND_PRODUCT'; filter = "phrase:'example_phrase'";
     priority = 'low'; permissions = 'private' }, @{ name = 'example_2'; topic = 'SA_BIN'; filter = "ccbin:'1234'";
     priority = 'medium'; permissions = 'public' })
-PS&gt;New-FalconReconRule -Array $Rules</dev:code>
+New-FalconReconRule -Array $Rules</dev:code>
         <dev:remarks>
           <maml:para>Create multiple Recon monitoring rules in a single request.</maml:para>
         </dev:remarks>
@@ -31663,7 +31708,7 @@ PS&gt;New-FalconReconRule -Array $Rules</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Settings = @(@{ id = 'CustomScripts'; value = @{ enabled = $true }}, @{ id = 'GetCommand';
     value = @{ enabled = $true }})
-PS&gt;New-FalconResponsePolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
+New-FalconResponsePolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
         <dev:remarks>
           <maml:para>Create Response policy 'Example' for Windows hosts, with 'CustomScripts' and 'GetCommand' enabled.</maml:para>
         </dev:remarks>
@@ -31824,7 +31869,7 @@ PS&gt;New-FalconResponsePolicy -PlatformName Windows -Name Example -Settings $Se
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Settings = @{ build = &lt;id&gt;; uninstall_protection = 'ENABLED' }
-PS&gt;New-FalconSensorUpdatePolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
+New-FalconSensorUpdatePolicy -PlatformName Windows -Name Example -Settings $Settings</dev:code>
         <dev:remarks>
           <maml:para>Create Sensor Update policy 'Example' for Windows hosts, with the build version &lt;id&gt; and 'uninstall_protection' enabled. 'Get-FalconBuild' can be used to find 'build' values.</maml:para>
         </dev:remarks>
@@ -32889,9 +32934,9 @@ PS&gt;New-FalconSensorUpdatePolicy -PlatformName Windows -Name Example -Settings
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
         <dev:code>$Session = Start-FalconSession -HostIds &lt;id&gt;, &lt;id&gt;
-PS&gt;$Get = Invoke-FalconBatchGet -BatchId $Session.batch_id -FilePath C:\temp\file.exe
-PS&gt;$Confirm = Confirm-FalconGetFile -BatchGetCmdReqId $Get.batch_get_cmd_reqid
-PS&gt;$Confirm | Where-Object { $_.sha256 -and $_.created_at -and $_.session_id } | ForEach-Object {
+$Get = Invoke-FalconBatchGet -BatchId $Session.batch_id -FilePath C:\temp\file.exe
+$Confirm = Confirm-FalconGetFile -BatchGetCmdReqId $Get.batch_get_cmd_reqid
+$Confirm | Where-Object { $_.sha256 -and $_.created_at -and $_.session_id } | ForEach-Object {
     Receive-FalconGetFile -Sha256 $_.sha256 -SessionId $_.session_id -Path "$($_.aid)_$($_.sha256)".7z }</dev:code>
         <dev:remarks>
           <maml:para>Start a session with hosts &lt;id&gt; and &lt;id&gt;, then use Real-time Response to 'get' the file 'C:\temp\file.exe' from each host. Once the extraction of the file has completed, the '$Confirm' variable contains the 'sha256', 'created_at' and 'session_id' properties for each unique 'file.exe'--retrieved using 'Confirm-FalconGetFile'-- and 'Receive-FalconGetFile' can download each file and save them as '&lt;host_id&gt;_&lt;sha256&gt;.7z' in your local directory.</maml:para>
@@ -36378,9 +36423,9 @@ PS&gt;$Confirm | Where-Object { $_.sha256 -and $_.created_at -and $_.session_id 
     <command:examples>
       <command:example>
         <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <dev:code>Revoke-FalconToken</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Revoke your active token and clear cached information.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -36942,7 +36987,7 @@ PS&gt;$Confirm | Where-Object { $_.sha256 -and $_.created_at -and $_.session_id 
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="3" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="none">
           <maml:name>Object</maml:name>
           <maml:description>
             <maml:para>Response object to format</maml:para>
@@ -36981,7 +37026,7 @@ PS&gt;$Confirm | Where-Object { $_.sha256 -and $_.created_at -and $_.session_id 
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="3" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="none">
         <maml:name>Object</maml:name>
         <maml:description>
           <maml:para>Response object to format</maml:para>
@@ -37532,9 +37577,9 @@ Send-FalconWebhook -Type Slack -Path https://hooks.slack.com/... -Object $HostIn
     <command:examples>
       <command:example>
         <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <dev:code>(Show-FalconModule).Token</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Output a boolean value determining whether your current OAuth2 access token is valid.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -37768,7 +37813,7 @@ Send-FalconWebhook -Type Slack -Path https://hooks.slack.com/... -Object $HostIn
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$Fields = @{ name = 'GrandparentImageFilename'; type = 'excludable'; values = @(@{ label = 'include';
     value = '.+bug.exe' })}
-PS&gt;Test-FalconIoaRule -Fields $Fields</dev:code>
+Test-FalconIoaRule -Fields $Fields</dev:code>
         <dev:remarks>
           <maml:para>Validate '$Fields', containing custom IOA rule properties.</maml:para>
         </dev:remarks>
