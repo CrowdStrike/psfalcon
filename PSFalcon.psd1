@@ -357,8 +357,7 @@
                 'Windows','Linux','MacOS')
             LicenseUri   = 'https://github.com/CrowdStrike/psfalcon/blob/master/LICENSE'
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
-            IconUri      = 
-                'https://avatars.githubusercontent.com/u/54042976?s=400&u=789014ae9e1ec2204090e90711fa34dd93e5c4d1'
+            IconUri      = 'https://github.com/CrowdStrike/psfalcon/blob/master/icon.png'
             ReleaseNotes = @"
 General Changes
 
