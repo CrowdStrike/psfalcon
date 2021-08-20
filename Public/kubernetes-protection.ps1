@@ -1,16 +1,4 @@
 function Edit-FalconContainerAwsAccount {
-<#
-.Synopsis
-Modify Falcon Container Security AWS accounts
-.Description
-Requires 'kubernetes-protection:write'.
-.Parameter Ids
-AWS account identifier(s)
-.Parameter Region
-AWS cloud region
-.Role
-kubernetes-protection:write
-#>
     [CmdletBinding(DefaultParameterSetName = '')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:patch', Mandatory = $true,
@@ -36,26 +24,6 @@ kubernetes-protection:write
     }
 }
 function Get-FalconContainerAwsAccount {
-<#
-.Synopsis
-Search for Falcon Container Security AWS accounts
-.Description
-Requires 'kubernetes-protection:read'.
-.Parameter Ids
-AWS account identifier(s)
-.Parameter Status
-Filter by account status
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-kubernetes-protection:read
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:get')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:get', Position = 1)]
@@ -93,16 +61,6 @@ kubernetes-protection:read
     }
 }
 function Get-FalconContainerCloud {
-<#
-.Synopsis
-List cloud provider locations acknowledged by Falcon Container Security
-.Description
-Requires 'kubernetes-protection:read'.
-.Parameter Clouds
-Cloud provider(s)
-.Role
-kubernetes-protection:read
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/cloud-locations/v1:get')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/cloud-locations/v1:get', Position = 1)]
@@ -124,30 +82,6 @@ kubernetes-protection:read
     }
 }
 function Get-FalconContainerCluster {
-<#
-.Synopsis
-List clusters acknowledged by Falcon Container Security
-.Description
-Requires 'kubernetes-protection:read'.
-.Parameter Ids
-Cluster account identifier(s)
-.Parameter Locations
-Cloud provider location(s)
-.Parameter ClusterNames
-Cluster name(s)
-.Parameter ClusterService
-Cluster service
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-kubernetes-protection:read
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/kubernetes/clusters/v1:get', Position = 1)]
@@ -195,16 +129,6 @@ kubernetes-protection:read
     }
 }
 function Invoke-FalconContainerScan {
-<#
-.Synopsis
-Initiate a scan of your Kubernetes footprint
-.Description
-Requires 'kubernetes-protection:write'.
-.Parameter ScanType
-Scan type
-.Role
-kubernetes-protection:write
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/scan/trigger/v1:post')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/scan/trigger/v1:post', Mandatory = $true,
@@ -230,18 +154,6 @@ kubernetes-protection:write
     }
 }
 function New-FalconContainerAwsAccount {
-<#
-.Synopsis
-Provision Falcon Container Security accounts
-.Description
-Requires 'kubernetes-protection:write'.
-.Parameter Id
-AWS account identifier
-.Parameter Region
-AWS cloud region
-.Role
-kubernetes-protection:write
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:post')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:post', Mandatory = $true,
@@ -273,14 +185,6 @@ kubernetes-protection:write
     }
 }
 function New-FalconContainerKey {
-<#
-.Synopsis
-Regenerate the API key for Docker registry integrations
-.Description
-Requires 'kubernetes-protection:write'.
-.Role
-kubernetes-protection:write
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/integration/api-key/v1:post')]
     param()
     process {
@@ -288,18 +192,6 @@ kubernetes-protection:write
     }
 }
 function Receive-FalconContainerYaml {
-<#
-.Synopsis
-Download a sample Helm values.yaml file
-.Description
-Requires 'kubernetes-protection:read'.
-.Parameter ClusterName
-Cluster name
-.Parameter Path
-Destination path
-.Role
-kubernetes-protection:read
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/integration/agent/v1:get')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/integration/agent/v1:get',
@@ -340,16 +232,6 @@ kubernetes-protection:read
     }
 }
 function Remove-FalconContainerAwsAccount {
-<#
-.Synopsis
-Remove Falcon Container Security AWS accounts
-.Description
-Requires 'kubernetes-protection:write'.
-.Parameter Ids
-AWS account identifier(s)
-.Role
-kubernetes-protection:write
-#>
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:delete', Mandatory = $true,

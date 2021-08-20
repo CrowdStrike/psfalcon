@@ -1,45 +1,4 @@
 function Edit-FalconIoc {
-<#
-.Synopsis
-Update custom indicators
-.Description
-Requires 'ioc:write'.
-.Parameter Id
-Custom indicator identifier
-.Parameter Action
-Action to take when a host observes the custom indicator
-.Parameter Platforms
-Platform that the custom indicator applies to
-.Parameter Source
-The source where this custom indicator originated
-.Parameter Severity
-Severity level to apply to the custom indicator
-.Parameter Description
-Descriptive label for the custom indicator
-.Parameter Filename
-A common filename, or a filename in your environment (applies to hashes only)
-.Parameter Tags
-List of tags to apply to the custom indicator
-.Parameter HostGroups
-One or more Host Group identifiers to assign the custom indicator
-.Parameter AppliedGlobally
-Globally assign the custom indicator instead of assigning to specific Host Groups
-.Parameter Expiration
-The date on which the custom indicator will become inactive. When an indicator expires, its action is set
-to 'no_action' but it remains in your list of custom indicators.
-.Parameter Comment
-Audit log comment
-.Parameter RetroDetects
-Generate retroactive detections for hosts that have observed the custom indicator
-.Parameter IgnoreWarnings
-Ignore warnings and modify all custom indicators
-.Role
-ioc:write
-.Example
-PS>Edit-FalconIoc -Id <id> -Action prevent -Severity high
-
-Change custom indicator <id> and set 'action' to 'prevent' and 'severity' to 'high'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:patch', Mandatory = $true,
@@ -121,40 +80,6 @@ Change custom indicator <id> and set 'action' to 'prevent' and 'severity' to 'hi
     }
 }
 function Get-FalconIoc {
-<#
-.Synopsis
-Search for custom indicators
-.Description
-Requires 'ioc:read'.
-.Parameter Ids
-One or more custom indicator identifiers
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter After
-Pagination token to retrieve the next set of results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-ioc:read
-.Example
-PS>Get-FalconIoc -Filter "type:'sha256'"
-
-List the first set of identifiers for 'sha256' custom indicators.
-.Example
-PS>Get-FalconIoc -Filter "type:'domain'+value:'example.com'" -Detailed
-
-List detailed information about the 'domain' custom indicator with the value 'example.com'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/iocs/queries/indicators/v1:get')]
     param(
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:get', Mandatory = $true, Position = 1)]
@@ -211,60 +136,6 @@ List detailed information about the 'domain' custom indicator with the value 'ex
     }
 }
 function New-FalconIoc {
-<#
-.Synopsis
-Create custom indicators
-.Description
-Requires 'ioc:write'.
-.Parameter Array
-An array of custom indicators to create in a single request
-.Parameter Type
-Custom indicator type
-.Parameter Value
-String representation of the custom indicator
-.Parameter Action
-Action to take when a host observes the custom indicator
-.Parameter Platforms
-Platform that the custom indicator applies to
-.Parameter Source
-The source where this custom indicator originated
-.Parameter Severity
-Severity level to apply to the custom indicator
-.Parameter Description
-Descriptive label for the custom indicator
-.Parameter Filename
-A common filename, or a filename in your environment (applies to hashes only)
-.Parameter Tags
-List of tags to apply to the custom indicator
-.Parameter HostGroups
-One or more Host Group identifiers to assign the custom indicator
-.Parameter AppliedGlobally
-Globally assign the custom indicator instead of assigning to specific Host Groups
-.Parameter Expiration
-The date on which the custom indicator will become inactive. When an indicator expires, its action is set
-to 'no_action' but it remains in your list of custom indicators.
-.Parameter Comment
-Audit log comment
-.Parameter RetroDetects
-Generate retroactive detections for hosts that have observed the custom indicator
-.Parameter IgnoreWarnings
-Ignore warnings and create all custom indicators
-.Role
-ioc:write
-.Example
-PS>$IOCs = @(@{ type = 'domain'; value = 'example.com'; platforms = @('windows'); action = 'detect';
-    severity = 'low'; applied_globally = $true}, @{ type = 'ipv4'; value = '93.184.216.34'; platforms = @(
-    'windows','mac','linux'); action = 'detect'; severity = 'low'; host_groups = @('<id>', '<id>')})
-PS>New-FalconIoc -Array $IOCs
-
-Create a 'domain' and 'ipv4' custom indicator for 'example.com' and its related IP address in a single request.
-.Example
-PS>New-FalconIoc -Type domain -Value example.com -Platforms windows -Action detect -Severity low
-    -AppliedGlobally $true
-
-Create the 'domain' custom indicator for 'example.com' and set it to generate detections of 'low' severity
-for all Windows hosts.
-#>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -368,28 +239,6 @@ for all Windows hosts.
     }
 }
 function Remove-FalconIoc {
-<#
-.Synopsis
-Remove custom indicators
-.Description
-Requires 'ioc:write'.
-.Parameter Ids
-One or more custom indicator identifiers
-.Parameter Filter
-Falcon Query Language expression to find custom indicators for removal (takes precedence over 'Ids')
-.Parameter Comment
-Audit log comment
-.Role
-ioc:write
-.Example
-PS>Remove-FalconIoc -Ids <id>, <id>
-
-Delete custom indicators <id> and <id>.
-.Example
-PS>Remove-FalconIoc -Filter "type:'domain'+value:'example.com'"
-
-Delete custom indicators matching 'type: domain' and 'value: example.com'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/iocs/entities/indicators/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:delete', Position = 1)]

@@ -1,36 +1,4 @@
 function Get-FalconBehavior {
-<#
-.Synopsis
-Search for behaviors
-.Description
-Requires 'incidents:read'.
-.Parameter Ids
-Behavior identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-incidents:read
-.Example
-PS>Get-FalconBehavior -Detailed
-
-Return the first set of detailed behavior results.
-.Example
-PS>Get-FalconBehavior -Ids <id>, <id>
-
-Return detailed information for behaviors <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/incidents/queries/behaviors/v1:get')]
     param(
         [Parameter(ParameterSetName = '/incidents/entities/behaviors/GET/v1:post', Mandatory = $true,
@@ -79,38 +47,6 @@ Return detailed information for behaviors <id> and <id>.
     }
 }
 function Get-FalconIncident {
-<#
-.Synopsis
-Search for incidents
-.Description
-Requires 'incidents:read'.
-.Parameter Ids
-Incident identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-incidents:read
-.Example
-PS>Get-FalconIncident -Detailed
-
-Return the first set of detailed incident results.
-.Example
-PS>Get-FalconIncident -Ids <id>, <id>
-
-Return detailed information for incidents <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/incidents/queries/incidents/v1:get')]
     param(
         [Parameter(ParameterSetName = '/incidents/entities/incidents/GET/v1:post', Mandatory = $true,
@@ -162,30 +98,6 @@ Return detailed information for incidents <id> and <id>.
     }
 }
 function Get-FalconScore {
-<#
-.Synopsis
-Search for CrowdScore values
-.Description
-Requires 'incidents:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-incidents:read
-.Example
-PS>Get-FalconScore -Detailed
-
-Return the first set of detailed CrowdScore results.
-#>
     [CmdletBinding(DefaultParameterSetName = '/incidents/combined/crowdscores/v1:get')]
     param(
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 1)]
@@ -223,28 +135,6 @@ Return the first set of detailed CrowdScore results.
     }
 }
 function Invoke-FalconIncidentAction {
-<#
-.Synopsis
-Perform actions on incidents
-.Description
-Requires 'incidents:write'.
-.Parameter Name
-Action to perform
-.Parameter Value
-Value for the chosen action
-.Parameter Ids
-Incident identifier(s)
-.Parameter UpdateDetects
-Update status of related 'new' detections
-.Parameter OverwriteDetects
-Replace existing status for related detections
-.Role
-incidents:write
-.Example
-PS>Invoke-FalconIncidentAction -Name update_status -Value in_progress -Ids <id>, <id>
-
-Update the status of incidents <id> and <id> to 'in_progress'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/incidents/entities/incident-actions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/incidents/entities/incident-actions/v1:post', Mandatory = $true,

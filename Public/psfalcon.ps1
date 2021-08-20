@@ -1,40 +1,4 @@
 function Export-FalconReport {
-<#
-.Synopsis
-Format a response object and output to CSV
-.Description
-Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with
-each column having an appended 'prefix'--and exports the result the designated file path.
-
-For instance, if the object contains a property called 'device_policies', and that contains other objects called
-'prevention' and 'sensor_update', the result will contain properties labelled 'device_policies.prevention' and
-'device_policies.sensor_update' with additional '.<field_name>' values for any sub-properties of those objects.
-
-When the result contains an array with similarly named properties, it will attempt to add each sub-property
-with an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example,
-@{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed
-under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
-becomes part of the column.
-
-The '-WhatIf' parameter will display what would be written to CSV without creating the CSV file.
-.Parameter Path
-Destination path
-.Parameter Object
-Response object to format
-.Example
-PS>$Example = Get-FalconHost -Filter "hostname:'EXAMPLE-PC'"
-PS>Export-FalconReport -Path .\EXAMPLE-PC.csv -Object $Example
-
-Creates '.\EXAMPLE-PC.csv' with column 'id' and the 'device_id' value for a device with the hostname 'EXAMPLE-PC'.
-.Example
-PS>Get-FalconHost -Filter "hostname:'EXAMPLE-PC'" -Detailed | Export-FalconReport -Path .\EXAMPLE-PC.csv
-
-Creates '.\EXAMPLE-PC.csv' with all of the device details for a device with the hostname 'EXAMPLE-PC'.
-.Example
-PS>Get-FalconHost -Detailed -All | Select-Object cid, device_id, hostname | Export-FalconReport .\Hostnames.csv
-
-Creates '.\Hostnames.csv' with the 'cid', 'device_id' and 'hostname' for all devices in your environment.
-#>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $true, Position = 1)]
@@ -159,25 +123,6 @@ Creates '.\Hostnames.csv' with the 'cid', 'device_id' and 'hostname' for all dev
     }
 }
 function Export-FalconConfig {
-<#
-.Synopsis
-Create an archive containing exported Falcon configuration files
-.Description
-Uses various PSFalcon commands to gather and export Groups, Policies and Exclusions as a collection of Json files
-within a zip archive. The exported files can be used with 'Import-FalconConfig' to restore configurations to your
-existing CID, or create them in another CID.
-.Parameter Items
-Items to export from your current CID; leave blank to export all available items
-.Example
-PS>Export-FalconConfig
-
-Creates '.\FalconConfig_<FileDate>.zip' with all available configuration files.
-.Example
-PS>Export-FalconConfig -Items HostGroup, FirewallGroup, FirewallPolicy
-
-Creates '.\FalconConfig_<FileDate>.zip' with HostGroup, FirewallGroup (including Firewall Rules),
-and FirewallPolicy configuration files.
-#>
     [CmdletBinding(DefaultParameterSetName = 'ExportItems')]
     param(
         [Parameter(ParameterSetName = 'ExportItems', Position = 1)]
@@ -269,34 +214,6 @@ and FirewallPolicy configuration files.
     }
 }
 function Find-FalconDuplicate {
-<#
-.Synopsis
-Find duplicate hosts within your Falcon environment
-.Description
-Requires 'devices:read' and 'devices:write'.
-
-If the 'Hosts' parameter is not provided, all Host information will be retrieved. An error will be displayed if
-required fields 'cid', 'device_id', 'first_seen', 'last_seen', 'hostname' and any defined 'filter' value are
-not present.
-
-Hosts are grouped by 'cid', 'hostname' and any defined 'filter' value, then sorted by 'last_seen' time. Any
-result other than the one with the most recent 'last_seen' time is considered a duplicate host and is returned
-within the output.
-.Parameter Hosts
-Array of 'Get-FalconHost -Detailed' results
-.Parameter Filter
-Property to determine duplicate Host(s) in addition to 'hostname'
-.Example
-PS>Find-FalconDuplicate
-
-Retrieve a list of all hosts and output potential duplicates using the 'hostname' field.
-.Example
-PS>$Hosts = Get-FalconHost -Detailed -All
-PS>$Duplicates = Find-FalconDuplicate -Hosts $Hosts -Filter 'mac_address'
-PS>Invoke-FalconHostAction -Name hide_host -Ids $Duplicates.device_id
-
-Find duplicate Hosts using 'hostname' and 'mac_address', then hide results within the Falcon console.
-#>
     [CmdletBinding()]
     param(
         [Parameter(Position = 1)]
@@ -351,23 +268,6 @@ Find duplicate Hosts using 'hostname' and 'mac_address', then hide results withi
     }
 }
 function Get-FalconQueue {
-<#
-.Synopsis
-Create a report of Real-time Response commands in the offline queue
-.Description
-Requires 'real-time-response-admin:read' and 'real-time-response-admin:write'.
-
-Creates a CSV of pending Real-time Response commands and their related session information. Sessions within the
-offline queue expire 7 days after creation by default. Sessions can have additional commands appended to them
-to extend their expiration time.
-.Parameter Days
-Days worth of results to retrieve [default: 7]
-.Example
-PS>Get-FalconQueue -Days 14
-
-Output pending Real-time Response sessions in the offline queue that were created within the last 14 days. Any
-sessions that expired at the end of the default 7 day period will not be displayed.
-#>
     [CmdletBinding()]
     param(
         [Parameter(Position = 1)]
@@ -440,27 +340,6 @@ sessions that expired at the end of the default 7 day period will not be display
     }
 }
 function Import-FalconConfig {
-<#
-.Synopsis
-Import configurations from a 'FalconConfig' archive into your Falcon environment
-.Description
-Creates groups, policies, exclusions and rules within a 'FalconConfig' archive within your authenticated
-Falcon environment.
-
-Anything that already exists will be ignored and no existing items will be modified.
-
-The '-Force' parameter forces the script to assign exceptions, policies and rules to existing Host Groups
-with the same names as the ones provided in the configuration file.
-.Parameter Path
-'FalconConfig' archive path
-.Parameter Force
-Assign items to existing Host Groups
-.Example
-PS>Import-FalconConfig -Path .\FalconConfig_<FileDateTime>.zip
-
-Creates new items present in the archive, but does not assign policies or exclusions to existing groups or
-modify existing items (including 'default' policies).
-#>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true, Position = 1)]
@@ -1214,38 +1093,6 @@ modify existing items (including 'default' policies).
     }
 }
 function Invoke-FalconDeploy {
-<#
-.Synopsis
-Deploy and run an executable using Real-time Response
-.Description
-Requires 'real-time-response-admin:write'.
-
-'Put' files will be checked for identical file names, and if any are found, the Sha256 hash values will be
-compared between your local and cloud files. If they are different, a prompt will appear asking which file to use.
-
-If the file is not present in 'Put' files, it will be uploaded.
-
-Once uploaded, a Real-time Response session will be started for the designated Host(s), the file will be 'put'
-into the root drive, and 'run' if successfully transferred.
-
-Details of each step will be output to a CSV file in the current directory.
-.Parameter Path
-Path to local file
-.Parameter Arguments
-Arguments to include when running the executable
-.Parameter Timeout
-Length of time to wait for a result, in seconds
-.Parameter QueueOffline
-Add non-responsive Hosts to the offline queue
-.Parameter HostIds
-Host identifier(s)
-.Parameter GroupId
-Host Group identifier
-.Example
-PS>Invoke-FalconDeploy -Path C:\files\example.exe -HostIds <id>, <id>
-
-The file 'example.exe' will be 'put' and 'run' on <id> and <id>.
-#>
     [CmdletBinding()]
     [CmdletBinding(DefaultParameterSetName = 'HostIds')]
     param(
@@ -1453,29 +1300,6 @@ The file 'example.exe' will be 'put' and 'run' on <id> and <id>.
     }
 }
 function Invoke-FalconRtr {
-<#
-.Synopsis
-Start Real-time Response session(s), execute a command and output the result(s)
-.Description
-Requires 'real-time-response:read', 'real-time-response:write' or 'real-time-response-admin:write' depending
-on 'Command' provided.
-.Parameter Command
-Real-time Response command
-.Parameter Arguments
-Arguments to include with the command
-.Parameter Timeout
-Length of time to wait for a result, in seconds
-.Parameter QueueOffline
-Add non-responsive Hosts to the offline queue
-.Parameter HostIds
-Host identifier(s)
-.Parameter GroupId
-Host Group identifier
-.Example
-PS>Invoke-FalconRtr runscript "-CloudFile='HelloWorld'" -HostIds <id>, <id>
-
-Real-time Response will use 'runscript' to execute the 'CloudFile' script named 'HelloWorld' on <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = 'HostIds')]
     param(
         [Parameter(ParameterSetName = 'HostIds', Mandatory = $true, Position = 1)]
@@ -1614,17 +1438,6 @@ Real-time Response will use 'runscript' to execute the 'CloudFile' script named 
     }
 }
 function Show-FalconMap {
-<#
-.Synopsis
-Use your default browser to display indicators on the Falcon X Indicator Map. Invalid indicator values are ignored.
-.Parameter Indicators
-Real-time Response command
-.Example
-PS>Show-FalconMap -Indicators 93.184.216.34, example.com, <sha256_hash>
-
-The default browser will open and the indicator map will be displayed for "ip:93.184.216.34", "domain:example.com",
-and "hash:<sha256_hash>".
-#>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true, Position = 1)]
@@ -1649,13 +1462,6 @@ and "hash:<sha256_hash>".
     }
 }
 function Show-FalconModule {
-<#
-.Synopsis
-Display information about your PSFalcon installation.
-.Description
-Outputs an object containing module, user and system version information that is helpful for diagnosing problems
-with the PSFalcon module.
-#>
     [CmdletBinding()]
     param()
     begin {

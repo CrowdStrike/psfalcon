@@ -1,18 +1,4 @@
 function Confirm-FalconDiscoverAwsAccess {
-<#
-.Synopsis
-Performs an Access Verification check on the specified Falcon Discover for Cloud AWS Account IDs
-.Description
-Requires 'cloud-connect-aws:write'.
-.Parameter Ids
-AWS account identifier(s)
-.Role
-cloud-connect-aws:write
-.Example
-PS>Confirm-FalconDiscoverAwsAccess -Ids <id>, <id>
-
-Verify account access status for AWS accounts <id> and <id> within Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/verify-account-access/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/verify-account-access/v1:post',
@@ -35,32 +21,6 @@ Verify account access status for AWS accounts <id> and <id> within Falcon Discov
     }
 }
 function Edit-FalconDiscoverAwsAccount {
-<#
-.Synopsis
-Update Falcon Discover for Cloud AWS Accounts by specifying the ID of the account and details to update
-.Description
-Requires 'cloud-connect-aws:write'.
-.Parameter Id
-AWS account identifier
-.Parameter ExternalId
-AWS account identifier with cross-account IAM role access
-.Parameter IamRoleArn
-Full ARN of the IAM role created in the AWS account to control access
-.Parameter CloudtrailBucketOwnerId
-AWS account identifier containing cloudtrail logs
-.Parameter CloudtrailBucketRegion
-AWS region where the account containing cloudtrail logs resides
-.Parameter RateLimitTime
-Number of seconds between requests defined by 'RateLimitReqs'
-.Parameter RateLimitReqs
-Maximum number of requests within 'RateLimitTime'
-.Role
-cloud-connect-aws:write
-.Example
-PS>Edit-FalconDiscoverAwsAccount -Id <id> -CloudtrailBucketOwnerId <id>
-
-Change the 'cloudtrail_bucket_owner_id' for AWS account <id> within Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:patch', Mandatory = $true,
@@ -114,38 +74,6 @@ Change the 'cloudtrail_bucket_owner_id' for AWS account <id> within Falcon Disco
     }
 }
 function Get-FalconDiscoverAwsAccount {
-<#
-.Synopsis
-Search for Falcon Discover for Cloud AWS accounts
-.Description
-Requires 'cloud-connect-aws:read'.
-.Parameter Ids
-AWS account identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-cloud-connect-aws:read
-.Example
-PS>Get-FalconDiscoverAwsAccount
-
-Return the first set of AWS account identifiers from Falcon Discover for Cloud.
-.Example
-PS>Get-FalconDiscoverAwsAccount -Ids <id>, <id>
-
-Retrieve detailed information about AWS accounts <id> and <id> from Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:get', Mandatory = $true,
@@ -196,18 +124,6 @@ Retrieve detailed information about AWS accounts <id> and <id> from Falcon Disco
     }
 }
 function Get-FalconDiscoverAwsSetting {
-<#
-.Synopsis
-Retrieve Global Settings for all provisioned AWS accounts in Falcon Discover for Cloud
-.Description
-Requires 'cloud-connect-aws:read'.
-.Role
-cloud-connect-aws:read
-.Example
-PS>Get-FalconDiscoverAwsSetting
-
-Returns the global settings for all provisioned AWS accounts in Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/combined/settings/v1:get')]
     param()
     process {
@@ -215,39 +131,6 @@ Returns the global settings for all provisioned AWS accounts in Falcon Discover 
     }
 }
 function New-FalconDiscoverAwsAccount {
-<#
-.Synopsis
-Provision Falcon Discover for Cloud AWS Accounts by specifying details about the accounts to provision
-.Description
-Requires 'cloud-connect-aws:write'.
-.Parameter Id
-AWS account identifier
-.Parameter Mode
-Provisioning mode [default: manual]
-.Parameter ExternalId
-AWS account identifier with cross-account IAM role access
-.Parameter IamRoleArn
-Full ARN of the IAM role created in the AWS account to control access
-.Parameter CloudtrailBucketOwnerId
-AWS account identifier containing cloudtrail logs
-.Parameter CloudtrailBucketRegion
-AWS region where the account containing cloudtrail logs resides
-.Parameter RateLimitTime
-Number of seconds between requests defined by 'RateLimitReqs'
-.Parameter RateLimitReqs
-Maximum number of requests within 'RateLimitTime'
-.Role
-cloud-connect-aws:write
-.Example
-PS>New-FalconDiscoverAwsAccount -Id <id> -Mode cloudformation
-
-Add AWS account <id> to Falcon Discover for Cloud using the 'cloudformation' provisioning mode.
-.Example
-PS>New-FalconDiscoverAwsAccount -Id <id> -IamRoleArn <string> -ExternalId <external_id>
-
-Add AWS account <id> with your pre-defined IAM role ARN and External ID to Falcon Discover for Cloud using the
-'manual' provisioning mode.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:post', Mandatory = $true,
@@ -306,20 +189,6 @@ Add AWS account <id> with your pre-defined IAM role ARN and External ID to Falco
     }
 }
 function Remove-FalconDiscoverAwsAccount {
-<#
-.Synopsis
-Delete Falcon Discover for Cloud AWS accounts
-.Description
-Requires 'cloud-connect-aws:write'.
-.Parameter Ids
-AWS account identifier(s)
-.Role
-cloud-connect-aws:write
-.Example
-PS>Remove-FalconDiscoverAwsAccount -Ids <id>, <id>
-
-Remove AWS accounts <id> and <id> from Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/accounts/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/accounts/v1:delete', Mandatory = $true,
@@ -342,24 +211,6 @@ Remove AWS accounts <id> and <id> from Falcon Discover for Cloud.
     }
 }
 function Update-FalconDiscoverAwsSetting {
-<#
-.Synopsis
-Create or update Global Settings which are applicable to all newly-provisioned Falcon Discover for Cloud AWS
-accounts
-.Description
-Requires 'cloud-connect-aws:write'.
-.Parameter CloudtrailBucketOwnerId
-AWS account identifier containing cloudtrail logs
-.Parameter StaticExternalId
-Default external identifier to apply to AWS accounts
-.Role
-cloud-connect-aws:write
-.Example
-PS>Update-FalconDiscoverAwsSetting -CloudtrailBucketOwnerId <id>
-
-Set the 'cloudtrail_bucket_owner_id' to <id> for all newly-provisioned AWS accounts within Falcon Discover for
-Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-aws/entities/settings/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-aws/entities/settings/v1:post', Position = 1)]

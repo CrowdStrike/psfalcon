@@ -1,30 +1,4 @@
 function Edit-FalconIoaGroup {
-<#
-.Synopsis
-Modify a Custom IOA rule group
-.Description
-Requires 'custom-ioa:write'.
-
-All fields (plus 'rulegroup_version') are required when making a Custom IOA rule group change. PSFalcon adds
-missing values automatically using data from your existing rule group.
-.Parameter Id
-Custom IOA rule group identifier
-.Parameter Name
-Custom IOA rule group name
-.Parameter Enabled
-Custom IOA rule group status
-.Parameter Description
-Custom IOA rule group description
-.Parameter Comment
-Audit log comment
-.Role
-custom-ioa:write
-.Example
-PS>Edit-FalconIoaGroup -Id <id> -Name updatedRuleGroup -enabled $true -Description 'My updated mac rule group'
-
-Change the name of Custom IOA rule group <id> to 'updatedRuleGroup', description to 'My updated mac rule group',
-and set 'enabled' to '$true'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/entities/rule-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rule-groups/v1:patch', Mandatory = $true,
@@ -77,38 +51,6 @@ and set 'enabled' to '$true'.
     }
 }
 function Edit-FalconIoaRule {
-<#
-.Synopsis
-Modify custom IOA rules within an IOA rule group
-.Description
-Requires 'custom-ioa:write'.
-
-All fields are required (plus 'rulegroup_version') when making a Custom IOA rule group change. PSFalcon adds
-missing values automatically using data from your existing rule group.
-
-If an existing rule is submitted within 'rule_updates', it will be filtered to the required properties
-('comment', 'description', 'disposition_id', 'enabled', 'field_values', 'instance_id', 'name', and 
-'pattern_severity') including those under 'field_values' ('name', 'label', 'type' and 'values').
-.Parameter RulegroupId
-Custom IOA rule group identifier
-.Parameter RuleUpdates
-An array of custom IOA rule properties
-.Parameter Comment
-Audit log comment
-.Role
-custom-ioa:write
-.Example
-PS>$Group = Get-FalconIoaGroup -Ids <id>
-PS>$Rule = $Group.rules | Where-Object { $_.name -eq 'BugRule' }
-PS>$Rule.enabled = $true
-PS>($Rule.field_values | Where-Object {
-    $_.name -eq 'GrandparentImageFilename' }).values[0].value = '.+updatebug.exe'
-PS>Edit-FalconIoaRule -RulegroupId $Group.id -RuleUpdates $Rule
-
-Capture the existing Custom IOA rule group data as '$Group', then save the rule to update as '$Rule'. Change
-'enabled' to '$true', and set the 'GrandParentImageFilename' value as '.+updatebug.exe', then submit it as a change
-within the existing Custom IOA rule group.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/entities/rules/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rules/v1:patch', Mandatory = $true, Position = 1)]
@@ -170,40 +112,6 @@ within the existing Custom IOA rule group.
     }
 }
 function Get-FalconIoaGroup {
-<#
-.Synopsis
-Search for Custom IOA rule groups
-.Description
-Requires 'custom-ioa:read'.
-.Parameter Ids
-Custom IOA rule group identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-custom-ioa:read
-.Example
-PS>Get-FalconIoaGroup -Filter "name:'newRuleGroup'" -Detailed
-
-Retrieve detailed results for the Custom IOA rule group named 'newRuleGroup'.
-.Example
-PS>Get-FalconIoaGroup -Ids <id>, <id>
-
-Retrieve detailed results for Custom IOA rule groups <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/rule-groups/v1:get')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rule-groups/v1:get', Mandatory = $true, Position = 1)]
@@ -265,34 +173,6 @@ Retrieve detailed results for Custom IOA rule groups <id> and <id>.
     }
 }
 function Get-FalconIoaPlatform {
-<#
-.Synopsis
-List Custom IOA platforms
-.Description
-Requires 'custom-ioa:read'.
-.Parameter Ids
-Custom IOA platform(s)
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-custom-ioa:read
-.Example
-PS>Get-FalconIoaPlatform -Detailed
-
-Retrieve the first set of detailed Custom IOA platform results.
-.Example
-PS>Get-FalconIoaPlatform -Ids <id>, <id>
-
-Retrieve detailed results for Custom IOA platforms <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/platforms/v1:get')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/platforms/v1:get', Mandatory = $true, Position = 1)]
@@ -330,40 +210,6 @@ Retrieve detailed results for Custom IOA platforms <id> and <id>.
     }
 }
 function Get-FalconIoaRule {
-<#
-.Synopsis
-Search for Custom IOA rules
-.Description
-Requires 'custom-ioa:read'.
-.Parameter Ids
-Custom IOA rule identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-custom-ioa:read
-.Example
-PS>Get-FalconIoaRule -Detailed
-
-Retrieve the first set of detailed Custom IOA rule results.
-.Example
-PS>Get-FalconIoaRule -Ids <id>, <id>
-
-Retrieve detailed results for Custom IOA rules <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rules/GET/v1:post', Mandatory = $true, Position = 1)]
@@ -419,34 +265,6 @@ Retrieve detailed results for Custom IOA rules <id> and <id>.
     }
 }
 function Get-FalconIoaSeverity {
-<#
-.Synopsis
-List Custom IOA severity levels
-.Description
-Requires 'custom-ioa:read'.
-.Parameter Ids
-Custom IOA severities
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-custom-ioa:read
-.Example
-PS>Get-FalconIoaSeverity -Detailed
-
-Retrieve the first set of detailed Custom IOA severity results.
-.Example
-PS>Get-FalconIoaSeverity -Ids <id>, <id>
-
-Retrieve detailed results for Custom IOA severities <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/pattern-severities/v1:get')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/pattern-severities/v1:get', Mandatory = $true,
@@ -485,34 +303,6 @@ Retrieve detailed results for Custom IOA severities <id> and <id>.
     }
 }
 function Get-FalconIoaType {
-<#
-.Synopsis
-List Custom IOA types
-.Description
-Requires 'custom-ioa:read'.
-.Parameter Ids
-Custom IOA types
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-custom-ioa:read
-.Example
-PS>Get-FalconIoaType -Detailed
-
-Retrieve the first set of detailed Custom IOA type results.
-.Example
-PS>Get-FalconIoaType -Ids <id>, <id>
-
-Retrieve detailed results for Custom IOA types <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/queries/rule-types/v1:get')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rule-types/v1:get', Mandatory = $true, Position = 1)]
@@ -550,26 +340,6 @@ Retrieve detailed results for Custom IOA types <id> and <id>.
     }
 }
 function New-FalconIoaGroup {
-<#
-.Synopsis
-Create a Custom IOA rule group
-.Description
-Requires 'custom-ioa:write'.
-.Parameter Platform
-Operating System platform
-.Parameter Name
-Custom IOA rule group name
-.Parameter Description
-Custom IOA rule group description
-.Parameter Comment
-Audit log comment
-.Role
-custom-ioa:write
-.Example
-PS>New-FalconIoaGroup -Platform mac -Name newRuleGroup -Description 'My new mac rule group'
-
-Create a new Custom IOA rule group named 'newRuleGroup' with the description 'My new mac rule group'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/entities/rule-groups/v1:post')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rule-groups/v1:post', Mandatory = $true, Position = 1)]
@@ -602,40 +372,6 @@ Create a new Custom IOA rule group named 'newRuleGroup' with the description 'My
     }
 }
 function New-FalconIoaRule {
-<#
-.Synopsis
-Create a Custom IOA rule within a rule group
-.Description
-Requires 'custom-ioa:write'.
-
-'RuleTypeId' and 'DispositionId' values can be found using 'Get-FalconIoaType -Detailed' under the 'id' and
-'disposition_map' properties.
-.Parameter RulegroupId
-Custom IOA rule group identifier
-.Parameter Name
-Custom IOA rule name
-.Parameter PatternSeverity
-Custom IOA rule severity
-.Parameter RuletypeId
-Custom IOA rule type
-.Parameter DispositionId
-Disposition identifier (10: Monitor, 20: Detect, 30: Block)
-.Parameter FieldValues
-An array of Custom IOA rule properties
-.Parameter Description
-Custom IOA rule description
-.Parameter Comment
-Audit log comment
-.Role
-custom-ioa:write
-.Example
-PS>$FieldValues = @{ name = 'GrandparentImageFilename'; type = 'excludable'; values = @(@{ label = 'include';
-    value = '.+bug.exe' })}
-PS>New-FalconIoaRule -RulegroupId <id> -Name BugRule -PatternSeverity critical -RuletypeId 5 -DispositionId 30
--FieldValues $FieldValues
-
-Create Custom IOA rule 'BugRule' within rule group <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/entities/rules/v1:post')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rules/v1:post', Mandatory = $true, Position = 1)]
@@ -691,22 +427,6 @@ Create Custom IOA rule 'BugRule' within rule group <id>.
     }
 }
 function Remove-FalconIoaGroup {
-<#
-.Synopsis
-Delete Custom IOA rule groups
-.Description
-Requires 'custom-ioa:write'.
-.Parameter Ids
-Custom IOA rule group identifier(s)
-.Parameter Comment
-Audit log comment
-.Role
-custom-ioa:write
-.Example
-PS>Remove-FalconIoaGroup -Ids <id>, <id>
-
-Delete Custom IOA rule groups <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/entities/rule-groups/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rule-groups/v1:delete', Mandatory = $true, Position = 1)]
@@ -731,24 +451,6 @@ Delete Custom IOA rule groups <id> and <id>.
     }
 }
 function Remove-FalconIoaRule {
-<#
-.Synopsis
-Remove Custom IOA rules from rule groups
-.Description
-Requires 'custom-ioa:write'.
-.Parameter RuleGroupId
-Custom IOA rule group identifier
-.Parameter Ids
-Custom IOA rule identifier(s)
-.Parameter Comment
-Audit log comment
-.Role
-custom-ioa:write
-.Example
-PS>Remove-FalconIoaRule -RuleGroupId <group_id> -Ids <id>, <id>
-
-Delete Custom IOA rules <id> and <id> from rule group <group_id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/entities/rules/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rules/v1:delete', Mandatory = $true, Position = 1)]
@@ -779,22 +481,6 @@ Delete Custom IOA rules <id> and <id> from rule group <group_id>.
     }
 }
 function Test-FalconIoaRule {
-<#
-.Synopsis
-Validate fields and patterns of a Custom IOA rule
-.Description
-Requires 'custom-ioa:write'.
-.Parameter Fields
-An array of Custom IOA Rule properties
-.Role
-custom-ioa:write
-.Example
-PS>$Fields = @{ name = 'GrandparentImageFilename'; type = 'excludable'; values = @(@{ label = 'include';
-    value = '.+bug.exe' })}
-PS>Test-FalconIoaRule -Fields $Fields
-
-Validate '$Fields', containing custom IOA rule properties.
-#>
     [CmdletBinding(DefaultParameterSetName = '/ioarules/entities/rules/validate/v1:post')]
     param(
         [Parameter(ParameterSetName = '/ioarules/entities/rules/validate/v1:post', Mandatory = $true,

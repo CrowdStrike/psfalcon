@@ -1,28 +1,4 @@
 function Edit-FalconHostGroup {
-<#
-.Synopsis
-Modify a Host Group
-.Description
-Requires 'host-group:write'.
-.Parameter Id
-Host Group identifier
-.Parameter Name
-Host Group name
-.Parameter Description
-Host Group description
-.Parameter AssignmentRule
-FQL-based assignment rule, used with dynamic Host Groups
-.Role
-host-group:write
-.Example
-PS>Edit-FalconHostGroup -Id <id> -Name 'New Name'
-
-Change the name of Host Group <id> to 'New Name'.
-.Example
-PS>Edit-FalconHostGroup -Id <id> -AssignmentRule "platform_name:'Windows'"
-
-Change the assignment rule of Host Group <id> to "platform_name:'Windows'".
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:patch', Mandatory = $true,
@@ -59,38 +35,6 @@ Change the assignment rule of Host Group <id> to "platform_name:'Windows'".
     }
 }
 function Get-FalconHostGroup {
-<#
-.Synopsis
-Search for Host Groups
-.Description
-Requires 'host-group:read'.
-.Parameter Ids
-Host Group identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-host-group:read
-.Example
-PS>Get-FalconHostGroup -Detailed
-
-Return the first set of detailed Host Group results.
-.Example
-PS>Get-FalconHostGroup -Ids <id>, <id>
-
-Return detailed information about Host Groups <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/host-groups/v1:get')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:get', Mandatory = $true, Position = 1)]
@@ -142,34 +86,6 @@ Return detailed information about Host Groups <id> and <id>.
     }
 }
 function Get-FalconHostGroupMember {
-<#
-.Synopsis
-Search for Host Group members
-.Description
-Requires 'host-group:read'.
-.Parameter Id
-Host Group identifier
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-The maximum records to return
-.Parameter Offset
-The offset to start retrieving records from
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-host-group:read
-.Example
-PS>Get-FalconHostGroupMember -Id <id> -All
-
-Return all identifiers for hosts in Host Group <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/host-group-members/v1:get')]
     param(
         [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get',
@@ -221,26 +137,6 @@ Return all identifiers for hosts in Host Group <id>.
     }
 }
 function Invoke-FalconHostGroupAction {
-<#
-.Synopsis
-Perform actions on Host Groups
-.Description
-Requires 'host-group:write'.
-
-Adds or removes hosts from Host Groups in batches of 500.
-.Parameter Name
-The action to perform
-.Parameter Id
-Host Group identifier
-.Parameter HostIds
-Host identifier(s)
-.Role
-host-group:write
-.Example
-PS>Invoke-FalconHostGroupAction -Name add-hosts -Id <id> -HostIds <host_id>, <host_id>
-
-Add hosts <host_id> and <host_id> to Host Group <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-group-actions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/host-group-actions/v1:post', Mandatory = $true,
@@ -290,32 +186,6 @@ Add hosts <host_id> and <host_id> to Host Group <id>.
     }
 }
 function New-FalconHostGroup {
-<#
-.Synopsis
-Create Host Groups
-.Description
-Requires 'host-group:write'.
-.Parameter Array
-An array of Host Groups to create in a single request
-.Parameter GroupType
-Host Group type
-.Parameter Name
-Host Group name
-.Parameter Description
-Host Group description
-.Parameter AssignmentRule
-Assignment rule for 'dynamic' Host Groups
-.Role
-host-group:write
-.Example
-PS>New-FalconHostGroup -GroupType static -Name 'Test Group 45' -Description 'A demo group'
-
-Create a static Host Group called 'Test Group 45' with the description 'A demo group'.
-.Example
-PS>New-FalconHostGroup -GroupType dynamic -Name Windows -AssignmentRule "platform_name:'Windows'"
-
-Create a dynamic Host Group called 'Windows' with the assignment rule "platform_name:'Windows'".
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -383,20 +253,6 @@ Create a dynamic Host Group called 'Windows' with the assignment rule "platform_
     }
 }
 function Remove-FalconHostGroup {
-<#
-.Synopsis
-Delete Host Groups
-.Description
-Requires 'host-group:write'.
-.Parameter Ids
-Host Group identifier(s)
-.Role
-host-group:write
-.Example
-PS>Remove-FalconHostGroup -Ids <id>, <id>
-
-Delete Host Groups <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/host-groups/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/host-groups/v1:delete', Mandatory = $true, Position = 1)]

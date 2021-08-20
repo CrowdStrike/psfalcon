@@ -1,24 +1,4 @@
 function Edit-FalconMlExclusion {
-<#
-.Synopsis
-Modify Machine Learning exclusions
-.Description
-Requires 'ml-exclusions:write'.
-.Parameter Id
-Machine Learning exclusion identifier
-.Parameter Value
-RegEx pattern value
-.Parameter GroupIds
-Host group identifier(s) or 'all'
-.Parameter Comment
-Audit log comment
-.Role
-ml-exclusions:write
-.Example
-PS>Edit-FalconMlExclusion -Id <id> -Value '/foo*'
-
-Modify the existing Machine Learning exclusion <id> to set the 'value' to '/foo*'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:patch', Mandatory = $true,
@@ -56,34 +36,6 @@ Modify the existing Machine Learning exclusion <id> to set the 'value' to '/foo*
     }
 }
 function Get-FalconMlExclusion {
-<#
-.Synopsis
-Search for Machine Learning exclusions
-.Description
-Requires 'ml-exclusions:read'.
-.Parameter Ids
-Machine Learning exclusion identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-ml-exclusions:read
-.Example
-PS>Get-FalconMlExclusion -Detailed
-
-Return the first set of detailed results about Machine Learning exclusions.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/ml-exclusions/v1:get')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:get', Mandatory = $true, Position = 1)]
@@ -130,26 +82,6 @@ Return the first set of detailed results about Machine Learning exclusions.
     }
 }
 function New-FalconMlExclusion {
-<#
-.Synopsis
-Create a Machine Learning exclusion
-.Description
-Requires 'ml-exclusions:write'.
-.Parameter Value
-RegEx pattern value
-.Parameter ExcludedFrom
-Actions to exclude
-.Parameter GroupIds
-Host group identifier(s) or 'all'
-.Parameter Comment
-Audit log comment
-.Role
-ml-exclusions:write
-.Example
-PS>New-FalconMlExclusion -Value '/foo' -ExcludedFrom blocking, extraction -GroupIds all -Comment 'creating foo'
-
-Create a Machine Learning exclusion with the value '/foo' and assign it to all hosts in your CID.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 1)]
@@ -187,22 +119,6 @@ Create a Machine Learning exclusion with the value '/foo' and assign it to all h
     }
 }
 function Remove-FalconMlExclusion {
-<#
-.Synopsis
-Delete Machine Learning exclusions
-.Description
-Requires 'ml-exclusions:write'.
-.Parameter Ids
-Machine Learning exclusion identifier(s)
-.Parameter Comment
-Audit log comment
-.Role
-ml-exclusions:write
-.Example
-PS>Remove-FalconMlExclusion -Ids <id>, <id>
-
-Delete Machine Learning exclusions <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:delete', Mandatory = $true, Position = 1)]

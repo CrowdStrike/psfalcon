@@ -1,38 +1,4 @@
 function Get-FalconReport {
-<#
-.Synopsis
-Search for Falcon X Sandbox reports
-.Description
-Requires 'falconx-sandbox:read'.
-.Parameter Ids
-Falcon X Sandbox report identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Summary
-Return a summary version of one or more sandbox reports
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconx-sandbox:read
-.Example
-PS>Get-FalconReport -Ids <id>, <id> -Summary
-
-Return summary-level Sandbox reports for <id> and <id>.
-.Example
-PS>Get-FalconReport -Ids <id>, <id>
-
-Retrieve the Sandbox reports <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falconx/queries/reports/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falconx/entities/reports/v1:get', Mandatory = $true, Position = 1)]
@@ -81,38 +47,6 @@ Retrieve the Sandbox reports <id> and <id>.
     }
 }
 function Get-FalconSubmission {
-<#
-.Synopsis
-Search for Falcon X Sandbox submissions
-.Description
-Requires 'falconx-sandbox:read'.
-.Parameter Ids
-Falcon X Sandbox submission identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconx-sandbox:read
-.Example
-PS>Get-FalconSubmission -Limit 5 -Detailed
-
-Retrieve detail about the 5 most recent Falcon X Sandbox submissions.
-.Example
-PS>Get-FalconSubmission -Ids <id>, <id>
-
-Retrieve information about submissions <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falconx/queries/submissions/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falconx/entities/submissions/v1:get', Mandatory = $true, Position = 1)]
@@ -156,16 +90,6 @@ Retrieve information about submissions <id> and <id>.
     }
 }
 function Get-FalconSubmissionQuota {
-<#
-.Synopsis
-Display your monthly Falcon X sandbox submission quota
-.Description
-Requires 'falconx-sandbox:read'.
-.Role
-falconx-sandbox:read
-.Example
-PS>Get-FalconSubmissionQuota
-#>
     [CmdletBinding(DefaultParameterSetName = '/falconx/queries/submissions/v1:get')]
     param()
     begin {
@@ -187,46 +111,6 @@ PS>Get-FalconSubmissionQuota
     }
 }
 function New-FalconSubmission {
-<#
-.Synopsis
-Submit a sample to the Falcon X Sandbox
-.Description
-Requires 'falconx-sandbox:write'.
-
-'Sha256' values are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be uploaded
-before they can be provided to the Falcon X Sandbox.
-.Parameter EnvironmentId
-Analysis environment
-.Parameter Sha256
-Sample Sha256 hash value
-.Parameter Url
-A webpage or file URL
-.Parameter SubmitName
-Submission name
-.Parameter ActionScript
-Runtime script for sandbox analysis
-.Parameter CommandLine
-Command line script passed to the submitted file at runtime
-.Parameter SystemDate
-A custom date to use in the analysis environment
-.Parameter SystemTime
-A custom time to use in the analysis environment
-.Parameter DocumentPassword
-Auto-filled for Adobe or Office files that prompt for a password
-.Parameter NetworkSettings
-Network settings to use in the analysis environment
-.Parameter EnableTor
-Route traffic via TOR
-.Parameter UserTags
-Tags to categorize the submission
-.Role
-falconx-sandbox:write
-.Example
-PS>New-FalconSubmission -Sha256 $Sample.sha256 -EnvironmentId win7_x86 -SubmitName sample.exe
-
-Submit 'sample.exe' to the Falcon X Sandbox to be detonated in a Windows 7 32-bit environment, using the 'sha256'
-value stored in the '$Sample' variable (a 'Send-FalconSample' command result).
-#>
     [CmdletBinding(DefaultParameterSetName = '/falconx/entities/submissions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/falconx/entities/submissions/v1:post', Mandatory = $true, Position = 1)]
@@ -314,25 +198,6 @@ value stored in the '$Sample' variable (a 'Send-FalconSample' command result).
     }
 }
 function Receive-FalconArtifact {
-<#
-.Synopsis
-Download artifacts from a Falcon X Sandbox report
-.Description
-Requires 'falconx-sandbox:read'.
-
-Artifact identifier values can be retrieved for specific Falcon X Sandbox reports using 'Get-FalconReport'.
-.Parameter Id
-Artifact identifier
-.Parameter Path
-Destination path
-.Role
-falconx-sandbox:read
-.Example
-PS>Receive-FalconArtifact -Id $Report.ioc_report_strict_csv_artifact_id -Path
-    ioc_report_strict_csv_artifact_id.csv
-
-Download a CSV containing artifact information using the identifier contained in the '$Report' variable.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falconx/entities/artifacts/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falconx/entities/artifacts/v1:get', Mandatory = $true,
@@ -368,20 +233,6 @@ Download a CSV containing artifact information using the identifier contained in
     }
 }
 function Remove-FalconReport {
-<#
-.Synopsis
-Delete a Falcon X Sandbox report
-.Description
-Requires 'falconx-sandbox:write'.
-.Parameter Id
-Falcon X Sandbox report identifier
-.Role
-falconx-sandbox:write
-.Example
-PS>Remove-FalconReport -Id <id>
-
-Delete the Falcon X Sandbox report <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falconx/entities/reports/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/falconx/entities/reports/v1:delete', Mandatory = $true, Position = 1)]

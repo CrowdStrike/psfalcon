@@ -1,24 +1,4 @@
 function Get-FalconDiscoverAzureAccount {
-<#
-.Synopsis
-Search for Falcon Discover for Cloud Azure accounts
-.Description
-Requires 'd4c-registration:read'.
-.Parameter Ids
-Azure account identifier(s)
-.Parameter ScanType
-Scan type
-.Role
-d4c-registration:read
-.Example
-PS>Get-FalconDiscoverAzureAccount
-
-Return the first set of Azure account identifiers from Falcon Discover for Cloud.
-.Example
-PS>Get-FalconDiscoverAzureAccount -Ids <id>, <id>
-
-Retrieve detailed information about Azure accounts <id> and <id> from Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:get', Mandatory = $true,
@@ -48,26 +28,6 @@ Retrieve detailed information about Azure accounts <id> and <id> from Falcon Dis
     }
 }
 function Get-FalconDiscoverGcpAccount {
-<#
-.Synopsis
-Search for Falcon Discover for Cloud GCP accounts
-.Description
-Requires 'd4c-registration:read'.
-.Parameter Ids
-GCP account identifier(s)
-.Parameter ScanType
-Scan type
-.Role
-d4c-registration:read
-.Example
-PS>Get-FalconDiscoverGcpAccount
-
-Return the first set of GCP account identifiers from Falcon Discover for Cloud.
-.Example
-PS>Get-FalconDiscoverGcpAccount -Ids <id>, <id>
-
-Retrieve detailed information about GCP accounts <id> and <id> from Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:get', Mandatory = $true,
@@ -97,22 +57,6 @@ Retrieve detailed information about GCP accounts <id> and <id> from Falcon Disco
     }
 }
 function New-FalconDiscoverAzureAccount {
-<#
-.Synopsis
-Provision Falcon Discover for Cloud Azure accounts
-.Description
-Requires 'd4c-registration:write'.
-.Parameter SubscriptionId
-Azure subscription identifier
-.Parameter TenantId
-Azure tenant identifier
-.Role
-d4c-registration:write
-.Example
-PS>New-FalconDiscoverAzureAccount -SubscriptionId <id> -TenantId <id>
-
-Add Azure subscription <id> within tenant <id> to Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-azure/entities/account/v1:post', Position = 1)]
@@ -144,20 +88,6 @@ Add Azure subscription <id> within tenant <id> to Falcon Discover for Cloud.
     }
 }
 function New-FalconDiscoverGcpAccount {
-<#
-.Synopsis
-Provision Falcon Discover for Cloud GCP accounts
-.Description
-Requires 'd4c-registration:write'.
-.Parameter ParentId
- GCP project identifier
-.Role
-d4c-registration:write
-.Example
-PS>New-FalconDiscoverGcpAccount -ParentId <id>
-
-Add GCP parent <id> to Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/account/v1:post', Mandatory = $true,
@@ -185,19 +115,6 @@ Add GCP parent <id> to Falcon Discover for Cloud.
     }
 }
 function Receive-FalconDiscoverAzureScript {
-<#
-.Synopsis
-Download a Bash script which grants Falcon Discover for Cloud access using Azure Cloud Shell
-.Description
-Requires 'd4c-registration:read'.
-.Role
-d4c-registration:read
-.Example
-PS>Receive-FalconHorizonAzureScript -Path .\azure_provision.sh
-
-Download 'azure_provision.sh' which can be run (using Azure Cloud Shell) to provide access to Falcon Discover
-for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-azure/entities/user-scripts-download/v1:get',
@@ -230,20 +147,6 @@ for Cloud.
     }
 }
 function Receive-FalconDiscoverGcpScript {
-<#
-.Synopsis
- Download a Bash script which grants access using GCP CLI
- .Description
-Requires 'd4c-registration:read'.
-.Parameter Path
-Destination path
-.Role
-d4c-registration:read
-.Example
-PS>Receive-FalconDiscoverGcpScript -Path .\gcp_provision.sh
-
-Download 'gcp_provision.sh' which can be run (using GCP CLI) to provide access to Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-gcp/entities/user-scripts-download/v1:get',
@@ -276,20 +179,6 @@ Download 'gcp_provision.sh' which can be run (using GCP CLI) to provide access t
     }
 }
 function Update-FalconDiscoverAzureAccount {
-<#
-.Synopsis
-Update the Azure Service Principal for Falcon Discover for Cloud.
-.Description
-Requires 'd4c-registration:write'.
-.Parameter Id
-Azure client identifier for the associated Service Principal
-.Role
-d4c-registration:write
-.Example
-PS>Update-FalconDiscoverAzureAccount -Id <id>
-
-Set the Azure Service Principal for Falcon Discover for Cloud.
-#>
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/cloud-connect-azure/entities/client-id/v1:patch', Mandatory = $true,

@@ -1,48 +1,4 @@
 function Get-FalconRule {
-<#
-.Synopsis
-Search for Falcon X rulesets
-.Description
-Requires 'falconx-rules:read'.
-.Parameter Ids
-Ruleset identifier(s)
-.Parameter Type
-Ruleset type
-.Parameter Name
-Ruleset name
-.Parameter Description
-Ruleset description
-.Parameter Tags
-One or more ruleset tags
-.Parameter MinCreatedDate
-Filter results to those created on or after a date
-.Parameter MaxCreatedDate
-Filter results to those created on or before a date
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconx-rules:read
-.Example
-PS>Get-FalconRule -Filter "type=yara-master&min_created_date=1509494400" -Limit 3
-
-Search for 3 'yara-master' rule sets created after 1509494400 (Unix time).
-.Example
-PS>Get-FalconRule -Ids <id>, <id>
-
-List detailed information about rulesets <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName = '/intel/entities/rules/v1:get', Mandatory = $true, Position = 1)]
@@ -112,28 +68,6 @@ List detailed information about rulesets <id> and <id>.
     }
 }
 function Receive-FalconRule {
-<#
-.Synopsis
-Download the most recent ruleset, or a specific ruleset
-.Description
-Requires 'falconx-rules:read'.
-.Parameter Id
-Ruleset identifier, used for a specific ruleset
-.Parameter Type
-Ruleset type, used to retrieve the latest ruleset
-.Parameter Path
-Destination path
-.Role
-falconx-rules:read
-.Example
-PS>Receive-FalconRule -Type yara-master -Path yara-master.zip
-
-Download the latest 'yara-master' rule set as 'yara-master.zip'.
-.Example
-PS>Receive-FalconRule -Id <id> -Path rules.zip
-
-Download ruleset <id> as 'rules.zip'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/intel/entities/rules-files/v1:get')]
     param(
         [Parameter(ParameterSetName = '/intel/entities/rules-files/v1:get', Mandatory = $true,

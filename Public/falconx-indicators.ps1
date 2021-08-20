@@ -1,43 +1,4 @@
 function Get-FalconIndicator {
-<#
-.Synopsis
-Search for intelligence indicators
-.Description
-Requires 'falconx-indicators:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter IncludeDeleted
-Include previously deleted indicators
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconx-indicators:read
-.Example
-PS>Get-FalconIndicator -Filter "type:'domain'" -Detailed
-
-Return the first set of detailed results for 'domain' indicators.
-.Example
-PS>Get-FalconIndicator -Ids <id>, <id>
-
-List information about indicators <id> and <id>.
-.Example
-PS>Get-FalconIndicator -Filter "last_updated:>=1427846400" -Sort "last_updated|asc" -Detailed
-
-Return the first set of detailed results--sorted by 'last_updated' in ascending order--for indicators updated
-after 1427846400 (Unix time).
-#>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/indicators/v1:get')]
     param(
         [Parameter(ParameterSetName = '/intel/entities/indicators/GET/v1:post', Mandatory = $true, Position = 1)]

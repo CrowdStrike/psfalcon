@@ -1,40 +1,4 @@
 function Get-FalconIntel {
-<#
-.Synopsis
-Search for intelligence reports
-.Description
-Requires 'falconx-reports:read'.
-.Parameter Ids
-Intelligence report identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Fields
-Specific fields, or a predefined collection name surrounded by two underscores [default: __basic__]
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconx-reports:read
-.Example
-PS>Get-FalconReport -Filter "target_countries:'united states'+target_industries:'government'"
-
-Search for identifiers of reports where the target is government entities in the United States.
-.Example
-PS>Get-FalconReport -Ids <id>, <id>
-
-Get information about reports <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/reports/v1:get')]
     param(
         [Parameter(ParameterSetName = '/intel/entities/reports/v1:get', Mandatory = $true, Position = 1)]
@@ -96,18 +60,6 @@ Get information about reports <id> and <id>.
     }
 }
 function Receive-FalconIntel {
-<#
-.Synopsis
-Download an intelligence report
-.Description
-Requires 'falconx-reports:read'.
-.Parameter Id
-Intelligence report identifier
-.Parameter Path
-Destination path
-.Role
-falconx-reports:read
-#>
     [CmdletBinding(DefaultParameterSetName = '/intel/entities/report-files/v1:get')]
     param(
         [Parameter(ParameterSetName = '/intel/entities/report-files/v1:get', Mandatory = $true,

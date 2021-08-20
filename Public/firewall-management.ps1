@@ -1,57 +1,4 @@
 function Edit-FalconFirewallGroup {
-<#
-.Synopsis
-Modify Firewall rule groups
-.Description
-Requires 'firewall-management:write'.
-
-All fields (plus 'rulegroup_version') are required when making a Firewall rule group change. PSFalcon
-adds missing values automatically using data from your existing rule group.
-
-'DiffOperations' array objects must contain 'op', 'path' and 'value' properties. Accepted 'op' values are 'add',
-'remove' and 'replace'.
-
-When adding a rule to a rule group, the required rule fields must be included along with a 'temp_id' (in both the
-rule properties and in precedence order within 'rule_ids') to establish proper placement of the rule within the
-rule group. Simlarly, the value 'null' must be placed within 'rule_versions' in precedence order.
-
-PSFalcon will accept 'temp_id' values between 1 and 500, allowing batches of up to 500 rules per request.
-.Parameter Id
-Firewall rule group identifier
-.Parameter DiffOperations
-An array of hashtables containing rule or rule group changes
-.Parameter RuleIds
-Firewall rule identifier(s) within the existing rule group
-.Parameter RuleVersions
-Rule version value(s), using 'null' for the value when adding new rules
-.Parameter Comment
-Audit log comment
-.Role
-firewall-management:write
-.Example
-PS>$DiffOperations = @(@{ op = 'replace'; path = '/enabled'; value = $true })
-PS>Edit-FalconFirewallGroup -Id <id> -DiffOperations $DiffOperations
-
-Use 'DiffOperations' to 'enable' the Custom IOA rule group <id>.
-.Example
-PS>$DiffOperations = @(@{ op = 'add'; path = '/rules/0'; value = @{ temp_id = '1'; name = 'First rule in a group';
-    description = 'Example'; platform_ids = @('0'); enabled = $false; action = 'ALLOW'; direction = 'IN';
-    address_family = 'NONE'; protocol = '6'; fields = @(@{ name = 'network_location'; type = 'set';
-    values = @( 'ANY' )}); local_address = @(@{ address = '*'; netmask = 0 }); remote_address = @(@{
-    address = '*'; netmask = 0 })}})
-PS>$Group = Get-FalconFirewallGroup -Ids <id>
-PS>$Rules = Get-FalconFirewallRule -Ids $Group.rule_ids
-PS>$RuleIds = @('1') + $Group.rule_ids
-PS>$RuleVersions = @('null') + $Rules.version
-PS>Edit-FalconFirewallGroup -Id $Group.id -DiffOperations $DiffOperations -RuleIds $RuleIds
-    -RuleVersions $RuleVersions
-
-Set '$DiffOperations' to 'add' the rule 'First rule in a group' to the top of the existing rules, gather and save
-the existing rule group to '$Group', then use '$Group' to collect and save information about the existing rules
-in that group to '$Rules'. Create '$RuleIds' with the 'temp_id' value (as a string) and add the existing
-'rule_ids', then create '$RuleVersions' with 'null' for the rule being created, followed by the 'rule_versions' for
-each of the existing rules. Finally, request the change to the rule group to add the rule using related variables.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/rule-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Mandatory = $true,
@@ -140,26 +87,6 @@ each of the existing rules. Finally, request the change to the rule group to add
     }
 }
 function Edit-FalconFirewallPolicy {
-<#
-.Synopsis
-Modify Firewall policies
-.Description
-Requires 'firewall-management:write'.
-.Parameter Array
-An array of Firewall policies to modify in a single request
-.Parameter Id
-Firewall policy identifier
-.Parameter Name
-Firewall policy name
-.Parameter Description
-Firewall policy description
-.Role
-firewall-management:write
-.Example
-PS>Edit-FalconFirewallPolicy -Id <id> -Name 'Name Changed'
-
-Change the name of Firewall policy <id> to 'Name Changed'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall/v1:patch')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -209,42 +136,6 @@ Change the name of Firewall policy <id> to 'Name Changed'.
     }
 }
 function Edit-FalconFirewallSetting {
-<#
-.Synopsis
-Modify Firewall policy settings
-.Description
-Requires 'firewall-management:write'.
-
-All fields are required to modify Firewall policy settings. PSFalcon adds missing values automatically
-using data from your existing policy.
-
-If adding or removing rule groups, all rule groups must be supplied in precedence order.
-.Parameter PolicyId
-Firewall policy identifier
-.Parameter PlatformId
-Operating System platform identifier
-.Parameter Enforce
-Enforce this policy on target Host Groups
-.Parameter RuleGroupIds
-Firewall rule group identifier(s)
-.Parameter DefaultInbound
-Default action for inbound traffic
-.Parameter DefaultOutbound
-Default action for outbound traffic
-.Parameter MonitorMode
-Override all block rules in this policy and turn on monitoring
-.Role
-firewall-management:write
-.Example
-PS>Edit-FalconFirewallSetting -PolicyId <id> -Enforce $true -DefaultInbound DENY -DefaultOutbound ALLOW
-
-Modify Firewall policy <id> to enable 'enforce', set 'default_inbound' to 'DENY' and 'default_outbound' to 'ALLOW'.
-.Example
-PS>$Settings = Get-FalconFirewallSetting -Ids <id>
-PS>Edit-FalconFirewallSetting -PolicyId $Settings.id -RuleGroupIds ($Settings.rule_group_ids + <rule_group_id>)
-
-Modify Firewall policy <id> to add <rule_group_id> at the end of the existing assigned rule groups.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/policies/v1:put')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Mandatory = $true, Position = 1)]
@@ -311,42 +202,6 @@ Modify Firewall policy <id> to add <rule_group_id> at the end of the existing as
     }
 }
 function Get-FalconFirewallEvent {
-<#
-.Synopsis
-Search for Firewall events
-.Description
-Requires 'firewall-management:read'.
-.Parameter Ids
-Firewall event identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter After
-Pagination token to retrieve the next set of results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallEvent -Detailed
-
-Return the first set of detailed Firewall event results.
-.Example
-PS>Get-FalconFirewallEvent -Ids <id>, <id>
-
-Return detailed information about Firewall events <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/events/v1:get')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/events/v1:get', Mandatory = $true, Position = 1)]
@@ -398,36 +253,6 @@ Return detailed information about Firewall events <id> and <id>.
     }
 }
 function Get-FalconFirewallField {
-<#
-.Synopsis
-Search for Firewall fields
-.Description
-Requires 'firewall-management:read'.
-.Parameter Ids
-Firewall field identifier(s)
-.Parameter PlatformId
-Operating System platform
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallField -Detailed -All
-
-Retrieve detailed information about all available Firewall fields.
-.Example
-PS>Get-FalconFirewallField -Ids <id>, <id>
-
-Return detailed information about Firewall fields <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/firewall-fields/v1:get')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/firewall-fields/v1:get', Mandatory = $true, Position = 1)]
@@ -470,42 +295,6 @@ Return detailed information about Firewall fields <id> and <id>.
     }
 }
 function Get-FalconFirewallGroup {
-<#
-.Synopsis
-Search for Firewall rule groups
-.Description
-Requires 'firewall-management:read'.
-.Parameter Ids
-Firewall rule group identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter After
-Pagination token to retrieve the next set of results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallGroup -Detailed
-
-Retrieve the first set of detailed Firewall group results.
-.Example
-PS>Get-FalconFirewallGroup -Ids <id>, <id>
-
-Return detailed information about Firewall groups <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/rule-groups/v1:get')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:get', Mandatory = $true, Position = 1)]
@@ -557,34 +346,6 @@ Return detailed information about Firewall groups <id> and <id>.
     }
 }
 function Get-FalconFirewallPlatform {
-<#
-.Synopsis
-Search for Firewall platforms
-.Description
-Requires 'firewall-management:read'.
-.Parameter Ids
-Firewall platform identifier(s)
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallPlatform -Detailed -All
-
-Retrieve detailed information about all available Firewall platforms.
-.Example
-PS>Get-FalconFirewallPlatform -Ids <id>, <id>
-
-Return detailed information about Firewall platforms <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/platforms/v1:get')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/platforms/v1:get', Mandatory = $true, Position = 1)]
@@ -621,38 +382,6 @@ Return detailed information about Firewall platforms <id> and <id>.
     }
 }
 function Get-FalconFirewallPolicy {
-<#
-.Synopsis
-Search for Firewall policies
-.Description
-Requires 'firewall-management:read'.
-.Parameter Ids
-Firewall policy identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallPolicy -Filter "name:!'platform_default'" -Detailed -All
-
-Return detailed information about all Firewall policies not named 'platform_default'.
-.Example
-PS>Get-FalconFirewallPolicy -Ids <id>, <id>
-
-Return detailed information about Firewall policies <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/firewall/v1:get')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/firewall/v1:get', Mandatory = $true, Position = 1)]
@@ -705,34 +434,6 @@ Return detailed information about Firewall policies <id> and <id>.
     }
 }
 function Get-FalconFirewallPolicyMember {
-<#
-.Synopsis
-Search for Firewall policy members
-.Description
-Requires 'firewall-management:read'.
-.Parameter Id
-Firewall policy identifier
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallPolicyMember -Id <id> -All
-
-Return all identifiers for hosts in the Firewall policy <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/firewall-members/v1:get')]
     param(
         [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get',
@@ -785,44 +486,6 @@ Return all identifiers for hosts in the Firewall policy <id>.
     }
 }
 function Get-FalconFirewallRule {
-<#
-.Synopsis
-Search for Firewall rules
-.Description
-Requires 'firewall-management:read'.
-.Parameter Ids
-Firewall rule identifier(s)
-.Parameter PolicyId
-Return rules in precedence order for a specific Firewall policy
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter After
-Pagination token to retrieve the next set of results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallRule -Detailed
-
-Return the first set of detailed Firewall rule results.
-.Example
-PS>Get-FalconFirewallRule -Ids <id>, <id>
-
-Return detailed information about Firewall rules <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/rules/v1:get', Mandatory = $true, Position = 1)]
@@ -892,20 +555,6 @@ Return detailed information about Firewall rules <id> and <id>.
     }
 }
 function Get-FalconFirewallSetting {
-<#
-.Synopsis
-List general settings for a Firewall policy
-.Description
-Requires 'firewall-management:read'.
-.Parameter Ids
-Firewall policy identifier(s)
-.Role
-firewall-management:read
-.Example
-PS>Get-FalconFirewallSetting -Ids <id>, <id>
-
-Retrieve settings for Firewall policies <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/policies/v1:get')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:get', Mandatory = $true, Position = 1)]
@@ -927,28 +576,6 @@ Retrieve settings for Firewall policies <id> and <id>.
     }
 }
 function Invoke-FalconFirewallPolicyAction {
-<#
-.Synopsis
-Perform actions on Firewall policies
-.Description
-Requires 'firewall-management:write'.
-.Parameter Name
-Action to perform
-.Parameter Id
-Firewall policy identifier
-.Parameter GroupId
-Host group identifier
-.Role
-firewall-management:write
-.Example
-PS>Invoke-FalconFirewallPolicyAction -Name add-host-group -Id <policy_id> -GroupId <group_id>
-
-Add the Host Group <group_id> to Firewall policy <policy_id>.
-.Example
-PS>Invoke-FalconFirewallPolicyAction -Name enable -Id <policy_id>
-
-Enable Firewall policy <policy_id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall-actions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/firewall-actions/v1:post', Mandatory = $true,
@@ -997,38 +624,6 @@ Enable Firewall policy <policy_id>.
     }
 }
 function New-FalconFirewallGroup {
-<#
-.Synopsis
-Create Firewall rule groups
-.Description
-Requires 'firewall-management:write'.
-.Parameter Name
-Firewall rule group name
-.Parameter Enabled
-Firewall rule group status
-.Parameter CloneId
-Clone an existing Firewall rule group
-.Parameter Library
-Clone default Firewall rules
-.Parameter Rules
-An array of Firewall rule properties
-.Parameter Description
-Firewall rule group description
-.Parameter Comment
-Audit log comment
-.Role
-firewall-management:write
-.Example
-PS>$Rules = @(@{ name = 'Block Example.com IP'; description = 'Block outbound to example.com IP address';
-    platform_ids = @('0'); enabled = $true; action = 'DENY'; direction = 'OUT'; address_family = 'IP4';
-    protocol = '*'; fields = @(@{ name = 'network_location'; type = 'set'; values = @( 'ANY' ) });
-    local_address = @(@{ address = '*'; netmask = 0 }); remote_address = @(@{ address = '93.184.216.34';
-    netmask = 32 })})
-PS>New-FalconFirewallGroup -Name Example -Enabled $true -Rules $Rules
-
-Create a Firewall rule group named 'Example' for Windows hosts, with a rule named 'Block example.com' that blocks
-outbound IPv4 traffic to the associated IP address (93.184.216.34).
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/rule-groups/v1:post')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Mandatory = $true, Position = 1)]
@@ -1074,32 +669,6 @@ outbound IPv4 traffic to the associated IP address (93.184.216.34).
     }
 }
 function New-FalconFirewallPolicy {
-<#
-.Synopsis
-Create Firewall policies
-.Description
-Requires 'firewall-management:write'.
-.Parameter Array
-An array of Firewall policies to create in a single request
-.Parameter PlatformName
-Operating System platform
-.Parameter Name
-Firewall policy name
-.Parameter Description
-Firewall policy description
-.Parameter CloneId
-Clone an existing Firewall policy
-.Role
-firewall-management:write
-.Example
-PS>New-FalconFirewallPolicy -PlatformName Windows -Name Example
-
-Create Firewall policy 'Example' for Windows hosts.
-.Example
-PS>New-FalconFirewallPolicy -PlatformName Windows -Name 'Cloned Policy' -CloneId <id>
-
-Create Firewall policy 'Cloned Policy' by cloning the existing Firewall policy <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -1158,22 +727,6 @@ Create Firewall policy 'Cloned Policy' by cloning the existing Firewall policy <
     }
 }
 function Remove-FalconFirewallGroup {
-<#
-.Synopsis
-Remove Firewall rule groups
-.Description
-Requires 'firewall-management:write'.
-.Parameter Ids
-Firewall rule group identifier(s)
-.Parameter Comment
-Audit log comment
-.Role
-firewall-management:write
-.Example
-PS>Remove-FalconFirewallGroup -Ids <id>, <id>
-
-Delete Firewall rule groups <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/rule-groups/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:delete', Mandatory = $true, Position = 1)]
@@ -1197,20 +750,6 @@ Delete Firewall rule groups <id> and <id>.
     }
 }
 function Remove-FalconFirewallPolicy {
-<#
-.Synopsis
-Delete Firewall policies
-.Description
-Requires 'firewall-management:write'.
-.Parameter Ids
-Firewall policy identifier(s)
-.Role
-firewall-management:write
-.Example
-PS>Remove-FalconFirewallPolicy -Ids <id>, <id>
-
-Delete Firewall policies <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/firewall/v1:delete', Mandatory = $true, Position = 1)]
@@ -1232,26 +771,6 @@ Delete Firewall policies <id> and <id>.
     }
 }
 function Set-FalconFirewallPrecedence {
-<#
-.Synopsis
-Set Firewall policy precedence
-.Description
-Requires 'firewall-management:write'.
-
-All Firewall policy identifiers must be supplied in order (with the exception of the 'platform_default' policy)
-to define policy precedence.
-.Parameter PlatformName
-Operating System platform
-.Parameter Ids
-All Firewall policy identifiers in desired precedence order
-.Role
-firewall-management:write
-.Example
-PS>Set-FalconFirewallPrecedence -PlatformName Windows -Ids <id_1>, <id_2>, <id_3>
-
-Set the Firewall policy precedence for 'Windows' policies in order <id_1>, <id_2>, <id_3>. All policy
-identifiers must be supplied.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall-precedence/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/firewall-precedence/v1:post', Mandatory = $true,

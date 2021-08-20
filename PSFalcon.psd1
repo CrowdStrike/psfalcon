@@ -387,7 +387,9 @@ General Changes
   that were previously in 'Public\scripts.ps1'. Renamed 'Public\scripts.ps1' to 'Public\psfalcon.ps1'.
 
 * All 'Public' functions (commands that users type) have been re-written to use static parameters, which removed
-  the custom '-Help' parameter and supports the use of 'Get-Help'.
+  the custom '-Help' parameter and supports the use of 'Get-Help'. The help content has also been moved online.
+  Use 'Update-Help -Module PSFalcon' to download extended help information, including examples previously
+  accessible through the GitHub-based PSFalcon Wiki.
 
 * Added '.Roles' in-line comment to functions which allows users to 'Get-Help -Role <api_role>' and find
   commands that are available based on required API permission. For instance, typing 'Get-Help -Role devices:read'
@@ -548,6 +550,7 @@ Command Changes
   Renamed to 'Update-FalconDiscoverAwsSetting'.
 
 GitHub Issues
+
 * Issue #48: Updated 'Invoke-Loop' private function with a more explicit counting method to eliminate endless
   loops in PowerShell 5.1.
 

@@ -1,20 +1,4 @@
 function Add-FalconHostTag {
-<#
-.Synopsis
-Add FalconGroupingTags to one or more Host(s)
-.Description
-Requires 'devices:write'.
-.Parameter Ids
-Host identifier(s)
-.Parameter Tags
-FalconGroupingTag value(s)
-.Role
-devices:write
-.Example
-PS>Add-FalconHostTag -Ids <id>, <id> -Tags 'FalconGroupingTags/Example', 'FalconGroupingTags/Test'
-
-Add 'FalconGroupingTags/Example' and 'FalconGroupingTags/Test' to hosts <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices/tags/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices/tags/v1:patch', Mandatory = $true, Position = 1)]
@@ -46,44 +30,6 @@ Add 'FalconGroupingTags/Example' and 'FalconGroupingTags/Test' to hosts <id> and
     }
 }
 function Get-FalconHost {
-<#
-.Synopsis
-Search for Hosts
-.Description
-Requires 'devices:read'.
-.Parameter Ids
-Host identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Hidden
-Restrict search to 'hidden' hosts
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-devices:read
-.Example
-PS>Get-FalconHost -Filter "platform_name:'Windows'" -Detailed -All
-
-Return detailed results for all 'Windows' hosts.
-.Example
-PS>Get-FalconHost -Filter "hostname:['EXAMPLE-PC']" -Detailed
-
-Return detailed results for the host named 'EXAMPLE-PC' (exact match).
-.Example
-PS>Get-FalconHost -Ids <id>, <id>
-
-Return detailed results for hosts <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/devices-scroll/v1:get')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices/v1:get', Mandatory = $true, Position = 1)]
@@ -137,26 +83,6 @@ Return detailed results for hosts <id> and <id>.
     }
 }
 function Invoke-FalconHostAction {
-<#
-.Synopsis
-Perform actions on Hosts
-.Description
-Requires 'devices:write'.
-.Parameter Name
-Action to perform
-.Parameter Ids
-Host identifier(s)
-.Role
-devices:write
-.Example
-PS>Invoke-FalconHostAction -Name contain -Ids <id>, <id>
-
-Send a network containment request for hosts <id> and <id>.
-.Example
-PS>Invoke-FalconHostAction -Name hide_host -Ids <id>, <id>
-
-Hide the hosts <id> and <id> from the Falcon console. Hidden hosts can be found using 'Get-FalconHost -Hidden'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices-actions/v2:post')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices-actions/v2:post', Mandatory = $true,
@@ -195,22 +121,6 @@ Hide the hosts <id> and <id> from the Falcon console. Hidden hosts can be found 
     }
 }
 function Remove-FalconHostTag {
-<#
-.Synopsis
-Remove FalconGroupingTags from one or more hosts
-.Description
-Requires 'devices:write'.
-.Parameter Ids
-Host identifier(s)
-.Parameter Tags
-FalconGroupingTag value(s)
-.Role
-devices:write
-.Example
-PS>Remove-FalconHostTag -Ids <id>, <id> -Tags 'FalconGroupingTags/Example', 'FalconGroupingTags/Test'
-
-Remove 'FalconGroupingTags/Example' and 'FalconGroupingTags/Test' from hosts <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices/tags/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices/tags/v1:patch', Mandatory = $true, Position = 1)]

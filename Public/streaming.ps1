@@ -1,20 +1,4 @@
 function Get-FalconStream {
-<#
-.Synopsis
-List event streams
-.Description
-Requires 'streaming:read'.
-.Parameter Format
-Format for streaming events [default: json]
-.Parameter Appid
-Connection label
-.Role
-streaming:read
-.Example
-PS>Get-FalconStream -AppId psfalcon
-
-Start an event stream named 'psfalcon'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/sensors/entities/datafeed/v2:get')]
     param(
         [Parameter(ParameterSetName = '/sensors/entities/datafeed/v2:get', Mandatory = $true, Position = 1)]
@@ -39,22 +23,6 @@ Start an event stream named 'psfalcon'.
     }
 }
 function Update-FalconStream {
-<#
-.Synopsis
-Refresh an active event stream
-.Description
-Requires 'streaming:read'.
-.Parameter Appid
-Connection label
-.Parameter Partition
-Partition number
-.Role
-streaming:read
-.Example
-PS>Update-FalconStream -AppId psfalcon -Partition 0
-
-Refresh the active event stream 'psfalcon'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/sensors/entities/datafeed-actions/v1/{partition}:post')]
     param(
         [Parameter(ParameterSetName = '/sensors/entities/datafeed-actions/v1/{partition}:post', Mandatory = $true,

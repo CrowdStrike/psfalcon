@@ -1,41 +1,4 @@
 function Get-FalconActor {
-<#
-.Synopsis
-Search for threat actors
-.Description
-Requires 'falconx-actors:read'.
-.Parameter Ids
-Threat actor identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Fields
-Specific fields, or a predefined collection name surrounded by two underscores [default: __basic__]
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconx-actors:read
-.Example
-PS>Get-FalconActor -Filter "target_countries:'united states'+target_countries:'canada'+target_industries:
-'government'" -Detailed
-
-Return the first set of detailed results for actors that have targeted government in the United States and Canada.
-.Example
-PS>Get-FalconActor -Ids <id>, <id>
-
-List information about actors <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/intel/queries/actors/v1:get')]
     param(
         [Parameter(ParameterSetName = '/intel/entities/actors/v1:get', Mandatory = $true, Position = 1)]

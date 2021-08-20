@@ -1,33 +1,4 @@
 function Request-FalconToken {
-<#
-.Synopsis
-Request an OAuth2 access token
-.Description
-Requests an OAuth2 access token. If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and
-'Cloud'/'Hostname') and token are cached for re-use.
-
-If an active OAuth2 access token is due to expire in less than 15 seconds, a new token will automatically be
-requested using your cached credentials.
-.Parameter ClientId
-OAuth2 Client Identifier
-.Parameter ClientSecret
-OAuth2 Client Secret
-.Parameter Cloud
-CrowdStrike Cloud [default: 'us-1']
-.Parameter Hostname
-CrowdStrike API Hostname
-.Parameter MemberCid
-Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control')
-.Example
-PS>Request-FalconToken -ClientId <string> -ClientSecret <string> -Cloud 'us-1'
-
-Authenticate with the 'us-1' cloud using the provided 'ClientId' and 'ClientSecret' values.
-.Example
-PS>Request-FalconToken -ClientId <string> -ClientSecret <string> -Hostname 'https://api.us-2.crowdstrike.com'
-    -MemberCid <string>
-
-Authenticate with 'MemberCid' in the 'us-2' cloud using the provided 'ClientId' and 'ClientSecret' values.
-#>
     [CmdletBinding(DefaultParameterSetName = 'Hostname')]
     param(
         [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 1)]
@@ -171,13 +142,6 @@ Authenticate with 'MemberCid' in the 'us-2' cloud using the provided 'ClientId' 
     }
 }
 function Revoke-FalconToken {
-<#
-.Synopsis
-Revoke your active OAuth2 access token
-.Description
-Revokes your active OAuth2 access token and clears cached credential information ('ClientId', 'ClientSecret',
-'MemberCid', 'Cloud'/'Hostname') from the module.
-#>
     [CmdletBinding(DefaultParameterSetName = '/oauth2/revoke:post')]
     param()
     process {
@@ -205,17 +169,6 @@ Revokes your active OAuth2 access token and clears cached credential information
     }
 }
 function Test-FalconToken {
-<#
-.Synopsis
-Display your OAuth2 access token status
-.Description
-Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname', 'ClientId' and
-'MemberCid' values.
-.Example
-PS>(Test-FalconToken).Token
-
-Return OAuth2 access token status ([boolean]).
-#>
     [CmdletBinding()]
     param()
     process {

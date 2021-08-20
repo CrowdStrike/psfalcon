@@ -1,32 +1,4 @@
 function Get-FalconCompleteAllowlist {
-<#
-.Synopsis
-Search for Falcon Complete Allowlist tickets
-.Description
-Requires 'falconcomplete-dashboard:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconcomplete-dashboard:read
-.Example
-PS>Get-FalconCompleteAllowlist
-
-Return the first set of identifiers for Falcon Complete Allowlist tickets.
-.Example
-PS>Get-FalconCompleteAllowlist -Total
-
-Return the total number of Falcon Complete Allowlist tickets.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get', Position = 1)]
@@ -63,34 +35,6 @@ Return the total number of Falcon Complete Allowlist tickets.
     }
 }
 function Get-FalconCompleteBlocklist {
-<#
-.Synopsis
-Search for Falcon Complete Blocklist tickets
-.Description
-Requires 'falconcomplete-dashboard:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconcomplete-dashboard:read
-.Example
-PS>Get-FalconCompleteBlocklist
-
-Return the first set of identifiers for Falcon Complete Blocklist tickets.
-.Example
-PS>Get-FalconCompleteBlocklist -Total
-
-Return the total number of Falcon Complete Blocklist tickets.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get', Position = 1)]
@@ -127,34 +71,6 @@ Return the total number of Falcon Complete Blocklist tickets.
     }
 }
 function Get-FalconCompleteCollection {
-<#
-.Synopsis
-Search for Falcon Complete device collections
-.Description
-Requires 'falconcomplete-dashboard:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconcomplete-dashboard:read
-.Example
-PS>Get-FalconCompleteCollection
-
-Return the first set of identifiers for Falcon Complete device collections.
-.Example
-PS>Get-FalconCompleteCollection -Total
-
-Return the total number of Falcon Complete device collections.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
@@ -195,34 +111,6 @@ Return the total number of Falcon Complete device collections.
     }
 }
 function Get-FalconCompleteDetection {
-<#
-.Synopsis
-Search for Falcon Complete detections
-.Description
-Requires 'falconcomplete-dashboard:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconcomplete-dashboard:read
-.Example
-PS>Get-FalconCompleteDetection
-
-Return the first set of identifiers for Falcon Complete detections.
-.Example
-PS>Get-FalconCompleteDetection -Total
-
-Return the total number of Falcon Complete detections.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get', Position = 1)]
@@ -259,34 +147,6 @@ Return the total number of Falcon Complete detections.
     }
 }
 function Get-FalconCompleteEscalation {
-<#
-.Synopsis
-Search for Falcon Complete escalations
-.Description
-Requires 'falconcomplete-dashboard:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconcomplete-dashboard:read
-.Example
-PS>Get-FalconCompleteEscalation
-
-Return the first set of identifiers for Falcon Complete escalations.
-.Example
-PS>Get-FalconCompleteEscalation -Total
-
-Return the total number of Falcon Complete escalations.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get', Position = 1)]
@@ -323,34 +183,6 @@ Return the total number of Falcon Complete escalations.
     }
 }
 function Get-FalconCompleteIncident {
-<#
-.Synopsis
-Search for Falcon Complete incidents
-.Description
-Requires 'falconcomplete-dashboard:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconcomplete-dashboard:read
-.Example
-PS>Get-FalconCompleteIncident
-
-Return the first set of identifiers for Falcon Complete incidents.
-.Example
-PS>Get-FalconCompleteIncident -Total
-
-Return the total number of Falcon Complete incidents.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get', Position = 1)]
@@ -387,34 +219,6 @@ Return the total number of Falcon Complete incidents.
     }
 }
 function Get-FalconCompleteRemediation {
-<#
-.Synopsis
-Search for Falcon Complete remediations
-.Description
-Requires 'falconcomplete-dashboard:read'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-falconcomplete-dashboard:read
-.Example
-PS>Get-FalconCompleteRemediation
-
-Return the first set of identifiers for Falcon Complete remediations.
-.Example
-PS>Get-FalconCompleteRemediation -Total
-
-Return the total number of Falcon Complete remediations.
-#>
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get', Position = 1)]

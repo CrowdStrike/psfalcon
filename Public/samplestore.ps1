@@ -1,18 +1,4 @@
 function Get-FalconSample {
-<#
-.Synopsis
-List detailed information about accessible sample files
-.Description
-Requires 'samplestore:read'.
-.Parameter Ids
-Sample Sha256 hash value(s)
-.Role
-samplestore:read
-.Example
-PS>Get-FalconSample -Ids <id>, <id>
-
-List information about samples <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/samples/queries/samples/GET/v1:post')]
     param(
         [Parameter(ParameterSetName = '/samples/queries/samples/GET/v1:post', Mandatory = $true, Position = 1)]
@@ -39,24 +25,6 @@ List information about samples <id> and <id>.
     }
 }
 function Receive-FalconSample {
-<#
-.Synopsis
-Download a sample
-.Description
-Requires 'samplestore:read'.
-.Parameter Id
-Sample Sha256 hash value
-.Parameter Path
-Destination path
-.Parameter PasswordProtected
-Archive and password protect the sample with password 'infected'
-.Role
-samplestore:read
-.Example
-PS>Receive-FalconSample -Id <id> -Path sample.exe
-
-Download sample <id> as 'sample.exe'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:get')]
     param(
         [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true,
@@ -100,20 +68,6 @@ Download sample <id> as 'sample.exe'.
     }
 }
 function Remove-FalconSample {
-<#
-.Synopsis
-Delete samples
-.Description
-Requires 'samplestore:write'.
-.Parameter Id
-Sample Sha256 hash value
-.Role
-samplestore:write
-.Example
-PS>Remove-FalconSample -Ids <id>, <id>
-
-Delete samples <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:delete')]
     param(
         [Parameter(ParameterSetName = '/samples/entities/samples/v3:delete', Mandatory = $true, Position = 1)]
@@ -138,33 +92,6 @@ Delete samples <id> and <id>.
     }
 }
 function Send-FalconSample {
-<#
-.Synopsis
-Upload a sample file up to 256MB in size
-.Description
-Requires 'samplestore:write'.
-
-A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon X Sandbox or
-Falcon QuickScan.
-.Parameter Path
-Path to local file
-.Parameter FileName
-Name of the file
-.Parameter IsConfidential
-Prohibit sample from being displayed in MalQuery [default: $true]
-.Parameter Comment
-Sample comment
-.Role
-samplestore:write
-.Example
-PS>Send-FalconSample -Path virus.exe -Comment 'bad file'
-
-Upload 'virus.exe' with the comment 'bad file'.
-.Example
-PS>Send-FalconSample -Path samples.zip
-
-Upload 'samples.zip' containing multiple samples in a single archive.
-#>
     [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:post')]
     param(
         [Parameter(ParameterSetName = '/samples/entities/samples/v3:post', Mandatory = $true, Position = 1)]

@@ -1,24 +1,4 @@
 function Edit-FalconSvExclusion {
-<#
-.Synopsis
-Modify Sensor Visibility exclusions
-.Description
-Requires 'sensor-visibility-exclusions:write'.
-.Parameter Id
-Sensor Visibility exclusion identifier
-.Parameter Value
-RegEx pattern value
-.Parameter GroupIds
-Host group identifier(s) or 'all'
-.Parameter Comment
-Audit log comment
-.Role
-sensor-visibility-exclusions:write
-.Example
-PS>Edit-FalconSvExclusion -Id <id> -Value '/foochanged*'
-
-Modify the existing Sensor Visibility exclusion <id> to set the 'value' to '/foochanged*'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:patch', Mandatory = $true,
@@ -56,34 +36,6 @@ Modify the existing Sensor Visibility exclusion <id> to set the 'value' to '/foo
     }
 }
 function Get-FalconSvExclusion {
-<#
-.Synopsis
-Search for Sensor Visibility exclusions
-.Description
-Requires 'sensor-visibility-exclusions:read'.
-.Parameter Ids
-Sensor Visibility exclusion identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-sensor-visibility-exclusions:read
-.Example
-PS>Get-FalconSvExclusion -Detailed
-
-Return the first set of detailed results about Sensor Visibility exclusions.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/sv-exclusions/v1:get')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:get', Mandatory = $true, Position = 1)]
@@ -130,24 +82,6 @@ Return the first set of detailed results about Sensor Visibility exclusions.
     }
 }
 function New-FalconSvExclusion {
-<#
-.Synopsis
-Create sensor visibility exclusions
-.Description
-Requires 'sensor-visibility-exclusions:write'.
-.Parameter Value
-RegEx pattern value
-.Parameter GroupIds
-Host group identifier(s) or 'all'
-.Parameter Comment
-Audit log comment
-.Role
-sensor-visibility-exclusions:write
-.Example
-PS>New-FalconSvExclusion -Value '/foo' -GroupIds all -Comment 'creating'
-
-Create a Sensor Visibility exclusion with the value '/foo' and assign it to all hosts in your CID.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post', Mandatory = $true, Position = 1)]
@@ -180,22 +114,6 @@ Create a Sensor Visibility exclusion with the value '/foo' and assign it to all 
     }
 }
 function Remove-FalconSvExclusion {
-<#
-.Synopsis
-Delete Sensor Visibility exclusions
-.Description
-Requires 'sensor-visibility-exclusions:write'.
-.Parameter Ids
-Sensor Visibility exclusion identifier(s)
-.Parameter Comment
-Audit log comment
-.Role
-sensor-visibility-exclusions:write
-.Example
-PS>Remove-FalconSvExclusion -Ids <id>, <id>
-
-Delete Sensor Visibility exclusions <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete', Mandatory = $true, Position = 1)]

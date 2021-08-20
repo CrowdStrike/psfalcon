@@ -1,28 +1,4 @@
 function Edit-FalconResponsePolicy {
-<#
-.Synopsis
-Modify Response policies
-.Description
-Requires 'response-policies:write'.
-.Parameter Array
-An array of Response policies to modify in a single request
-.Parameter Id
-Response policy identifier
-.Parameter Name
-Response policy name
-.Parameter Settings
-An array of Response policy settings
-.Parameter Description
-Response policy description
-.Role
-response-policies:write
-.Example
-PS>$Settings = @(@{ id = 'CustomScripts'; value = @{ enabled = $true }}, @{ id = 'GetCommand';
-value = @{ enabled = $false }})
-PS>Edit-FalconResponsePolicy -Id <id> -Settings $Settings
-
-Modify Response policy <id> to enable 'CustomScripts' and disable 'GetCommand'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:patch')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -75,38 +51,6 @@ Modify Response policy <id> to enable 'CustomScripts' and disable 'GetCommand'.
     }
 }
 function Get-FalconResponsePolicy {
-<#
-.Synopsis
-Search for Response policies
-.Description
-Requires 'response-policies:read'.
-.Parameter Ids
-Response policy identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-response-policies:read
-.Example
-PS>Get-FalconResponsePolicy -Filter "name:!'platform_default'" -Detailed -All
-
-Return detailed information about all Response policies not named 'platform_default'.
-.Example
-PS>Get-FalconResponsePolicy -Ids <id>, <id>
-
-Return detailed information about Response policies <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/response/v1:get')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/response/v1:get', Mandatory = $true, Position = 1)]
@@ -159,34 +103,6 @@ Return detailed information about Response policies <id> and <id>.
     }
 }
 function Get-FalconResponsePolicyMember {
-<#
-.Synopsis
-Search for members of Response policies
-.Description
-Requires 'response-policies:read'.
-.Parameter Id
-Response policy identifier
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-response-policies:read
-.Example
-PS>Get-FalconResponsePolicyMember -Id <id> -All
-
-Return all identifiers for hosts in the Response policy <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/response-members/v1:get')]
     param(
         [Parameter(ParameterSetName = '/policy/queries/response-members/v1:get',
@@ -238,28 +154,6 @@ Return all identifiers for hosts in the Response policy <id>.
     }
 }
 function Invoke-FalconResponsePolicyAction {
-<#
-.Synopsis
-Perform actions on Response policies
-.Description
-Requires 'response-policies:write'.
-.Parameter Name
-Action to perform
-.Parameter Id
-Response policy identifier
-.Parameter GroupId
-Host group identifier
-.Role
-response-policies:write
-.Example
-PS>Invoke-FalconResponsePolicyAction -Name add-host-group -Id <policy_id> -GroupId <group_id>
-
-Add the Host Group <group_id> to Response policy <policy_id>.
-.Example
-PS>Invoke-FalconResponsePolicyAction -Name enable -Id <policy_id>
-
-Enable Response policy <policy_id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response-actions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/response-actions/v1:post', Mandatory = $true,
@@ -307,32 +201,6 @@ Enable Response policy <policy_id>.
     }
 }
 function New-FalconResponsePolicy {
-<#
-.Synopsis
-Create Response policies
-.Description
-Requires 'response-policies:write'.
-.Parameter Array
-An array of Response policies to create in a single request
-.Parameter PlatformName
-Operating System platform
-.Parameter Name
-Response policy name
-.Parameter Settings
-An array of Response policy settings
-.Parameter Description
-Sensor Update policy description
-.Parameter CloneId
-Clone an existing Response policy
-.Role
-response-policies:write
-.Example
-PS>$Settings = @(@{ id = 'CustomScripts'; value = @{ enabled = $true }}, @{ id = 'GetCommand';
-    value = @{ enabled = $true }})
-PS>New-FalconResponsePolicy -PlatformName Windows -Name Example -Settings $Settings
-
-Create Response policy 'Example' for Windows hosts, with 'CustomScripts' and 'GetCommand' enabled.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -393,20 +261,6 @@ Create Response policy 'Example' for Windows hosts, with 'CustomScripts' and 'Ge
     }
 }
 function Remove-FalconResponsePolicy {
-<#
-.Synopsis
-Delete Response policies
-.Description
-Requires 'response-policies:write'.
-.Parameter Ids
-Response policy identifier(s)
-.Role
-response-policies:write
-.Example
-PS>Remove-FalconResponsePolicy -Ids <id>, <id>
-
-Delete Response policies <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/response/v1:delete', Mandatory = $true, Position = 1)]
@@ -428,26 +282,6 @@ Delete Response policies <id> and <id>.
     }
 }
 function Set-FalconResponsePrecedence {
-<#
-.Synopsis
-Set Response policy precedence
-.Description
-Requires 'response-policies:write'.
-
-All Response policy identifiers must be supplied in order (with the exception of the 'platform_default' policy)
-to define policy precedence.
-.Parameter PlatformName
-Operating System platform
-.Parameter Ids
-All Response policy identifiers in desired precedence order
-.Role
-response-policies:write
-.Example
-PS>Set-FalconResponsePrecedence -PlatformName Windows -Ids <id_1>, <id_2>, <id_3>
-
-Set the Response policy precedence for 'Windows' policies in order <id_1>, <id_2>, <id_3>. All policy
-identifiers must be supplied.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/response-precedence/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/response-precedence/v1:post', Mandatory = $true,

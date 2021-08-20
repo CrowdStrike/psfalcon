@@ -1,30 +1,4 @@
 function Edit-FalconIoaExclusion {
-<#
-.Synopsis
-Modify Indicator of Attack exclusions
-.Description
-Requires 'self-service-ioa-exclusions:write'.
-.Parameter Id
-Indicator of Attack exclusion identifier
-.Parameter Name
-Indicator of Attack exclusion name
-.Parameter ClRegex
-Command line RegEx
-.Parameter IfnRegex
-Image Filename RegEx
-.Parameter GroupIds
-Host Group identifier(s) or 'all'
-.Parameter Description
-Indicator of Attack exclusion description
-.Parameter Comment
-Audit log comment
-.Role
-self-service-ioa-exclusions:write
-.Example
-PS>Edit-FalconIoaExclusion -Id <id> -IfnRegex '.*\\Windows\\System32\\choice1\.exe'
-
-Modify the existing Indicator of Attack exclusion <id> to set 'ifn_regex' to '.*\\Windows\\System32\\choice1\.exe'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ioa-exclusions/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:patch', Mandatory = $true,
@@ -73,34 +47,6 @@ Modify the existing Indicator of Attack exclusion <id> to set 'ifn_regex' to '.*
     }
 }
 function Get-FalconIoaExclusion {
-<#
-.Synopsis
-Search for Indicator of Attack exclusions
-.Description
-Requires 'self-service-ioa-exclusions:read'.
-.Parameter Ids
-Indicator of Attack exclusion identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Sort
-Property and direction to sort results
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-self-service-ioa-exclusions:read
-.Example
-PS>Get-FalconIoaExclusion -Detailed
-
-Return the first set of detailed results about Indicator of Attack exclusions.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/ioa-exclusions/v1:get')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:get', Mandatory = $true, Position = 1)]
@@ -148,22 +94,6 @@ Return the first set of detailed results about Indicator of Attack exclusions.
     }
 }
 function Remove-FalconIoaExclusion {
-<#
-.Synopsis
-Delete Indicator of Attack exclusions
-.Description
-Requires 'self-service-ioa-exclusions:write'.
-.Parameter Ids
-Indicator of Attack exclusion identifier(s)
-.Parameter Comment
-Audit log comment
-.Role
-self-service-ioa-exclusions:write
-.Example
-PS>Remove-FalconIoaExclusion -Ids <id>, <id>
-
-Delete Indicator of Attack exclusions <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ioa-exclusions/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:delete', Mandatory = $true,

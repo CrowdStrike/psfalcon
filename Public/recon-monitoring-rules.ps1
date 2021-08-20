@@ -1,24 +1,4 @@
 function Edit-FalconReconAction {
-<#
-.Synopsis
-Update an action for a Recon monitoring rule
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter Id
-Recon rule action identifier
-.Parameter Frequency
-Recon rule action frequency
-.Parameter Recipients
-One or more email addresses
-.Parameter Status
-Recon rule action status
-.Role
-recon-monitoring-rules:write
-.Example
-PS>Edit-FalconReconAction -Id <id> -Frequency weekly
-
-Change Recon action <id> to a weekly frequency.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/actions/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true,
@@ -56,22 +36,6 @@ Change Recon action <id> to a weekly frequency.
     }
 }
 function Edit-FalconReconNotification {
-<#
-.Synopsis
-Update Recon notification status or assignee
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter Array
-An array of Recon notifications to modify in a single request
-.Parameter Id
-Recon notification identifier
-.Parameter AssignedToUuid
-User identifier for assignment
-.Parameter Status
-Recon notification status
-.Role
-recon-monitoring-rules:write
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/notifications/v1:patch')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -138,35 +102,6 @@ recon-monitoring-rules:write
     }
 }
 function Edit-FalconReconRule {
-<#
-.Synopsis
-Update Recon monitoring rules
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter Array
-An array of Recon rules to modify in a single request
-.Parameter Id
-Recon monitoring rule identifier
-.Parameter Name
-Recon monitoring rule name
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Priority
-Recon monitoring rule priority
-.Parameter Permissions
-Permission level [public: 'All Intel users', private: 'Recon Admins']
-.Role
-recon-monitoring-rules:write
-.Example
-PS>Edit-FalconReconRule -Id <id> -Name example_updated -Priority medium
-
-Change the name and priority of Recon rule <id>.
-.Example
-PS>$Rules = @(@{ id = '<id>'; priority = 'high' }, @{ id = '<id>'; priority = 'high' })
-PS>Edit-FalconReconRule -Array $Rules
-
-Change the priority of rules <id> and <id> in a single request.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:patch')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -235,40 +170,6 @@ Change the priority of rules <id> and <id> in a single request.
     }
 }
 function Get-FalconReconAction {
-<#
-.Synopsis
-Search for Recon actions
-.Description
-Requires 'recon-monitoring-rules:read'.
-.Parameter Ids
-One or more Recon action identifiers
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-recon-monitoring-rules:read
-.Example
-PS>Get-FalconReconAction -Detailed
-
-Return the first set of detailed Recon action results.
-.Example
-PS>Get-FalconReconAction -Ids <id>, <id>
-
-Retrieve detailed information about Recon actions <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/actions/v1:get')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:get', Mandatory = $true, Position = 1)]
@@ -317,54 +218,6 @@ Retrieve detailed information about Recon actions <id> and <id>.
     }
 }
 function Get-FalconReconNotification {
-<#
-.Synopsis
-Search for Recon notifications
-.Description
-Requires 'recon-monitoring-rules:read'.
-.Parameter Ids
-One or more Recon action identifiers
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Parameter Intel
-Include raw intelligence content
-.Parameter Translate
-Translate to English
-.Parameter Combined
-Include raw intelligence content and translate to English
-.Role
-recon-monitoring-rules:read
-.Example
-PS>Get-FalconReconNotification -Detailed
-
-Return the first set of summary-level Recon notifications.
-.Example
-PS>Get-FalconReconNotification -Ids <id>, <id> -Intel
-
-Retrieve raw intelligence for Recon notifications <id> and <id>.
-.Example
-PS>Get-FalconReconNotification -Ids <id>, <id> -Translate
-
-Retrieve detail for Recon notifications <id> and <id>, translated to English.
-.Example
-PS>Get-FalconReconNotification -Ids <id>, <id> -Combined
-
-Retrieve raw intelligence for Recon notifications <id> and <id>, translated to English.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/notifications/v1:get')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:get', Mandatory = $true, Position = 1)]
@@ -425,40 +278,6 @@ Retrieve raw intelligence for Recon notifications <id> and <id>, translated to E
     }
 }
 function Get-FalconReconRule {
-<#
-.Synopsis
-Search for Recon monitoring rules
-.Description
-Requires 'recon-monitoring-rules:read'.
-.Parameter Ids
-One or more Recon monitoring rule identifiers
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Perform a generic substring search across available fields
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Role
-recon-monitoring-rules:read
-.Example
-PS>Get-FalconReconRule -Detailed
-
-Return the first set of detailed Recon monitoring rule results.
-.Example
-PS>Get-FalconReconRule -Ids <id>, <id>
-
-Retrieve detailed information about Recon monitoring rules <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:get', Mandatory = $true, Position = 1)]
@@ -510,22 +329,6 @@ Retrieve detailed information about Recon monitoring rules <id> and <id>.
     }
 }
 function Get-FalconReconRulePreview {
-<#
-.Synopsis
-Preview Recon monitoring rule notification count and distribution
-.Description
-Requires 'recon-monitoring-rules:read'.
-.Parameter Topic
-Recon monitoring rule topic
-.Parameter Filter
-Recon monitoring rule filter
-.Role
-recon-monitoring-rules:read
-.Example
-PS>Get-FalconReconRulePreview -Topic SA_AUTHOR -Filter "author:'example_author'"
-
-Preview the potential results for a filtered 'SA_AUTHOR' Recon rule.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/aggregates/rules-preview/GET/v1:post')]
     param(
         [Parameter(ParameterSetName = '/recon/aggregates/rules-preview/GET/v1:post', Mandatory = $true,
@@ -553,26 +356,6 @@ Preview the potential results for a filtered 'SA_AUTHOR' Recon rule.
     }
 }
 function New-FalconReconAction {
-<#
-.Synopsis
-Create actions for an existing Recon monitoring rule
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter RuleId
-Recon monitoring rule identifier
-.Parameter Type
-Recon monitoring rule notification type
-.Parameter Frequency
-Recon monitoring rule notification frequency
-.Parameter Recipients
-Recon monitoring rule notification recipients
-.Role
-recon-monitoring-rules:write
-.Example
-PS>New-FalconReconAction -RuleId <id> -Type email -Frequency daily -Recipients jane.doe@example.com
-
-Configure Recon rule <id> to email daily updates to 'jane.doe@example.com'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/actions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:post', Mandatory = $true, Position = 1)]
@@ -611,38 +394,6 @@ Configure Recon rule <id> to email daily updates to 'jane.doe@example.com'.
     }
 }
 function New-FalconReconRule {
-<#
-.Synopsis
-Create Recon monitoring rules
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter Array
-An array of Recon rules to create in a single request
-.Parameter Name
-Recon monitoring rule name
-.Parameter Topic
-Recon monitoring rule topic
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Priority
-Recon monitoring rule priority
-.Parameter Permissions
-Permission level [public: 'All Intel users', private: 'Recon Admins']
-.Role
-recon-monitoring-rules:write
-.Example
-PS>New-FalconReconRule -Name Example -Topic SA_AUTHOR -Filter "author:'example_author'" -Priority low
-    -Permissions Private
-
-Create a filtered 'SA_AUTHOR' rule with low priority and make it accessible to 'Recon Admins'.
-.Example
-PS>$Rules = @(@{ name = 'example_1'; topic = 'SA_BRAND_PRODUCT'; filter = "phrase:'example_phrase'";
-    priority = 'low'; permissions = 'private' }, @{ name = 'example_2'; topic = 'SA_BIN'; filter = "ccbin:'1234'";
-    priority = 'medium'; permissions = 'public' })
-PS>New-FalconReconRule -Array $Rules
-
-Create multiple Recon monitoring rules in a single request.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:post')]
     param(
         [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
@@ -710,20 +461,6 @@ Create multiple Recon monitoring rules in a single request.
     }
 }
 function Remove-FalconReconAction {
-<#
-.Synopsis
-Delete an action from a Recon monitoring rule
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter Id
-Recon action identifier
-.Role
-recon-monitoring-rules:write
-.Example
-PS>Remove-FalconReconAction -Id <id>
-
-Delete Recon action <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/actions/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:delete', Mandatory = $true,
@@ -746,20 +483,6 @@ Delete Recon action <id>.
     }
 }
 function Remove-FalconReconRule {
-<#
-.Synopsis
-Delete Recon monitoring rules
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter Ids
-Recon monitoring rule identifier(s)
-.Role
-recon-monitoring-rules:write
-.Example
-PS>Remove-FalconReconRule -Ids <id>, <id>
-
-Delete Recon monitoring rules <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/rules/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:delete', Mandatory = $true, Position = 1)]
@@ -781,20 +504,6 @@ Delete Recon monitoring rules <id> and <id>.
     }
 }
 function Remove-FalconNotification {
-<#
-.Synopsis
-Delete Recon notifications. Notifications cannot be recovered after they are deleted.
-.Description
-Requires 'recon-monitoring-rules:write'.
-.Parameter Ids
-One or more Recon notification identifiers
-.Role
-recon-monitoring-rules:write
-.Example
-PS>Remove-FalconNotification -Ids <id>, <id>
-
-Delete Recon notifications <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/notifications/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:delete', Mandatory = $true, Position = 1)]
