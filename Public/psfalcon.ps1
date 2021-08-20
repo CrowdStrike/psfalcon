@@ -1454,23 +1454,52 @@ function Send-FalconWebhook {
         [object] $Object
     )
     begin {
-        $Content = switch ($PSBoundParameters.Type) {
-            'Slack' {
-                $Payload = @{
-                    username = "PSFalcon [$($Script:Falcon.ClientId)]"
-                    icon_url = 'https://github.com/CrowdStrike/psfalcon/blob/master/icon.png'
-                    attachments = Export-FalconReport -Object $Object -
-                }
-            }
-        }
-        $Token = if ($Content) {
+        $Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
             # Remove default Falcon authorization token
             $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
     }
     process {
-        if ($Content) {
+        [array] $Content = switch ($PSBoundParameters.Type) {
+            'Slack' {
+                # Create 'attachment' for each object in submission
+                $Object | Export-FalconReport | ForEach-Object {
+                    [array] $Fields = $_.PSObject.Properties | ForEach-Object {
+                        ,@{
+                            title = $_.Name
+                            value = if ($_.Value -is [boolean]) {
+                                # Convert [boolean] to [string]
+                                if ($_.Value -eq $true) {
+                                    'true'
+                                } else {
+                                    'false'
+                                }
+                            } else {
+                                if ($null -eq $_.Value) {
+                                    # Add [string] value when $null
+                                    'null'
+                                } else {
+                                    $_.Value
+                                }
+                            }
+                            short = $false
+                        }
+                    }
+                    ,@{
+                        username = "PSFalcon [$($Script:Falcon.ClientId)]"
+                        icon_url = 'https://github.com/CrowdStrike/psfalcon/blob/master/icon.png'
+                        attachments = @(
+                            @{
+                                fallback = 'Send-FalconWebhook'
+                                fields   = $Fields
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        foreach ($Item in $Content) {
             try {
                 $Param = @{
                     Path    = $PSBoundParameters.Path
@@ -1478,7 +1507,7 @@ function Send-FalconWebhook {
                     Headers = @{
                         ContentType = 'application/json'
                     }
-                    Body = $Content
+                    Body = ConvertTo-Json -InputObject $Item -Depth 16
                 }
                 Write-Result ($Script:Falcon.Api.Invoke($Param))
             } catch {
