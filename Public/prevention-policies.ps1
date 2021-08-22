@@ -223,17 +223,17 @@ function New-FalconPreventionPolicy {
         })]
         [array] $Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true, Position = 1)]
         [ValidateSet('Windows', 'Mac', 'Linux')]
         [string] $PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Mandatory = $true, Position = 2)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true, Position = 2)]
         [string] $Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Position = 3)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Position = 3)]
         [array] $Settings,
 
-        [Parameter(ParameterSetName = '/policy/entities/prevention/v2:post', Position = 4)]
+        [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Position = 4)]
         [string] $Description,
 
         [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Position = 5)]
