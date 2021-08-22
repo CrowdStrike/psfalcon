@@ -1449,8 +1449,10 @@ function Send-FalconWebhook {
         [Parameter(Mandatory = $true, Position = 2)]
         [System.Uri] $Path,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true,
-            Position = 3)]
+        [Parameter(Position = 3)]
+        [string] $Label,
+
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 4)]
         [object] $Object
     )
     begin {
@@ -1487,8 +1489,9 @@ function Send-FalconWebhook {
                         }
                     }
                     ,@{
-                        username = "PSFalcon [$($Script:Falcon.ClientId)]"
-                        icon_url = 'https://github.com/CrowdStrike/psfalcon/blob/master/icon.png'
+                        username = "PSFalcon: $($Script:Falcon.ClientId)"
+                        icon_url = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
+                        text     = $PSBoundParameters.Label
                         attachments = @(
                             @{
                                 fallback = 'Send-FalconWebhook'
