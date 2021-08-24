@@ -76,7 +76,7 @@ function Request-FalconToken {
             $Script:Falcon = Get-ApiCredential $PSBoundParameters
             $Script:Falcon.Add('Api', [ApiClient]::New())
             $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
-            $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("crowdstrike-psfalcon/2.1.0")
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("crowdstrike-psfalcon/2.1.1")
         } else {
             (Get-ApiCredential $PSBoundParameters).GetEnumerator().foreach{
                 if ($Script:Falcon.($_.Key) -ne $_.Value) {
