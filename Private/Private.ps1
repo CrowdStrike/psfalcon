@@ -692,7 +692,7 @@ function Write-Result {
                 $HTML = ($Request.Result.Content).ReadAsStringAsync().Result
             } elseif ($Request.Result.Content.Headers.ContentType -eq 'application/json') {
                 # Convert Json response
-                $Json = ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
+                $Json = ConvertFrom-Json -InputObject ($Request.Result.Content).ReadAsStringAsync().Result
                 $Verbose += if ($Json.meta) {
                     # Capture 'meta' values for verbose output
                     ($Json.meta.PSObject.Properties).foreach{

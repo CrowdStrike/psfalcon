@@ -180,7 +180,11 @@ function Invoke-FalconPreventionPolicyAction {
         if ($PSBoundParameters.GroupId) {
             $PSBoundParameters.Add('action_parameters', @(
                 @{
-                    name  = 'group_id'
+                    name  = if ($PSBoundParameters.Name -match 'rule-group$') {
+                        'rule_group_id'
+                    } else {
+                        'group_id'
+                    }
                     value = $PSBoundParameters.GroupId
                 }
             ))
