@@ -221,6 +221,12 @@ function Get-FalconReconNotification {
     [CmdletBinding(DefaultParameterSetName = '/recon/queries/notifications/v1:get')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/recon/entities/notifications-detailed/v1:get', Mandatory = $true,
+            Position = 1)]
+        [Parameter(ParameterSetName = '/recon/entities/notifications-translated/v1:get', Mandatory = $true,
+            Position = 1)]
+        [Parameter(ParameterSetName = '/recon/entities/notifications-detailed-translated/v1:get',
+            Mandatory = $true,Position = 1)]
         [ValidatePattern('^\w{76}$')]
         [array] $Ids,
 

@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.1.0'
+    ModuleVersion        = '2.1.1'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'

@@ -1,9 +1,9 @@
 function Edit-FalconContainerAwsAccount {
-    [CmdletBinding(DefaultParameterSetName = '')]
+    [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:patch', Mandatory = $true,
             Position = 1)]
-        [ValidateSet('^\d{12}$')]
+        [ValidatePattern('^\d{12}$')]
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:patch', Position = 2)]
@@ -27,7 +27,7 @@ function Get-FalconContainerAwsAccount {
     [CmdletBinding(DefaultParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:get')]
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:get', Position = 1)]
-        [ValidateSet('^\d{12}$')]
+        [ValidatePattern('^\d{12}$')]
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:get', Position = 2)]
@@ -158,7 +158,7 @@ function New-FalconContainerAwsAccount {
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:post', Mandatory = $true,
             Position = 1)]
-        [ValidateSet('^\d{12}$')]
+        [ValidatePattern('^\d{12}$')]
         [string] $Id,
 
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:post', Mandatory = $true,
@@ -236,7 +236,7 @@ function Remove-FalconContainerAwsAccount {
     param(
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:delete', Mandatory = $true,
             Position = 1)]
-        [ValidateSet('^\d{12}$')]
+        [ValidatePattern('^\d{12}$')]
         [array] $Ids
     )
     begin {

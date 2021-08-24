@@ -217,7 +217,7 @@ function Get-FalconFirewallEvent {
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 4)]
-        [ValidateSet(1,5000)]
+        [ValidateRange(1,5000)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 5)]
@@ -262,7 +262,7 @@ function Get-FalconFirewallField {
         [string] $PlatformId,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get', Position = 2)]
-        [ValidateSet(1,5000)]
+        [ValidateRange(1,5000)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get', Position = 3)]
@@ -310,7 +310,7 @@ function Get-FalconFirewallGroup {
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 4)]
-        [ValidateSet(1,5000)]
+        [ValidateRange(1,5000)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 5)]
@@ -352,7 +352,7 @@ function Get-FalconFirewallPlatform {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get', Position = 1)]
-        [ValidateSet(1,5000)]
+        [ValidateRange(1,5000)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get', Position = 2)]
@@ -509,7 +509,7 @@ function Get-FalconFirewallRule {
 
         [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 5)]
         [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 4)]
-        [ValidateSet(1,5000)]
+        [ValidateRange(1,5000)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 6)]

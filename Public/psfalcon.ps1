@@ -1,5 +1,5 @@
 function Export-FalconReport {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [Parameter(Position = 1)]
         [ValidatePattern('\.csv$')]
