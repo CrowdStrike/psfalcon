@@ -58,6 +58,11 @@ function Edit-FalconIoc {
             HostGroups      = 'host_groups'
             IgnoreWarnings  = 'ignore_warnings'
         }
+    }
+    process {
+        if (!$PSBoundParameters.HostGroups -and !$PSBoundParameters.AppliedGlobally) {
+            throw "'HostGroups' or 'AppliedGlobally' must be provided."
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -70,11 +75,6 @@ function Edit-FalconIoc {
                         'metadata.filename', 'source', 'host_groups', 'severity', 'action', 'platforms')
                 }
             }
-        }
-    }
-    process {
-        if (!$PSBoundParameters.HostGroups -and !$PSBoundParameters.AppliedGlobally) {
-            throw "'HostGroups' or 'AppliedGlobally' must be provided."
         }
         Invoke-Falcon @Param
     }

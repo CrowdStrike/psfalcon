@@ -72,7 +72,7 @@ function Receive-FalconInstaller {
         })]
         [string] $Path
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -85,8 +85,6 @@ function Receive-FalconInstaller {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

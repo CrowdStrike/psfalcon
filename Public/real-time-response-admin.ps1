@@ -11,7 +11,7 @@ function Confirm-FalconAdminCommand {
     )
     begin {
         if (!$PSBoundParameters.SequenceId) {
-            $PSBoundParameters.Add('sequence_id', 0)
+            $PSBoundParameters['sequence_id'] = 0
         }
         $Fields = @{
             CloudRequestId = 'cloud_request_id'
@@ -73,6 +73,8 @@ function Edit-FalconScript {
             Path           = 'content'
             PermissionType = 'permission_type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -85,8 +87,6 @@ function Edit-FalconScript {
                     'content')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -221,7 +221,7 @@ function Invoke-FalconAdminCommand {
         } else {
             $PSBoundParameters.Command
         }
-        $PSBoundParameters.Add('command_string', $CommandString)
+        $PSBoundParameters['command_string'] = $CommandString
         $Fields = @{
             BatchId         = 'batch_id'
             Command         = 'base_command'

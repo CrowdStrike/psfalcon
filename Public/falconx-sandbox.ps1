@@ -215,7 +215,7 @@ function Receive-FalconArtifact {
         })]
         [string] $Path
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -227,8 +227,6 @@ function Receive-FalconArtifact {
                 Query = @('name', 'id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

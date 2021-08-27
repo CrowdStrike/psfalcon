@@ -34,6 +34,8 @@ function Edit-FalconSensorUpdatePolicy {
         $Fields = @{
             Array = 'resources'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/sensor-update/v2:patch'
@@ -45,8 +47,6 @@ function Edit-FalconSensorUpdatePolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -160,7 +160,7 @@ function Get-FalconSensorUpdatePolicyMember {
         [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -169,8 +169,6 @@ function Get-FalconSensorUpdatePolicyMember {
                 Query = @('sort', 'offset', 'filter', 'id', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -178,7 +176,7 @@ function Get-FalconUninstallToken {
     [CmdletBinding(DefaultParameterSetName = '/policy/combined/reveal-uninstall-token/v1:post')]
     param(
         [Parameter(ParameterSetName = '/policy/combined/reveal-uninstall-token/v1:post', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^(\w{32}|MAINTENANCE)$')]
         [string] $DeviceId,
 
@@ -190,6 +188,8 @@ function Get-FalconUninstallToken {
             DeviceId     = 'device_id'
             AuditMessage = 'audit_message'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -200,8 +200,6 @@ function Get-FalconUninstallToken {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -226,15 +224,17 @@ function Invoke-FalconSensorUpdatePolicyAction {
         $Fields = @{
             name = 'action_name'
         }
-        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+    }
+    process {
+        $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $PSBoundParameters.Add('action_parameters', @(
+            $PSBoundParameters['action_parameters'] = @(
                 @{
                     name  = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
-            ))
+            )
             [void] $PSBoundParameters.Remove('GroupId')
         }
         $Param = @{
@@ -248,8 +248,6 @@ function Invoke-FalconSensorUpdatePolicyAction {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

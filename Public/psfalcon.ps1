@@ -16,9 +16,6 @@ function Export-FalconReport {
         [object] $Object
     )
     begin {
-        if ($PSBoundParameters.Path) {
-            $OutputPath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
-        }
         function Get-Array ($Array, $Output, $Name) {
             foreach ($Item in $Array) {
                 if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
@@ -91,9 +88,7 @@ function Export-FalconReport {
                 }
             }
         }
-        # Create output object
         $Output = [PSCustomObject] @{}
-        
     }
     process {
         foreach ($Item in $PSBoundParameters.Object) {
@@ -110,17 +105,23 @@ function Export-FalconReport {
                 Add-Property @AddParam
             }
         }
-        if ($OutputPath) {
+        if ($PSBoundParameters.Path) {
             # Output to CSV
-            $Output | Export-Csv -Path $OutputPath -NoTypeInformation -Append
+            $ExportParam = @{
+                InputObject       = $Output
+                Path              = $Script:Falcon.Api.Path($PSBoundParameters.Path)
+                NoTypeInformation = $true
+                Append            = $true
+            }
+            Export-Csv @ExportParam
         } else {
             # Output to console
             $Output
         }
     }
     end {
-        if ($OutputPath -and (Test-Path $OutputPath)) {
-            Get-ChildItem $OutputPath
+        if ($ExportParam -and (Test-Path $ExportParam.Path)) {
+            Get-ChildItem $ExportParam.Path
         }
     }
 }
@@ -384,7 +385,7 @@ function Import-FalconConfig {
             }
             IoaExclusion = @{
                 Import = @('id', 'cl_regex', 'ifn_regex', 'name', 'pattern_id', 'pattern_name', 'groups',
-                    'comment', 'description')
+                    'comment', 'description', 'applied_globally')
             }
             IoaGroup = @{
                 Import = @('id', 'platform', 'name', 'description', 'rules', 'enabled', 'version')
@@ -690,7 +691,7 @@ function Import-FalconConfig {
                 }
             }
         }
-        foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Key -match '^(Ioc|(Ml|Sv)Exclusion)$' -and
+        foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Key -match '^(Ioc|(Ioa|Ml|Sv)Exclusion)$' -and
         $_.Value.Import })) {
             # Create IOCs and exclusions if assigned to 'all' or can be assigned to Host Groups
             if ($Pair.Key -eq 'Ioc') {
@@ -700,8 +701,54 @@ function Import-FalconConfig {
                         Write-Host "Created $($Pair.Key) '$($Item.type):$($Item.value)'."
                     }
                 }
+            } elseif ($Pair.Key -eq 'IoaExclusion') {
+                $ConfigData.($Pair.Key)['Created'] = foreach ($Import in $Pair.Value.Import) {
+                    # Create Ioa exclusions
+                    $Content = @{
+                        Name        = $Import.name
+                        PatternId   = $Import.pattern_id
+                        PatternName = $Import.pattern_name
+                        ClRegex     = $Import.cl_regex
+                        IfnRegex    = $Import.ifn_regex
+                    }
+                    @('description', 'comment').foreach{
+                        if ($Import.$_) {
+                            $Content[$_] = $Import.$_
+                        }
+                    }
+                    if ($Import.groups) {
+                        $Content['GroupIds'] = foreach ($Name in $Import.groups.name) {
+                            # Get Host Group identifier
+                            $Param = @{
+                                Item         = 'HostGroup'
+                                Type         = 'Created'
+                                FilterScript = { $_.name -eq $Name }
+                            }
+                            $CreatedId = (Get-ConfigItem @Param).id
+                            if ($CreatedId) {
+                                ,$CreatedId
+                            } elseif ($ForceEnabled -eq $true) {
+                                ,(Get-ConfigItem @Param -Type 'Cid').id
+                            }
+                        }
+                    }
+                    if ($Import.applied_globally -eq $true -or $Content.GroupIds) {
+                        $Param = @{
+                            Command = "New-Falcon$($Pair.Key)"
+                            Content = $Content
+                        }
+                        $Created = Invoke-ConfigItem @Param
+                        if ($Created) {
+                            Write-Host "Created $($Pair.Key) '$($Created.name)'."
+                        }
+                        $Created
+                    } else {
+                        Write-Warning "Unable to create '$($Content.name)' [missing_assignment]"
+                    }
+                }
             } else {
                 $ConfigData.($Pair.Key)['Created'] = foreach ($Import in $Pair.Value.Import) {
+                    # Create Ml/Sv exclusions
                     $Content = @{
                         Value = $Import.value
                     }

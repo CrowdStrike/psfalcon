@@ -36,12 +36,14 @@ function Edit-FalconFirewallGroup {
         [string] $Comment
     )
     begin {
-        $PSBoundParameters.Add('diff_type', 'application/json-patch+json')
         $Fields = @{
             DiffOperations   = 'diff_operations'
             RuleIds          = 'rule_ids'
             RuleVersions     = 'rule_versions'
         }
+    }
+    process {
+        $PSBoundParameters['diff_type'] = 'application/json-patch+json'
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -73,12 +75,10 @@ function Edit-FalconFirewallGroup {
                     } else {
                         $Group.$_
                     }
-                    $PSBoundParameters.Add($_,$Value)
+                    $PSBoundParameters[$_] = $Value
                 }
             }
         }
-    }
-    process {
         if ($PSBoundParameters.Tracking) {
             Invoke-Falcon @Param
         } else {
@@ -119,6 +119,8 @@ function Edit-FalconFirewallPolicy {
         $Fields = @{
             Array = 'resources'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/firewall/v1:patch'
@@ -130,8 +132,6 @@ function Edit-FalconFirewallPolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -192,7 +192,7 @@ function Edit-FalconFirewallSetting {
                         'SilentlyContinue')
                 }
                 if ($Existing) {
-                    $PSBoundParameters.Add($_,($Existing.$_))
+                    $PSBoundParameters[$_] = $Existing.$_
                 }
             }
         }
@@ -471,7 +471,7 @@ function Get-FalconFirewallPolicyMember {
         [switch] $Total
 
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -480,8 +480,6 @@ function Get-FalconFirewallPolicyMember {
                 Query = @('sort', 'offset', 'filter', 'id', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -596,15 +594,17 @@ function Invoke-FalconFirewallPolicyAction {
         $Fields = @{
             name = 'action_name'
         }
-        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+    }
+    process {
+        $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $PSBoundParameters.Add('action_parameters', @(
+            $PSBoundParameters['action_parameters'] = @(
                 @{
                     name  = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
-            ))
+            )
             [void] $PSBoundParameters.Remove('GroupId')
         }
         $Param = @{
@@ -618,8 +618,6 @@ function Invoke-FalconFirewallPolicyAction {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -20,6 +20,8 @@ function Edit-FalconMlExclusion {
         $Fields = @{
             GroupIds = 'groups'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -30,8 +32,6 @@ function Edit-FalconMlExclusion {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

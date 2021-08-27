@@ -18,11 +18,11 @@ function Edit-FalconIoaGroup {
         [Parameter(ParameterSetName = '/ioarules/entities/rule-groups/v1:patch', Position = 5)]
         [string] $Comment
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Inputs   = $PSBoundParameters
             Format   = @{
                 Body = @{
                     root = @('description', 'rulegroup_version', 'name', 'enabled', 'id', 'comment')
@@ -41,12 +41,10 @@ function Edit-FalconIoaGroup {
                     } else {
                         $Existing.$_
                     }
-                    $PSBoundParameters.Add($_,$Value)
+                    $PSBoundParameters[$_] = $Value
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -102,7 +100,7 @@ function Edit-FalconIoaRule {
                     } else {
                         $Existing.$_
                     }
-                    $PSBoundParameters.Add($_,$Value)
+                    $PSBoundParameters[$_] = $Value
                 }
             }
         }

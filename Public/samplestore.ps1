@@ -50,6 +50,8 @@ function Receive-FalconSample {
             Id                = 'ids'
             PasswordProtected = 'password_protected'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -62,8 +64,6 @@ function Receive-FalconSample {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -115,7 +115,7 @@ function Send-FalconSample {
     )
     begin {
         if (!$PSBoundParameters.FileName) {
-            $PSBoundParameters.Add('FileName',([System.IO.Path]::GetFileName($PSBoundParameters.Path)))
+            $PSBoundParameters['FileName'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
         }
         $Fields = @{
             FileName       = if ($PSBoundParameters.Path -match '\.zip$') {

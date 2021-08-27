@@ -772,11 +772,11 @@ function Update-FieldName {
         [object] $Inputs
     )
     process {
+        # Update user input field names for API submission
         if ($Fields.Keys -and $Inputs.Keys) {
-            # Update user input field names for API submission
             ($Fields.Keys).foreach{
                 if ($Inputs.$_) {
-                    $Inputs.Add($Fields.$_, $Inputs.$_)
+                    $Inputs["$($Fields.$_)"] = $Inputs.$_
                     [void] $Inputs.Remove($_)
                 }
             }

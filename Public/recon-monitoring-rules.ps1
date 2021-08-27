@@ -19,7 +19,7 @@ function Edit-FalconReconAction {
         [string] $Status
 
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -30,8 +30,6 @@ function Edit-FalconReconAction {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -68,6 +66,11 @@ function Edit-FalconReconNotification {
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:patch', Mandatory = $true, Position = 3)]
         [string] $Status
     )
+    begin {
+        $Fields = @{
+            AssignedToUuid = 'assigned_to_uuid'
+        }
+    }
     process {
         if ($PSBoundParameters.Array) {
             # Edit notifications in batches of 500
@@ -84,9 +87,6 @@ function Edit-FalconReconNotification {
                 Write-Result ($Script:Falcon.Api.Invoke($Param))
             }
         } else {
-            $Fields = @{
-                AssignedToUuid = 'assigned_to_uuid'
-            }
             $Param = @{
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
@@ -474,7 +474,7 @@ function Remove-FalconReconAction {
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -483,8 +483,6 @@ function Remove-FalconReconAction {
                 Query = @('id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -509,7 +507,7 @@ function Remove-FalconReconRule {
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconNotification {
+function Remove-FalconReconNotification {
     [CmdletBinding(DefaultParameterSetName = '/recon/entities/notifications/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/recon/entities/notifications/v1:delete', Mandatory = $true, Position = 1)]

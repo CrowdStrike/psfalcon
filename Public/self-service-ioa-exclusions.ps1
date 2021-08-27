@@ -31,6 +31,8 @@ function Edit-FalconIoaExclusion {
             GroupIds = 'groups'
             IfnRegex = 'ifn_regex'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -41,8 +43,6 @@ function Edit-FalconIoaExclusion {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -90,6 +90,64 @@ function Get-FalconIoaExclusion {
         }
     }
     process {
+        Invoke-Falcon @Param
+    }
+}
+function New-FalconIoaExclusion {
+    [CmdletBinding(DefaultParameterSetName = '/policy/entities/ioa-exclusions/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
+            Position = 1)]
+        [string] $Name,
+
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
+            Position = 2)]
+        [ValidatePattern('^\d+$')]
+        [string] $PatternId,
+
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
+            Position = 3)]
+        [string] $PatternName,
+
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
+            Position = 4)]
+        [string] $ClRegex,
+
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
+            Position = 5)]
+        [string] $IfnRegex,
+
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Position = 7)]
+        [ValidatePattern('^\w{32}$')]
+        [array] $GroupIds,
+
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Position = 8)]
+        [string] $Description,
+
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Position = 9)]
+        [string] $Comment
+    )
+    begin {
+        $Fields = @{
+            ClRegex       = 'cl_regex'
+            GroupIds      = 'groups'
+            IfnRegex      = 'ifn_regex'
+            PatternId     = 'pattern_id'
+            PatternName   = 'pattern_name'
+        }
+    }
+    process {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Body = @{
+                    root = @('cl_regex', 'ifn_regex', 'groups', 'name', 'pattern_id', 'pattern_name',
+                        'description', 'comment')
+                }
+            }
+        }
         Invoke-Falcon @Param
     }
 }

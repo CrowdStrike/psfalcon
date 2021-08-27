@@ -34,6 +34,8 @@ function Edit-FalconDeviceControlPolicy {
         $Fields = @{
             Array = 'resources'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/device-control/v1:patch'
@@ -45,8 +47,6 @@ function Edit-FalconDeviceControlPolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -139,7 +139,7 @@ function Get-FalconDeviceControlPolicyMember {
         [Parameter(ParameterSetName = '/policy/queries/device-control-members/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -148,8 +148,6 @@ function Get-FalconDeviceControlPolicyMember {
                 Query = @('sort', 'offset', 'filter', 'id', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -174,15 +172,17 @@ function Invoke-FalconDeviceControlPolicyAction {
         $Fields = @{
             name = 'action_name'
         }
-        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+    }
+    process {
+        $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $PSBoundParameters.Add('action_parameters', @(
+            $PSBoundParameters['action_parameters'] = @(
                 @{
                     name  = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
-            ))
+            )
             [void] $PSBoundParameters.Remove('GroupId')
         }
         $Param = @{
@@ -196,8 +196,6 @@ function Invoke-FalconDeviceControlPolicyAction {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

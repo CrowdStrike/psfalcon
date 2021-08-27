@@ -60,6 +60,8 @@ function Request-FalconToken {
             }
             return $Output
         }
+    }
+    process {
         if ($PSBoundParameters.Cloud) {
             # Convert 'Cloud' to 'Hostname'
             $Value = switch ($PSBoundParameters.Cloud) {
@@ -68,7 +70,7 @@ function Request-FalconToken {
                 'us-1'     { 'https://api.crowdstrike.com' }
                 'us-2'     { 'https://api.us-2.crowdstrike.com' }
             }
-            $PSBoundParameters.Add('Hostname', $Value)
+            $PSBoundParameters['Hostname'] = $Value
             [void] $PSBoundParameters.Remove('Cloud')
         }
         if (!$Script:Falcon) {
@@ -76,7 +78,8 @@ function Request-FalconToken {
             $Script:Falcon = Get-ApiCredential $PSBoundParameters
             $Script:Falcon.Add('Api', [ApiClient]::New())
             $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
-            $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("crowdstrike-psfalcon/2.1.1")
+            $Version = (Show-FalconModule).ModuleVersion.Split(' {')[0] -replace 'v', $null
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("crowdstrike-psfalcon/$Version")
         } else {
             (Get-ApiCredential $PSBoundParameters).GetEnumerator().foreach{
                 if ($Script:Falcon.($_.Key) -ne $_.Value) {
@@ -85,8 +88,6 @@ function Request-FalconToken {
                 }
             }
         }
-    }
-    process {
         if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             $Param = @{
                 Path    = "$($Script:Falcon.Hostname)/oauth2/token"

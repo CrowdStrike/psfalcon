@@ -34,6 +34,9 @@ function Edit-FalconPreventionPolicy {
         $Fields = @{
             Array = 'resources'
         }
+    }
+    process {
+        
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/prevention/v1:patch'
@@ -45,8 +48,6 @@ function Edit-FalconPreventionPolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -139,7 +140,7 @@ function Get-FalconPreventionPolicyMember {
         [Parameter(ParameterSetName = '/policy/queries/prevention-members/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -148,8 +149,6 @@ function Get-FalconPreventionPolicyMember {
                 Query = @('sort', 'offset', 'filter', 'id', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -175,10 +174,12 @@ function Invoke-FalconPreventionPolicyAction {
         $Fields = @{
             name = 'action_name'
         }
-        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+    }
+    process {
+        $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $PSBoundParameters.Add('action_parameters', @(
+            $PSBoundParameters['action_parameters'] = @(
                 @{
                     name  = if ($PSBoundParameters.Name -match 'rule-group$') {
                         'rule_group_id'
@@ -187,7 +188,7 @@ function Invoke-FalconPreventionPolicyAction {
                     }
                     value = $PSBoundParameters.GroupId
                 }
-            ))
+            )
             [void] $PSBoundParameters.Remove('GroupId')
         }
         $Param = @{
@@ -201,8 +202,6 @@ function Invoke-FalconPreventionPolicyAction {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

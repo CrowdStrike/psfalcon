@@ -13,7 +13,7 @@ function Add-FalconHostTag {
         $Fields = @{
             Ids = 'device_ids'
         }
-        $PSBoundParameters.Add('action', 'add')
+        $PSBoundParameters['action'] = 'add'
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -33,6 +33,10 @@ function Get-FalconHost {
     [CmdletBinding(DefaultParameterSetName = '/devices/queries/devices-scroll/v1:get')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/devices/combined/devices/login-history/v1:post', Mandatory = $true,
+            Position = 1)]
+        [Parameter(ParameterSetName = '/devices/combined/devices/network-address-history/v1:post',
+            Mandatory = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
         [array] $Ids,
 
@@ -53,8 +57,20 @@ function Get-FalconHost {
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 4)]
         [string] $Offset,
 
+        [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 5)]
+        [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 5)]
+        [ValidateSet('login_history', 'network_history')]
+        [array] $Include,
+
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Mandatory = $true)]
         [switch] $Hidden,
+        
+        [Parameter(ParameterSetName = '/devices/combined/devices/login-history/v1:post', Mandatory = $true)]
+        [switch] $Login,
+
+        [Parameter(ParameterSetName = '/devices/combined/devices/network-address-history/v1:post',
+            Mandatory = $true)]
+        [switch] $Network,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get')]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get')]
@@ -73,13 +89,43 @@ function Get-FalconHost {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'filter', 'sort', 'limit', 'offset')
-            }
         }
     }
     process {
-        Invoke-Falcon @Param
+        $Param['Format'] = if ($Param.Endpoint -match 'post$') {
+            @{ Body = @{ root = @('ids') }}
+        } else {
+            @{ Query = @('ids', 'filter', 'sort', 'limit', 'offset') }
+        }
+        $Request = Invoke-Falcon @Param
+        if ($PSBoundParameters.Include) {
+            if (!$Request.device_id) {
+                $Request = ($Request).foreach{
+                    ,[PSCustomObject] @{ device_id = $_ }
+                }
+            }
+            if ($PSBoundParameters.Include -contains 'login_history') {
+                foreach ($Object in (& $MyInvocation.MyCommand.Name -Ids $Request.device_id -Login)) {
+                    $AddParam = @{
+                        Object = $Request | Where-Object { $_.device_id -eq $Object.device_id }
+                        Name   = 'login_history'
+                        Value  = $Object.recent_logins
+                    }
+                    Add-Property @AddParam
+                }
+            }
+            if ($PSBoundParameters.Include -contains 'network_history') {
+                foreach ($Object in (& $MyInvocation.MyCommand.Name -Ids $Request.device_id -Network)) {
+                    $AddParam = @{
+                        Object = $Request | Where-Object { $_.device_id -eq $Object.device_id }
+                        Name   = 'network_history'
+                        Value  = $Object.history
+                    }
+                    Add-Property @AddParam
+                }
+            }
+        }
+        $Request
     }
 }
 function Invoke-FalconHostAction {
@@ -135,7 +181,7 @@ function Remove-FalconHostTag {
         $Fields = @{
             Ids = 'device_ids'
         }
-        $PSBoundParameters.Add('action', 'remove')
+        $PSBoundParameters['action'] = 'remove'
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName

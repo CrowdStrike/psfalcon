@@ -34,6 +34,8 @@ function Edit-FalconResponsePolicy {
         $Fields = @{
             Array = 'resources'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/response/v1:patch'
@@ -45,8 +47,6 @@ function Edit-FalconResponsePolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -139,7 +139,7 @@ function Get-FalconResponsePolicyMember {
         [Parameter(ParameterSetName = '/policy/queries/response-members/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -148,8 +148,6 @@ function Get-FalconResponsePolicyMember {
                 Query = @('sort', 'offset', 'filter', 'id', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -174,15 +172,17 @@ function Invoke-FalconResponsePolicyAction {
         $Fields = @{
             name = 'action_name'
         }
-        $PSBoundParameters.Add('Ids', @( $PSBoundParameters.Id ))
+    }
+    process {
+        $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
         [void] $PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
-            $PSBoundParameters.Add('action_parameters', @(
+            $PSBoundParameters['action_parameters'] = @(
                 @{
                     name  = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
-            ))
+            )
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -195,8 +195,6 @@ function Invoke-FalconResponsePolicyAction {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

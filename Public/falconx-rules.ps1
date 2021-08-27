@@ -93,12 +93,12 @@ function Receive-FalconRule {
         })]
         [string] $Path
     )
-    begin {
-        if ($PSBoundParameters.Path -match '\.(gz|gzip)$') {
-            $PSBoundParameters.Add('format', 'gzip')
-            $Accept = 'application/gzip'
+    process {
+        $Accept = if ($PSBoundParameters.Path -match '\.(gz|gzip)$') {
+            $PSBoundParameters['format'] = 'gzip'
+            'application/gzip'
         } else {
-            $Accept = 'application/zip'
+            'application/zip'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -112,8 +112,6 @@ function Receive-FalconRule {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

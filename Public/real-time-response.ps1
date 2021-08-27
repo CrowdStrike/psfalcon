@@ -11,7 +11,7 @@ function Confirm-FalconCommand {
     )
     begin {
         if (!$PSBoundParameters.SequenceId) {
-            $PSBoundParameters.Add('sequence_id', 0)
+            $PSBoundParameters['sequence_id'] = 0
         }
         $Fields = @{
             CloudRequestId = 'cloud_request_id'
@@ -87,7 +87,7 @@ function Confirm-FalconResponderCommand {
     )
     begin {
         if (!$PSBoundParameters.SequenceId) {
-            $PSBoundParameters.Add('sequence_id', 0)
+            $PSBoundParameters['sequence_id'] = 0
         }
         $Fields = @{
             CloudRequestId = 'cloud_request_id'
@@ -250,7 +250,7 @@ function Invoke-FalconCommand {
         } else {
             $PSBoundParameters.Command
         }
-        $PSBoundParameters.Add('command_string', $CommandString)
+        $PSBoundParameters['command_string'] = $CommandString
         $Fields = @{
             BatchId         = 'batch_id'
             Command         = 'base_command'
@@ -320,7 +320,7 @@ function Invoke-FalconResponderCommand {
         } else {
             $PSBoundParameters.Command
         }
-        $PSBoundParameters.Add('command_string', $CommandString)
+        $PSBoundParameters['command_string'] = $CommandString
         $Fields = @{
             BatchId         = 'batch_id'
             Command         = 'base_command'

@@ -19,6 +19,8 @@ function Edit-FalconHostGroup {
         $Fields = @{
             AssignmentRule = 'assignment_rule'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -29,8 +31,6 @@ function Edit-FalconHostGroup {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -122,7 +122,7 @@ function Get-FalconHostGroupMember {
         [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -131,8 +131,6 @@ function Get-FalconHostGroupMember {
                 Query = @('id', 'filter', 'sort', 'limit', 'offset')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -154,10 +152,10 @@ function Invoke-FalconHostGroupAction {
         [ValidatePattern('^\w{32}$')]
         [array] $HostIds
     )
-    begin {
+    process {
         $Param = @{
-            Path    = ("$($Script:Falcon.Hostname)/devices/entities/host-group-actions/v1?" + 
-                "action_name=$($PSBoundParameters.Name)")
+            Path    = "$($Script:Falcon.Hostname)/devices/entities/host-group-actions/v1?action_name=$(
+                $PSBoundParameters.Name)"
             Method  = 'post'
             Headers = @{
                 Accept      = 'application/json'
@@ -171,13 +169,10 @@ function Invoke-FalconHostGroupAction {
             }
             ids = @( $PSBoundParameters.Id )
         }
-        $Max = 500
-    }
-    process {
-        for ($i = 0; $i -lt ($PSBoundParameters.HostIds | Measure-Object).Count; $i += $Max) {
+        for ($i = 0; $i -lt ($PSBoundParameters.HostIds | Measure-Object).Count; $i += 500) {
             $Clone = $Param.Clone()
             $Clone.Add('Body', $Body.Clone())
-            $IdString = ($PSBoundParameters.HostIds[$i..($i + ($Max - 1))] | ForEach-Object {
+            $IdString = ($PSBoundParameters.HostIds[$i..($i + 499)] | ForEach-Object {
                 "'$_'"
             }) -join ','
             $Clone.Body.action_parameters.value = "(device_id:[$IdString])"

@@ -78,7 +78,7 @@ function Receive-FalconIntel {
         })]
         [string] $Path
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -91,8 +91,6 @@ function Receive-FalconIntel {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

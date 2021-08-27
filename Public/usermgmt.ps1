@@ -47,6 +47,8 @@ function Edit-FalconUser {
         $Fields = @{
             Id = 'user_uuid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -58,8 +60,6 @@ function Edit-FalconUser {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -82,6 +82,8 @@ function Get-FalconRole {
         $Fields = @{
             UserId = 'user_uuid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -90,8 +92,6 @@ function Get-FalconRole {
                 Query = @('ids', 'user_uuid')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
