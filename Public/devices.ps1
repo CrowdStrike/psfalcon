@@ -155,11 +155,11 @@ function Invoke-FalconHostAction {
                     root = @('ids')
                 }
             }
-            Max = if ($PSBoundParameters.Name -match '^(hide_host|unhide_host)$') {
-                100
-            } else {
-                500
-            }
+        }
+        $Param['Max'] = if ($Param.Inputs.action_name -match 'host$') {
+            100
+        } else {
+            500
         }
     }
     process {
