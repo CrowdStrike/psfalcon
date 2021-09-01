@@ -162,7 +162,7 @@ function Export-FalconConfig {
             }
             if ($FileContent) {
                 # Export results to json file and output created file name
-                ConvertTo-Json -InputObject @( $FileContent ) -Depth 16 | Out-File -FilePath $ItemFile -Append
+                ConvertTo-Json -InputObject @( $FileContent ) -Depth 32 | Out-File -FilePath $ItemFile -Append
                 $ItemFile
             }
         }
@@ -1218,15 +1218,16 @@ function Invoke-FalconDeploy {
         $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
         $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
         [array] $HostArray = if ($PSBoundParameters.GroupId) {
-            try {
+            if ((Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -Total) -gt 10000) {
+                # Stop if number of members exceeds API limit
+                throw "Group size exceeds maximum number of results [10,000]"
+            } else {
                 # Find Host Group member identifiers
-                Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId
-            } catch {
-                throw $_
+                ,(Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -All)
             }
         } else {
             # Use provided Host identifiers
-            $PSBoundParameters.HostIds
+            ,$PSBoundParameters.HostIds
         }
         if ($HostArray) {
             try {
@@ -1410,10 +1411,10 @@ function Invoke-FalconRtr {
                     stdout           = $null
                 }
                 if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                    $Item.PSObject.Properties.Add((New-Object PSNoteProperty('batch_get_cmd_req_id', $null)))
+                    Add-Property -Object $Item -Name 'batch_get_cmd_req_id' -Value $null
                 }
                 if ($PSBoundParameters.GroupId) {
-                    $Item.PSObject.Properties.Add((New-Object PSNoteProperty('batch_get_cmd_req_id', $null)))
+                    Add-Property -Object $Item -Name 'host_group_id' -Value $PSBoundParameters.GroupId
                 }
                 $Item
             }
@@ -1431,26 +1432,29 @@ function Invoke-FalconRtr {
         }
     }
     process {
-        [array] $HostArray = if ($PSBoundParameters.GroupId) {
-            try {
-                # Find Host Group member identifiers
-                ,(Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId)
-            } catch {
-                throw $_
-            }
-        } else {
-            # Use provided Host identifiers
-            ,$PSBoundParameters.HostIds
-        }
         try {
+            [array] $HostArray = if ($PSBoundParameters.GroupId) {
+                if ((Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -Total) -gt 10000) {
+                    # Stop if number of members exceeds API limit
+                    throw "Group size exceeds maximum number of results [10,000]"
+                } else {
+                    # Find Host Group member identifiers
+                    ,(Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -All)
+                }
+            } else {
+                # Use provided Host identifiers
+                ,$PSBoundParameters.HostIds
+            }
             for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 500) {
                 # Create baseline output and define request parameters
                 [array] $Group = Initialize-Output $HostArray[$i..($i + 499)]
                 $InitParam = @{
-                    HostIds = $Group.aid
-                }
-                if ($PSBoundParameters.QueueOffline) {
-                    $InitParam['QueueOffline'] = $PSBoundParameters.QueueOffline
+                    HostIds      = $Group.aid
+                    QueueOffline = if ($PSBoundParameters.QueueOffline) {
+                        $true
+                    } else {
+                        $false
+                    }
                 }
                 # Define command request parameters
                 if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
@@ -1484,8 +1488,8 @@ function Invoke-FalconRtr {
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet' -and $CmdRequest.batch_get_cmd_req_id) {
                         $CmdResult | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
                             # Add 'batch_get_cmd_req_id' and remove 'stdout' from session
-                            $_.PSObject.Properties.Add((New-Object PSNoteProperty('batch_get_cmd_req_id',
-                                $CmdRequest.batch_get_cmd_req_id)))
+                            Add-Property -Object $Item -Name 'batch_get_cmd_req_id' -Value (
+                                $CmdRequest.batch_get_cmd_req_id)
                             $_.stdout = $null
                         }
                     }
@@ -1570,7 +1574,7 @@ function Send-FalconWebhook {
                     Headers = @{
                         ContentType = 'application/json'
                     }
-                    Body = ConvertTo-Json -InputObject $Item -Depth 16
+                    Body = ConvertTo-Json -InputObject $Item -Depth 32
                 }
                 Write-Result ($Script:Falcon.Api.Invoke($Param))
             } catch {
@@ -1629,6 +1633,106 @@ function Show-FalconModule {
             }
         } else {
             throw "Cannot find 'PSFalcon.psd1'"
+        }
+    }
+}
+function Uninstall-FalconSensor {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $HostId,
+
+        [Parameter()]
+        [boolean] $QueueOffline
+    )
+    begin {
+        $UninstallScript = @'
+```
+param(
+    [string] $Token
+)
+Start-Sleep -Seconds 5
+$RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitecture -eq "64-bit") {
+    "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+} else {
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+}
+if (Test-Path $RegPath) {
+    $RegKey = Get-ChildItem $RegPath | Where-Object {
+        $_.GetValue("DisplayName") -like "*CrowdStrike Windows Sensor*" }
+    if ($RegKey) {
+        $UninstallString = $RegKey.GetValue("QuietUninstallString")
+        $Arguments = @("/c", $UninstallString)
+        if ($Token) {
+            $Arguments += "MAINTENANCE_TOKEN=$Token"
+        }
+        $ArgumentList = $Arguments -join " "
+        Start-Process -FilePath cmd.exe -ArgumentList $ArgumentList -PassThru |
+        Select-Object Id, ProcessName | ForEach-Object {
+            Write-Output "$($_ | ConvertTo-Json -Compress)"
+        }
+    }
+} else {
+    Write-Error "Unable to locate $RegPath"
+}
+```
+'@
+    }
+    process {
+        try {
+            $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId | Select-Object device_id,
+                hostname, device_policies
+            $Token = if ($HostInfo.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
+                $TokenParam = @{
+                    DeviceId     = $HostInfo.device_id
+                    AuditMessage = "Uninstall-FalconSensor [$((Show-FalconModule).UserAgent)]"
+                }
+                (Get-FalconUninstallToken @TokenParam).uninstall_token
+            } else {
+                $null
+            }
+            $InitParam = @{
+                HostId       = $HostInfo.device_id
+                QueueOffline = if ($PSBoundParameters.QueueOffline) {
+                    $true
+                } else {
+                    $false
+                }
+            }
+            $Init = Start-FalconSession @InitParam
+            $Request = if ($Init.session_id) {
+                $CmdParam = @{
+                    SessionId = $Init.session_id
+                    Command   = 'runscript'
+                    Arguments = '-Raw=' + $UninstallScript
+                }
+                if ($Token) {
+                    $CmdParam.Arguments += ' -CommandLine="' + $Token + '"'
+                }
+                Invoke-FalconAdminCommand @CmdParam
+            }
+            if ($Request.cloud_request_id) {
+                do {
+                    Start-Sleep -Seconds 5
+                    $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
+                } until ($Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr)
+                $HostInfo | Select-Object device_id, hostname | ForEach-Object {
+                    $Status = if ($Confirm.stdout) {
+                        $Confirm.stdout | ConvertFrom-Json | ForEach-Object {
+                            "[$($_.Id)] '$($_.ProcessName)' started removal of the Falcon sensor"
+                        }
+                    } elseif ($Confirm.stderr) {
+                        $Confirm.stderr
+                    } else {
+                        'Unexpected error'
+                    }
+                    Add-Property -Object $_ -Name 'status' -Value $Status
+                    $_
+                }
+            }
+        } catch {
+            throw $_
         }
     }
 }

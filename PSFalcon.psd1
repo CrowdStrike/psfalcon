@@ -1,6 +1,6 @@
 @{
   RootModule           = 'PSFalcon.psm1'
-  ModuleVersion        = '2.1.2'
+  ModuleVersion        = '2.1.3'
   CompatiblePSEditions = @('Desktop','Core')
   GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
   Author               = 'Brendan Kremian'
@@ -243,6 +243,7 @@
     'Send-FalconWebhook',
     'Show-FalconMap',
     'Show-FalconModule',
+    'Uninstall-FalconSensor',
 
     # quick-scan.ps1
     'Get-FalconQuickScan',
@@ -368,39 +369,23 @@
           IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
           ReleaseNotes = @"
 New Commands
-* container-security
-  'Get-FalconContainerToken'
-
-* scheduled-report
-  'Get-FalconScheduledReport'
-  'Receive-FalconScheduledReport'
-
-* self-service-ioa-exclusions
-  'New-FalconIoaExclusion'
+  * psfalcon
+    'Uninstall-FalconSensor'
 
 Command Changes
-* Export-FalconConfig
-  Added 'IoaExclusion' to '-Items'.
+  * Invoke-FalconRtr
+    Fixed typo which prevented 'host_group_id' from showing up on output when using '-GroupId'.
 
-* Get-FalconHost
-  Added '-Network' parameter to retrieve network address history using host identifier(s).
+    Added error message to prevent the use of a '-GroupId' with more than 10,000 members (as the API won't
+    return more than 10,000).
 
-  Added '-Login' parameter to retrieve user login history using host identifier(s).
-
-  Added '-Include' parameter with values 'login_history' and 'network_history' to include data with regular
-  output.
-
-* Get-FalconZta
-  Added '/zero-trust-assessment/entities/audit/v1:get' endpoint to 'Get-FalconZta' to provide summary-level
-  Zero Trust Assessment results for your entire CID.
-
-* Import-FalconConfig
-  Added 'IoaExclusion' for import and assignment.
+  * Invoke-FalconDeploy
+    Added error message to prevent the use of a '-GroupId' with more than 10,000 members (as the API won't
+    return more than 10,000).
 
 GitHub Issues
-* Issue #67: Solved. Apparently you can't use a trailing slash for 'HelpInfoUri'...
-* Issue #68: Fixed typo which prevented 'Remove-FalconReconNotification' from being available
-* Issue #69: Moved code from 'begin{}' block to 'process{}' block for relevant commands.
+  * Issue #70, #71: Updated the 'Depth' value of 'ConvertTo-Json' throughout module.
+  * Issue #73: Fixed the grouping of ids for 'Invoke-FalconHostAction'.
 "@
       }
   }

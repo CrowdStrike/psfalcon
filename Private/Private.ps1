@@ -90,7 +90,7 @@ function Build-Content {
                 }
                 if (($Body.Keys | Measure-Object).Count -gt 0) {
                     # Return 'Body' object
-                    Write-Verbose "[Build-Body] $(ConvertTo-Json -InputObject $Body -Depth 8 -Compress)"
+                    Write-Verbose "[Build-Body] $(ConvertTo-Json -InputObject $Body -Depth 32 -Compress)"
                     $Body
                 }
             }
@@ -107,7 +107,7 @@ function Build-Content {
             }
             if (($Formdata.Keys | Measure-Object).Count -gt 0) {
                 # Return 'Formdata' object
-                Write-Verbose "[Build-Formdata] $(ConvertTo-Json -InputObject $Formdata -Depth 8 -Compress)"
+                Write-Verbose "[Build-Formdata] $(ConvertTo-Json -InputObject $Formdata -Depth 32 -Compress)"
                 $Formdata
             }
         }
@@ -158,7 +158,7 @@ function Build-Content {
                         & "Build-$_" -Format $Format -Inputs $Inputs
                     }
                     if ($Value) {
-                        $Content.Add($_, $Value)
+                        $Content[$_] = $Value
                     }
                 }
             }
@@ -211,7 +211,7 @@ function Confirm-Parameter {
                 $_.Name -eq $Parameter }).Attributes.ValidValues
         }
         # Create object string
-        $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+        $ObjectString = ConvertTo-Json -InputObject $Object -Depth 32 -Compress
     }
     process {
         if ($Object -is [hashtable]) {
@@ -565,7 +565,7 @@ function Invoke-Falcon {
                 }
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
-                    $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Depth 8
+                    $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Depth 32
                 }
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
                 if ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
