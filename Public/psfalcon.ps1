@@ -1681,7 +1681,7 @@ if (Test-Path $RegPath) {
     }
     process {
         try {
-            $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId | Select-Object device_id,
+            $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId | Select-Object cid, device_id,
                 hostname, device_policies
             $Token = if ($HostInfo.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
                 $TokenParam = @{
@@ -1717,7 +1717,7 @@ if (Test-Path $RegPath) {
                     Start-Sleep -Seconds 5
                     $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
                 } until ($Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr)
-                $HostInfo | Select-Object device_id, hostname | ForEach-Object {
+                $HostInfo | Select-Object cid, device_id, hostname | ForEach-Object {
                     $Status = if ($Confirm.stdout) {
                         $Confirm.stdout | ConvertFrom-Json | ForEach-Object {
                             "[$($_.Id)] '$($_.ProcessName)' started removal of the Falcon sensor"
