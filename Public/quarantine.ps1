@@ -1,36 +1,4 @@
 function Get-FalconQuarantine {
-<#
-.Synopsis
-Search for quarantined files
-.Description
-Requires 'quarantine:read'.
-.Parameter Ids
-Quarantined file identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Match phrase prefix
-.Parameter Sort
-Property and direction to sort results
-.Parameter Limit
-Maximum number of results per request
-.Parameter Offset
-Position to begin retrieving results
-.Parameter Detailed
-Retrieve detailed information
-.Parameter All
-Repeat requests until all available results are retrieved
-.Parameter Total
-Display total result count instead of results
-.Example
-PS>Get-FalconQuarantine -Filter "device.hostname:'EXAMPLE-PC'"
-
-Search for quarantined files on the host named 'EXAMPLE-PC'.
-.Example
-PS>Get-FalconQuarantine -Ids <id>, <id>
-
-Get information about quarantined files <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/quarantine/queries/quarantined-files/v1:get')]
     param(
         [Parameter(ParameterSetName = '/quarantine/entities/quarantined-files/GET/v1:post', Mandatory = $true,
@@ -87,30 +55,6 @@ Get information about quarantined files <id> and <id>.
     }
 }
 function Invoke-FalconQuarantineAction {
-<#
-.Synopsis
-Perform actions on quarantined files
-.Description
-Requires 'quarantine:write'.
-.Parameter Action
-Action to perform
-.Parameter Ids
-Quarantined file identifier(s)
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Parameter Query
-Match phrase prefix
-.Parameter Comment
-Audit log comment
-.Example
-PS>Invoke-FalconQuarantineAction -Action delete -Ids <id>, <id>
-
-Delete quarantined files <id> and <id>.
-.Example
-PS>Invoke-FalconQuarantineAction -Action release -Filter "device.hostname:'EXAMPLE-PC'"
-
-Release quarantined files <id> and <id> on the host named 'EXAMPLE-PC'.
-#>
     [CmdletBinding(DefaultParameterSetName = '/quarantine/entities/quarantined-files/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/quarantine/entities/quarantined-files/v1:patch', Mandatory = $true,
@@ -157,18 +101,6 @@ Release quarantined files <id> and <id> on the host named 'EXAMPLE-PC'.
     }
 }
 function Test-FalconQuarantineAction {
-<#
-.Synopsis
-Check the number of quarantined files potentially affected by a filter-based action
-.Description
-Requires 'quarantine:write'.
-.Parameter Filter
-Falcon Query Language expression to limit results
-.Example
-PS>Test-FalconQuarantineAction -Filter "device.hostname:'EXAMPLE-PC'"
-
-Check the how quarantined files on the host named 'EXAMPLE-PC' would be affected by an action.
-#>
     [CmdletBinding(DefaultParameterSetName = '/quarantine/aggregates/action-update-count/v1:get')]
     param(
         [Parameter(ParameterSetName = '/quarantine/aggregates/action-update-count/v1:get', Mandatory = $true,
