@@ -245,6 +245,11 @@
     'Show-FalconModule',
     'Uninstall-FalconSensor',
 
+    # quarantine.ps1
+    'Get-FalconQuarantine',
+    'Invoke-FalconQuarantineAction',
+    'Test-FalconQuarantineAction',
+
     # quick-scan.ps1
     'Get-FalconQuickScan',
     'Get-FalconQuickScanQuota',
@@ -372,6 +377,11 @@ New Commands
   * psfalcon
     'Uninstall-FalconSensor'
 
+  * quarantine
+    'Get-FalconQuarantine'
+    'Invoke-FalconQuarantineAction'
+    'Test-FalconQuarantineAction'
+
 Command Changes
   * Invoke-FalconRtr
     Fixed typo which prevented 'host_group_id' from showing up on output when using '-GroupId'.
@@ -382,6 +392,10 @@ Command Changes
   * Invoke-FalconDeploy
     Added error message to prevent the use of a '-GroupId' with more than 10,000 members (as the API won't
     return more than 10,000).
+
+  * New-FalconUser
+    Removed '-Password' parameter because the API doesn't allow the password assignment, which was against
+    best practices for user creation anyway.
 
 GitHub Issues
   * Issue #70, #71: Updated the 'Depth' value of 'ConvertTo-Json' throughout module.
