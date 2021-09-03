@@ -3,13 +3,6 @@ function Export-FalconReport {
     param(
         [Parameter(Position = 1)]
         [ValidatePattern('\.csv$')]
-        [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
-        })]
         [string] $Path,
 
         [Parameter(Mandatory = $true, ValueFromPipeLine = $true, Position = 2)]
