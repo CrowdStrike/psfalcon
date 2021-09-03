@@ -394,8 +394,7 @@ Command Changes
     return more than 10,000).
 
   * New-FalconUser
-    Removed '-Password' parameter because the API doesn't allow the password assignment, which was against
-    best practices for user creation anyway.
+    Added password complexity check to '-Password' parameter.
 
 GitHub Issues
   * Issue #70, #71: Updated the 'Depth' value of 'ConvertTo-Json' throughout module.

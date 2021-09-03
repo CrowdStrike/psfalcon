@@ -138,7 +138,11 @@ function New-FalconUser {
         [string] $Firstname,
 
         [Parameter(ParameterSetName = '/users/entities/users/v1:post', Position = 3)]
-        [string] $Lastname
+        [string] $Lastname,
+
+        [Parameter(ParameterSetName = '/users/entities/users/v1:post', Position = 4)]
+        [ValidatePattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{12,}$')]
+        [string] $Password
     )
     begin {
         $Fields = @{
@@ -150,7 +154,7 @@ function New-FalconUser {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    root = @('firstName', 'uid', 'lastName')
+                    root = @('firstName', 'uid', 'lastName', 'password')
                 }
             }
         }
