@@ -177,6 +177,7 @@ function Get-FalconUninstallToken {
     param(
         [Parameter(ParameterSetName = '/policy/combined/reveal-uninstall-token/v1:post', Mandatory = $true,
             ValueFromPipeline = $true, Position = 1)]
+        [Alias('device_id')]
         [ValidatePattern('^(\w{32}|MAINTENANCE)$')]
         [string] $DeviceId,
 

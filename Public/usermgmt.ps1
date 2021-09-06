@@ -34,14 +34,15 @@ function Edit-FalconUser {
     param(
         [Parameter(ParameterSetName = '/users/entities/users/v1:patch', Mandatory = $true,
             ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Alias('uuid')]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id,
 
         [Parameter(ParameterSetName = '/users/entities/users/v1:patch', Position = 2)]
-        [string] $Firstname,
+        [string] $FirstName,
 
         [Parameter(ParameterSetName = '/users/entities/users/v1:patch', Position = 3)]
-        [string] $Lastname
+        [string] $LastName
     )
     begin {
         $Fields = @{
@@ -68,6 +69,7 @@ function Get-FalconRole {
     param(
         [Parameter(ParameterSetName = '/user-roles/queries/user-role-ids-by-user-uuid/v1:get', Mandatory = $true,
             Position = 1)]
+        [Alias('uuid')]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $UserId,
 

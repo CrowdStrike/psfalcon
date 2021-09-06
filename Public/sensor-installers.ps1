@@ -57,7 +57,8 @@ function Receive-FalconInstaller {
     [CmdletBinding(DefaultParameterSetName = '/sensors/entities/download-installer/v1:get')]
     param(
         [Parameter(ParameterSetName = '/sensors/entities/download-installer/v1:get', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+            ValueFromPipeline = $true, Position = 1)]
+        [Alias('sha256')]
         [ValidatePattern('^\w{64}$')]
         [string] $Id,
 

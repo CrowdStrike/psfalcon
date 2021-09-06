@@ -8,7 +8,7 @@ function Add-FalconCidGroupMember {
 
         [Parameter(ParameterSetName = '/mssp/entities/cid-group-members/v1:post', Mandatory = $true, Position = 2)]
         [ValidatePattern('^\w{32}$')]
-        [array] $CIDs
+        [array] $Cids
     )
     begin {
         $Fields = @{
@@ -220,7 +220,7 @@ function Get-FalconCidGroupMember {
         [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Mandatory = $true,
             ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $CID,
+        [string] $Cid,
 
         [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Position = 2)]
         [ValidateSet('last_modified_timestamp')]
@@ -244,7 +244,6 @@ function Get-FalconCidGroupMember {
     )
     begin {
         $Fields = @{
-            CID = 'cid'
             Ids = 'cid_group_ids'
         }
     }
@@ -539,7 +538,7 @@ function Remove-FalconCidGroupMember {
         [Parameter(ParameterSetName = '/mssp/entities/cid-group-members/v1:delete', Mandatory = $true,
             Position = 2)]
         [ValidatePattern('^\w{32}$')]
-        [array] $CIDs
+        [array] $Cids
     )
     begin {
         $Fields = @{

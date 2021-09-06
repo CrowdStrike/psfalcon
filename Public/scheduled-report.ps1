@@ -5,6 +5,7 @@ function Get-FalconScheduledReport {
             Position = 1)]
         [Parameter(ParameterSetName = '/reports/entities/report-executions/v1:get', Mandatory = $true,
             Position = 1)]
+        [ValidatePattern('^\w{32}$')]
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 1)]
@@ -67,7 +68,7 @@ function Receive-FalconScheduledReport {
     param(
         [Parameter(ParameterSetName = '/reports/entities/report-executions-download/v1:get', Mandatory = $true,
             ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
-        #[ValidatePattern('^\d{2,}$')]
+        [ValidatePattern('^\w{32}$')]
         [string] $Id,
 
         [Parameter(ParameterSetName = '/reports/entities/report-executions-download/v1:get', Mandatory = $true,

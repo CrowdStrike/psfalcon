@@ -3,11 +3,13 @@ function Request-FalconToken {
     param(
         [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 1)]
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 1)]
+        [Alias('client_id')]
         [ValidatePattern('^\w{32}$')]
         [string] $ClientId,
 
         [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 2)]
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 2)]
+        [Alias('client_secret')]
         [ValidatePattern('^\w{40}$')]
         [string] $ClientSecret,
 
@@ -22,6 +24,7 @@ function Request-FalconToken {
 
         [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 4)]
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 4)]
+        [Alias('cid', 'member_cid')]
         [ValidatePattern('^\w{32}$')]
         [string] $MemberCid
     )

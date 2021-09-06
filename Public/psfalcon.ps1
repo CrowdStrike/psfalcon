@@ -1634,7 +1634,8 @@ function Uninstall-FalconSensor {
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $HostId,
+        [Alias('device_id')]
+        [string] $Id,
 
         [Parameter()]
         [boolean] $QueueOffline
@@ -1674,7 +1675,7 @@ if (Test-Path $RegPath) {
     }
     process {
         try {
-            $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId | Select-Object cid, device_id,
+            $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Id | Select-Object cid, device_id,
                 hostname, device_policies
             $Token = if ($HostInfo.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
                 $TokenParam = @{
