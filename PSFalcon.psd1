@@ -1,6 +1,6 @@
 @{
   RootModule           = 'PSFalcon.psm1'
-  ModuleVersion        = '2.1.3'
+  ModuleVersion        = '2.1.4'
   CompatiblePSEditions = @('Desktop','Core')
   GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
   Author               = 'Brendan Kremian'
@@ -374,31 +374,15 @@
           IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
           ReleaseNotes = @"
 New Commands
-  * psfalcon
-    'Uninstall-FalconSensor'
-
-  * quarantine
-    'Get-FalconQuarantine'
-    'Invoke-FalconQuarantineAction'
-    'Test-FalconQuarantineAction'
 
 Command Changes
-  * Invoke-FalconRtr
-    Fixed typo which prevented 'host_group_id' from showing up on output when using '-GroupId'.
-
-    Added error message to prevent the use of a '-GroupId' with more than 10,000 members (as the API won't
-    return more than 10,000).
-
   * Invoke-FalconDeploy
-    Added error message to prevent the use of a '-GroupId' with more than 10,000 members (as the API won't
-    return more than 10,000).
-
-  * New-FalconUser
-    Added password complexity check to '-Password' parameter.
+    Added check for OS version and 'cd_temp' step to change to a default temporary directory (\Windows\Temp or
+    /tmp) before the 'put' and 'run' commands.
 
 GitHub Issues
-  * Issue #70, #71: Updated the 'Depth' value of 'ConvertTo-Json' throughout module.
-  * Issue #73: Fixed the grouping of ids for 'Invoke-FalconHostAction'.
+  * Issue #79: Fixed bug with 'Invoke-FalconRtr' using the 'get' command that prevented completion of 'get'
+    requests and output of 'batch_get_cmd_req_id' value.
 "@
       }
   }

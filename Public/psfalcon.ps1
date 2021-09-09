@@ -1216,11 +1216,12 @@ function Invoke-FalconDeploy {
                 throw "Group size exceeds maximum number of results [10,000]"
             } else {
                 # Find Host Group member identifiers
-                ,(Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -All)
+                ,(Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -Detailed -All |
+                    Select-Object device_id, platform_name)
             }
         } else {
             # Use provided Host identifiers
-            ,$PSBoundParameters.HostIds
+            ,(Get-FalconHost -Ids $PSBoundParameters.HostIds| Select-Object device_id, platform_name)
         }
         if ($HostArray) {
             try {
@@ -1290,7 +1291,7 @@ function Invoke-FalconDeploy {
             try {
                 for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 500) {
                     $Param = @{
-                        HostIds = $HostArray[$i..($i + 499)]
+                        HostIds = ($HostArray[$i..($i + 499)]).device_id
                     }
                     switch -Regex ($PSBoundParameters.Keys) {
                         '(QueueOffline|Timeout)' { $Param[$_] = $PSBoundParameters.$_ }
@@ -1302,46 +1303,83 @@ function Invoke-FalconDeploy {
                         ($Session.hosts | Where-Object { $_.complete -eq $true -or
                             $_.offline_queued -eq $true }).aid
                     }
-                    $PutHosts = if ($SessionHosts) {
-                        # Invoke 'put' on successful hosts
-                        Write-Host "Sending $Filename to $(($SessionHosts | Measure-Object).Count) host(s)..."
-                        $Param = @{
-                            BatchId         = $Session.batch_id
-                            Command         = 'put'
-                            Arguments       = "$Filename"
-                            OptionalHostIds = $SessionHosts
-                        }
-                        if ($PSBoundParameters.Timeout) {
-                            $Param['Timeout'] = $PSBoundParameters.Timeout
-                        }
-                        $CmdPut = Invoke-FalconAdminCommand @Param
-                        if ($CmdPut) {
-                            # Output result to CSV and return list of successful 'put_file' hosts
-                            Write-RtrResult -Object $CmdPut -Step 'put_file' -BatchId $Session.batch_id
-                            ($CmdPut | Where-Object { $_.stdout -eq 'Operation completed successfully.' -or
-                                $_.offline_queued -eq $true }).aid
-                        }
-                    }
-                    if ($PutHosts) {
-                        # Invoke 'run'
-                        Write-Host "Starting $Filename on $(($PutHosts | Measure-Object).Count) host(s)..."
-                        $Arguments = "\$Filename"
-                        if ($PSBoundParameters.Arguments) {
-                            $Arguments += " -CommandLine=`"$($PSBoundParameters.Arguments)`""
-                        }
-                        $Param = @{
-                            BatchId         = $Session.batch_id
-                            Command         = 'run'
-                            Arguments       = $Arguments
-                            OptionalHostIds = $PutHosts
-                        }
-                        if ($PSBoundParameters.Timeout) {
-                            $Param['Timeout'] = $PSBoundParameters.Timeout
-                        }
-                        $CmdRun = Invoke-FalconAdminCommand @Param
-                        if ($CmdRun) {
-                            # Output result to CSV
-                            Write-RtrResult -Object $CmdRun -Step 'run_file' -BatchId $Session.batch_id
+                    if ($SessionHosts) {
+                        # Change to a 'temp' directory for each device, by platform
+                        Write-Host "Initiated session with $(($SessionHosts | Measure-Object).Count) host(s)..."
+                        foreach ($Pair in (@{
+                            Windows = ($HostArray | Where-Object { $SessionHosts -contains $_.device_id -and
+                                $_.platform_name -eq 'Windows' }).device_id
+                            Mac     = ($HostArray | Where-Object { $SessionHosts -contains $_.device_id -and
+                                $_.platform_name -eq 'Mac' }).device_id
+                            Linux   = ($HostArray | Where-Object { $SessionHosts -contains $_.device_id -and
+                                $_.platform_name -eq 'Linux' }).device_id
+                        }).GetEnumerator().Where({ $_.Value })) {
+                            $Param = @{
+                                BatchId         = $Session.batch_id
+                                Command         = 'cd'
+                                OptionalHostIds = $Pair.Value
+                            }
+                            if ($PSBoundParameters.Timeout) {
+                                $Param['Timeout'] = $PSBoundParameters.Timeout
+                            }
+                            $TempDir = switch ($Pair.Key) {
+                                'Windows' { '\Windows\Temp' }
+                                'Mac'     { '/tmp' }
+                                'Linux'   { '/tmp' }
+                            }
+                            $Param['Arguments'] = $TempDir
+                            $CmdCd = Invoke-FalconAdminCommand @Param
+                            $CdHosts = if ($CmdCd) {
+                                # Output result to CSV and return list of successful 'cd_temp' hosts
+                                $TempRegex = $TempDir -replace '\\','\\'
+                                Write-RtrResult -Object $CmdCd -Step 'cd_temp' -BatchId $Session.batch_id
+                                ,($CmdCd | Where-Object { $_.stdout -match $TempRegex -or $_.offline_queued -eq
+                                    $true }).aid
+                            }
+                            $PutHosts = if ($CdHosts) {
+                                # Invoke 'put' on successful hosts
+                                Write-Host "Sending $Filename to $(($CdHosts | Measure-Object).Count)" +
+                                    " $($Pair.Key) host(s)..."
+                                $Param = @{
+                                    BatchId         = $Session.batch_id
+                                    Command         = 'put'
+                                    Arguments       = $Filename
+                                    OptionalHostIds = $CdHosts
+                                }
+                                if ($PSBoundParameters.Timeout) {
+                                    $Param['Timeout'] = $PSBoundParameters.Timeout
+                                }
+                                $CmdPut = Invoke-FalconAdminCommand @Param
+                                if ($CmdPut) {
+                                    # Output result to CSV and return list of successful 'put_file' hosts
+                                    Write-RtrResult -Object $CmdPut -Step 'put_file' -BatchId $Session.batch_id
+                                    ($CmdPut | Where-Object { $_.stdout -eq 'Operation completed successfully.' -or
+                                        $_.offline_queued -eq $true }).aid
+                                }
+                            }
+                            if ($PutHosts) {
+                                # Invoke 'run'
+                                Write-Host "Starting $Filename on $(($PutHosts | Measure-Object).Count)" +
+                                    " $($Pair.Key) host(s)..."
+                                $Arguments = "$(Join-Path -Path $TempDir -ChildPath $Filename)"
+                                if ($PSBoundParameters.Arguments) {
+                                    $Arguments += " -CommandLine=`"$($PSBoundParameters.Arguments)`""
+                                }
+                                $Param = @{
+                                    BatchId         = $Session.batch_id
+                                    Command         = 'run'
+                                    Arguments       = $Arguments
+                                    OptionalHostIds = $PutHosts
+                                }
+                                if ($PSBoundParameters.Timeout) {
+                                    $Param['Timeout'] = $PSBoundParameters.Timeout
+                                }
+                                $CmdRun = Invoke-FalconAdminCommand @Param
+                                if ($CmdRun) {
+                                    # Output result to CSV
+                                    Write-RtrResult -Object $CmdRun -Step 'run_file' -BatchId $Session.batch_id
+                                }
+                            }
                         }
                     }
                 }
@@ -1477,11 +1515,17 @@ function Invoke-FalconRtr {
                     }
                     # Perform command request and capture result
                     $CmdRequest = & $InvokeCmd @CmdParam -BatchId $InitRequest.batch_id
-                    $CmdResult = Get-RtrResult -Object $CmdRequest -Output $InitResult
+                    $CmdContent = if ($CmdRequest.hosts) {
+                        # Capture 'hosts' for 'Invoke-FalconBatchGet'
+                        $CmdRequest.hosts
+                    } else {
+                        $CmdRequest
+                    }
+                    $CmdResult = Get-RtrResult -Object $CmdContent -Output $InitResult
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet' -and $CmdRequest.batch_get_cmd_req_id) {
                         $CmdResult | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
-                            # Add 'batch_get_cmd_req_id' and remove 'stdout' from session
-                            Add-Property -Object $Item -Name 'batch_get_cmd_req_id' -Value (
+                            # Update 'batch_get_cmd_req_id' and remove 'stdout'
+                            Add-Property -Object $_ -Name 'batch_get_cmd_req_id' -Value (
                                 $CmdRequest.batch_get_cmd_req_id)
                             $_.stdout = $null
                         }
