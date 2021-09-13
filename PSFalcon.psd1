@@ -376,6 +376,12 @@
 New Commands
 
 Command Changes
+  * Get-FalconBehavior
+    Updated 'Limit' to maximum of 500 to match API.
+
+  * Get-FalconIncident
+    Update 'Limit' to maximum of 500 to match API.
+
   * Invoke-FalconDeploy
     Added check for OS version and 'cd_temp' step to change to a default temporary directory (\Windows\Temp or
     /tmp) before the 'put' and 'run' commands.

@@ -1221,7 +1221,7 @@ function Invoke-FalconDeploy {
             }
         } else {
             # Use provided Host identifiers
-            ,(Get-FalconHost -Ids $PSBoundParameters.HostIds| Select-Object device_id, platform_name)
+            ,(Get-FalconHost -Ids $PSBoundParameters.HostIds | Select-Object device_id, platform_name)
         }
         if ($HostArray) {
             try {
@@ -1338,8 +1338,8 @@ function Invoke-FalconDeploy {
                             }
                             $PutHosts = if ($CdHosts) {
                                 # Invoke 'put' on successful hosts
-                                Write-Host "Sending $Filename to $(($CdHosts | Measure-Object).Count)" +
-                                    " $($Pair.Key) host(s)..."
+                                Write-Host ("Sending $Filename to $(($CdHosts | Measure-Object).Count)" +
+                                    " $($Pair.Key) host(s)...")
                                 $Param = @{
                                     BatchId         = $Session.batch_id
                                     Command         = 'put'
@@ -1359,8 +1359,8 @@ function Invoke-FalconDeploy {
                             }
                             if ($PutHosts) {
                                 # Invoke 'run'
-                                Write-Host "Starting $Filename on $(($PutHosts | Measure-Object).Count)" +
-                                    " $($Pair.Key) host(s)..."
+                                Write-Host ("Starting $Filename on $(($PutHosts | Measure-Object).Count)" +
+                                    " $($Pair.Key) host(s)...")
                                 $Arguments = "$(Join-Path -Path $TempDir -ChildPath $Filename)"
                                 if ($PSBoundParameters.Arguments) {
                                     $Arguments += " -CommandLine=`"$($PSBoundParameters.Arguments)`""

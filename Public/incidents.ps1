@@ -14,7 +14,7 @@ function Get-FalconBehavior {
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 3)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,500)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 4)]
@@ -65,7 +65,7 @@ function Get-FalconIncident {
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get', Position = 3)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,500)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get', Position = 4)]
