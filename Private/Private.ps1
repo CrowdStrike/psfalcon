@@ -128,7 +128,7 @@ function Build-Content {
                                 } else {
                                     $Int * -1
                                 }
-                                $Value = $Value -replace $Match, (Convert-Rfc3339 $Hours)
+                                $Value = $Value -replace $Match, (Convert-Rfc3339 $Int)
                             }
                         }
                     }
