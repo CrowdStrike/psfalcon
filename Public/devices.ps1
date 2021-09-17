@@ -1,4 +1,4 @@
-function Add-FalconHostTag {
+function Add-FalconGroupingTag {
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices/tags/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices/tags/v1:patch', Mandatory = $true, Position = 1)]
@@ -166,7 +166,7 @@ function Invoke-FalconHostAction {
         Invoke-Falcon @Param
     }
 }
-function Remove-FalconHostTag {
+function Remove-FalconGroupingTag {
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices/tags/v1:patch')]
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices/tags/v1:patch', Mandatory = $true, Position = 1)]

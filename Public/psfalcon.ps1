@@ -1,3 +1,82 @@
+function Add-FalconSensorTag {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [array] $Tags,
+
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 2)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('device_id')]
+        [string] $Id,
+
+        [Parameter()]
+        [boolean] $QueueOffline
+    )
+    begin {
+        $TagScript = @'
+```
+[CmdletBinding()]
+param(
+    [array] $Tags
+)
+$TagPath = "HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\" +
+    "{16e0423f-7058-48c9-a204-725362b67639}\Default"
+if ((Get-ItemProperty -Path $TagPath).GroupingTags) {
+    $Tags += (Get-ItemProperty -Path $TagPath).GroupingTags.Split(",").Where({ $Tags -notcontains $_ })
+}
+$Param = @{
+    Path         = $TagPath
+    PropertyType = "String"
+    Name         = "GroupingTags"
+    Value        = $Tags -join ","
+    Force        = $true
+}
+(New-ItemProperty @Param).GroupingTags
+```
+'@
+    }
+    process {
+        try {
+            $InitParam = @{
+                HostId       = $PSBoundParameters.Id
+                QueueOffline = if ($PSBoundParameters.QueueOffline) {
+                    $true
+                } else {
+                    $false
+                }
+            }
+            $Init = Start-FalconSession @InitParam
+            $Request = if ($Init.session_id) {
+                $CmdParam = @{
+                    SessionId = $Init.session_id
+                    Command   = 'runscript'
+                    Arguments = '-Raw=' + $TagScript + " -CommandLine='$($PSBoundParameters.Tags -join ',')'"
+                }
+                Invoke-FalconAdminCommand @CmdParam
+            }
+            if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+                do {
+                    Start-Sleep -Seconds 5
+                    $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
+                } until (
+                    $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
+                )
+                [PSCustomObject] @{
+                    aid  = $PSBoundParameters.Id
+                    tags = if ($Confirm.stderr) {
+                        $Confirm.stderr.TrimEnd()
+                    } else {
+                        $Confirm.stdout.TrimEnd()
+                    }
+                }
+            } else {
+                $Request
+            }
+        } catch {
+            throw $_
+        }
+    }
+}
 function Export-FalconReport {
     [CmdletBinding()]
     param(
@@ -332,6 +411,67 @@ function Get-FalconQueue {
             if (Test-Path $OutputFile) {
                 Get-ChildItem $OutputFile
             }
+        }
+    }
+}
+function Get-FalconSensorTag {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('device_id')]
+        [string] $Id,
+
+        [Parameter()]
+        [boolean] $QueueOffline
+    )
+    begin {
+        $TagRegex = '\.GroupingTags = (?<tags>(\w+,?){1,})'
+    }
+    process {
+        try {
+            $InitParam = @{
+                HostId       = $PSBoundParameters.Id
+                QueueOffline = if ($PSBoundParameters.QueueOffline) {
+                    $true
+                } else {
+                    $false
+                }
+            }
+            $Init = Start-FalconSession @InitParam
+            $Request = if ($Init.session_id) {
+                $CmdParam = @{
+                    SessionId = $Init.session_id
+                    Command   = 'reg query'
+                    Arguments = 'HKLM\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\' +
+                        '{16e0423f-7058-48c9-a204-725362b67639}\Default GroupingTags'
+                }
+                Invoke-FalconCommand @CmdParam
+            }
+            if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+                do {
+                    Start-Sleep -Seconds 5
+                    $Confirm = Confirm-FalconCommand -CloudRequestId $Request.cloud_request_id
+                } until (
+                    $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
+                )
+                [PSCustomObject] @{
+                    aid  = $PSBoundParameters.Id
+                    tags = if ($Confirm.stderr) {
+                        $Confirm.stderr.TrimEnd()
+                    } elseif ($Confirm.stdout -match $TagRegex) {
+                        [regex]::Matches($Confirm.stdout, $TagRegex)[0].Groups['tags'].Value
+                    } elseif ($Confirm.stdout -match '\.GroupingTags =') {
+                        $Confirm.stdout.TrimEnd().Split('=')[-1]
+                    } else {
+                        $Confirm.stdout.TrimEnd()
+                    }
+                }
+            } else {
+                $Request
+            }
+        } catch {
+            throw $_
         }
     }
 }
@@ -1538,6 +1678,85 @@ function Invoke-FalconRtr {
         }
     }
 }
+function Remove-FalconSensorTag {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [array] $Tags,
+
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 2)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('device_id')]
+        [string] $Id,
+
+        [Parameter()]
+        [boolean] $QueueOffline
+    )
+    begin {
+        $TagScript = @'
+```
+[CmdletBinding()]
+param(
+    [array] $Tags
+)
+$RegPath = "HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\" +
+    "{16e0423f-7058-48c9-a204-725362b67639}\Default"
+if ((Get-ItemProperty -Path $RegPath).GroupingTags) {
+    $Modified = (Get-ItemProperty -Path $RegPath).GroupingTags.Split(",").Where({ $Tags -notcontains $_ })
+}
+$Param = @{
+    Path         = $RegPath
+    PropertyType = "String"
+    Name         = "GroupingTags"
+    Value        = $Modified -join ","
+    Force        = $true
+}
+(New-ItemProperty @Param).GroupingTags
+```
+'@
+    }
+    process {
+        try {
+            $InitParam = @{
+                HostId       = $PSBoundParameters.Id
+                QueueOffline = if ($PSBoundParameters.QueueOffline) {
+                    $true
+                } else {
+                    $false
+                }
+            }
+            $Init = Start-FalconSession @InitParam
+            $Request = if ($Init.session_id) {
+                $CmdParam = @{
+                    SessionId = $Init.session_id
+                    Command   = 'runscript'
+                    Arguments = '-Raw=' + $TagScript + " -CommandLine='$($PSBoundParameters.Tags -join ',')'"
+                }
+                Invoke-FalconAdminCommand @CmdParam
+            }
+            if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+                do {
+                    Start-Sleep -Seconds 5
+                    $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
+                } until (
+                    $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
+                )
+                [PSCustomObject] @{
+                    aid  = $PSBoundParameters.Id
+                    tags = if ($Confirm.stderr) {
+                        $Confirm.stderr.TrimEnd()
+                    } else {
+                        $Confirm.stdout.TrimEnd()
+                    }
+                }
+            } else {
+                $Request
+            }
+        } catch {
+            throw $_
+        }
+    }
+}
 function Send-FalconWebhook {
     [CmdletBinding()]
     param(
@@ -1737,7 +1956,7 @@ if (Test-Path $RegPath) {
                 }
             }
             $Init = Start-FalconSession @InitParam
-            $Request = if ($Init.session_id) {
+            if ($Init.session_id) {
                 $CmdParam = @{
                     SessionId = $Init.session_id
                     Command   = 'runscript'
@@ -1746,25 +1965,27 @@ if (Test-Path $RegPath) {
                 if ($Token) {
                     $CmdParam.Arguments += ' -CommandLine="' + $Token + '"'
                 }
-                Invoke-FalconAdminCommand @CmdParam
-            }
-            if ($Request.cloud_request_id) {
-                do {
-                    Start-Sleep -Seconds 5
-                    $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
-                } until ($Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr)
-                $HostInfo | Select-Object cid, device_id, hostname | ForEach-Object {
-                    $Status = if ($Confirm.stdout) {
-                        $Confirm.stdout | ConvertFrom-Json | ForEach-Object {
-                            "[$($_.Id)] '$($_.ProcessName)' started removal of the Falcon sensor"
+                $Request = Invoke-FalconAdminCommand @CmdParam
+                if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+                    do {
+                        Start-Sleep -Seconds 5
+                        $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
+                    } until (
+                        $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
+                    )
+                    $HostInfo | Select-Object cid, device_id, hostname | ForEach-Object {
+                        $Status = if ($Confirm.stdout) {
+                            $Confirm.stdout | ConvertFrom-Json | ForEach-Object {
+                                "[$($_.Id)] '$($_.ProcessName)' started removal of the Falcon sensor"
+                            }
+                        } else {
+                            $Confirm.stderr
                         }
-                    } elseif ($Confirm.stderr) {
-                        $Confirm.stderr
-                    } else {
-                        'Unexpected error'
+                        Add-Property -Object $_ -Name 'status' -Value $Status
+                        $_
                     }
-                    Add-Property -Object $_ -Name 'status' -Value $Status
-                    $_
+                } else {
+                    $Request
                 }
             }
         } catch {

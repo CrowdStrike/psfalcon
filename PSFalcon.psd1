@@ -77,10 +77,10 @@
       'Set-FalconDeviceControlPrecedence',
 
       # devices.ps1
-      'Add-FalconHostTag',
+      'Add-FalconGroupingTag',
       'Get-FalconHost',
       'Invoke-FalconHostAction',
-      'Remove-FalconHostTag',
+      'Remove-FalconGroupingTag',
 
       # falcon-container.ps1
       'Get-FalconContainerToken',
@@ -233,13 +233,16 @@
       'Set-FalconPreventionPrecedence',
 
       # psfalcon.psd1
+      'Add-FalconSensorTag',
       'Export-FalconConfig',
       'Export-FalconReport',
       'Find-FalconDuplicate',
+      'Get-FalconSensorTag',
       'Get-FalconQueue',
       'Import-FalconConfig',
       'Invoke-FalconDeploy',
       'Invoke-FalconRtr',
+      'Remove-FalconSensorTag',
       'Send-FalconWebhook',
       'Show-FalconMap',
       'Show-FalconModule',
@@ -374,6 +377,10 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
 New Commands
+  * psfalcon
+    'Add-FalconSensorTag'
+    'Get-FalconSensorTag'
+    'Remove-FalconSensorTag'
 
 Command Changes
   * Get-FalconBehavior
@@ -385,6 +392,12 @@ Command Changes
   * Invoke-FalconDeploy
     Added check for OS version and 'cd_temp' step to change to a default temporary directory (\Windows\Temp or
     /tmp) before the 'put' and 'run' commands.
+
+  * Add-FalconHostTag
+    Renamed to 'Add-FalconGroupingTag' to clarify purpose and prevent confusion with 'Add-FalconSensorTag'.
+
+  * Remove-FalconHostTag
+    Renamed to 'Remove-FalconGroupingTag' to clarify purpose and prevent confusion with 'Remove-FalconSensorTag'.
 
 GitHub Issues
   * Issue #79: Fixed bug with 'Invoke-FalconRtr' using the 'get' command that prevented completion of 'get'
