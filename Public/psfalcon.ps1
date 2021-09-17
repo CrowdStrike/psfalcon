@@ -1515,20 +1515,18 @@ function Invoke-FalconRtr {
                     }
                     # Perform command request and capture result
                     $CmdRequest = & $InvokeCmd @CmdParam -BatchId $InitRequest.batch_id
-                    $CmdContent = if ($CmdRequest.hosts) {
+                    $CmdResult = if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
                         # Capture 'hosts' for 'Invoke-FalconBatchGet'
-                        $CmdRequest.hosts
-                    } else {
-                        $CmdRequest
-                    }
-                    $CmdResult = Get-RtrResult -Object $CmdContent -Output $InitResult
-                    if ($InvokeCmd -eq 'Invoke-FalconBatchGet' -and $CmdRequest.batch_get_cmd_req_id) {
-                        $CmdResult | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
+                        $CmdContent = Get-RtrResult -Object $CmdRequest.hosts -Output $InitResult
+                        $CmdContent | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
                             # Update 'batch_get_cmd_req_id' and remove 'stdout'
                             Add-Property -Object $_ -Name 'batch_get_cmd_req_id' -Value (
                                 $CmdRequest.batch_get_cmd_req_id)
                             $_.stdout = $null
                         }
+                        $CmdContent
+                    } else {
+                        Get-RtrResult -Object $CmdRequest -Output $InitResult
                     }
                     $CmdResult
                 } else {
