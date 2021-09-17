@@ -563,6 +563,10 @@ function Invoke-Falcon {
                     # Verify authorization token
                     Request-FalconToken
                 }
+                if ((Test-FalconToken).Token -eq $false) {
+                    # Stop if authorization token request fails
+                    break
+                }
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
                     $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Depth 32

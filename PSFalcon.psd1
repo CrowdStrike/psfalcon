@@ -390,6 +390,7 @@ GitHub Issues
   * Issue #79: Fixed bug with 'Invoke-FalconRtr' using the 'get' command that prevented completion of 'get'
     requests and output of 'batch_get_cmd_req_id' value.
   * Issue #82: Fixed typo causing relative 'Last X days/hours' value to not be properly calculated.
+  * Issue #84: Added break to abort requests when missing authorization token.
 "@
         }
     }
