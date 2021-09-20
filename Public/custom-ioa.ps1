@@ -126,7 +126,9 @@ function Get-FalconIoaGroup {
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups-full/v1:get', Position = 3)]
-        [ValidateSet('created_by', 'created_on', 'description', 'enabled', 'modified_by', 'modified_on', 'name')]
+        [ValidateSet('created_by.asc','created_by.desc','created_on.asc','created_on.desc','description.asc',
+            'description.desc','enabled.asc','enabled.desc','modified_by.asc','modified_by.desc',
+            'modified_on.asc','modified_on.desc','name.asc','name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 4)]
@@ -220,10 +222,15 @@ function Get-FalconIoaRule {
         [string] $Query,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 3)]
-        [ValidateSet('rules.created_by', 'rules.created_on', 'rules.current_version.action_label',
-            'rules.current_version.description', 'rules.current_version.modified_by',
-            'rules.current_version.modified_on', 'rules.current_version.name',
-            'rules.current_version.pattern_severity', 'rules.enabled', 'rules.ruletype_name')]
+        [ValidateSet('rules.created_by.asc','rules.created_by.desc','rules.created_on.asc',
+            'rules.created_on.desc','rules.current_version.action_label.asc',
+            'rules.current_version.action_label.desc','rules.current_version.description.asc',
+            'rules.current_version.description.desc','rules.current_version.modified_by.asc',
+            'rules.current_version.modified_by.desc','rules.current_version.modified_on.asc',
+            'rules.current_version.modified_on.desc','rules.current_version.name.asc',
+            'rules.current_version.name.desc','rules.current_version.pattern_severity.asc',
+            'rules.current_version.pattern_severity.desc','rules.enabled.asc','rules.enabled.desc',
+            'rules.ruletype_name.asc','rules.ruletype_name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 4)]

@@ -386,8 +386,44 @@ Command Changes
   * Get-FalconBehavior
     Updated 'Limit' to maximum of 500 to match API.
 
+  * Get-FalconCidGroup
+    Updated 'Sort' values.
+
+  * Get-FalconCidGroupMember
+    Updated 'Sort' values.
+
+  * Get-FalconGroupRole
+    Updated 'Sort' values.
+
+  * Get-FalconHost
+    Added list of accepted 'Sort' values based on related 'Filter' values accepted by 'devices-scroll' API.
+
   * Get-FalconIncident
     Update 'Limit' to maximum of 500 to match API.
+
+  * Get-FalconIoaGroup
+    Updated 'Sort' values.
+
+  * Get-FalconIoaRule
+    Updated 'Sort' values.
+
+  * Get-FalconIoc
+    Updated 'Sort' values.
+
+  * Get-FalconMemberCid
+    Updated 'Sort' values.
+
+  * Get-FalconScheduledReport
+    Updated 'Sort' values.
+
+  * Get-FalconQuarantine
+    Updated 'Sort' values.
+
+  * Get-FalconUserGroup
+    Updated 'Sort' values.
+
+  * Get-FalconUserGroupMember
+    Updated 'Sort' values.
 
   * Invoke-FalconDeploy
     Added check for OS version and 'cd_temp' step to change to a default temporary directory (\Windows\Temp or

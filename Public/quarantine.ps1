@@ -13,9 +13,9 @@ function Get-FalconQuarantine {
         [string] $Query,
 
         [Parameter(ParameterSetName = '/quarantine/queries/quarantined-files/v1:get', Position = 3)]
-        [ValidateSet('hostname|asc', 'hostname|desc', 'username|asc', 'username|desc', 'date_updated|asc',
-            'date_updated|desc', 'date_created|asc', 'date_created|desc', 'paths.path|asc', 'paths.path|desc',
-            'paths.state|asc', 'paths.state|desc', 'state|asc', 'state|desc')]
+        [ValidateSet('hostname.asc', 'hostname.desc', 'username.asc', 'username.desc', 'date_updated.asc',
+            'date_updated.desc', 'date_created.asc', 'date_created.desc', 'paths.path.asc', 'paths.path.desc',
+            'paths.state.asc', 'paths.state.desc', 'state.asc', 'state.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/quarantine/queries/quarantined-files/v1:get', Position = 4)]

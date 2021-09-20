@@ -18,7 +18,8 @@ function Get-FalconScheduledReport {
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 3)]
-        [ValidateSet('created_on', 'last_updated_on', 'last_execution_on', 'next_execution_on')]
+        [ValidateSet('created_on.asc','created_on.desc','last_updated_on.asc','last_updated_on.desc',
+            'last_execution_on.asc','last_execution_on.desc','next_execution_on.asc','next_execution_on.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 4)]

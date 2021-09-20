@@ -46,6 +46,22 @@ function Get-FalconHost {
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 2)]
+        [ValidateSet('device_id.asc','device_id.desc','agent_load_flags.asc','agent_load_flags.desc',
+            'agent_version.asc','agent_version.desc','bios_manufacturer.asc','bios_manufacturer.desc',
+            'bios_version.asc','bios_version.desc','config_id_base.asc','config_id_base.desc',
+            'config_id_build.asc','config_id_build.desc','config_id_platform.asc','config_id_platform.desc',
+            'cpu_signature.asc','cpu_signature.desc','external_ip.asc','external_ip.desc','first_seen.asc',
+            'first_seen.desc','hostname.asc','hostname.desc','last_login_timestamp.asc',
+            'last_login_timestamp.desc','last_seen.asc','last_seen.desc','local_ip.asc','local_ip.desc',
+            'local_ip.raw.asc','local_ip.raw.desc','mac_address.asc','mac_address.desc','machine_domain.asc',
+            'machine_domain.desc','major_version.asc','major_version.desc','minor_version.asc',
+            'minor_version.desc','modified_timestamp.asc','modified_timestamp.desc','os_version.asc',
+            'os_version.desc','ou.asc','ou.desc','platform_id.asc','platform_id.desc','platform_name.asc',
+            'platform_name.desc','product_type_desc.asc','product_type_desc.desc','reduced_functionality_mode.asc',
+            'reduced_functionality_mode.desc','release_group.asc','release_group.desc','serial_number.asc',
+            'serial_number.desc','site_name.asc','site_name.desc','status.asc','status.desc',
+            'system_manufacturer.asc','system_manufacturer.desc','system_product_name.asc',
+            'system_product_name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 3)]

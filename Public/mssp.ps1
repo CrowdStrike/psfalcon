@@ -174,7 +174,7 @@ function Get-FalconCidGroup {
         [string] $Name,
 
         [Parameter(ParameterSetName = '/mssp/queries/cid-groups/v1:get', Position = 2)]
-        [ValidateSet('last_modified_timestamp', 'name')]
+        [ValidateSet('last_modified_timestamp.asc', 'last_modified_timestamp.desc', 'name.asc', 'name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/mssp/queries/cid-groups/v1:get', Position = 3)]
@@ -223,7 +223,7 @@ function Get-FalconCidGroupMember {
         [string] $Cid,
 
         [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Position = 2)]
-        [ValidateSet('last_modified_timestamp')]
+        [ValidateSet('last_modified_timestamp.asc', 'last_modified_timestamp.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/mssp/queries/cid-group-members/v1:get', Position = 3)]
@@ -278,7 +278,7 @@ function Get-FalconGroupRole {
         [string] $RoleId,
 
         [Parameter(ParameterSetName = '/mssp/queries/mssp-roles/v1:get', Position = 4)]
-        [ValidateSet('last_modified_timestamp')]
+        [ValidateSet('last_modified_timestamp.asc', 'last_modified_timestamp.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/mssp/queries/mssp-roles/v1:get', Position = 5)]
@@ -324,7 +324,7 @@ function Get-FalconMemberCid {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/mssp/queries/children/v1:get', Position = 1)]
-        [ValidateSet('last_modified_timestamp')]
+        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/mssp/queries/children/v1:get', Position = 2)]
@@ -368,7 +368,7 @@ function Get-FalconUserGroup {
         [string] $Name,
 
         [Parameter(ParameterSetName = '/mssp/queries/user-groups/v1:get', Position = 2)]
-        [ValidateSet('last_modified_timestamp', 'name')]
+        [ValidateSet('last_modified_timestamp.asc', 'last_modified_timestamp.desc', 'name.asc', 'name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/mssp/queries/user-groups/v1:get', Position = 3)]
@@ -416,7 +416,7 @@ function Get-FalconUserGroupMember {
         [string] $UserId,
 
         [Parameter(ParameterSetName = '/mssp/queries/user-group-members/v1:get', Position = 2)]
-        [ValidateSet('last_modified_timestamp')]
+        [ValidateSet('last_modified_timestamp.asc', 'last_modified_timestamp.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/mssp/queries/user-group-members/v1:get', Position = 3)]
