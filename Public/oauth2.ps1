@@ -137,6 +137,7 @@ function Request-FalconToken {
                         [void] $Script:Falcon.Remove("$_")
                     }
                     [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
+                    throw 'Authorization token request failed.'
                 }
             }
         } else {

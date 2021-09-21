@@ -435,6 +435,10 @@ Command Changes
   * Remove-FalconHostTag
     Renamed to 'Remove-FalconGroupingTag' to clarify purpose and prevent confusion with 'Remove-FalconSensorTag'.
 
+  * Request-FalconToken
+    Added 'Authorization token request failed' message when token request fails to ensure that an error is
+    produced when an HTTP 403 response is suppressed from the oauth2 API.
+
 GitHub Issues
   * Issue #79: Fixed bug with 'Invoke-FalconRtr' using the 'get' command that prevented completion of 'get'
     requests and output of 'batch_get_cmd_req_id' value.
