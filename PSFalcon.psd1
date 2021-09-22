@@ -383,6 +383,9 @@ New Commands
     'Remove-FalconSensorTag'
 
 Command Changes
+  * Add-FalconHostTag
+    Renamed to 'Add-FalconGroupingTag' to clarify purpose and prevent confusion with 'Add-FalconSensorTag'.
+
   * Get-FalconBehavior
     Updated 'Limit' to maximum of 500 to match API.
 
@@ -429,8 +432,9 @@ Command Changes
     Added check for OS version and 'cd_temp' step to change to a default temporary directory (\Windows\Temp or
     /tmp) before the 'put' and 'run' commands.
 
-  * Add-FalconHostTag
-    Renamed to 'Add-FalconGroupingTag' to clarify purpose and prevent confusion with 'Add-FalconSensorTag'.
+  * Invoke-FalconRtr
+    Supressed output of session init 'stdout' value so it doesn't display when the following command results in
+    an error.
 
   * Remove-FalconHostTag
     Renamed to 'Remove-FalconGroupingTag' to clarify purpose and prevent confusion with 'Remove-FalconSensorTag'.

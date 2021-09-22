@@ -1650,8 +1650,9 @@ function Invoke-FalconRtr {
                 $InitResult = Get-RtrResult -Object $InitRequest.hosts -Output $Group
                 if ($InitRequest.batch_id) {
                     $InitResult | Where-Object { $_.session_id } | ForEach-Object {
-                        # Add batch_id to initialized sessions
+                        # Add batch_id to initialized sessions and clear 'stdout' result
                         $_.batch_id = $InitRequest.batch_id
+                        $_.stdout = $null
                     }
                     # Perform command request and capture result
                     $CmdRequest = & $InvokeCmd @CmdParam -BatchId $InitRequest.batch_id
@@ -1659,10 +1660,9 @@ function Invoke-FalconRtr {
                         # Capture 'hosts' for 'Invoke-FalconBatchGet'
                         $CmdContent = Get-RtrResult -Object $CmdRequest.hosts -Output $InitResult
                         $CmdContent | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
-                            # Update 'batch_get_cmd_req_id' and remove 'stdout'
+                            # Update 'batch_get_cmd_req_id'
                             Add-Property -Object $_ -Name 'batch_get_cmd_req_id' -Value (
                                 $CmdRequest.batch_get_cmd_req_id)
-                            $_.stdout = $null
                         }
                         $CmdContent
                     } else {
