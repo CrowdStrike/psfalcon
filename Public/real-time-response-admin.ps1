@@ -41,10 +41,10 @@ function Edit-FalconScript {
         [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Mandatory = $true,
             Position = 2)]
         [ValidateScript({
-            if (Test-Path $_) {
+            if (Test-Path -Path $_ -PathType Leaf) {
                 $true
             } else {
-                throw "Cannot find path '$_' because it does not exist."
+                throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
         [string] $Path,
@@ -300,10 +300,10 @@ function Send-FalconPutFile {
         [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:post', Mandatory = $true,
             Position = 1)]
         [ValidateScript({
-            if (Test-Path $_) {
+            if (Test-Path -Path $_ -PathType Leaf) {
                 $true
             } else {
-                throw "Cannot find path '$_' because it does not exist."
+                throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
         [string] $Path,
@@ -345,10 +345,10 @@ function Send-FalconScript {
         [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:post', Mandatory = $true,
             Position = 1)]
         [ValidateScript({
-            if (Test-Path $_) {
+            if (Test-Path -Path $_ -PathType Leaf) {
                 $true
             } else {
-                throw "Cannot find path '$_' because it does not exist."
+                throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
         [string] $Path,

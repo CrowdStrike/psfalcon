@@ -143,6 +143,9 @@
       'New-FalconHostGroup',
       'Remove-FalconHostGroup',
 
+      # identity-graphql.ps1
+      'Invoke-FalconIdentityGraph',
+
       # incidents.ps1
       'Get-FalconBehavior',
       'Get-FalconIncident',
@@ -377,63 +380,41 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
 New Commands
+  * identity-graphql
+    'Invoke-FalconIdentityGraph'
+
   * psfalcon
     'Add-FalconSensorTag'
     'Get-FalconSensorTag'
     'Remove-FalconSensorTag'
 
+General Changes
+  * Added support for results from Identity Protection APIs to 'Write-Result'.
+
 Command Changes
+  Updated the 'Sort' values for the following commands:
+    'Get-FalconCidGroup', 'Get-FalconCidGroupMember', 'Get-FalconGroupRole', 'Get-FalconIoaGroup',
+    'Get-FalconIoaRole', 'Get-FalconIoc', 'Get-FalconMemberCid', 'Get-FalconScheduledReport',
+    'Get-FalconQuarantine', 'Get-FalconUserGroup', 'Get-FalconUserGroupMember'.
+
+  Updated the 'Limit' values for the following commands:
+    'Get-FalconBehavior', 'Get-FalconIncident'.
+
+  Updated the following commands to generate an error when the 'Path' parameter is given a directory:
+    'Edit-FalconScript', 'Send-FalconPutFile', 'Send-FalconSample', 'Send-FalconScript'.
+
   * Add-FalconHostTag
     Renamed to 'Add-FalconGroupingTag' to clarify purpose and prevent confusion with 'Add-FalconSensorTag'.
 
-  * Get-FalconBehavior
-    Updated 'Limit' to maximum of 500 to match API.
-
-  * Get-FalconCidGroup
-    Updated 'Sort' values.
-
-  * Get-FalconCidGroupMember
-    Updated 'Sort' values.
-
-  * Get-FalconGroupRole
-    Updated 'Sort' values.
-
   * Get-FalconHost
     Added list of accepted 'Sort' values based on related 'Filter' values accepted by 'devices-scroll' API.
-
-  * Get-FalconIncident
-    Update 'Limit' to maximum of 500 to match API.
-
-  * Get-FalconIoaGroup
-    Updated 'Sort' values.
-
-  * Get-FalconIoaRule
-    Updated 'Sort' values.
-
-  * Get-FalconIoc
-    Updated 'Sort' values.
-
-  * Get-FalconMemberCid
-    Updated 'Sort' values.
-
-  * Get-FalconScheduledReport
-    Updated 'Sort' values.
-
-  * Get-FalconQuarantine
-    Updated 'Sort' values.
-
-  * Get-FalconUserGroup
-    Updated 'Sort' values.
-
-  * Get-FalconUserGroupMember
-    Updated 'Sort' values.
 
   * Invoke-FalconDeploy
     Added check for OS version and 'cd_temp' step to change to a default temporary directory (\Windows\Temp or
     /tmp) before the 'put' and 'run' commands.
 
   * Invoke-FalconRtr
-    Supressed output of session init 'stdout' value so it doesn't display when the following command results in
+    Suppressed output of session init 'stdout' value so it doesn't display when the following command results in
     an error.
 
   * Remove-FalconHostTag
@@ -448,6 +429,7 @@ GitHub Issues
     requests and output of 'batch_get_cmd_req_id' value.
   * Issue #82: Fixed typo causing relative 'Last X days/hours' value to not be properly calculated.
   * Issue #84: Added break to abort requests when missing authorization token.
+  * Issue #85: Modified 'Update-FieldName' to ensure evaluation of [boolean] parameters.
 "@
         }
     }

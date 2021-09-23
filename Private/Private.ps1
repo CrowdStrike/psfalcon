@@ -686,7 +686,7 @@ function Update-FieldName {
         # Update user input field names for API submission
         if ($Fields.Keys -and $Inputs.Keys) {
             ($Fields.Keys).foreach{
-                if ($Inputs.$_) {
+                if ($Inputs.$_ -or $Inputs.$_ -is [boolean]) {
                     $Inputs["$($Fields.$_)"] = $Inputs.$_
                     [void] $Inputs.Remove($_)
                 }
@@ -702,7 +702,7 @@ function Write-Result {
     )
     begin {
         $Verbose = if ($Request.Result.Headers) {
-            # Capture response header for verbose output
+            # Capture initial response header for verbose output
             ($Request.Result.Headers.GetEnumerator().foreach{
                 ,"$($_.Key)=$($_.Value)"
             })
@@ -710,9 +710,10 @@ function Write-Result {
     }
     process {
         if ($Request.Result.Content) {
-            if ($Request.Result.Content.Headers.ContentType -eq 'application/json') {
-                # Convert Json response
-                $Json = ConvertFrom-Json -InputObject ($Request.Result.Content).ReadAsStringAsync().Result
+            $Json = if ($Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json' -or
+            $Request.Result.Content.Headers.ContentType -eq 'application/json') {
+                # Convert and capture Json content
+                ConvertFrom-Json -InputObject ($Request.Result.Content).ReadAsStringAsync().Result
                 if ($Json.meta) {
                     # Capture 'meta' values for verbose output
                     $Verbose += ($Json.meta.PSObject.Properties).foreach{
@@ -726,48 +727,66 @@ function Write-Result {
                             ,"$($Parent).$($_.Name)=$($_.Value)"
                         }
                     }
-                    # Output response header and 'meta'
-                    Write-Verbose "[Write-Result] $($Verbose -join ', ')"
+                } elseif ($Json.extensions) {
+                    # Capture 'extensions' values for verbose output
+                    $Verbose += ($Json.extensions.PSObject.Properties).foreach{
+                        $Parent = 'extensions'
+                        if ($_.Value -is [PSCustomObject]) {
+                            $Parent += ".$($_.Name)"
+                            ($_.Value.PSObject.Properties).foreach{
+                                ,"$($Parent).$($_.Name)=$($_.Value)"
+                            }
+                        } else {
+                            ,"$($Parent).$($_.Name)=$($_.Value)"
+                        }
+                    }
                 }
-                if ($Json) {
-                    $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch '^(errors|meta)$' -and
-                    $_.Value }).foreach{
-                        # Gather field names from result, not including 'errors' and 'meta'
+            }
+            # Output response header and 'meta' or 'extensions' content
+            Write-Verbose "[Write-Result] $($Verbose -join ', ')"
+            if ($Json) {
+                ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                    ($_.Value).foreach{
+                        # Output errors
+                        $PSCmdlet.WriteError(
+                            [System.Management.Automation.ErrorRecord]::New(
+                                [Exception]::New("$($_.code): $($_.message)"),
+                                $Json.meta.trace_id,
+                                [System.Management.Automation.ErrorCategory]::NotSpecified,
+                                $Request
+                            )
+                        )
+                    }
+                }
+                $ResultFields = ($Json.PSObject.Properties).Where({
+                    $_.Name -notmatch '^(errors|extensions|meta)$' -and $_.Value
+                }).foreach{
+                    # Gather field names from result, not including 'errors', 'extensions', or 'meta'
+                    $_.Name
+                }
+                if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
+                    if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
+                        # Output 'combined.resources'
+                        ($Json.($ResultFields[0]).resources).PSObject.Properties.Value
+                    } elseif ($ResultFields[0] -eq 'data') {
+                        # Output 'data.entities'
+                        $Json.($ResultFields[0]).PSObject.Properties.Value
+                    } else {
+                        # Output single field
+                        $Json.($ResultFields[0])
+                    }
+                } elseif ($ResultFields) {
+                    # Export all fields
+                    $Json | Select-Object $ResultFields
+                } else {
+                    # Output relevant 'meta' values
+                    $MetaFields = ($Json.meta.PSObject.Properties).Where({
+                        $_.Name -notmatch '^(entity|pagination|powered_by|query_time|trace_id)$'
+                    }).foreach{
                         $_.Name
                     }
-                    if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
-                        if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
-                            # Output 'combined.resources'
-                            ($Json.($ResultFields[0]).resources).PSObject.Properties.Value
-                        } else {
-                            # Output single field
-                            $Json.($ResultFields[0])
-                        }
-                    } elseif ($ResultFields) {
-                        # Export all fields
-                        $Json | Select-Object $ResultFields
-                    } else {
-                        # Output relevant 'meta' values
-                        $MetaFields = ($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch ('^(entity|' +
-                        'pagination|powered_by|query_time|trace_id)$') }).foreach{
-                            $_.Name
-                        }
-                        if ($MetaFields) {
-                            $Json.meta | Select-Object $MetaFields
-                        }
-                    }
-                    ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                        ($_.Value).foreach{
-                            # Output errors
-                            $PSCmdlet.WriteError(
-                                [System.Management.Automation.ErrorRecord]::New(
-                                    [Exception]::New("$($_.code): $($_.message)"),
-                                    $Json.meta.trace_id,
-                                    [System.Management.Automation.ErrorCategory]::NotSpecified,
-                                    $Request
-                                )
-                            )
-                        }
+                    if ($MetaFields) {
+                        $Json.meta | Select-Object $MetaFields
                     }
                 }
             } else {

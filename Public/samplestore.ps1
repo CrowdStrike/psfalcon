@@ -96,10 +96,10 @@ function Send-FalconSample {
     param(
         [Parameter(ParameterSetName = '/samples/entities/samples/v3:post', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            if (Test-Path $_) {
+            if (Test-Path -Path $_ -PathType Leaf) {
                 $true
             } else {
-                throw "Cannot find path '$_' because it does not exist."
+                throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
         [string] $Path,
