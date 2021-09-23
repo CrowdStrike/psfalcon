@@ -745,34 +745,17 @@ function Write-Result {
             # Output response header and 'meta' or 'extensions' content
             Write-Verbose "[Write-Result] $($Verbose -join ', ')"
             if ($Json) {
-                ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                    ($_.Value).foreach{
-                        # Output errors
-                        $PSCmdlet.WriteError(
-                            [System.Management.Automation.ErrorRecord]::New(
-                                [Exception]::New("$($_.code): $($_.message)"),
-                                $Json.meta.trace_id,
-                                [System.Management.Automation.ErrorCategory]::NotSpecified,
-                                $Request
-                            )
-                        )
-                    }
-                }
                 $ResultFields = ($Json.PSObject.Properties).Where({
                     $_.Name -notmatch '^(errors|extensions|meta)$' -and $_.Value
                 }).foreach{
-                    # Gather field names from result, not including 'errors', 'extensions', or 'meta'
+                    # Gather field names from result and exclude 'errors', 'extensions', and 'meta'
                     $_.Name
                 }
                 if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
-                    if ($ResultFields[0] -eq 'combined' -and $Json.$ResultFields[0].resources) {
+                    if ($ResultFields[0] -eq 'combined' -and $Json.($ResultFields[0]).resources) {
                         # Output 'combined.resources'
-                        ($Json.($ResultFields[0]).resources).PSObject.Properties.Value
-                    } elseif ($ResultFields[0] -eq 'data') {
-                        # Output 'data.entities'
-                        $Json.($ResultFields[0]).PSObject.Properties.Value
+                        $Json.($ResultFields[0]).resources.PSObject.Properties.Value
                     } else {
-                        # Output single field
                         $Json.($ResultFields[0])
                     }
                 } elseif ($ResultFields) {
@@ -787,6 +770,19 @@ function Write-Result {
                     }
                     if ($MetaFields) {
                         $Json.meta | Select-Object $MetaFields
+                    }
+                }
+                ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                    ($_.Value).foreach{
+                        # Output errors from Json response
+                        $PSCmdlet.WriteError(
+                            [System.Management.Automation.ErrorRecord]::New(
+                                [Exception]::New("$($_.code): $($_.message)"),
+                                $Json.meta.trace_id,
+                                [System.Management.Automation.ErrorCategory]::NotSpecified,
+                                $Request
+                            )
+                        )
                     }
                 }
             } else {
