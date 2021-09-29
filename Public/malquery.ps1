@@ -22,17 +22,8 @@ function Get-FalconMalQuery {
 function Get-FalconMalQueryQuota {
     [CmdletBinding(DefaultParameterSetName = '/malquery/aggregates/quotas/v1:get')]
     param()
-    begin {
-        $Param = @{
-            Path    = "$($Script:Falcon.Hostname)/malquery/aggregates/quotas/v1"
-            Method  = 'get'
-            Headers = @{
-                Accept = 'application/json'
-            }
-        }
-    }
     process {
-        $Request = $Script:Falcon.Api.Invoke($Param)
+        $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta
         } else {

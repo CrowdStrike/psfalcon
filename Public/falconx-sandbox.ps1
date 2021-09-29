@@ -92,17 +92,8 @@ function Get-FalconSubmission {
 function Get-FalconSubmissionQuota {
     [CmdletBinding(DefaultParameterSetName = '/falconx/queries/submissions/v1:get')]
     param()
-    begin {
-        $Param = @{
-            Path    = "$($Script:Falcon.Hostname)/falconx/queries/submissions/v1?limit=1"
-            Method  = 'get'
-            Headers = @{
-                Accept = 'application/json'
-            }
-        }
-    }
     process {
-        $Request = $Script:Falcon.Api.Invoke($Param)
+        $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta.quota
         } else {

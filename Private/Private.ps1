@@ -525,12 +525,17 @@ function Invoke-Falcon {
         [object] $Headers,
         [object] $Inputs,
         [object] $Format,
+        [switch] $RawOutput,
         [int] $Max
     )
     begin {
+        if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
+            # Request initial authorization token
+            Request-FalconToken
+        }
         # Gather parameters for 'Get-ParamSet'
         $GetParam = @{}
-        $PSBoundParameters.GetEnumerator().Where({ $_.Key -ne 'Command' }).foreach{
+        $PSBoundParameters.GetEnumerator().Where({ $_.Key -notmatch '^(Command|RawOutput)$' }).foreach{
             $GetParam.Add($_.Key, $_.Value)
         }
         if (!$GetParam.Headers) {
@@ -558,21 +563,20 @@ function Invoke-Falcon {
     process {
         foreach ($ParamSet in (Get-ParamSet @GetParam)) {
             try {
-                if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or
-                ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15))) {
-                    # Verify authorization token
+                if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15)) {
+                    # Refresh authorization token during loop
                     Request-FalconToken
-                }
-                if ((Test-FalconToken).Token -eq $false) {
-                    # Stop if authorization token request fails
-                    break
                 }
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
                     $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Depth 32
                 }
+                # Make request
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
-                if ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
+                if ($RawOutput) {
+                    # Return result if 'RawOutput' is defined
+                    $Request
+                } elseif ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
                     # Display 'Outfile'
                     Get-ChildItem $ParamSet.Endpoint.Outfile
                 } elseif ($Request.Result.Content) {
@@ -594,7 +598,7 @@ function Invoke-Falcon {
                             }
                             if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt
                             $Pagination.total) {
-                                # Repeat requests
+                                # Repeat request(s)
                                 $Param = @{
                                     ParamSet   = $ParamSet
                                     Pagination = $Pagination

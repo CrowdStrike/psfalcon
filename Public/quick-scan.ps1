@@ -44,17 +44,8 @@ function Get-FalconQuickScan {
 function Get-FalconQuickScanQuota {
     [CmdletBinding(DefaultParameterSetName = '/scanner/queries/scans/v1:get')]
     param()
-    begin {
-        $Param = @{
-            Path    = "$($Script:Falcon.Hostname)/scanner/queries/scans/v1?limit=1"
-            Method  = 'get'
-            Headers = @{
-                Accept = 'application/json'
-            }
-        }
-    }
     process {
-        $Request = $Script:Falcon.Api.Invoke($Param)
+        $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta.quota
         } else {

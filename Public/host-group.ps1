@@ -152,6 +152,11 @@ function Invoke-FalconHostGroupAction {
         [ValidatePattern('^\w{32}$')]
         [array] $HostIds
     )
+    begin {
+        if (!$Script:Falcon.Hostname) {
+            Request-FalconToken
+        }
+    }
     process {
         $Param = @{
             Path    = "$($Script:Falcon.Hostname)/devices/entities/host-group-actions/v1?action_name=$(
@@ -163,10 +168,12 @@ function Invoke-FalconHostGroupAction {
             }
         }
         $Body = @{
-            action_parameters = @{
-                name  = 'filter'
-                value = ''
-            }
+            action_parameters = @(
+                @{
+                    name  = 'filter'
+                    value = ''
+                }
+            )
             ids = @( $PSBoundParameters.Id )
         }
         for ($i = 0; $i -lt ($PSBoundParameters.HostIds | Measure-Object).Count; $i += 500) {
@@ -175,7 +182,8 @@ function Invoke-FalconHostGroupAction {
             $IdString = ($PSBoundParameters.HostIds[$i..($i + 499)] | ForEach-Object {
                 "'$_'"
             }) -join ','
-            $Clone.Body.action_parameters.value = "(device_id:[$IdString])"
+            $Clone.Body.action_parameters[0].value = "(device_id:[$IdString])"
+            $Clone.Body = ConvertTo-Json -InputObject $Clone.Body -Depth 8
             Write-Result ($Script:Falcon.Api.Invoke($Clone))
         }
     }

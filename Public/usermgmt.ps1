@@ -106,6 +106,13 @@ function Get-FalconUser {
 
         [Parameter(ParameterSetName = '/users/queries/user-uuids-by-email/v1:get', Mandatory = $true,
             Position = 2)]
+        [ValidateScript({
+            if ((Confirm-String $_) -eq 'email') {
+                $true
+            } else {
+                throw "'$_' is not a valid email address."
+            }
+        })]
         [array] $Usernames,
 
         [Parameter(ParameterSetName = '/users/queries/user-uuids-by-cid/v1:get')]
@@ -134,6 +141,13 @@ function New-FalconUser {
     [CmdletBinding(DefaultParameterSetName = '/users/entities/users/v1:post')]
     param(
         [Parameter(ParameterSetName = '/users/entities/users/v1:post', Mandatory = $true, Position = 1)]
+        [ValidateScript({
+            if ((Confirm-String $_) -eq 'email') {
+                $true
+            } else {
+                throw "'$_' is not a valid email address."
+            }
+        })]
         [string] $Username,
 
         [Parameter(ParameterSetName = '/users/entities/users/v1:post', Position = 2)]

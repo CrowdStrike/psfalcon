@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.1.4'
+    ModuleVersion        = '2.1.5'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -379,57 +379,26 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
-New Commands
-  * identity-graphql
-    'Invoke-FalconIdentityGraph'
-
-  * psfalcon
-    'Add-FalconSensorTag'
-    'Get-FalconSensorTag'
-    'Remove-FalconSensorTag'
-
 General Changes
-  * Added support for results from Identity Protection APIs to 'Write-Result'.
+  * Added an authorization token check earlier in the private function 'Invoke-Falcon'. This change is designed
+    to help prevent "An invalid request URI was provided. The request URI must either be an absolute URI or
+    BaseAddress must be set" errors from appearing when a command prompts for ClientId/ClientSecret because
+    an authorization token had not been previously requested.
+
+  * Added additional authorization token checks to commands that don't use 'Invoke-Falcon'.
+
+  * Updated 'Invoke-Falcon' private function to allow the return of an un-formatted
+    [System.Net.Http.HttpResponseMessage] using the '-RawOutput' switch for commands that need 'meta' content.
 
 Command Changes
-  Updated the 'Sort' values for the following commands:
-    'Get-FalconCidGroup', 'Get-FalconCidGroupMember', 'Get-FalconGroupRole', 'Get-FalconIoaGroup',
-    'Get-FalconIoaRole', 'Get-FalconIoc', 'Get-FalconMemberCid', 'Get-FalconScheduledReport',
-    'Get-FalconQuarantine', 'Get-FalconUserGroup', 'Get-FalconUserGroupMember'.
+  * Updated 'Get-Falcon...Quota' commands to use new '-RawOutput' switch.
 
-  Updated the 'Limit' values for the following commands:
-    'Get-FalconBehavior', 'Get-FalconIncident'.
-
-  Updated the following commands to generate an error when the 'Path' parameter is given a directory:
-    'Edit-FalconScript', 'Send-FalconPutFile', 'Send-FalconSample', 'Send-FalconScript'.
-
-  * Add-FalconHostTag
-    Renamed to 'Add-FalconGroupingTag' to clarify purpose and prevent confusion with 'Add-FalconSensorTag'.
-
-  * Get-FalconHost
-    Added list of accepted 'Sort' values based on related 'Filter' values accepted by 'devices-scroll' API.
-
-  * Invoke-FalconDeploy
-    Added check for OS version and 'cd_temp' step to change to a default temporary directory (\Windows\Temp or
-    /tmp) before the 'put' and 'run' commands.
-
-  * Invoke-FalconRtr
-    Suppressed output of session init 'stdout' value so it doesn't display when the following command results in
-    an error.
-
-  * Remove-FalconHostTag
-    Renamed to 'Remove-FalconGroupingTag' to clarify purpose and prevent confusion with 'Remove-FalconSensorTag'.
-
-  * Request-FalconToken
-    Added 'Authorization token request failed' message when token request fails to ensure that an error is
-    produced when an HTTP 403 response is suppressed from the oauth2 API.
+  * Added email string regex check for 'Edit-FalconReconAction', 'Get-FalconUser', 'New-FalconReconAction', and
+    'New-FalconUser'.
 
 GitHub Issues
-  * Issue #79: Fixed bug with 'Invoke-FalconRtr' using the 'get' command that prevented completion of 'get'
-    requests and output of 'batch_get_cmd_req_id' value.
-  * Issue #82: Fixed typo causing relative 'Last X days/hours' value to not be properly calculated.
-  * Issue #84: Added break to abort requests when missing authorization token.
-  * Issue #85: Modified 'Update-FieldName' to ensure evaluation of [boolean] parameters.
+  * Issue #112: Updated 'Invoke-FalconHostGroupAction' to properly convert to Json and fixed an additional
+    formatting error.
 "@
         }
     }

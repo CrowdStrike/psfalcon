@@ -11,7 +11,13 @@ function Edit-FalconReconAction {
         [string] $Frequency,
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true, Position = 3)]
-        [ValidatePattern("^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")]
+        [ValidateScript({
+            if ((Confirm-String $_) -eq 'email') {
+                $true
+            } else {
+                throw "'$_' is not a valid email address."
+            }
+        })]
         [array] $Recipients,
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true, Position = 4)]
@@ -377,6 +383,13 @@ function New-FalconReconAction {
         [string] $Frequency,
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:post', Mandatory = $true, Position = 4)]
+        [ValidateScript({
+            if ((Confirm-String $_) -eq 'email') {
+                $true
+            } else {
+                throw "'$_' is not a valid email address."
+            }
+        })]
         [array] $Recipients
     )
     begin {
