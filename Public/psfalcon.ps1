@@ -1486,10 +1486,9 @@ function Invoke-FalconDeploy {
                             $CmdCd = Invoke-FalconAdminCommand @Param
                             $CdHosts = if ($CmdCd) {
                                 # Output result to CSV and return list of successful 'cd_temp' hosts
-                                $TempRegex = $TempDir -replace '\\','\\'
                                 Write-RtrResult -Object $CmdCd -Step 'cd_temp' -BatchId $Session.batch_id
-                                ,($CmdCd | Where-Object { $_.stdout -match $TempRegex -or $_.offline_queued -eq
-                                    $true }).aid
+                                ,($CmdCd | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
+                                    $_.offline_queued -eq $true }).aid
                             }
                             $PutHosts = if ($CdHosts) {
                                 # Invoke 'put' on successful hosts
@@ -1516,7 +1515,11 @@ function Invoke-FalconDeploy {
                                 # Invoke 'run'
                                 Write-Host ("Starting $Filename on $(($PutHosts | Measure-Object).Count)" +
                                     " $($Pair.Key) host(s)...")
-                                $Arguments = "$(Join-Path -Path $TempDir -ChildPath $Filename)"
+                                $Arguments = if ($Pair.Key -eq 'Windows') {
+                                    "$($TempDir)\$($Filename)"
+                                } else {
+                                    "$($TempDir)/$($Filename)"
+                                }
                                 if ($PSBoundParameters.Arguments) {
                                     $Arguments += " -CommandLine=`"$($PSBoundParameters.Arguments)`""
                                 }
