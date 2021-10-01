@@ -406,6 +406,7 @@ GitHub Issues
   * Issue #113: Updated 'Invoke-FalconDeploy' to check for 'complete = true' plus the lack of a 'stderr' output
     to verify success when using 'put' instead of checking the 'stdout' value, which is different between OS
     versions. Also changed the absolute path for the 'run' command to ensure it works with Linux and Mac.
+  * Issue #116: Updated 'Uninstall-FalconSensor' to request the maintenance mode token when appropriate.
 "@
         }
     }

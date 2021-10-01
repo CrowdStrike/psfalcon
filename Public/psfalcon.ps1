@@ -1955,9 +1955,14 @@ if (Test-Path $RegPath) {
         try {
             $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Id | Select-Object cid, device_id,
                 hostname, device_policies
-            $Token = if ($HostInfo.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
+            $TokenStatus = $HostInfo.device_policies.sensor_update.uninstall_protection
+            $Token = if ($TokenStatus -ne 'DISABLED') {
                 $TokenParam = @{
-                    DeviceId     = $HostInfo.device_id
+                    DeviceId     = if ($TokenStatus -eq 'ENABLED') {
+                        $HostInfo.device_id
+                    } elseif ($TokenStatus -eq 'MAINTENANCE_MODE') {
+                        'MAINTENANCE'
+                    }
                     AuditMessage = "Uninstall-FalconSensor [$((Show-FalconModule).UserAgent)]"
                 }
                 (Get-FalconUninstallToken @TokenParam).uninstall_token
@@ -1966,7 +1971,7 @@ if (Test-Path $RegPath) {
             }
             $InitParam = @{
                 HostId       = $HostInfo.device_id
-                QueueOffline = if ($PSBoundParameters.QueueOffline) {
+                QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) {
                     $true
                 } else {
                     $false
@@ -1983,7 +1988,7 @@ if (Test-Path $RegPath) {
                     $CmdParam.Arguments += ' -CommandLine="' + $Token + '"'
                 }
                 $Request = Invoke-FalconAdminCommand @CmdParam
-                if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+                if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
                     do {
                         Start-Sleep -Seconds 5
                         $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
