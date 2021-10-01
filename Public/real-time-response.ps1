@@ -63,7 +63,7 @@ function Confirm-FalconGetFile {
     process {
         $Request = Invoke-Falcon @Param
         if ($PSCmdlet.ParameterSetName -eq '/real-time-response/combined/batch-get-command/v1:get') {
-            $Request.PSObject.Properties | ForEach-Object {
+            @($Request.PSObject.Properties).foreach{
                 $Aid = $_.Name
                 ($_.Value).PSObject.Properties.Add((New-Object PSNoteProperty('aid', $Aid)))
                 $_.Value

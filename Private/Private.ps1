@@ -120,7 +120,7 @@ function Build-Content {
                     $Value = $_
                     if ($Field -eq 'filter' -and $Value -match $Relative) {
                         # Convert 'last [int] days/hours' to Rfc3339
-                        $Value | Select-String $Relative -AllMatches | ForEach-Object {
+                        @($Value | Select-String $Relative -AllMatches).foreach{
                             foreach ($Match in $_.Matches.Value) {
                                 [int] $Int = $Match -replace $Relative, '${Int}'
                                 $Int = if ($Match -match 'day') {
@@ -491,7 +491,7 @@ function Get-RtrResult {
     process {
         # Update $Output with results from $Object
         foreach ($Result in ($Object | Select-Object $RtrFields)) {
-            $Result.PSObject.Properties | Where-Object { $_.Value } | ForEach-Object {
+            @($Result.PSObject.Properties | Where-Object { $_.Value }).foreach{
                 $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
                     # Convert array result into string
                     $_.Value -join ', '
@@ -507,7 +507,7 @@ function Get-RtrResult {
                 } else {
                     $_.Name
                 }
-                $Output | Where-Object { $_.aid -eq $Result.aid } | ForEach-Object {
+                @($Output | Where-Object { $_.aid -eq $Result.aid }).foreach{
                     $_.$Name = $Value
                 }
             }

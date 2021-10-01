@@ -179,7 +179,7 @@ function Invoke-FalconHostGroupAction {
         for ($i = 0; $i -lt ($PSBoundParameters.HostIds | Measure-Object).Count; $i += 500) {
             $Clone = $Param.Clone()
             $Clone.Add('Body', $Body.Clone())
-            $IdString = ($PSBoundParameters.HostIds[$i..($i + 499)] | ForEach-Object {
+            $IdString = (@($PSBoundParameters.HostIds[$i..($i + 499)]).foreach{
                 "'$_'"
             }) -join ','
             $Clone.Body.action_parameters[0].value = "(device_id:[$IdString])"

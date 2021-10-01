@@ -346,7 +346,14 @@ function Get-FalconQueue {
     [CmdletBinding()]
     param(
         [Parameter(Position = 1)]
-        [int] $Days
+        [int] $Days,
+
+        [Parameter(Position = 2)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname','last_seen',
+            'local_ip','mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'provision_status','reduced_functionality_mode','serial_number','system_manufacturer',
+            'system_product_name','tags')]
+        [array] $Include
     )
     begin {
         $Days = if ($PSBoundParameters.Days) {
@@ -360,49 +367,59 @@ function Get-FalconQueue {
     }
     process {
         try {
-            Get-FalconSession -Filter $Filter -All -Verbose | ForEach-Object {
-                Get-FalconSession -Ids $_ -Queue -Verbose | ForEach-Object {
-                    foreach ($Session in $_) {
-                        $Session.Commands | ForEach-Object {
-                            $Object = [PSCustomObject] @{
-                                aid                = $Session.aid
-                                user_id            = $Session.user_id
-                                user_uuid          = $Session.user_uuid
-                                session_id         = $Session.id
-                                session_created_at = $Session.created_at
-                                session_deleted_at = $Session.deleted_at
-                                session_updated_at = $Session.updated_at
-                                session_status     = $Session.status
-                                command_complete   = $false
-                                command_stdout     = $null
-                                command_stderr     = $null
+            $Sessions = Get-FalconSession -Filter $Filter -Detailed -All -Verbose | Select-Object id, device_id
+            if ($PSBoundParameters.Include) {
+                $HostTable = @{}
+                $PSBoundParameters.Include += 'device_id'
+                @(Get-FalconHost -Ids ($Sessions.device_id | Group-Object).Name -Verbose |
+                Select-Object $PSBoundParameters.Include).foreach{
+                    $HostTable[$_.device_id] = $_ | Select-Object -ExcludeProperty device_id
+                }
+            }
+            foreach ($Session in (Get-FalconSession -Ids $Sessions.id -Queue -Verbose)) {
+                @($Session.Commands).foreach{
+                    $Object = [PSCustomObject] @{
+                        aid                = $Session.aid
+                        user_id            = $Session.user_id
+                        user_uuid          = $Session.user_uuid
+                        session_id         = $Session.id
+                        session_created_at = $Session.created_at
+                        session_deleted_at = $Session.deleted_at
+                        session_updated_at = $Session.updated_at
+                        session_status     = $Session.status
+                        command_complete   = $false
+                        command_stdout     = $null
+                        command_stderr     = $null
+                    }
+                    @($_.PSObject.Properties).foreach{
+                        $Name = if ($_.Name -match '^(created_at|deleted_at|status|updated_at)$') {
+                            "command_$($_.Name)"
+                        } else {
+                            $_.Name
+                        }
+                        $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $_.Value)))
+                    }
+                    if ($Object.command_status -eq 'FINISHED') {
+                        $ConfirmCmd = Get-RtrCommand $Object.base_command -ConfirmCommand
+                        $Param = @{
+                            CloudRequestId = $Object.cloud_request_id
+                            Verbose        = $true
+                            ErrorAction    = 'SilentlyContinue'
+                        }
+                        $CmdResult = & $ConfirmCmd @Param
+                        if ($CmdResult) {
+                            (($CmdResult | Select-Object stdout, stderr, complete).PSObject.Properties).foreach{
+                                $Object."command_$($_.Name)" = $_.Value
                             }
-                            $_.PSObject.Properties | ForEach-Object {
-                                $Name = if ($_.Name -match '^(created_at|deleted_at|status|updated_at)$') {
-                                    "command_$($_.Name)"
-                                } else {
-                                    $_.Name
-                                }
-                                $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $_.Value)))
-                            }
-                            if ($Object.command_status -eq 'FINISHED') {
-                                $ConfirmCmd = Get-RtrCommand $Object.base_command -ConfirmCommand
-                                $Param = @{
-                                    CloudRequestId = $Object.cloud_request_id
-                                    Verbose        = $true
-                                    ErrorAction    = 'SilentlyContinue'
-                                }
-                                $CmdResult = & $ConfirmCmd @Param
-                                if ($CmdResult) {
-                                    ($CmdResult | Select-Object stdout, stderr, complete).PSObject.Properties |
-                                    ForEach-Object {
-                                        $Object."command_$($_.Name)" = $_.Value
-                                    }
-                                }
-                            }
-                            $Object | Export-Csv $OutputFile -Append -NoTypeInformation -Force
                         }
                     }
+                    if ($PSBoundParameters.Include) {
+                        @(($HostTable.($Session.aid)).PSObject.Properties.Where({ $_.MemberType -eq
+                        'NoteProperty' -and $_.Name -ne 'device_id' })).foreach{
+                            Add-Property -Object $Object -Name $_.Name -Value $_.Value
+                        }
+                    }
+                    $Object | Export-Csv $OutputFile -Append -NoTypeInformation -Force
                 }
             }
         } catch {
@@ -577,7 +594,7 @@ function Import-FalconConfig {
                 Get-ConfigItem @Param
             } elseif ($ConfigData.$Item.Import) {
                 # Output all items
-                $ConfigData.$Item.Import | ForEach-Object {
+                @($ConfigData.$Item.Import).foreach{
                     Write-Verbose "[Compare-ImportData] $($Item).Import: $($_.id)"
                     $_
                 }
@@ -596,7 +613,7 @@ function Import-FalconConfig {
                 if ($Item.settings.classes) {
                     foreach ($Class in ($Item.settings.classes | Where-Object { $_.exceptions })) {
                         # Remove 'id' from 'exceptions'
-                        $Class.exceptions = $Class.exceptions | ForEach-Object {
+                        $Class.exceptions = @($Class.exceptions).foreach{
                             $_.PSObject.Properties.Remove('id')
                             $_
                         }
@@ -634,7 +651,7 @@ function Import-FalconConfig {
             }
         }
         function Get-ConfigItem ($Item, $Type, $FilterScript) {
-            $ConfigData.$Item.$Type | Where-Object -FilterScript $FilterScript | ForEach-Object {
+            @($ConfigData.$Item.$Type | Where-Object -FilterScript $FilterScript).foreach{
                 Write-Verbose "[Get-ConfigItem] $($Item).$($Type): $($_.id)"
                 $_
             }
@@ -717,8 +734,7 @@ function Import-FalconConfig {
                 }
             } else {
                 # Select fields for 'HostGroup'
-                [array] (Compare-ImportData $Item) | Select-Object name, group_type, description, assignment_rule |
-                ForEach-Object {
+                @(Compare-ImportData $Item | Select-Object name, group_type, description, assignment_rule).foreach{
                     # Remove 'assignment_rule' from 'static' host groups
                     if ($_.group_type -eq 'static') {
                         $_.PSObject.Properties.Remove('assignment_rule')
@@ -804,7 +820,7 @@ function Import-FalconConfig {
                 }
                 if ($Policy.settings.variants) {
                     # Update tagged 'variant' builds with current tagged build versions
-                    $Policy.settings.variants | Where-Object { $_.build } | ForEach-Object {
+                    @($Policy.settings.variants | Where-Object { $_.build }).foreach{
                         $Tag = ($_.build -split '\|', 2)[-1]
                         $CurrentBuild = ($Builds | Where-Object { ($_.build -like "*|$Tag") -and
                             ($_.platform -eq $Policy.platform_name) }).build
@@ -941,7 +957,7 @@ function Import-FalconConfig {
                         $_ -ne 'family' }
                     $Rules = $ConfigData.FirewallRule.Import | Where-Object {
                         $Import.rule_ids -contains $_.family } | Select-Object $CreateFields
-                    $Rules | ForEach-Object {
+                    @($Rules).foreach{
                         if ($_.name.length -gt 64) {
                             # Trim rule names to 64 characters
                             $_.name = ($_.name).SubString(0,63)
@@ -1128,7 +1144,7 @@ function Import-FalconConfig {
                                 Command = 'Edit-FalconFirewallSetting'
                                 Content = $Content
                             }
-                            Invoke-ConfigItem @Param | ForEach-Object {
+                            @(Invoke-ConfigItem @Param).foreach{
                                 if ($_.writes.resources_affected -eq 1) {
                                     # Append 'settings' to 'FirewallPolicy'
                                     Add-Property -Object $Policy -Name 'settings' -Value $Import.settings
@@ -1148,7 +1164,7 @@ function Import-FalconConfig {
                                     }
                                 }
                             }
-                            Invoke-ConfigItem @Param | ForEach-Object {
+                            @(Invoke-ConfigItem @Param).foreach{
                                 if ($_.settings -or $_.prevention_settings) {
                                     Write-Host "Applied settings to $($Pair.Key) '$($Policy.name)'."
                                 }
@@ -1178,7 +1194,7 @@ function Import-FalconConfig {
                                         GroupId = $IoaGroupId
                                     }
                                 }
-                                Invoke-ConfigItem @Param | ForEach-Object {
+                                @(Invoke-ConfigItem @Param).foreach{
                                     if ($_.ioa_rule_groups) {
                                         # Update 'ioa_rule_groups' for policy
                                         $Policy.ioa_rule_groups = $_.ioa_rule_groups
@@ -1211,7 +1227,7 @@ function Import-FalconConfig {
                                     GroupId = $HostGroupId
                                 }
                             }
-                            Invoke-ConfigItem @Param | ForEach-Object {
+                            @(Invoke-ConfigItem @Param).foreach{
                                 if ($_.groups) {
                                     # Update 'group' for policy
                                     $Policy.groups = $_.groups
@@ -1228,7 +1244,7 @@ function Import-FalconConfig {
                                 Name = 'enable'
                             }
                         }
-                        Invoke-ConfigItem @Param | ForEach-Object {
+                        @(Invoke-ConfigItem @Param).foreach{
                             if ($_.enabled -eq $true) {
                                 # Update 'enabled' for policy
                                 $Policy.enabled = $_.enabled
@@ -1253,7 +1269,7 @@ function Import-FalconConfig {
             $ConfigData
         } elseif ($ConfigData.Values.Created) {
             foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Value.Created })) {
-                $Pair.Value.Created | ForEach-Object {
+                @($Pair.Value.Created).foreach{
                     # Output 'created' results to CSV
                     [PSCustomObject] @{
                         type = $Pair.Key
@@ -1294,10 +1310,10 @@ function Invoke-FalconDeploy {
         [Parameter(ParameterSetName = 'HostIds', Mandatory = $true, Position = 1)]
         [Parameter(ParameterSetName = 'GroupId', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            if (Test-Path $_) {
+            if (Test-Path -Path $_ -PathType Leaf) {
                 $true
             } else {
-                throw "Cannot find path '$_' because it does not exist."
+                throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
         [string] $Path,
@@ -1366,8 +1382,8 @@ function Invoke-FalconDeploy {
         if ($HostArray) {
             try {
                 Write-Host "Checking cloud for existing file..."
-                $CloudFile = Get-FalconPutFile -Filter "name:['$Filename']" -Detailed | Select-Object $PutFields |
-                ForEach-Object {
+                $CloudFile = @(Get-FalconPutFile -Filter "name:['$Filename']" -Detailed |
+                Select-Object $PutFields).foreach{
                     [PSCustomObject] @{
                         id                 = $_.id
                         name               = $_.name
@@ -1376,8 +1392,7 @@ function Invoke-FalconDeploy {
                         sha256             = $_.sha256
                     }
                 }
-                $LocalFile = Get-ChildItem $FilePath | Select-Object CreationTime, Name, LastWriteTime |
-                ForEach-Object {
+                $LocalFile = @(Get-ChildItem $FilePath | Select-Object CreationTime, Name, LastWriteTime).foreach{
                     [PSCustomObject] @{
                         name               = $_.Name
                         created_timestamp  = $_.CreationTime
@@ -1437,7 +1452,7 @@ function Invoke-FalconDeploy {
                         '(QueueOffline|Timeout)' { $Param[$_] = $PSBoundParameters.$_ }
                     }
                     $Session = Start-FalconSession @Param
-                    $SessionHosts = if ($Session) {
+                    $SessionHosts = if ($Session.batch_id) {
                         # Output result to CSV and return list of successful 'session_start' hosts
                         Write-RtrResult -Object $Session.hosts -Step 'session_start' -BatchId $Session.batch_id
                         ($Session.hosts | Where-Object { $_.complete -eq $true -or
@@ -1493,7 +1508,7 @@ function Invoke-FalconDeploy {
                                 if ($CmdPut) {
                                     # Output result to CSV and return list of successful 'put_file' hosts
                                     Write-RtrResult -Object $CmdPut -Step 'put_file' -BatchId $Session.batch_id
-                                    ($CmdPut | Where-Object { $_.stdout -eq 'Operation completed successfully.' -or
+                                    ($CmdPut | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
                                         $_.offline_queued -eq $true }).aid
                                 }
                             }
@@ -1650,7 +1665,7 @@ function Invoke-FalconRtr {
                 if ($InitRequest.batch_id) {
                     # Capture session initialization result
                     $InitResult = Get-RtrResult -Object $InitRequest.hosts -Output $Group
-                    $InitResult | Where-Object { $_.session_id } | ForEach-Object {
+                    @($InitResult | Where-Object { $_.session_id }).foreach{
                         # Add batch_id and clear 'stdout'
                         $_.batch_id = $InitRequest.batch_id
                         $_.stdout = $null
@@ -1660,7 +1675,7 @@ function Invoke-FalconRtr {
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
                         # Capture 'hosts' for 'Invoke-FalconBatchGet'
                         $CmdContent = Get-RtrResult -Object $CmdRequest.hosts -Output $InitResult
-                        $CmdContent | Where-Object { $_.session_id -and $_.complete -eq $true } | ForEach-Object {
+                        @($CmdContent | Where-Object { $_.session_id -and $_.complete -eq $true }).foreach{
                             # Add 'batch_get_cmd_req_id' to output
                             Add-Property -Object $_ -Name 'batch_get_cmd_req_id' -Value (
                                 $CmdRequest.batch_get_cmd_req_id)
@@ -1783,8 +1798,8 @@ function Send-FalconWebhook {
         [array] $Content = switch ($PSBoundParameters.Type) {
             'Slack' {
                 # Create 'attachment' for each object in submission
-                $Object | Export-FalconReport | ForEach-Object {
-                    [array] $Fields = $_.PSObject.Properties | ForEach-Object {
+                @($Object | Export-FalconReport).foreach{
+                    [array] $Fields = @($_.PSObject.Properties).foreach{
                         ,@{
                             title = $_.Name
                             value = if ($_.Value -is [boolean]) {
@@ -1972,9 +1987,9 @@ if (Test-Path $RegPath) {
                     } until (
                         $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
                     )
-                    $HostInfo | Select-Object cid, device_id, hostname | ForEach-Object {
+                    @($HostInfo | Select-Object cid, device_id, hostname).foreach{
                         $Status = if ($Confirm.stdout) {
-                            $Confirm.stdout | ConvertFrom-Json | ForEach-Object {
+                            @($Confirm.stdout | ConvertFrom-Json).foreach{
                                 "[$($_.Id)] '$($_.ProcessName)' started removal of the Falcon sensor"
                             }
                         } else {

@@ -544,7 +544,7 @@ function Get-FalconFirewallRule {
         }
     }
     process {
-        Invoke-Falcon @Param | ForEach-Object {
+        @(Invoke-Falcon @Param).foreach{
             if ($_.version -and $null -eq $_.version) {
                 $_.version = 0
             }

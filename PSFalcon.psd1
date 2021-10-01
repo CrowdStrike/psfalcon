@@ -390,15 +390,22 @@ General Changes
   * Updated 'Invoke-Falcon' private function to allow the return of an un-formatted
     [System.Net.Http.HttpResponseMessage] using the '-RawOutput' switch for commands that need 'meta' content.
 
+  * Modified 'foreach' method being used throughout module to increase performance (where applicable).
+
 Command Changes
   * Updated 'Get-Falcon...Quota' commands to use new '-RawOutput' switch.
 
   * Added email string regex check for 'Edit-FalconReconAction', 'Get-FalconUser', 'New-FalconReconAction', and
     'New-FalconUser'.
 
+  * Added '-Include' parameter to 'Get-FalconQueue' to append chosen device information fields to output.
+
 GitHub Issues
   * Issue #112: Updated 'Invoke-FalconHostGroupAction' to properly convert to Json and fixed an additional
     formatting error.
+  * Issue #113: Updated 'Invoke-FalconDeploy' to check for 'complete = true' plus the lack of a 'stderr' output
+    to verify success when using 'put' instead of checking the 'stdout' value, which is different between OS
+    versions.
 "@
         }
     }

@@ -67,8 +67,8 @@ function Edit-FalconIoaRule {
             $RuleRequired = @('instance_id', 'pattern_severity', 'enabled', 'disposition_id', 'name',
                 'description', 'comment', 'field_values')
             $FieldRequired = @('name', 'label', 'type', 'values')
-            [array] $PSBoundParameters.RuleUpdates = ,($PSBoundParameters.RuleUpdates |
-                Select-Object $RuleRequired | ForEach-Object {
+            [array] $PSBoundParameters.RuleUpdates = ,(
+                @($PSBoundParameters.RuleUpdates | Select-Object $RuleRequired).foreach{
                     $_.field_values = $_.field_values | Select-Object $FieldRequired
                     $_
                 }
@@ -164,7 +164,7 @@ function Get-FalconIoaGroup {
         }
     }
     process {
-        Invoke-Falcon @Param | ForEach-Object {
+        @(Invoke-Falcon @Param).foreach{
             if ($_.version -and $null -eq $_.version) {
                 $_.version = 0
             }
