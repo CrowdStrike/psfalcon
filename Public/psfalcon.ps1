@@ -15,7 +15,6 @@ function Add-FalconSensorTag {
     begin {
         $TagScript = @'
 ```
-[CmdletBinding()]
 param(
     [array] $Tags
 )
@@ -54,7 +53,7 @@ $Param = @{
                 }
                 Invoke-FalconAdminCommand @CmdParam
             }
-            if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+            if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
                 do {
                     Start-Sleep -Seconds 5
                     $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
@@ -465,7 +464,7 @@ function Get-FalconSensorTag {
                 }
                 Invoke-FalconCommand @CmdParam
             }
-            if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+            if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
                 do {
                     Start-Sleep -Seconds 5
                     $Confirm = Confirm-FalconCommand -CloudRequestId $Request.cloud_request_id
@@ -1712,7 +1711,6 @@ function Remove-FalconSensorTag {
     begin {
         $TagScript = @'
 ```
-[CmdletBinding()]
 param(
     [array] $Tags
 )
@@ -1751,7 +1749,7 @@ $Param = @{
                 }
                 Invoke-FalconAdminCommand @CmdParam
             }
-            if ($InitParam.QueueOffline -eq $false -and $Request.cloud_request_id) {
+            if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
                 do {
                     Start-Sleep -Seconds 5
                     $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
