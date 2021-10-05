@@ -20,7 +20,7 @@ function ConvertTo-FalconIoaExclusion {
         [PSCustomObject] @{
             pattern_id   = $_.behaviors.behavior_id
             pattern_name = $_.behaviors.display_name
-            cl_regex     = [regex]::Escape($_.behaviors.cmdline)
+            cl_regex     = [regex]::Escape($_.behaviors.cmdline) -replace '(\\ {1,})+','\s+'
             ifn_regex    = [regex]::Escape($_.behaviors.filepath) -replace '\\\\Device\\\\HarddiskVolume\d+','.*'
             groups       = if ($_.device.groups) {
                 $_.device.groups
