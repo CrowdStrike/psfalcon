@@ -1,3 +1,34 @@
+function ConvertTo-FalconMlExclusion {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeLine = $true, Position = 1)]
+        [ValidateScript({
+            if ($_.PSObject.Properties.Where({ $_.MemberType -eq 'NoteProperty' -and
+            $_.Name -match '^(behaviors|device)$'})) {
+                if ($_.behaviors.tactic -match '^(Machine Learning|Malware)$') {
+                    $true
+                } else {
+                    throw "Only detections with a tactic of 'Machine Learning' or 'Malware' can be converted."
+                }
+            } else {
+                throw 'Input object is missing required detection properties [behaviors, device].'
+            }
+        })]
+        [object] $Detection
+    )
+    process {
+        [PSCustomObject] @{
+            value         = $_.behaviors.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
+            excluded_from = @('blocking')
+            groups        = if ($_.device.groups) {
+                $_.device.groups
+            } else {
+                'all'
+            }
+            comment       = "Created from $($_.detection_id) by $((Show-FalconModule).UserAgent)."
+        }
+    }
+}
 function Edit-FalconMlExclusion {
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:patch')]
     param(
@@ -84,18 +115,24 @@ function Get-FalconMlExclusion {
 function New-FalconMlExclusion {
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ml-exclusions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, Position = 1)]
         [string] $Value,
 
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 2)]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, Position = 2)]
         [ValidateSet('blocking', 'extraction')]
+        [Alias('excluded_from')]
         [array] $ExcludedFrom,
 
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true, Position = 3)]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, Position = 3)]
         [ValidatePattern('^(\w{32}|all)$')]
+        [Alias('groups')]
         [array] $GroupIds,
 
-        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post', Position = 4)]
+        [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:post',
+            ValueFromPipelineByPropertyName = $true, Position = 4)]
         [string] $Comment
     )
     begin {
@@ -103,6 +140,8 @@ function New-FalconMlExclusion {
             ExcludedFrom = 'excluded_from'
             GroupIds     = 'groups'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -113,8 +152,6 @@ function New-FalconMlExclusion {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -1,3 +1,36 @@
+function ConvertTo-FalconIoaExclusion {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeLine = $true, Position = 1)]
+        [ValidateScript({
+            if ($_.PSObject.Properties.Where({ $_.MemberType -eq 'NoteProperty' -and
+            $_.Name -match '^(behaviors|device)$'})) {
+                if ($_.behaviors.tactic -match '^(Machine Learning|Malware)$') {
+                    throw "Tactics 'Machine Learning' and 'Malware' are used with Machine Learning exclusions."
+                } else {
+                    $true
+                }
+            } else {
+                throw 'Input object is missing required detection properties [behaviors, device].'
+            }
+        })]
+        [object] $Detection
+    )
+    process {
+        [PSCustomObject] @{
+            pattern_id   = $_.behaviors.behavior_id
+            pattern_name = $_.behaviors.display_name
+            cl_regex     = [regex]::Escape($_.behaviors.cmdline)
+            ifn_regex    = [regex]::Escape($_.behaviors.filepath) -replace '\\\\Device\\\\HarddiskVolume\d+','.*'
+            groups       = if ($_.device.groups) {
+                $_.device.groups
+            } else {
+                'all'
+            }
+            comment     = "Created from $($_.detection_id) by $((Show-FalconModule).UserAgent)."
+        }
+    }
+}
 function Edit-FalconIoaExclusion {
     [CmdletBinding(DefaultParameterSetName = '/policy/entities/ioa-exclusions/v1:patch')]
     param(
@@ -101,24 +134,30 @@ function New-FalconIoaExclusion {
         [string] $Name,
 
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
-            Position = 2)]
+            ValueFromPipelineByPropertyName = $true, Position = 2)]
         [ValidatePattern('^\d+$')]
+        [Alias('pattern_id')]
         [string] $PatternId,
 
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
-            Position = 3)]
+            ValueFromPipelineByPropertyName = $true, Position = 3)]
+        [Alias('pattern_name')]
         [string] $PatternName,
 
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
-            Position = 4)]
+            ValueFromPipelineByPropertyName = $true, Position = 4)]
+        [Alias('cl_regex')]
         [string] $ClRegex,
 
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Mandatory = $true,
-            Position = 5)]
+            ValueFromPipelineByPropertyName = $true, Position = 5)]
+        [Alias('ifn_regex')]
         [string] $IfnRegex,
 
-        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Position = 7)]
-        [ValidatePattern('^\w{32}$')]
+        [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post',
+            ValueFromPipelineByPropertyName = $true, Position = 7)]
+        [ValidatePattern('^(\w{32}|all)$')]
+        [Alias('groups')]
         [array] $GroupIds,
 
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:post', Position = 8)]

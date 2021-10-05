@@ -191,6 +191,7 @@
       'Search-FalconMalQueryHash',
 
       # ml-exclusions.ps1
+      'ConvertTo-FalconMlExclusion',
       'Edit-FalconMlExclusion',
       'Get-FalconMlExclusion',
       'New-FalconMlExclusion',
@@ -317,6 +318,7 @@
       'Remove-FalconSample',
 
       # self-service-ioa-exclusions.ps1
+      'ConvertTo-FalconIoaExclusion',
       'Edit-FalconIoaExclusion',
       'Get-FalconIoaExclusion',
       'New-FalconIoaExclusion',
@@ -379,6 +381,13 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
+New Commands
+  * ml-exclusions
+    'ConvertTo-FalconMlExclusion'
+
+  * self-service-ioa-exclusions
+    'ConvertTo-FalconIoaExclusion'
+
 General Changes
   * Added an authorization token check earlier in the private function 'Invoke-Falcon'. This change is designed
     to help prevent "An invalid request URI was provided. The request URI must either be an absolute URI or
