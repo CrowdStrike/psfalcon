@@ -113,11 +113,9 @@ function Build-Content {
         }
         function Build-Query ($Format, $Inputs) {
             # Regex pattern for matching 'last [int] days/hours'
-            [regex] $Relative = '(last (?<Int>\d{1,}) (day[s]?|hour[s]?))'
-            [array] $Query = $Inputs.GetEnumerator().Where({ $Format.Query -contains $_.Key }).foreach{
-                $Field = ($_.Key).ToLower()
-                ($_.Value).foreach{
-                    $Value = $_
+            [regex] $Relative = '([Ll]ast (?<Int>\d{1,}) ([Dd]ay[s]?|[Hh]our[s]?))'
+            [array] $Query = foreach ($Field in $Format.Query.Where({ $Inputs.Keys -contains $_ })) {
+                foreach ($Value in ($Inputs.GetEnumerator().Where({ $_.Key -eq $Field }).Value)) {
                     if ($Field -eq 'filter' -and $Value -match $Relative) {
                         # Convert 'last [int] days/hours' to Rfc3339
                         @($Value | Select-String $Relative -AllMatches).foreach{
