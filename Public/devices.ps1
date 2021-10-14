@@ -75,7 +75,7 @@ function Get-FalconHost {
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 5)]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 5)]
-        [ValidateSet('login_history', 'network_history')]
+        [ValidateSet('login_history', 'network_history', 'zero_trust_assessment')]
         [array] $Include,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Mandatory = $true)]
@@ -116,7 +116,7 @@ function Get-FalconHost {
         $Request = Invoke-Falcon @Param
         if ($PSBoundParameters.Include) {
             if (!$Request.device_id) {
-                $Request = ($Request).foreach{
+                $Request = @($Request).foreach{
                     ,[PSCustomObject] @{ device_id = $_ }
                 }
             }
@@ -136,6 +136,17 @@ function Get-FalconHost {
                         Object = $Request | Where-Object { $_.device_id -eq $Object.device_id }
                         Name   = 'network_history'
                         Value  = $Object.history
+                    }
+                    Add-Property @AddParam
+                }
+            }
+            if ($PSBoundParameters.Include -contains 'zero_trust_assessment') {
+                foreach ($Object in (& Get-FalconZta -Ids $Request.device_id)) {
+                    $AddParam = @{
+                        Object = $Request | Where-Object { $_.device_id -eq $Object.aid }
+                        Name   = 'zero_trust_assessment'
+                        Value  = $Object | Select-Object modified_time, sensor_file_status,
+                            assessment, assessment_items
                     }
                     Add-Property @AddParam
                 }

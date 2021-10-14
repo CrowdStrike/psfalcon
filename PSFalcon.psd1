@@ -236,21 +236,27 @@
       'Remove-FalconPreventionPolicy',
       'Set-FalconPreventionPrecedence',
 
-      # psfalcon.psd1
-      'Add-FalconSensorTag',
+      # psf-config.ps1
       'Export-FalconConfig',
-      'Export-FalconReport',
+      'Import-FalconConfig',
+
+      # psf-devices.ps1
+      'Add-FalconSensorTag',
       'Find-FalconDuplicate',
       'Get-FalconSensorTag',
-      'Get-FalconQueue',
-      'Import-FalconConfig',
-      'Invoke-FalconDeploy',
-      'Invoke-FalconRtr',
       'Remove-FalconSensorTag',
+      'Uninstall-FalconSensor',
+
+      # psf-output.ps1
+      'Export-FalconReport',
       'Send-FalconWebhook',
       'Show-FalconMap',
       'Show-FalconModule',
-      'Uninstall-FalconSensor',
+
+      # psf-real-time-response.ps1
+      'Get-FalconQueue',
+      'Invoke-FalconDeploy',
+      'Invoke-FalconRtr',
 
       # quarantine.ps1
       'Get-FalconQuarantine',
@@ -401,21 +407,48 @@ General Changes
 
   * Modified 'foreach' method being used throughout module to increase performance (where applicable).
 
+  * Moved commands from 'Public\psfalcon.ps1' into new files due to intermittent errors that I suspect are
+    due to file size:
+
+      Public\psf-config.ps1
+      Public\psf-devices.ps1
+      Public\psf-output.ps1
+      Public\psf-real-time-response.ps1
+
+  * Updated the conversion of 'last X days/hours' for the '-Filter' parameter to work when last/days/hours is
+    properly capitalized, instead of only lower case.
+
+  * Added more explicit error messages to 'Request-FalconToken', 'Show-FalconModule' and 'Test-FalconToken' to
+    make it more obvious when errors are produced due to a failure during the loading of the module, or when
+    an authorization token has not been requested.
+
+  * Renamed private function 'Confirm-String' to 'Test-RegexValue' to prevent any future overlap due to generic
+    naming.
+
 Command Changes
-  * Updated 'Get-Falcon...Quota' commands to use new '-RawOutput' switch.
+  * Updated 'Get-Falcon...Quota' commands to use new (internal to module) '-RawOutput' switch.
 
   * Added email string regex check for 'Edit-FalconReconAction', 'Get-FalconUser', 'New-FalconReconAction', and
     'New-FalconUser'.
 
   * Added '-Include' parameter to 'Get-FalconQueue' to append chosen device information fields to output.
 
+  * Added 'zero_trust_assessment' as an option for the '-Include' parameter of 'Get-FalconHost'.
+
+  * Added support for Linux and Mac hosts to the commands 'Add-FalconSensorTag', 'Get-FalconSensorTag', and
+    'Remove-FalconSensorTag'.
+
 GitHub Issues
   * Issue #112: Updated 'Invoke-FalconHostGroupAction' to properly convert to Json and fixed an additional
     formatting error.
   * Issue #113: Updated 'Invoke-FalconDeploy' to check for 'complete = true' plus the lack of a 'stderr' output
     to verify success when using 'put' instead of checking the 'stdout' value, which is different between OS
-    versions. Also changed the absolute path for the 'run' command to ensure it works with Linux and Mac.
+    versions. Also changed the absolute path for the 'run' command to ensure it works with Linux and Mac, and
+    added a 'mod_file' step to make the file executable on Linux hosts.
   * Issue #116: Updated 'Uninstall-FalconSensor' to request the maintenance mode token when appropriate.
+  * Issue #119: Re-organized how the private function 'Build-Content' adds 'query' input to requests, so that the
+    parameter will be passed in exactly as specified by the 'Format.Query' property when using 'Invoke-Falcon',
+    instead of forcing lower case values using the PowerShell parameter name.
 "@
         }
     }

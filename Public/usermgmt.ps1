@@ -107,7 +107,7 @@ function Get-FalconUser {
         [Parameter(ParameterSetName = '/users/queries/user-uuids-by-email/v1:get', Mandatory = $true,
             Position = 2)]
         [ValidateScript({
-            if ((Confirm-String $_) -eq 'email') {
+            if ((Test-RegexValue $_) -eq 'email') {
                 $true
             } else {
                 throw "'$_' is not a valid email address."
@@ -142,7 +142,7 @@ function New-FalconUser {
     param(
         [Parameter(ParameterSetName = '/users/entities/users/v1:post', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            if ((Confirm-String $_) -eq 'email') {
+            if ((Test-RegexValue $_) -eq 'email') {
                 $true
             } else {
                 throw "'$_' is not a valid email address."

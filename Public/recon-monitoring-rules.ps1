@@ -12,7 +12,7 @@ function Edit-FalconReconAction {
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true, Position = 3)]
         [ValidateScript({
-            if ((Confirm-String $_) -eq 'email') {
+            if ((Test-RegexValue $_) -eq 'email') {
                 $true
             } else {
                 throw "'$_' is not a valid email address."
@@ -384,7 +384,7 @@ function New-FalconReconAction {
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:post', Mandatory = $true, Position = 4)]
         [ValidateScript({
-            if ((Confirm-String $_) -eq 'email') {
+            if ((Test-RegexValue $_) -eq 'email') {
                 $true
             } else {
                 throw "'$_' is not a valid email address."

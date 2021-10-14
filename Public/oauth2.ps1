@@ -77,12 +77,20 @@ function Request-FalconToken {
             [void] $PSBoundParameters.Remove('Cloud')
         }
         if (!$Script:Falcon) {
-            # Initiate ApiClient, set SslProtocol and UserAgent
-            $Script:Falcon = Get-ApiCredential $PSBoundParameters
-            $Script:Falcon.Add('Api', [ApiClient]::New())
-            $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
-            $Version = (Show-FalconModule).ModuleVersion.Split(' {')[0] -replace 'v', $null
-            $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("crowdstrike-psfalcon/$Version")
+            try {
+                # Initiate ApiClient, set SslProtocol and UserAgent
+                $Script:Falcon = Get-ApiCredential $PSBoundParameters
+                $Script:Falcon.Add('Api', [ApiClient]::New())
+                if ($Script:Falcon.Api) {
+                    $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
+                    $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                        "$((Show-FalconModule).UserAgent)")
+                } else {
+                    Write-Error "Unable to initialize [ApiClient] object."
+                }
+            } catch {
+                throw $_
+            }
         } else {
             (Get-ApiCredential $PSBoundParameters).GetEnumerator().foreach{
                 if ($Script:Falcon.($_.Key) -ne $_.Value) {
@@ -178,16 +186,18 @@ function Test-FalconToken {
     process {
         if ($Script:Falcon) {
             [PSCustomObject] @{
-                Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
+                Token     = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
                 ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(15))) {
                     $true
                 } else {
                     $false
                 }
-                Hostname = $Falcon.Hostname
-                ClientId = $Falcon.ClientId
-                MemberCid = $Falcon.MemberCid
+                Hostname  = $Script:Falcon.Hostname
+                ClientId  = $Script:Falcon.ClientId
+                MemberCid = $Script:Falcon.MemberCid
             }
+        } else {
+            Write-Error "No authorization token available. Try 'Request-FalconToken'."
         }
     }
 }
