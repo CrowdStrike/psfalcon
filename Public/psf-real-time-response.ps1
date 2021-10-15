@@ -7,8 +7,7 @@ function Get-FalconQueue {
         [Parameter(Position = 2)]
         [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname','last_seen',
             'local_ip','mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
-            'provision_status','reduced_functionality_mode','serial_number','system_manufacturer',
-            'system_product_name','tags')]
+            'reduced_functionality_mode','serial_number','system_manufacturer','system_product_name','tags')]
         [array] $Include
     )
     begin {
@@ -17,65 +16,87 @@ function Get-FalconQueue {
         } else {
             7
         }
+        # Properties to capture from request results
+        $Properties = @{
+            Session = @('aid', 'user_id', 'user_uuid', 'id', 'created_at', 'deleted_at', 'status')
+            Command = @('stdout', 'stderr', 'complete')
+        }
+        # Define output path
         $OutputFile = Join-Path -Path (Get-Location).Path -ChildPath "FalconQueue_$(
             Get-Date -Format FileDateTime).csv"
-        $Filter = "(deleted_at:null+commands_queued:1),(created_at:>'last $Days days'+commands_queued:1)"
     }
     process {
         try {
-            $Sessions = Get-FalconSession -Filter $Filter -Detailed -All -Verbose | Select-Object id, device_id
-            if ($PSBoundParameters.Include) {
-                $HostTable = @{}
-                $PSBoundParameters.Include += 'device_id'
-                @(Get-FalconHost -Ids ($Sessions.device_id | Group-Object).Name -Verbose |
-                Select-Object $PSBoundParameters.Include).foreach{
-                    $HostTable[$_.device_id] = $_ | Select-Object -ExcludeProperty device_id
-                }
+            $SessionParam = @{
+                Filter   = "(deleted_at:null+commands_queued:1),(created_at:>'last $Days days'+commands_queued:1)"
+                Detailed = $true
+                All      = $true
+                Verbose  = $true
+            }
+            $Sessions = Get-FalconSession @SessionParam | Select-Object id, device_id
+            [array] $HostInfo = if ($PSBoundParameters.Include) {
+                # Capture host information for eventual output
+                Get-FalconHost -Ids ($Sessions.device_id | Group-Object).Name | Select-Object @(
+                    $PSBoundParameters.Include + 'device_id')
             }
             foreach ($Session in (Get-FalconSession -Ids $Sessions.id -Queue -Verbose)) {
                 @($Session.Commands).foreach{
-                    $Object = [PSCustomObject] @{
-                        aid                = $Session.aid
-                        user_id            = $Session.user_id
-                        user_uuid          = $Session.user_uuid
-                        session_id         = $Session.id
-                        session_created_at = $Session.created_at
-                        session_deleted_at = $Session.deleted_at
-                        session_updated_at = $Session.updated_at
-                        session_status     = $Session.status
-                        command_complete   = $false
-                        command_stdout     = $null
-                        command_stderr     = $null
+                    # Create output for each individual command in queued session
+                    $Item = [PSCustomObject] @{}
+                    @($Session | Select-Object $Properties.Session).foreach{
+                        @($_.PSObject.Properties).foreach{
+                            # Add session properties with 'session' prefix
+                            $Name = if ($_.Name -match '^(id|(created|deleted|updated)_at|status)$') {
+                                "session_$($_.Name)"
+                            } else {
+                                $_.Name
+                            }
+                            Add-Property -Object $Item -Name $Name -Value $_.Value
+                        }
                     }
                     @($_.PSObject.Properties).foreach{
-                        $Name = if ($_.Name -match '^(created_at|deleted_at|status|updated_at)$') {
+                        # Add command properties
+                        $Name = if ($_.Name -match '^((created|deleted|updated)_at|status)$') {
                             "command_$($_.Name)"
                         } else {
                             $_.Name
                         }
-                        $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name, $_.Value)))
+                        Add-Property -Object $Item -Name $Name -Value $_.Value
                     }
-                    if ($Object.command_status -eq 'FINISHED') {
-                        $ConfirmCmd = Get-RtrCommand $Object.base_command -ConfirmCommand
+                    if ($Item.command_status -eq 'FINISHED') {
+                        # Update command properties with results
                         $Param = @{
-                            CloudRequestId = $Object.cloud_request_id
+                            CloudRequestId = $Item.cloud_request_id
                             Verbose        = $true
                             ErrorAction    = 'SilentlyContinue'
                         }
-                        $CmdResult = & $ConfirmCmd @Param
-                        if ($CmdResult) {
-                            (($CmdResult | Select-Object stdout, stderr, complete).PSObject.Properties).foreach{
-                                $Object."command_$($_.Name)" = $_.Value
+                        $ConfirmCmd = Get-RtrCommand $Item.base_command -ConfirmCommand
+                        @(& $ConfirmCmd @Param | Select-Object $Properties.Command).foreach{
+                            @($_.PSObject.Properties).foreach{
+                                Add-Property -Object $Item -Name "command_$($_.Name)" -Value $_.Value
+                            }
+                        }
+                    } else {
+                        @('command_complete', 'command_stdout', 'command_stderr').foreach{
+                            # Add empty command output
+                            $Value = if ($_ -eq 'command_complete') {
+                                $false
+                            } else {
+                                $null
+                            }
+                            Add-Property -Object $Item -Name $_ -Value $Value
+                        }
+                    }
+                    if ($PSBoundParameters.Include -and $HostInfo) {
+                        @($HostInfo.Where({ $_.device_id -eq $Item.aid })).foreach{
+                            @($_.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
+                                # Add 'Include' properties
+                                Add-Property -Object $Item -Name $_.Name -Value $_.Value
                             }
                         }
                     }
-                    if ($PSBoundParameters.Include) {
-                        @(($HostTable.($Session.aid)).PSObject.Properties.Where({ $_.MemberType -eq
-                        'NoteProperty' -and $_.Name -ne 'device_id' })).foreach{
-                            Add-Property -Object $Object -Name $_.Name -Value $_.Value
-                        }
-                    }
-                    $Object | Export-Csv $OutputFile -Append -NoTypeInformation -Force
+                    # Export using 'Export-FalconReport' and suppress 'Get-ChildItem' output
+                    [void] ($Item | Export-FalconReport $OutputFile)
                 }
             }
         } catch {

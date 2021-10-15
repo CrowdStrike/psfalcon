@@ -105,7 +105,7 @@ function Get-FalconUser {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/users/queries/user-uuids-by-email/v1:get', Mandatory = $true,
-            Position = 2)]
+            Position = 1)]
         [ValidateScript({
             if ((Test-RegexValue $_) -eq 'email') {
                 $true
@@ -114,6 +114,12 @@ function Get-FalconUser {
             }
         })]
         [array] $Usernames,
+
+        [Parameter(ParameterSetName = '/users/queries/user-uuids-by-cid/v1:get', Position = 2)]
+        [Parameter(ParameterSetName = '/users/entities/users/v1:get', Position = 2)]
+        [Parameter(ParameterSetName = '/users/queries/user-uuids-by-email/v1:get', Position = 2)]
+        [ValidateSet('roles')]
+        [array] $Include,
 
         [Parameter(ParameterSetName = '/users/queries/user-uuids-by-cid/v1:get')]
         [Parameter(ParameterSetName = '/users/queries/user-uuids-by-email/v1:get')]
@@ -124,6 +130,8 @@ function Get-FalconUser {
         $Fields = @{
             Usernames = 'uid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -132,9 +140,20 @@ function Get-FalconUser {
                 Query = @('ids', 'uid')
             }
         }
-    }
-    process {
-        Invoke-Falcon @Param
+        $Result = Invoke-Falcon @Param
+        if ($PSBoundParameters.Include) {
+            if (!$Result.uuid) {
+                $Result = @($Result).foreach{
+                    ,[PSCustomObject] @{ uuid = $_ }
+                }
+            }
+            if ($PSBoundParameters.Include -contains 'roles') {
+                @($Result).foreach{
+                    Add-Property -Object $_ -Name 'roles' -Value @(& Get-FalconRole -UserId $_.uuid)
+                }
+            }
+        }
+        $Result
     }
 }
 function New-FalconUser {

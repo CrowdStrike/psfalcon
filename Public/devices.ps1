@@ -14,6 +14,8 @@ function Add-FalconGroupingTag {
             Ids = 'device_ids'
         }
         $PSBoundParameters['action'] = 'add'
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -24,8 +26,6 @@ function Add-FalconGroupingTag {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -113,46 +113,46 @@ function Get-FalconHost {
         } else {
             @{ Query = @('ids', 'filter', 'sort', 'limit', 'offset') }
         }
-        $Request = Invoke-Falcon @Param
-        if ($PSBoundParameters.Include) {
-            if (!$Request.device_id) {
-                $Request = @($Request).foreach{
+        $Result = Invoke-Falcon @Param
+        if ($PSBoundParameters.Include -and $Result) {
+            if (!$Result.device_id) {
+                $Result = @($Result).foreach{
                     ,[PSCustomObject] @{ device_id = $_ }
                 }
             }
             if ($PSBoundParameters.Include -contains 'login_history') {
-                foreach ($Object in (& $MyInvocation.MyCommand.Name -Ids $Request.device_id -Login)) {
+                foreach ($Item in (& $MyInvocation.MyCommand.Name -Ids $Result.device_id -Login)) {
                     $AddParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $Object.device_id }
+                        Object = $Result | Where-Object { $_.device_id -eq $Item.device_id }
                         Name   = 'login_history'
-                        Value  = $Object.recent_logins
+                        Value  = $Item.recent_logins
                     }
                     Add-Property @AddParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'network_history') {
-                foreach ($Object in (& $MyInvocation.MyCommand.Name -Ids $Request.device_id -Network)) {
+                foreach ($Item in (& $MyInvocation.MyCommand.Name -Ids $Result.device_id -Network)) {
                     $AddParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $Object.device_id }
+                        Object = $Result | Where-Object { $_.device_id -eq $Item.device_id }
                         Name   = 'network_history'
-                        Value  = $Object.history
+                        Value  = $Item.history
                     }
                     Add-Property @AddParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'zero_trust_assessment') {
-                foreach ($Object in (& Get-FalconZta -Ids $Request.device_id)) {
+                foreach ($Item in (& Get-FalconZta -Ids $Result.device_id)) {
                     $AddParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $Object.aid }
+                        Object = $Result | Where-Object { $_.device_id -eq $Item.device_id }
                         Name   = 'zero_trust_assessment'
-                        Value  = $Object | Select-Object modified_time, sensor_file_status,
+                        Value  = $Item | Select-Object modified_time, sensor_file_status,
                             assessment, assessment_items
                     }
                     Add-Property @AddParam
                 }
             }
         }
-        $Request
+        $Result
     }
 }
 function Invoke-FalconHostAction {
@@ -166,12 +166,20 @@ function Invoke-FalconHostAction {
         [Parameter(ParameterSetName = '/devices/entities/devices-actions/v2:post', Mandatory = $true,
             Position = 2)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [array] $Ids,
+
+        [Parameter(ParameterSetName = '/devices/entities/devices-actions/v2:post', Position = 3)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname','last_seen',
+            'local_ip','mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'reduced_functionality_mode','serial_number','system_manufacturer','system_product_name','tags')]
+        [array] $Include
     )
     begin {
         $Fields = @{
             Name = 'action_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -188,9 +196,21 @@ function Invoke-FalconHostAction {
         } else {
             500
         }
-    }
-    process {
-        Invoke-Falcon @Param
+        $Result = Invoke-Falcon @Param
+        if ($PSBoundParameters.Include -and $Result) {
+            foreach ($Item in (Get-FalconHost -Ids $Result.id | Select-Object @($PSBoundParameters.Include +
+            'device_id'))) {
+                @($Item.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
+                    $AddParam = @{
+                        Object = $Result | Where-Object { $_.id -eq $Item.device_id }
+                        Name   = $_.Name
+                        Value  = $_.Value
+                    }
+                    Add-Property @AddParam
+                }
+            }
+        }
+        $Result
     }
 }
 function Remove-FalconGroupingTag {
@@ -209,6 +229,8 @@ function Remove-FalconGroupingTag {
             Ids = 'device_ids'
         }
         $PSBoundParameters['action'] = 'remove'
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -219,8 +241,6 @@ function Remove-FalconGroupingTag {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
