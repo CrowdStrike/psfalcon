@@ -13,11 +13,7 @@ posting your question as an [issue](https://github.com/CrowdStrike/psfalcon/issu
 - [How you can contribute](#how-you-can-contribute)
     + [Bug reporting](#bug-reporting-and-questions-are-handled-using-githubs-issues)
 - [Pull Requests](#pull-requests)
-    + [Contributor dependencies](#additional-contributor-package-requirements)
-    + [Unit testing](#unit-testing--code-coverage)
-    + [Linting](#linting)
     + [Breaking changes](#breaking-changes)
-    + [Branch targeting](#branch-targeting)
 - [Suggestions](#suggestions)
 
 ## How you can contribute
@@ -34,11 +30,9 @@ When you submit code changes, your submissions are understood to be under the sa
 If this is a concern, contact the maintainers before contributing.
 
 ### Breaking changes
-In an effort to maintain backwards compatibility, we thoroughly unit test every Pull Request for all versions of Python we support. These unit tests are intended to catch general programmatic errors, possible vulnerabilities (via bandit) and _potential breaking changes_. 
+In an effort to maintain backwards compatibility, we thoroughly unit test every Pull Request for all versions of PowerShell we support. These unit tests are intended to catch general programmatic errors, possible vulnerabilities and _potential breaking changes_. 
 
-> If you have to adjust a unit test locally in order to produce passing results, there is a possibility you are working with a potential breaking change.
-
-Please fully document changes to unit tests within your Pull Request. If you did not specify "Breaking Change" on the punch list in the description, and the change is identified as possibly breaking, this may delay or prevent approval of your PR.
+Please fully document unit testing performed within your Pull Request. If you did not specify "Breaking Change" on the punch list in the description, and the change is identified as possibly breaking, this may delay or prevent approval of your PR.
 
 ### Versioning
 We use [SemVer](https://semver.org/) as our versioning scheme. (Example: _2.1.4_) 
