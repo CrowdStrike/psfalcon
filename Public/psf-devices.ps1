@@ -328,8 +328,8 @@ function Uninstall-FalconSensor {
     }
     process {
         try {
-            $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Id |
-                Select-Object cid, device_id, platform_name, device_policies, hostname
+            $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Id | Select-Object cid, device_id,
+                platform_name, device_policies
             $IdValue = switch ($HostInfo.device_policies.sensor_update.uninstall_protection) {
                 'ENABLED'          { $HostInfo.device_id }
                 'MAINTENANCE_MODE' { 'MAINTENANCE' }
@@ -364,7 +364,7 @@ function Uninstall-FalconSensor {
                     } until (
                         $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
                     )
-                    @($HostInfo | Select-Object cid, device_id, hostname).foreach{
+                    @($HostInfo | Select-Object cid, device_id).foreach{
                         $Status = if ($Confirm.stdout) {
                             @($Confirm.stdout | ConvertFrom-Json).foreach{
                                 "[$($_.Id)] '$($_.ProcessName)' started removal of the Falcon sensor"
