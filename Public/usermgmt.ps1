@@ -13,6 +13,8 @@ function Add-FalconRole {
             Ids    = 'roleIds'
             UserId = 'user_uuid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -24,8 +26,6 @@ function Add-FalconRole {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -183,6 +183,8 @@ function New-FalconUser {
         $Fields = @{
             Username = 'uid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -193,8 +195,6 @@ function New-FalconUser {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -214,6 +214,8 @@ function Remove-FalconRole {
         $Fields = @{
             UserId = 'user_uuid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -222,8 +224,6 @@ function Remove-FalconRole {
                 Query = @('user_uuid', 'ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -238,6 +238,8 @@ function Remove-FalconUser {
         $Fields = @{
             Id = 'user_uuid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -246,8 +248,6 @@ function Remove-FalconUser {
                 Query = @('user_uuid')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

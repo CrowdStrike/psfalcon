@@ -74,6 +74,7 @@ function Get-FalconMlExclusion {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/policy/queries/ml-exclusions/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/ml-exclusions/v1:get', Position = 2)]
@@ -98,7 +99,7 @@ function Get-FalconMlExclusion {
         [Parameter(ParameterSetName = '/policy/queries/ml-exclusions/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -107,8 +108,6 @@ function Get-FalconMlExclusion {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -165,7 +164,7 @@ function Remove-FalconMlExclusion {
         [Parameter(ParameterSetName = '/policy/entities/ml-exclusions/v1:delete', Position = 2)]
         [string] $Comment
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -174,8 +173,6 @@ function Remove-FalconMlExclusion {
                 Query = @('ids', 'comment')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

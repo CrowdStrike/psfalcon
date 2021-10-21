@@ -173,6 +173,8 @@ function Edit-FalconFirewallSetting {
             PolicyId        = 'policy_id'
             RuleGroupIds    = 'rule_group_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -196,8 +198,6 @@ function Edit-FalconFirewallSetting {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -208,6 +208,7 @@ function Get-FalconFirewallEvent {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 2)]
@@ -239,6 +240,8 @@ function Get-FalconFirewallEvent {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -247,8 +250,6 @@ function Get-FalconFirewallEvent {
                 Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -281,6 +282,8 @@ function Get-FalconFirewallField {
         $Fields = @{
             PlatformId = 'platform_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -289,8 +292,6 @@ function Get-FalconFirewallField {
                 Query = @('ids', 'offset', 'limit', 'platform_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -301,6 +302,7 @@ function Get-FalconFirewallGroup {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 2)]
@@ -332,6 +334,8 @@ function Get-FalconFirewallGroup {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -340,8 +344,6 @@ function Get-FalconFirewallGroup {
                 Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -367,7 +369,7 @@ function Get-FalconFirewallPlatform {
         [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -376,8 +378,6 @@ function Get-FalconFirewallPlatform {
                 Query = @('ids', 'offset', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -390,6 +390,7 @@ function Get-FalconFirewallPolicy {
 
         [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 2)]
@@ -419,7 +420,7 @@ function Get-FalconFirewallPolicy {
         [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -428,8 +429,6 @@ function Get-FalconFirewallPolicy {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -445,6 +444,7 @@ function Get-FalconFirewallPolicyMember {
 
         [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get', Position = 3)]
@@ -495,6 +495,7 @@ function Get-FalconFirewallRule {
 
         [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 3)]
@@ -534,6 +535,8 @@ function Get-FalconFirewallRule {
             PolicyId = 'id'
             Query    = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -542,8 +545,6 @@ function Get-FalconFirewallRule {
                 Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter', 'id')
             }
         }
-    }
-    process {
         @(Invoke-Falcon @Param).foreach{
             if ($_.version -and $null -eq $_.version) {
                 $_.version = 0
@@ -559,7 +560,7 @@ function Get-FalconFirewallSetting {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -568,8 +569,6 @@ function Get-FalconFirewallSetting {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -650,6 +649,8 @@ function New-FalconFirewallGroup {
         $Fields = @{
             CloneId = 'clone_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -661,8 +662,6 @@ function New-FalconFirewallGroup {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -707,6 +706,8 @@ function New-FalconFirewallPolicy {
             CloneId      = 'clone_id'
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/firewall/v1:post'
@@ -719,8 +720,6 @@ function New-FalconFirewallPolicy {
                 Query = @('clone_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -733,7 +732,7 @@ function Remove-FalconFirewallGroup {
         [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:delete', Position = 2)]
         [string] $Comment
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -742,8 +741,6 @@ function Remove-FalconFirewallGroup {
                 Query = @('ids', 'comment')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -754,7 +751,7 @@ function Remove-FalconFirewallPolicy {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -763,8 +760,6 @@ function Remove-FalconFirewallPolicy {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -785,6 +780,8 @@ function Set-FalconFirewallPrecedence {
         $Fields = @{
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -795,8 +792,6 @@ function Set-FalconFirewallPrecedence {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -6,6 +6,7 @@ function Get-FalconIntel {
 
         [Parameter(ParameterSetName = '/intel/queries/reports/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/intel/combined/reports/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/intel/queries/reports/v1:get', Position = 2)]
@@ -46,6 +47,8 @@ function Get-FalconIntel {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -54,8 +57,6 @@ function Get-FalconIntel {
                 Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

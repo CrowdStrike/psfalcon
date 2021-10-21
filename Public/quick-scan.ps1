@@ -6,6 +6,7 @@ function Get-FalconQuickScan {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get', Position = 2)]
@@ -27,7 +28,7 @@ function Get-FalconQuickScan {
         [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -36,8 +37,6 @@ function Get-FalconQuickScan {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -64,6 +63,8 @@ function New-FalconQuickScan {
         $Fields = @{
             Ids = 'samples'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -74,8 +75,6 @@ function New-FalconQuickScan {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

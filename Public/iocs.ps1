@@ -25,7 +25,7 @@ function Get-FalconIocHost {
         [Parameter(ParameterSetName = '/indicators/aggregates/devices-count/v1:get', Mandatory = $true)]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -34,8 +34,6 @@ function Get-FalconIocHost {
                 Query = @('type', 'offset', 'limit', 'value')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -74,6 +72,8 @@ function Get-FalconIocProcess {
         $Fields = @{
             HostId = 'device_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -82,8 +82,6 @@ function Get-FalconIocProcess {
                 Query = @('ids', 'device_id', 'offset', 'type', 'value', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

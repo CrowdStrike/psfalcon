@@ -62,6 +62,12 @@ function Edit-FalconIoaRule {
         [string] $Comment
     )
     begin {
+        $Fields = @{
+            RuleGroupId = 'rulegroup_id'
+            RuleUpdates = 'rule_updates'
+        }
+    }
+    process {
         if ($PSBoundParameters.RuleUpdates) {
             # Filter 'rule_updates' to required fields
             $RuleRequired = @('instance_id', 'pattern_severity', 'enabled', 'disposition_id', 'name',
@@ -73,10 +79,6 @@ function Edit-FalconIoaRule {
                     $_
                 }
             )
-        }
-        $Fields = @{
-            RuleGroupId = 'rulegroup_id'
-            RuleUpdates = 'rule_updates'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -104,8 +106,6 @@ function Edit-FalconIoaRule {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -118,6 +118,7 @@ function Get-FalconIoaGroup {
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups-full/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 2)]
@@ -154,6 +155,8 @@ function Get-FalconIoaGroup {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -162,8 +165,6 @@ function Get-FalconIoaGroup {
                 Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter')
             }
         }
-    }
-    process {
         @(Invoke-Falcon @Param).foreach{
             if ($_.version -and $null -eq $_.version) {
                 $_.version = 0
@@ -195,7 +196,7 @@ function Get-FalconIoaPlatform {
         [Parameter(ParameterSetName = '/ioarules/queries/platforms/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -204,8 +205,6 @@ function Get-FalconIoaPlatform {
                 Query = @('ids', 'offset', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -216,6 +215,7 @@ function Get-FalconIoaRule {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 2)]
@@ -253,6 +253,8 @@ function Get-FalconIoaRule {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -264,8 +266,6 @@ function Get-FalconIoaRule {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -293,7 +293,7 @@ function Get-FalconIoaSeverity {
         [Parameter(ParameterSetName = '/ioarules/queries/pattern-severities/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -302,8 +302,6 @@ function Get-FalconIoaSeverity {
                 Query = @('ids', 'offset', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -330,7 +328,7 @@ function Get-FalconIoaType {
         [Parameter(ParameterSetName = '/ioarules/queries/rule-types/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -339,8 +337,6 @@ function Get-FalconIoaType {
                 Query = @('ids', 'offset', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -360,7 +356,7 @@ function New-FalconIoaGroup {
         [Parameter(ParameterSetName = '/ioarules/entities/rule-groups/v1:post', Position = 4)]
         [string] $Comment
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -371,8 +367,6 @@ function New-FalconIoaGroup {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -415,6 +409,8 @@ function New-FalconIoaRule {
             RulegroupId     = 'rulegroup_id'
             RuletypeId      = 'ruletype_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -426,8 +422,6 @@ function New-FalconIoaRule {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -441,7 +435,7 @@ function Remove-FalconIoaGroup {
         [Parameter(ParameterSetName = '/ioarules/entities/rule-groups/v1:delete', Position = 2)]
         [string] $Comment
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -450,8 +444,6 @@ function Remove-FalconIoaGroup {
                 Query = @('ids', 'comment')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -472,6 +464,8 @@ function Remove-FalconIoaRule {
         $Fields = @{
             RuleGroupId = 'rule_group_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -480,8 +474,6 @@ function Remove-FalconIoaRule {
                 Query = @('ids', 'rule_group_id', 'comment')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -492,7 +484,7 @@ function Test-FalconIoaRule {
             Position = 1)]
         [array] $Fields
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -503,8 +495,6 @@ function Test-FalconIoaRule {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

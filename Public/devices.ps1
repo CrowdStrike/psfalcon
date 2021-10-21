@@ -13,9 +13,9 @@ function Add-FalconGroupingTag {
         $Fields = @{
             Ids = 'device_ids'
         }
-        $PSBoundParameters['action'] = 'add'
     }
     process {
+        $PSBoundParameters['action'] = 'add'
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -42,6 +42,14 @@ function Get-FalconHost {
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 1)]
+        [ValidateScript({
+            Test-FqlStatement $_ @('agent_load_flags','agent_version','bios_manufacturer','bios_version',
+            'config_id_base','config_id_build','config_id_platform','cpu_signature','device_id','external_ip',
+            'first_seen','hostname','last_login_timestamp','last_seen','local_ip','local_ip.raw','mac_address',
+            'machine_domain','major_version','minor_version','modified_timestamp','os_version','ou','platform_id',
+            'platform_name','product_type_desc','reduced_functionality_mode','release_group','serial_number',
+            'site_name','status','system_manufacturer','system_product_name')
+        })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 2)]
@@ -228,9 +236,9 @@ function Remove-FalconGroupingTag {
         $Fields = @{
             Ids = 'device_ids'
         }
-        $PSBoundParameters['action'] = 'remove'
     }
     process {
+        $PSBoundParameters['action'] = 'remove'
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName

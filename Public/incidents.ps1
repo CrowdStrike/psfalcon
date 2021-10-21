@@ -7,6 +7,7 @@ function Get-FalconBehavior {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 2)]
@@ -29,7 +30,7 @@ function Get-FalconBehavior {
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -41,8 +42,6 @@ function Get-FalconBehavior {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -55,6 +54,7 @@ function Get-FalconIncident {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get', Position = 2)]
@@ -80,7 +80,7 @@ function Get-FalconIncident {
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -92,8 +92,6 @@ function Get-FalconIncident {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -101,6 +99,7 @@ function Get-FalconScore {
     [CmdletBinding(DefaultParameterSetName = '/incidents/combined/crowdscores/v1:get')]
     param(
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 2)]
@@ -120,7 +119,7 @@ function Get-FalconScore {
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -129,8 +128,6 @@ function Get-FalconScore {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -162,6 +159,8 @@ function Invoke-FalconIncidentAction {
             OverwriteDetects = 'overwrite_detects'
             UpdateDetects    = 'update_detects'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -174,11 +173,9 @@ function Invoke-FalconIncidentAction {
                 }
             }
         }
-    }
-    process {
         if ($Param.Inputs.Name -ne 'update_status') {
             Invoke-Falcon @Param
-        } elseif ($Param.Inputs.Name -eq 'update_status' -and $Param.Inputs.Value -match 
+        } elseif ($Param.Inputs.Name -eq 'update_status' -and $Param.Inputs.Value -match
         '^(closed|in_progress|new|reopened)$') {
             $Param.Inputs.Value = switch ($Param.Inputs.Value) {
                 'new'         { '20' }

@@ -8,6 +8,7 @@ function Get-FalconReport {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/falconx/queries/reports/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falconx/queries/reports/v1:get', Position = 2)]
@@ -32,7 +33,7 @@ function Get-FalconReport {
         [Parameter(ParameterSetName = '/falconx/queries/reports/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -41,8 +42,6 @@ function Get-FalconReport {
                 Query = @('filter', 'offset', 'sort', 'ids', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -54,6 +53,7 @@ function Get-FalconSubmission {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/falconx/queries/submissions/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falconx/queries/submissions/v1:get', Position = 2)]
@@ -75,7 +75,7 @@ function Get-FalconSubmission {
         [Parameter(ParameterSetName = '/falconx/queries/submissions/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -84,8 +84,6 @@ function Get-FalconSubmission {
                 Query = @('filter', 'offset', 'sort', 'ids', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -160,30 +158,31 @@ function New-FalconSubmission {
             SystemTime       = 'system_time'
             UserTags         = 'user_tags'
         }
-        $PSBoundParameters.EnvironmentId = switch ($PSBoundParameters.EnvironmentId) {
-            'android'      { 200 }
-            'ubuntu16_x64' { 300 }
-            'win7_x64'     { 110 }
-            'win7_x86'     { 100 }
-            'win10_x64'    { 160 }
-        }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root    = @('user_tags')
-                    sandbox = @('submit_name', 'system_date', 'action_script', 'environment_id', 'command_line',
-                        'system_time', 'url', 'document_password', 'enable_tor', 'sha256', 'network_settings')
-                }
-            }
-        }
     }
     process {
         if ($PSBoundParameters.Url -and $PSBoundParameters.Sha256) {
             throw "Url and Sha256 cannot be combined in a submission."
         } else {
+            $PSBoundParameters.EnvironmentId = switch ($PSBoundParameters.EnvironmentId) {
+                'android'      { 200 }
+                'ubuntu16_x64' { 300 }
+                'win7_x64'     { 110 }
+                'win7_x86'     { 100 }
+                'win10_x64'    { 160 }
+            }
+            $Param = @{
+                Command  = $MyInvocation.MyCommand.Name
+                Endpoint = $PSCmdlet.ParameterSetName
+                Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+                Format   = @{
+                    Body = @{
+                        root    = @('user_tags')
+                        sandbox = @('submit_name', 'system_date', 'action_script', 'environment_id',
+                            'command_line', 'system_time', 'url', 'document_password', 'enable_tor', 'sha256',
+                            'network_settings')
+                    }
+                }
+            }
             Invoke-Falcon @Param
         }
     }
@@ -231,6 +230,8 @@ function Remove-FalconReport {
         $Fields = @{
             Id = 'ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -239,8 +240,6 @@ function Remove-FalconReport {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

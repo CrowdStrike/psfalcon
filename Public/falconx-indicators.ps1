@@ -6,6 +6,7 @@ function Get-FalconIndicator {
 
         [Parameter(ParameterSetName = '/intel/queries/indicators/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/intel/combined/indicators/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/intel/queries/indicators/v1:get', Position = 2)]
@@ -47,6 +48,8 @@ function Get-FalconIndicator {
             IncludeDeleted = 'include_deleted'
             Query          = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -58,8 +61,6 @@ function Get-FalconIndicator {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

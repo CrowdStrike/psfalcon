@@ -20,6 +20,8 @@ function Edit-FalconInstallToken {
         $Fields = @{
             ExpiresTimestamp = 'expires_timestamp'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -31,8 +33,6 @@ function Edit-FalconInstallToken {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -45,6 +45,7 @@ function Get-FalconInstallToken {
         [array] $Ids,
         
         [Parameter(ParameterSetName = '/installation-tokens/queries/tokens/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/installation-tokens/queries/tokens/v1:get', Position = 3)]
@@ -66,7 +67,7 @@ function Get-FalconInstallToken {
         [Parameter(ParameterSetName = '/installation-tokens/queries/tokens/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -75,8 +76,6 @@ function Get-FalconInstallToken {
                 Query = @('sort', 'ids', 'offset', 'limit', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -89,6 +88,7 @@ function Get-FalconInstallTokenEvent {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/installation-tokens/queries/audit-events/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/installation-tokens/queries/audit-events/v1:get', Position = 2)]
@@ -109,7 +109,7 @@ function Get-FalconInstallTokenEvent {
         [Parameter(ParameterSetName = '/installation-tokens/queries/audit-events/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -118,8 +118,6 @@ function Get-FalconInstallTokenEvent {
                 Query = @('sort', 'ids', 'offset', 'limit', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -146,6 +144,8 @@ function New-FalconInstallToken {
         $Fields = @{
             ExpiresTimestamp = 'expires_timestamp'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -156,8 +156,6 @@ function New-FalconInstallToken {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -169,7 +167,7 @@ function Remove-FalconInstallToken {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -178,8 +176,6 @@ function Remove-FalconInstallToken {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

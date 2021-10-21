@@ -53,6 +53,8 @@ function Get-FalconRule {
             MinCreatedDate = 'min_created_date'
             Query          = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -62,8 +64,6 @@ function Get-FalconRule {
                     'name', 'description', 'type', 'q')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

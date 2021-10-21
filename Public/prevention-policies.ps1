@@ -36,7 +36,6 @@ function Edit-FalconPreventionPolicy {
         }
     }
     process {
-        
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/prevention/v1:patch'
@@ -60,6 +59,7 @@ function Get-FalconPreventionPolicy {
 
         [Parameter(ParameterSetName = '/policy/combined/prevention/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/policy/queries/prevention/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/combined/prevention/v1:get', Position = 2)]
@@ -89,7 +89,7 @@ function Get-FalconPreventionPolicy {
         [Parameter(ParameterSetName = '/policy/queries/prevention/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -98,8 +98,6 @@ function Get-FalconPreventionPolicy {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -115,6 +113,7 @@ function Get-FalconPreventionPolicyMember {
 
         [Parameter(ParameterSetName = '/policy/queries/prevention-members/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/policy/combined/prevention-members/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/prevention-members/v1:get', Position = 3)]
@@ -249,6 +248,8 @@ function New-FalconPreventionPolicy {
             CloneId      = 'clone_id'
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/prevention/v1:post'
@@ -260,8 +261,6 @@ function New-FalconPreventionPolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -272,7 +271,7 @@ function Remove-FalconPreventionPolicy {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -281,8 +280,6 @@ function Remove-FalconPreventionPolicy {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -303,6 +300,8 @@ function Set-FalconPreventionPrecedence {
         $Fields = @{
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -313,8 +312,6 @@ function Set-FalconPreventionPrecedence {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -59,6 +59,7 @@ function Get-FalconDeviceControlPolicy {
 
         [Parameter(ParameterSetName = '/policy/combined/device-control/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/policy/queries/device-control/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/combined/device-control/v1:get', Position = 2)]
@@ -88,7 +89,7 @@ function Get-FalconDeviceControlPolicy {
         [Parameter(ParameterSetName = '/policy/queries/device-control/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -97,8 +98,6 @@ function Get-FalconDeviceControlPolicy {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -114,6 +113,7 @@ function Get-FalconDeviceControlPolicyMember {
 
         [Parameter(ParameterSetName = '/policy/queries/device-control-members/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/policy/combined/device-control-members/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/device-control-members/v1:get', Position = 3)]
@@ -240,6 +240,8 @@ function New-FalconDeviceControlPolicy {
             CloneId      = 'clone_id'
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/device-control/v1:post'
@@ -251,8 +253,6 @@ function New-FalconDeviceControlPolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -264,7 +264,7 @@ function Remove-FalconDeviceControlPolicy {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -273,8 +273,6 @@ function Remove-FalconDeviceControlPolicy {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -295,6 +293,8 @@ function Set-FalconDeviceControlPrecedence {
         $Fields = @{
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -305,8 +305,6 @@ function Set-FalconDeviceControlPrecedence {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -638,6 +638,33 @@ function Invoke-Loop {
         }
     }
 }
+function Test-FqlStatement {
+    [CmdletBinding()]
+    [OutputType([boolean])]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string] $String,
+
+        [Parameter(Position = 2)]
+        [array] $Properties
+    )
+    begin {
+        $FqlPattern = [regex] "(\()?[\w\.]+:(!~?|(>|<)=?|~|\*)?(\[)?'[\w\d\s\.\-\*,']+'(\])?(\))?"
+    }
+    process {
+        @(($String).Split('+').Split(',')).foreach{
+            if ($_ -notmatch $FqlPattern) {
+                # Error when <property>:<operator><value> does not match pattern
+                throw "'$_' is not a valid Falcon Query Language statement."
+            } elseif ($Properties -and $Properties -notcontains ($_).Split(':')[0]) {
+                # Error when 'properties' are provided and input property does not match
+                throw "'$(($_).Split(':')[0])' is not an accepted property."
+            } else {
+                $true
+            }
+        }
+    }
+}
 function Test-RegexValue {
     [CmdletBinding()]
     [OutputType([string])]

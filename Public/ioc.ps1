@@ -88,6 +88,7 @@ function Get-FalconIoc {
 
         [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/iocs/combined/indicator/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get', Position = 2)]
@@ -127,7 +128,7 @@ function Get-FalconIoc {
         [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -136,8 +137,6 @@ function Get-FalconIoc {
                 Query = @('ids', 'filter', 'offset', 'limit', 'sort', 'after')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -226,6 +225,8 @@ function New-FalconIoc {
             HostGroups      = 'host_groups'
             IgnoreWarnings  = 'ignore_warnings'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/iocs/entities/indicators/v1:post'
@@ -239,8 +240,6 @@ function New-FalconIoc {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -252,23 +251,22 @@ function Remove-FalconIoc {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:delete', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:delete', Position = 3)]
         [string] $Comment
     )
-    begin {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format    = @{
-                Query = @('ids', 'filter', 'comment')
-            }
-        }
-    }
     process {
         if ($PSBoundParameters.Filter -or $PSBoundParameters.Ids) {
+            $Param = @{
+                Command  = $MyInvocation.MyCommand.Name
+                Endpoint = $PSCmdlet.ParameterSetName
+                Inputs   = $PSBoundParameters
+                Format    = @{
+                    Query = @('ids', 'filter', 'comment')
+                }
+            }
             Invoke-Falcon @Param
         } else {
             throw "'Filter' or 'Ids' must be provided."

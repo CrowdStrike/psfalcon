@@ -87,6 +87,7 @@ function Get-FalconIoaExclusion {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/policy/queries/ioa-exclusions/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/ioa-exclusions/v1:get', Position = 2)]
@@ -112,7 +113,7 @@ function Get-FalconIoaExclusion {
         [Parameter(ParameterSetName = '/policy/queries/ioa-exclusions/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -121,8 +122,6 @@ function Get-FalconIoaExclusion {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -201,7 +200,7 @@ function Remove-FalconIoaExclusion {
         [Parameter(ParameterSetName = '/policy/entities/ioa-exclusions/v1:delete', Position = 2)]
         [string] $Comment
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -210,8 +209,6 @@ function Remove-FalconIoaExclusion {
                 Query = @('ids', 'comment')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

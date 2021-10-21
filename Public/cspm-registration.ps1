@@ -14,6 +14,8 @@ function Edit-FalconHorizonAwsAccount {
             AccountId        = 'account_id'
             CloudtrailRegion = 'cloudtrail_region'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -24,8 +26,6 @@ function Edit-FalconHorizonAwsAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -53,6 +53,8 @@ function Edit-FalconHorizonAzureAccount {
             SubscriptionId = 'subscription_id'
             TenantId       = 'tenant-id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -61,8 +63,6 @@ function Edit-FalconHorizonAzureAccount {
                 Query = @('tenant-id', 'id', 'subscription_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -83,6 +83,8 @@ function Edit-FalconHorizonPolicy {
         $Fields = @{
             PolicyId = 'policy_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -93,8 +95,6 @@ function Edit-FalconHorizonPolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -114,6 +114,8 @@ function Edit-FalconHorizonSchedule {
             CloudPlatform = 'cloud_platform'
             ScanSchedule  = 'scan_schedule'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -124,8 +126,6 @@ function Edit-FalconHorizonSchedule {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -171,6 +171,8 @@ function Get-FalconHorizonAwsAccount {
             OrganizationIds = 'organization-ids'
             ScanType        = 'scan-type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -179,8 +181,6 @@ function Get-FalconHorizonAwsAccount {
                 Query = @('limit', 'ids', 'organization-ids', 'scan-type', 'offset', 'group_by', 'status')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -223,6 +223,8 @@ function Get-FalconHorizonAzureAccount {
         $Fields = @{
             ScanType = 'scan-type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -231,8 +233,6 @@ function Get-FalconHorizonAzureAccount {
                 Query = @('scan-type', 'offset', 'ids', 'status', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -278,6 +278,8 @@ function Get-FalconHorizonIoaEvent {
             PolicyId      = 'policy_id'
             UserIds       = 'user_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -287,8 +289,6 @@ function Get-FalconHorizonIoaEvent {
                     'azure_tenant_id', 'user_ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -317,6 +317,8 @@ function Get-FalconHorizonIoaUser {
             CloudPlatform = 'cloud_provider'
             PolicyId      = 'policy_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -325,8 +327,6 @@ function Get-FalconHorizonIoaUser {
                 Query = @('cloud_provider', 'policy_id', 'azure_tenant_id', 'account_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -362,6 +362,8 @@ function Get-FalconHorizonPolicy {
             CloudPlatform = 'cloud-platform'
             PolicyId      = 'policy-id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -370,8 +372,6 @@ function Get-FalconHorizonPolicy {
                 Query = @('ids', 'service', 'policy-id', 'cloud-platform')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -386,6 +386,8 @@ function Get-FalconHorizonSchedule {
         $Fields = @{
             CloudPlatform = 'cloud-platform'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -394,8 +396,6 @@ function Get-FalconHorizonSchedule {
                 Query = @('cloud-platform')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -422,6 +422,8 @@ function New-FalconHorizonAwsAccount {
             CloudtrailRegion = 'cloudtrail_region'
             OrganizationId   = 'organization_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -432,8 +434,6 @@ function New-FalconHorizonAwsAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -453,6 +453,8 @@ function New-FalconHorizonAzureAccount {
             SubscriptionId = 'subscription_id'
             TenantId       = 'tenant_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -463,8 +465,6 @@ function New-FalconHorizonAzureAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -483,7 +483,7 @@ function Receive-FalconHorizonAwsScript {
         })]
         [string] $Path
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -495,8 +495,6 @@ function Receive-FalconHorizonAwsScript {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -524,6 +522,8 @@ function Receive-FalconHorizonAzureScript {
         $Fields = @{
             TenantId = 'tenant-id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -536,8 +536,6 @@ function Receive-FalconHorizonAzureScript {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -556,6 +554,8 @@ function Remove-FalconHorizonAwsAccount {
         $Fields = @{
             OrganizationIds = 'organization-ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -564,8 +564,6 @@ function Remove-FalconHorizonAwsAccount {
                 Query = @('ids', 'organization-ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -576,7 +574,7 @@ function Remove-FalconHorizonAzureAccount {
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -585,8 +583,6 @@ function Remove-FalconHorizonAzureAccount {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -9,7 +9,7 @@ function Edit-FalconContainerAwsAccount {
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:patch', Position = 2)]
         [string] $Region
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -18,8 +18,6 @@ function Edit-FalconContainerAwsAccount {
                 Query = @('ids', 'region')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -46,7 +44,7 @@ function Get-FalconContainerAwsAccount {
         [Parameter(ParameterSetName = '/kubernetes-protection/entities/accounts/aws/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -55,8 +53,6 @@ function Get-FalconContainerAwsAccount {
                 Query = @('ids', 'offset', 'limit', 'status')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -67,7 +63,7 @@ function Get-FalconContainerCloud {
         [ValidateSet('aws', 'azure', 'gcp')]
         [array] $Clouds
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -76,8 +72,6 @@ function Get-FalconContainerCloud {
                 Query = @('clouds')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -115,6 +109,8 @@ function Get-FalconContainerCluster {
             ClusterService = 'cluster_service'
             Ids            = 'account_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -123,8 +119,6 @@ function Get-FalconContainerCluster {
                 Query = @('limit', 'cluster_names', 'account_ids', 'offset', 'cluster_service', 'locations')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -140,6 +134,8 @@ function Invoke-FalconContainerScan {
         $Fields = @{
             ScanType = 'scan_type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -148,8 +144,6 @@ function Invoke-FalconContainerScan {
                 Query = @('scan_type')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -169,6 +163,8 @@ function New-FalconContainerAwsAccount {
         $Fields = @{
             Id = 'account_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -179,8 +175,6 @@ function New-FalconContainerAwsAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -214,6 +208,8 @@ function Receive-FalconContainerYaml {
         $Fields = @{
             ClusterName = 'cluster_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -226,8 +222,6 @@ function Receive-FalconContainerYaml {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -239,7 +233,7 @@ function Remove-FalconContainerAwsAccount {
         [ValidatePattern('^\d{12}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -248,8 +242,6 @@ function Remove-FalconContainerAwsAccount {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

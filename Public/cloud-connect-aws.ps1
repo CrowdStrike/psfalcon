@@ -6,7 +6,7 @@ function Confirm-FalconDiscoverAwsAccess {
         [ValidatePattern('^\d{12}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -15,8 +15,6 @@ function Confirm-FalconDiscoverAwsAccess {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -57,6 +55,8 @@ function Edit-FalconDiscoverAwsAccount {
             RateLimitReqs           = 'rate_limit_reqs'
             RateLimitTime           = 'rate_limit_time'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -68,8 +68,6 @@ function Edit-FalconDiscoverAwsAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -83,6 +81,7 @@ function Get-FalconDiscoverAwsAccount {
 
         [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/cloud-connect-aws/combined/accounts/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get', Position = 2)]
@@ -109,7 +108,7 @@ function Get-FalconDiscoverAwsAccount {
 
         
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -118,8 +117,6 @@ function Get-FalconDiscoverAwsAccount {
                 Query = @('sort', 'ids', 'offset', 'limit', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -171,6 +168,8 @@ function New-FalconDiscoverAwsAccount {
             RateLimitReqs           = 'rate_limit_reqs'
             RateLimitTime           = 'rate_limit_time'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -183,8 +182,6 @@ function New-FalconDiscoverAwsAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -196,7 +193,7 @@ function Remove-FalconDiscoverAwsAccount {
         [ValidatePattern('^\d{12}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -205,8 +202,6 @@ function Remove-FalconDiscoverAwsAccount {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -226,6 +221,8 @@ function Update-FalconDiscoverAwsSetting {
             CloudtrailBucketOwnerId = 'cloudtrail_bucket_owner_id'
             StaticExternalId        = 'static_external_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -236,8 +233,6 @@ function Update-FalconDiscoverAwsSetting {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

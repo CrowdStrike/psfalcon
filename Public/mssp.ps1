@@ -49,6 +49,8 @@ function Add-FalconGroupRole {
             RoleIds     = 'role_ids'
             UserGroupId = 'user_group_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -59,8 +61,6 @@ function Add-FalconGroupRole {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -197,6 +197,8 @@ function Get-FalconCidGroup {
         $Fields = @{
             Ids = 'cid_group_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -205,8 +207,6 @@ function Get-FalconCidGroup {
                 Query = @('cid_group_ids', 'offset', 'limit', 'name', 'sort')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -303,6 +303,8 @@ function Get-FalconGroupRole {
             RoleId      = 'role_id'
             UserGroupId = 'user_group_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -311,8 +313,6 @@ function Get-FalconGroupRole {
                 Query = @('limit', 'ids', 'role_id', 'cid_group_id', 'sort', 'offset', 'user_group_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -343,7 +343,7 @@ function Get-FalconMemberCid {
         [Parameter(ParameterSetName = '/mssp/queries/children/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -352,8 +352,6 @@ function Get-FalconMemberCid {
                 Query = @('sort', 'ids', 'offset', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -391,6 +389,8 @@ function Get-FalconUserGroup {
         $Fields = @{
             Ids = 'user_group_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -399,8 +399,6 @@ function Get-FalconUserGroup {
                 Query = @('sort', 'offset', 'user_group_ids', 'limit', 'name')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -440,6 +438,8 @@ function Get-FalconUserGroupMember {
             Ids    = 'user_group_ids'
             UserId = 'user_uuid'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -448,8 +448,6 @@ function Get-FalconUserGroupMember {
                 Query = @('sort', 'offset', 'user_group_ids', 'limit', 'user_uuid')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -462,7 +460,7 @@ function New-FalconCidGroup {
         [Parameter(ParameterSetName = '/mssp/entities/cid-groups/v1:post', Mandatory = $true, Position = 2)]
         [string] $Description
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -473,8 +471,6 @@ function New-FalconCidGroup {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -487,7 +483,7 @@ function New-FalconUserGroup {
         [Parameter(ParameterSetName = '/mssp/entities/user-groups/v1:post', Mandatory = $true, Position = 2)]
         [string] $Description
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -498,8 +494,6 @@ function New-FalconUserGroup {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -514,6 +508,8 @@ function Remove-FalconCidGroup {
         $Fields = @{
             Ids = 'cid_group_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -522,8 +518,6 @@ function Remove-FalconCidGroup {
                 Query = @('cid_group_ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -579,6 +573,8 @@ function Remove-FalconGroupRole {
             UserGroupId = 'user_group_id'
             RoleIds     = 'role_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -589,8 +585,6 @@ function Remove-FalconGroupRole {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -605,6 +599,8 @@ function Remove-FalconUserGroup {
         $Fields = @{
             Ids = 'user_group_ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -613,8 +609,6 @@ function Remove-FalconUserGroup {
                 Query = @('user_group_ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

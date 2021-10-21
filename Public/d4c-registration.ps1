@@ -14,6 +14,8 @@ function Get-FalconDiscoverAzureAccount {
         $Fields = @{
             ScanType = 'scan-type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -22,8 +24,6 @@ function Get-FalconDiscoverAzureAccount {
                 Query = @('ids', 'scan-type')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -43,6 +43,8 @@ function Get-FalconDiscoverGcpAccount {
         $Fields = @{
             ScanType = 'scan-type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -51,8 +53,6 @@ function Get-FalconDiscoverGcpAccount {
                 Query = @('ids', 'scan-type')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -72,6 +72,8 @@ function New-FalconDiscoverAzureAccount {
             SubscriptionId = 'subscription_id'
             TenantId       = 'tenant_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -82,8 +84,6 @@ function New-FalconDiscoverAzureAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -99,6 +99,8 @@ function New-FalconDiscoverGcpAccount {
         $Fields = @{
             ParentId = 'parent_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -109,8 +111,6 @@ function New-FalconDiscoverGcpAccount {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -129,7 +129,7 @@ function Receive-FalconDiscoverAzureScript {
         })]
         [string] $Path
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -141,8 +141,6 @@ function Receive-FalconDiscoverAzureScript {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -161,7 +159,7 @@ function Receive-FalconDiscoverGcpScript {
         })]
         [string] $Path
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -173,8 +171,6 @@ function Receive-FalconDiscoverGcpScript {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -186,7 +182,7 @@ function Update-FalconDiscoverAzureAccount {
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $Id
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -195,8 +191,6 @@ function Update-FalconDiscoverAzureAccount {
                 Query = @('id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

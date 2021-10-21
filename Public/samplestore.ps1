@@ -9,6 +9,8 @@ function Get-FalconSample {
         $Fields = @{
             Ids = 'sha256s'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -19,8 +21,6 @@ function Get-FalconSample {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -78,6 +78,8 @@ function Remove-FalconSample {
         $Fields = @{
             Id = 'ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -86,8 +88,6 @@ function Remove-FalconSample {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -114,9 +114,6 @@ function Send-FalconSample {
         [string] $Comment
     )
     begin {
-        if (!$PSBoundParameters.FileName) {
-            $PSBoundParameters['FileName'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
-        }
         $Fields = @{
             FileName       = if ($PSBoundParameters.Path -match '\.zip$') {
                 'name'
@@ -125,6 +122,11 @@ function Send-FalconSample {
             }
             IsConfidential = 'is_confidential'
             Path           = 'body'
+        }
+    }
+    process {
+        if (!$PSBoundParameters.FileName) {
+            $PSBoundParameters['FileName'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -144,8 +146,6 @@ function Send-FalconSample {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -43,6 +43,7 @@ function Get-FalconHostGroup {
 
         [Parameter(ParameterSetName = '/devices/queries/host-groups/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/devices/combined/host-groups/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/devices/queries/host-groups/v1:get', Position = 2)]
@@ -71,7 +72,7 @@ function Get-FalconHostGroup {
         [Parameter(ParameterSetName = '/devices/queries/host-groups/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -80,8 +81,6 @@ function Get-FalconHostGroup {
                 Query = @('ids', 'filter', 'sort', 'limit', 'offset')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -97,6 +96,7 @@ function Get-FalconHostGroupMember {
 
         [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/devices/combined/host-group-members/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/devices/queries/host-group-members/v1:get', Position = 3)]
@@ -239,6 +239,8 @@ function New-FalconHostGroup {
             AssignmentRule = 'assignment_rule'
             GroupType      = 'group_type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/devices/entities/host-groups/v1:post'
@@ -250,8 +252,6 @@ function New-FalconHostGroup {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -262,7 +262,7 @@ function Remove-FalconHostGroup {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -271,8 +271,6 @@ function Remove-FalconHostGroup {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

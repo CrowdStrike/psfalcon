@@ -10,12 +10,14 @@ function Confirm-FalconAdminCommand {
         [int] $SequenceId
     )
     begin {
-        if (!$PSBoundParameters.SequenceId) {
-            $PSBoundParameters['sequence_id'] = 0
-        }
         $Fields = @{
             CloudRequestId = 'cloud_request_id'
             SequenceId     = 'sequence_id'
+        }
+    }
+    process {
+        if (!$PSBoundParameters.SequenceId) {
+            $PSBoundParameters['sequence_id'] = 0
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -25,8 +27,6 @@ function Confirm-FalconAdminCommand {
                 Query = @('cloud_request_id', 'sequence_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -99,6 +99,7 @@ function Get-FalconPutFile {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get', Position = 2)]
@@ -120,7 +121,7 @@ function Get-FalconPutFile {
         [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -129,8 +130,6 @@ function Get-FalconPutFile {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -143,6 +142,7 @@ function Get-FalconScript {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get', Position = 2)]
@@ -164,7 +164,7 @@ function Get-FalconScript {
         [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -173,8 +173,6 @@ function Get-FalconScript {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -215,6 +213,14 @@ function Invoke-FalconAdminCommand {
         [int] $Timeout
     )
     begin {
+        $Fields = @{
+            BatchId         = 'batch_id'
+            Command         = 'base_command'
+            OptionalHostIds = 'optional_hosts'
+            SessionId       = 'session_id'
+        }
+    }
+    process {
         $CommandString = if ($PSBoundParameters.Arguments) {
             @($PSBoundParameters.Command, $PSBoundParameters.Arguments) -join ' '
             [void] $PSBoundParameters.Remove('Arguments')
@@ -222,12 +228,6 @@ function Invoke-FalconAdminCommand {
             $PSBoundParameters.Command
         }
         $PSBoundParameters['command_string'] = $CommandString
-        $Fields = @{
-            BatchId         = 'batch_id'
-            Command         = 'base_command'
-            OptionalHostIds = 'optional_hosts'
-            SessionId       = 'session_id'
-        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -239,8 +239,6 @@ function Invoke-FalconAdminCommand {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -256,6 +254,8 @@ function Remove-FalconPutFile {
         $Fields = @{
             Id = 'ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -264,8 +264,6 @@ function Remove-FalconPutFile {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -281,6 +279,8 @@ function Remove-FalconScript {
         $Fields = @{
             Id = 'ids'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -289,8 +289,6 @@ function Remove-FalconScript {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -323,6 +321,8 @@ function Send-FalconPutFile {
             Comment = 'comments_for_audit_log'
             Path    = 'file'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -334,8 +334,6 @@ function Send-FalconPutFile {
                 Formdata = @('file', 'name', 'description', 'comments_for_audit_log')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -379,6 +377,8 @@ function Send-FalconScript {
             Path           = 'content'
             PermissionType = 'permission_type'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -391,8 +391,6 @@ function Send-FalconScript {
                     'content')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

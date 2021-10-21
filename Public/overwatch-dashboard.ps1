@@ -3,9 +3,10 @@ function Get-FalconOverWatchEvent {
     param(
         [Parameter(ParameterSetName = '/overwatch-dashboards/aggregates/ow-events-global-counts/v1:get',
             Mandatory = $true, Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -14,8 +15,6 @@ function Get-FalconOverWatchEvent {
                 Query = @('filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -24,9 +23,10 @@ function Get-FalconOverWatchDetection {
     param(
         [Parameter(ParameterSetName = '/overwatch-dashboards/aggregates/detections-global-counts/v1:get',
             Mandatory = $true, Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -35,8 +35,6 @@ function Get-FalconOverWatchDetection {
                 Query = @('filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -45,9 +43,10 @@ function Get-FalconOverWatchIncident {
     param(
         [Parameter(ParameterSetName = '/overwatch-dashboards/aggregates/incidents-global-counts/v1:get',
             Mandatory = $true, Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -56,8 +55,6 @@ function Get-FalconOverWatchIncident {
                 Query = @('filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

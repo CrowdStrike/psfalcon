@@ -43,6 +43,7 @@ function Get-FalconSvExclusion {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get', Position = 2)]
@@ -67,7 +68,7 @@ function Get-FalconSvExclusion {
         [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -76,8 +77,6 @@ function Get-FalconSvExclusion {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -98,6 +97,8 @@ function New-FalconSvExclusion {
         $Fields = @{
             GroupIds = 'groups'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -108,8 +109,6 @@ function New-FalconSvExclusion {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -122,7 +121,7 @@ function Remove-FalconSvExclusion {
         [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete', Position = 2)]
         [string] $Comment
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -131,8 +130,6 @@ function Remove-FalconSvExclusion {
                 Query = @('ids', 'comment')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

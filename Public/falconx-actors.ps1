@@ -6,6 +6,7 @@ function Get-FalconActor {
 
         [Parameter(ParameterSetName = '/intel/queries/actors/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/intel/combined/actors/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/intel/queries/actors/v1:get', Position = 2)]
@@ -47,6 +48,8 @@ function Get-FalconActor {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -55,8 +58,6 @@ function Get-FalconActor {
                 Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

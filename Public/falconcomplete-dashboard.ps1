@@ -2,6 +2,7 @@ function Get-FalconCompleteAllowlist {
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get', Position = 2)]
@@ -20,7 +21,7 @@ function Get-FalconCompleteAllowlist {
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/allowlist/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -29,8 +30,6 @@ function Get-FalconCompleteAllowlist {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -38,6 +37,7 @@ function Get-FalconCompleteBlocklist {
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get', Position = 2)]
@@ -56,7 +56,7 @@ function Get-FalconCompleteBlocklist {
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/blocklist/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -65,8 +65,6 @@ function Get-FalconCompleteBlocklist {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -75,6 +73,7 @@ function Get-FalconCompleteCollection {
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
             Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
@@ -96,7 +95,7 @@ function Get-FalconCompleteCollection {
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -105,8 +104,6 @@ function Get-FalconCompleteCollection {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -114,6 +111,7 @@ function Get-FalconCompleteDetection {
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get', Position = 2)]
@@ -132,7 +130,7 @@ function Get-FalconCompleteDetection {
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/detects/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -141,8 +139,6 @@ function Get-FalconCompleteDetection {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -150,6 +146,7 @@ function Get-FalconCompleteEscalation {
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get', Position = 2)]
@@ -168,7 +165,7 @@ function Get-FalconCompleteEscalation {
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/escalations/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -177,8 +174,6 @@ function Get-FalconCompleteEscalation {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -186,6 +181,7 @@ function Get-FalconCompleteIncident {
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get', Position = 2)]
@@ -204,7 +200,7 @@ function Get-FalconCompleteIncident {
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/incidents/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -213,8 +209,6 @@ function Get-FalconCompleteIncident {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -222,6 +216,7 @@ function Get-FalconCompleteRemediation {
     [CmdletBinding(DefaultParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get')]
     param(
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get', Position = 2)]
@@ -240,7 +235,7 @@ function Get-FalconCompleteRemediation {
         [Parameter(ParameterSetName = '/falcon-complete-dashboards/queries/remediations/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -249,8 +244,6 @@ function Get-FalconCompleteRemediation {
                 Query = @('sort', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

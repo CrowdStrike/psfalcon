@@ -79,7 +79,9 @@ function Edit-FalconReconNotification {
     }
     process {
         if ($PSBoundParameters.Array) {
-            # Edit notifications in batches of 500
+            if (!$Script:Falcon.Hostname) {
+                Request-FalconToken
+            }
             $Param = @{
                 Path    = '/recon/entities/notifications/v1'
                 Method  = 'patch'
@@ -88,6 +90,7 @@ function Edit-FalconReconNotification {
                 }
             }
             for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
+                # Edit notifications in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
                 Write-Result ($Script:Falcon.Api.Invoke($Param))
@@ -135,6 +138,7 @@ function Edit-FalconReconRule {
         [string] $Name,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:patch', Mandatory = $true, Position = 3)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:patch', Mandatory = $true, Position = 4)]
@@ -147,7 +151,9 @@ function Edit-FalconReconRule {
     )
     process {
         if ($PSBoundParameters.Array) {
-            # Edit rules in batches of 500
+            if (!$Script:Falcon.Hostname) {
+                Request-FalconToken
+            }
             $Param = @{
                 Path    = '/recon/entities/rules/v1'
                 Method  = 'patch'
@@ -156,6 +162,7 @@ function Edit-FalconReconRule {
                 }
             }
             for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
+                # Edit rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
                 Write-Result ($Script:Falcon.Api.Invoke($Param))
@@ -183,6 +190,7 @@ function Get-FalconReconAction {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/recon/queries/actions/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/recon/queries/actions/v1:get', Position = 2)]
@@ -210,6 +218,8 @@ function Get-FalconReconAction {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -218,8 +228,6 @@ function Get-FalconReconAction {
                 Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -237,6 +245,7 @@ function Get-FalconReconNotification {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/recon/queries/notifications/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/recon/queries/notifications/v1:get', Position = 2)]
@@ -276,6 +285,8 @@ function Get-FalconReconNotification {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -284,8 +295,6 @@ function Get-FalconReconNotification {
                 Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -297,6 +306,7 @@ function Get-FalconReconRule {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/recon/queries/rules/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/recon/queries/rules/v1:get', Position = 2)]
@@ -327,6 +337,8 @@ function Get-FalconReconRule {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -335,8 +347,6 @@ function Get-FalconReconRule {
                 Query = @('limit', 'ids', 'q', 'sort', 'offset', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -349,9 +359,10 @@ function Get-FalconReconRulePreview {
 
         [Parameter(ParameterSetName = '/recon/aggregates/rules-preview/GET/v1:post', Mandatory = $true,
             Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -362,8 +373,6 @@ function Get-FalconReconRulePreview {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -396,6 +405,8 @@ function New-FalconReconAction {
         $Fields = @{
             RuleId = 'rule_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -407,8 +418,6 @@ function New-FalconReconAction {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -439,6 +448,7 @@ function New-FalconReconRule {
         [string] $Topic,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:post', Mandatory = $true, Position = 3)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/recon/entities/rules/v1:post', Mandatory = $true, Position = 4)]
@@ -451,7 +461,9 @@ function New-FalconReconRule {
     )
     process {
         if ($PSBoundParameters.Array) {
-            # Create rules in batches of 500
+            if (!$Script:Falcon.Hostname) {
+                Request-FalconToken
+            }
             $Param = @{
                 Path    = '/recon/entities/rules/v1'
                 Method  = 'post'
@@ -460,6 +472,7 @@ function New-FalconReconRule {
                 }
             }
             for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
+                # Create rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
                 Write-Result ($Script:Falcon.Api.Invoke($Param))
@@ -506,7 +519,7 @@ function Remove-FalconReconRule {
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -515,8 +528,6 @@ function Remove-FalconReconRule {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -527,7 +538,7 @@ function Remove-FalconReconNotification {
         [ValidatePattern('^\w{76}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -536,8 +547,6 @@ function Remove-FalconReconNotification {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

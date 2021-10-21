@@ -24,6 +24,8 @@ function Edit-FalconDetection {
             AssignedToUuid = 'assigned_to_uuid'
             ShowInUi       = 'show_in_ui'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -34,8 +36,6 @@ function Edit-FalconDetection {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -47,6 +47,7 @@ function Get-FalconDetection {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/detects/queries/detects/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/detects/queries/detects/v1:get', Position = 2)]
@@ -75,6 +76,8 @@ function Get-FalconDetection {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -87,8 +90,6 @@ function Get-FalconDetection {
             }
             Max      = 1000
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

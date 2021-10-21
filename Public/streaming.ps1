@@ -8,7 +8,7 @@ function Get-FalconStream {
         [ValidateSet('json', 'flatjson')]
         [string] $Format
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -17,8 +17,6 @@ function Get-FalconStream {
                 Query = @('format', 'appId')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -34,7 +32,7 @@ function Update-FalconStream {
             Position = 2)]
         [int] $Partition
     )
-    begin {
+    process {
         $Endpoint = $PSCmdlet.ParameterSetName -replace '{partition}', $PSBoundParameters.Partition
         [void] $PSBoundParameters.Remove('Partition')
         $PSBoundParameters['action_name'] = 'refresh_active_stream_session'
@@ -46,8 +44,6 @@ function Update-FalconStream {
                 Query = @('action_name', 'appId')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

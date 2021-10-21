@@ -5,7 +5,7 @@ function Get-FalconMalQuery {
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -14,8 +14,6 @@ function Get-FalconMalQuery {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -38,7 +36,7 @@ function Get-FalconMalQuerySample {
         [ValidatePattern('^\w{64}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -47,8 +45,6 @@ function Get-FalconMalQuerySample {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -60,7 +56,7 @@ function Group-FalconMalQuerySample {
         [ValidatePattern('^\w{64}$')]
         [array] $Samples
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -71,8 +67,6 @@ function Group-FalconMalQuerySample {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -145,6 +139,8 @@ function Invoke-FalconMalQuery {
             MinSize         = 'min_size'
             YaraRule        = 'yara_rule'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -158,8 +154,6 @@ function Invoke-FalconMalQuery {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -181,15 +175,17 @@ function Receive-FalconMalQuerySample {
         [string] $Path
     )
     begin {
+        $Fields = @{
+            Id = 'ids'
+        }
+    }
+    process {
         if ($PSBoundParameters.Id -match '^\w{64}$') {
             $Accept = 'application/octet-stream'
             $Endpoint = '/malquery/entities/download-files/v1:get'
         } else {
             $Accept = 'application/zip'
             $Endpoint = '/malquery/entities/samples-fetch/v1:get'
-        }
-        $Fields = @{
-            Id = 'ids'
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -202,8 +198,6 @@ function Receive-FalconMalQuerySample {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

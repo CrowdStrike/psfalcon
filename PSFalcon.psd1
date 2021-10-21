@@ -395,6 +395,8 @@ New Commands
     'ConvertTo-FalconIoaExclusion'
 
 General Changes
+  * Updated module license to 'The Unlicense' to be in-line with similar projects (falconpy, gofalcon).
+
   * Added an authorization token check earlier in the private function 'Invoke-Falcon'. This change is designed
     to help prevent "An invalid request URI was provided. The request URI must either be an absolute URI or
     BaseAddress must be set" errors from appearing when a command prompts for ClientId/ClientSecret because
@@ -412,6 +414,9 @@ General Changes
 
   * Modified 'foreach' method being used throughout module to increase performance (where applicable).
 
+  * Updated most commands to move the 'Param' definition into the process{} block. This change was made to match
+    the changes required for commands that have added 'pipeline' support.
+
   * Moved commands from 'Public\psfalcon.ps1' into new, smaller files due to intermittent errors that may be
     related to file size:
 
@@ -423,34 +428,37 @@ General Changes
   * Updated the conversion of 'last X days/hours' for the '-Filter' parameter to work when last/days/hours is
     properly capitalized, instead of only lower case.
 
+  * Added private function 'Test-FqlStatement' to validate the values provided to '-Filter' and provide the
+    opportunity to generate error messages before submission to the Falcon APIs.
+
   * Renamed private function 'Confirm-String' to 'Test-RegexValue' to prevent any future overlap due to generic
     naming.
 
 Command Changes
-  * Added email string regex validation to the commands:
-    'Edit-FalconReconAction'
-    'Get-FalconUser'
-    'New-FalconReconAction'
-    'New-FalconUser'
+  * Added support for passing identifier values through the pipeline to the commands:
+    'Start-FalconSession', 'Update-FalconSession'
+
+  * Added email string RegEx validation to the commands:
+    'Edit-FalconReconAction', 'Get-FalconUser', 'New-FalconReconAction', 'New-FalconUser'
 
   * Added '-Include' parameter (or additional values) to append data to the commands:
-    'Get-FalconQueue'
-    'Get-FalconUser'
-    'Get-FalconHost'
-    'Invoke-FalconHostAction'
+    'Get-FalconQueue', 'Get-FalconUser', 'Get-FalconHost', 'Invoke-FalconHostAction'
 
-  * Added support for Linux and Mac hosts to the commands:
-    'Add-FalconSensorTag'    (Mac in progress)
-    'Get-FalconSensorTag'    (Mac in progress)
-    'Remove-FalconSensorTag' (Mac in progress)
-    'Uninstall-FalconSensor' (Linux and Mac in progress)
+  * Added support for Linux hosts to the commands:
+    'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag'
   
-  * Modified output the following commands to include 'cid', 'device_id', 'hostname' and 'tags':
-    'Add-FalconSensorTag'
-    'Get-FalconSensorTag'
-    'Remove-FalconSensorTag'
+  * Modified output the following commands to include 'cid', 'device_id', and 'tags':
+    'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag'
 
-  * Modified output of 'Uninstall-FalconSensor' to include 'cid', 'device_id', 'hostname' and 'status'.
+  * Modified output of 'Uninstall-FalconSensor' to include 'cid', 'device_id' and 'status'.
+
+  * Updated 'Start-FalconSession' to a maximum of 10,000 identifiers to match API changes.
+  
+  * Increased Real-time Response batch size from 500 to 1,000 for the commands:
+    'Invoke-FalconRtr', 'Invoke-FalconDeploy'
+
+  * Added support for new API to 'Get-FalconVulnerability' (including 'Facet' parameter, which is functionally
+    similar to what PSFalcon does with '-Include') and raised 'Limit' from 400 to 5,000.
 
 GitHub Issues
   * Issue #112: Updated 'Invoke-FalconHostGroupAction' to properly convert to Json and fixed an additional

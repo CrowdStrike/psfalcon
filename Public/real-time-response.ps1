@@ -10,12 +10,14 @@ function Confirm-FalconCommand {
         [int] $SequenceId
     )
     begin {
-        if (!$PSBoundParameters.SequenceId) {
-            $PSBoundParameters['sequence_id'] = 0
-        }
         $Fields = @{
             CloudRequestId = 'cloud_request_id'
             SequenceId     = 'sequence_id'
+        }
+    }
+    process {
+        if (!$PSBoundParameters.SequenceId) {
+            $PSBoundParameters['sequence_id'] = 0
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -25,8 +27,6 @@ function Confirm-FalconCommand {
                 Query = @('cloud_request_id', 'sequence_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -51,6 +51,8 @@ function Confirm-FalconGetFile {
             BatchGetCmdReqId = 'batch_get_cmd_req_id'
             SessionId        = 'session_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -59,8 +61,6 @@ function Confirm-FalconGetFile {
                 Query = @('session_id', 'batch_get_cmd_req_id', 'timeout', 'timeout_duration')
             }
         }
-    }
-    process {
         $Request = Invoke-Falcon @Param
         if ($PSCmdlet.ParameterSetName -eq '/real-time-response/combined/batch-get-command/v1:get') {
             @($Request.PSObject.Properties).foreach{
@@ -86,12 +86,14 @@ function Confirm-FalconResponderCommand {
         [int] $SequenceId
     )
     begin {
-        if (!$PSBoundParameters.SequenceId) {
-            $PSBoundParameters['sequence_id'] = 0
-        }
         $Fields = @{
             CloudRequestId = 'cloud_request_id'
             SequenceId     = 'sequence_id'
+        }
+    }
+    process {
+        if (!$PSBoundParameters.SequenceId) {
+            $PSBoundParameters['sequence_id'] = 0
         }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
@@ -101,8 +103,6 @@ function Confirm-FalconResponderCommand {
                 Query = @('cloud_request_id', 'sequence_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -117,6 +117,7 @@ function Get-FalconSession {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/real-time-response/queries/sessions/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/real-time-response/queries/sessions/v1:get', Position = 2)]
@@ -143,7 +144,7 @@ function Get-FalconSession {
         [switch] $Total
 
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -155,8 +156,6 @@ function Get-FalconSession {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -186,6 +185,8 @@ function Invoke-FalconBatchGet {
             FilePath        = 'file_path'
             OptionalHostIds = 'optional_hosts'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -197,8 +198,6 @@ function Invoke-FalconBatchGet {
                 }
             }
         }
-    }
-    process {
         $Request = Invoke-Falcon @Param
         if ($Request.batch_id -and $Request.combined.resources) {
             [PSCustomObject] @{
@@ -244,6 +243,14 @@ function Invoke-FalconCommand {
         [int] $Timeout
     )
     begin {
+        $Fields = @{
+            BatchId         = 'batch_id'
+            Command         = 'base_command'
+            OptionalHostIds = 'optional_hosts'
+            SessionId       = 'session_id'
+        }
+    }
+    process {
         $CommandString = if ($PSBoundParameters.Arguments) {
             @($PSBoundParameters.Command, $PSBoundParameters.Arguments) -join ' '
             [void] $PSBoundParameters.Remove('Arguments')
@@ -251,12 +258,6 @@ function Invoke-FalconCommand {
             $PSBoundParameters.Command
         }
         $PSBoundParameters['command_string'] = $CommandString
-        $Fields = @{
-            BatchId         = 'batch_id'
-            Command         = 'base_command'
-            OptionalHostIds = 'optional_hosts'
-            SessionId       = 'session_id'
-        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -268,8 +269,6 @@ function Invoke-FalconCommand {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -314,6 +313,14 @@ function Invoke-FalconResponderCommand {
         [int] $Timeout
     )
     begin {
+        $Fields = @{
+            BatchId         = 'batch_id'
+            Command         = 'base_command'
+            OptionalHostIds = 'optional_hosts'
+            SessionId       = 'session_id'
+        }
+    }
+    process {
         $CommandString = if ($PSBoundParameters.Arguments) {
             @($PSBoundParameters.Command, $PSBoundParameters.Arguments) -join ' '
             [void] $PSBoundParameters.Remove('Arguments')
@@ -321,12 +328,6 @@ function Invoke-FalconResponderCommand {
             $PSBoundParameters.Command
         }
         $PSBoundParameters['command_string'] = $CommandString
-        $Fields = @{
-            BatchId         = 'batch_id'
-            Command         = 'base_command'
-            OptionalHostIds = 'optional_hosts'
-            SessionId       = 'session_id'
-        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -338,8 +339,6 @@ function Invoke-FalconResponderCommand {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -372,6 +371,8 @@ function Receive-FalconGetFile {
         $Fields = @{
             SessionId = 'session_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -384,8 +385,6 @@ function Receive-FalconGetFile {
                 Outfile = 'path'
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -407,6 +406,8 @@ function Remove-FalconCommand {
             CloudRequestId = 'cloud_request_id'
             SessionId      = 'session_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -415,8 +416,6 @@ function Remove-FalconCommand {
                 Query = @('session_id', 'cloud_request_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -438,6 +437,8 @@ function Remove-FalconGetFile {
             Id        = 'ids'
             SessionId = 'session_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -446,8 +447,6 @@ function Remove-FalconGetFile {
                 Query = @('session_id', 'ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -463,6 +462,8 @@ function Remove-FalconSession {
         $Fields = @{
             Id = 'session_id'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -471,8 +472,6 @@ function Remove-FalconSession {
                 Query = @('session_id')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -480,8 +479,9 @@ function Start-FalconSession {
     [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/sessions/v1:post')]
     param(
         [Parameter(ParameterSetName = '/real-time-response/entities/sessions/v1:post', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
+        [Alias('device_id')]
         [string] $HostId,
 
         [Parameter(ParameterSetName = '/real-time-response/combined/batch-init-session/v1:post', Mandatory = $true,
@@ -508,6 +508,11 @@ function Start-FalconSession {
             HostIds         = 'host_ids'
             QueueOffline    = 'queue_offline'
         }
+    }
+    process {
+        if ($PSBoundParameters.HostIds -and ($PSBoundParameters.HostIds | Measure-Object).Count -gt 10000) {
+            throw "Real-time Response sessions are limited to 10,000 hosts."
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -519,8 +524,6 @@ function Start-FalconSession {
                 }
             }
         }
-    }
-    process {
         $Request = Invoke-Falcon @Param
         if ($Request.batch_id -and $Request.resources) {
             [PSCustomObject] @{
@@ -536,8 +539,9 @@ function Update-FalconSession {
     [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/refresh-session/v1:post')]
     param(
         [Parameter(ParameterSetName = '/real-time-response/entities/refresh-session/v1:post', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
+        [Alias('device_id')]
         [string] $HostId,
 
         [Parameter(ParameterSetName = '/real-time-response/combined/batch-refresh-session/v1:post',
@@ -564,6 +568,8 @@ function Update-FalconSession {
             HostsToRemove = 'hosts_to_remove'
             QueueOffline  = 'queue_offline'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -575,8 +581,6 @@ function Update-FalconSession {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

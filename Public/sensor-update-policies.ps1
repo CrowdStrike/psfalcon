@@ -57,7 +57,7 @@ function Get-FalconBuild {
         [ValidateSet('linux', 'mac', 'windows')]
         [string] $Platform
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -66,8 +66,6 @@ function Get-FalconBuild {
                 Query = @('platform')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -80,6 +78,7 @@ function Get-FalconSensorUpdatePolicy {
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get', Position = 1)]
         [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get', Position = 2)]
@@ -109,7 +108,7 @@ function Get-FalconSensorUpdatePolicy {
         [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -118,8 +117,6 @@ function Get-FalconSensorUpdatePolicy {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -135,6 +132,7 @@ function Get-FalconSensorUpdatePolicyMember {
 
         [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get', Position = 3)]
@@ -291,6 +289,8 @@ function New-FalconSensorUpdatePolicy {
             Array        = 'resources'
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/sensor-update/v2:post'
@@ -302,8 +302,6 @@ function New-FalconSensorUpdatePolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -314,7 +312,7 @@ function Remove-FalconSensorUpdatePolicy {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -323,8 +321,6 @@ function Remove-FalconSensorUpdatePolicy {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -345,6 +341,8 @@ function Set-FalconSensorUpdatePrecedence {
         $Fields = @{
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -355,8 +353,6 @@ function Set-FalconSensorUpdatePrecedence {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -6,6 +6,11 @@ function Invoke-FalconIdentityGraph {
         [string] $Query
     )
     begin {
+        if (!$Script:Falcon.Hostname) {
+            Request-FalconToken
+        }
+    }
+    process {
         $Param = @{
             Path    = "$($Script:Falcon.Hostname)/identity-protection/combined/graphql/v1"
             Method  = 'post'
@@ -15,8 +20,6 @@ function Invoke-FalconIdentityGraph {
             }
             Body = ConvertTo-Json -InputObject @{ query = "{$($PSBoundParameters.Query)}" } -Compress 
         }
-    }
-    process {
         Write-Result ($Script:Falcon.Api.Invoke($Param))
     }
 }

@@ -10,6 +10,7 @@ function Get-FalconScheduledReport {
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 2)]
@@ -51,6 +52,8 @@ function Get-FalconScheduledReport {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -59,8 +62,6 @@ function Get-FalconScheduledReport {
                 Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'q')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

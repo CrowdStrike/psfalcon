@@ -7,6 +7,7 @@ function Get-FalconQuarantine {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/quarantine/queries/quarantined-files/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/quarantine/queries/quarantined-files/v1:get', Position = 2)]
@@ -38,6 +39,8 @@ function Get-FalconQuarantine {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -49,8 +52,6 @@ function Get-FalconQuarantine {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -71,6 +72,7 @@ function Invoke-FalconQuarantineAction {
 
         [Parameter(ParameterSetName = '/quarantine/queries/quarantined-files/v1:patch', Mandatory = $true,
             Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/quarantine/queries/quarantined-files/v1:patch', Position = 3)]
@@ -84,6 +86,8 @@ function Invoke-FalconQuarantineAction {
         $Fields = @{
             Query = 'q'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -95,8 +99,6 @@ function Invoke-FalconQuarantineAction {
             }
             Max      = 500
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -105,9 +107,10 @@ function Test-FalconQuarantineAction {
     param(
         [Parameter(ParameterSetName = '/quarantine/aggregates/action-update-count/v1:get', Mandatory = $true,
             Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -116,8 +119,6 @@ function Test-FalconQuarantineAction {
                 Query = @('filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

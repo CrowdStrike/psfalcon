@@ -59,6 +59,7 @@ function Get-FalconResponsePolicy {
 
         [Parameter(ParameterSetName = '/policy/combined/response/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/policy/queries/response/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/combined/response/v1:get', Position = 2)]
@@ -88,7 +89,7 @@ function Get-FalconResponsePolicy {
         [Parameter(ParameterSetName = '/policy/queries/response/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -97,8 +98,6 @@ function Get-FalconResponsePolicy {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -114,6 +113,7 @@ function Get-FalconResponsePolicyMember {
 
         [Parameter(ParameterSetName = '/policy/queries/response-members/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/policy/combined/response-members/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/queries/response-members/v1:get', Position = 3)]
@@ -242,6 +242,8 @@ function New-FalconResponsePolicy {
             CloneId      = 'clone_id'
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/response/v1:post'
@@ -253,8 +255,6 @@ function New-FalconResponsePolicy {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -265,7 +265,7 @@ function Remove-FalconResponsePolicy {
         [ValidatePattern('^\w{32}$')]
         [array] $Ids
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -274,8 +274,6 @@ function Remove-FalconResponsePolicy {
                 Query = @('ids')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }
@@ -296,6 +294,8 @@ function Set-FalconResponsePrecedence {
         $Fields = @{
             PlatformName = 'platform_name'
         }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -306,8 +306,6 @@ function Set-FalconResponsePrecedence {
                 }
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

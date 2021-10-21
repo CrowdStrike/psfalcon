@@ -14,6 +14,7 @@ function Get-FalconInstaller {
 
         [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/sensors/combined/installers/v1:get', Position = 1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get', Position = 2)]
@@ -39,7 +40,7 @@ function Get-FalconInstaller {
         [Parameter(ParameterSetName = '/sensors/queries/installers/v1:get')]
         [switch] $Total
     )
-    begin {
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -48,8 +49,6 @@ function Get-FalconInstaller {
                 Query = @('sort', 'ids', 'offset', 'limit', 'filter')
             }
         }
-    }
-    process {
         Invoke-Falcon @Param
     }
 }

@@ -249,9 +249,9 @@ function Invoke-FalconDeploy {
                 throw "Upload failed."
             }
             try {
-                for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 500) {
+                for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 1000) {
                     $Param = @{
-                        HostIds = ($HostArray[$i..($i + 499)]).device_id
+                        HostIds = ($HostArray[$i..($i + 999)]).device_id
                     }
                     switch -Regex ($PSBoundParameters.Keys) {
                         '(QueueOffline|Timeout)' { $Param[$_] = $PSBoundParameters.$_ }
@@ -457,9 +457,9 @@ function Invoke-FalconRtr {
                 # Use provided Host identifiers
                 ,$PSBoundParameters.HostIds
             }
-            for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 500) {
+            for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 1000) {
                 # Create baseline output and define request parameters
-                [array] $Group = Initialize-Output $HostArray[$i..($i + 499)]
+                [array] $Group = Initialize-Output $HostArray[$i..($i + 999)]
                 $InitParam = @{
                     HostIds      = $Group.aid
                     QueueOffline = if ($PSBoundParameters.QueueOffline) {
