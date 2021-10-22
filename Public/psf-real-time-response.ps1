@@ -402,7 +402,7 @@ function Invoke-FalconRtr {
         [Parameter(ParameterSetName = 'GroupId')]
         [boolean] $QueueOffline,
 
-        [Parameter(ParameterSetName = 'HostId', Mandatory = $true)]
+        [Parameter(ParameterSetName = 'HostId', ValueFromPipeline = $true, Mandatory = $true)]
         [ValidatePattern('^\w{32}$')]
         [Alias('device_id')]
         [string] $HostId,
