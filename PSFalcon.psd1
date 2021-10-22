@@ -445,11 +445,13 @@ Command Changes
   * Added '-Include' parameter (or additional values) to append data to the commands:
     'Get-FalconQueue', 'Get-FalconUser', 'Get-FalconHost', 'Invoke-FalconHostAction'
 
-  * Added support for Linux hosts to the commands:
-    'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag'
-  
-  * Modified output the following commands to include 'cid', 'device_id', and 'tags':
-    'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag'
+  * Added '-HostId' parameter to 'Invoke-FalconRtr' to allow for single-host sessions and the use of
+  'Invoke-FalconRtr' for 'SensorTag' and 'UninstallSensor' commands.
+
+  * Updated 'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag':
+    Added support for Linux hosts
+    Added '-Ids' parameter for multi-host support
+    Modified output to include 'cid', 'device_id', and 'tags'
 
   * Modified output of 'Uninstall-FalconSensor' to include 'cid', 'device_id' and 'status'.
 
