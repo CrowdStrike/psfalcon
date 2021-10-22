@@ -424,6 +424,7 @@ General Changes
       'Public\psf-devices.ps1'
       'Public\psf-output.ps1'
       'Public\psf-real-time-response.ps1'
+      'Public\psf-sensors.ps1'
 
   * Updated the conversion of 'last X days/hours' for the '-Filter' parameter to work when last/days/hours is
     properly capitalized, instead of only lower case.
