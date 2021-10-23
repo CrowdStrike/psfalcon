@@ -446,7 +446,7 @@ Command Changes
     'Get-FalconQueue', 'Get-FalconUser', 'Get-FalconHost', 'Invoke-FalconHostAction'
 
   * Added '-HostId' parameter to 'Invoke-FalconRtr' to allow for single-host sessions and the use of
-  'Invoke-FalconRtr' for 'SensorTag' and 'UninstallSensor' commands.
+    'Invoke-FalconRtr' as the foundation of 'SensorTag' commands.
 
   * Updated 'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag':
     Added support for Linux hosts
