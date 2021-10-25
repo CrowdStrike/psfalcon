@@ -42,9 +42,9 @@ function Add-FalconSensorTag {
                 'lconctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
             Windows = '$Key = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
                 '0423f-7058-48c9-a204-725362b67639}\Default"; $Tags = (reg query $Key) -match "GroupingTags"; $V' +
-                'alue = if ($Tags) { ($Tags.Split("REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Select-Ob' +
-                'ject -Unique) -join "," } else { $args }; [void] (reg add $Key /v GroupingTags /d $Value /f); W' +
-                'rite-Output "$(((reg query $Key) -match "GroupingTags").Split("REG_SZ")[-1].Trim())"'
+                'alue = if ($Tags) { (($Tags -split "REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Select-' +
+                'Object -Unique) -join "," } else { $args }; [void] (reg add $Key /v GroupingTags /d $Value /f);' +
+                ' Write-Output "$((((reg query $Key) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
         }
     }
     process {
@@ -138,7 +138,7 @@ function Get-FalconSensorTag {
                 "ping tags set//; s/^Grouping tags: //'"
             Windows = '$Tags = (reg query "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c0' +
                 '34b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($Tags) { Wr' +
-                'ite-Output "$($Tags.Split("REG_SZ")[-1].Trim())" }'
+                'ite-Output "$(($Tags -split "REG_SZ")[-1].Trim())" }'
         }
     }
     process {
@@ -251,10 +251,10 @@ function Remove-FalconSensorTag {
                 's set//; s/^Grouping tags: //"'
             Windows = '$Key = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
                 '0423f-7058-48c9-a204-725362b67639}\Default"; $Tags = (reg query $Key) -match "GroupingTags"; if' +
-                ' ($Tags) { $Delete = $args.Split(","); $Value = $Tags.Split("REG_SZ")[-1].Trim().Split(",").Whe' +
-                're({ $Delete -notcontains $_ }) -join ","; if ($Value) { [void] (reg add $Key /v GroupingTags /' +
-                'd $Value /f) } else { [void] (reg delete $Key /v GroupingTags /f) }}; $Tags = (reg query $Key) ' +
-                '-match "GroupingTags"; if ($Tags) { $Tags.Split("REG_SZ")[-1].Trim() }'
+                ' ($Tags) { $Delete = $args.Split(","); $Value = ($Tags -split "REG_SZ")[-1].Trim().Split(",").W' +
+                'here({ $Delete -notcontains $_ }) -join ","; if ($Value) { [void] (reg add $Key /v GroupingTags' +
+                ' /d $Value /f) } else { [void] (reg delete $Key /v GroupingTags /f) }}; $Tags = (reg query $Key' +
+                ') -match "GroupingTags"; if ($Tags) { ($Tags -split "REG_SZ")[-1].Trim() }'
         }
     }
     process {

@@ -481,6 +481,10 @@ GitHub Issues
   * Issue #131: Updated 'Class.ps1' to change how header values were added/removed from the [System.Net.Http.
     HttpClientHandler] object before/after running a 'Receive' command. This should resolve 'An error occurred
     while enumerating through a collection: Collection was modified' errors in PowerShell 5.1.
+
+  * Issue #132: Updated 'Add-FalconSensorTag', 'Get-FalconSensorTag' and 'Remove-FalconSensorTag' to change method
+    used to split 'GroupingTags' values when running on Windows hosts. Previous method was incorrectly splitting
+    on unexpected characters, causing tag values to not be gathered properly for display and manipulation.
 "@
         }
     }
