@@ -34,7 +34,12 @@ function Add-FalconSensorTag {
                 't -u | xargs)) && uniq="$(echo ${uniq[*]} | tr " " ",")" && /opt/CrowdStrike/falconctl -d -f --' +
                 'tags && /opt/CrowdStrike/falconctl -s --tags="$uniq" && /opt/CrowdStrike/falconctl -g --tags | ' +
                 'sed "s/^Sensor grouping tags are not set//; s/^tags=//; s/.$//"'
-            Mac     = 'echo "not_supported_in_psfalcon"'
+            Mac     = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | se' +
+                'd "s/^No grouping tags set//; s/^Grouping tags: //")) tag+=($1) && uniq=$(echo "${tag[@]}" | tr' +
+                ' " " "\n" | sort -u | tr "\n" "," | sed "s/,$//") && /Applications/Falcon.app/Contents/Resource' +
+                's/falconctl grouping-tags clear &> /dev/null && /Applications/Falcon.app/Contents/Resources/fal' +
+                'conctl grouping-tags set "$uniq" &> /dev/null && /Applications/Falcon.app/Contents/Resources/fa' +
+                'lconctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
             Windows = '$Key = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
                 '0423f-7058-48c9-a204-725362b67639}\Default"; $Tags = (reg query $Key) -match "GroupingTags"; $V' +
                 'alue = if ($Tags) { ($Tags.Split("REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Select-Ob' +
@@ -237,7 +242,13 @@ function Remove-FalconSensorTag {
                 'IFS=$"\n" && val=($(printf "%s\n" ${tag[*]} | xargs)) && val="$(echo ${val[*]} | tr " " ",")" &' +
                 '& /opt/CrowdStrike/falconctl -s --tags="$val"; fi; /opt/CrowdStrike/falconctl -g --tags | sed "' +
                 's/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//"'
-            Mac     = 'echo "not_supported_in_psfalcon"'
+            Mac     = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | se' +
+                'd "s/^No grouping tags set//; s/^Grouping tags: //")) del=("${(@s/,/)1}") && for i in ${del[@]}' +
+                '; do tag=("${tag[@]/$i}"); done && tag=$(echo "${tag[@]}" | xargs | tr " " "," | sed "s/,$//") ' +
+                '&& /Applications/Falcon.app/Contents/Resources/falconctl grouping-tags clear &> /dev/null && /A' +
+                'pplications/Falcon.app/Contents/Resources/falconctl grouping-tags set "$tag" &> /dev/null && /A' +
+                'pplications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping tag' +
+                's set//; s/^Grouping tags: //"'
             Windows = '$Key = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
                 '0423f-7058-48c9-a204-725362b67639}\Default"; $Tags = (reg query $Key) -match "GroupingTags"; if' +
                 ' ($Tags) { $Delete = $args.Split(","); $Value = $Tags.Split("REG_SZ")[-1].Trim().Split(",").Whe' +
@@ -327,16 +338,15 @@ function Uninstall-FalconSensor {
         $Scripts = @{
             Linux   = 'echo "not_supported_in_psfalcon"'
             Mac     = 'echo "not_supported_in_psfalcon"'
-            Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osar' +
-                'chitecture -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion' +
-                '\Uninstall" } else { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if ' +
-                '(Test-Path $RegPath) { $RegKey = Get-ChildItem $RegPath | Where-Object { $_.GetValue("D' +
-                'isplayName") -like "*CrowdStrike Windows Sensor*" }; if ($RegKey) { $UninstallString = ' +
-                '$RegKey.GetValue("QuietUninstallString"); $Arguments = @("/c", $UninstallString); if ($' +
-                'args) { $Arguments += "MAINTENANCE_TOKEN=$args" }; $ArgumentList = $Arguments -join " "' +
-                '; Start-Process -FilePath cmd.exe -ArgumentList $ArgumentList -PassThru | Select-Object' +
-                ' Id, ProcessName | ForEach-Object { Write-Output "$($_ | ConvertTo-Json -Compress)" }}}' +
-                ' else { Write-Error "Unable to locate $RegPath" }'
+            Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
+                're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
+                'se { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $' +
+                'RegKey = Get-ChildItem $RegPath | Where-Object { $_.GetValue("DisplayName") -like "*CrowdStrike' +
+                ' Windows Sensor*" }; if ($RegKey) { $UninstallString = $RegKey.GetValue("QuietUninstallString")' +
+                '; $Arguments = @("/c", $UninstallString); if ($args) { $Arguments += "MAINTENANCE_TOKEN=$args" ' +
+                '}; $ArgumentList = $Arguments -join " "; Start-Process -FilePath cmd.exe -ArgumentList $Argumen' +
+                'tList -PassThru | Select-Object Id, ProcessName | ForEach-Object { Write-Output "$($_ | Convert' +
+                'To-Json -Compress)" }}} else { Write-Error "Unable to locate $RegPath" }'
         }
     }
     process {

@@ -24,16 +24,16 @@ class ApiClient {
         }
         try {
             $Output = if ($Param.Outfile) {
-                ($Param.Headers).GetEnumerator().foreach{
-                    $this.Client.DefaultRequestHeaders.Add($_.Key, $_.Value)
+                @($Param.Headers.Keys).foreach{
+                    $this.Client.DefaultRequestHeaders.Add($_, $Param.Headers.$_)
                 }
                 $Request = $this.Client.GetByteArrayAsync($Param.Path)
                 if ($Request.Result) {
                     [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile), $Request.Result)
                 }
-                ($this.Client.DefaultRequestHeaders).GetEnumerator().foreach{
-                    if ($Param.Headers.Keys -contains $_.Key) {
-                        $this.Client.DefaultRequestHeaders.Remove($_.Key)
+                @($Param.Headers.Keys).foreach{
+                    if ($this.Client.DefaultRequestHeaders.$_) {
+                        $this.Client.DefaultRequestHeaders.Remove($_)
                     }
                 }
             } else {

@@ -449,7 +449,7 @@ Command Changes
     'Invoke-FalconRtr' as the foundation of 'SensorTag' commands.
 
   * Updated 'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag':
-    Added support for Linux hosts
+    Added support for Linux and Mac hosts
     Added '-Ids' parameter for multi-host support
     Modified output to include 'cid', 'device_id', and 'tags'
 
@@ -477,6 +477,10 @@ GitHub Issues
   * Issue #119: Re-organized how the private function 'Build-Content' adds 'query' input to requests, so that the
     parameter will be passed in exactly as specified by the 'Format.Query' property when using 'Invoke-Falcon',
     instead of forcing lower case values using the PowerShell parameter name.
+
+  * Issue #131: Updated 'Class.ps1' to change how header values were added/removed from the [System.Net.Http.
+    HttpClientHandler] object before/after running a 'Receive' command. This should resolve 'An error occurred
+    while enumerating through a collection: Collection was modified' errors in PowerShell 5.1.
 "@
         }
     }
