@@ -59,7 +59,10 @@ function Get-FalconResponsePolicy {
 
         [Parameter(ParameterSetName = '/policy/combined/response/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/policy/queries/response/v1:get', Position = 1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
+        [ValidateScript({
+            Test-FqlStatement $_ @('created_by','created_timestamp','description','enabled','groups',
+            'modified_by','modified_timestamp','name','name.raw','platform_name')
+        })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/combined/response/v1:get', Position = 2)]
