@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.1.5'
+    ModuleVersion        = '2.1.6'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -387,106 +387,10 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
-New Commands
-  * ml-exclusions
-    'ConvertTo-FalconMlExclusion'
-
-  * self-service-ioa-exclusions
-    'ConvertTo-FalconIoaExclusion'
-
-General Changes
-  * Updated module license to 'The Unlicense' to be in-line with similar projects (falconpy, gofalcon).
-
-  * Added an authorization token check earlier in the private function 'Invoke-Falcon'. This change is designed
-    to help prevent "An invalid request URI was provided. The request URI must either be an absolute URI or
-    BaseAddress must be set" errors from appearing when a command prompts for ClientId/ClientSecret because
-    an authorization token had not been previously requested.
-
-  * Added more explicit error messages to 'Request-FalconToken', 'Show-FalconModule' and 'Test-FalconToken' to
-    make it more obvious when errors are produced due to a failure during the loading of the module, or when
-    an authorization token has not been requested.
-
-  * Updated 'Invoke-Falcon' private function to allow the return of an un-formatted [System.Net.Http.
-    HttpResponseMessage] using the '-RawOutput' switch for commands that need 'meta' content. This reduces
-    the number of 'unique' commands that don't pass through 'Invoke-Falcon'.
-
-  * Added additional authorization token checks to commands that don't use 'Invoke-Falcon'.
-
-  * Modified 'foreach' method being used throughout module to increase performance (where applicable).
-
-  * Updated most commands to move the 'Param' definition into the process{} block. This change was made to match
-    the changes required for commands that have added 'pipeline' support.
-
-  * Moved commands from 'Public\psfalcon.ps1' into new, smaller files due to intermittent errors that may be
-    related to file size:
-
-      'Public\psf-config.ps1'
-      'Public\psf-devices.ps1'
-      'Public\psf-output.ps1'
-      'Public\psf-real-time-response.ps1'
-      'Public\psf-sensors.ps1'
-
-  * Updated the conversion of 'last X days/hours' for the '-Filter' parameter to work when last/days/hours is
-    properly capitalized, instead of only lower case.
-
-  * Added private function 'Test-FqlStatement' to validate the values provided to '-Filter' and provide the
-    opportunity to generate error messages before submission to the Falcon APIs.
-
-  * Renamed private function 'Confirm-String' to 'Test-RegexValue' to prevent any future overlap due to generic
-    naming.
-
-Command Changes
-  * Added support for passing identifier values through the pipeline to the commands:
-    'Start-FalconSession', 'Update-FalconSession'
-
-  * Added email string RegEx validation to the commands:
-    'Edit-FalconReconAction', 'Get-FalconUser', 'New-FalconReconAction', 'New-FalconUser'
-
-  * Added '-Include' parameter (or additional values) to append data to the commands:
-    'Get-FalconQueue', 'Get-FalconUser', 'Get-FalconHost', 'Invoke-FalconHostAction'
-
-  * Added '-HostId' parameter to 'Invoke-FalconRtr' to allow for single-host sessions and the use of
-    'Invoke-FalconRtr' as the foundation of 'SensorTag' commands.
-
-  * Updated 'Add-FalconSensorTag', 'Get-FalconSensorTag', 'Remove-FalconSensorTag':
-    Added support for Linux and Mac hosts
-    Added '-Ids' parameter for multi-host support
-    Modified output to include 'cid', 'device_id', and 'tags'
-
-  * Updated 'Uninstall-FalconSensor':
-    Modified output to include include 'cid', 'device_id' and 'status'
-    Added error message when command is used with Linux/Mac hosts until support is added in the future
-
-  * Updated 'Start-FalconSession' to a maximum of 10,000 identifiers to match API changes.
-  
-  * Increased Real-time Response batch size from 500 to 1,000 for the commands:
-    'Invoke-FalconRtr', 'Invoke-FalconDeploy'
-
-  * Added support for new API to 'Get-FalconVulnerability' (including 'Facet' parameter, which is functionally
-    similar to what PSFalcon does with '-Include') and raised 'Limit' from 400 to 5,000.
-
 GitHub Issues
-  * Issue #112: Updated 'Invoke-FalconHostGroupAction' to properly convert to Json and fixed an additional
-    formatting error.
-
-  * Issue #113: Updated 'Invoke-FalconDeploy' to check for 'complete = true' plus the lack of a 'stderr' output
-    to verify success when using 'put' instead of checking the 'stdout' value, which is different between OS
-    versions. Also changed the absolute path for the 'run' command to ensure it works with Linux and Mac, and
-    added a 'mod_file' step to make the file executable on Linux hosts.
-
-  * Issue #116: Updated 'Uninstall-FalconSensor' to request the maintenance mode token when appropriate.
-
-  * Issue #119: Re-organized how the private function 'Build-Content' adds 'query' input to requests, so that the
-    parameter will be passed in exactly as specified by the 'Format.Query' property when using 'Invoke-Falcon',
-    instead of forcing lower case values using the PowerShell parameter name.
-
-  * Issue #131: Updated 'Class.ps1' to change how header values were added/removed from the [System.Net.Http.
-    HttpClientHandler] object before/after running a 'Receive' command. This should resolve 'An error occurred
-    while enumerating through a collection: Collection was modified' errors in PowerShell 5.1.
-
-  * Issue #132: Updated 'Add-FalconSensorTag', 'Get-FalconSensorTag' and 'Remove-FalconSensorTag' to change method
-    used to split 'GroupingTags' values when running on Windows hosts. Previous method was incorrectly splitting
-    on unexpected characters, causing tag values to not be gathered properly for display and manipulation.
+  * Issue #134: Modified RegEx pattern for 'Add-FalconGroupingTag' and 'Remove-FalconGroupingTag' to allow all
+    characters in the initial tag value, then updated the command to use the 'Test-RegexValue' to validate
+    that each value is a valid tag.
 "@
         }
     }

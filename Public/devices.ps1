@@ -6,7 +6,16 @@ function Add-FalconGroupingTag {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/devices/entities/devices/tags/v1:patch', Mandatory = $true, Position = 2)]
-        [ValidatePattern('^FalconGroupingTags/\w{1,237}$')]
+        [ValidatePattern('^FalconGroupingTags/.+$')]
+        [ValidateScript({
+            @($_).foreach{
+                if ((Test-RegexValue $_) -eq 'tag') {
+                    $true
+                } else {
+                    throw "Valid values include letters, numbers, hyphens, unscores and forward slashes. ['$_']"
+                }
+            }
+        })]
         [array] $Tags
     )
     begin {
@@ -229,7 +238,16 @@ function Remove-FalconGroupingTag {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/devices/entities/devices/tags/v1:patch', Mandatory = $true, Position = 2)]
-        [ValidatePattern('^FalconGroupingTags/\w{1,237}$')]
+        [ValidatePattern('^FalconGroupingTags/.+$')]
+        [ValidateScript({
+            @($_).foreach{
+                if ((Test-RegexValue $_) -eq 'tag') {
+                    $true
+                } else {
+                    throw "Valid values include letters, numbers, hyphens, unscores and forward slashes. ['$_']"
+                }
+            }
+        })]
         [array] $Tags
     )
     begin {
