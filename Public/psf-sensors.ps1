@@ -336,8 +336,8 @@ function Uninstall-FalconSensor {
     )
     begin {
         $Scripts = @{
-            Linux   = 'echo "not_supported_in_psfalcon"'
-            Mac     = 'echo "not_supported_in_psfalcon"'
+            Linux   = $null
+            Mac     = $null
             Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
                 're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
                 'se { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $' +
@@ -353,6 +353,9 @@ function Uninstall-FalconSensor {
         try {
             $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Id | Select-Object cid, device_id,
                 platform_name, device_policies
+            if ($HostInfo.platform_name -ne 'Windows') {
+                throw 'Only Windows hosts are currently supported in PSFalcon.'
+            }
             $IdValue = switch ($HostInfo.device_policies.sensor_update.uninstall_protection) {
                 'ENABLED'          { $HostInfo.device_id }
                 'MAINTENANCE_MODE' { 'MAINTENANCE' }

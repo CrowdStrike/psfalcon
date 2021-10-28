@@ -453,7 +453,9 @@ Command Changes
     Added '-Ids' parameter for multi-host support
     Modified output to include 'cid', 'device_id', and 'tags'
 
-  * Modified output of 'Uninstall-FalconSensor' to include 'cid', 'device_id' and 'status'.
+  * Updated 'Uninstall-FalconSensor':
+    Modified output to include include 'cid', 'device_id' and 'status'
+    Added error message when command is used with Linux/Mac hosts until support is added in the future
 
   * Updated 'Start-FalconSession' to a maximum of 10,000 identifiers to match API changes.
   
