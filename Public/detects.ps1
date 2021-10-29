@@ -6,7 +6,8 @@ function Edit-FalconDetection {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/detects/entities/detects/v2:patch', Position = 2)]
-        [ValidateSet('new', 'in_progress', 'true_positive', 'false_positive', 'ignored', 'closed', 'reopened')]
+        [ValidateSet('new', 'in_progress', 'true_positive', 'false_positive', 'ignored', 'closed', 'reopened',
+            IgnoreCase = $false)]
         [string] $Status,
 
         [Parameter(ParameterSetName = '/detects/entities/detects/v2:patch', Position = 3)]
@@ -14,6 +15,13 @@ function Edit-FalconDetection {
         [string] $AssignedToUuid,
 
         [Parameter(ParameterSetName = '/detects/entities/detects/v2:patch', Position = 4)]
+        [ValidateScript({
+            if ($PSBoundParameters.Status) {
+                $true
+            } else {
+                throw "A valid 'status' value must also be supplied."
+            }
+        })]
         [string] $Comment,
 
         [Parameter(ParameterSetName = '/detects/entities/detects/v2:patch', Position = 5)]

@@ -195,9 +195,9 @@ function Invoke-FalconAdminCommand {
             Mandatory = $true, Position = 2)]
         [ValidateSet('cat', 'cd', 'clear', 'cp', 'csrutil', 'encrypt', 'env', 'eventlog', 'filehash', 'get',
             'getsid', 'help', 'history', 'ifconfig', 'ipconfig', 'kill', 'ls', 'map', 'memdump', 'mkdir',
-            'mount', 'mv', 'netstat', 'ps', 'put', 'reg delete', 'reg load', 'reg query', 'reg set', 'reg unload',
-            'restart', 'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap', 'update history',
-            'update install', 'update list', 'update install', 'users', 'xmemdump', 'zip')]
+            'mount', 'mv', 'netstat', 'ps', 'put', 'put-and-run', 'reg delete', 'reg load', 'reg query',
+            'reg set', 'reg unload', 'restart', 'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap',
+            'update history', 'update install', 'update list', 'update install', 'users', 'xmemdump', 'zip')]
         [string] $Command,
 
         [Parameter(ParameterSetName = '/real-time-response/entities/admin-command/v1:post', Position = 3)]

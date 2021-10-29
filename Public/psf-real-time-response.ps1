@@ -382,9 +382,9 @@ function Invoke-FalconRtr {
         [Parameter(ParameterSetName = 'GroupId', Mandatory = $true, Position = 1)]
         [ValidateSet('cat', 'cd', 'clear', 'cp', 'csrutil', 'encrypt', 'env', 'eventlog', 'filehash', 'get',
             'getsid', 'history', 'ifconfig', 'ipconfig', 'kill', 'ls', 'map', 'memdump', 'mkdir', 'mount', 'mv',
-            'netstat', 'ps', 'put', 'reg delete', 'reg load', 'reg query', 'reg set', 'reg unload', 'restart',
-            'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap', 'update history', 'update install',
-            'update list', 'users', 'xmemdump', 'zip')]
+            'netstat', 'ps', 'put', 'put-and-run', 'reg delete', 'reg load', 'reg query', 'reg set', 'reg unload',
+            'restart', 'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap', 'update history',
+            'update install', 'update list', 'users', 'xmemdump', 'zip')]
         [string] $Command,
 
         [Parameter(ParameterSetName = 'HostId', Position = 2)]

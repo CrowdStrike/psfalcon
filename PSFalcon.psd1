@@ -387,10 +387,16 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
+Command Changes
+  * Added 'put-and-run' to 'Invoke-FalconAdminCommand' and 'Invoke-FalconRtr'.
+
 GitHub Issues
   * Issue #134: Modified RegEx pattern for 'Add-FalconGroupingTag' and 'Remove-FalconGroupingTag' to allow all
     characters in the initial tag value, then updated the command to use the 'Test-RegexValue' to validate
     that each value is a valid tag.
+  * Issue #135: Added check to validate both 'status' and 'comment' value are present when submitting 'comment'
+    with 'Edit-FalconDetection'. Also forced the input of lower case status values, as improperly-cased 'status'
+    values will cause a '400: Failed to validate resource' error.
 "@
         }
     }
