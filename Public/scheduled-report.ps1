@@ -69,6 +69,44 @@ function Get-FalconScheduledReport {
         Invoke-Falcon @Param
     }
 }
+function Invoke-FalconScheduledReport {
+<#
+.SYNOPSIS
+Execute a scheduled report
+.DESCRIPTION
+Requires 'scheduled-report:read'.
+.PARAMETER Id
+Report identifier
+.EXAMPLE
+Invoke-FalconScheduledReport -Id <id>
+
+Execute scheduled report <id>.
+#>
+    [CmdletBinding(DefaultParameterSetName = '/reports/entities/scheduled-reports/execution/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/reports/entities/scheduled-reports/execution/v1:post', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $Id
+    )
+    begin {
+        if (!$Script:Falcon) {
+            Request-FalconToken
+        }
+    }
+    process {
+        $Param = @{
+            Path    = @($Script:Falcon.Hostname, ($PSCmdlet.ParameterSetName).Split(':')[0]) -join $null
+            Method  = ($PSCmdlet.ParameterSetName).Split(':')[-1]
+            Headers = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json'
+            }
+            Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
+        }
+        Write-Result ($Script:Falcon.Api.Invoke($Param))
+    }
+}
 function Receive-FalconScheduledReport {
     [CmdletBinding(DefaultParameterSetName = '/reports/entities/report-executions-download/v1:get')]
     param(
@@ -105,5 +143,43 @@ function Receive-FalconScheduledReport {
             }
         }
         Invoke-Falcon @Param
+    }
+}
+function Redo-FalconScheduledReport {
+<#
+.SYNOPSIS
+Retry a scheduled report execution
+.DESCRIPTION
+Requires 'scheduled-report:read'.
+.PARAMETER Id
+Report identifier
+.EXAMPLE
+Redo-FalconScheduledReport -Id <id>
+
+Retry scheduled report <id>.
+#>
+    [CmdletBinding(DefaultParameterSetName = '/reports/entities/report-executions-retry/v1:post')]
+    param(
+        [Parameter(ParameterSetName = '/reports/entities/report-executions-retry/v1:post', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [ValidatePattern('^\w{32}$')]
+        [string] $Id
+    )
+    begin {
+        if (!$Script:Falcon) {
+            Request-FalconToken
+        }
+    }
+    process {
+        $Param = @{
+            Path    = @($Script:Falcon.Hostname, ($PSCmdlet.ParameterSetName).Split(':')[0]) -join $null
+            Method  = ($PSCmdlet.ParameterSetName).Split(':')[-1]
+            Headers = @{
+                Accept      = 'application/json'
+                ContentType = 'application/json'
+            }
+            Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
+        }
+        Write-Result ($Script:Falcon.Api.Invoke($Param))
     }
 }

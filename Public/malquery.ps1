@@ -221,10 +221,6 @@ function Search-FalconMalQueryHash {
         [ValidatePattern('^\w{64}$')]
         [string] $Sha256
     )
-    begin {
-        $Sleep = 5
-        $MaxSleep = 30
-    }
     process {
         try {
             $Param = @{
@@ -234,16 +230,14 @@ function Search-FalconMalQueryHash {
             }
             $Request = Invoke-FalconMalQuery @Param
             if ($Request.reqid) {
-                $Param = @{
-                    Ids = $Request.reqid
-                    OutVariable = 'Result'
-                }
-                if ((Get-FalconMalQuery @Param).status -eq 'inprogress') {
+                $Result = Get-FalconMalQuery -Id $Request.reqid
+                if ($Result.status -eq 'inprogress') {
                     do {
-                        Start-Sleep -Seconds $Sleep
-                        $i += $Sleep
+                        Start-Sleep -Seconds 5
+                        $i += 5
+                        $Result = Get-FalconMalQuery -Id $Request.reqid
                     } until (
-                        ((Get-FalconMalQuery @Param).status -ne 'inprogress') -or ($i -ge $MaxSleep)
+                        ($Result.status -ne 'inprogress') -or ($i -ge 30)
                     )
                 }
                 $Result
