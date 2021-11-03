@@ -3,13 +3,18 @@ function Get-FalconMalQuery {
     param(
         [Parameter(ParameterSetName = '/malquery/entities/requests/v1:get', Mandatory = $true, Position = 1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [array] $Ids
+        [array] $Id
     )
+    begin {
+        $Fields = @{
+            Id = 'ids'
+        }
+    }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('ids')
             }
@@ -122,12 +127,7 @@ function Invoke-FalconMalQuery {
         [int32] $Limit,
 
         [Parameter(ParameterSetName = '/malquery/combined/fuzzy-search/v1:post', Mandatory = $true)]
-        [switch] $Fuzzy,
-
-        [Parameter(ParameterSetName = '/malquery/queries/hunt/v1:post')]
-        [Parameter(ParameterSetName = '/malquery/queries/exact-search/v1:post')]
-        [Parameter(ParameterSetName = '/malquery/combined/fuzzy-search/v1:post')]
-        [switch] $Detailed
+        [switch] $Fuzzy
     )
     begin {
         $Fields = @{
@@ -141,15 +141,28 @@ function Invoke-FalconMalQuery {
         }
     }
     process {
+        $Options = @{}
+        @('FilterFiletypes', 'FilterMeta', 'Limit', 'MaxDate', 'MaxSize', 'MinDate', 'MinSize').foreach{
+            if ($PSBoundParameters.$_) {
+                $Key = if ($_ -eq 'Limit') {
+                    'Limit'
+                } else {
+                    $Fields.$_
+                }
+                $Options[$Key] = $PSBoundParameters.$_
+                [void] $PSBoundParameters.Remove($_)
+            }
+        }
+        if ($Options.Keys) {
+            $PSBoundParameters.Add('options', $Options)
+        }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Body = @{
-                    root = @('yara_rule')
-                    options = @('min_size', 'limit', 'filter_filetypes', 'min_date', 'filter_meta',
-                        'max_date', 'max_size')
+                    root = @('yara_rule', 'options')
                     patterns = @('type', 'value')
                 }
             }
@@ -215,8 +228,8 @@ function Search-FalconMalQueryHash {
     process {
         try {
             $Param = @{
-                YaraRule = "import `"hash`"`nrule SearchHash`n{`ncondition:`nhash.sha256(0, filesize) == " +
-                "`"$($PSBoundParameters.Sha256)`"`n}"
+                YaraRule = 'import "hash" rule SearchHash { condition: hash.sha256(0, filesize) == "' +
+                    $PSBoundParameters.Sha256 + '" }'
                 FilterMeta = 'sha256', 'type', 'label', 'family'
             }
             $Request = Invoke-FalconMalQuery @Param

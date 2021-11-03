@@ -389,6 +389,8 @@
             ReleaseNotes = @"
 Command Changes
   * Added 'put-and-run' to 'Invoke-FalconAdminCommand' and 'Invoke-FalconRtr'.
+  * Changed 'Get-FalconMalQuery' parameter from '-Ids' to '-Id' to signify that the endpoint only accepts one
+    request at a time.
 
 GitHub Issues
   * Issue #134: Modified RegEx pattern for 'Add-FalconGroupingTag' and 'Remove-FalconGroupingTag' to allow all
@@ -397,6 +399,9 @@ GitHub Issues
   * Issue #135: Added check to validate both 'status' and 'comment' value are present when submitting 'comment'
     with 'Edit-FalconDetection'. Also forced the input of lower case status values, as improperly-cased 'status'
     values will cause a '400: Failed to validate resource' error.
+  * Issue #136: Corrected 'Invoke-FalconMalQuery' to submit 'options' as a hashtable rather than an array, which
+    was causing all requests to fail (including those made with 'Search-FalconMalQueryHash'). Also removed the
+    '-Detailed' parameter, as it was originally added in error.
 "@
         }
     }
