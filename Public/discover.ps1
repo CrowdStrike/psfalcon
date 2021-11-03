@@ -1,34 +1,4 @@
 function Get-FalconAsset {
-<#
-.SYNOPSIS
-Search for assets in Falcon Discover
-.DESCRIPTION
-Requires 'discover:read'.
-.PARAMETER Ids
-Asset identifier(s)
-.PARAMETER Filter
-Falcon Query Language expression to limit results
-.PARAMETER Sort
-Property and direction to sort results
-.PARAMETER Limit
-Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
-.PARAMETER Detailed
-Retrieve detailed information
-.PARAMETER All
-Repeat requests until all available results are retrieved
-.PARAMETER Total
-Display total result count instead of results
-.EXAMPLE
-Get-FalconAsset -Filter "platform_name:'Windows'" -Detailed -All
-
-Return detailed results for all 'Windows' assets.
-.EXAMPLE
-Get-FalconAsset -Ids <id>, <id>
-
-Return detailed results for assets <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/discover/queries/hosts/v1:get')]
     param(
         [Parameter(ParameterSetName = '/discover/entities/hosts/v1:get', Mandatory = $true, Position = 1)]

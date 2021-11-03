@@ -70,18 +70,6 @@ function Get-FalconScheduledReport {
     }
 }
 function Invoke-FalconScheduledReport {
-<#
-.SYNOPSIS
-Execute a scheduled report
-.DESCRIPTION
-Requires 'scheduled-report:read'.
-.PARAMETER Id
-Report identifier
-.EXAMPLE
-Invoke-FalconScheduledReport -Id <id>
-
-Execute scheduled report <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/reports/entities/scheduled-reports/execution/v1:post')]
     param(
         [Parameter(ParameterSetName = '/reports/entities/scheduled-reports/execution/v1:post', Mandatory = $true,
@@ -146,18 +134,6 @@ function Receive-FalconScheduledReport {
     }
 }
 function Redo-FalconScheduledReport {
-<#
-.SYNOPSIS
-Retry a scheduled report execution
-.DESCRIPTION
-Requires 'scheduled-report:read'.
-.PARAMETER Id
-Report identifier
-.EXAMPLE
-Redo-FalconScheduledReport -Id <id>
-
-Retry scheduled report <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = '/reports/entities/report-executions-retry/v1:post')]
     param(
         [Parameter(ParameterSetName = '/reports/entities/report-executions-retry/v1:post', Mandatory = $true,
