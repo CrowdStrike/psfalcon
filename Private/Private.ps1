@@ -649,20 +649,22 @@ function Test-FqlStatement {
         [array] $Properties
     )
     begin {
-        $FqlPattern = [regex] "(\()?[\w\.]+:(!~?|(>|<)=?|~|\*)?(\[)?'[\w\d\s\.\-\*,']+'(\])?(\))?"
+        $Pattern = [regex] ("(?<FqlProperty>[\w\.]+):(?<FqlOperator>(!~?|~|(>|<)=?|\*)?)" +
+            "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,']+)")
     }
     process {
-        @(($String).Split('+').Split(',')).foreach{
-            if ($_ -notmatch $FqlPattern) {
-                # Error when <property>:<operator><value> does not match pattern
-                throw "'$_' is not a valid Falcon Query Language statement."
-            } elseif ($Properties -and $Properties -notcontains ($_).Split(':')[0]) {
-                # Error when 'properties' are provided and input property does not match
-                throw "'$(($_).Split(':')[0])' is not an accepted property."
-            } else {
-                $true
+        if ($String -match $Pattern) {
+            @([regex]::Matches($String, $Pattern).Groups.Where({ $_.Name -eq 'FqlProperty' }).Value).foreach{
+                if ($Properties -and $Properties -notcontains $_) {
+                    # Error when 'property' is not in list of valid properties
+                    throw "'$_' is not a valid property."
+                }
             }
+        } else {
+            # Error when 'filter' does not match $Pattern
+            throw "'$String' is not a valid Falcon Query Language statement."
         }
+        $true
     }
 }
 function Test-RegexValue {

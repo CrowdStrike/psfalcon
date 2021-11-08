@@ -419,6 +419,9 @@ GitHub Issues
 
   * Issue #136: Corrected 'Invoke-FalconMalQuery' to submit 'options' as a hashtable rather than an array, which
     was causing all requests to fail (including those made with 'Search-FalconMalQueryHash').
+
+  * Issue #138: Updated 'Test-FqlStatement' to account for multiple 'exact match' values, and used operator groups
+    to more efficiently check <property>, <operator> and <value> independently within an FQL 'filter' string.
 "@
         }
     }
