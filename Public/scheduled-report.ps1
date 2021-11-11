@@ -66,7 +66,16 @@ function Get-FalconScheduledReport {
                 Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'q')
             }
         }
-        Invoke-Falcon @Param
+        if ($Param.Inputs.Execution -and $Param.Inputs.Detailed) {
+            $Param.Inputs.Remove('Detailed')
+            $Request = Invoke-Falcon @Param
+            if ($Request) {
+                & $MyInvocation.MyCommand.Name -Execution -Ids $Request
+            }
+        } else {
+            Invoke-Falcon @Param
+        }
+        
     }
 }
 function Invoke-FalconScheduledReport {
@@ -105,7 +114,7 @@ function Receive-FalconScheduledReport {
 
         [Parameter(ParameterSetName = '/reports/entities/report-executions-download/v1:get', Mandatory = $true,
             Position = 2)]
-        [ValidatePattern('\.(csv|json)$')]
+        [ValidatePattern('\.gzip$')]
         [ValidateScript({
             if (Test-Path $_) {
                 throw "An item with the specified name $_ already exists."
