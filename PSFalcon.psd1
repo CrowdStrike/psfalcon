@@ -426,6 +426,8 @@ GitHub Issues
   * Issue #140: Updated 'Receive-FalconScheduledReport' to handle gzip files instead of CSV/json.
 
   * Issue #143: Updated 'Get-FalconScheduledReport -Execution' to work properly with the '-Detailed' parameter.
+
+  * Issue #144: Updated 'Test-FqlStatement' to allow semicolon characters.
 "@
         }
     }

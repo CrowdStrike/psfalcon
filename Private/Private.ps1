@@ -650,7 +650,7 @@ function Test-FqlStatement {
     )
     begin {
         $Pattern = [regex] ("(?<FqlProperty>[\w\.]+):(?<FqlOperator>(!~?|~|(>|<)=?|\*)?)" +
-            "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,']+)")
+            "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,':]+)")
     }
     process {
         if ($String -match $Pattern) {
