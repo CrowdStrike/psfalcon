@@ -416,7 +416,7 @@ function Invoke-FalconRtr {
         [string] $GroupId
     )
     begin {
-        if ($PSCmdlet.ParameterSetName -eq 'HostIds') {
+        if ($PSCmdlet.ParameterSetName -ne 'HostId') {
             function Initialize-Output ([array] $HostIds) {
                 # Create initial array of output for each host
                 ($HostIds).foreach{

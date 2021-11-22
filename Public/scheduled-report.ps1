@@ -114,7 +114,7 @@ function Receive-FalconScheduledReport {
 
         [Parameter(ParameterSetName = '/reports/entities/report-executions-download/v1:get', Mandatory = $true,
             Position = 2)]
-        [ValidatePattern('\.gzip$')]
+        [ValidatePattern('\.(csv|json)$')]
         [ValidateScript({
             if (Test-Path $_) {
                 throw "An item with the specified name $_ already exists."

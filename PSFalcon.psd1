@@ -423,11 +423,15 @@ GitHub Issues
   * Issue #138: Updated 'Test-FqlStatement' to account for multiple 'exact match' values, and used operator groups
     to more efficiently check <property>, <operator> and <value> independently within an FQL 'filter' string.
 
-  * Issue #140: Updated 'Receive-FalconScheduledReport' to handle gzip files instead of CSV/json.
+  * Issue #140: Updated the base [System.Net.Http.HttpClientHandler] to automatically decompress gzip files when
+    presented with them from an API.
 
   * Issue #143: Updated 'Get-FalconScheduledReport -Execution' to work properly with the '-Detailed' parameter.
 
   * Issue #144: Updated 'Test-FqlStatement' to allow colon characters.
+
+  * Issue #146: Updated 'Invoke-FalconRtr' to access the 'Initialize-Output' function when using both 'HostIds'
+    and 'GroupId', instead of just 'HostIds'.
 "@
         }
     }

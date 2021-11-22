@@ -83,6 +83,8 @@ function Request-FalconToken {
                 $Script:Falcon.Add('Api', [ApiClient]::New())
                 if ($Script:Falcon.Api) {
                     $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
+                    $Script:Falcon.Api.Handler.AutomaticDecompression = [System.Net.DecompressionMethods]::Gzip,
+                        [System.Net.DecompressionMethods]::Deflate
                     $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd(
                         "$((Show-FalconModule).UserAgent)")
                 } else {
