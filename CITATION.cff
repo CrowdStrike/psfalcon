@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: 'PSFalcon: The CrowdStrike Falcon SDK for PowerShell'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: 
+    family-names: CrowdStrike
+  - given-names: Brendan
+    family-names: Kremian
+    affiliation: CrowdStrike
+repository-code: 'https://github.com/CrowdStrike/psfalcon'
+url: 'https://github.com/CrowdStrike/psfalcon/wiki'
+repository-artifact: 'https://www.powershellgallery.com/packages/PSFalcon'
+abstract: >-
+  PSFalcon is a PowerShell Module that helps CrowdStrike 
+  Falcon users interact with the CrowdStrike Falcon OAuth2 
+  APIs without having extensive knowledge of APIs or PowerShell.
+keywords:
+  - crowdstrike
+  - oauth2
+  - crowdstrike-api
+  - crowdstrike-falcon-api
+  - powershell
+  - windows
+  - linux
+  - mac
+license: Unlicense
