@@ -2,8 +2,9 @@
 
 # Overview
 
-![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/psfalcon)
 ![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/psfalcon)
+![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/psfalcon)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/crowdstrike/psfalcon/latest)
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/crowdstrike/psfalcon)
 
 [PSFalcon](https://github.com/crowdstrike/psfalcon) is a [PowerShell Module](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_modules?view=powershell-7) that helps CrowdStrike
