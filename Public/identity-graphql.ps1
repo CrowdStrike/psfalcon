@@ -18,7 +18,7 @@ function Invoke-FalconIdentityGraph {
                 Accept      = 'application/json'
                 ContentType = 'application/json'
             }
-            Body = ConvertTo-Json -InputObject @{ query = "{$($PSBoundParameters.Query)}" } -Compress 
+            Body = ConvertTo-Json -InputObject @{ query = "{$($PSBoundParameters.Query)}" } -Compress
         }
         Write-Result ($Script:Falcon.Api.Invoke($Param))
     }

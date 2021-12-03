@@ -231,6 +231,9 @@ function New-FalconDeviceControlPolicy {
         [object] $Settings,
 
         [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Position = 4)]
+        [string] $Description,
+
+        [Parameter(ParameterSetName = '/policy/entities/device-control/v1:post', Position = 5)]
         [ValidatePattern('^\w{32}$')]
         [string] $CloneId
     )

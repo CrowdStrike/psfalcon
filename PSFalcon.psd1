@@ -256,6 +256,13 @@
       'Show-FalconMap',
       'Show-FalconModule',
 
+      # psf-policies.ps1
+      'Copy-FalconDeviceControlPolicy',
+      'Copy-FalconFirewallPolicy',
+      'Copy-FalconPreventionPolicy',
+      'Copy-FalconResponsePolicy',
+      'Copy-FalconSensorUpdatePolicy',
+
       # psf-real-time-response.ps1
       'Get-FalconQueue',
       'Invoke-FalconDeploy',
@@ -396,6 +403,13 @@ New Commands
   * discover.ps1
     'Get-FalconAsset'
 
+  * psf-policies.ps1
+    'Copy-FalconDeviceControlPolicy'
+    'Copy-FalconFirewallPolicy'
+    'Copy-FalconPreventionPolicy'
+    'Copy-FalconResponsePolicy'
+    'Copy-FalconSensorUpdatePolicy'
+
   * scheduled-report.ps1
     'Invoke-FalconScheduledReport'
     'Redo-FalconScheduledReport'
@@ -407,6 +421,15 @@ Command Changes
     request at a time.
 
   * Removed '-Detailed' from 'Invoke-FalconMalQuery' because it was not supposed to be there.
+
+  * Added '-Description' to 'New-FalconDeviceControlPolicy'. Whoops.
+
+  * Added '-Include' to 'Get-FalconFirewallPolicy' to include firewall settings with a policy result.
+
+  * Added '-LocalLogging' to 'Edit-FalconFirewallSetting' to support new Firewall Management policy setting.
+
+  * Added pipeline support for parameters in 'Edit-FalconFirewallSetting'. 'Copy-FalconFirewallPolicy' uses
+    the pipeline to supply settings during the duplication of an existing policy.
 
 GitHub Issues
   * Issue #134: Modified RegEx pattern for 'Add-FalconGroupingTag' and 'Remove-FalconGroupingTag' to allow all
@@ -428,7 +451,7 @@ GitHub Issues
 
   * Issue #143: Updated 'Get-FalconScheduledReport -Execution' to work properly with the '-Detailed' parameter.
 
-  * Issue #144: Updated 'Test-FqlStatement' to allow colon characters.
+  * Issue #144: Updated 'Test-FqlStatement' to allow colon characters in the value portion of an FQL statement.
 
   * Issue #146: Updated 'Invoke-FalconRtr' to access the 'Initialize-Output' function when using both 'HostIds'
     and 'GroupId', instead of just 'HostIds'.

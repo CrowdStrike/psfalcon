@@ -138,36 +138,55 @@ function Edit-FalconFirewallPolicy {
 function Edit-FalconFirewallSetting {
     [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/policies/v1:put')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}$')]
+        [Alias('policy_id')]
         [string] $PolicyId,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Position = 2)]
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
+            Position = 2)]
         [ValidateSet('0')]
+        [Alias('platform_id')]
         [string] $PlatformId,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Position = 3)]
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
+            Position = 3)]
         [boolean] $Enforce,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Position = 4)]
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
+            Position = 4)]
         [ValidatePattern('^\w{32}$')]
+        [Alias('rule_group_ids')]
         [array] $RuleGroupIds,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Position = 6)]
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
+            Position = 6)]
         [ValidateSet('ALLOW', 'DENY')]
+        [Alias('default_inbound')]
         [string] $DefaultInbound,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Position = 7)]
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
+            Position = 7)]
         [ValidateSet('ALLOW', 'DENY')]
+        [Alias('default_outbound')]
         [string] $DefaultOutbound,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Position = 8)]
-        [boolean] $MonitorMode
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
+            Position = 8)]
+        [Alias('test_mode')]
+        [boolean] $MonitorMode,
+
+        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
+            Position = 9)]
+        [Alias('local_logging')]
+        [boolean] $LocalLogging
     )
     begin {
         $Fields = @{
             DefaultInbound  = 'default_inbound'
             DefaultOutbound = 'default_outbound'
+            LocalLogging    = 'local_logging'
             MonitorMode     = 'test_mode'
             PlatformId      = 'platform_id'
             PolicyId        = 'policy_id'
@@ -182,7 +201,7 @@ function Edit-FalconFirewallSetting {
             Format   = @{
                 Body = @{
                     root = @('platform_id', 'tracking', 'policy_id', 'test_mode', 'enforce', 'default_outbound',
-                        'default_inbound', 'rule_group_ids')
+                        'default_inbound', 'rule_group_ids', 'local_logging')
                 }
             }
         }
@@ -410,6 +429,12 @@ function Get-FalconFirewallPolicy {
         [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 4)]
         [int] $Offset,
 
+        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:get', Position = 2)]
+        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 5)]
+        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 5)]
+        [ValidateSet('settings')]
+        [array] $Include,
+
         [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Mandatory = $true)]
         [switch] $Detailed,
 
@@ -429,7 +454,28 @@ function Get-FalconFirewallPolicy {
                 Query = @('sort', 'ids', 'offset', 'filter', 'limit')
             }
         }
-        Invoke-Falcon @Param
+        $Result = Invoke-Falcon @Param
+        if ($PSBoundParameters.Include -and $Result) {
+            if (!$Result.id) {
+                $Result = @($Result).foreach{
+                    ,[PSCustomObject] @{ id = $_ }
+                }
+            }
+            if ($PSBoundParameters.Include -contains 'settings') {
+                foreach ($Item in (Get-FalconFirewallSetting -Ids $Result.id)) {
+                    $AddParam = @{
+                        Object = $Result | Where-Object { $_.id -eq $Item.policy_id }
+                        Name   = 'settings'
+                        Value  = $Item | ForEach-Object {
+                            $_.PSObject.Properties.Remove('policy_id')
+                            $_
+                        }
+                    }
+                    Add-Property @AddParam
+                }
+            }
+        }
+        $Result
     }
 }
 function Get-FalconFirewallPolicyMember {
