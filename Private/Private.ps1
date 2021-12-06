@@ -598,6 +598,8 @@ function Invoke-Loop {
             $Clone.Endpoint = $ParamSet.Endpoint.Clone()
             $Page = if ($Pagination.after) {
                 @('after', $Pagination.after)
+            } elseif ($Pagination.next_token) {
+                @('next_token', $Pagination.next_token)
             } elseif ($Pagination.next_page) {
                 @('offset', $Pagination.offset)
             } elseif ($Pagination.offset -match '^\d{1,}$') {
@@ -614,6 +616,7 @@ function Invoke-Loop {
                 # Add pagination
                 "$($Clone.Endpoint.Path)?$($Page -join '=')"
             } else {
+                # Update pagination
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
             # Make request, capture new pagination and output result
@@ -675,7 +678,6 @@ function Test-RegexValue {
         [string] $String
     )
     begin {
-        # RegEx patterns
         $RegEx = @{
             md5    = [regex] '^[A-Fa-f0-9]{32}$'
             sha256 = [regex] '^[A-Fa-f0-9]{64}$'
@@ -729,101 +731,89 @@ function Update-FieldName {
 }
 function Write-Result {
     [CmdletBinding()]
-    param (
+    param(
         [object] $Request
     )
     begin {
+        $Json = if ($Request.Result.Content -and ($Request.Result.Content.Headers.ContentType.MediaType -or
+        $Request.Result.Content.Headers.ContentType) -eq 'application/json') {
+            # Capture Json content
+            ConvertFrom-Json -InputObject ($Request.Result.Content).ReadAsStringAsync().Result
+        }
         $Verbose = if ($Request.Result.Headers) {
-            # Capture initial response header for verbose output
+            # Add response header to verbose output
             ($Request.Result.Headers.GetEnumerator().foreach{
                 ,"$($_.Key)=$($_.Value)"
             })
+            foreach ($String in @('extensions','meta')) {
+                # Add 'meta' and 'extensions'
+                if ($Json -and $Json.$String) {
+                    foreach ($Key in $Json.$String.PSObject.Properties.Where({ $_.Name -ne 'trace_id' })) {
+                        if ($Key.Value -is [PSCustomObject]) {
+                            ($Key.Value.PSObject.Properties).foreach{
+                                ,"$($String).$($Key.Name).$($_.Name)=$($_.Value)"
+                            }
+                        } else {
+                            ,"$($String).$($Key.Name)=$($Key.Value)"
+                        }
+                    }
+                }
+            }
+        }
+        if ($Verbose) {
+            Write-Verbose "[Write-Result] $($Verbose -join ', ')"
         }
     }
     process {
-        if ($Request.Result.Content) {
-            $Json = if ($Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json' -or
-            $Request.Result.Content.Headers.ContentType -eq 'application/json') {
-                # Convert and capture Json content
-                ConvertFrom-Json -InputObject ($Request.Result.Content).ReadAsStringAsync().Result
-                if ($Json.meta) {
-                    # Capture 'meta' values for verbose output
-                    $Verbose += ($Json.meta.PSObject.Properties).foreach{
-                        $Parent = 'meta'
-                        if ($_.Value -is [PSCustomObject]) {
-                            $Parent += ".$($_.Name)"
-                            ($_.Value.PSObject.Properties).foreach{
-                                ,"$($Parent).$($_.Name)=$($_.Value)"
-                            }
-                        } elseif ($_.Name -ne 'trace_id') {
-                            ,"$($Parent).$($_.Name)=$($_.Value)"
-                        }
-                    }
-                } elseif ($Json.extensions) {
-                    # Capture 'extensions' values for verbose output
-                    $Verbose += ($Json.extensions.PSObject.Properties).foreach{
-                        $Parent = 'extensions'
-                        if ($_.Value -is [PSCustomObject]) {
-                            $Parent += ".$($_.Name)"
-                            ($_.Value.PSObject.Properties).foreach{
-                                ,"$($Parent).$($_.Name)=$($_.Value)"
-                            }
-                        } else {
-                            ,"$($Parent).$($_.Name)=$($_.Value)"
-                        }
-                    }
-                }
+        if ($Json) {
+            $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch
+            '^(errors|extensions|meta)$' -and $_.Value }).foreach{
+                # Gather field names from result, excluding 'errors', 'extensions', and 'meta'
+                $_.Name
             }
-            # Output response header and 'meta' or 'extensions' content
-            Write-Verbose "[Write-Result] $($Verbose -join ', ')"
-            if ($Json) {
-                $ResultFields = ($Json.PSObject.Properties).Where({
-                    $_.Name -notmatch '^(errors|extensions|meta)$' -and $_.Value
-                }).foreach{
-                    # Gather field names from result and exclude 'errors', 'extensions', and 'meta'
+            if ($ResultFields -and ($ResultFields | Measure-Object).Count -gt 1) {
+                # Output results
+                $Json | Select-Object $ResultFields
+            } elseif ($ResultFields) {
+                if ($ResultFields[0] -eq 'combined' -and $Json.combined.resources) {
+                    # Output values under 'combined.resources'
+                    $Json.combined.resources.PSObject.Properties.Value
+                } elseif ($ResultFields[0] -eq 'resources' -and $Json.resources.events) {
+                    # Output 'resources.events'
+                    $Json.resources.events
+                } else {
+                    $Json.($ResultFields[0])
+                }
+            } elseif ($Json.meta) {
+                $MetaFields = ($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
+                '^(entity|pagination|powered_by|query_time|trace_id)$' }).foreach{
+                    # Output relevant 'meta' fields
                     $_.Name
                 }
-                if ($ResultFields -and ($ResultFields | Measure-Object).Count -eq 1) {
-                    if ($ResultFields[0] -eq 'combined' -and $Json.($ResultFields[0]).resources) {
-                        # Output 'combined.resources'
-                        $Json.($ResultFields[0]).resources.PSObject.Properties.Value
-                    } else {
-                        $Json.($ResultFields[0])
-                    }
-                } elseif ($ResultFields) {
-                    # Export all fields
-                    $Json | Select-Object $ResultFields
-                } else {
-                    # Output relevant 'meta' values
-                    $MetaFields = ($Json.meta.PSObject.Properties).Where({
-                        $_.Name -notmatch '^(entity|pagination|powered_by|query_time|trace_id)$'
-                    }).foreach{
-                        $_.Name
-                    }
-                    if ($MetaFields) {
-                        $Json.meta | Select-Object $MetaFields
-                    }
+                if ($MetaFields) {
+                    # Output 'meta' result(s)
+                    $Json.meta | Select-Object $MetaFields
                 }
-                ($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                    ($_.Value).foreach{
-                        # Output errors from Json response
-                        $PSCmdlet.WriteError(
-                            [System.Management.Automation.ErrorRecord]::New(
-                                [Exception]::New("$($_.code): $($_.message)"),
-                                $Json.meta.trace_id,
-                                [System.Management.Automation.ErrorCategory]::NotSpecified,
-                                $Request
-                            )
-                        )
-                    }
-                }
-            } else {
-                # Output Result.Content as [string]
-                ($Request.Result.Content).ReadAsStringAsync().Result
             }
-            # Check for rate limiting
-            Wait-RetryAfter $Request
+            @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                # Output error
+                $TraceId = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
+                $Message = ConvertTo-Json -InputObject $_.Value -Compress
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::New(
+                        [Exception]::New($Message),
+                        $TraceId,
+                        [System.Management.Automation.ErrorCategory]::NotSpecified,
+                        $Request
+                    )
+                )
+            }
+        } elseif ($Request.Result.Content) {
+            # Output Result.Content as [string]
+            ($Request.Result.Content).ReadAsStringAsync().Result
         }
+        # Check for rate limiting
+        Wait-RetryAfter $Request
     }
 }
 function Wait-RetryAfter {

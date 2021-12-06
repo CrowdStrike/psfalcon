@@ -236,6 +236,85 @@ function Get-FalconHorizonAzureAccount {
         Invoke-Falcon @Param
     }
 }
+function Get-FalconHorizonIoa {
+    [CmdletBinding(DefaultParameterSetName = '/detects/entities/ioa/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Mandatory = $true, Position = 1)]
+        [ValidateSet('aws','azure')]
+        [string] $CloudPlatform,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 2)]
+        [ValidatePattern('^\d{12}$')]
+        [string] $AwsAccountId,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 3)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $AzureSubscriptionId,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 4)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $AzureTenantId,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 5)]
+        [ValidateSet('High','Medium','Informational',IgnoreCase = $false)]
+        [string] $Severity,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 6)]
+        [string] $Region,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 7)]
+        [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
+            'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
+            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
+            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
+            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
+            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
+            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase = $false)]
+        [string] $Service,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 8)]
+        [ValidateSet('open','closed')]
+        [string] $State,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 9)]
+        [string] $DateTimeSince,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 10)]
+        [ValidateRange(1,5000)]
+        [int] $Limit,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 11)]
+        [string] $NextToken,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get')]
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get')]
+        [switch] $Total
+    )
+    begin {
+        $Fields = @{
+            AwsAccountId        = 'aws_account_id'
+            AzureSubscriptionId = 'azure_subscription_id'
+            AzureTenantId       = 'azure_tenant_id'
+            CloudPlatform       = 'cloud_provider'
+            DateTimeSince       = 'date_time_since'
+            NextToken           = 'next_token'
+        }
+    }
+    process {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Query = @('cloud_provider', 'limit', 'date_time_since', 'azure_tenant_id', 'next_token',
+                    'severity', 'service', 'state', 'region', 'azure_subscription_id', 'aws_account_id')
+            }
+        }
+        Invoke-Falcon @Param
+    }
+}
 function Get-FalconHorizonIoaEvent {
     [CmdletBinding(DefaultParameterSetName = '/ioa/entities/events/v1:get')]
     param(
@@ -330,6 +409,81 @@ function Get-FalconHorizonIoaUser {
         Invoke-Falcon @Param
     }
 }
+function Get-FalconHorizonIom {
+    [CmdletBinding(DefaultParameterSetName = '/detects/entities/iom/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Mandatory = $true, Position = 1)]
+        [ValidateSet('aws','azure','gcp')]
+        [string] $CloudPlatform,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 2)]
+        [ValidatePattern('^\d{12}$')]
+        [string] $AwsAccountId,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 3)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $AzureSubscriptionId,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 4)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string] $AzureTenantId,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 5)]
+        [ValidateSet('new','recurring','all')]
+        [string] $Status,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 6)]
+        [string] $Region,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 7)]
+        [ValidateSet('High','Medium','Informational',IgnoreCase = $false)]
+        [string] $Severity,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 8)]
+        [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
+            'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
+            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
+            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
+            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
+            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
+            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase = $false)]
+        [string] $Service,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 9)]
+        [ValidateRange(1,5000)]
+        [int] $Limit,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 10)]
+        [string] $NextToken,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get')]
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/detects/entities/iom/v1:get')]
+        [switch] $Total
+    )
+    begin {
+        $Fields = @{
+            AwsAccountId        = 'aws_account_id'
+            AzureSubscriptionId = 'azure_subscription_id'
+            AzureTenantId       = 'azure_tenant_id'
+            CloudPlatform       = 'cloud_provider'
+            NextToken           = 'next_token'
+        }
+    }
+    process {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
+            Format   = @{
+                Query = @('cloud_provider', 'limit', 'azure_tenant_id', 'next_token', 'severity', 'service',
+                    'status', 'azure_subscription_id', 'region', 'aws_account_id')
+            }
+        }
+        Invoke-Falcon @Param
+    }
+}
 function Get-FalconHorizonPolicy {
     [CmdletBinding(DefaultParameterSetName = '/settings/entities/policy/v1:get')]
     param(
@@ -342,12 +496,13 @@ function Get-FalconHorizonPolicy {
         [string] $PolicyId,
 
         [Parameter(ParameterSetName = '/settings/entities/policy/v1:get', Position = 2)]
-        [ValidateSet('ACM', 'ACR', 'AppService', 'CloudFormation', 'CloudTrail', 'CloudWatch Logs', 'Cloudfront',
-            'Config', 'Disk', 'DynamoDB', 'EBS', 'EC2', 'ECR', 'EFS', 'EKS', 'ELB', 'EMR', 'Elasticache',
-            'GuardDuty', 'IAM', 'Identity', 'KMS', 'KeyVault', 'Kinesis', 'Kubernetes', 'Lambda', 'LoadBalancer',
-            'Monitor', 'NLB/ALB', 'NetworkSecurityGroup', 'PostgreSQL', 'RDS', 'Redshift', 'S3', 'SES', 'SNS',
-            'SQLDatabase', 'SQLServer', 'SQS', 'SSM', 'Serverless Application Repository', 'StorageAccount',
-            'Subscriptions', 'VirtualMachine', 'VirtualNetwork', IgnoreCase = $false)]
+        [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
+            'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
+            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
+            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
+            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
+            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
+            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase = $false)]
         [string] $Service,
 
         [Parameter(ParameterSetName = '/settings/entities/policy/v1:get', Position = 3)]

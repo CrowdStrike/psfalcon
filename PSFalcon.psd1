@@ -29,8 +29,10 @@
       'Get-FalconHorizonAwsAccount',
       'Get-FalconHorizonAwsLink',
       'Get-FalconHorizonAzureAccount',
+      'Get-FalconHorizonIoa',
       'Get-FalconHorizonIoaEvent',
       'Get-FalconHorizonIoaUser',
+      'Get-FalconHorizonIom',
       'Get-FalconHorizonPolicy',
       'Get-FalconHorizonSchedule',
       'New-FalconHorizonAwsAccount',
@@ -400,6 +402,10 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
 New Commands
+  * cspm-registration.ps1
+    'Get-FalconHorizonIoa'
+    'Get-FalconHorizonIom'
+
   * discover.ps1
     'Get-FalconAsset'
 
@@ -430,6 +436,20 @@ Command Changes
 
   * Added pipeline support for parameters in 'Edit-FalconFirewallSetting'. 'Copy-FalconFirewallPolicy' uses
     the pipeline to supply settings during the duplication of an existing policy.
+
+General Changes
+  * Updated 'Invoke-Loop' to account for new pagination token style used in 'Get-FalconHorizonIoa' and
+    'Get-FalconHorizonIom'.
+
+  * Re-wrote 'Write-Result' to reduce total code and improve for handling of errors from the 'identity-protection'
+    API. As a result, errors produced by 'Write-Result' are now shown as compressed Json objects rather than a
+    string (which only expected 'code' and 'message'--typical with most Falcon APIs).
+
+  * Fixed an issue with 'Write-Result' that prevented the output of 'meta' properties in the verbose stream. An
+    earlier version of PSFalcon mistakenly hid this output.
+
+  * Re-wrote portions of 'Request-FalconToken' to eliminate 'call depth overflow' errors generated due to how the
+    '308: Permanent Redirection' response is handled in PowerShell 5.1. Redirection should now function properly.
 
 GitHub Issues
   * Issue #134: Modified RegEx pattern for 'Add-FalconGroupingTag' and 'Remove-FalconGroupingTag' to allow all
