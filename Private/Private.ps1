@@ -734,7 +734,7 @@ function Write-Result {
     param(
         [object] $Request
     )
-    begin {
+    process {
         $Json = if ($Request.Result.Content -and ($Request.Result.Content.Headers.ContentType.MediaType -or
         $Request.Result.Content.Headers.ContentType) -eq 'application/json') {
             # Capture Json content
@@ -763,26 +763,27 @@ function Write-Result {
         if ($Verbose) {
             Write-Verbose "[Write-Result] $($Verbose -join ', ')"
         }
-    }
-    process {
         if ($Json) {
             $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch
             '^(errors|extensions|meta)$' -and $_.Value }).foreach{
                 # Gather field names from result, excluding 'errors', 'extensions', and 'meta'
                 $_.Name
             }
-            if ($ResultFields -and ($ResultFields | Measure-Object).Count -gt 1) {
-                # Output results
-                $Json | Select-Object $ResultFields
-            } elseif ($ResultFields) {
-                if ($ResultFields[0] -eq 'combined' -and $Json.combined.resources) {
+            if ($ResultFields) {
+                if (($ResultFields | Measure-Object).Count -gt 1) {
+                    # Output all fields by name
+                    $Json | Select-Object $ResultFields
+                } elseif ($ResultFields -eq 'combined' -and $Json.$ResultFields.PSObject.Properties.Name -eq
+                'resources' -and ($Json.$ResultFields.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
                     # Output values under 'combined.resources'
-                    $Json.combined.resources.PSObject.Properties.Value
-                } elseif ($ResultFields[0] -eq 'resources' -and $Json.resources.events) {
+                    $Json.$ResultFields.resources.PSObject.Properties.Value
+                } elseif ($ResultFields -eq 'resources' -and $Json.$ResultFields.PSObject.Properties.Name -eq
+                'events' -and ($Json.$ResultFields.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
                     # Output 'resources.events'
-                    $Json.resources.events
+                    $Json.$ResultFields.events
                 } else {
-                    $Json.($ResultFields[0])
+                    # Output single field
+                    $Json.$ResultFields
                 }
             } elseif ($Json.meta) {
                 $MetaFields = ($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
