@@ -87,8 +87,8 @@ function Request-FalconToken {
                         $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
                         Write-Verbose "[Request-FalconToken] Set TLS 1.2 via [System.Net.Http.HttpClientHandler]"
                     } catch {
-                        # Set TLS 1.2 for PowerShell session if not set already
                         if ([Net.ServicePointManager]::SecurityProtocol -notmatch 'Tls12') {
+                            # Set TLS 1.2 for PowerShell session
                             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                             Write-Verbose "[Request-FalconToken] Set TLS 1.2 via [Net.ServicePointManager]"
                         }
