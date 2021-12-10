@@ -82,7 +82,14 @@ function Request-FalconToken {
                 $Script:Falcon = Get-ApiCredential $PSBoundParameters
                 $Script:Falcon.Add('Api', [ApiClient]::New())
                 if ($Script:Falcon.Api) {
-                    $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
+                    if ($Script:Falcon.Api.Handler.PSObject.Members | Where-Object { $_.MemberType -eq
+                    'Property' -and $_.Name -eq 'SslProtocols' }) {
+                        # Set 'SslProtocols' for Handler
+                        $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
+                    } elseif ([Net.ServicePointManager]::SecurityProtocol -notmatch 'Tls12') {
+                        # Set TLS 1.2 for PowerShell session
+                        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                    }
                     $Script:Falcon.Api.Handler.AutomaticDecompression = [System.Net.DecompressionMethods]::Gzip,
                         [System.Net.DecompressionMethods]::Deflate
                     $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd(
