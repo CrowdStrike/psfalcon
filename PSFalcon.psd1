@@ -198,6 +198,15 @@
       'Receive-FalconMalQuerySample',
       'Search-FalconMalQueryHash',
 
+      # message-center.ps1
+      'Add-FalconCompleteActivity',
+      'Edit-FalconCompleteCase',
+      'New-FalconCompleteCase',
+      'Get-FalconCompleteActivity',
+      'Get-FalconCompleteCase',
+      'Receive-FalconCompleteAttachment',
+      'Send-FalconCompleteAttachment',
+
       # ml-exclusions.ps1
       'ConvertTo-FalconMlExclusion',
       'Edit-FalconMlExclusion',
@@ -409,10 +418,25 @@
 
     New Commands
     * filevantage.ps1
-      'Get-FalconFimChange'
+    'Get-FalconFimChange'
+
+    * message-center.ps1
+    'Add-FalconCompleteActivity'
+    'Edit-FalconCompleteCase'
+    'New-FalconCompleteCase'
+    'Get-FalconCompleteActivity'
+    'Get-FalconCompleteCase'
+    'Receive-FalconCompleteAttachment'
+    'Send-FalconCompleteAttachment'
 
     GitHub Issues
     * Issue #153: Added 'instance_id' as a value for '-Filter' and '-Sort' under 'Get-FalconHost'.
+
+    * Issue #154: Added check for 'SslProtocols' property before attempting to enforce TLS 1.2 in
+    'Request-FalconToken' If not available, TLS 1.2 is set through [System.Net.ServicePointManager] instead. Thank
+    you @Minty123!
+
+    * Issue #155: Added colon to correct RegEx pattern for 'New-FalconIoc' and 'Edit-FalconIoc'.
 "@
         }
     }

@@ -39,7 +39,7 @@ function Edit-FalconIoc {
         [boolean] $AppliedGlobally,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:patch', Position = 11)]
-        [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z)$')]
+        [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
         [string] $Expiration,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:patch', Position = 12)]
@@ -205,7 +205,7 @@ function New-FalconIoc {
         [boolean] $AppliedGlobally,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Position = 12)]
-        [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\d{2}Z)$')]
+        [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
         [string] $Expiration,
 
         [Parameter(ParameterSetName = '/iocs/entities/indicators/v1:post', Position = 13)]
