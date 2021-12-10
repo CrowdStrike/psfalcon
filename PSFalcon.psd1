@@ -433,8 +433,8 @@
     * Issue #153: Added 'instance_id' as a value for '-Filter' and '-Sort' under 'Get-FalconHost'.
 
     * Issue #154: Added check for 'SslProtocols' property before attempting to enforce TLS 1.2 in
-    'Request-FalconToken' If not available, TLS 1.2 is set through [System.Net.ServicePointManager] instead. Thank
-    you @Minty123!
+    'Request-FalconToken'. If not available, TLS 1.2 is set through [System.Net.ServicePointManager]
+    instead. Thank you @Minty123!
 
     * Issue #155: Added colon to correct RegEx pattern for 'New-FalconIoc' and 'Edit-FalconIoc'.
 "@
