@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.1.6'
+    ModuleVersion        = '2.1.7'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -120,6 +120,9 @@
       'New-FalconSubmission',
       'Receive-FalconArtifact',
       'Remove-FalconReport',
+
+      # filevantage.ps1
+      'Get-FalconFimChange',
 
       # firewall-management.ps1
       'Edit-FalconFirewallGroup',
@@ -401,80 +404,15 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
-New Commands
-  * cspm-registration.ps1
-    'Get-FalconHorizonIoa'
-    'Get-FalconHorizonIom'
+    Command Changes
+    * Added 'group_names' as an 'Include' option for 'Get-FalconHost'.
 
-  * discover.ps1
-    'Get-FalconAsset'
+    New Commands
+    * filevantage.ps1
+      'Get-FalconFimChange'
 
-  * psf-policies.ps1
-    'Copy-FalconDeviceControlPolicy'
-    'Copy-FalconFirewallPolicy'
-    'Copy-FalconPreventionPolicy'
-    'Copy-FalconResponsePolicy'
-    'Copy-FalconSensorUpdatePolicy'
-
-  * scheduled-report.ps1
-    'Invoke-FalconScheduledReport'
-    'Redo-FalconScheduledReport'
-
-Command Changes
-  * Added 'put-and-run' to 'Invoke-FalconAdminCommand' and 'Invoke-FalconRtr'.
-
-  * Changed 'Get-FalconMalQuery' parameter from '-Ids' to '-Id' to signify that the endpoint only accepts one
-    request at a time.
-
-  * Removed '-Detailed' from 'Invoke-FalconMalQuery' because it was not supposed to be there.
-
-  * Added '-Description' to 'New-FalconDeviceControlPolicy'. Whoops.
-
-  * Added '-Include' to 'Get-FalconFirewallPolicy' to include firewall settings with a policy result.
-
-  * Added '-LocalLogging' to 'Edit-FalconFirewallSetting' to support new Firewall Management policy setting.
-
-  * Added pipeline support for parameters in 'Edit-FalconFirewallSetting'. 'Copy-FalconFirewallPolicy' uses
-    the pipeline to supply settings during the duplication of an existing policy.
-
-General Changes
-  * Updated 'Invoke-Loop' to account for new pagination token style used in 'Get-FalconHorizonIoa' and
-    'Get-FalconHorizonIom'.
-
-  * Re-wrote 'Write-Result' to reduce total code and improve for handling of errors from the 'identity-protection'
-    API. As a result, errors produced by 'Write-Result' are now shown as compressed Json objects rather than a
-    string (which only expected 'code' and 'message'--typical with most Falcon APIs).
-
-  * Fixed an issue with 'Write-Result' that prevented the output of 'meta' properties in the verbose stream. An
-    earlier version of PSFalcon mistakenly hid this output.
-
-  * Re-wrote portions of 'Request-FalconToken' to eliminate 'call depth overflow' errors generated due to how the
-    '308: Permanent Redirection' response is handled in PowerShell 5.1. Redirection should now function properly.
-
-GitHub Issues
-  * Issue #134: Modified RegEx pattern for 'Add-FalconGroupingTag' and 'Remove-FalconGroupingTag' to allow all
-    characters in the initial tag value, then updated the command to use the 'Test-RegexValue' to validate
-    that each value is a valid tag.
-
-  * Issue #135: Added check to validate both 'status' and 'comment' value are present when submitting 'comment'
-    with 'Edit-FalconDetection'. Also forced the input of lower case status values, as improperly-cased 'status'
-    values will cause a '400: Failed to validate resource' error.
-
-  * Issue #136: Corrected 'Invoke-FalconMalQuery' to submit 'options' as a hashtable rather than an array, which
-    was causing all requests to fail (including those made with 'Search-FalconMalQueryHash').
-
-  * Issue #138: Updated 'Test-FqlStatement' to account for multiple 'exact match' values, and used operator groups
-    to more efficiently check <property>, <operator> and <value> independently within an FQL 'filter' string.
-
-  * Issue #140: Updated the base [System.Net.Http.HttpClientHandler] to automatically decompress gzip files when
-    presented with them from an API.
-
-  * Issue #143: Updated 'Get-FalconScheduledReport -Execution' to work properly with the '-Detailed' parameter.
-
-  * Issue #144: Updated 'Test-FqlStatement' to allow colon characters in the value portion of an FQL statement.
-
-  * Issue #146: Updated 'Invoke-FalconRtr' to access the 'Initialize-Output' function when using both 'HostIds'
-    and 'GroupId', instead of just 'HostIds'.
+    GitHub Issues
+    * Issue #153: Added 'instance_id' as a value for '-Filter' and '-Sort' under 'Get-FalconHost'.
 "@
         }
     }

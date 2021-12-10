@@ -54,10 +54,10 @@ function Get-FalconHost {
         [ValidateScript({
             Test-FqlStatement $_ @('agent_load_flags','agent_version','bios_manufacturer','bios_version',
             'config_id_base','config_id_build','config_id_platform','cpu_signature','device_id','external_ip',
-            'first_seen','hostname','last_login_timestamp','last_seen','local_ip','local_ip.raw','mac_address',
-            'machine_domain','major_version','minor_version','modified_timestamp','os_version','ou','platform_id',
-            'platform_name','product_type_desc','reduced_functionality_mode','release_group','serial_number',
-            'site_name','status','system_manufacturer','system_product_name')
+            'first_seen','hostname','instance_id','last_login_timestamp','last_seen','local_ip','local_ip.raw',
+            'mac_address','machine_domain','major_version','minor_version','modified_timestamp','os_version','ou',
+            'platform_id','platform_name','product_type_desc','reduced_functionality_mode','release_group',
+            'serial_number','site_name','status','system_manufacturer','system_product_name')
         })]
         [string] $Filter,
 
@@ -68,17 +68,17 @@ function Get-FalconHost {
             'bios_version.asc','bios_version.desc','config_id_base.asc','config_id_base.desc',
             'config_id_build.asc','config_id_build.desc','config_id_platform.asc','config_id_platform.desc',
             'cpu_signature.asc','cpu_signature.desc','external_ip.asc','external_ip.desc','first_seen.asc',
-            'first_seen.desc','hostname.asc','hostname.desc','last_login_timestamp.asc',
-            'last_login_timestamp.desc','last_seen.asc','last_seen.desc','local_ip.asc','local_ip.desc',
-            'local_ip.raw.asc','local_ip.raw.desc','mac_address.asc','mac_address.desc','machine_domain.asc',
-            'machine_domain.desc','major_version.asc','major_version.desc','minor_version.asc',
-            'minor_version.desc','modified_timestamp.asc','modified_timestamp.desc','os_version.asc',
-            'os_version.desc','ou.asc','ou.desc','platform_id.asc','platform_id.desc','platform_name.asc',
-            'platform_name.desc','product_type_desc.asc','product_type_desc.desc','reduced_functionality_mode.asc',
-            'reduced_functionality_mode.desc','release_group.asc','release_group.desc','serial_number.asc',
-            'serial_number.desc','site_name.asc','site_name.desc','status.asc','status.desc',
-            'system_manufacturer.asc','system_manufacturer.desc','system_product_name.asc',
-            'system_product_name.desc')]
+            'first_seen.desc','hostname.asc','hostname.desc','instance_id.asc','instance_id.desc',
+            'last_login_timestamp.asc','last_login_timestamp.desc','last_seen.asc','last_seen.desc',
+            'local_ip.asc','local_ip.desc','local_ip.raw.asc','local_ip.raw.desc','mac_address.asc',
+            'mac_address.desc','machine_domain.asc','machine_domain.desc','major_version.asc',
+            'major_version.desc','minor_version.asc','minor_version.desc','modified_timestamp.asc',
+            'modified_timestamp.desc','os_version.asc','os_version.desc','ou.asc','ou.desc','platform_id.asc',
+            'platform_id.desc','platform_name.asc','platform_name.desc','product_type_desc.asc',
+            'product_type_desc.desc','reduced_functionality_mode.asc','reduced_functionality_mode.desc',
+            'release_group.asc','release_group.desc','serial_number.asc','serial_number.desc','site_name.asc',
+            'site_name.desc','status.asc','status.desc','system_manufacturer.asc','system_manufacturer.desc',
+            'system_product_name.asc','system_product_name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 3)]
@@ -92,7 +92,7 @@ function Get-FalconHost {
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 5)]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 5)]
-        [ValidateSet('login_history', 'network_history', 'zero_trust_assessment')]
+        [ValidateSet('group_names','login_history','network_history','zero_trust_assessment')]
         [array] $Include,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Mandatory = $true)]
@@ -118,13 +118,17 @@ function Get-FalconHost {
         [switch] $Total
     )
     begin {
+        if ($PSBoundParameters.Include -contains 'group_names' -and !$PSBoundParameters.Detailed) {
+            $PSBoundParameters.Add('Detailed', $true)
+            $SelectFilter = @('device_id', 'groups')
+        }
+    }
+    process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
         }
-    }
-    process {
         $Param['Format'] = if ($Param.Endpoint -match 'post$') {
             @{ Body = @{ root = @('ids') }}
         } else {
@@ -135,6 +139,21 @@ function Get-FalconHost {
             if (!$Result.device_id) {
                 $Result = @($Result).foreach{
                     ,[PSCustomObject] @{ device_id = $_ }
+                }
+            } elseif ($SelectFilter) {
+                $Result = $Result | Select-Object $SelectFilter
+            }
+            if ($PSBoundParameters.Include -contains 'group_names') {
+                $Groups = Get-FalconHostGroup -Ids ($Result.groups | Group-Object).Name | Select-Object id, name
+                if ($Groups) {
+                    foreach ($Item in $Result) {
+                        $GroupInfo = foreach ($Group in $Item.groups) {
+                            $Groups | Where-Object { $_.id -eq $Group }
+                        }
+                        if ($GroupInfo) {
+                            $Item.groups = $GroupInfo
+                        }
+                    }
                 }
             }
             if ($PSBoundParameters.Include -contains 'login_history') {
