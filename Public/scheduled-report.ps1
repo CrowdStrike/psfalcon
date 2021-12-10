@@ -93,8 +93,8 @@ function Invoke-FalconScheduledReport {
     }
     process {
         $Param = @{
-            Path    = @($Script:Falcon.Hostname, ($PSCmdlet.ParameterSetName).Split(':')[0]) -join $null
-            Method  = ($PSCmdlet.ParameterSetName).Split(':')[-1]
+            Path    = "$($Script:Falcon.Hostname)/reports/entities/scheduled-reports/execution/v1"
+            Method  = 'post'
             Headers = @{
                 Accept      = 'application/json'
                 ContentType = 'application/json'
@@ -157,8 +157,8 @@ function Redo-FalconScheduledReport {
     }
     process {
         $Param = @{
-            Path    = @($Script:Falcon.Hostname, ($PSCmdlet.ParameterSetName).Split(':')[0]) -join $null
-            Method  = ($PSCmdlet.ParameterSetName).Split(':')[-1]
+            Path    = "$($Script:Falcon.Hostname)/reports/entities/report-executions-retry/v1"
+            Method  = 'post'
             Headers = @{
                 Accept      = 'application/json'
                 ContentType = 'application/json'

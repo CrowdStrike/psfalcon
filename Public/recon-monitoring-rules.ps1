@@ -83,9 +83,10 @@ function Edit-FalconReconNotification {
                 Request-FalconToken
             }
             $Param = @{
-                Path    = '/recon/entities/notifications/v1'
+                Path    = "$($Script:Falcon.Hostname)/recon/entities/notifications/v1"
                 Method  = 'patch'
                 Headers = @{
+                    Accept      = 'application/json'
                     ContentType = 'application/json'
                 }
             }
@@ -155,9 +156,10 @@ function Edit-FalconReconRule {
                 Request-FalconToken
             }
             $Param = @{
-                Path    = '/recon/entities/rules/v1'
+                Path    = "$($Script:Falcon.Hostname)/recon/entities/rules/v1"
                 Method  = 'patch'
                 Headers = @{
+                    Accept      = 'application/json'
                     ContentType = 'application/json'
                 }
             }
@@ -465,9 +467,10 @@ function New-FalconReconRule {
                 Request-FalconToken
             }
             $Param = @{
-                Path    = '/recon/entities/rules/v1'
+                Path    = "$($Script:Falcon.Hostname)/recon/entities/rules/v1"
                 Method  = 'post'
                 Headers = @{
+                    Accept      = 'application/json'
                     ContentType = 'application/json'
                 }
             }

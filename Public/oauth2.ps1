@@ -173,8 +173,8 @@ function Revoke-FalconToken {
         $Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             # Revoke OAuth2 access token
             $Param = @{
-                Path    = "$($Script:Falcon.Hostname)$(($PSCmdlet.ParameterSetName).Split(':')[0])"
-                Method  = ($PSCmdlet.ParameterSetName).Split(':')[1]
+                Path    = "$($Script:Falcon.Hostname)/oauth2/revoke"
+                Method  = 'post'
                 Headers = @{
                     Accept        = 'application/json'
                     ContentType   = 'application/x-www-form-urlencoded'
