@@ -179,7 +179,7 @@ function Get-FalconHost {
             if ($PSBoundParameters.Include -contains 'zero_trust_assessment') {
                 foreach ($Item in (& Get-FalconZta -Ids $Result.device_id)) {
                     $AddParam = @{
-                        Object = $Result | Where-Object { $_.device_id -eq $Item.device_id }
+                        Object = $Result | Where-Object { $_.device_id -eq $Item.aid }
                         Name   = 'zero_trust_assessment'
                         Value  = $Item | Select-Object modified_time, sensor_file_status,
                             assessment, assessment_items
