@@ -336,7 +336,11 @@ function Uninstall-FalconSensor {
     )
     begin {
         $Scripts = @{
-            Linux   = $null
+            Linux   = 'manager=("$(if [[ $(command -v apt) ]]; then echo "sudo apt-get purge"; elif [[ $(command' +
+                ' -v yum) ]]; then echo "sudo yum remove"; elif [[ $(command -v zypper) ]]; then echo "sudo zypp' +
+                'er remove"; fi)"); if [[ ${manager} ]]; then echo "Beginning removal of the Falcon sensor" && e' +
+                'val "${manager} falcon-sensor -y &" &>/dev/null; else echo "apt, yum or zypper must be present ' +
+                'to begin removal"; fi'
             Mac     = $null
             Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
                 're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
@@ -345,16 +349,17 @@ function Uninstall-FalconSensor {
                 ' Windows Sensor*" }; if ($RegKey) { $UninstallString = $RegKey.GetValue("QuietUninstallString")' +
                 '; $Arguments = @("/c", $UninstallString); if ($args) { $Arguments += "MAINTENANCE_TOKEN=$args" ' +
                 '}; $ArgumentList = $Arguments -join " "; Start-Process -FilePath cmd.exe -ArgumentList $Argumen' +
-                'tList -PassThru | Select-Object Id, ProcessName | ForEach-Object { Write-Output "$($_ | Convert' +
-                'To-Json -Compress)" }}} else { Write-Error "Unable to locate $RegPath" }'
+                'tList -PassThru | Select-Object Id, ProcessName | ForEach-Object { Write-Output "[$($_.Id)] $($' +
+                '_.ProcessName) started removal of the Falcon sensor" }}} else { Write-Error "Unable to locate $' +
+                'RegPath" }'
         }
     }
     process {
         try {
             $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Id | Select-Object cid, device_id,
                 platform_name, device_policies
-            if ($HostInfo.platform_name -ne 'Windows') {
-                throw 'Only Windows hosts are currently supported in PSFalcon.'
+            if ($HostInfo.platform_name -eq 'Mac') {
+                throw 'Only Windows and Linux hosts are currently supported in PSFalcon.'
             }
             $IdValue = switch ($HostInfo.device_policies.sensor_update.uninstall_protection) {
                 'ENABLED'          { $HostInfo.device_id }
@@ -392,9 +397,7 @@ function Uninstall-FalconSensor {
                     )
                     @($HostInfo | Select-Object cid, device_id).foreach{
                         $Status = if ($Confirm.stdout) {
-                            @($Confirm.stdout | ConvertFrom-Json).foreach{
-                                "[$($_.Id)] '$($_.ProcessName)' started removal of the Falcon sensor"
-                            }
+                            ($Confirm.stdout).Trim()
                         } else {
                             $Confirm.stderr
                         }
