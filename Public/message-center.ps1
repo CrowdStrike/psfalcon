@@ -192,7 +192,10 @@ function Get-FalconCompleteCase {
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format    = @{
-                Query = @('ids', 'filter', 'sort', 'limit', 'offset')
+                Body = @{
+                    root = @('ids')
+                }
+                Query = @('filter', 'sort', 'limit', 'offset')
             }
         }
         Invoke-Falcon @Param
@@ -345,9 +348,7 @@ function Send-FalconCompleteAttachment {
                 ContentType = 'multipart/form-data'
             }
             Format    = @{
-                Format   = @{
-                    Formdata = @('case_id', 'user_uuid', 'file')
-                }
+                Formdata = @('case_id', 'user_uuid', 'file')
             }
         }
         Invoke-Falcon @Param
