@@ -416,6 +416,8 @@
     Command Changes
     * Added 'group_names' as an 'Include' option for 'Get-FalconHost'.
 
+    * Added Linux support for 'Uninstall-FalconSensor'.
+
     New Commands
     * filevantage.ps1
     'Get-FalconFimChange'
@@ -437,6 +439,9 @@
     instead. Thank you @Minty123!
 
     * Issue #155: Added colon to correct RegEx pattern for 'New-FalconIoc' and 'Edit-FalconIoc'.
+
+    * Issue #158: Fixed typo in 'Get-FalconHost' which prevented the attachment of Zero Trust Assessment results
+      when using the 'Include' parameter.
 "@
         }
     }
