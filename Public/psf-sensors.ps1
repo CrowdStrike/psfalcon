@@ -336,11 +336,11 @@ function Uninstall-FalconSensor {
     )
     begin {
         $Scripts = @{
-            Linux   = 'manager=("$(if [[ $(command -v apt) ]]; then echo "sudo apt-get purge"; elif [[ $(command' +
-                ' -v yum) ]]; then echo "sudo yum remove"; elif [[ $(command -v zypper) ]]; then echo "sudo zypp' +
-                'er remove"; fi)"); if [[ ${manager} ]]; then echo "Beginning removal of the Falcon sensor" && e' +
-                'val "${manager} falcon-sensor -y &" &>/dev/null; else echo "apt, yum or zypper must be present ' +
-                'to begin removal"; fi'
+            Linux   = 'manager=("$(if [[ $(command -v apt) ]]; then echo "apt-get purge falcon-sensor -y"; elif ' +
+                '[[ $(command -v yum) ]]; then echo "yum remove falcon-sensor -y"; elif [[ $(command -v zypper) ' +
+                ']]; then echo "zypper remove -y falcon-sensor"; fi)"); if [[ ${manager} ]]; then echo "Beginnin' +
+                'g removal of the Falcon sensor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or' +
+                ' zypper must be present to begin removal"; fi'
             Mac     = $null
             Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
                 're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
