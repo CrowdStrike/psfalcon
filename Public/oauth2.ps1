@@ -124,12 +124,7 @@ function Request-FalconToken {
             if ($Script:Falcon.MemberCid) {
                 $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
             }
-            $RequestTime = if ($Script:Humio.Path -and $Script:Humio.Token) {
-                # Capture request time for logging
-                [DateTimeOffset]::Now.ToUnixTimeSeconds()
-            } else {
-                $null
-            }
+            $RequestTime = [DateTimeOffset]::Now.ToUnixTimeSeconds()
             $Request = $Script:Falcon.Api.Invoke($Param)
             if ($Request.Result) {
                 $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
@@ -190,7 +185,9 @@ function Revoke-FalconToken {
                 }
                 Body    = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
-            Write-Result ($Script:Falcon.Api.Invoke($Param))
+            $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+            $Request = $Script:Falcon.Api.Invoke($Param)
+            Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
         @('ClientId', 'ClientSecret', 'MemberCid').foreach{

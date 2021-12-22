@@ -184,7 +184,9 @@ function Invoke-FalconHostGroupAction {
             }) -join ','
             $Clone.Body.action_parameters[0].value = "(device_id:[$IdString])"
             $Clone.Body = ConvertTo-Json -InputObject $Clone.Body -Depth 8
-            Write-Result ($Script:Falcon.Api.Invoke($Clone))
+            $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+            $Request = $Script:Falcon.Api.Invoke($Clone)
+            Write-Result -Request $Request -ParamSet $Clone -Time $RequestTime
         }
     }
 }

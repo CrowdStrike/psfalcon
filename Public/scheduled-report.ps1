@@ -101,7 +101,9 @@ function Invoke-FalconScheduledReport {
             }
             Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
         }
-        Write-Result ($Script:Falcon.Api.Invoke($Param))
+        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $Request = $Script:Falcon.Api.Invoke($Param)
+        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
     }
 }
 function Receive-FalconScheduledReport {
@@ -165,6 +167,8 @@ function Redo-FalconScheduledReport {
             }
             Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
         }
-        Write-Result ($Script:Falcon.Api.Invoke($Param))
+        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $Request = $Script:Falcon.Api.Invoke($Param)
+        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
     }
 }

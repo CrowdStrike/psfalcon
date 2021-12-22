@@ -20,6 +20,8 @@ function Invoke-FalconIdentityGraph {
             }
             Body = ConvertTo-Json -InputObject @{ query = "{$($PSBoundParameters.Query)}" } -Compress
         }
-        Write-Result ($Script:Falcon.Api.Invoke($Param))
+        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $Request = $Script:Falcon.Api.Invoke($Param)
+        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
     }
 }

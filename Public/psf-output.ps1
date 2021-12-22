@@ -191,7 +191,9 @@ function Send-FalconWebhook {
                     }
                     Body = ConvertTo-Json -InputObject $Item -Depth 32
                 }
-                Write-Result ($Script:Falcon.Api.Invoke($Param))
+                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $Request = $Script:Falcon.Api.Invoke($Param)
+                Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
             } catch {
                 throw $_
             }

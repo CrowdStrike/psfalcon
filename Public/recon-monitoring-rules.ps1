@@ -94,7 +94,9 @@ function Edit-FalconReconNotification {
                 # Edit notifications in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                Write-Result ($Script:Falcon.Api.Invoke($Param))
+                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $Request = $Script:Falcon.Api.Invoke($Param)
+                Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
             }
         } else {
             $Param = @{
@@ -167,7 +169,9 @@ function Edit-FalconReconRule {
                 # Edit rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                Write-Result ($Script:Falcon.Api.Invoke($Param))
+                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $Request = $Script:Falcon.Api.Invoke($Param)
+                Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
             }
         } else {
             $Param = @{
@@ -478,7 +482,9 @@ function New-FalconReconRule {
                 # Create rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                Write-Result ($Script:Falcon.Api.Invoke($Param))
+                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $Request = $Script:Falcon.Api.Invoke($Param)
+                Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
             }
         } else {
             $Param = @{
