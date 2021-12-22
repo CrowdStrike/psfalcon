@@ -124,9 +124,15 @@ function Request-FalconToken {
             if ($Script:Falcon.MemberCid) {
                 $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
             }
-            $Response = $Script:Falcon.Api.Invoke($Param)
-            if ($Response.Result) {
-                $Region = $Response.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
+            $RequestTime = if ($Script:Humio.Path -and $Script:Humio.Token) {
+                # Capture request time for logging
+                [DateTimeOffset]::Now.ToUnixTimeSeconds()
+            } else {
+                $null
+            }
+            $Request = $Script:Falcon.Api.Invoke($Param)
+            if ($Request.Result) {
+                $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
                 $Redirect = switch ($Region) {
                     # Update ApiClient hostname if redirected
                     'us-1'     { 'https://api.crowdstrike.com' }
@@ -138,7 +144,7 @@ function Request-FalconToken {
                     Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result $Response
+                $Result = Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
                 if ($Result.access_token) {
                     # Cache access token in ApiClient
                     $Token = "$($Result.token_type) $($Result.access_token)"
@@ -149,7 +155,7 @@ function Request-FalconToken {
                     }
                     $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
                     Write-Verbose "[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)"
-                } elseif (@(308,429) -contains $Response.Result.StatusCode.GetHashCode()) {
+                } elseif (@(308,429) -contains $Request.Result.StatusCode.GetHashCode()) {
                     # Retry token request when rate limited or unable to automatically follow redirection
                     & $MyInvocation.MyCommand.Name
                 }
