@@ -525,9 +525,13 @@ function Invoke-Falcon {
                     # Refresh authorization token during loop
                     Request-FalconToken
                 }
+                if ($Script:Falcon.HumioPath -and $Script:Falcon.HumioToken) {
+                    # Send request event to Humio Event Collector
+                    Send-HumioEvent -Endpoint $ParamSet.Endpoint
+                }
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
-                    $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Depth 32
+                    $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Compress
                 }
                 # Make request
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
@@ -619,6 +623,10 @@ function Invoke-Loop {
                 # Update pagination
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
+            if ($Script:Falcon.HumioPath -and $Script:Falcon.HumioToken) {
+                # Send request event to Humio Event Collector
+                Send-HumioEvent -Endpoint $Clone.Endpoint
+            }
             # Make request, capture new pagination and output result
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
@@ -638,6 +646,60 @@ function Invoke-Loop {
                 $Pagination = (ConvertFrom-Json (
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
             }
+        }
+    }
+}
+function Send-HumioEvent {
+    [CmdletBinding()]
+    param(
+        [Parameter(ParameterSetName = 'Endpoint', Mandatory = $true)]
+        [object] $Endpoint,
+
+        [Parameter(ParameterSetName = 'Response', Mandatory = $true)]
+        [object] $Response,
+
+        [Parameter(ParameterSetName = 'Response', Mandatory = $true)]
+        [object] $Headers
+    )
+    begin {
+        if ($Script:Falcon.HumioPath -and $Script:Falcon.HumioToken) {
+            $EventContent = if ($Response) {
+                # Capture response content
+                ConvertTo-Json -InputObject $Response -Compress
+            } elseif ($Endpoint) {
+                '"request_sent"'
+            }
+            $Fields = @{}
+            @($Endpoint, $Headers).Where({ $_ }).foreach{
+                $_.GetEnumerator().foreach{
+                    # Capture endpoint parameters or response headers
+                    $Fields[$_.Key] = $_.Value
+                }
+            }
+        }
+    }
+    process {
+        if ($EventContent) {
+            $EventParam = @{
+                Path    = $Script:Falcon.HumioPath
+                Method  = 'post'
+                Headers = @{
+                    Authorization = "bearer $($Script:Falcon.HumioToken)"
+                    ContentType   = 'application/json'
+                }
+                Body    = @{
+                    time       = Get-Date -Date (Get-Date) -UFormat %s
+                    sourcetype = 'json'
+                    source     = (Show-FalconModule).UserAgent
+                    host       = [System.Net.Dns]::GetHostname()
+                }
+            }
+            if ($Fields) {
+                $EventParam.Body['fields'] = $Fields
+            }
+            $EventParam.Body = ((ConvertTo-Json -InputObject $EventParam.Body -Compress).TrimEnd('}') +
+                ',"event":' + $EventContent + '}')
+            [void] $Script:Falcon.Api.Invoke($EventParam)
         }
     }
 }
@@ -764,6 +826,10 @@ function Write-Result {
             Write-Verbose "[Write-Result] $($Verbose -join ', ')"
         }
         if ($Json) {
+            if ($Script:Falcon.HumioPath -and $Script:Falcon.HumioToken) {
+                # Send response to Humio Event Collector
+                Send-HumioEvent -Response $Json -Headers $Request.Result.Headers
+            }
             $ResultFields = ($Json.PSObject.Properties).Where({ $_.Name -notmatch
             '^(errors|extensions|meta)$' -and $_.Value }).foreach{
                 # Gather field names from result, excluding 'errors', 'extensions', and 'meta'
@@ -811,7 +877,12 @@ function Write-Result {
             }
         } elseif ($Request.Result.Content) {
             # Output Result.Content as [string]
-            ($Request.Result.Content).ReadAsStringAsync().Result
+            $Content = ($Request.Result.Content).ReadAsStringAsync().Result
+            if ($Content -and $Script:Falcon.HumioPath -and $Script:Falcon.HumioToken) {
+                # Send response to Humio Event Collector
+                Send-HumioEvent -Response $Content -Headers $Request.Result.Headers
+            }
+            $Content
         }
         # Check for rate limiting
         Wait-RetryAfter $Request

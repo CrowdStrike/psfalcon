@@ -264,6 +264,11 @@
       'Remove-FalconSensorTag',
       'Uninstall-FalconSensor',
 
+      # psf-humio.ps1
+      'Register-HumioEventCollector',
+      'Remove-HumioEventCollector',
+      'Show-HumioEventCollector',
+
       # psf-output.ps1
       'Export-FalconReport',
       'Send-FalconWebhook',
@@ -418,6 +423,12 @@
 
     * Added Linux support for 'Uninstall-FalconSensor'.
 
+    * Added commands allowing a user to set a Humio Event Collector destination (using the relevant /hec/raw
+    endpoint) to send all PSFalcon requests and results to a Humio instance. Once an authorization token has been
+    requested, 'Register-HumioEventCollector' will define the destination URL and ingest token for sending events.
+    'Show-HumioEventCollector' can be used for confirmation, and 'Remove-HumioEventCollector' can be used to
+    disable event logging.
+
     New Commands
     * filevantage.ps1
     'Get-FalconFimChange'
@@ -430,6 +441,11 @@
     'Get-FalconCompleteCase'
     'Receive-FalconCompleteAttachment'
     'Send-FalconCompleteAttachment'
+
+    * psf-humio.ps1
+    'Register-HumioEventCollector'
+    'Remove-HumioEventCollector'
+    'Show-HumioEventCollector'
 
     GitHub Issues
     * Issue #153: Added 'instance_id' as a value for '-Filter' and '-Sort' under 'Get-FalconHost'.
