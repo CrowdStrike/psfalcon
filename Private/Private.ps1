@@ -767,7 +767,6 @@ function Write-Result {
             # Create and send log event
             $LogParam = @{
                 Uri     = $Script:Humio.Path
-                #Path    = $Script:Humio.Path
                 Method  = 'post'
                 Headers = @{
                     Authorization = "bearer $($Script:Humio.Token)"
@@ -808,7 +807,6 @@ function Write-Result {
                 $null
             }
             $LogParam.Body = ConvertTo-Json -InputObject $LogParam.Body -Depth 8 -Compress
-            #[void] $Script:Falcon.Api.Invoke($LogParam)
         }
         $Verbose = if ($Request.Result.Headers) {
             # Capture trace_id, add response header to verbose output and log
