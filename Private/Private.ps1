@@ -529,13 +529,7 @@ function Invoke-Falcon {
                     # Convert body to Json
                     $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Compress
                 }
-                $RequestTime = if ($Script:Humio.Path -and $Script:Humio.Token) {
-                    # Capture request time for logging
-                    [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-                } else {
-                    $null
-                }
-                # Make request
+                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
                 if ($RawOutput) {
                     # Return result if 'RawOutput' is defined
@@ -625,13 +619,7 @@ function Invoke-Loop {
                 # Update pagination
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
-            $RequestTime = if ($Script:Humio.Path -and $Script:Humio.Token) {
-                # Capture request time for logging
-                [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-            } else {
-                $null
-            }
-            # Make request, capture new pagination and output result
+            $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
                 $Result = Write-Result -Request $Request -ParamSet $Clone.Endpoint -Time $RequestTime
@@ -778,51 +766,56 @@ function Write-Result {
                     source     = (Show-FalconModule).UserAgent
                     sourcetype = 'json'
                     client_id  = $Script:Falcon.ClientId
+                    member_cid = if ($Script:Falcon.MemberCid) {
+                        $Script:Falcon.MemberCid
+                    } else {
+                        $null
+                    }
+                    headers    = @{
+                        request = @{}
+                        result  = @{}
+                    }
+                    request    = @{}
                 }
-            }
-            if ($Script:Falcon.MemberCid) {
-                $LogParam.Body['member_cid'] = $Script:Falcon.MemberCid
             }
             if ($ParamSet) {
-                $LogParam.Body['request'] = @{}
-                if ($ParamSet.Path -match '/oauth2/token$' -and $ParamSet.Body) {
-                    # Remove access token request body
-                    $ParamSet.Body = $ParamSet.Body -replace 'client_secret=\w{40}', 'client_secret=redacted'
+                if ($ParamSet.Path -match '/oauth2/' -and $ParamSet.Body) {
+                    # Remove client_secret and access_token from Body
+                    $ParamSet.Body = ($ParamSet.Body -replace 'client_secret=\w{40}',
+                        'client_secret=redacted' -replace '^token=.*','token=redacted')
                 }
                 $ParamSet.GetEnumerator().foreach{
-                    # Add request parameters
-                    $LogParam.Body.request[$_.Key] = $_.Value
+                    if ($_.Key -eq 'Headers') {
+                        ($_.Value).GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
+                            # Add headers, excluding authorization
+                            $LogParam.Body.headers.request[$_.Key] = $_.Value
+                        }
+                    } else {
+                        # Add request parameters
+                        $LogParam.Body.request[$_.Key] = $_.Value
+                    }
+                }
+                $LogParam.Body['result'] = if ($Json -and $ParamSet.Path -match '/oauth2/token$') {
+                    # Exclude access token
+                    $Json | Select-Object token_type, expires_in
+                } elseif ($Json) {
+                    # Add Json content
+                    $Json
+                } elseif ($Result) {
+                    # Add [string] content
+                    [PSCustomObject] @{ string = $Result }
                 }
             }
-            $LogParam.Body['result'] = if ($Json -and $ParamSet.Path -match '/oauth2/token$') {
-                # Add Json content, excluding access token
-                $Json | Select-Object token_type, expires_in
-            } elseif ($Json) {
-                # Add Json content, excluding access token
-                $Json
-            } elseif ($Result) {
-                # Add [string] content
-                $Result
-            } else {
-                $null
-            }
-            $LogParam.Body = ConvertTo-Json -InputObject $LogParam.Body -Depth 8 -Compress
         }
         $Verbose = if ($Request.Result.Headers) {
-            # Capture trace_id, add response header to verbose output and log
+            # Capture trace_id and add response header to verbose output
             $TraceId = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
-            if ($LogParam.Body.result) {
-                $ResultHeaders = @{}
-            }
             ($Request.Result.Headers.GetEnumerator().foreach{
                 ,"$($_.Key)=$($_.Value)"
-                if ($ResultHeaders) {
-                    $ResultHeaders[$_.Key] = $_.Value
+                if ($LogParam.Body.headers.result) {
+                    $LogParam.Body.headers.result[$_.Key] = $_.Value
                 }
             })
-            if ($LogParam.Body.result -and ($ResultHeaders.Keys | Measure-Object).Count -ge 1) {
-                $LogParam.Body.result['headers'] = $ResultHeaders
-            }
             foreach ($String in @('extensions','meta')) {
                 if ($Json -and $Json.$String) {
                     foreach ($Key in $Json.$String.PSObject.Properties.Where({ $_.Name -ne 'trace_id' })) {
@@ -840,6 +833,7 @@ function Write-Result {
         }
         if ($LogParam) {
             # Send log as background job
+            $LogParam.Body = ConvertTo-Json -InputObject $LogParam.Body -Depth 8 -Compress
             $JobParam = @{
                 Name         = if ($TraceId) {
                     "PSFalcon_log_$TraceId"
