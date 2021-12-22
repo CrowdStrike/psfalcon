@@ -426,8 +426,8 @@
     * Added commands allowing a user to set a Humio Event Collector destination (using the relevant /hec/raw
     endpoint) to send all PSFalcon requests and results to a Humio instance. Once an authorization token has been
     requested, 'Register-HumioEventCollector' will define the destination URL and ingest token for sending events.
-    'Show-HumioEventCollector' can be used for confirmation, and 'Remove-HumioEventCollector' can be used to
-    disable event logging.
+    'Show-HumioEventCollector' can be used for confirmation and 'Remove-HumioEventCollector' can be used to disable
+    event logging.
 
     New Commands
     * filevantage.ps1
