@@ -664,10 +664,21 @@ function Send-HumioEvent {
     begin {
         if ($Script:Falcon.HumioPath -and $Script:Falcon.HumioToken) {
             $EventContent = if ($Response) {
-                # Capture response content
-                ConvertTo-Json -InputObject $Response -Compress
+                # Use response content
+                ConvertTo-Json -InputObject @{
+                    type    = 'psfalcon_response'
+                    content = $Response
+                } -Compress
             } elseif ($Endpoint) {
-                '"request_sent"'
+                # Use 'ClientId' and 'MemberCid' for requests
+                $ApiClient = @{
+                    type      = 'psfalcon_request'
+                    client_id = $Script:Falcon.ClientId
+                }
+                if ($Script:Falcon.MemberCid) {
+                    $ApiClient['member_cid'] = $Script:Falcon.MemberCid
+                }
+                ConvertTo-Json -InputObject $ApiClient -Compress
             }
             $Fields = @{}
             @($Endpoint, $Headers).Where({ $_ }).foreach{
