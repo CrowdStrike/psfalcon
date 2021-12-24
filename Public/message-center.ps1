@@ -43,7 +43,9 @@ function Add-FalconCompleteActivity {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
-        Write-Result ($Script:Falcon.Api.Invoke($Param))
+        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $Request = $Script:Falcon.Api.Invoke($Param)
+        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
     }
 }
 function Edit-FalconCompleteCase {
@@ -94,7 +96,9 @@ function Edit-FalconCompleteCase {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
-        Write-Result ($Script:Falcon.Api.Invoke($Param))
+        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $Request = $Script:Falcon.Api.Invoke($Param)
+        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
     }
 }
 function Get-FalconCompleteActivity {
@@ -272,7 +276,9 @@ function New-FalconCompleteCase {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
-        Write-Result ($Script:Falcon.Api.Invoke($Param))
+        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $Request = $Script:Falcon.Api.Invoke($Param)
+        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
     }
 }
 function Receive-FalconCompleteAttachment {
