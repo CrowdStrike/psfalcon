@@ -6,9 +6,7 @@ function Get-FalconFimChange {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/filevantage/queries/changes/v2:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('action_timestamp','ingestion_timestamp','host.name')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/filevantage/queries/changes/v2:get', Position = 3)]

@@ -646,28 +646,20 @@ function Test-FqlStatement {
     [OutputType([boolean])]
     param(
         [Parameter(Mandatory = $true, Position = 1)]
-        [string] $String,
-
-        [Parameter(Position = 2)]
-        [array] $Properties
+        [string] $String
     )
     begin {
         $Pattern = [regex] ("(?<FqlProperty>[\w\.]+):(?<FqlOperator>(!~?|~|(>|<)=?|\*)?)" +
             "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,':]+)")
     }
     process {
-        if ($String -match $Pattern) {
-            @([regex]::Matches($String, $Pattern).Groups.Where({ $_.Name -eq 'FqlProperty' }).Value).foreach{
-                if ($Properties -and $Properties -notcontains $_) {
-                    # Error when 'property' is not in list of valid properties
-                    throw "'$_' is not a valid property."
-                }
-            }
-        } else {
+        if ($String -notmatch $Pattern) {
             # Error when 'filter' does not match $Pattern
             throw "'$String' is not a valid Falcon Query Language statement."
+        } else {
+            $true
         }
-        $true
+        
     }
 }
 function Test-RegexValue {

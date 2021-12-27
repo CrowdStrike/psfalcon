@@ -30,12 +30,7 @@ function Get-FalconVulnerability {
             Position = 1)]
         [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Mandatory = $true,
             Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('aid', 'apps_remediation', 'closed_timestamp', 'created_timestamp',
-                'cve.exploit_status', 'cve.exprt_rating', 'cve.id', 'cve.severity', 'host_info.groups',
-                'host_info.platform_name', 'host_info.product_type_desc', 'host_info.tags',
-                'host_last_seen_timestamp', 'status', 'updated_timestamp')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Position = 2)]

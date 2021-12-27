@@ -10,11 +10,7 @@ function Get-FalconScheduledReport {
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('created_on','description','expiration_on','last_execution.last_updated_on',
-            'last_execution.status','last_updated_on','name','next_execution_on','shared_with','start_on',
-            'status','stop_on','type','user_id','result_metadata','scheduled_report_id')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 2)]

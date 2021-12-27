@@ -59,10 +59,7 @@ function Get-FalconPreventionPolicy {
 
         [Parameter(ParameterSetName = '/policy/combined/prevention/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/policy/queries/prevention/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('created_by','created_timestamp','description','enabled','groups',
-            'modified_by','modified_timestamp','name','name.raw','platform_name')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/policy/combined/prevention/v1:get', Position = 2)]

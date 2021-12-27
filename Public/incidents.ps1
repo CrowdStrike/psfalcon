@@ -7,9 +7,7 @@ function Get-FalconBehavior {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('aid','incident_id','pattern_id','template_instance_id','timestamp')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/incidents/queries/behaviors/v1:get', Position = 2)]
@@ -56,10 +54,7 @@ function Get-FalconIncident {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('host_ids','lm_host_ids','lm_hosts_capped','name','description','users',
-            'tags','fine_score','start','end','assigned_to_name','state','status','modified_timestamp')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/incidents/queries/incidents/v1:get', Position = 2)]
@@ -104,9 +99,7 @@ function Get-FalconScore {
     [CmdletBinding(DefaultParameterSetName = '/incidents/combined/crowdscores/v1:get')]
     param(
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('timestamp','score')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/incidents/combined/crowdscores/v1:get', Position = 2)]

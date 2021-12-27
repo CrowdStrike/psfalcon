@@ -88,10 +88,7 @@ function Get-FalconIoc {
 
         [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/iocs/combined/indicator/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('type','value','action','severity','platforms','tags','expiration','expired',
-            'applied_globally','host_groups','created_on','created_by','modified_on','modified_by','source')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get', Position = 2)]

@@ -118,11 +118,7 @@ function Get-FalconIoaGroup {
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 1)]
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups-full/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('enabled','platform','name','description','rules.action_label','rules.name',
-            'rules.description','rules.pattern_severity','rules.ruletype_name','rules.enabled','created_on',
-            'modified_on')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 2)]
@@ -219,11 +215,7 @@ function Get-FalconIoaRule {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('enabled','platform','name','description','rules.action_label','rules.name',
-            'rules.description','rules.pattern_severity','rules.ruletype_name','rules.enabled','created_on',
-            'modified_on')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 2)]

@@ -6,18 +6,7 @@ function Get-FalconAsset {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get', Position = 1)]
-        [ValidateScript({
-            Test-FqlStatement $_ @('agent_version','aid','bios_manufacturer','bios_version','cid','city',
-            'confidence','country','current_local_ip','discoverer_aids','discoverer_count',
-            'discoverer_platform_names','discoverer_product_type_descs','discoverer_tags','entity_type',
-            'external_ip','first_discoverer_aid','first_discoverer_ip','first_seen_timestamp','groups',
-            'hostname','id','kernel_version','last_discoverer_aid','last_seen_timestamp','local_ips_count',
-            'machine_domain','network_interfaces','network_interfaces.interface_alias',
-            'network_interfaces.interface_description','network_interfaces.local_ip',
-            'network_interfaces.mac_address','network_interfaces.network_prefix','os_version','ou',
-            'platform_name','product_type','product_type_desc','site_name','system_manufacturer',
-            'system_product_name','system_serial_number','tags')
-        })]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get', Position = 2)]
