@@ -418,6 +418,12 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
+
+    General Changes
+    * Modified 'Test-FqlStatement' to simply validate an FQL statement instead of the statement plus individual
+    properties. This was changed because of numerous reports of undocumented properties that were usable with
+    specific APIs, but were being blocked by 'Test-FqlStatement'.
+
     Command Changes
     * Added 'group_names' as an 'Include' option for 'Get-FalconHost'.
 
