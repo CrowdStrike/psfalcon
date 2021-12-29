@@ -301,6 +301,61 @@ function Convert-Rfc3339 {
             (Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc) -replace '\.\d+Z$','Z')"
     }
 }
+function Get-LibraryScript {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param(
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string] $Name,
+
+        [Parameter(Mandatory = $true, Position = 2)]
+        [string] $Platform
+    )
+    begin {
+        $Authorization = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
+            # Capture current bearer token, then remove it before request to library
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.ToString()
+            [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
+        }
+    }
+    process {
+        $Extension = if ($PSBoundParameters.Name -notmatch '\.(sh|ps1)$') {
+            switch -Regex ($PSBoundParameters.Platform) {
+                # Set file extension, when not provided
+                '^(Linux|Mac)$' { 'sh' }
+                '^Windows$'     { 'ps1' }
+            }
+        }
+        $FileString = if ($Extension) {
+            # Determine absolute request path
+            "$(@($PSBoundParameters.Platform.ToLower(),
+                (@($PSBoundParameters.Name, $Extension) -join '.')) -join '/')"
+        } else {
+            "$(@($PSBoundParameters.Platform.ToLower(),$PSBoundParameters.Name) -join '/')"
+        }
+        if ($FileString) {
+            # Make request and output result
+            $Param = @{
+                Path = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
+                Method = 'get'
+                Headers = @{
+                    Accept = 'text/plain'
+                }
+            }
+            $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+            $Request = $Script:Falcon.Api.Invoke($Param)
+            if ($Request.Result.Content) {
+                Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+            }
+        }
+    }
+    end {
+        if ($Authorization) {
+            # Re-add existing bearer token
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization',$Authorization)
+        }
+    }
+}
 function Get-ParamSet {
     [CmdletBinding()]
     param(
@@ -738,8 +793,8 @@ function Write-Result {
             # Capture result content
             ($Request.Result.Content).ReadAsStringAsync().Result
         }
-        $Json = if ($Result -and ($Request.Result.Content.Headers.ContentType -or
-        $Request.Result.Content.Headers.ContentType.MediaType) -eq 'application/json') {
+        $Json = if ($Result -and $Request.Result.Content.Headers.ContentType -eq 'application/json' -or
+        $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
             # Convert content to Json
             ConvertFrom-Json -InputObject $Result
         }
@@ -887,7 +942,7 @@ function Write-Result {
                 )
             }
         } else {
-            $Response
+            $Result
         }
         # Check for rate limiting
         Wait-RetryAfter $Request
