@@ -570,3 +570,139 @@ function Invoke-FalconRtr {
         }
     }
 }
+function Invoke-FalconScript {
+<#
+.SYNOPSIS
+Execute a Real-time Response Library script
+.DESCRIPTION
+Requires 'real-time-response-admin:write'.
+
+The selected script must match one in the Real-time Response Library (https://github.com/bk-cs/rtr) without a
+file extension.
+.PARAMETER Name
+Script name, not including file extension
+.PARAMETER Arguments
+Arguments to include with 'runscript'
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds
+.PARAMETER QueueOffline
+Add non-responsive Hosts to the offline queue
+.PARAMETER HostId
+Host identifier
+.PARAMETER HostIds
+Host identifier(s)
+.EXAMPLE
+PS>Invoke-FalconScript -Name list_sensor_tags -HostIds <id>, <id>
+
+List the FalconSensorTag values for hosts <id> and <id>.
+#>
+    [CmdletBinding(DefaultParameterSetName = 'HostId')]
+    param(
+        [Parameter(ParameterSetName = 'HostId', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName = 'HostIds', Mandatory = $true, Position = 1)]
+        [string] $Name,
+
+        [Parameter(ParameterSetName = 'HostId', Position = 2)]
+        [Parameter(ParameterSetName = 'HostIds', Position = 2)]
+        [string] $Arguments,
+
+        [Parameter(ParameterSetName = 'HostIds', Position = 3)]
+        [ValidateRange(30,600)]
+        [int] $Timeout,
+
+        [Parameter(ParameterSetName = 'HostId')]
+        [Parameter(ParameterSetName = 'HostIds')]
+        [boolean] $QueueOffline,
+
+        [Parameter(ParameterSetName = 'HostId', Mandatory = $true, ValueFromPipeline = $true)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('device_id')]
+        [string] $HostId,
+
+        [Parameter(ParameterSetName = 'HostIds', Mandatory = $true)]
+        [ValidatePattern('^\w{32}$')]
+        [array] $HostIds
+    )
+    begin {
+        if ($PSBoundParameters.Timeout -and $PSBoundParameters.Arguments -notmatch '-Timeout=\d+') {
+            $PSBoundParameters.Arguments += " -Timeout=$($PSBoundParameters.Timeout)"
+        }
+    }
+    process {
+        try {
+            if ($PSCmdlet.ParameterSetName -eq 'HostId') {
+                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId |
+                    Select-Object cid, device_id, platform_name
+                if ($HostInfo.platform_name) {
+                    $RawScript = Get-LibraryScript -Name $PSBoundParameters.Name -Platform $HostInfo.platform_name
+                    if ($RawScript) {
+                        $InvokeParam = @{
+                            HostId    = $HostInfo.device_id
+                            Command   = 'runscript'
+                            Arguments = '-Raw=```' + $RawScript + '```'
+                        }
+                        if ($PSBoundParameters.Arguments) {
+                            $InvokeParam.Arguments += " $($PSBoundParameters.Arguments)"
+                        }
+                        if ($PSBoundParameters.QueueOffline) {
+                            $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
+                        }
+                        foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
+                            if ($Result.stdout) {
+                                $Result.stdout = try {
+                                    $Result.stdout -split '\n' | ForEach-Object {
+                                        $_ | ConvertFrom-Json
+                                    }
+                                } catch {
+                                    $Result.stdout
+                                }
+                            }
+                            $Result
+                        }
+                    } else {
+                        throw "No script matching '$($PSBoundParameters.Name)' for $($HostInfo.platform_name)."
+                    }
+                } else {
+                    throw "No host found matching '$($PSBoundParameters.Id)'."
+                }
+            } else {
+                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostIds |
+                    Select-Object cid, device_id, platform_name
+                foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
+                    $RawScript = Get-LibraryScript -Name $PSBoundParameters.Name -Platform $Platform
+                    if ($RawScript) {
+                        $InvokeParam = @{
+                            Command   = 'runscript'
+                            Arguments =  '-Raw=```' + $RawScript + '```'
+                            HostIds   = ($HostInfo | Where-Object { $_.platform_name -eq $Platform }).device_id
+                        }
+                        if ($PSBoundParameters.Arguments) {
+                            $InvokeParam.Arguments += " $($PSBoundParameters.Arguments)"
+                        }
+                        @('Timeout','QueueOffline').foreach{
+                            if ($PSBoundParameters.Keys -contains $_) {
+                                $InvokeParam[$_] = $PSBoundParameters.$_
+                            }
+                        }
+                        foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
+                            if ($Result.stdout) {
+                                $Result.stdout = try {
+                                    $Result.stdout -split '\n' | ForEach-Object {
+                                        $_ | ConvertFrom-Json
+                                    }
+                                } catch {
+                                    $Result.stdout
+                                }
+                            }
+                            $Result
+                        }
+                    } else {
+                        Write-Error "No script matching '$($PSBoundParameters.Name)' for $Platform."
+                    }
+                }
+            }
+        } catch {
+            throw $_
+        }
+    }
+}

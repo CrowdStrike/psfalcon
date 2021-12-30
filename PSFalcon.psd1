@@ -286,6 +286,7 @@
       'Get-FalconQueue',
       'Invoke-FalconDeploy',
       'Invoke-FalconRtr',
+      'Invoke-FalconScript',
 
       # quarantine.ps1
       'Get-FalconQuarantine',
