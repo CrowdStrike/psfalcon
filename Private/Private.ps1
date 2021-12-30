@@ -344,9 +344,11 @@ function Get-LibraryScript {
             }
             $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
             $Request = $Script:Falcon.Api.Invoke($Param)
-            if ($Request.Result.Content) {
-                Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
-            }
+            try {
+                if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
+                    Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+                }
+            } catch {}
         }
     }
     end {
