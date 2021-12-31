@@ -81,6 +81,9 @@ function Request-FalconToken {
                 # Initiate ApiClient, set SslProtocol and UserAgent
                 $Script:Falcon = Get-ApiCredential $PSBoundParameters
                 $Script:Falcon.Add('Api', [ApiClient]::New())
+                if ($Script:Humio.Path -and $Script:Humio.Token -and -not $Script:Falcon.Request) {
+                    $Script:Falcon['Request'] = @{}
+                }
                 if ($Script:Falcon.Api) {
                     try {
                         # Set TLS 1.2 for [System.Net.Http.HttpClientHandler]
@@ -139,7 +142,7 @@ function Request-FalconToken {
                     Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+                $Result = Write-Result -Request $Request -Time $RequestTime
                 if ($Result.access_token) {
                     # Cache access token in ApiClient
                     $Token = "$($Result.token_type) $($Result.access_token)"
@@ -187,7 +190,7 @@ function Revoke-FalconToken {
             }
             $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
             $Request = $Script:Falcon.Api.Invoke($Param)
-            Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+            Write-Result -Request $Request -Time $RequestTime
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
         @('ClientId', 'ClientSecret', 'MemberCid').foreach{

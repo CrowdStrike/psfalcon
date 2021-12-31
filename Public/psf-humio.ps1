@@ -15,6 +15,9 @@ function Register-HumioEventCollector {
             Path  = $PSBoundParameters.Path
             Token = $PSBoundParameters.Token
         }
+        if ($Script:Falcon -and -not $Script:Falcon.Request) {
+            $Script:Falcon['Request'] = @{}
+        }
     }
 }
 function Remove-HumioEventCollector {

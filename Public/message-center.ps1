@@ -43,9 +43,12 @@ function Add-FalconCompleteActivity {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
+        if ($Script:Humio.Path -and $Script:Humio.Token) {
+            $Script:Falcon.Request['Body'] = $Param.Body
+        }
         $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+        Write-Result -Request $Request -Time $RequestTime
     }
 }
 function Edit-FalconCompleteCase {
@@ -96,9 +99,12 @@ function Edit-FalconCompleteCase {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
+        if ($Script:Humio.Path -and $Script:Humio.Token) {
+            $Script:Falcon.Request['Body'] = $Param.Body
+        }
         $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+        Write-Result -Request $Request -Time $RequestTime
     }
 }
 function Get-FalconCompleteActivity {
@@ -276,9 +282,12 @@ function New-FalconCompleteCase {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
+        if ($Script:Humio.Path -and $Script:Humio.Token) {
+            $Script:Falcon.Request['Body'] = $Param.Body
+        }
         $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+        Write-Result -Request $Request -Time $RequestTime
     }
 }
 function Receive-FalconCompleteAttachment {

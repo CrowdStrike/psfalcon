@@ -346,7 +346,7 @@ function Get-LibraryScript {
             $Request = $Script:Falcon.Api.Invoke($Param)
             try {
                 if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
-                    Write-Result -Request $Request -ParamSet $Param -Time $RequestTime
+                    Write-Result -Request $Request -Time $RequestTime
                 }
             } catch {}
         }
@@ -585,6 +585,16 @@ function Invoke-Falcon {
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
                     $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Compress
+                    if ($Script:Humio.Path -and $Script:Humio.Token) {
+                        $Script:Falcon.Request['Body'] = $ParamSet.Endpoint.Body
+                    }
+                }
+                if ($Script:Humio.Path -and $Script:Humio.Token) {
+                    @('Formdata','Outfile').foreach{
+                        if ($ParamSet.Endpoint.$_) {
+                            $Script:Falcon.Request[$_] = $ParamSet.Endpoint.$_
+                        }
+                    }
                 }
                 $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
@@ -602,7 +612,7 @@ function Invoke-Falcon {
                         # Output 'Total'
                         $Pagination.total
                     } else {
-                        $Result = Write-Result -Request $Request -ParamSet $ParamSet.Endpoint -Time $RequestTime
+                        $Result = Write-Result -Request $Request -Time $RequestTime
                         if ($null -ne $Result) {
                             if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
                                 # Output 'Detailed'
@@ -679,7 +689,7 @@ function Invoke-Loop {
             $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
-                $Result = Write-Result -Request $Request -ParamSet $Clone.Endpoint -Time $RequestTime
+                $Result = Write-Result -Request $Request -Time $RequestTime
                 if ($null -ne $Result) {
                     if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                         & $Command -Ids $Result
@@ -782,7 +792,6 @@ function Write-Result {
     [CmdletBinding()]
     param(
         [object] $Request,
-        [hashtable] $ParamSet,
         [Int64] $Time
     )
     begin {
@@ -810,50 +819,46 @@ function Write-Result {
                     ContentType   = 'application/json'
                 }
                 Body    = @{
-                    time       = $Time
                     host       = [System.Net.Dns]::GetHostname()
                     source     = (Show-FalconModule).UserAgent
                     sourcetype = 'json'
                     client_id  = $Script:Falcon.ClientId
-                    member_cid = if ($Script:Falcon.MemberCid) {
-                        $Script:Falcon.MemberCid
-                    } else {
-                        $null
-                    }
-                    headers    = @{
-                        request = @{}
-                        result  = @{}
-                    }
-                    request    = @{}
+                    member_cid = if ($Script:Falcon.MemberCid) { $Script:Falcon.MemberCid } else { $null }
+                    headers    = @{ Request = @{}; Result = @{} }
+                    request    = @{ Time = $Time }
                 }
             }
-            if ($ParamSet) {
-                if ($ParamSet.Path -match '/oauth2/' -and $ParamSet.Body) {
-                    # Remove client_secret and access_token from Body
-                    $ParamSet.Body = ($ParamSet.Body -replace 'client_secret=\w{40}',
-                        'client_secret=redacted' -replace '^token=.*','token=redacted')
+            @('Body','Formdata','Outfile').foreach{
+                if ($Script:Falcon.Request.$_) {
+                    $LogParam.Body.request[$_] = $Script:Falcon.Request.$_
+                    $Script:Falcon.Request.Remove($_)
                 }
-                $ParamSet.GetEnumerator().foreach{
-                    if ($_.Key -eq 'Headers') {
-                        ($_.Value).GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
-                            # Add headers, excluding authorization
-                            $LogParam.Body.headers.request[$_.Key] = $_.Value
-                        }
+            }
+            ($Request.Result.RequestMessage.PSObject.Properties).Where({ $_.MemberType -eq 'Property' -and
+            $_.Name -notmatch '^(Content|Properties|Version)$' }).foreach{
+                if ($_.Name -eq 'Headers') {
+                    ($_.Value).GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
+                        $LogParam.Body.headers.Request[$_.Key] = $_.Value
+                    }
+                } else {
+                    $LogParam.Body.request[$_.Name] = if ($_.Name -eq 'Method') {
+                        $_.Value.ToString()
                     } else {
-                        # Add request parameters
-                        $LogParam.Body.request[$_.Key] = $_.Value
+                        $_.Value
                     }
                 }
-                $LogParam.Body['result'] = if ($Json -and $ParamSet.Path -match '/oauth2/token$') {
-                    # Exclude access token
+            }
+            $LogParam.Body['result'] = if ($Json) {
+                if ($Request.Result.RequestMessage.RequestUri -match '/oauth2/token') {
+                    # Exclude 'access_token'
                     $Json | Select-Object token_type, expires_in
-                } elseif ($Json) {
+                } else {
                     # Add Json content
                     $Json
-                } elseif ($Result) {
-                    # Add [string] content
-                    [PSCustomObject] @{ string = $Result }
                 }
+            } elseif ($Result) {
+                # Add [string] content
+                $Result
             }
         }
         $Verbose = if ($Request.Result.Headers) {
@@ -954,7 +959,7 @@ function Write-Result {
             Get-Job | Where-Object { $_.Name -match '^PSFalcon_log' -and $_.State -eq 'Completed' } |
             ForEach-Object {
                 # Clean up completed log job(s)
-                Write-Verbose "[Write-Result] Removed job '$($_.Name)'"
+                Write-Verbose "[Write-Result] Removed completed job '$($_.Name)'"
                 Remove-Job -Id $_.Id
             }
         }
