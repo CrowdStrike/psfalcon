@@ -269,6 +269,10 @@
       'Remove-HumioEventCollector',
       'Show-HumioEventCollector',
 
+      # psf-library.ps1
+      'Get-FalconLibrary',
+      'Invoke-FalconLibrary',
+
       # psf-output.ps1
       'Export-FalconReport',
       'Send-FalconWebhook',
@@ -286,7 +290,6 @@
       'Get-FalconQueue',
       'Invoke-FalconDeploy',
       'Invoke-FalconRtr',
-      'Invoke-FalconScript',
 
       # quarantine.ps1
       'Get-FalconQuarantine',
@@ -453,6 +456,10 @@
     'Register-HumioEventCollector'
     'Remove-HumioEventCollector'
     'Show-HumioEventCollector'
+
+    * psf-library.ps1
+    'Get-FalconLibrary'
+    'Invoke-FalconLibrary'
 
     GitHub Issues
     * Issue #153: Added 'instance_id' as a value for '-Filter' and '-Sort' under 'Get-FalconHost'.
