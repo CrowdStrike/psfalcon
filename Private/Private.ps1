@@ -900,7 +900,7 @@ function Write-Result {
             [void] (Start-Job @JobParam)
         }
         if ($Verbose) {
-            Write-Verbose "[Write-Result] $($Verbose -join ', ')"
+            Write-Verbose "[Write-Result] $($Verbose -join ',')"
         }
         if ($Json) {
             # Gather field names from result, excluding 'errors', 'extensions', and 'meta'

@@ -424,6 +424,8 @@
             ReleaseNotes = @"
 
     General Changes
+    * Changed format of request header verbose output to match result header verbose output.
+
     * Modified 'Test-FqlStatement' to simply validate an FQL statement instead of the statement plus individual
     properties. This was changed because of numerous reports of undocumented properties that were usable with
     specific APIs, but were being blocked by 'Test-FqlStatement'.
