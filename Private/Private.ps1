@@ -324,13 +324,13 @@ function Get-LibraryScript {
             # Script to splice in before library script and send results to Humio
             Linux   = $null
             Mac     = $null
-            Windows = 'function Send-ToHumio ([object] $Obj){$Req=@{Uri="null";Method="post";Headers=@{Authoriza' +
-                'tion="Bearer token";ContentType="application/json"};Body=@{fields=@{host=[System.Net.Dns]::GetH' +
-                'ostname();script="null"};messages=$Obj}};$Key="HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fa' +
-                'e-d9f4c034b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default";if(Test-Path $Key){@(@("cid","C' +
-                'U"),@("aid","AG")).foreach{$Req.Body.fields.Add($_[0],([System.BitConverter]::ToString(((Get-It' +
-                'emProperty $Key -Name $_[1]).($_[1]))).ToLower() -replace "-",""))}};$Req.Body=ConvertTo-Json $' +
-                'Req.Body -Compress;[void](Invoke-WebRequest @Req -UseBasicParsing)}'
+            Windows = 'function shumio ([object] $Obj){$Iwr=@{Uri=null;Method="post";Headers=@{Authorization=nul' +
+                'l;ContentType="application/json"};Body=@{fields=@{host=[System.Net.Dns]::GetHostname();script=n' +
+                'ull};messages=$Obj}};$Key="HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
+                '0423f-7058-48c9-a204-725362b67639}\Default";if(Test-Path $Key){@(@("cid","CU"),@("aid","AG")).f' +
+                'oreach{$Iwr.Body.fields[$_[0]]=([System.BitConverter]::ToString(((gp $Key -Name $_[1]).($_[1]))' +
+                ').ToLower() -replace "-","")}};$Iwr.Body=$Iwr.Body|ConvertTo-Json -Compress;[void](iwr @Iwr -Us' +
+                'eBasicParsing)}'
         }
     }
     process {
@@ -357,20 +357,20 @@ function Get-LibraryScript {
                     $Result = Write-Result -Request $Request -Time $RequestTime
                     if ($PSBoundParameters.SendToHumio -eq $true) {
                         if ($Result -match '^\$ScriptBlock = \{') {
-                            # Add SendTo-Humio function at $ScriptBlock definition - IN_PROGRESS
+                            # Add 'shumio' function at $ScriptBlock definition - IN_PROGRESS
                             <#
                             $Splice = '$ScriptBlock = {' + ($HumioFunction.($HostInfo.platform_name)).Replace(
-                                'Uri="null"',('Uri="' + $Script:Humio.Path + '"')).Replace(
-                                'Authorization="Bearer token"',('Authorization="Bearer '+ $Script:Humio.Token +
-                                '"')).Replace('script="null"','script="' + $PSBoundParameters.Name + '"')
+                                'Uri=null',('Uri="' + $Script:Humio.Path + '"')).Replace('Authorization=null',
+                                ('Authorization="Bearer '+ $Script:Humio.Token + '"')).Replace('script=null',
+                                'script="' + $PSBoundParameters.Name + '"')
                             @($Splice,($Result -replace '^\$ScriptBlock = \{',';')) -join $null
                             #>
                         } else {
-                            # Add SendTo-Humio function
-                            $Splice = ($HumioFunction.($HostInfo.platform_name)).Replace(
-                                'Uri="null"',('Uri="' + $Script:Humio.Path + '"')).Replace(
-                                'Authorization="Bearer token"',('Authorization="Bearer '+ $Script:Humio.Token +
-                                '"')).Replace('script="null"','script="' + $PSBoundParameters.Name + '"')
+                            # Add 'shumio' function
+                            $Splice = ($HumioFunction.($HostInfo.platform_name)).Replace('Uri=null',
+                                ('Uri="' + $Script:Humio.Path + '"')).Replace('Authorization=null',
+                                ('Authorization="Bearer '+ $Script:Humio.Token + '"')).Replace('script=null',
+                                'script="' + $PSBoundParameters.Name + '"')
                             @($Splice,$Result) -join ";"
                         }
                     } else {
