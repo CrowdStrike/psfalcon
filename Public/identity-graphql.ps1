@@ -20,7 +20,7 @@ function Invoke-FalconIdentityGraph {
             }
             Body = ConvertTo-Json -InputObject @{ query = "{$($PSBoundParameters.Query)}" } -Compress
         }
-        if ($Script:Humio.Path -and $Script:Humio.Token) {
+        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
         $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()

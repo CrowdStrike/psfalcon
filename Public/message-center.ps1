@@ -43,7 +43,7 @@ function Add-FalconCompleteActivity {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
-        if ($Script:Humio.Path -and $Script:Humio.Token) {
+        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
         $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -99,7 +99,7 @@ function Edit-FalconCompleteCase {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
-        if ($Script:Humio.Path -and $Script:Humio.Token) {
+        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
         $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -282,7 +282,7 @@ function New-FalconCompleteCase {
             $Param.Body[$_.Key.ToLower()] = $_.Value
         }
         $Param.Body = ConvertTo-Json -InputObject $Param.Body
-        if ($Script:Humio.Path -and $Script:Humio.Token) {
+        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
         $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()

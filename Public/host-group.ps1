@@ -184,7 +184,7 @@ function Invoke-FalconHostGroupAction {
             }) -join ','
             $Clone.Body.action_parameters[0].value = "(device_id:[$IdString])"
             $Clone.Body = ConvertTo-Json -InputObject $Clone.Body -Depth 8
-            if ($Script:Humio.Path -and $Script:Humio.Token) {
+            if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                 $Script:Falcon.Request['Body'] = $Clone.Body
             }
             $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()

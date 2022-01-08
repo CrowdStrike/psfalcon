@@ -94,7 +94,7 @@ function Edit-FalconReconNotification {
                 # Edit notifications in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                if ($Script:Humio.Path -and $Script:Humio.Token) {
+                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                     $Script:Falcon.Request['Body'] = $Param.Body
                 }
                 $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -172,7 +172,7 @@ function Edit-FalconReconRule {
                 # Edit rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                if ($Script:Humio.Path -and $Script:Humio.Token) {
+                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                     $Script:Falcon.Request['Body'] = $Param.Body
                 }
                 $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -488,7 +488,7 @@ function New-FalconReconRule {
                 # Create rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                if ($Script:Humio.Path -and $Script:Humio.Token) {
+                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                     $Script:Falcon.Request['Body'] = $Param.Body
                 }
                 $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()

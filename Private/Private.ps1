@@ -309,7 +309,10 @@ function Get-LibraryScript {
         [string] $Name,
 
         [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Platform
+        [string] $Platform,
+
+        [Parameter()]
+        [boolean] $SendToHumio
     )
     begin {
         $Authorization = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
@@ -317,36 +320,62 @@ function Get-LibraryScript {
             $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.ToString()
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
+        $HumioFunction = @{
+            # Script to splice in before library script and send results to Humio
+            Linux   = $null
+            Mac     = $null
+            Windows = 'function Send-ToHumio ([object] $Obj){$Req=@{Uri="null";Method="post";Headers=@{Authoriza' +
+                'tion="Bearer token";ContentType="application/json"};Body=@{fields=@{host=[System.Net.Dns]::GetH' +
+                'ostname();script="null"};messages=$Obj}};$Key="HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fa' +
+                'e-d9f4c034b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default";if(Test-Path $Key){@(@("cid","C' +
+                'U"),@("aid","AG")).foreach{$Req.Body.fields.Add($_[0],([System.BitConverter]::ToString(((Get-It' +
+                'emProperty $Key -Name $_[1]).($_[1]))).ToLower() -replace "-",""))}};$Req.Body=ConvertTo-Json $' +
+                'Req.Body -Compress;[void](Invoke-WebRequest @Req -UseBasicParsing)}'
+        }
     }
     process {
-        $Extension = if ($PSBoundParameters.Name -notmatch '\.(sh|ps1)$') {
-            switch -Regex ($PSBoundParameters.Platform) {
-                # Set file extension, when not provided
+        if ($PSBoundParameters.Name -notmatch '\.(sh|ps1)$') {
+            # Set file extension, when not provided
+            $Extension = switch -Regex ($PSBoundParameters.Platform) {
                 '^(Linux|Mac)$' { 'sh' }
                 '^Windows$'     { 'ps1' }
             }
+            $PSBoundParameters.Name = @($PSBoundParameters.Name, $Extension) -join '.'
         }
-        $FileString = if ($Extension) {
-            # Determine absolute request path
-            "$(@($PSBoundParameters.Platform.ToLower(),
-                (@($PSBoundParameters.Name, $Extension) -join '.')) -join '/')"
-        } else {
-            "$(@($PSBoundParameters.Platform.ToLower(),$PSBoundParameters.Name) -join '/')"
-        }
+        $FileString = "$(@($PSBoundParameters.Platform.ToLower(),$PSBoundParameters.Name) -join '/')"
         if ($FileString) {
             # Make request and output result
             $Param = @{
-                Path = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
-                Method = 'get'
-                Headers = @{
-                    Accept = 'text/plain'
-                }
+                Path    = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
+                Method  = 'get'
+                Headers = @{ Accept = 'text/plain' }
             }
             $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
             $Request = $Script:Falcon.Api.Invoke($Param)
             try {
                 if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
-                    Write-Result -Request $Request -Time $RequestTime
+                    $Result = Write-Result -Request $Request -Time $RequestTime
+                    if ($PSBoundParameters.SendToHumio -eq $true) {
+                        if ($Result -match '^\$ScriptBlock = \{') {
+                            # Add SendTo-Humio function at $ScriptBlock definition - IN_PROGRESS
+                            <#
+                            $Splice = '$ScriptBlock = {' + ($HumioFunction.($HostInfo.platform_name)).Replace(
+                                'Uri="null"',('Uri="' + $Script:Humio.Path + '"')).Replace(
+                                'Authorization="Bearer token"',('Authorization="Bearer '+ $Script:Humio.Token +
+                                '"')).Replace('script="null"','script="' + $PSBoundParameters.Name + '"')
+                            @($Splice,($Result -replace '^\$ScriptBlock = \{',';')) -join $null
+                            #>
+                        } else {
+                            # Add SendTo-Humio function
+                            $Splice = ($HumioFunction.($HostInfo.platform_name)).Replace(
+                                'Uri="null"',('Uri="' + $Script:Humio.Path + '"')).Replace(
+                                'Authorization="Bearer token"',('Authorization="Bearer '+ $Script:Humio.Token +
+                                '"')).Replace('script="null"','script="' + $PSBoundParameters.Name + '"')
+                            @($Splice,$Result) -join ";"
+                        }
+                    } else {
+                        $Result
+                    }
                 }
             } catch {}
         }
@@ -585,11 +614,11 @@ function Invoke-Falcon {
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
                     $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Compress
-                    if ($Script:Humio.Path -and $Script:Humio.Token) {
+                    if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                         $Script:Falcon.Request['Body'] = $ParamSet.Endpoint.Body
                     }
                 }
-                if ($Script:Humio.Path -and $Script:Humio.Token) {
+                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                     @('Formdata','Outfile').foreach{
                         if ($ParamSet.Endpoint.$_) {
                             $Script:Falcon.Request[$_] = $ParamSet.Endpoint.$_
@@ -809,7 +838,7 @@ function Write-Result {
             # Convert content to Json
             ConvertFrom-Json -InputObject $Result
         }
-        if ($Script:Humio.Path -and $Script:Humio.Token) {
+        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             # Create and send log event
             $LogParam = @{
                 Uri     = $Script:Humio.Path
@@ -955,7 +984,7 @@ function Write-Result {
         Wait-RetryAfter $Request
     }
     end {
-        if ($Script:Humio.Path -and $Script:Humio.Token) {
+        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             Get-Job | Where-Object { $_.Name -match '^PSFalcon_log' -and $_.State -eq 'Completed' } |
             ForEach-Object {
                 # Clean up completed log job(s)

@@ -265,6 +265,8 @@
       'Uninstall-FalconSensor',
 
       # psf-humio.ps1
+      'Disable-HumioEventCollector',
+      'Enable-HumioEventCollector',
       'Register-HumioEventCollector',
       'Remove-HumioEventCollector',
       'Show-HumioEventCollector',
@@ -455,6 +457,8 @@
     'Send-FalconCompleteAttachment'
 
     * psf-humio.ps1
+    'Disable-HumioEventCollector'
+    'Enable-HumioEventCollector'
     'Register-HumioEventCollector'
     'Remove-HumioEventCollector'
     'Show-HumioEventCollector'

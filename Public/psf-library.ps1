@@ -1,14 +1,4 @@
 function Get-FalconLibrary {
-<#
-.SYNOPSIS
-List available Real-time Response Library scripts
-.PARAMETER Platform
-Operating system platform
-.EXAMPLE
-PS>Get-FalconScript -Platform windows
-
-List scripts from the Windows library.
-#>
     [CmdletBinding()]
     param(
         [Parameter(Position = 1, Mandatory = $true)]
@@ -18,7 +8,7 @@ List scripts from the Windows library.
     begin {
         $CurrentProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
-        
+        $PSBoundParameters.Platform = $PSBoundParameters.Platform.ToLower()
     }
     process {
         $Request = Invoke-WebRequest -Uri "https://github.com/bk-cs/rtr/tree/main/$Platform" -UseBasicParsing
@@ -33,28 +23,6 @@ List scripts from the Windows library.
     }
 }
 function Invoke-FalconLibrary {
-<#
-.SYNOPSIS
-Execute a Real-time Response Library script
-.DESCRIPTION
-Requires 'real-time-response-admin:write'.
-.PARAMETER Name
-Script name
-.PARAMETER Arguments
-Arguments to include with 'runscript'
-.PARAMETER Timeout
-Length of time to wait for a result, in seconds
-.PARAMETER QueueOffline
-Add non-responsive Hosts to the offline queue
-.PARAMETER HostId
-Host identifier
-.PARAMETER HostIds
-Host identifier(s)
-.EXAMPLE
-PS>Invoke-FalconScript -Name list_sensor_tags -HostIds <id>, <id>
-
-List the FalconSensorTag values for hosts <id> and <id>.
-#>
     [CmdletBinding(DefaultParameterSetName = 'HostId')]
     param(
         [Parameter(ParameterSetName = 'HostId', Mandatory = $true, Position = 1)]
@@ -80,7 +48,11 @@ List the FalconSensorTag values for hosts <id> and <id>.
 
         [Parameter(ParameterSetName = 'HostIds', Mandatory = $true)]
         [ValidatePattern('^\w{32}$')]
-        [array] $HostIds
+        [array] $HostIds,
+
+        [Parameter(ParameterSetName = 'HostId')]
+        [Parameter(ParameterSetName = 'HostIds')]
+        [boolean] $SendToHumio
     )
     begin {
         if ($PSBoundParameters.Timeout -and $PSBoundParameters.Arguments -notmatch '-Timeout=\d+') {
@@ -88,15 +60,38 @@ List the FalconSensorTag values for hosts <id> and <id>.
         }
     }
     process {
+        if ($SendToHumio -eq $true) {
+            if ($Script:Humio) {
+                @('Path','Token').foreach{
+                    if (-not $Script:Humio.$_) {
+                        throw "Humio '$_' has not been defined. Try 'Register-HumioEventCollector'."
+                    }
+                }
+            } else {
+                throw "Humio destination has not been defined. Try 'Register-HumioEventCollector'."
+            }
+        }
         try {
             if ($PSCmdlet.ParameterSetName -eq 'HostId') {
                 $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId |
                     Select-Object cid, device_id, platform_name
                 if ($HostInfo.platform_name) {
-                    $RawScript = Get-LibraryScript -Platform $HostInfo.platform_name -Name $PSBoundParameters.Name
+                    $Script = @{
+                        Platform    = $HostInfo.platform_name
+                        Name        = $PSBoundParameters.Name
+                    }
+                    if ($PSBoundParameters.SendToHumio -eq $true) {
+                        if ($Script.Platform -ne 'Windows') {
+                            # Send warning for lack of Linux/Mac support
+                            Write-Warning "Sending output to Humio is only supported within Windows scripts."
+                        } else {
+                            $Script['SendToHumio'] = $true
+                        }
+                    }
+                    $RawScript = Get-LibraryScript @Script
                     if ($RawScript) {
                         $InvokeParam = @{
-                            HostId    = $HostInfo.device_id
+                            HostId    = $HostInfo.device_id 
                             Command   = 'runscript'
                             Arguments = '-Raw=```' + $RawScript + '```'
                         }
@@ -109,8 +104,10 @@ List the FalconSensorTag values for hosts <id> and <id>.
                         foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
                             if ($Result.stdout) {
                                 $Result.stdout = try {
-                                    $Result.stdout -split '\n' | ForEach-Object {
-                                        $_ | ConvertFrom-Json
+                                    @($Result.stdout -split '\n').foreach{
+                                        if (-not [string]::IsNullOrEmpty($_)) {
+                                            $_ | ConvertFrom-Json
+                                        }
                                     }
                                 } catch {
                                     $Result.stdout
@@ -128,7 +125,19 @@ List the FalconSensorTag values for hosts <id> and <id>.
                 $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostIds |
                     Select-Object cid, device_id, platform_name
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
-                    $RawScript = Get-LibraryScript -Platform $Platform -Name $PSBoundParameters.Name
+                    $Script = @{
+                        Platform = $Platform
+                        Name     = $PSBoundParameters.Name
+                    }
+                    if ($PSBoundParameters.SendToHumio -eq $true) {
+                        if ($Script.Platform -ne 'Windows') {
+                            # Send warning for lack of Linux/Mac support
+                            Write-Warning "Sending output to Humio is only supported within Windows scripts."
+                        } else {
+                            $Script['SendToHumio'] = $true
+                        }
+                    }
+                    $RawScript = Get-LibraryScript @Script
                     if ($RawScript) {
                         $InvokeParam = @{
                             Command   = 'runscript'
@@ -146,8 +155,10 @@ List the FalconSensorTag values for hosts <id> and <id>.
                         foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
                             if ($Result.stdout) {
                                 $Result.stdout = try {
-                                    $Result.stdout -split '\n' | ForEach-Object {
-                                        $_ | ConvertFrom-Json
+                                    @($Result.stdout -split '\n').foreach{
+                                        if (-not [string]::IsNullOrEmpty($_)) {
+                                            $_ | ConvertFrom-Json
+                                        }
                                     }
                                 } catch {
                                     $Result.stdout
