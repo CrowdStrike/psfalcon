@@ -320,7 +320,7 @@ function Get-LibraryScript {
             $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.ToString()
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
-        $HumioFunction = @{
+        $Function = @{
             # Script to splice in before library script and send results to Humio
             Linux   = $null
             Mac     = $null
@@ -342,42 +342,41 @@ function Get-LibraryScript {
             }
             $PSBoundParameters.Name = @($PSBoundParameters.Name, $Extension) -join '.'
         }
-        $FileString = "$(@($PSBoundParameters.Platform.ToLower(),$PSBoundParameters.Name) -join '/')"
+        $FileString = "$(@($PSBoundParameters.Platform, $PSBoundParameters.Name) -join '/')"
         if ($FileString) {
             # Make request and output result
-            $Param = @{
+            $ReqTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+            $Request = $Script:Falcon.Api.Invoke(@{
                 Path    = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
                 Method  = 'get'
                 Headers = @{ Accept = 'text/plain' }
-            }
-            $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-            $Request = $Script:Falcon.Api.Invoke($Param)
-            try {
-                if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
-                    $Result = Write-Result -Request $Request -Time $RequestTime
+            })
+            if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
+                try {
+                    $Result = Write-Result -Request $Request -Time $ReqTime
                     if ($PSBoundParameters.SendToHumio -eq $true) {
                         if ($Result -match '^\$ScriptBlock = \{') {
                             # Add 'shumio' function at $ScriptBlock definition - IN_PROGRESS
                             <#
-                            $Splice = '$ScriptBlock = {' + ($HumioFunction.($HostInfo.platform_name)).Replace(
+                            $Splice = '$ScriptBlock = {' + ($Function.($PSBoundParameters.Platform)).Replace(
                                 'Uri=null',('Uri="' + $Script:Humio.Path + '"')).Replace('Authorization=null',
                                 ('Authorization="Bearer '+ $Script:Humio.Token + '"')).Replace('script=null',
                                 'script="' + $PSBoundParameters.Name + '"')
-                            @($Splice,($Result -replace '^\$ScriptBlock = \{',';')) -join $null
+                            @($Splice,($_ -replace '^\$ScriptBlock = \{',';')) -join $null
                             #>
                         } else {
                             # Add 'shumio' function
-                            $Splice = ($HumioFunction.($HostInfo.platform_name)).Replace('Uri=null',
+                            $Splice = ($Function.($PSBoundParameters.Platform)).Replace('Uri=null',
                                 ('Uri="' + $Script:Humio.Path + '"')).Replace('Authorization=null',
                                 ('Authorization="Bearer '+ $Script:Humio.Token + '"')).Replace('script=null',
                                 'script="' + $PSBoundParameters.Name + '"')
-                            @($Splice,$Result) -join ";"
+                            @($Splice,$Result) -join "`n"
                         }
                     } else {
                         $Result
                     }
-                }
-            } catch {}
+                } catch {}
+            }
         }
     }
     end {
@@ -625,7 +624,7 @@ function Invoke-Falcon {
                         }
                     }
                 }
-                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $ReqTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
                 if ($RawOutput) {
                     # Return result if 'RawOutput' is defined
@@ -641,7 +640,7 @@ function Invoke-Falcon {
                         # Output 'Total'
                         $Pagination.total
                     } else {
-                        $Result = Write-Result -Request $Request -Time $RequestTime
+                        $Result = Write-Result -Request $Request -Time $ReqTime
                         if ($null -ne $Result) {
                             if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
                                 # Output 'Detailed'
@@ -715,10 +714,10 @@ function Invoke-Loop {
                 # Update pagination
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
-            $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+            $ReqTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
-                $Result = Write-Result -Request $Request -Time $RequestTime
+                $Result = Write-Result -Request $Request -Time $ReqTime
                 if ($null -ne $Result) {
                     if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                         & $Command -Ids $Result

@@ -8,14 +8,15 @@ function Get-FalconLibrary {
     begin {
         $CurrentProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
-        $PSBoundParameters.Platform = $PSBoundParameters.Platform.ToLower()
+        $Platform = $PSBoundParameters.Platform.ToLower()
     }
     process {
-        $Request = Invoke-WebRequest -Uri "https://github.com/bk-cs/rtr/tree/main/$Platform" -UseBasicParsing
+        $Request = Invoke-WebRequest -Uri "https://github.com/bk-cs/rtr/tree/main/$(
+            $PSBoundParameters.Platform.ToLower())" -UseBasicParsing
         if ($Request.Links) {
             ($Request.Links | Where-Object { $_.title -match "\.(sh|ps1)" }).Title
         } else {
-            Write-Error "Unable to retrieve script list for '$Platform'."
+            Write-Error "Unable to retrieve script list for '$($PSBoundParameters.Platform.ToLower())'."
         }
     }
     end {
@@ -58,6 +59,7 @@ function Invoke-FalconLibrary {
         if ($PSBoundParameters.Timeout -and $PSBoundParameters.Arguments -notmatch '-Timeout=\d+') {
             $PSBoundParameters.Arguments += " -Timeout=$($PSBoundParameters.Timeout)"
         }
+        $PSBoundParameters.Name = $PSBoundParameters.Name.ToLower()
     }
     process {
         if ($SendToHumio -eq $true) {
@@ -75,73 +77,75 @@ function Invoke-FalconLibrary {
             if ($PSCmdlet.ParameterSetName -eq 'HostId') {
                 $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId |
                     Select-Object cid, device_id, platform_name
+                if (-not $HostInfo) {
+                    throw "No host found matching '$($PSBoundParameters.HostId)'."
+                }
                 if ($HostInfo.platform_name) {
                     $Script = @{
-                        Platform    = $HostInfo.platform_name
-                        Name        = $PSBoundParameters.Name
+                        Platform = $HostInfo.platform_name.ToLower()
+                        Name     = $PSBoundParameters.Name
                     }
-                    if ($PSBoundParameters.SendToHumio -eq $true) {
-                        if ($Script.Platform -ne 'Windows') {
-                            # Send warning for lack of Linux/Mac support
-                            Write-Warning "Sending output to Humio is only supported within Windows scripts."
-                        } else {
-                            $Script['SendToHumio'] = $true
-                        }
+                    if ($PSBoundParameters.SendToHumio -eq $true -and $Script.Platform -ne 'windows') {
+                        # Send warning for lack of Linux/Mac support
+                        Write-Warning "Sending output to Humio is only supported for Windows library scripts."
+                    } elseif ($PSBoundParameters.SendToHumio -eq $true) {
+                        $Script['SendToHumio'] = $true
                     }
                     $RawScript = Get-LibraryScript @Script
-                    if ($RawScript) {
-                        $InvokeParam = @{
-                            HostId    = $HostInfo.device_id 
-                            Command   = 'runscript'
-                            Arguments = '-Raw=```' + $RawScript + '```'
-                        }
-                        if ($PSBoundParameters.Arguments) {
-                            $InvokeParam.Arguments += " $($PSBoundParameters.Arguments)"
-                        }
-                        if ($PSBoundParameters.QueueOffline) {
-                            $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
-                        }
-                        foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
-                            if ($Result.stdout) {
-                                $Result.stdout = try {
-                                    @($Result.stdout -split '\n').foreach{
-                                        if (-not [string]::IsNullOrEmpty($_)) {
-                                            $_ | ConvertFrom-Json
-                                        }
+                    if (-not $RawScript) {
+                        throw "No script matching '$($Script.Name)' for '$($Script.Platform)'."
+                    }
+                    $InvokeParam = @{
+                        HostId    = $HostInfo.device_id 
+                        Command   = 'runscript'
+                        Arguments = '-Raw=```' + $RawScript + '```'
+                    }
+                    if ($PSBoundParameters.Arguments) {
+                        $InvokeParam.Arguments += " $($PSBoundParameters.Arguments)"
+                    }
+                    if ($PSBoundParameters.QueueOffline) {
+                        $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
+                    }
+                    foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
+                        if ($Result.stdout) {
+                            $Result.stdout = try {
+                                @($Result.stdout -split '\n').foreach{
+                                    if (-not [string]::IsNullOrEmpty($_)) {
+                                        $_ | ConvertFrom-Json
                                     }
-                                } catch {
-                                    $Result.stdout
                                 }
+                            } catch {
+                                $Result.stdout
                             }
-                            $Result
                         }
-                    } else {
-                        throw "No script matching '$($PSBoundParameters.Name)' for $($HostInfo.platform_name)."
+                        $Result
                     }
                 } else {
-                    throw "No host found matching '$($PSBoundParameters.Id)'."
+                    throw "No host found matching '$($PSBoundParameters.HostId)'."
                 }
             } else {
                 $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostIds |
                     Select-Object cid, device_id, platform_name
-                foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
+                if (-not $HostInfo) {
+                    throw "No hosts found matching $(
+                        (@($PSBoundParameters.HostIds).foreach{ "'$_'" }) -join ', ')."
+                }
+                foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name.ToLower()) {
                     $Script = @{
                         Platform = $Platform
                         Name     = $PSBoundParameters.Name
                     }
-                    if ($PSBoundParameters.SendToHumio -eq $true) {
-                        if ($Script.Platform -ne 'Windows') {
-                            # Send warning for lack of Linux/Mac support
-                            Write-Warning "Sending output to Humio is only supported within Windows scripts."
-                        } else {
-                            $Script['SendToHumio'] = $true
-                        }
+                    if ($PSBoundParameters.SendToHumio -eq $true -and $Script.Platform -ne 'windows') {
+                        # Send warning for lack of Linux/Mac support
+                        Write-Warning "Sending output to Humio is only supported for Windows library scripts."
+                    } elseif ($PSBoundParameters.SendToHumio -eq $true) {
+                        $Script['SendToHumio'] = $true
                     }
                     $RawScript = Get-LibraryScript @Script
                     if ($RawScript) {
                         $InvokeParam = @{
                             Command   = 'runscript'
-                            Arguments =  '-Raw=```' + $RawScript + '```'
+                            Arguments = '-Raw=```' + $RawScript + '```'
                             HostIds   = ($HostInfo | Where-Object { $_.platform_name -eq $Platform }).device_id
                         }
                         if ($PSBoundParameters.Arguments) {
@@ -167,7 +171,7 @@ function Invoke-FalconLibrary {
                             $Result
                         }
                     } else {
-                        Write-Error "No script matching '$($PSBoundParameters.Name)' for $Platform."
+                        Write-Error "No script matching '$($Script.Name)' for '$($Script.Platform)'."
                     }
                 }
             }
