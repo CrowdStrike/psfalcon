@@ -324,13 +324,20 @@ function Get-LibraryScript {
             # Script to splice in before library script and send results to Humio
             Linux   = $null
             Mac     = $null
-            Windows = 'function shumio ([object] $Obj){$Iwr=@{Uri=null;Method="post";Headers=@{Authorization=nul' +
-                'l;ContentType="application/json"};Body=@{fields=@{host=[System.Net.Dns]::GetHostname();script=n' +
-                'ull};messages=$Obj}};$Key="HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
-                '0423f-7058-48c9-a204-725362b67639}\Default";if(Test-Path $Key){@(@("cid","CU"),@("aid","AG")).f' +
-                'oreach{$Iwr.Body.fields[$_[0]]=([System.BitConverter]::ToString(((gp $Key -Name $_[1]).($_[1]))' +
-                ').ToLower() -replace "-","")}};$Iwr.Body=$Iwr.Body|ConvertTo-Json -Compress;[void](iwr @Iwr -Us' +
-                'eBasicParsing)}'
+            Windows = @{
+                One = 'function shumio ([object]$Obj){$Req=@{Uri=null;Method="post";Headers=@{Authorization=null' +
+                    ';ContentType="application/json"};Body=@{fields=@{host=[System.Net.Dns]::GetHostname();scrip' +
+                    't=null};messages=$Obj}};$Key="HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88' +
+                    'd}\{16e0423f-7058-48c9-a204-725362b67639}\Default";if(Test-Path $Key){@(@("cid","CU"),@("ai' +
+                    'd","AG")).foreach{$Req.Body.fields[$_[0]]=([System.BitConverter]::ToString(((gp $Key -Name ' +
+                    '$_[1]).($_[1]))).ToLower() -replace "-","")}};$Req.Body=$Req.Body|ConvertTo-Json -Compress;' +
+                    '[void](iwr @Req -UseBasicParsing)}'
+                Two = '$Out=[PSCustomObject]@{Host=[System.Net.Dns]::GetHostName();Script=null;Message=null};if(' +
+                    'gcm shumio -EA 0){if($Obj){shumio $Obj;$Out|%{$_.Message="check_humio";$_|ConvertTo-Json -C' +
+                    'ompress}}else{$Out|%{shumio ($_|select Script,Message);Write-Error $_.Message}}}elseif($Obj' +
+                    '){$Obj|%{$_.PSObject.Properties.Add((New-Object PSNoteProperty("Host",$Out.Host)));$_|Conve' +
+                    'rtTo-Json -Compress}}else{Write-Error $Out.Message}'
+            }
         }
     }
     process {
@@ -354,26 +361,27 @@ function Get-LibraryScript {
             if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
                 try {
                     $Result = Write-Result -Request $Request -Time $ReqTime
+                    # Update 'shumio' function with cached event collector details
+                    $Splice1 = ($Function.($PSBoundParameters.Platform).One).Replace('Uri=null',('Uri="' +
+                        $Script:Humio.Path + '"')).Replace('Authorization=null',('Authorization="Bearer ' +
+                        $Script:Humio.Token + '"')).Replace('script=null',('script="' +
+                        $PSBoundParameters.Name + '"'))
+                    # Add output handling to format results
+                    $Splice2 = ($Function.($PSBoundParameters.Platform).Two).Replace('Script=null',
+                        ('Script="' + $PSBoundParameters.Name + '"')).Replace('Message=null',
+                        ('Message="no_' + (($PSBoundParameters.Name).Split('_',2)[-1] -replace '\.(ps1|sh)',
+                        $null) + '"'))
                     if ($PSBoundParameters.SendToHumio -eq $true) {
-                        if ($Result -match '^\$ScriptBlock = \{') {
-                            # Add 'shumio' function at $ScriptBlock definition - IN_PROGRESS
-                            <#
-                            $Splice = '$ScriptBlock = {' + ($Function.($PSBoundParameters.Platform)).Replace(
-                                'Uri=null',('Uri="' + $Script:Humio.Path + '"')).Replace('Authorization=null',
-                                ('Authorization="Bearer '+ $Script:Humio.Token + '"')).Replace('script=null',
-                                'script="' + $PSBoundParameters.Name + '"')
-                            @($Splice,($_ -replace '^\$ScriptBlock = \{',';')) -join $null
-                            #>
+                        if ($Result -match '$SBlock={') {
+                            # Add 'shumio' function in [scriptblock]
+                            ($Result).Replace('$SBlock={',(@('$SBlock={',$Splice1) -join "`n"))
                         } else {
-                            # Add 'shumio' function
-                            $Splice = ($Function.($PSBoundParameters.Platform)).Replace('Uri=null',
-                                ('Uri="' + $Script:Humio.Path + '"')).Replace('Authorization=null',
-                                ('Authorization="Bearer '+ $Script:Humio.Token + '"')).Replace('script=null',
-                                'script="' + $PSBoundParameters.Name + '"')
-                            @($Splice,$Result) -join "`n"
+                            # Also add output handling for $Obj to send to Humio or return Json
+                            @($Splice1,$Result,$Splice2) -join "`n"
                         }
                     } else {
-                        $Result
+                        # Also add output handling to return Json
+                        @($Result,$Splice2) -join "`n"
                     }
                 } catch {}
             }
