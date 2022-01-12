@@ -321,7 +321,7 @@ function Get-LibraryScript {
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
         $Function = @{
-            # Script to splice in before library script and send results to Humio
+            # Scripts to send results to Humio
             Linux   = $null
             Mac     = $null
             Windows = @{
@@ -337,6 +337,28 @@ function Get-LibraryScript {
                     'ompress}}else{$Out|%{shumio ($_|select Script,Message);Write-Error $_.Message}}}elseif($Obj' +
                     '){$Obj|%{$_.PSObject.Properties.Add((New-Object PSNoteProperty("Host",$Out.Host)));$_|Conve' +
                     'rtTo-Json -Compress}}else{Write-Error $Out.Message}'
+            }
+        }
+        $Process = @{
+            # Script to run after Start-Process library scripts to send results to Humio
+            Linux   = $null
+            Mac     = $null
+            Windows = @{
+                One = '[void](Start-Process powershell.exe "-Command &{ $([scriptblock]{Wait-Process $args;$Rtr=' +
+                    '(Join-Path $env:SystemRoot `"system32\drivers\CrowdStrike\Rtr`");$Json=(Join-Path $Rtr `"nu' +
+                    'll.json`");$Msg=if(Test-Path $Json){try{Get-Content $Json|ConvertFrom-Json}catch{Get-Conten' +
+                    't $Json}}elseif(Test-Path $Log){Get-Content $Log};if([string]::IsNullOrEmpty($Msg)){$Msg=`"' +
+                    'no_results`"};$Req=@{Uri=null;Method=`"post`";Headers=@{Authorization=null;ContentType=`"ap' +
+                    'plication/json`"};Body=@{fields=@{host=[System.Net.Dns]::GetHostname();script=null};message' +
+                    's=$Msg}};$Key=`"HKLM:\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-7' +
+                    '058-48c9-a204-725362b67639}\Default`";if(Test-Path $Key){@(@(`"cid`",`"CU`"),@(`"aid`",`"AG' +
+                    '`")).foreach{$Req.Body.fields[$_[0]]=([System.BitConverter]::ToString(((gp $Key -Name $_[1]' +
+                    ').($_[1]))).ToLower() -replace `"-`",`"`")}};$Req.Body=$Req.Body|ConvertTo-Json -Compress;t' +
+                    'ry{[void](iwr @Req -UseBasicParsing)}catch{@{script=`"$Json`";message=`"failed_to_send_to_h' +
+                    'umio`";timestamp=(Get-Date).ToFileTimeUtc}|ConvertTo-Json -Compress|Out-File (Join-Path (Sp' +
+                    'lit-Path $Json) `"library_error.log`") -Append}}) } $($Obj.Id)" -PassThru);$Obj.Message=`"c' +
+                    'heck_humio`"'
+                Two = '$Obj|ConvertTo-Json -Compress'
             }
         }
     }
@@ -361,27 +383,34 @@ function Get-LibraryScript {
             if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
                 try {
                     $Result = Write-Result -Request $Request -Time $ReqTime
-                    # Update 'shumio' function with cached event collector details
-                    $Splice1 = ($Function.($PSBoundParameters.Platform).One).Replace('Uri=null',('Uri="' +
-                        $Script:Humio.Path + '"')).Replace('Authorization=null',('Authorization="Bearer ' +
-                        $Script:Humio.Token + '"')).Replace('script=null',('script="' +
-                        $PSBoundParameters.Name + '"'))
-                    # Add output handling to format results
-                    $Splice2 = ($Function.($PSBoundParameters.Platform).Two).Replace('Script=null',
-                        ('Script="' + $PSBoundParameters.Name + '"')).Replace('Message=null',
-                        ('Message="no_' + (($PSBoundParameters.Name).Split('_',2)[-1] -replace '\.(ps1|sh)',
-                        $null) + '"'))
-                    if ($PSBoundParameters.SendToHumio -eq $true) {
-                        if ($Result -match '$SBlock={') {
-                            # Add 'shumio' function in [scriptblock]
-                            ($Result).Replace('$SBlock={',(@('$SBlock={',$Splice1) -join "`n"))
+                    if ($Result -match '\$Obj = Start-Process') {
+                        # Add 'shumio' process with cached event collector details
+                        $Splice1 = $Process.($PSBoundParameters.Platform).One.Replace('Uri=null',"Uri=`"$(
+                            $Script:Humio.Path)`"").Replace('Authorization=null',
+                            "Authorization=`"Bearer $($Script:Humio.Token)`"").Replace('script=null',
+                            "script=`"$($PSBoundParameters.Name)`"").Replace('null.json',(
+                            ($PSBoundParameters.Name).Split('_',2)[-1] -replace '\.ps1','json'))
+                        # Output handling for Start-Process
+                        $Splice2 = $Process.($PSBoundParameters.Platform).Two
+                        if ($PSBoundParameters.SendToHumio -eq $true) {
+                            @($Result, $Splice1, $Splice2) -join "`n"
                         } else {
-                            # Also add output handling for $Obj to send to Humio or return Json
-                            @($Splice1,$Result,$Splice2) -join "`n"
+                            @($Result, $Splice2) -join "`n"
                         }
                     } else {
-                        # Also add output handling to return Json
-                        @($Result,$Splice2) -join "`n"
+                        # Add 'shumio' function with cached event collector details
+                        $Splice1 = $Function.($PSBoundParameters.Platform).One.Replace('Uri=null',"Uri=`"$(
+                            $Script:Humio.Path)`"").Replace('Authorization=null',"Authorization=`"Bearer $(
+                            $Script:Humio.Token)`"").Replace('script=null',"script=`"$($PSBoundParameters.Name)`"")
+                        # Output handling for results
+                        $Splice2 = $Function.($PSBoundParameters.Platform).Two.Replace('Script=null',
+                            "Script=`"$($PSBoundParameters.Name)`"").Replace('Message=null',"Message=`"no_$((
+                            $PSBoundParameters.Name).Split('_',2)[-1] -replace '\.ps1',$null)`"")
+                        if ($PSBoundParameters.SendToHumio -eq $true) {
+                            @($Splice1, $Result, $Splice2) -join "`n"
+                        } else {
+                            @($Result, $Splice2) -join "`n"
+                        }
                     }
                 } catch {}
             }
