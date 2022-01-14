@@ -321,23 +321,23 @@ function Get-LibraryScript {
             # 'shumio' function for sending data to Humio
             Linux   = $null
             Mac     = $null
-            Windows = 'function shumio($O,$C,$A,$H){$B=$O|%{$I=@{};@($_.PSObject.Properties).Where({$_.Name -ne ' +
-                '"timestamp"}).foreach{$I[$_.Name]=$_.Value};@{timestamp=$_.timestamp;attributes=$I}};$Req=@{Uri' +
-                '=null;Method="post";Headers=@{Authorization=null;ContentType="application/json"};Body=@(@{tags=' +
-                '@{cid=$C;aid=$A;host=$H;script=null};events=$B})};$Req.Body=ConvertTo-Json @($Req.Body) -Depth ' +
-                '8 -Compress;[void](iwr @Req -UseBasicParsing)}'
+            Windows = 'function shumio($O,$C,$A,$H){$B=$O|%{$I=@{};$_.PSObject.Properties|where name -ne "timest' +
+                'amp"|%{$I[$_.Name]=$_.Value};@{timestamp=$_.timestamp;attributes=$I}};$Req=@{Uri=null;Method="p' +
+                'ost";Headers=@{Authorization=null;ContentType="application/json"};Body=ConvertTo-Json @(@{tags=' +
+                '@{cid=$C;aid=$A;host=$H;script=null};events=@($B)}) -Depth 4 -Compress};[void](iwr @Req -UseBas' +
+                'icParsing)}'
         }
         $Handling = @{
             # Content for handling output after script
             Linux   = $null
             Mac     = $null
-            Windows = 'function anp($O,$A){$A.foreach{$O.PSObject.Properties.Add((New-Object PSNoteProperty($_[0' +
-                '],$_[1])))};$O};$K=reg query "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9' +
-                'f4c034b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default";$cid=(($K -match "CU") -split "REG_' +
-                'BINARY")[-1].Trim().ToLower();$aid=(($K -match "AG") -split "REG_BINARY")[-1].Trim().ToLower();' +
-                '$H=[System.Net.Dns]::GetHostName();if(!$Obj){$Obj=@{timestamp=(Get-Date -Format o);error=null}}' +
-                ';if(gcm shumio -EA 0){shumio $Obj $cid $aid $H};$Obj|%{anp $_ @(@("cid",$cid),@("aid",$aid),@("' +
-                'host",$H))|ConvertTo-Json -Compress}'
+            Windows = 'function anp($O,$N,$V){$O|%{$_.PSObject.Properties.Add((New-Object PSNoteProperty($N,$V))' +
+                ')}}if(!$Obj){$Obj=@{timestamp=(Get-Date -Format o);error=null}};$H=[System.Net.Dns]::GetHostnam' +
+                'e();$R="HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-' +
+                '7058-48c9-a204-725362b67639}\Default";if(Test-Path "REGISTRY::\$R"){$K=reg query "$R";$C=(($K -' +
+                'match "CU") -split "REG_BINARY")[-1].Trim().ToLower();$A=(($K -match "AG") -split "REG_BINARY")' +
+                '[-1].Trim().ToLower()};if (gcm shumio -EA 0){shumio $Obj $C $A $H};@(@("host",$H),@("cid",$C),@' +
+                '("aid",$A)).foreach{anp $Obj $_[0] $_[1]};$Obj|ConvertTo-Json -Compress'
         }
     }
     process {
@@ -374,11 +374,10 @@ function Get-LibraryScript {
                                         Write-Warning ("Sending output to Humio is only supported for Windows " +
                                             "library scripts.")
                                     } else {
-                                        @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',('Uri="' +
-                                        $Script:Falcon.Api.Collector.Path + '"')).Replace('Authorization=null',
-                                        ('Authorization="Bearer ' + $Script:Falcon.Api.Collector.Token +
-                                        '"')).Replace('script=null',('script="' + $PSBoundParameters.Name +
-                                        '"')),$_) -join ';'
+                                        @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',"Uri=`"$(
+                                        $Script:Falcon.Api.Collector.Path)`"").Replace('Authorization=null',
+                                        "Authorization=`"Bearer $($Script:Falcon.Api.Collector.Token)`"").Replace(
+                                        'script=null',"script=`"$($PSBoundParameters.Name)`""),$_) -join ';'
                                     }
                                 } else {
                                     $_
