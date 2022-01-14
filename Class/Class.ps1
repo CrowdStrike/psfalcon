@@ -123,7 +123,7 @@ class ApiClient {
                     Authorization = @('Bearer', $this.Collector.Token) -join ' '
                     ContentType   = 'application/json'
                 }
-                Body    = @(
+                Body    = ConvertTo-Json -InputObject @(
                     @{
                         tags   = @{
                             host   = [System.Net.Dns]::GetHostName()
@@ -131,10 +131,9 @@ class ApiClient {
                         }
                         events = @( ,$Item )
                     }
-                )
+                ) -Depth 8 -Compress
             }
         }
-        $Job.ArgumentList.Body = ConvertTo-Json -InputObject @($Job.ArgumentList.Body) -Depth 8 -Compress
         [void] (Start-Job @Job)
         Write-Verbose "[ApiClient.Log] Submitted job '$($Job.Name)'."
         Get-Job | Where-Object { $_.Name -match '^ApiClient_Log' -and $_.State -eq 'Completed' } |
