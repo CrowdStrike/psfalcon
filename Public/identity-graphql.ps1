@@ -23,8 +23,8 @@ function Invoke-FalconIdentityGraph {
         if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
-        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $ReqTime = Get-Date -Format o
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -Time $RequestTime
+        Write-Result -Request $Request -Time $ReqTime
     }
 }

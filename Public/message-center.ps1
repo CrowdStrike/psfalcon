@@ -46,9 +46,9 @@ function Add-FalconCompleteActivity {
         if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
-        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $ReqTime = Get-Date -Format o
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -Time $RequestTime
+        Write-Result -Request $Request -Time $ReqTime
     }
 }
 function Edit-FalconCompleteCase {
@@ -102,9 +102,9 @@ function Edit-FalconCompleteCase {
         if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
-        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $ReqTime = Get-Date -Format o
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -Time $RequestTime
+        Write-Result -Request $Request -Time $ReqTime
     }
 }
 function Get-FalconCompleteActivity {
@@ -285,9 +285,9 @@ function New-FalconCompleteCase {
         if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
             $Script:Falcon.Request['Body'] = $Param.Body
         }
-        $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $ReqTime = Get-Date -Format o
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -Time $RequestTime
+        Write-Result -Request $Request -Time $ReqTime
     }
 }
 function Receive-FalconCompleteAttachment {

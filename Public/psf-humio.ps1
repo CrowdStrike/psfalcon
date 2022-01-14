@@ -45,13 +45,16 @@ function Register-HumioEventCollector {
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 2)]
         [Alias('humio_token')]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [string] $Token
+        [string] $Token,
+
+        [Parameter(ValueFromPipeLineByPropertyName = $true, Position = 3)]
+        [boolean] $Enabled
     )
     process {
         $Script:Humio = @{
             Path    = $PSBoundParameters.Path
             Token   = $PSBoundParameters.Token
-            Enabled = $false
+            Enabled = $PSBoundParameters.Enabled
         }
         if ($Script:Falcon -and -not $Script:Falcon.Request) {
             $Script:Falcon['Request'] = @{}
@@ -74,21 +77,9 @@ function Show-HumioEventCollector {
     param()
     process {
         [PSCustomObject] @{
-            Path  = if ($Script:Humio.Path) {
-                $Script:Humio.Path
-            } else {
-                $null
-            }
-            Token = if ($Script:Humio.Token) {
-                $Script:Humio.Token
-            } else {
-                $null
-            }
-            Enabled = if ($Script:Humio.Enabled) {
-                $Script:Humio.Enabled
-            } else {
-                $false
-            }
+            Path    = $Script:Humio.Path
+            Token   = $Script:Humio.Token
+            Enabled = $Script:Humio.Enabled
         }
     }
 }

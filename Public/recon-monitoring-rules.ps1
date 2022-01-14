@@ -97,9 +97,9 @@ function Edit-FalconReconNotification {
                 if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                     $Script:Falcon.Request['Body'] = $Param.Body
                 }
-                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request -Time $RequestTime
+                Write-Result -Request $Request -Time $ReqTime
             }
         } else {
             $Param = @{
@@ -175,9 +175,9 @@ function Edit-FalconReconRule {
                 if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                     $Script:Falcon.Request['Body'] = $Param.Body
                 }
-                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request -Time $RequestTime
+                Write-Result -Request $Request -Time $ReqTime
             }
         } else {
             $Param = @{
@@ -491,9 +491,9 @@ function New-FalconReconRule {
                 if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
                     $Script:Falcon.Request['Body'] = $Param.Body
                 }
-                $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request -Time $RequestTime
+                Write-Result -Request $Request -Time $ReqTime
             }
         } else {
             $Param = @{

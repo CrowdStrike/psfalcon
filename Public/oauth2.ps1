@@ -127,7 +127,7 @@ function Request-FalconToken {
             if ($Script:Falcon.MemberCid) {
                 $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
             }
-            $RequestTime = [DateTimeOffset]::Now.ToUnixTimeSeconds()
+            $ReqTime = Get-Date -Format o
             $Request = $Script:Falcon.Api.Invoke($Param)
             if ($Request.Result) {
                 $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
@@ -142,7 +142,7 @@ function Request-FalconToken {
                     Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result -Request $Request -Time $RequestTime
+                $Result = Write-Result -Request $Request -Time $ReqTime
                 if ($Result.access_token) {
                     # Cache access token in ApiClient
                     $Token = "$($Result.token_type) $($Result.access_token)"
@@ -188,9 +188,9 @@ function Revoke-FalconToken {
                 }
                 Body    = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
-            $RequestTime = [System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+            $ReqTime = Get-Date -Format o
             $Request = $Script:Falcon.Api.Invoke($Param)
-            Write-Result -Request $Request -Time $RequestTime
+            Write-Result -Request $Request -Time $ReqTime
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
         @('ClientId', 'ClientSecret', 'MemberCid').foreach{
