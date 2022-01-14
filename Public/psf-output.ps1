@@ -191,12 +191,8 @@ function Send-FalconWebhook {
                     }
                     Body = ConvertTo-Json -InputObject $Item -Depth 32
                 }
-                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-                    $Script:Falcon.Request['Body'] = $Param.Body
-                }
-                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request -Time $ReqTime
+                Write-Result -Request $Request
             } catch {
                 throw $_
             }

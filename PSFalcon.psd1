@@ -265,11 +265,9 @@
       'Uninstall-FalconSensor',
 
       # psf-humio.ps1
-      'Disable-HumioEventCollector',
-      'Enable-HumioEventCollector',
-      'Register-HumioEventCollector',
-      'Remove-HumioEventCollector',
-      'Show-HumioEventCollector',
+      'Register-FalconEventCollector',
+      'Show-FalconEventCollector',
+      'Unregister-FalconEventCollector',
 
       # psf-library.ps1
       'Get-FalconLibrary',
@@ -437,11 +435,13 @@
 
     * Added Linux support for 'Uninstall-FalconSensor'.
 
-    * Added commands allowing a user to set a Humio Event Collector destination (using the relevant /hec/raw
-    endpoint) to send all PSFalcon requests and results to a Humio instance. Once an authorization token has been
-    requested, 'Register-HumioEventCollector' will define the destination URL and ingest token for sending events.
-    'Show-HumioEventCollector' can be used for confirmation and 'Remove-HumioEventCollector' can be used to disable
-    event logging.
+    * Added commands allowing a user to set a Humio Event Collector destination (using the relevant
+    'humio-structured' endpoint) to send all PSFalcon requests, results and 'Invoke-FalconLibrary' script results
+    to a Humio instance. 'Register-FalconEventCollector' is used to define the destination URL, ingest token and 
+    event types to log, while 'Show-FalconEventCollector' can be used for confirmation and
+    'Remove-FalconEventCollector' can be used to disable logging.
+
+    * Added 'Collector' parameter to 'Request-FalconToken' to support new logging functionality.
 
     New Commands
     * filevantage.ps1
@@ -457,11 +457,9 @@
     'Send-FalconCompleteAttachment'
 
     * psf-humio.ps1
-    'Disable-HumioEventCollector'
-    'Enable-HumioEventCollector'
-    'Register-HumioEventCollector'
-    'Remove-HumioEventCollector'
-    'Show-HumioEventCollector'
+    'Register-FalconEventCollector'
+    'Show-FalconEventCollector'
+    'Unregister-FalconEventCollector'
 
     * psf-library.ps1
     'Get-FalconLibrary'

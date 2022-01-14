@@ -49,11 +49,7 @@ function Invoke-FalconLibrary {
 
         [Parameter(ParameterSetName = 'HostIds', Mandatory = $true)]
         [ValidatePattern('^\w{32}$')]
-        [array] $HostIds,
-
-        [Parameter(ParameterSetName = 'HostId')]
-        [Parameter(ParameterSetName = 'HostIds')]
-        [boolean] $SendToHumio
+        [array] $HostIds
     )
     begin {
         if ($PSBoundParameters.Timeout -and $PSBoundParameters.Arguments -notmatch '-Timeout=\d+') {
@@ -62,17 +58,6 @@ function Invoke-FalconLibrary {
         $PSBoundParameters.Name = $PSBoundParameters.Name.ToLower()
     }
     process {
-        if ($SendToHumio -eq $true) {
-            if ($Script:Humio) {
-                @('Path','Token').foreach{
-                    if (-not $Script:Humio.$_) {
-                        throw "Humio '$_' has not been defined. Try 'Register-HumioEventCollector'."
-                    }
-                }
-            } else {
-                throw "Humio destination has not been defined. Try 'Register-HumioEventCollector'."
-            }
-        }
         try {
             if ($PSCmdlet.ParameterSetName -eq 'HostId') {
                 $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId |
@@ -84,12 +69,6 @@ function Invoke-FalconLibrary {
                     $Script = @{
                         Platform = $HostInfo.platform_name.ToLower()
                         Name     = $PSBoundParameters.Name
-                    }
-                    if ($PSBoundParameters.SendToHumio -eq $true -and $Script.Platform -ne 'windows') {
-                        # Send warning for lack of Linux/Mac support
-                        Write-Warning "Sending output to Humio is only supported for Windows library scripts."
-                    } elseif ($PSBoundParameters.SendToHumio -eq $true) {
-                        $Script['SendToHumio'] = $true
                     }
                     $RawScript = Get-LibraryScript @Script
                     if (-not $RawScript) {
@@ -134,12 +113,6 @@ function Invoke-FalconLibrary {
                     $Script = @{
                         Platform = $Platform
                         Name     = $PSBoundParameters.Name
-                    }
-                    if ($PSBoundParameters.SendToHumio -eq $true -and $Script.Platform -ne 'windows') {
-                        # Send warning for lack of Linux/Mac support
-                        Write-Warning "Sending output to Humio is only supported for Windows library scripts."
-                    } elseif ($PSBoundParameters.SendToHumio -eq $true) {
-                        $Script['SendToHumio'] = $true
                     }
                     $RawScript = Get-LibraryScript @Script
                     if ($RawScript) {

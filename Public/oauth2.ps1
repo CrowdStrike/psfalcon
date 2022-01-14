@@ -26,7 +26,25 @@ function Request-FalconToken {
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 4)]
         [Alias('cid', 'member_cid')]
         [ValidatePattern('^\w{32}$')]
-        [string] $MemberCid
+        [string] $MemberCid,
+
+        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 5)]
+        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 5)]
+        [ValidateScript({
+            @($_.Keys).foreach{
+                if ($_ -notmatch '^(Enabled|Path|Token)$') {
+                    throw "Unexpected key in 'Collector' object. ['$_']"
+                }
+            }
+            foreach ($Key in @('Path','Token','Enabled')) {
+                if ($_.Keys -notcontains $Key) {
+                    throw "'Collector' requires '$Key'."
+                } else {
+                    $true
+                }
+            }
+        })]
+        [System.Collections.Hashtable] $Collector
     )
     begin {
         function Get-ApiCredential ($Inputs) {
@@ -81,9 +99,6 @@ function Request-FalconToken {
                 # Initiate ApiClient, set SslProtocol and UserAgent
                 $Script:Falcon = Get-ApiCredential $PSBoundParameters
                 $Script:Falcon.Add('Api', [ApiClient]::New())
-                if ($Script:Humio.Path -and $Script:Humio.Token -and -not $Script:Falcon.Request) {
-                    $Script:Falcon['Request'] = @{}
-                }
                 if ($Script:Falcon.Api) {
                     try {
                         # Set TLS 1.2 for [System.Net.Http.HttpClientHandler]
@@ -114,6 +129,9 @@ function Request-FalconToken {
                 }
             }
         }
+        if ($PSBoundParameters.Collector) {
+            $Script:Falcon.Api.Collector = $PSBoundParameters.Collector
+        }
         if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             $Param = @{
                 Path    = "$($Script:Falcon.Hostname)/oauth2/token"
@@ -127,7 +145,6 @@ function Request-FalconToken {
             if ($Script:Falcon.MemberCid) {
                 $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
             }
-            $ReqTime = Get-Date -Format o
             $Request = $Script:Falcon.Api.Invoke($Param)
             if ($Request.Result) {
                 $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
@@ -142,7 +159,7 @@ function Request-FalconToken {
                     Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result -Request $Request -Time $ReqTime
+                $Result = Write-Result -Request $Request
                 if ($Result.access_token) {
                     # Cache access token in ApiClient
                     $Token = "$($Result.token_type) $($Result.access_token)"
@@ -188,9 +205,8 @@ function Revoke-FalconToken {
                 }
                 Body    = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
-            $ReqTime = Get-Date -Format o
             $Request = $Script:Falcon.Api.Invoke($Param)
-            Write-Result -Request $Request -Time $ReqTime
+            Write-Result -Request $Request
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
         @('ClientId', 'ClientSecret', 'MemberCid').foreach{
@@ -205,7 +221,7 @@ function Test-FalconToken {
         if ($Script:Falcon) {
             [PSCustomObject] @{
                 Token     = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
-                ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(15))) {
+                ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(60))) {
                     $true
                 } else {
                     $false

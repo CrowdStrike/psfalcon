@@ -97,12 +97,8 @@ function Invoke-FalconScheduledReport {
             }
             Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
         }
-        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-            $Script:Falcon.Request['Body'] = $Param.Body
-        }
-        $ReqTime = Get-Date -Format o
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -Time $ReqTime
+        Write-Result -Request $Request
     }
 }
 function Receive-FalconScheduledReport {
@@ -166,11 +162,7 @@ function Redo-FalconScheduledReport {
             }
             Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
         }
-        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-            $Script:Falcon.Request['Body'] = $Param.Body
-        }
-        $ReqTime = Get-Date -Format o
         $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request -Time $ReqTime
+        Write-Result -Request $Request
     }
 }

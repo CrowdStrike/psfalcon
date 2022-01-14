@@ -94,12 +94,8 @@ function Edit-FalconReconNotification {
                 # Edit notifications in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-                    $Script:Falcon.Request['Body'] = $Param.Body
-                }
-                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request -Time $ReqTime
+                Write-Result -Request $Request
             }
         } else {
             $Param = @{
@@ -172,12 +168,8 @@ function Edit-FalconReconRule {
                 # Edit rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-                    $Script:Falcon.Request['Body'] = $Param.Body
-                }
-                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request -Time $ReqTime
+                Write-Result -Request $Request
             }
         } else {
             $Param = @{
@@ -488,12 +480,8 @@ function New-FalconReconRule {
                 # Create rules in batches of 500
                 $Group = $PSBoundParameters.Array[$i..($i + 499)]
                 $Param['Body'] = ConvertTo-Json -InputObject @( $Group ) -Depth 8
-                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-                    $Script:Falcon.Request['Body'] = $Param.Body
-                }
-                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request -Time $ReqTime
+                Write-Result -Request $Request
             }
         } else {
             $Param = @{

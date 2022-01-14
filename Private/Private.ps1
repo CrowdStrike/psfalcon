@@ -309,10 +309,7 @@ function Get-LibraryScript {
         [string] $Name,
 
         [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Platform,
-
-        [Parameter()]
-        [boolean] $SendToHumio
+        [string] $Platform
     )
     begin {
         $Authorization = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
@@ -355,7 +352,6 @@ function Get-LibraryScript {
         $FileString = "$(@($PSBoundParameters.Platform, $PSBoundParameters.Name) -join '/')"
         if ($FileString) {
             # Make request and output result
-            $ReqTime = Get-Date -Format o
             $Request = $Script:Falcon.Api.Invoke(@{
                 Path    = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
                 Method  = 'get'
@@ -363,7 +359,7 @@ function Get-LibraryScript {
             })
             if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
                 try {
-                    $Result = Write-Result -Request $Request -Time $ReqTime
+                    $Result = Write-Result -Request $Request
                     if ($Result) {
                         $Output = if ($Result -match '\$Obj\s?=\s?Start-Process') {
                             '$Obj|ConvertTo-Json -Compress'
@@ -371,11 +367,19 @@ function Get-LibraryScript {
                             $Handling.($PSBoundParameters.Platform).Replace('error=null',
                             ('error="no_' + (($PSBoundParameters.Name).Split('_',2)[-1] -replace '\.ps1',
                             $null) + '"')) | ForEach-Object {
-                                if ($PSBoundParameters.SendToHumio -eq $true) {
-                                    @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',('Uri="' +
-                                        $Script:Humio.Path + '"')).Replace('Authorization=null',
-                                        ('Authorization="Bearer ' + $Script:Humio.Token + '"')).Replace(
-                                        'script=null',('script="' + $PSBoundParameters.Name + '"')),$_) -join ';'
+                                if ($Script:Falcon.Api.Collector -and
+                                $Script:Falcon.Api.Collector.Enabled -contains 'library') {
+                                    if ($PSBoundParameters.Platform -ne 'Windows') {
+                                         # Send warning for lack of Linux/Mac support
+                                        Write-Warning ("Sending output to Humio is only supported for Windows " +
+                                            "library scripts.")
+                                    } else {
+                                        @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',('Uri="' +
+                                        $Script:Falcon.Api.Collector.Path + '"')).Replace('Authorization=null',
+                                        ('Authorization="Bearer ' + $Script:Falcon.Api.Collector.Token +
+                                        '"')).Replace('script=null',('script="' + $PSBoundParameters.Name +
+                                        '"')),$_) -join ';'
+                                    }
                                 } else {
                                     $_
                                 }
@@ -614,25 +618,14 @@ function Invoke-Falcon {
     process {
         foreach ($ParamSet in (Get-ParamSet @GetParam)) {
             try {
-                if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(15)) {
+                if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) {
                     # Refresh authorization token during loop
                     Request-FalconToken
                 }
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
                     $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Compress
-                    if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-                        $Script:Falcon.Request['Body'] = $ParamSet.Endpoint.Body
-                    }
                 }
-                if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-                    @('Formdata','Outfile').foreach{
-                        if ($ParamSet.Endpoint.$_) {
-                            $Script:Falcon.Request[$_] = $ParamSet.Endpoint.$_
-                        }
-                    }
-                }
-                $ReqTime = Get-Date -Format o
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
                 if ($RawOutput) {
                     # Return result if 'RawOutput' is defined
@@ -648,7 +641,7 @@ function Invoke-Falcon {
                         # Output 'Total'
                         $Pagination.total
                     } else {
-                        $Result = Write-Result -Request $Request -Time $ReqTime
+                        $Result = Write-Result -Request $Request
                         if ($null -ne $Result) {
                             if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
                                 # Output 'Detailed'
@@ -722,10 +715,9 @@ function Invoke-Loop {
                 # Update pagination
                 "$($Clone.Endpoint.Path)&$($Page -join '=')"
             }
-            $ReqTime = Get-Date -Format o
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
-                $Result = Write-Result -Request $Request -Time $ReqTime
+                $Result = Write-Result -Request $Request
                 if ($null -ne $Result) {
                     if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                         & $Command -Ids $Result
@@ -827,14 +819,8 @@ function Update-FieldName {
 function Write-Result {
     [CmdletBinding()]
     param(
-        [object] $Request,
-        [string] $Time
+        [object] $Request
     )
-    begin {
-        if (!$Time) {
-            $Time = Get-Date -Format o
-        }
-    }
     process {
         $Result = if ($Request.Result.Content) {
             # Capture result content
@@ -845,109 +831,12 @@ function Write-Result {
             # Convert content to Json
             ConvertFrom-Json -InputObject $Result
         }
-        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-            # Create and send log event
-            $ReqAttrib = @{
-                Headers = @{}
-            }
-            @('Body','Formdata','Outfile').foreach{
-                if ($Script:Falcon.Request.$_) {
-                    $ReqAttrib[$_] = $Script:Falcon.Request.$_
-                    $Script:Falcon.Request.Remove($_)
-                }
-            }
-            ($Request.Result.RequestMessage.PSObject.Properties).Where({ $_.MemberType -eq 'Property' -and
-            $_.Name -notmatch '^(Content|Properties|Version)$' }).foreach{
-                if ($_.Name -eq 'Headers') {
-                    ($_.Value).GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
-                        $ReqAttrib.Headers[$_.Key] = $_.Value
-                    }
-                } else {
-                    $ReqAttrib[$_.Name] = if ($_.Name -eq 'Method') {
-                        $_.Value.ToString()
-                    } else {
-                        $_.Value
-                    }
-                }
-            }
-            $Tags = @{
-                host      = [System.Net.Dns]::GetHostName()
-                source    = (Show-FalconModule).UserAgent
-                client_id = $Script:Falcon.ClientId
-            }
-            if ($Script:Falcon.MemberCid) {
-                $Tags['member_cid'] = $Script:Falcon.MemberCid
-            }
-            $LogParam = @{
-                Uri     = $Script:Humio.Path
-                Method  = 'post'
-                Headers = @{
-                    Authorization = "bearer $($Script:Humio.Token)"
-                    ContentType   = 'application/json'
-                }
-                Body    = @(
-                    @{
-                        tags   = $Tags
-                        events = @(
-                            @{
-                                timestamp  = $Time
-                                attributes = $ReqAttrib
-                            }
-                        )
-                    },
-                    @{
-                        tags   = $Tags
-                        events = @(
-                            @{
-                                timestamp  = Get-Date -Format o
-                                attributes = @{
-                                    Headers = @{}
-                                }
-                            }
-                        )
-                    }
-                )
-            }
-            if ($Json -and $Request.Result.RequestMessage.RequestUri -match '/oauth2/token') {
-                @(($Json | Select-Object token_type, expires_in).PSObject.Properties).foreach{
-                    # Exclude 'access_token'
-                    $LogParam.Body[-1].events[0].attributes[$_.Name] = $_.Value
-                }
-            } elseif ($Json) {
-                # Add Json content
-                @($Json.PSObject.Properties).foreach{
-                    # Exclude 'access_token'
-                    $LogParam.Body[-1].events[0].attributes[$_.Name] = $_.Value
-                }
-            } elseif ($Result) {
-                # Add [string] content
-                $LogParam.Body[-1].events[0].attributes['string'] = $Result
-            }
-        }
         $Verbose = if ($Request.Result.Headers) {
             # Capture trace_id and add response header to verbose output
             $TraceId = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
             ($Request.Result.Headers.GetEnumerator().foreach{
                 ,"$($_.Key)=$($_.Value)"
-                if ($LogParam.Body[-1].events[0].attributes.Headers) {
-                    $LogParam.Body[-1].events[0].attributes.Headers[$_.Key] = $_.Value
-                }
             })
-        }
-        if ($LogParam) {
-            # Send log as background job
-            $LogParam.Body = ConvertTo-Json -InputObject $LogParam.Body -Depth 8 -Compress
-            Write-Verbose "$($LogParam.Body)"
-            $JobParam = @{
-                Name         = if ($TraceId) {
-                    "PSFalcon_log_$TraceId"
-                } else {
-                    "PSFalcon_log_$Time"
-                }
-                ScriptBlock  = { $Param = $args[0]; Invoke-RestMethod @Param }
-                ArgumentList = $LogParam
-            }
-            [void] (Start-Job @JobParam)
         }
         if ($Verbose) {
             Write-Verbose "[Write-Result] $($Verbose -join ',')"
@@ -1003,16 +892,6 @@ function Write-Result {
         }
         # Check for rate limiting
         Wait-RetryAfter $Request
-    }
-    end {
-        if ($Script:Humio.Path -and $Script:Humio.Token -and $Script:Humio.Enabled) {
-            Get-Job | Where-Object { $_.Name -match '^PSFalcon_log' -and $_.State -eq 'Completed' } |
-            ForEach-Object {
-                # Clean up completed log job(s)
-                Write-Verbose "[Write-Result] Removed completed job '$($_.Name)'"
-                Remove-Job -Id $_.Id
-            }
-        }
     }
 }
 function Wait-RetryAfter {
