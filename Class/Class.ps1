@@ -92,11 +92,11 @@ class ApiClient {
             @('RequestUri','Method').foreach{
                 $Item.Attributes[$_] = $Object.$_.ToString()
             }
-            $Object.Headers.GetEnumerator().foreach{
+            $Object.Headers.GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
                 $Item.Attributes.Headers[$_.Key] = $_.Value
             }
             if ($Object.Content -is [System.Net.Http.StringContent]) {
-                $Item.Attributes['Content'] = ($Object.Content.ReadAsStringAsync().Result -replace
+                $Item.Attributes['StringContent'] = ($Object.Content.ReadAsStringAsync().Result -replace
                     'client_secret=\w+&?','client_secret=redacted')
             }
         } elseif ($Object -is [System.Net.Http.HttpResponseMessage]) {
@@ -105,13 +105,12 @@ class ApiClient {
             }
             if ($Object.Content -and ($Object.Content.Headers.ContentType -eq 'application/json' -or
             $Object.Content.Headers.ContentType.MediaType -eq 'application/json')) {
-                @(($Object.Content.ReadAsStringAsync().Result | ConvertFrom-Json).PSObject.Properties).foreach{
-                    if ($_.Name -ne 'access_token') {
-                        $Item.Attributes[$_.Name] = $_.Value
-                    }
+                @(($Object.Content.ReadAsStringAsync().Result | ConvertFrom-Json).PSObject.Properties).Where({
+                $_.Name -ne 'access_token' }).foreach{
+                    $Item.Attributes[$_.Name] = $_.Value
                 }
             } elseif ($Object.Content) {
-                $Item.Attributes['string'] = $Object.Content.ReadAsStringAsync().Result
+                $Item.Attributes['StringContent'] = $Object.Content.ReadAsStringAsync().Result
             }
         }
         $Job = @{
