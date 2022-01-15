@@ -266,6 +266,7 @@
 
       # psf-humio.ps1
       'Register-FalconEventCollector',
+      'Send-FalconEvent',
       'Show-FalconEventCollector',
       'Unregister-FalconEventCollector',
 
@@ -422,27 +423,6 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
-
-    General Changes
-    * Changed format of request header verbose output to match result header verbose output.
-
-    * Modified 'Test-FqlStatement' to simply validate an FQL statement instead of the statement plus individual
-    properties. This was changed because of numerous reports of undocumented properties that were usable with
-    specific APIs, but were being blocked by 'Test-FqlStatement'.
-
-    Command Changes
-    * Added 'group_names' as an 'Include' option for 'Get-FalconHost'.
-
-    * Added Linux support for 'Uninstall-FalconSensor'.
-
-    * Added commands allowing a user to set a Humio Event Collector destination (using the relevant
-    'humio-structured' endpoint) to send all PSFalcon requests, results and 'Invoke-FalconLibrary' script results
-    to a Humio instance. 'Register-FalconEventCollector' is used to define the destination URL, ingest token and 
-    event types to log, while 'Show-FalconEventCollector' can be used for confirmation and
-    'Remove-FalconEventCollector' can be used to disable logging.
-
-    * Added 'Collector' parameter to 'Request-FalconToken' to support new logging functionality.
-
     New Commands
     * filevantage.ps1
     'Get-FalconFimChange'
@@ -458,6 +438,7 @@
 
     * psf-humio.ps1
     'Register-FalconEventCollector'
+    'Send-FalconEvent'
     'Show-FalconEventCollector'
     'Unregister-FalconEventCollector'
 
@@ -465,7 +446,42 @@
     'Get-FalconLibrary'
     'Invoke-FalconLibrary'
 
-    GitHub Issues
+    New Functionality
+    * Created a GitHub-based Real-time Response library (https://github.com/bk-cs/rtr). The list of available
+    scripts can be retrieved using 'Get-FalconLibrary' with the appropriate Operating System platform, and
+    scripts can be run on one or more devices using 'Invoke-FalconLibrary'.
+
+    * Added the ability to cache a Humio Event Collector (using the relevant 'humio-structured' endpoint) to send
+    PSFalcon content to a Humio instance.
+
+    * 'Register-FalconEventCollector' is used to define your Humio Event Collector, ingest token and the events
+    to log, 'Show-FalconEventCollector' can be used for confirmation, and 'Remove-FalconEventCollector' can
+    be used to disable logging.
+
+    * The 'Enabled' parameter for 'Register-HumioEventCollector' defines the data that will be sent to
+    Humio. Using 'requests' sends the full content of PSFalcon requests, 'responses' sends the full content of
+    the API response for the PSFalcon request, and 'library' sends the results from a Real-time Response library
+    script directly from the host(s) to Humio, with #host and #script tags appended.
+
+    * Added 'Send-FalconEvent' to use the results of a PSFalcon command to create Humio events. This allows
+    PSFalcon to work as a mechanism to ingest data from the CrowdStrike APIs directly into Humio on demand.
+
+    Command Changes
+    * Added 'group_names' as an 'Include' option for 'Get-FalconHost'. Requires 'host-group:read' permission.
+
+    * Added Linux support to 'Uninstall-FalconSensor'.
+
+    * Added 'Collector' parameter to 'Request-FalconToken' to allow the addition of a Humio Event Collector during
+    initial authorization token request.
+
+    General Changes
+    * Changed format of request header verbose output to match result header verbose output.
+
+    * Modified 'Test-FqlStatement' to simply validate an FQL statement instead of the statement plus individual
+    properties. This was changed because of numerous reports of undocumented properties that were usable with
+    specific APIs, but were being blocked by 'Test-FqlStatement'.
+
+    Resolved Issues
     * Issue #153: Added 'instance_id' as a value for '-Filter' and '-Sort' under 'Get-FalconHost'.
 
     * Issue #154: Added check for 'SslProtocols' property before attempting to enforce TLS 1.2 in

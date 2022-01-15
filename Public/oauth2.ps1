@@ -36,7 +36,7 @@ function Request-FalconToken {
                     throw "Unexpected key in 'Collector' object. ['$_']"
                 }
             }
-            foreach ($Key in @('Path','Token','Enabled')) {
+            foreach ($Key in @('Path','Token')) {
                 if ($_.Keys -notcontains $Key) {
                     throw "'Collector' requires '$Key'."
                 } else {
