@@ -64,7 +64,7 @@ class ApiClient {
                         $Param.Body
                     }
                 }
-                if ($this.Collector.Enabled -contains 'requests') {
+                if ($this.Collector.Enable -contains 'requests') {
                     $this.Log($Message)
                 }
                 $this.Client.SendAsync($Message)
@@ -73,7 +73,7 @@ class ApiClient {
                 Write-Verbose "[ApiClient.Invoke] $(@($Output.Result.StatusCode.GetHashCode(),
                     $Output.Result.StatusCode) -join ': ')"
             }
-            if ($Output.Result -and $this.Collector.Enabled -contains 'responses') {
+            if ($Output.Result -and $this.Collector.Enable -contains 'responses') {
                 $this.Log($Output.Result)
             }
         } catch {

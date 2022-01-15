@@ -10,7 +10,7 @@ function Register-FalconEventCollector {
 
         [Parameter(ValueFromPipeLineByPropertyName = $true, Position = 3)]
         [ValidateSet('library','responses','requests')]
-        [array] $Enabled
+        [array] $Enable
     )
     process {
         if (!$Script:Falcon.Api) {
@@ -21,8 +21,8 @@ function Register-FalconEventCollector {
             Token   = $PSBoundParameters.Token
         }
         $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Path)'"
-        if ($PSBoundParameters.Enabled) {
-            $Script:Falcon.Api.Collector['Enabled'] = $PSBoundParameters.Enabled
+        if ($PSBoundParameters.Enable) {
+            $Script:Falcon.Api.Collector['Enable'] = $PSBoundParameters.Enable
             $Message += " for $(@($PSBoundParameters.Enabled).foreach{ "'$_'" } -join ', ')"
         }
         Write-Verbose "$Message."
@@ -90,7 +90,7 @@ function Show-FalconEventCollector {
         [PSCustomObject] @{
             Path    = $Script:Falcon.Api.Collector.Path
             Token   = $Script:Falcon.Api.Collector.Token
-            Enabled = $Script:Falcon.Api.Collector.Enabled
+            Enabled = $Script:Falcon.Api.Collector.Enable
         }
     }
 }

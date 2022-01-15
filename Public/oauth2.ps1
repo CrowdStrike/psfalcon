@@ -32,7 +32,7 @@ function Request-FalconToken {
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 5)]
         [ValidateScript({
             @($_.Keys).foreach{
-                if ($_ -notmatch '^(Enabled|Path|Token)$') {
+                if ($_ -notmatch '^(Enable|Path|Token)$') {
                     throw "Unexpected key in 'Collector' object. ['$_']"
                 }
             }

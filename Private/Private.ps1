@@ -368,7 +368,7 @@ function Get-LibraryScript {
                             ('error="no_' + (($PSBoundParameters.Name).Split('_',2)[-1] -replace '\.ps1',
                             $null) + '"')) | ForEach-Object {
                                 if ($Script:Falcon.Api.Collector -and
-                                $Script:Falcon.Api.Collector.Enabled -contains 'library') {
+                                $Script:Falcon.Api.Collector.Enable -contains 'library') {
                                     @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',"Uri=`"$(
                                     $Script:Falcon.Api.Collector.Path)`"").Replace('Authorization=null',
                                     "Authorization=`"Bearer $($Script:Falcon.Api.Collector.Token)`"").Replace(

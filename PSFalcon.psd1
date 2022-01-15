@@ -458,13 +458,14 @@
     to log, 'Show-FalconEventCollector' can be used for confirmation, and 'Remove-FalconEventCollector' can
     be used to disable logging.
 
-    * The 'Enabled' parameter for 'Register-HumioEventCollector' defines the data that will be sent to
-    Humio. Using 'requests' sends the full content of PSFalcon requests, 'responses' sends the full content of
-    the API response for the PSFalcon request, and 'library' sends the results from a Real-time Response library
-    script directly from the host(s) to Humio, with #host and #script tags appended.
+    * The 'Enable' parameter for 'Register-FalconEventCollector' defines the data that will be sent to Humio. Using
+    'requests' sends the full content of PSFalcon requests, 'responses' sends API responses, and 'library' sends
+    results from a Real-time Response library script directly from the host(s) to Humio, with #cid, #aid, #host
+    and #script tags appended.
 
     * Added 'Send-FalconEvent' to use the results of a PSFalcon command to create Humio events. This allows
-    PSFalcon to work as a mechanism to ingest data from the CrowdStrike APIs directly into Humio on demand.
+    PSFalcon to work as a mechanism to ingest data from the CrowdStrike APIs directly into Humio on demand and does
+    not require a specific 'Enable' value under 'Register-FalconEventCollector'.
 
     Command Changes
     * Added 'group_names' as an 'Include' option for 'Get-FalconHost'. Requires 'host-group:read' permission.

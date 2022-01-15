@@ -66,7 +66,7 @@ function Invoke-FalconLibrary {
                     throw "No host found matching '$($PSBoundParameters.HostId)'."
                 }
                 if ($HostInfo.platform_name) {
-                    if ($HostInfo.platform_name -ne 'Windows' -and $Script:Falcon.Api.Collector.Enabled -contains
+                    if ($HostInfo.platform_name -ne 'Windows' -and $Script:Falcon.Api.Collector.Enable -contains
                     'library') {
                         Write-Warning ("Unable to send output to Humio with '$($HostInfo.platform_name)' " +
                             "library scripts.")
@@ -115,7 +115,7 @@ function Invoke-FalconLibrary {
                         (@($PSBoundParameters.HostIds).foreach{ "'$_'" }) -join ', ')."
                 }
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name.ToLower()) {
-                    if ($Platform -ne 'Windows' -and $Script:Falcon.Api.Collector.Enabled -contains
+                    if ($Platform -ne 'Windows' -and $Script:Falcon.Api.Collector.Enable -contains
                     'library') {
                         Write-Warning "Unable to send output to Humio with '$Platform' library scripts."
                     }
