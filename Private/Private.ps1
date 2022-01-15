@@ -360,7 +360,7 @@ function Get-LibraryScript {
             if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
                 try {
                     $Result = Write-Result -Request $Request
-                    if ($Result) {
+                    if ($Result -and $PSBoundParameters.Platform -eq 'Windows') {
                         $Output = if ($Result -match '\$Obj\s?=\s?Start-Process') {
                             '$Obj|ConvertTo-Json -Compress'
                         } else {
@@ -369,22 +369,18 @@ function Get-LibraryScript {
                             $null) + '"')) | ForEach-Object {
                                 if ($Script:Falcon.Api.Collector -and
                                 $Script:Falcon.Api.Collector.Enabled -contains 'library') {
-                                    if ($PSBoundParameters.Platform -ne 'Windows') {
-                                         # Send warning for lack of Linux/Mac support
-                                        Write-Warning ("Sending output to Humio is only supported for Windows " +
-                                            "library scripts.")
-                                    } else {
-                                        @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',"Uri=`"$(
-                                        $Script:Falcon.Api.Collector.Path)`"").Replace('Authorization=null',
-                                        "Authorization=`"Bearer $($Script:Falcon.Api.Collector.Token)`"").Replace(
-                                        'script=null',"script=`"$($PSBoundParameters.Name)`""),$_) -join ';'
-                                    }
+                                    @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',"Uri=`"$(
+                                    $Script:Falcon.Api.Collector.Path)`"").Replace('Authorization=null',
+                                    "Authorization=`"Bearer $($Script:Falcon.Api.Collector.Token)`"").Replace(
+                                    'script=null',"script=`"$($PSBoundParameters.Name)`""),$_) -join ';'
                                 } else {
                                     $_
                                 }
                             }
                         }
                         @($Result,$Output) -join "`n"
+                    } else {
+                        $Result
                     }
                 } catch {}
             }
