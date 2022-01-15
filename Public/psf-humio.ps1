@@ -19,10 +19,10 @@ function Register-FalconEventCollector {
         $Script:Falcon.Api.Collector = @{
             Path    = $PSBoundParameters.Path
             Token   = $PSBoundParameters.Token
-            Enabled = $PSBoundParameters.Enabled
         }
         $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Path)'"
         if ($PSBoundParameters.Enabled) {
+            $Script:Falcon.Api.Collector['Enabled'] = $PSBoundParameters.Enabled
             $Message += " for $(@($PSBoundParameters.Enabled).foreach{ "'$_'" } -join ', ')"
         }
         Write-Verbose "$Message."
