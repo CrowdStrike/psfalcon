@@ -136,7 +136,6 @@ function Import-FalconConfig {
             }
             IoaGroup = @{
                 Import = @('id', 'platform', 'name', 'description', 'rules', 'enabled', 'version')
-                Compare = @('platform', 'name')
             }
             IoaRule = @{
                 Create = @('name', 'pattern_severity', 'ruletype_id', 'disposition_id', 'field_values',
@@ -173,16 +172,12 @@ function Import-FalconConfig {
                 $CompareFields = if ($ConfigFields.$Item.Compare) {
                     # Use defined fields for comparison with CID
                     $ConfigFields.$Item.Compare
-                } elseif ($Item -match 'Policy$') {
-                    # Use 'platform_name' and 'name' for policies
-                    @('platform_name', 'name')
                 } else {
                     # Use 'name'
                     @('name')
                 }
                 $FilterText = (($CompareFields).foreach{
-                    "`$ConfigData.$($Item).Cid.$($_) -notcontains `$_.$($_)"
-                }) -join ' -and '
+                    "`$ConfigData.$($Item).Cid.$($_) -notcontains `$_.$($_)" }) -join ' -and '
                 $Param = @{
                     Item         = $Item
                     Type         = 'Import'
@@ -282,7 +277,6 @@ function Import-FalconConfig {
             $Output
         }
         function Invoke-ConfigArray ($Item) {
-            # Find non-existent items and create them in batches of 20
             [array] $Content = if ($Item -match 'Policy$') {
                 # Filter to required fields for creating policies
                 ,($ConfigData.$Item.Import | Select-Object platform_name, name, description)
@@ -390,12 +384,20 @@ function Import-FalconConfig {
     process {
         # Create 'ConfigData' and import configuration files
         $ConfigData = Import-ConfigData -FilePath $ArchivePath
-        $ConfigData.GetEnumerator().foreach{
+        foreach ($Pair in $ConfigData.GetEnumerator()) {#$ConfigData.GetEnumerator().foreach{
             # Retrieve data from CID
-            $_.Value['Cid'] = [array] (Get-CidValue $_.Key)
-            if ($_.Key -ne 'HostGroup') {
+            $Pair.Value['Cid'] = [array] (Get-CidValue $Pair.Key)
+            if ($Pair.Key -match 'Policy$') {
+                $Pair.Value.Import = foreach ($ImpPol in $Pair.Value.Import) {
+                    # Check policies by platform name and name
+                    if (!($ConfigData.($Pair.Key).Cid | Where-Object { $_.name -eq $ImpPol.name -and
+                    $_.platform_name -eq $ImpPol.platform_name })) {
+                        $ImpPol
+                    }
+                }
+            } elseif ($Pair.Key -ne 'HostGroup') {
                 # Remove existing items from 'Import', except for 'HostGroup'
-                $_.Value.Import = Compare-ImportData $_.Key
+                $Pair.Value.Import = Compare-ImportData $Pair.Key
             }
         }
         if ($ConfigData.SensorUpdatePolicy.Import) {
@@ -614,7 +616,7 @@ function Import-FalconConfig {
                                     PatternSeverity = $Rule.pattern_severity
                                     RuletypeId      = $Rule.ruletype_id
                                     DispositionId   = $Rule.disposition_id
-                                    FieldValues     = $Rule.field_values
+                                    FieldValues     = [array] $Rule.field_values
                                 }
                                 @('description', 'comment').foreach{
                                     if ($Rule.$_) {
@@ -635,9 +637,9 @@ function Import-FalconConfig {
                                     $Param = @{
                                         Command = 'Edit-FalconIoaRule'
                                         Content = @{
-                                            RulegroupId      = $NewGroup.id
-                                            RuleUpdates      = $Created
-                                            Comment          = if ($Rule.comment) {
+                                            RulegroupId = $NewGroup.id
+                                            RuleUpdates = $Created
+                                            Comment     = if ($Rule.comment) {
                                                 $Rule.comment
                                             } else {
                                                 "Enabled $FileDate by 'Import-FalconConfig'"
@@ -662,15 +664,15 @@ function Import-FalconConfig {
                         $Param = @{
                             Command = 'Edit-FalconIoaGroup'
                             Content = @{
-                                Id               = $NewGroup.id
-                                Name             = $NewGroup.name
-                                Enabled          = $true
-                                Description      = if ($NewGroup.description) {
+                                Id          = $NewGroup.id
+                                Name        = $NewGroup.name
+                                Enabled     = $true
+                                Description = if ($NewGroup.description) {
                                     $NewGroup.description
                                 } else {
                                     "Imported $FileDate by 'Import-FalconConfig'"
                                 }
-                                Comment = if ($NewGroup.comment) {
+                                Comment     = if ($NewGroup.comment) {
                                     $NewGroup.comment
                                 } else {
                                     "Enabled $FileDate by 'Import-FalconConfig'"
@@ -862,9 +864,7 @@ function Import-FalconConfig {
         }
     }
     end {
-        if ($PSBoundParameters.Debug) {
-            $ConfigData
-        } elseif ($ConfigData.Values.Created) {
+        if ($ConfigData.Values.Created) {
             foreach ($Pair in $ConfigData.GetEnumerator().Where({ $_.Value.Created })) {
                 @($Pair.Value.Created).foreach{
                     # Output 'created' results to CSV

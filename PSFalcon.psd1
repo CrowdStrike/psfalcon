@@ -493,6 +493,11 @@
 
     * Issue #158: Fixed typo in 'Get-FalconHost' which prevented the attachment of Zero Trust Assessment results
       when using the 'Include' parameter.
+
+    * Issue #164: Modified the filter used to check for existing 'IoaGroup' items, so it no longer checks for
+    values that don't match 'name' and 'platform', and instead checks for values that don't match 'name' for each
+    'platform' (so new groups will only be created for the specific platform). Also updated 'Policy' items, as the
+    'import skipped' behavior was present there too.
 "@
         }
     }
