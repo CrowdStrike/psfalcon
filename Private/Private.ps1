@@ -619,7 +619,7 @@ function Invoke-Falcon {
                 }
                 if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
                     # Convert body to Json
-                    $ParamSet.Endpoint.Body = ConvertTo-Json -InputObject $ParamSet.Endpoint.Body -Compress
+                    $ParamSet.Endpoint.Body = ConvertTo-Json $ParamSet.Endpoint.Body -Depth 32 -Compress
                 }
                 $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
                 if ($RawOutput) {
