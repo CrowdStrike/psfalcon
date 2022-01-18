@@ -23,7 +23,7 @@ function Register-FalconEventCollector {
         $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Path)'"
         if ($PSBoundParameters.Enable) {
             $Script:Falcon.Api.Collector['Enable'] = $PSBoundParameters.Enable
-            $Message += " for $(@($PSBoundParameters.Enabled).foreach{ "'$_'" } -join ', ')"
+            $Message += " for $(@($PSBoundParameters.Enable).foreach{ "'$_'" } -join ', ')"
         }
         Write-Verbose "$Message."
     }
