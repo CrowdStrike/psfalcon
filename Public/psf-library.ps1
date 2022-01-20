@@ -3,7 +3,10 @@ function Get-FalconLibrary {
     param(
         [Parameter(Position = 1, Mandatory = $true)]
         [ValidateSet('linux','mac','windows')]
-        [string] $Platform
+        [string] $Platform,
+
+        [Parameter(Position = 2)]
+        [string] $Name
     )
     begin {
         $CurrentProgress = $ProgressPreference
@@ -11,9 +14,31 @@ function Get-FalconLibrary {
         $Platform = $PSBoundParameters.Platform.ToLower()
     }
     process {
-        $Request = Invoke-WebRequest -Uri "https://github.com/bk-cs/rtr/tree/main/$(
-            $PSBoundParameters.Platform.ToLower())" -UseBasicParsing
-        if ($Request.Links) {
+        if ($PSBoundParameters.Name -and $PSBoundParameters.Name -match '\.(sh|ps1)$') {
+            $PSBoundParameters.Name = $PSBoundParameters.Name -replace '\.(sh|ps1)$','.md'
+        } elseif ($PSBoundParameters.Name -and $PSBoundParameters.Name -notmatch '\.(sh|ps1)$') {
+            $PSBoundParameters.Name += '.md'
+        }
+        $Param = @{
+            Uri             = if ($PSBoundParameters.Name) {
+                "https://raw.githubusercontent.com/bk-cs/rtr/main/$($PSBoundParameters.Platform.ToLower())/$(
+                    $PSBoundParameters.Name.ToLower())"
+            } else {
+                "https://github.com/bk-cs/rtr/tree/main/$($PSBoundParameters.Platform.ToLower())"
+            }
+            UseBasicParsing = $true
+        }
+        $Request = try {
+            Invoke-WebRequest @Param
+        } catch {}
+        if ($PSBoundParameters.Name) {
+            if ($Request.Content) {
+                $Request.Content
+            } else {
+                Write-Error "No help file available for '$($PSBoundParameters.Name.ToLower() -replace '\.md',
+                    $null)'. [$($PSBoundParameters.Platform.ToLower())]"
+            }
+        } elseif ($Request.Links) {
             ($Request.Links | Where-Object { $_.title -match "\.(sh|ps1)" }).Title
         } else {
             Write-Error "Unable to retrieve script list for '$($PSBoundParameters.Platform.ToLower())'."

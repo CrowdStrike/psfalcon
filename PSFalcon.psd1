@@ -449,10 +449,12 @@
     New Functionality
     * Created a GitHub-based Real-time Response library (https://github.com/bk-cs/rtr). The list of available
     scripts can be retrieved using 'Get-FalconLibrary' with the appropriate Operating System platform, and
-    scripts can be run on one or more devices using 'Invoke-FalconLibrary'.
+    including a specific script name will output information about the script. Scripts can be run on one or more
+    devices using 'Invoke-FalconLibrary'.
 
     * Added the ability to cache a Humio Event Collector (using the relevant 'humio-structured' endpoint) to send
-    PSFalcon content to a Humio instance.
+    PSFalcon content to a Humio instance. A specific parser is not required because the content sent by PSFalcon
+    uses the documented Humio event structure.
 
     * 'Register-FalconEventCollector' is used to define your Humio Event Collector, ingest token and the events
     to log, 'Show-FalconEventCollector' can be used for confirmation, and 'Remove-FalconEventCollector' can
@@ -480,14 +482,14 @@
 
     * Modified 'Test-FqlStatement' to simply validate an FQL statement instead of the statement plus individual
     properties. This was changed because of numerous reports of undocumented properties that were usable with
-    specific APIs, but were being blocked by 'Test-FqlStatement'.
+    specific APIs but were being blocked by 'Test-FqlStatement'.
 
     Resolved Issues
-    * Issue #153: Added 'instance_id' as a value for '-Filter' and '-Sort' under 'Get-FalconHost'.
+    * Issue #153: Added 'instance_id' as a value for '-Sort' under 'Get-FalconHost'.
 
     * Issue #154: Added check for 'SslProtocols' property before attempting to enforce TLS 1.2 in
     'Request-FalconToken'. If not available, TLS 1.2 is set through [System.Net.ServicePointManager]
-    instead. Thank you @Minty123!
+    instead. Thank you for your contribution @Minty123!
 
     * Issue #155: Added colon to correct RegEx pattern for 'New-FalconIoc' and 'Edit-FalconIoc'.
 
@@ -497,7 +499,7 @@
     * Issue #164: Modified the filter used to check for existing 'IoaGroup' items, so it no longer checks for
     values that don't match 'name' and 'platform', and instead checks for values that don't match 'name' for each
     'platform' (so new groups will only be created for the specific platform). Also updated 'Policy' items, as the
-    'import skipped' behavior was present there too.
+    behavior was present there too.
 "@
         }
     }
