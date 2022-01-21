@@ -448,9 +448,8 @@
 
     New Functionality
     * Created a GitHub-based Real-time Response library (https://github.com/bk-cs/rtr). The list of available
-    scripts can be retrieved using 'Get-FalconLibrary' with the appropriate Operating System platform, and
-    including a specific script name will output information about the script. Scripts can be run on one or more
-    devices using 'Invoke-FalconLibrary'.
+    scripts can be retrieved using 'Get-FalconLibrary'. Including a specific script name will output basic help
+    information about the script. Scripts can be run on one or more devices using 'Invoke-FalconLibrary'.
 
     * Added the ability to cache a Humio Event Collector (using the relevant 'humio-structured' endpoint) to send
     PSFalcon content to a Humio instance. A specific parser is not required because the content sent by PSFalcon

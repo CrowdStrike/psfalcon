@@ -1,45 +1,36 @@
 function Get-FalconLibrary {
     [CmdletBinding()]
     param(
-        [Parameter(Position = 1, Mandatory = $true)]
-        [ValidateSet('linux','mac','windows')]
-        [string] $Platform,
-
-        [Parameter(Position = 2)]
+        [Parameter(Position = 1)]
         [string] $Name
     )
     begin {
         $CurrentProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
-        $Platform = $PSBoundParameters.Platform.ToLower()
     }
     process {
-        if ($PSBoundParameters.Name -and $PSBoundParameters.Name -match '\.(sh|ps1)$') {
-            $PSBoundParameters.Name = $PSBoundParameters.Name -replace '\.(sh|ps1)$','.md'
-        } elseif ($PSBoundParameters.Name -and $PSBoundParameters.Name -notmatch '\.(sh|ps1)$') {
-            $PSBoundParameters.Name += '.md'
-        }
-        $Param = @{
-            Uri             = if ($PSBoundParameters.Name) {
-                "https://raw.githubusercontent.com/bk-cs/rtr/main/$($PSBoundParameters.Platform.ToLower())/$(
-                    $PSBoundParameters.Name.ToLower())"
-            } else {
-                "https://github.com/bk-cs/rtr/tree/main/$($PSBoundParameters.Platform.ToLower())"
+        $Output = if ($PSBoundParameters.Name) {
+            if ($PSBoundParameters.Name -match '\.(sh|ps1)$') {
+                $PSBoundParameters.Name = $PSBoundParameters.Name -replace '\.(sh|ps1)$','.md'
+            } elseif ($PSBoundParameters.Name -notmatch '\.(sh|ps1)$') {
+                $PSBoundParameters.Name += '.md'
             }
-            UseBasicParsing = $true
+            try {
+                (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bk-cs/rtr/main/help/$(
+                    $PSBoundParameters.Name.ToLower())" -UseBasicParsing).Content
+            } catch {}
+        } else {
+            (@('mac','linux','windows').foreach{
+                try {
+                    ((Invoke-WebRequest -Uri "https://github.com/bk-cs/rtr/tree/main/$_" -UseBasicParsing).Links |
+                        Where-Object { $_.title -match '\.(sh|ps1)$' }).Title -replace '\.(ps1|sh)$',$null
+                } catch {}
+            }) | Sort-Object -Unique
         }
-        $Request = try {
-            Invoke-WebRequest @Param
-        } catch {}
-        if ($PSBoundParameters.Name) {
-            if ($Request.Content) {
-                $Request.Content
-            } else {
-                Write-Error "No help file available for '$($PSBoundParameters.Name.ToLower() -replace '\.md',
-                    $null)'. [$($PSBoundParameters.Platform.ToLower())]"
-            }
-        } elseif ($Request.Links) {
-            ($Request.Links | Where-Object { $_.title -match "\.(sh|ps1)" }).Title
+        if ($Output) {
+            $Output
+        } elseif ($PSBoundParameters.Name) {
+            Write-Error "No help file available for '$($PSBoundParameters.Name.ToLower() -replace '\.md',$null)'."
         } else {
             Write-Error "Unable to retrieve script list for '$($PSBoundParameters.Platform.ToLower())'."
         }
@@ -186,4 +177,7 @@ function Invoke-FalconLibrary {
             throw $_
         }
     }
+}
+@('Get-FalconLibrary', 'Invoke-FalconLibrary').foreach{
+    Register-ArgumentCompleter -CommandName $_ -ParameterName Name -ScriptBlock { Get-FalconLibrary }
 }
