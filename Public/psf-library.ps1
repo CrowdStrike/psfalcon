@@ -76,64 +76,57 @@ function Invoke-FalconLibrary {
     process {
         try {
             if ($PSCmdlet.ParameterSetName -eq 'HostId') {
-                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId |
-                    Select-Object cid, device_id, platform_name
-                if (-not $HostInfo) {
+                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostId | Select-Object device_id, platform_name
+                if (-not($HostInfo.device_id -and $HostInfo.platform_name)) {
                     throw "No host found matching '$($PSBoundParameters.HostId)'."
                 }
-                if ($HostInfo.platform_name) {
-                    if ($HostInfo.platform_name -ne 'Windows' -and $Script:Falcon.Api.Collector.Enable -contains
-                    'library') {
-                        Write-Warning ("Unable to send output to Humio with '$($HostInfo.platform_name)' " +
-                            "library scripts.")
-                    }
-                    $Script = @{
-                        Platform = $HostInfo.platform_name.ToLower()
-                        Name     = $PSBoundParameters.Name
-                    }
-                    $RawScript = Get-LibraryScript @Script
-                    if (-not $RawScript) {
-                        throw "No script matching '$($Script.Name)' for '$($Script.Platform)'."
-                    }
-                    $InvokeParam = @{
-                        HostId    = $HostInfo.device_id 
-                        Command   = 'runscript'
-                        Arguments = '-Raw=```' + $RawScript + '```'
-                    }
-                    if ($PSBoundParameters.Arguments) {
-                        $InvokeParam.Arguments += " $($PSBoundParameters.Arguments)"
-                    }
-                    if ($PSBoundParameters.QueueOffline) {
-                        $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
-                    }
-                    foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
-                        if ($Result.stdout) {
-                            $Result.stdout = try {
-                                @($Result.stdout -split '\n').foreach{
-                                    if (-not [string]::IsNullOrEmpty($_)) {
-                                        $_ | ConvertFrom-Json
-                                    }
+                if ($HostInfo.platform_name -ne 'Windows' -and $Script:Falcon.Api.Collector.Enable -contains
+                'library') {
+                    Write-Warning "Unable to send '$($HostInfo.platform_name.ToLower())' script output to Humio."
+                }
+                $Script = @{
+                    Platform = $HostInfo.platform_name.ToLower()
+                    Name     = $PSBoundParameters.Name
+                }
+                $RawScript = Get-LibraryScript @Script
+                if (-not $RawScript) {
+                    throw "No script matching '$($Script.Name)' for '$($Script.Platform)'."
+                }
+                $InvokeParam = @{
+                    HostId    = $HostInfo.device_id 
+                    Command   = 'runscript'
+                    Arguments = '-Raw=```' + $RawScript + '```'
+                }
+                if ($PSBoundParameters.Arguments) {
+                    $InvokeParam.Arguments += " $($PSBoundParameters.Arguments)"
+                }
+                if ($PSBoundParameters.QueueOffline) {
+                    $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
+                }
+                foreach ($Result in (Invoke-FalconRtr @InvokeParam)) {
+                    if ($Result.stdout) {
+                        $Result.stdout = try {
+                            @($Result.stdout -split '\n').foreach{
+                                if (-not [string]::IsNullOrEmpty($_)) {
+                                    $_ | ConvertFrom-Json
                                 }
-                            } catch {
-                                $Result.stdout
                             }
+                        } catch {
+                            $Result.stdout
                         }
-                        $Result
                     }
-                } else {
-                    throw "No host found matching '$($PSBoundParameters.HostId)'."
+                    $Result
                 }
             } else {
-                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostIds |
-                    Select-Object cid, device_id, platform_name
-                if (-not $HostInfo) {
-                    throw "No hosts found matching $(
+                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.HostIds | Select-Object device_id, platform_name
+                if (-not($HostInfo.device_id -and $HostInfo.platform_name)) {
+                    throw "No host(s) found matching $(
                         (@($PSBoundParameters.HostIds).foreach{ "'$_'" }) -join ', ')."
                 }
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name.ToLower()) {
                     if ($Platform -ne 'Windows' -and $Script:Falcon.Api.Collector.Enable -contains
                     'library') {
-                        Write-Warning "Unable to send output to Humio with '$Platform' library scripts."
+                        Write-Warning "Unable to send '$Platform' script output to Humio."
                     }
                     $Script = @{
                         Platform = $Platform
