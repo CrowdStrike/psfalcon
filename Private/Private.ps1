@@ -324,7 +324,7 @@ function Get-LibraryScript {
             Windows = 'function shumio($O,$C,$A,$H){$B=$O|%{$I=@{};$_.PSObject.Properties|where name -ne "timest' +
                 'amp"|%{$I[$_.Name]=$_.Value};@{timestamp=$_.timestamp;attributes=$I}};$Req=@{Uri=null;Method="p' +
                 'ost";Headers=@{Authorization=null;ContentType="application/json"};Body=ConvertTo-Json @(@{tags=' +
-                '@{cid=$C;aid=$A;host=$H;script=null};events=@($B)}) -Depth 4 -Compress};[void](iwr @Req -UseBas' +
+                '@{cid=$C;aid=$A;host=$H;script=null};events=@($B)}) -Depth 8 -Compress};[void](iwr @Req -UseBas' +
                 'icParsing)}'
         }
         $Handling = @{
