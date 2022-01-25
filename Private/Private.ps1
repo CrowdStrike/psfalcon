@@ -351,14 +351,14 @@ function Get-LibraryScript {
         }
         $FileString = "$(@($PSBoundParameters.Platform, $PSBoundParameters.Name) -join '/')"
         if ($FileString) {
-            # Make request and output result
-            $Request = $Script:Falcon.Api.Invoke(@{
-                Path    = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
-                Method  = 'get'
-                Headers = @{ Accept = 'text/plain' }
-            })
-            if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
-                try {
+            try {
+                # Make request and output result
+                $Request = $Script:Falcon.Api.Invoke(@{
+                    Path    = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
+                    Method  = 'get'
+                    Headers = @{ Accept = 'text/plain' }
+                })
+                if ($Request.Result.EnsureSuccessStatusCode() -and $Request.Result.Content) {
                     $Result = Write-Result -Request $Request
                     if ($Result -and $PSBoundParameters.Platform -eq 'Windows') {
                         $Output = if ($Result -match '\$Obj\s?=\s?Start-Process') {
@@ -382,8 +382,8 @@ function Get-LibraryScript {
                     } else {
                         $Result
                     }
-                } catch {}
-            }
+                }
+            } catch {}
         }
     }
     end {
