@@ -32,11 +32,11 @@ function Request-FalconToken {
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 5)]
         [ValidateScript({
             @($_.Keys).foreach{
-                if ($_ -notmatch '^(Enable|Path|Token)$') {
+                if ($_ -notmatch '^(Enable|Token|Uri)$') {
                     throw "Unexpected key in 'Collector' object. ['$_']"
                 }
             }
-            foreach ($Key in @('Path','Token')) {
+            foreach ($Key in @('Token','Uri')) {
                 if ($_.Keys -notcontains $Key) {
                     throw "'Collector' requires '$Key'."
                 } else {
@@ -130,7 +130,8 @@ function Request-FalconToken {
             }
         }
         if ($PSBoundParameters.Collector) {
-            $Script:Falcon.Api.Collector = $PSBoundParameters.Collector
+            $Collector = $PSBoundParameters.Collector
+            Register-FalconEventCollector @Collector
         }
         if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             $Param = @{

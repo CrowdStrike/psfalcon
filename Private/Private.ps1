@@ -370,7 +370,7 @@ function Get-LibraryScript {
                                 if ($Script:Falcon.Api.Collector -and
                                 $Script:Falcon.Api.Collector.Enable -contains 'library') {
                                     @($SHumio.($PSBoundParameters.Platform).Replace('Uri=null',"Uri=`"$(
-                                    $Script:Falcon.Api.Collector.Path)`"").Replace('Authorization=null',
+                                    $Script:Falcon.Api.Collector.Uri)`"").Replace('Authorization=null',
                                     "Authorization=`"Bearer $($Script:Falcon.Api.Collector.Token)`"").Replace(
                                     'script=null',"script=`"$($PSBoundParameters.Name)`""),$_) -join ';'
                                 } else {

@@ -117,7 +117,7 @@ class ApiClient {
             Name         = "ApiClient_Log.$($Item.timestamp)"
             ScriptBlock  = { $Param = $args[0]; Invoke-RestMethod @Param }
             ArgumentList = @{
-                Uri     = $this.Collector.Path
+                Uri     = $this.Collector.Uri
                 Method  = 'post'
                 Headers = @{
                     Authorization = @('Bearer', $this.Collector.Token) -join ' '

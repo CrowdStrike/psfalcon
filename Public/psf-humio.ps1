@@ -2,7 +2,9 @@ function Register-FalconEventCollector {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
-        [System.Uri] $Path,
+        [ValidateSet('https://cloud.community.humio.com/','https://cloud.humio.com/',
+            'https://cloud.us.humio.com/')]
+        [System.Uri] $Uri,
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
@@ -17,10 +19,10 @@ function Register-FalconEventCollector {
             throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
         }
         $Script:Falcon.Api.Collector = @{
-            Path    = $PSBoundParameters.Path
-            Token   = $PSBoundParameters.Token
+            Uri   = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
+            Token = $PSBoundParameters.Token
         }
-        $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Path)'"
+        $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Uri)'"
         if ($PSBoundParameters.Enable) {
             $Script:Falcon.Api.Collector['Enable'] = $PSBoundParameters.Enable
             $Message += " for $(@($PSBoundParameters.Enable).foreach{ "'$_'" } -join ', ')"
@@ -40,7 +42,7 @@ function Send-FalconEvent {
         $ProgressPreference = 'SilentlyContinue'
     }
     process {
-        if (!$Script:Falcon.Api.Collector.Path -or !$Script:Falcon.Api.Collector.Token) {
+        if (!$Script:Falcon.Api.Collector.Uri -or !$Script:Falcon.Api.Collector.Token) {
             throw "Humio destination has not been configured. Try 'Register-FalconEventCollector'."
         }
         [array] $Events = $PSBoundParameters.Object | ForEach-Object {
@@ -58,7 +60,7 @@ function Send-FalconEvent {
             $Item
         }
         $Param = @{
-            Uri     = $Script:Falcon.Api.Collector.Path
+            Uri     = $Script:Falcon.Api.Collector.Uri
             Method  = 'post'
             Headers = @{
                 Authorization = @('Bearer', $Script:Falcon.Api.Collector.Token) -join ' '
@@ -88,7 +90,7 @@ function Show-FalconEventCollector {
             throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
         }
         [PSCustomObject] @{
-            Path    = $Script:Falcon.Api.Collector.Path
+            Uri     = $Script:Falcon.Api.Collector.Uri
             Token   = $Script:Falcon.Api.Collector.Token
             Enabled = $Script:Falcon.Api.Collector.Enable
         }
@@ -99,7 +101,7 @@ function Unregister-FalconEventCollector {
     param()
     process {
         if ($Script:Falcon.Api.Collector) {
-            Write-Verbose "[Unregister-FalconEventCollector] Removed '$($Script:Falcon.Api.Collector.Path)'."
+            Write-Verbose "[Unregister-FalconEventCollector] Removed '$($Script:Falcon.Api.Collector.Uri)'."
             $Script:Falcon.Api.Collector = @{}
         }
     }
