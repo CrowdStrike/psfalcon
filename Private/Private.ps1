@@ -321,23 +321,22 @@ function Get-LibraryScript {
             # 'shumio' function for sending data to Humio
             Linux   = $null
             Mac     = $null
-            Windows = 'function shumio($O,$C,$A,$H){$B=$O|%{$I=@{};$_.PSObject.Properties|where name -ne "timest' +
-                'amp"|%{$I[$_.Name]=$_.Value};@{timestamp=$_.timestamp;attributes=$I}};$Req=@{Uri=null;Method="p' +
-                'ost";Headers=@{Authorization=null;ContentType="application/json"};Body=ConvertTo-Json @(@{tags=' +
-                '@{cid=$C;aid=$A;host=$H;script=null};events=@($B)}) -Depth 8 -Compress};[void](iwr @Req -UseBas' +
-                'icParsing)}'
+            Windows = 'function shumio($O,$C,$A){$B=$O|%{$I=@{};$_.PSObject.Properties|where name -ne "timestamp' +
+                '"|%{$I[$_.Name]=$_.Value};@{timestamp=$_.timestamp;attributes=$I}};$Req=@{Uri=null;Method="post' +
+                '";Headers=@{Authorization=null;ContentType="application/json"};Body=ConvertTo-Json @(@{tags=@{c' +
+                'id=$C;aid=$A;script=null};events=@($B)}) -Depth 8 -Compress};[void](iwr @Req -UseBasicParsing)}'
         }
         $Handling = @{
             # Content for handling output after script
             Linux   = $null
             Mac     = $null
             Windows = 'function anp($O,$N,$V){$O|%{$_.PSObject.Properties.Add((New-Object PSNoteProperty($N,$V))' +
-                ')}}if(!$Obj){$Obj=@{timestamp=(Get-Date -Format o);error=null}};$H=[System.Net.Dns]::GetHostnam' +
-                'e();$R="HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-' +
-                '7058-48c9-a204-725362b67639}\Default";if(Test-Path "REGISTRY::\$R"){$K=reg query "$R";$C=(($K -' +
-                'match "CU") -split "REG_BINARY")[-1].Trim().ToLower();$A=(($K -match "AG") -split "REG_BINARY")' +
-                '[-1].Trim().ToLower()};if (gcm shumio -EA 0){shumio $Obj $C $A $H};@(@("host",$H),@("cid",$C),@' +
-                '("aid",$A)).foreach{anp $Obj $_[0] $_[1]};$Obj|ConvertTo-Json -Compress'
+                ')}}if(!$Obj){$Obj=@{timestamp=(Get-Date -Format o);error=null}};$R="HKEY_LOCAL_MACHINE\SYSTEM\C' +
+                'rowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Defaul' +
+                't";if(Test-Path "REGISTRY::\$R"){$K=reg query "$R";$C=(($K -match "CU") -split "REG_BINARY")[-1' +
+                '].Trim().ToLower();$A=(($K -match "AG") -split "REG_BINARY")[-1].Trim().ToLower()};if (gcm shum' +
+                'io -EA 0){shumio $Obj $C $A};@(@("cid",$C),@("aid",$A)).foreach{anp $Obj $_[0] $_[1]};$Obj|Conv' +
+                'ertTo-Json -Compress'
         }
     }
     process {
@@ -354,7 +353,7 @@ function Get-LibraryScript {
             try {
                 # Make request and output result
                 $Request = $Script:Falcon.Api.Invoke(@{
-                    Path    = "https://raw.githubusercontent.com/bk-cs/rtr/main/$FileString"
+                    Path    = "https://raw.githubusercontent.com/bk-cs/library/main/$FileString"
                     Method  = 'get'
                     Headers = @{ Accept = 'text/plain' }
                 })

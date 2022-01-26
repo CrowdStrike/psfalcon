@@ -16,14 +16,14 @@ function Get-FalconLibrary {
                 $PSBoundParameters.Name += '.md'
             }
             try {
-                (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bk-cs/rtr/main/help/$(
+                (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bk-cs/library/main/help/$(
                     $PSBoundParameters.Name.ToLower())" -UseBasicParsing).Content
             } catch {}
         } else {
             (@('mac','linux','windows').foreach{
                 try {
-                    ((Invoke-WebRequest -Uri "https://github.com/bk-cs/rtr/tree/main/$_" -UseBasicParsing).Links |
-                        Where-Object { $_.title -match '\.(sh|ps1)$' }).Title -replace '\.(ps1|sh)$',$null
+                    ((Invoke-WebRequest -Uri "https://github.com/bk-cs/library/tree/main/$_" -UseBasicParsing
+                    ).Links | Where-Object { $_.title -match '\.(sh|ps1)$' }).Title -replace '\.(ps1|sh)$',$null
                 } catch {}
             }) | Sort-Object -Unique
         }
