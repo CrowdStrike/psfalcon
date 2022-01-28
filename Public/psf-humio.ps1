@@ -11,7 +11,7 @@ function Register-FalconEventCollector {
         [string] $Token,
 
         [Parameter(ValueFromPipeLineByPropertyName = $true, Position = 3)]
-        [ValidateSet('library','responses','requests')]
+        [ValidateSet('responses','requests')]
         [array] $Enable
     )
     process {

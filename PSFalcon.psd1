@@ -270,10 +270,6 @@
       'Show-FalconEventCollector',
       'Unregister-FalconEventCollector',
 
-      # psf-library.ps1
-      'Get-FalconLibrary',
-      'Invoke-FalconLibrary',
-
       # psf-output.ps1
       'Export-FalconReport',
       'Send-FalconWebhook',
@@ -442,31 +438,20 @@
     'Show-FalconEventCollector'
     'Unregister-FalconEventCollector'
 
-    * psf-library.ps1
-    'Get-FalconLibrary'
-    'Invoke-FalconLibrary'
-
     New Functionality
-    * Created a GitHub-based Real-time Response library (https://github.com/bk-cs/rtr). The list of available
-    scripts can be retrieved using 'Get-FalconLibrary'. Including a specific script name will output basic help
-    information about the script. Scripts can be run on one or more devices using 'Invoke-FalconLibrary'.
+    * Added the ability to PSFalcon content to a Humio instance. A specific parser is not required because the
+    content sent by PSFalcon uses the documented Humio event structure.
 
-    * Added the ability to cache a Humio Event Collector (using the relevant 'humio-structured' endpoint) to send
-    PSFalcon content to a Humio instance. A specific parser is not required because the content sent by PSFalcon
-    uses the documented Humio event structure.
+    * 'Register-FalconEventCollector' is used to define your Humio cloud, ingest token and the events to log,
+    'Show-FalconEventCollector' can be used for confirmation, and 'Remove-FalconEventCollector' can be used to
+    disable logging.
 
-    * 'Register-FalconEventCollector' is used to define your Humio Event Collector, ingest token and the events
-    to log, 'Show-FalconEventCollector' can be used for confirmation, and 'Remove-FalconEventCollector' can
-    be used to disable logging.
+    * The 'Enable' parameter for 'Register-FalconEventCollector' defines the data that will be sent to Humio. The
+    value 'requests' sends  PSFalcon requests while 'responses' sends API responses.
 
-    * The 'Enable' parameter for 'Register-FalconEventCollector' defines the data that will be sent to Humio. Using
-    'requests' sends the full content of PSFalcon requests, 'responses' sends API responses, and 'library' sends
-    results from a Real-time Response library script directly from the host(s) to Humio, with #cid, #aid, #host
-    and #script tags appended.
-
-    * Added 'Send-FalconEvent' to use the results of a PSFalcon command to create Humio events. This allows
-    PSFalcon to work as a mechanism to ingest data from the CrowdStrike APIs directly into Humio on demand and does
-    not require a specific 'Enable' value under 'Register-FalconEventCollector'.
+    * Added 'Send-FalconEvent' to generate Humio events using the output of a PSFalcon command. This allows
+    PSFalcon to work as a mechanism to ingest data from the CrowdStrike APIs directly into Humio and does not
+    require a specific 'Enable' value under 'Register-FalconEventCollector'.
 
     Command Changes
     * Added 'group_names' as an 'Include' option for 'Get-FalconHost'. Requires 'host-group:read' permission.
