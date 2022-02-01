@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.1.7'
+    ModuleVersion        = '2.1.8'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -374,6 +374,7 @@
       # sensor-update-policies.ps1
       'Edit-FalconSensorUpdatePolicy',
       'Get-FalconBuild',
+      'Get-FalconKernel',
       'Get-FalconSensorUpdatePolicy',
       'Get-FalconSensorUpdatePolicyMember',
       'Get-FalconUninstallToken',
@@ -420,70 +421,17 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
     New Commands
-    * filevantage.ps1
-    'Get-FalconFimChange'
-
-    * message-center.ps1
-    'Add-FalconCompleteActivity'
-    'Edit-FalconCompleteCase'
-    'New-FalconCompleteCase'
-    'Get-FalconCompleteActivity'
-    'Get-FalconCompleteCase'
-    'Receive-FalconCompleteAttachment'
-    'Send-FalconCompleteAttachment'
-
-    * psf-humio.ps1
-    'Register-FalconEventCollector'
-    'Send-FalconEvent'
-    'Show-FalconEventCollector'
-    'Unregister-FalconEventCollector'
+    * sensor-update-policies.ps1
+      'Get-FalconKernel'
 
     New Functionality
-    * Added the ability to PSFalcon content to a Humio instance. A specific parser is not required because the
-    content sent by PSFalcon uses the documented Humio event structure.
-
-    * 'Register-FalconEventCollector' is used to define your Humio cloud, ingest token and the events to log,
-    'Show-FalconEventCollector' can be used for confirmation, and 'Remove-FalconEventCollector' can be used to
-    disable logging.
-
-    * The 'Enable' parameter for 'Register-FalconEventCollector' defines the data that will be sent to Humio. The
-    value 'requests' sends  PSFalcon requests while 'responses' sends API responses.
-
-    * Added 'Send-FalconEvent' to generate Humio events using the output of a PSFalcon command. This allows
-    PSFalcon to work as a mechanism to ingest data from the CrowdStrike APIs directly into Humio and does not
-    require a specific 'Enable' value under 'Register-FalconEventCollector'.
+    * 
 
     Command Changes
-    * Added 'group_names' as an 'Include' option for 'Get-FalconHost'. Requires 'host-group:read' permission.
-
-    * Added Linux support to 'Uninstall-FalconSensor'.
-
-    * Added 'Collector' parameter to 'Request-FalconToken' to allow the addition of a Humio Event Collector during
-    initial authorization token request.
-
-    General Changes
-    * Changed format of request header verbose output to match result header verbose output.
-
-    * Modified 'Test-FqlStatement' to simply validate an FQL statement instead of the statement plus individual
-    properties. This was changed because of numerous reports of undocumented properties that were usable with
-    specific APIs but were being blocked by 'Test-FqlStatement'.
+    * 
 
     Resolved Issues
-    * Issue #153: Added 'instance_id' as a value for '-Sort' under 'Get-FalconHost'.
-
-    * Issue #154: Added check for 'SslProtocols' property before attempting to enforce TLS 1.2 in
-    'Request-FalconToken'. If not available, TLS 1.2 is set through [System.Net.ServicePointManager]
-    instead. Thank you for your contribution @Minty123!
-
-    * Issue #155: Added colon to correct RegEx pattern for 'New-FalconIoc' and 'Edit-FalconIoc'.
-
-    * Issue #158: Fixed typo in 'Get-FalconHost' which prevented the attachment of Zero Trust Assessment results
-      when using the 'Include' parameter.
-
-    * Issue #164: Modified the filter used to check for existing 'IoaGroup' items, so it no longer checks for
-    values that don't match 'name' and 'platform', and instead checks for values that don't match 'name' for each
-    'platform' (so new groups will only be created for the specific platform). Also updated 'Policy' items, as the
-    behavior was present there too.
+    * 
 "@
         }
     }

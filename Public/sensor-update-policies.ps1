@@ -69,6 +69,53 @@ function Get-FalconBuild {
         Invoke-Falcon @Param
     }
 }
+function Get-FalconKernel {
+    [CmdletBinding(DefaultParameterSetName = '/policy/combined/sensor-update-kernels/v1:get')]
+    param(
+        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Mandatory = $true,
+            Position = 1)]
+        [ValidateSet('architecture','base_package_supported_sensor_versions','distro','distro_version','flavor',
+            'release','vendor','version','ztl_supported_sensor_versions')]
+        [string] $Field,
+
+        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 1)]
+        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
+        [string] $Filter,
+
+        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 2)]
+        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 3)]
+        [ValidateRange(1, 5000)]
+        [int] $Limit,
+
+        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 3)]
+        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 4)]
+        [int] $Offset,
+
+        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get')]
+        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get')]
+        [switch] $All,
+
+        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get')]
+        [switch] $Total
+    )
+    process {
+        $Param = @{
+            Command  = $MyInvocation.MyCommand.Name
+            Endpoint = if ($PSBoundParameters.Field) {
+                $PSCmdlet.ParameterSetName -replace '\{field\}', $PSBoundParameters.Field
+                [void] $PSBoundParameters.Remove('Field')
+            } else {
+                $PSCmdlet.ParameterSetName
+            }
+            Inputs   = $PSBoundParameters
+            Format   = @{
+                Query = @('offset', 'filter', 'limit')
+            }
+        }
+        Invoke-Falcon @Param
+    }
+}
 function Get-FalconSensorUpdatePolicy {
     [CmdletBinding(DefaultParameterSetName = '/policy/queries/sensor-update/v1:get')]
     param(
