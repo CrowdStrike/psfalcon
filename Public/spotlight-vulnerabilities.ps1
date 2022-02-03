@@ -45,7 +45,7 @@ function Get-FalconVulnerability {
 
         [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Position = 4)]
         [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Position = 4)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,400)]
         [int] $Limit,
 
         [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Position = 5)]

@@ -430,6 +430,8 @@
     Command Changes
     * Added 'cswindiag' command to 'Invoke-FalconRtr' and 'Invoke-FalconAdminCommand'.
 
+    * Changed 'Limit' maximum for 'Get-FalconVulnerability' to 400 to match API.
+
     Resolved Issues
     * 
 "@
