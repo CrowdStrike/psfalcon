@@ -11,11 +11,7 @@ function Get-FalconQueue {
         [array] $Include
     )
     begin {
-        $Days = if ($PSBoundParameters.Days) {
-            $PSBoundParameters.Days
-        } else {
-            7
-        }
+        $Days = if ($PSBoundParameters.Days) { $PSBoundParameters.Days } else { 7 }
         # Properties to capture from request results
         $Properties = @{
             Session = @('aid', 'user_id', 'user_uuid', 'id', 'created_at', 'deleted_at', 'status')
@@ -380,11 +376,11 @@ function Invoke-FalconRtr {
         [Parameter(ParameterSetName = 'HostId', Mandatory = $true, Position = 1)]
         [Parameter(ParameterSetName = 'HostIds', Mandatory = $true, Position = 1)]
         [Parameter(ParameterSetName = 'GroupId', Mandatory = $true, Position = 1)]
-        [ValidateSet('cat', 'cd', 'clear', 'cp', 'csrutil', 'encrypt', 'env', 'eventlog', 'filehash', 'get',
-            'getsid', 'history', 'ifconfig', 'ipconfig', 'kill', 'ls', 'map', 'memdump', 'mkdir', 'mount', 'mv',
-            'netstat', 'ps', 'put', 'put-and-run', 'reg delete', 'reg load', 'reg query', 'reg set', 'reg unload',
-            'restart', 'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap', 'update history',
-            'update install', 'update list', 'users', 'xmemdump', 'zip')]
+        [ValidateSet('cat','cd','clear','cp','csrutil','cswindiag','encrypt','env','eventlog','filehash','get',
+            'getsid','history','ifconfig','ipconfig','kill','ls','map','memdump','mkdir','mount','mv','netstat',
+            'ps','put','put-and-run','reg delete','reg load','reg query','reg set','reg unload','restart','rm',
+            'run','runscript','shutdown','umount','unmap','update history','update install','update list',
+            'users','xmemdump','zip')]
         [string] $Command,
 
         [Parameter(ParameterSetName = 'HostId', Position = 2)]

@@ -428,7 +428,7 @@
     * 
 
     Command Changes
-    * 
+    * Added 'cswindiag' command to 'Invoke-FalconRtr' and 'Invoke-FalconAdminCommand'.
 
     Resolved Issues
     * 
