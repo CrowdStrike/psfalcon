@@ -2,8 +2,6 @@ function Register-FalconEventCollector {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
-        [ValidateSet('https://cloud.community.humio.com/','https://cloud.humio.com/',
-            'https://cloud.us.humio.com/')]
         [System.Uri] $Uri,
 
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 2)]
@@ -11,7 +9,7 @@ function Register-FalconEventCollector {
         [string] $Token,
 
         [Parameter(ValueFromPipeLineByPropertyName = $true, Position = 3)]
-        [ValidateSet('responses','requests')]
+        [ValidateSet('responses', 'requests')]
         [array] $Enable
     )
     process {
@@ -30,6 +28,19 @@ function Register-FalconEventCollector {
         Write-Verbose "$Message."
     }
 }
+$FalconEventCollectorUri = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+    $publicClouds = @('https://cloud.community.humio.com/', 'https://cloud.humio.com/',
+        'https://cloud.us.humio.com/')
+    $match = $publicClouds | Where-Object { $_ -like "$wordToComplete*" }
+    $match | ForEach-Object {
+        New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
+        $_,
+        "ParameterValue",
+        $_
+    }
+}
+Register-ArgumentCompleter -CommandName Register-FalconEventCollector -ParameterName Uri -ScriptBlock $FalconEventCollectorUri
 function Send-FalconEvent {
     [CmdletBinding()]
     [OutputType([void])]
@@ -47,14 +58,15 @@ function Send-FalconEvent {
         }
         [array] $Events = $PSBoundParameters.Object | ForEach-Object {
             $Item = @{
-                timestamp = Get-Date -Format o
+                timestamp  = Get-Date -Format o
                 attributes = @{}
             }
             if ($_ -is [System.Management.Automation.PSCustomObject]) {
                 $_.PSObject.Properties | Where-Object { $_.Name -notmatch '\.' } | ForEach-Object {
                     $Item.attributes[$_.Name] = $_.Value
                 }
-            } elseif ($_ -is [string]) {
+            }
+            elseif ($_ -is [string]) {
                 $Item.attributes['id'] = $_
             }
             $Item
