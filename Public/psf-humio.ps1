@@ -65,8 +65,7 @@ function Send-FalconEvent {
                 $_.PSObject.Properties | Where-Object { $_.Name -notmatch '\.' } | ForEach-Object {
                     $Item.attributes[$_.Name] = $_.Value
                 }
-            }
-            elseif ($_ -is [string]) {
+            } elseif ($_ -is [string]) {
                 $Item.attributes['id'] = $_
             }
             $Item
