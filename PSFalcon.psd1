@@ -432,6 +432,9 @@
 
     * Changed 'Limit' maximum for 'Get-FalconVulnerability' to 400 to match API.
 
+    * Added support for local Humio instances within 'Register-FalconEventCollector' while maintaining auto-
+    complete for Humio Cloud. Thank you @kra-ts!
+
     Resolved Issues
     * 
 "@
