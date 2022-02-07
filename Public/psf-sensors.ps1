@@ -40,11 +40,11 @@ function Add-FalconSensorTag {
                 's/falconctl grouping-tags clear &> /dev/null && /Applications/Falcon.app/Contents/Resources/fal' +
                 'conctl grouping-tags set "$uniq" &> /dev/null && /Applications/Falcon.app/Contents/Resources/fa' +
                 'lconctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
-            Windows = '$Key = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
-                '0423f-7058-48c9-a204-725362b67639}\Default"; $Tags = (reg query $Key) -match "GroupingTags"; $V' +
-                'alue = if ($Tags) { (($Tags -split "REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Select-' +
-                'Object -Unique) -join "," } else { $args }; [void] (reg add $Key /v GroupingTags /d $Value /f);' +
-                ' Write-Output "$((((reg query $Key) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
+            Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
+                '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags" | Where-Ob' +
+                'ject { $_ }; $V = if ($T) { (($T -split "REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Se' +
+                'lect-Object -Unique) -join "," } else { $args }; [void] (reg add $K /v GroupingTags /d $V /f); ' +
+                '"$((((reg query $K) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
         }
     }
     process {
@@ -136,9 +136,9 @@ function Get-FalconSensorTag {
                 "=//; s/.$//'"
             Mac     = "/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed 's/^No grou" +
                 "ping tags set//; s/^Grouping tags: //'"
-            Windows = '$Tags = (reg query "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c0' +
-                '34b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($Tags) { Wr' +
-                'ite-Output "$(($Tags -split "REG_SZ")[-1].Trim())" }'
+            Windows = '$T = (reg query "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b' +
+                '88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($T) { "$(($T -' +
+                'split "REG_SZ")[-1].Trim())" }'
         }
     }
     process {
@@ -249,12 +249,12 @@ function Remove-FalconSensorTag {
                 'pplications/Falcon.app/Contents/Resources/falconctl grouping-tags set "$tag" &> /dev/null && /A' +
                 'pplications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping tag' +
                 's set//; s/^Grouping tags: //"'
-            Windows = '$Key = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e' +
-                '0423f-7058-48c9-a204-725362b67639}\Default"; $Tags = (reg query $Key) -match "GroupingTags"; if' +
-                ' ($Tags) { $Delete = $args.Split(","); $Value = ($Tags -split "REG_SZ")[-1].Trim().Split(",").W' +
-                'here({ $Delete -notcontains $_ }) -join ","; if ($Value) { [void] (reg add $Key /v GroupingTags' +
-                ' /d $Value /f) } else { [void] (reg delete $Key /v GroupingTags /f) }}; $Tags = (reg query $Key' +
-                ') -match "GroupingTags"; if ($Tags) { ($Tags -split "REG_SZ")[-1].Trim() }'
+            Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
+                '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags"; if ($T) {' +
+                ' $D = $args.Split(","); $V = ($T -split "REG_SZ")[-1].Trim().Split(",").Where({ $D -notcontains' +
+                ' $_ }) -join ","; if ($V) { [void] (reg add $K /v GroupingTags /d $V /f) } else { [void] (reg d' +
+                'elete $K /v GroupingTags /f) }}; $T = (reg query $K) -match "GroupingTags"; if ($T) { ($T -spli' +
+                't "REG_SZ")[-1].Trim() }'
         }
     }
     process {
