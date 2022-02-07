@@ -28,19 +28,23 @@ function Register-FalconEventCollector {
         Write-Verbose "$Message."
     }
 }
-$FalconEventCollectorUri = {
-    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-    $publicClouds = @('https://cloud.community.humio.com/', 'https://cloud.humio.com/',
-        'https://cloud.us.humio.com/')
-    $match = $publicClouds | Where-Object { $_ -like "$wordToComplete*" }
-    $match | ForEach-Object {
-        New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
-        $_,
-        "ParameterValue",
-        $_
+$Register = @{
+    CommandName   = 'Register-FalconEventCollector'
+    ParameterName = 'Uri'
+    ScriptBlock   = {
+        param($CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters)
+        $PublicClouds = @('https://cloud.community.humio.com/', 'https://cloud.humio.com/',
+            'https://cloud.us.humio.com/')
+        $Match = $PublicClouds | Where-Object { $_ -like "$WordToComplete*" }
+        $Match | ForEach-Object {
+            New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
+            $_,
+            "ParameterValue",
+            $_
+        }
     }
 }
-Register-ArgumentCompleter -CommandName Register-FalconEventCollector -ParameterName Uri -ScriptBlock $FalconEventCollectorUri
+Register-ArgumentCompleter @Register
 function Send-FalconEvent {
     [CmdletBinding()]
     [OutputType([void])]
