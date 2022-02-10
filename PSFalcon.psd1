@@ -435,6 +435,9 @@
     * Added support for local Humio instances within 'Register-FalconEventCollector' while maintaining auto-
     complete for Humio Cloud. Thank you @kra-ts!
 
+    * Added 'No queued Real-time Response sessions available.' error when using 'Get-FalconQueue' when there are
+    no queued sessions.
+
     Resolved Issues
     * 
 "@

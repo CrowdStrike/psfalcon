@@ -30,6 +30,9 @@ function Get-FalconQueue {
                 Verbose  = $true
             }
             $Sessions = Get-FalconSession @SessionParam | Select-Object id, device_id
+            if (-not $Sessions) {
+                throw "No queued Real-time Response sessions available."
+            }
             [array] $HostInfo = if ($PSBoundParameters.Include) {
                 # Capture host information for eventual output
                 Get-FalconHost -Ids ($Sessions.device_id | Group-Object).Name | Select-Object @(
