@@ -439,7 +439,8 @@
     no queued sessions.
 
     Resolved Issues
-    * 
+    * Issue #187: Fixed typo which was causing array values to only show a single value (instead of all values)
+    when using 'Export-FalconReport'.
 "@
         }
     }

@@ -34,7 +34,7 @@ function Export-FalconReport {
                     $AddParam = @{
                         Object = $Output
                         Name   = $Name
-                        Value  = $Item -join ','
+                        Value  = $Array -join ','
                     }
                     Add-Property @AddParam
                 }
@@ -47,11 +47,7 @@ function Export-FalconReport {
                     $ArrayParam = @{
                         Array  = $Item.Value
                         Output = $Output
-                        Name   = if ($Prefix) {
-                            "$($Prefix).$($Item.Name)"
-                        } else {
-                            $Item.Name
-                        }
+                        Name   = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
                     }
                     Get-Array @ArrayParam
                 } elseif ($Item.Value.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
@@ -59,22 +55,14 @@ function Export-FalconReport {
                     $ObjectParam = @{
                         Object = $Item.Value
                         Output = $Output
-                        Prefix = if ($Prefix) {
-                            "$($Prefix).$($Item.Name)"
-                        } else {
-                            $Item.Name
-                        }
+                        Prefix = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
                     }
                     Get-PSObject @ObjectParam
                 } else {
                     # Add property to output with 'prefix.name'
                     $AddParam = @{
                         Object = $Output
-                        Name   = if ($Prefix) {
-                            "$($Prefix).$($Item.Name)"
-                        } else {
-                            $Item.Name
-                        }
+                        Name   = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
                         Value  = $Item.Value
                     }
                     Add-Property @AddParam
