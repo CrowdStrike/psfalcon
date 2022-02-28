@@ -456,15 +456,15 @@ function Get-RtrResult {
                 } elseif ($_.Value.code -and $_.Value.message) {
                     # Convert error code and message into string
                     (($_.Value).foreach{ "$($_.code): $($_.message)" }) -join ', '
+                } elseif ($_.Name -match 'std(err|out)' -and $_.Value -match '^(\[|\{|"|)') {
+                    # If 'stdout' or 'stderr' looks like Json, attempt to convert it
+                    try { $_.Value | ConvertFrom-Json } catch { $_.Value }
                 } else {
+                    # Output unmodified value
                     $_.Value
                 }
-                $Name = if ($_.Name -eq 'task_id') {
-                    # Rename 'task_id' to 'cloud_request_id'
-                    'cloud_request_id'
-                } else {
-                    $_.Name
-                }
+                # Rename 'task_id' to 'cloud_request_id'
+                $Name = if ($_.Name -eq 'task_id') { 'cloud_request_id' } else { $_.Name }
                 @($Output | Where-Object { $_.aid -eq $Result.aid }).foreach{
                     $_.$Name = $Value
                 }

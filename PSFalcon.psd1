@@ -438,6 +438,10 @@
     * Added 'No queued Real-time Response sessions available.' error when using 'Get-FalconQueue' when there are
     no queued sessions.
 
+    * Updated internal 'Get-RtrResult' function (used by 'Invoke-FalconRtr' and 'Invoke-FalconDeploy') to
+    automatically convert 'stdout' and 'stderr' content from Json into PowerShell objects when appropriate. This
+    will make it easier to work with scripts that are written for Falcon Workflows.
+
     Resolved Issues
     * Issue #187: Fixed typo which was causing array values to only show a single value (instead of all values)
     when using 'Export-FalconReport'.
