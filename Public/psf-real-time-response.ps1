@@ -456,17 +456,13 @@ function Invoke-FalconRtr {
         try {
             if ($PSCmdlet.ParameterSetName -eq 'HostId') {
                 $InitParam = @{
-                    HostId = $PSBoundParameters.HostId
-                }
-                switch ($PSBoundParameters.Keys) {
-                    'QueueOffline' { $InitParam[$_] = $PSBoundParameters.$_ }
+                    HostId       = $PSBoundParameters.HostId
+                    QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) { $true } else { $false }
                 }
                 $Init = Start-FalconSession @InitParam
                 $Request = if ($Init.session_id) {
-                    $CmdParam = @{
-                        # Send 'runscript' with tag values
-                        SessionId = $Init.session_id
-                    }
+                    # Set baseline command parameters
+                    $CmdParam = @{ SessionId = $Init.session_id }
                     switch -Regex ($PSBoundParameters.Keys) {
                         '^(Command|Arguments)$' { $CmdParam[$_] = $PSBoundParameters.$_ }
                     }
@@ -474,7 +470,7 @@ function Invoke-FalconRtr {
                 }
                 if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
                     do {
-                        # Retry 'runscript' confirmation until result is provided
+                        # Retry command confirmation until result is provided
                         Start-Sleep -Seconds 5
                         $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
                     } until (
@@ -489,7 +485,13 @@ function Invoke-FalconRtr {
                         } else {
                             'task_id'
                         }
-                        $_ | Select-Object session_id, $CmdId, complete, stdout, stderr
+                        $_ | Select-Object session_id, $CmdId, complete, stdout, stderr | ForEach-Object {
+                            if ($_.stdout -and $PSBoundParameters.Command -eq 'runscript') {
+                                # Attempt to convert 'stdout' from Json for 'runscript'
+                                $_.stdout = try { $_.stdout | ConvertFrom-Json } catch { $_.stdout }
+                            }
+                            $_
+                        }
                     }
                 } else {
                     $Request
@@ -512,21 +514,13 @@ function Invoke-FalconRtr {
                     [array] $Group = Initialize-Output $HostArray[$i..($i + 999)]
                     $InitParam = @{
                         HostIds      = $Group.aid
-                        QueueOffline = if ($PSBoundParameters.QueueOffline) {
-                            $true
-                        } else {
-                            $false
-                        }
+                        QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) { $true } else { $false }
                     }
                     # Define command request parameters
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        $CmdParam = @{
-                            FilePath = $PSBoundParameters.Arguments
-                        }
+                        $CmdParam = @{ FilePath = $PSBoundParameters.Arguments }
                     } else {
-                        $CmdParam = @{
-                            Command = $PSBoundParameters.Command
-                        }
+                        $CmdParam = @{ Command = $PSBoundParameters.Command }
                         if ($PSBoundParameters.Arguments) {
                             $CmdParam['Arguments'] = $PSBoundParameters.Arguments
                         }
@@ -559,7 +553,13 @@ function Invoke-FalconRtr {
                             $CmdContent
                         } else {
                             # Output result
-                            Get-RtrResult -Object $CmdRequest -Output $InitResult
+                            Get-RtrResult -Object $CmdRequest -Output $InitResult | ForEach-Object {
+                                if ($_.stdout -and $PSBoundParameters.Command -eq 'runscript') {
+                                    # Attempt to convert 'stdout' from Json for 'runscript'
+                                    $_.stdout = try { $_.stdout | ConvertFrom-Json } catch { $_.stdout }
+                                }
+                                $_
+                            }
                         }
                     }
                 }
