@@ -28,5 +28,5 @@ Add any other context about the problem here.
 If possible, please include a PowerShell transcript.
  
 1. Set $VerbosePreference = 'Continue'
-2. Run Request-FalconToken, Start-Transcript, Show-FalconModule, the affected PSFalcon commands or script, and Stop-Transcript
+2. Run Import-Module, Request-FalconToken, Start-Transcript, Show-FalconModule, the affected PSFalcon commands or script, and Stop-Transcript
 3. Copy/paste transcript content
