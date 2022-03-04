@@ -85,11 +85,18 @@ function Get-FalconKernel {
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 3)]
-        [ValidateRange(1, 5000)]
-        [int] $Limit,
+        [ValidateSet('architecture.asc','architecture.desc','distro.asc','distro.desc','distro_version.asc',
+            'distro_version.desc','flavor.asc','flavor.desc','release.asc','release.desc','vendor.asc',
+            'vendor.desc','version.asc','version.desc')]
+        [string] $Sort,
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 4)]
+        [ValidateRange(1, 5000)]
+        [int] $Limit,
+
+        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 4)]
+        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 5)]
         [int] $Offset,
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get')]
@@ -110,7 +117,7 @@ function Get-FalconKernel {
             }
             Inputs   = $PSBoundParameters
             Format   = @{
-                Query = @('offset', 'filter', 'limit')
+                Query = @('offset', 'filter', 'sort', 'limit')
             }
         }
         Invoke-Falcon @Param
