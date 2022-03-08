@@ -441,6 +441,9 @@
     * Added automatic Json conversion of 'stdout' and 'stderr' output when using 'runscript' with
     'Invoke-FalconRtr', simplifying the use of results from scripts that were designed for Falcon Workflows.
 
+    * Added 'iOS' and 'Android' as valid values for 'platform_name' for 'Edit-FalconPreventionPolicy' and
+    'New-FalconPreventionPolicy'.
+
     Resolved Issues
     * Issue #187: Fixed typo which was causing array values to only show a single value (instead of all values)
     when using 'Export-FalconReport'.

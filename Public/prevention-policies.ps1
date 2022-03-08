@@ -226,7 +226,7 @@ function New-FalconPreventionPolicy {
         [array] $Array,
 
         [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true, Position = 1)]
-        [ValidateSet('Windows', 'Mac', 'Linux')]
+        [ValidateSet('Windows', 'Mac', 'Linux', 'iOS', 'Android')]
         [string] $PlatformName,
 
         [Parameter(ParameterSetName = '/policy/entities/prevention/v1:post', Mandatory = $true, Position = 2)]
@@ -288,7 +288,7 @@ function Set-FalconPreventionPrecedence {
     param(
         [Parameter(ParameterSetName = '/policy/entities/prevention-precedence/v1:post', Mandatory = $true,
             Position = 1)]
-        [ValidateSet('Windows', 'Mac', 'Linux')]
+        [ValidateSet('Windows', 'Mac', 'Linux', 'iOS', 'Android')]
         [string] $PlatformName,
 
         [Parameter(ParameterSetName = '/policy/entities/prevention-precedence/v1:post', Mandatory = $true,
