@@ -24,4 +24,4 @@ Falcon UI. For example, you could create scripts that:
 * PowerShell 5.1+ (Windows), PowerShell 6+ (Linux/MacOS)
 * A Falcon [OAuth2 API Client](https://falcon.crowdstrike.com/support/api-clients-and-keys) with appropriate roles
 
-### Visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)** for information about [installation](https://github.com/CrowdStrike/psfalcon/wiki/Installation) and [commands](https://github.com/CrowdStrike/psfalcon/wiki/Commands).
+### Visit the **[PSFalcon Wiki](https://github.com/CrowdStrike/psfalcon/wiki)** for more information.
