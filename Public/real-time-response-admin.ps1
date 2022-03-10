@@ -246,14 +246,12 @@ function Remove-FalconPutFile {
     [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/put-files/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:delete', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}_\w{32}$')]
         [string] $Id
     )
     begin {
-        $Fields = @{
-            Id = 'ids'
-        }
+        $Fields = @{ Id = 'ids' }
     }
     process {
         $Param = @{
@@ -271,14 +269,12 @@ function Remove-FalconScript {
     [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/scripts/v1:delete')]
     param(
         [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:delete', Mandatory = $true,
-            Position = 1)]
+            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidatePattern('^\w{32}_\w{32}$')]
         [string] $Id
     )
     begin {
-        $Fields = @{
-            Id = 'ids'
-        }
+        $Fields = @{ Id = 'ids' }
     }
     process {
         $Param = @{
@@ -327,9 +323,7 @@ function Send-FalconPutFile {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'multipart/form-data'
-            }
+            Headers  = @{ ContentType = 'multipart/form-data' }
             Format   = @{
                 Formdata = @('file', 'name', 'description', 'comments_for_audit_log')
             }
@@ -383,9 +377,7 @@ function Send-FalconScript {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'multipart/form-data'
-            }
+            Headers  = @{ ContentType = 'multipart/form-data' }
             Format   = @{
                 Formdata = @('platform', 'permission_type', 'name', 'description', 'comments_for_audit_log',
                     'content')

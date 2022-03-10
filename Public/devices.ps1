@@ -189,7 +189,8 @@ function Invoke-FalconHostAction {
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices-actions/v2:post', Mandatory = $true,
             Position = 1)]
-        [ValidateSet('contain', 'lift_containment', 'hide_host', 'unhide_host')]
+        [ValidateSet('contain','lift_containment','hide_host','unhide_host','detection_suppress',
+            'detection_unsuppress')]
         [string] $Name,
 
         [Parameter(ParameterSetName = '/devices/entities/devices-actions/v2:post', Mandatory = $true,
@@ -220,11 +221,7 @@ function Invoke-FalconHostAction {
                 }
             }
         }
-        $Param['Max'] = if ($Param.Inputs.action_name -match 'host$') {
-            100
-        } else {
-            500
-        }
+        $Param['Max'] = if ($Param.Inputs.action_name -match 'host$') { 100 } else { 500 }
         $Result = Invoke-Falcon @Param
         if ($PSBoundParameters.Include -and $Result) {
             foreach ($Item in (Get-FalconHost -Ids $Result.id | Select-Object @($PSBoundParameters.Include +

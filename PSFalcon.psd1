@@ -444,6 +444,10 @@
     * Added 'iOS' and 'Android' as valid values for 'platform_name' for 'Edit-FalconPreventionPolicy' and
     'New-FalconPreventionPolicy'.
 
+    * Added pipeline support for 'Remove-FalconPutFile' and 'Remove-FalconScript'.
+
+    * Added the undocumented 'detection_suppress' and 'detection_unsuppress' to 'Invoke-FalconHostAction'.
+
     Resolved Issues
     * Issue #187: Fixed typo which was causing array values to only show a single value (instead of all values)
     when using 'Export-FalconReport'.
