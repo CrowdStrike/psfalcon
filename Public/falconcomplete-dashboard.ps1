@@ -26,9 +26,7 @@ function Get-FalconCompleteAllowlist {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -61,9 +59,7 @@ function Get-FalconCompleteBlocklist {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -100,9 +96,7 @@ function Get-FalconCompleteCollection {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -135,9 +129,7 @@ function Get-FalconCompleteDetection {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -170,9 +162,7 @@ function Get-FalconCompleteEscalation {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -205,9 +195,7 @@ function Get-FalconCompleteIncident {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -240,9 +228,7 @@ function Get-FalconCompleteRemediation {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }

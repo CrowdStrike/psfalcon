@@ -56,9 +56,7 @@ function Get-FalconIndicator {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('sort', 'limit', 'filter', 'offset', 'include_deleted', 'q')
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
             }
         }
         Invoke-Falcon @Param

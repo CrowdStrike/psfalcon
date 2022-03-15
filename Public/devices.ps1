@@ -19,9 +19,7 @@ function Add-FalconGroupingTag {
         [array] $Tags
     )
     begin {
-        $Fields = @{
-            Ids = 'device_ids'
-        }
+        $Fields = @{ Ids = 'device_ids' }
     }
     process {
         $PSBoundParameters['action'] = 'add'
@@ -29,11 +27,7 @@ function Add-FalconGroupingTag {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('tags', 'device_ids', 'action')
-                }
-            }
+            Format   = @{ Body = @{ root = @('tags', 'device_ids', 'action') }}
         }
         Invoke-Falcon @Param
     }
@@ -56,22 +50,22 @@ function Get-FalconHost {
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 2)]
-        [ValidateSet('device_id.asc','device_id.desc','agent_load_flags.asc','agent_load_flags.desc',
-            'agent_version.asc','agent_version.desc','bios_manufacturer.asc','bios_manufacturer.desc',
-            'bios_version.asc','bios_version.desc','config_id_base.asc','config_id_base.desc',
-            'config_id_build.asc','config_id_build.desc','config_id_platform.asc','config_id_platform.desc',
-            'cpu_signature.asc','cpu_signature.desc','external_ip.asc','external_ip.desc','first_seen.asc',
-            'first_seen.desc','hostname.asc','hostname.desc','instance_id.asc','instance_id.desc',
-            'last_login_timestamp.asc','last_login_timestamp.desc','last_seen.asc','last_seen.desc',
-            'local_ip.asc','local_ip.desc','local_ip.raw.asc','local_ip.raw.desc','mac_address.asc',
-            'mac_address.desc','machine_domain.asc','machine_domain.desc','major_version.asc',
-            'major_version.desc','minor_version.asc','minor_version.desc','modified_timestamp.asc',
-            'modified_timestamp.desc','os_version.asc','os_version.desc','ou.asc','ou.desc','platform_id.asc',
-            'platform_id.desc','platform_name.asc','platform_name.desc','product_type_desc.asc',
-            'product_type_desc.desc','reduced_functionality_mode.asc','reduced_functionality_mode.desc',
-            'release_group.asc','release_group.desc','serial_number.asc','serial_number.desc','site_name.asc',
-            'site_name.desc','status.asc','status.desc','system_manufacturer.asc','system_manufacturer.desc',
-            'system_product_name.asc','system_product_name.desc')]
+        [ValidateSet('device_id.asc', 'device_id.desc', 'agent_load_flags.asc', 'agent_load_flags.desc',
+            'agent_version.asc', 'agent_version.desc', 'bios_manufacturer.asc', 'bios_manufacturer.desc',
+            'bios_version.asc', 'bios_version.desc', 'config_id_base.asc', 'config_id_base.desc',
+            'config_id_build.asc', 'config_id_build.desc', 'config_id_platform.asc', 'config_id_platform.desc',
+            'cpu_signature.asc', 'cpu_signature.desc', 'external_ip.asc', 'external_ip.desc', 'first_seen.asc',
+            'first_seen.desc', 'hostname.asc', 'hostname.desc', 'instance_id.asc', 'instance_id.desc',
+            'last_login_timestamp.asc', 'last_login_timestamp.desc', 'last_seen.asc', 'last_seen.desc',
+            'local_ip.asc', 'local_ip.desc', 'local_ip.raw.asc', 'local_ip.raw.desc', 'mac_address.asc',
+            'mac_address.desc', 'machine_domain.asc', 'machine_domain.desc', 'major_version.asc',
+            'major_version.desc', 'minor_version.asc', 'minor_version.desc', 'modified_timestamp.asc',
+            'modified_timestamp.desc', 'os_version.asc', 'os_version.desc', 'ou.asc', 'ou.desc', 'platform_id.asc',
+            'platform_id.desc', 'platform_name.asc', 'platform_name.desc', 'product_type_desc.asc',
+            'product_type_desc.desc', 'reduced_functionality_mode.asc', 'reduced_functionality_mode.desc',
+            'release_group.asc', 'release_group.desc', 'serial_number.asc', 'serial_number.desc', 'site_name.asc',
+            'site_name.desc', 'status.asc', 'status.desc', 'system_manufacturer.asc', 'system_manufacturer.desc',
+            'system_product_name.asc', 'system_product_name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 3)]
@@ -85,7 +79,7 @@ function Get-FalconHost {
 
         [Parameter(ParameterSetName = '/devices/queries/devices-scroll/v1:get', Position = 5)]
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Position = 5)]
-        [ValidateSet('group_names','login_history','network_history','zero_trust_assessment')]
+        [ValidateSet('group_names', 'login_history', 'network_history', 'zero_trust_assessment')]
         [array] $Include,
 
         [Parameter(ParameterSetName = '/devices/queries/devices-hidden/v1:get', Mandatory = $true)]
@@ -130,9 +124,7 @@ function Get-FalconHost {
         $Result = Invoke-Falcon @Param
         if ($PSBoundParameters.Include -and $Result) {
             if (!$Result.device_id) {
-                $Result = @($Result).foreach{
-                    ,[PSCustomObject] @{ device_id = $_ }
-                }
+                $Result = @($Result).foreach{ ,[PSCustomObject] @{ device_id = $_ }}
             } elseif ($SelectFilter) {
                 $Result = $Result | Select-Object $SelectFilter
             }
@@ -143,9 +135,7 @@ function Get-FalconHost {
                         $GroupInfo = foreach ($Group in $Item.groups) {
                             $Groups | Where-Object { $_.id -eq $Group }
                         }
-                        if ($GroupInfo) {
-                            $Item.groups = $GroupInfo
-                        }
+                        if ($GroupInfo) { $Item.groups = $GroupInfo }
                     }
                 }
             }
@@ -189,7 +179,7 @@ function Invoke-FalconHostAction {
     param(
         [Parameter(ParameterSetName = '/devices/entities/devices-actions/v2:post', Mandatory = $true,
             Position = 1)]
-        [ValidateSet('contain','lift_containment','hide_host','unhide_host','detection_suppress',
+        [ValidateSet('contain', 'lift_containment', 'hide_host', 'unhide_host', 'detection_suppress',
             'detection_unsuppress')]
         [string] $Name,
 
@@ -199,15 +189,14 @@ function Invoke-FalconHostAction {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/devices/entities/devices-actions/v2:post', Position = 3)]
-        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname','last_seen',
-            'local_ip','mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
-            'reduced_functionality_mode','serial_number','system_manufacturer','system_product_name','tags')]
+        [ValidateSet('agent_version', 'cid', 'external_ip', 'first_seen', 'host_hidden_status', 'hostname',
+            'last_seen', 'local_ip', 'mac_address', 'os_build', 'os_version', 'platform_name', 'product_type',
+            'product_type_desc', 'reduced_functionality_mode', 'serial_number', 'system_manufacturer',
+            'system_product_name', 'tags')]
         [array] $Include
     )
     begin {
-        $Fields = @{
-            Name = 'action_name'
-        }
+        $Fields = @{ Name = 'action_name' }
     }
     process {
         $Param = @{
@@ -216,9 +205,7 @@ function Invoke-FalconHostAction {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
             }
         }
         $Param['Max'] = if ($Param.Inputs.action_name -match 'host$') { 100 } else { 500 }
@@ -260,9 +247,7 @@ function Remove-FalconGroupingTag {
         [array] $Tags
     )
     begin {
-        $Fields = @{
-            Ids = 'device_ids'
-        }
+        $Fields = @{ Ids = 'device_ids' }
     }
     process {
         $PSBoundParameters['action'] = 'remove'
@@ -270,11 +255,7 @@ function Remove-FalconGroupingTag {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('tags', 'device_ids', 'action')
-                }
-            }
+            Format   = @{ Body = @{ root = @('tags', 'device_ids', 'action') }}
         }
         Invoke-Falcon @Param
     }

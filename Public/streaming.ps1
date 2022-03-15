@@ -13,9 +13,7 @@ function Get-FalconStream {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('format', 'appId')
-            }
+            Format   = @{ Query = @('format', 'appId') }
         }
         Invoke-Falcon @Param
     }
@@ -40,9 +38,7 @@ function Update-FalconStream {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $Endpoint
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('action_name', 'appId')
-            }
+            Format   = @{ Query = @('action_name', 'appId') }
         }
         Invoke-Falcon @Param
     }

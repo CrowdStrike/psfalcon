@@ -16,16 +16,12 @@ function Confirm-FalconAdminCommand {
         }
     }
     process {
-        if (!$PSBoundParameters.SequenceId) {
-            $PSBoundParameters['sequence_id'] = 0
-        }
+        if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['sequence_id'] = 0 }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('cloud_request_id', 'sequence_id')
-            }
+            Format   = @{ Query = @('cloud_request_id', 'sequence_id') }
         }
         Invoke-Falcon @Param
     }
@@ -79,9 +75,7 @@ function Edit-FalconScript {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'multipart/form-data'
-            }
+            Headers  = @{ ContentType = 'multipart/form-data' }
             Format   = @{
                 Formdata = @('id', 'platform', 'permission_type', 'name', 'description', 'comments_for_audit_log',
                     'content')
@@ -126,9 +120,7 @@ function Get-FalconPutFile {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -169,9 +161,7 @@ function Get-FalconScript {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -193,11 +183,11 @@ function Invoke-FalconAdminCommand {
             Position = 2)]
         [Parameter(ParameterSetName = '/real-time-response/combined/batch-admin-command/v1:post',
             Mandatory = $true, Position = 2)]
-        [ValidateSet('cat','cd','clear','cp','csrutil','cswindiag','encrypt','env','eventlog','filehash','get',
-            'getsid','help','history','ifconfig','ipconfig','kill','ls','map','memdump','mkdir','mount','mv',
-            'netstat','ps','put','put-and-run','reg delete','reg load','reg query','reg set','reg unload',
-            'restart','rm','run','runscript','shutdown','umount','unmap','update history','update install',
-            'update list','update install','users','xmemdump','zip')]
+        [ValidateSet('cat', 'cd', 'clear', 'cp', 'csrutil', 'cswindiag', 'encrypt', 'env', 'eventlog', 'filehash',
+            'get', 'getsid', 'help', 'history', 'ifconfig', 'ipconfig', 'kill', 'ls', 'map', 'memdump', 'mkdir',
+            'mount', 'mv', 'netstat', 'ps', 'put', 'put-and-run', 'reg delete', 'reg load', 'reg query',
+            'reg set', 'reg unload', 'restart', 'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap',
+            'update history', 'update install', 'update list', 'update install', 'users', 'xmemdump', 'zip')]
         [string] $Command,
 
         [Parameter(ParameterSetName = '/real-time-response/entities/admin-command/v1:post', Position = 3)]
@@ -234,9 +224,7 @@ function Invoke-FalconAdminCommand {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('timeout')
-                Body  = @{
-                    root = @('session_id', 'base_command', 'command_string', 'optional_hosts', 'batch_id')
-                }
+                Body  = @{ root = @('session_id', 'base_command', 'command_string', 'optional_hosts', 'batch_id') }
             }
         }
         Invoke-Falcon @Param
@@ -258,9 +246,7 @@ function Remove-FalconPutFile {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -281,9 +267,7 @@ function Remove-FalconScript {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -324,9 +308,7 @@ function Send-FalconPutFile {
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Headers  = @{ ContentType = 'multipart/form-data' }
-            Format   = @{
-                Formdata = @('file', 'name', 'description', 'comments_for_audit_log')
-            }
+            Format   = @{ Formdata = @('file', 'name', 'description', 'comments_for_audit_log') }
         }
         Invoke-Falcon @Param
     }

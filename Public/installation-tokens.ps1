@@ -17,9 +17,7 @@ function Edit-FalconInstallToken {
         [boolean] $Revoked
     )
     begin {
-        $Fields = @{
-            ExpiresTimestamp = 'expires_timestamp'
-        }
+        $Fields = @{ ExpiresTimestamp = 'expires_timestamp' }
     }
     process {
         $Param = @{
@@ -28,9 +26,7 @@ function Edit-FalconInstallToken {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('ids')
-                Body  = @{
-                    root = @('label', 'revoked', 'expires_timestamp')
-                }
+                Body  = @{ root = @('label', 'revoked', 'expires_timestamp') }
             }
         }
         Invoke-Falcon @Param
@@ -72,9 +68,7 @@ function Get-FalconInstallToken {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'limit', 'filter')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'limit', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -114,9 +108,7 @@ function Get-FalconInstallTokenEvent {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'limit', 'filter')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'limit', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -141,20 +133,14 @@ function New-FalconInstallToken {
         [string] $ExpiresTimestamp
     )
     begin {
-        $Fields = @{
-            ExpiresTimestamp = 'expires_timestamp'
-        }
+        $Fields = @{ ExpiresTimestamp = 'expires_timestamp' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('label', 'expires_timestamp')
-                }
-            }
+            Format   = @{ Body = @{ root = @('label', 'expires_timestamp') }}
         }
         Invoke-Falcon @Param
     }
@@ -172,9 +158,7 @@ function Remove-FalconInstallToken {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

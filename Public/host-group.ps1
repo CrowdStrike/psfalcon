@@ -16,20 +16,14 @@ function Edit-FalconHostGroup {
         [string] $AssignmentRule
     )
     begin {
-        $Fields = @{
-            AssignmentRule = 'assignment_rule'
-        }
+        $Fields = @{ AssignmentRule = 'assignment_rule' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('assignment_rule', 'id', 'name', 'description')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('assignment_rule', 'id', 'name', 'description') }}
         }
         Invoke-Falcon @Param
     }
@@ -77,9 +71,7 @@ function Get-FalconHostGroup {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'filter', 'sort', 'limit', 'offset')
-            }
+            Format   = @{ Query = @('ids', 'filter', 'sort', 'limit', 'offset') }
         }
         Invoke-Falcon @Param
     }
@@ -127,9 +119,7 @@ function Get-FalconHostGroupMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('id', 'filter', 'sort', 'limit', 'offset')
-            }
+            Format   = @{ Query = @('id', 'filter', 'sort', 'limit', 'offset') }
         }
         Invoke-Falcon @Param
     }
@@ -153,9 +143,7 @@ function Invoke-FalconHostGroupAction {
         [array] $HostIds
     )
     begin {
-        if (!$Script:Falcon.Hostname) {
-            Request-FalconToken
-        }
+        if (!$Script:Falcon.Hostname) { Request-FalconToken }
     }
     process {
         $Param = @{
@@ -168,20 +156,13 @@ function Invoke-FalconHostGroupAction {
             }
         }
         $Body = @{
-            action_parameters = @(
-                @{
-                    name  = 'filter'
-                    value = ''
-                }
-            )
+            action_parameters = @(@{ name = 'filter'; value = '' })
             ids = @( $PSBoundParameters.Id )
         }
         for ($i = 0; $i -lt ($PSBoundParameters.HostIds | Measure-Object).Count; $i += 500) {
             $Clone = $Param.Clone()
             $Clone.Add('Body', $Body.Clone())
-            $IdString = (@($PSBoundParameters.HostIds[$i..($i + 499)]).foreach{
-                "'$_'"
-            }) -join ','
+            $IdString = (@($PSBoundParameters.HostIds[$i..($i + 499)]).foreach{ "'$_'" }) -join ','
             $Clone.Body.action_parameters[0].value = "(device_id:[$IdString])"
             $Clone.Body = ConvertTo-Json -InputObject $Clone.Body -Depth 8
             $Request = $Script:Falcon.Api.Invoke($Clone)
@@ -201,9 +182,7 @@ function New-FalconHostGroup {
                     Endpoint = '/devices/entities/host-groups/v1:post'
                     Required = @('group_type', 'name')
                     Content  = @('group_type')
-                    Format   = @{
-                        group_type = 'GroupType'
-                    }
+                    Format   = @{ group_type = 'GroupType' }
                 }
                 Confirm-Parameter @Param
                 if ($Object.group_type -eq 'static' -and $Object.assignment_rule) {
@@ -268,9 +247,7 @@ function Remove-FalconHostGroup {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

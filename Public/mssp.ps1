@@ -11,20 +11,14 @@ function Add-FalconCidGroupMember {
         [array] $Cids
     )
     begin {
-        $Fields = @{
-            Id = 'cid_group_id'
-        }
+        $Fields = @{ Id = 'cid_group_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cid_group_id', 'cids')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('cid_group_id', 'cids') }}
         }
         Invoke-Falcon @Param
     }
@@ -55,11 +49,7 @@ function Add-FalconGroupRole {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cid_group_id', 'user_group_id', 'role_ids')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('cid_group_id', 'user_group_id', 'role_ids') }}
         }
         Invoke-Falcon @Param
     }
@@ -88,11 +78,7 @@ function Add-FalconUserGroupMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('user_uuids', 'user_group_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('user_uuids', 'user_group_id') }}
         }
         Invoke-Falcon @Param
     }
@@ -112,20 +98,14 @@ function Edit-FalconCidGroup {
         [string] $Description
     )
     begin {
-        $Fields = @{
-            Id = 'cid_group_id'
-        }
+        $Fields = @{ Id = 'cid_group_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('description', 'cid_group_id', 'name')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('description', 'cid_group_id', 'name') }}
         }
         Invoke-Falcon @Param
     }
@@ -145,20 +125,14 @@ function Edit-FalconUserGroup {
         [string] $Description
     )
     begin {
-        $Fields = @{
-            Id = 'user_group_id'
-        }
+        $Fields = @{ Id = 'user_group_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('description', 'name', 'user_group_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('description', 'name', 'user_group_id') }}
         }
         Invoke-Falcon @Param
     }
@@ -194,18 +168,14 @@ function Get-FalconCidGroup {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Ids = 'cid_group_ids'
-        }
+        $Fields = @{ Ids = 'cid_group_ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('cid_group_ids', 'offset', 'limit', 'name', 'sort')
-            }
+            Format   = @{ Query = @('cid_group_ids', 'offset', 'limit', 'name', 'sort') }
         }
         Invoke-Falcon @Param
     }
@@ -243,18 +213,14 @@ function Get-FalconCidGroupMember {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Ids = 'cid_group_ids'
-        }
+        $Fields = @{ Ids = 'cid_group_ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('cid_group_ids', 'offset', 'limit', 'sort', 'cid')
-            }
+            Format   = @{ Query = @('cid_group_ids', 'offset', 'limit', 'sort', 'cid') }
         }
         Invoke-Falcon @Param
     }
@@ -309,9 +275,7 @@ function Get-FalconGroupRole {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'role_id', 'cid_group_id', 'sort', 'offset', 'user_group_id')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'role_id', 'cid_group_id', 'sort', 'offset', 'user_group_id') }
         }
         Invoke-Falcon @Param
     }
@@ -324,7 +288,7 @@ function Get-FalconMemberCid {
         [array] $Ids,
 
         [Parameter(ParameterSetName = '/mssp/queries/children/v1:get', Position = 1)]
-        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc')]
+        [ValidateSet('last_modified_timestamp.asc', 'last_modified_timestamp.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/mssp/queries/children/v1:get', Position = 2)]
@@ -348,9 +312,7 @@ function Get-FalconMemberCid {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -386,18 +348,14 @@ function Get-FalconUserGroup {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Ids = 'user_group_ids'
-        }
+        $Fields = @{ Ids = 'user_group_ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'user_group_ids', 'limit', 'name')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'user_group_ids', 'limit', 'name') }
         }
         Invoke-Falcon @Param
     }
@@ -444,9 +402,7 @@ function Get-FalconUserGroupMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'user_group_ids', 'limit', 'user_uuid')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'user_group_ids', 'limit', 'user_uuid') }
         }
         Invoke-Falcon @Param
     }
@@ -465,11 +421,7 @@ function New-FalconCidGroup {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('description', 'name')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('description', 'name') }}
         }
         Invoke-Falcon @Param
     }
@@ -488,11 +440,7 @@ function New-FalconUserGroup {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('description', 'name')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('description', 'name') }}
         }
         Invoke-Falcon @Param
     }
@@ -505,18 +453,14 @@ function Remove-FalconCidGroup {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            Ids = 'cid_group_ids'
-        }
+        $Fields = @{ Ids = 'cid_group_ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('cid_group_ids')
-            }
+            Format   = @{ Query = @('cid_group_ids') }
         }
         Invoke-Falcon @Param
     }
@@ -535,20 +479,14 @@ function Remove-FalconCidGroupMember {
         [array] $Cids
     )
     begin {
-        $Fields = @{
-            Id = 'cid_group_id'
-        }
+        $Fields = @{ Id = 'cid_group_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cid_group_id', 'cids')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('cid_group_id', 'cids') }}
         }
         Invoke-Falcon @Param
     }
@@ -579,11 +517,7 @@ function Remove-FalconGroupRole {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cid_group_id', 'user_group_id', 'role_ids')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('cid_group_id', 'user_group_id', 'role_ids') }}
         }
         Invoke-Falcon @Param
     }
@@ -596,18 +530,14 @@ function Remove-FalconUserGroup {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            Ids = 'user_group_ids'
-        }
+        $Fields = @{ Ids = 'user_group_ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('user_group_ids')
-            }
+            Format   = @{ Query = @('user_group_ids') }
         }
         Invoke-Falcon @Param
     }
@@ -636,11 +566,7 @@ function Remove-FalconUserGroupMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('user_uuids', 'user_group_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('user_uuids', 'user_group_id') }}
         }
         Invoke-Falcon @Param
     }

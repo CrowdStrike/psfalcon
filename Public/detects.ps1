@@ -38,11 +38,7 @@ function Edit-FalconDetection {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('show_in_ui', 'comment', 'assigned_to_uuid', 'status', 'ids')
-                }
-            }
+            Format   = @{ Body = @{ root = @('show_in_ui', 'comment', 'assigned_to_uuid', 'status', 'ids') }}
         }
         Invoke-Falcon @Param
     }
@@ -81,9 +77,7 @@ function Get-FalconDetection {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
@@ -92,9 +86,7 @@ function Get-FalconDetection {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('filter', 'q', 'sort', 'limit', 'offset')
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
             }
             Max      = 1000
         }

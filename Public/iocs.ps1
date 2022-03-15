@@ -30,9 +30,7 @@ function Get-FalconIocHost {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('type', 'offset', 'limit', 'value')
-            }
+            Format   = @{ Query = @('type', 'offset', 'limit', 'value') }
         }
         Invoke-Falcon @Param
     }
@@ -69,18 +67,14 @@ function Get-FalconIocProcess {
         [switch] $All
     )
     begin {
-        $Fields = @{
-            HostId = 'device_id'
-        }
+        $Fields = @{ HostId = 'device_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'device_id', 'offset', 'type', 'value', 'limit')
-            }
+            Format   = @{ Query = @('ids', 'device_id', 'offset', 'type', 'value', 'limit') }
         }
         Invoke-Falcon @Param
     }

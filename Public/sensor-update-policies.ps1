@@ -31,9 +31,7 @@ function Edit-FalconSensorUpdatePolicy {
         [string] $Description
     )
     begin {
-        $Fields = @{
-            Array = 'resources'
-        }
+        $Fields = @{ Array = 'resources' }
     }
     process {
         $Param = @{
@@ -62,9 +60,7 @@ function Get-FalconBuild {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('platform')
-            }
+            Format   = @{ Query = @('platform') }
         }
         Invoke-Falcon @Param
     }
@@ -74,8 +70,8 @@ function Get-FalconKernel {
     param(
         [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Mandatory = $true,
             Position = 1)]
-        [ValidateSet('architecture','base_package_supported_sensor_versions','distro','distro_version','flavor',
-            'release','vendor','version','ztl_supported_sensor_versions')]
+        [ValidateSet('architecture', 'base_package_supported_sensor_versions', 'distro', 'distro_version',
+            'flavor', 'release', 'vendor', 'version', 'ztl_supported_sensor_versions')]
         [string] $Field,
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 1)]
@@ -85,9 +81,9 @@ function Get-FalconKernel {
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 3)]
-        [ValidateSet('architecture.asc','architecture.desc','distro.asc','distro.desc','distro_version.asc',
-            'distro_version.desc','flavor.asc','flavor.desc','release.asc','release.desc','vendor.asc',
-            'vendor.desc','version.asc','version.desc')]
+        [ValidateSet('architecture.asc', 'architecture.desc', 'distro.asc', 'distro.desc', 'distro_version.asc',
+            'distro_version.desc', 'flavor.asc', 'flavor.desc', 'release.asc', 'release.desc', 'vendor.asc',
+            'vendor.desc', 'version.asc', 'version.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 3)]
@@ -116,9 +112,7 @@ function Get-FalconKernel {
                 $PSCmdlet.ParameterSetName
             }
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('offset', 'filter', 'sort', 'limit')
-            }
+            Format   = @{ Query = @('offset', 'filter', 'sort', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -167,9 +161,7 @@ function Get-FalconSensorUpdatePolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -217,9 +209,7 @@ function Get-FalconSensorUpdatePolicyMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'id', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'id', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -247,11 +237,7 @@ function Get-FalconUninstallToken {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('audit_message', 'device_id')
-                }
-            }
+            Format   = @{ Body = @{ root = @('audit_message', 'device_id') }}
         }
         Invoke-Falcon @Param
     }
@@ -274,9 +260,7 @@ function Invoke-FalconSensorUpdatePolicyAction {
         [string] $GroupId
     )
     begin {
-        $Fields = @{
-            name = 'action_name'
-        }
+        $Fields = @{ name = 'action_name' }
     }
     process {
         $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
@@ -296,9 +280,7 @@ function Invoke-FalconSensorUpdatePolicyAction {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body  = @{
-                    root = @('ids', 'action_parameters')
-                }
+                Body  = @{ root = @('ids', 'action_parameters') }
             }
         }
         Invoke-Falcon @Param
@@ -316,9 +298,7 @@ function New-FalconSensorUpdatePolicy {
                     Endpoint = '/policy/entities/sensor-update/v2:post'
                     Required = @('name','platform_name')
                     Content  = @('platform_name')
-                    Format   = @{
-                        platform_name = 'PlatformName'
-                    }
+                    Format   = @{ platform_name = 'PlatformName' }
                 }
                 Confirm-Parameter @Param
             }
@@ -371,9 +351,7 @@ function Remove-FalconSensorUpdatePolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -392,20 +370,14 @@ function Set-FalconSensorUpdatePrecedence {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            PlatformName = 'platform_name'
-        }
+        $Fields = @{ PlatformName = 'platform_name' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('platform_name', 'ids')
-                }
-            }
+            Format   = @{ Body = @{ root = @('platform_name', 'ids') }}
         }
         Invoke-Falcon @Param
     }

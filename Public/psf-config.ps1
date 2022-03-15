@@ -95,11 +95,7 @@ function Import-FalconConfig {
         [Parameter(Mandatory = $true, Position = 1)]
         [ValidatePattern('\.zip$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                $true
-            } else {
-                throw "Cannot find path '$_' because it does not exist."
-            }
+            if (Test-Path $_) { $true } else { throw "Cannot find path '$_' because it does not exist." }
         })]
         [string] $Path,
 

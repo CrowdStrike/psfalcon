@@ -45,9 +45,7 @@ function Get-FalconInstaller {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'limit', 'filter')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'limit', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -64,11 +62,7 @@ function Receive-FalconInstaller {
         [Parameter(ParameterSetName = '/sensors/entities/download-installer/v1:get', Mandatory = $true,
             Position = 2)]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -77,9 +71,7 @@ function Receive-FalconInstaller {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
             Format   = @{
                 Query = @('id')
                 Outfile = 'path'

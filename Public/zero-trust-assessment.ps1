@@ -10,9 +10,7 @@ function Get-FalconZta {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

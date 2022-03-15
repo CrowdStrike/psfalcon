@@ -14,9 +14,7 @@ function Edit-FalconContainerAwsAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'region')
-            }
+            Format   = @{ Query = @('ids', 'region') }
         }
         Invoke-Falcon @Param
     }
@@ -49,9 +47,7 @@ function Get-FalconContainerAwsAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'offset', 'limit', 'status')
-            }
+            Format   = @{ Query = @('ids', 'offset', 'limit', 'status') }
         }
         Invoke-Falcon @Param
     }
@@ -68,9 +64,7 @@ function Get-FalconContainerCloud {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('clouds')
-            }
+            Format   = @{ Query = @('clouds') }
         }
         Invoke-Falcon @Param
     }
@@ -131,18 +125,14 @@ function Invoke-FalconContainerScan {
         [string] $ScanType
     )
     begin {
-        $Fields = @{
-            ScanType = 'scan_type'
-        }
+        $Fields = @{ ScanType = 'scan_type' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('scan_type')
-            }
+            Format   = @{ Query = @('scan_type') }
         }
         Invoke-Falcon @Param
     }
@@ -160,20 +150,14 @@ function New-FalconContainerAwsAccount {
         [string] $Region
     )
     begin {
-        $Fields = @{
-            Id = 'account_id'
-        }
+        $Fields = @{ Id = 'account_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('account_id', 'region')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('account_id', 'region') }}
         }
         Invoke-Falcon @Param
     }
@@ -196,27 +180,19 @@ function Receive-FalconContainerYaml {
             Mandatory = $true, Position = 2)]
         [ValidatePattern('^*\.yaml$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name '$_' already exists." } else { $true }
         })]
         [string] $Path
     )
     begin {
-        $Fields = @{
-            ClusterName = 'cluster_name'
-        }
+        $Fields = @{ ClusterName = 'cluster_name' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/yaml'
-            }
+            Headers  = @{ Accept = 'application/yaml' }
             Format   = @{
                 Query   = @('cluster_name')
                 Outfile = 'path'
@@ -238,9 +214,7 @@ function Remove-FalconContainerAwsAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

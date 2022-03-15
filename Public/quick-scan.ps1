@@ -33,9 +33,7 @@ function Get-FalconQuickScan {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -60,20 +58,14 @@ function New-FalconQuickScan {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            Ids = 'samples'
-        }
+        $Fields = @{ Ids = 'samples' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('samples')
-                }
-            }
+            Format   = @{ Body = @{ root = @('samples') }}
         }
         Invoke-Falcon @Param
     }

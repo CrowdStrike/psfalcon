@@ -31,9 +31,7 @@ function Edit-FalconDeviceControlPolicy {
         [string] $Description
     )
     begin {
-        $Fields = @{
-            Array = 'resources'
-        }
+        $Fields = @{ Array = 'resources' }
     }
     process {
         $Param = @{
@@ -94,9 +92,7 @@ function Get-FalconDeviceControlPolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -144,9 +140,7 @@ function Get-FalconDeviceControlPolicyMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'id', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'id', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -169,9 +163,7 @@ function Invoke-FalconDeviceControlPolicyAction {
         [string] $GroupId
     )
     begin {
-        $Fields = @{
-            name = 'action_name'
-        }
+        $Fields = @{ name = 'action_name' }
     }
     process {
         $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
@@ -191,9 +183,7 @@ function Invoke-FalconDeviceControlPolicyAction {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body  = @{
-                    root = @('ids', 'action_parameters')
-                }
+                Body  = @{ root = @('ids', 'action_parameters') }
             }
         }
         Invoke-Falcon @Param
@@ -272,9 +262,7 @@ function Remove-FalconDeviceControlPolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -293,20 +281,14 @@ function Set-FalconDeviceControlPrecedence {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            PlatformName = 'platform_name'
-        }
+        $Fields = @{ PlatformName = 'platform_name' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('platform_name', 'ids')
-                }
-            }
+            Format   = @{ Body = @{ root = @('platform_name', 'ids') }}
         }
         Invoke-Falcon @Param
     }

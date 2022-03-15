@@ -49,11 +49,7 @@ function Copy-FalconDeviceControlPolicy {
         }
     }
     end {
-        if (($Output | Measure-Object).Count -gt 1) {
-            $Output[-1]
-        } else {
-            $Output
-        }
+        if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } else { $Output }
     }
 }
 function Copy-FalconFirewallPolicy {
@@ -96,11 +92,7 @@ function Copy-FalconFirewallPolicy {
         } catch {
             throw $_
         }
-        $Output = if (($Output | Measure-Object).Count -gt 1) {
-            $Output[-1]
-        } else {
-            $Output
-        }
+        $Output = if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } else { $Output }
         if ($Policy.settings -and !$Output.settings) {
             Get-FalconFirewallPolicy -Ids $Output.id -Include settings
         } else {
@@ -161,11 +153,7 @@ function Copy-FalconPreventionPolicy {
         }
     }
     end {
-        if (($Output | Measure-Object).Count -gt 1) {
-            $Output[-1]
-        } else {
-            $Output
-        }
+        if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } else { $Output }
     }
 }
 function Copy-FalconResponsePolicy {
@@ -211,11 +199,7 @@ function Copy-FalconResponsePolicy {
         }
     }
     end {
-        if (($Output | Measure-Object).Count -gt 1) {
-            $Output[-1]
-        } else {
-            $Output
-        }
+        if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } else { $Output }
     }
 }
 function Copy-FalconSensorUpdatePolicy {
@@ -260,10 +244,6 @@ function Copy-FalconSensorUpdatePolicy {
         }
     }
     end {
-        if (($Output | Measure-Object).Count -gt 1) {
-            $Output[-1]
-        } else {
-            $Output
-        }
+        if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } else { $Output }
     }
 }

@@ -24,23 +24,17 @@ function Edit-FalconIoaGroup {
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
             Format   = @{
-                Body = @{
-                    root = @('description', 'rulegroup_version', 'name', 'enabled', 'id', 'comment')
-                }
+                Body = @{ root = @('description', 'rulegroup_version', 'name', 'enabled', 'id', 'comment') }
             }
         }
         ($Param.Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
             # When not provided, add required fields using existing policy settings
             if (!$Param.Inputs.$_) {
                 if (!$Existing) {
-                    $Existing = Get-FalconIoaGroup -Ids $Param.Inputs.id -ErrorAction 'SilentlyContinue'
+                    $Existing = Get-FalconIoaGroup -Ids $Param.Inputs.id -EA 0
                 }
                 if ($Existing) {
-                    $Value = if ($_ -eq 'rulegroup_version') {
-                        $Existing.version
-                    } else {
-                        $Existing.$_
-                    }
+                    $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
                     $PSBoundParameters[$_] = $Value
                 }
             }
@@ -84,24 +78,16 @@ function Edit-FalconIoaRule {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('rulegroup_id', 'comment', 'rule_updates', 'rulegroup_version')
-                }
-            }
+            Format   = @{ Body = @{ root = @('rulegroup_id', 'comment', 'rule_updates', 'rulegroup_version') }}
         }
         ($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
             # When not provided, add required fields using existing policy settings
             if (!$Param.Inputs.$_) {
                 if (!$Existing) {
-                    $Existing = Get-FalconIoaGroup -Ids $Param.Inputs.rulegroup_id -ErrorAction 'SilentlyContinue'
+                    $Existing = Get-FalconIoaGroup -Ids $Param.Inputs.rulegroup_id -EA 0
                 }
                 if ($Existing) {
-                    $Value = if ($_ -eq 'rulegroup_version') {
-                        $Existing.version
-                    } else {
-                        $Existing.$_
-                    }
+                    $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
                     $PSBoundParameters[$_] = $Value
                 }
             }
@@ -127,9 +113,9 @@ function Get-FalconIoaGroup {
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups-full/v1:get', Position = 3)]
-        [ValidateSet('created_by.asc','created_by.desc','created_on.asc','created_on.desc','description.asc',
-            'description.desc','enabled.asc','enabled.desc','modified_by.asc','modified_by.desc',
-            'modified_on.asc','modified_on.desc','name.asc','name.desc')]
+        [ValidateSet('created_by.asc', 'created_by.desc', 'created_on.asc', 'created_on.desc', 'description.asc',
+            'description.desc', 'enabled.asc', 'enabled.desc', 'modified_by.asc', 'modified_by.desc',
+            'modified_on.asc', 'modified_on.desc', 'name.asc', 'name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rule-groups/v1:get', Position = 4)]
@@ -152,23 +138,17 @@ function Get-FalconIoaGroup {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter') }
         }
         @(Invoke-Falcon @Param).foreach{
-            if ($_.version -and $null -eq $_.version) {
-                $_.version = 0
-            }
+            if ($_.version -and $null -eq $_.version) { $_.version = 0 }
             $_
         }
     }
@@ -201,9 +181,7 @@ function Get-FalconIoaPlatform {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'offset', 'limit')
-            }
+            Format   = @{ Query = @('ids', 'offset', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -222,15 +200,15 @@ function Get-FalconIoaRule {
         [string] $Query,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 3)]
-        [ValidateSet('rules.created_by.asc','rules.created_by.desc','rules.created_on.asc',
-            'rules.created_on.desc','rules.current_version.action_label.asc',
-            'rules.current_version.action_label.desc','rules.current_version.description.asc',
-            'rules.current_version.description.desc','rules.current_version.modified_by.asc',
-            'rules.current_version.modified_by.desc','rules.current_version.modified_on.asc',
-            'rules.current_version.modified_on.desc','rules.current_version.name.asc',
-            'rules.current_version.name.desc','rules.current_version.pattern_severity.asc',
-            'rules.current_version.pattern_severity.desc','rules.enabled.asc','rules.enabled.desc',
-            'rules.ruletype_name.asc','rules.ruletype_name.desc')]
+        [ValidateSet('rules.created_by.asc', 'rules.created_by.desc', 'rules.created_on.asc',
+            'rules.created_on.desc', 'rules.current_version.action_label.asc',
+            'rules.current_version.action_label.desc', 'rules.current_version.description.asc',
+            'rules.current_version.description.desc', 'rules.current_version.modified_by.asc',
+            'rules.current_version.modified_by.desc', 'rules.current_version.modified_on.asc',
+            'rules.current_version.modified_on.desc', 'rules.current_version.name.asc',
+            'rules.current_version.name.desc', 'rules.current_version.pattern_severity.asc',
+            'rules.current_version.pattern_severity.desc', 'rules.enabled.asc', 'rules.enabled.desc',
+            'rules.ruletype_name.asc', 'rules.ruletype_name.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/ioarules/queries/rules/v1:get', Position = 4)]
@@ -250,9 +228,7 @@ function Get-FalconIoaRule {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
@@ -261,9 +237,7 @@ function Get-FalconIoaRule {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('limit', 'sort', 'q', 'offset', 'filter')
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
             }
         }
         Invoke-Falcon @Param
@@ -298,9 +272,7 @@ function Get-FalconIoaSeverity {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'offset', 'limit')
-            }
+            Format   = @{ Query = @('ids', 'offset', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -333,9 +305,7 @@ function Get-FalconIoaType {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'offset', 'limit')
-            }
+            Format   = @{ Query = @('ids', 'offset', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -361,11 +331,7 @@ function New-FalconIoaGroup {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('description', 'platform', 'name', 'comment')
-                }
-            }
+            Format   = @{ Body = @{ root = @('description', 'platform', 'name', 'comment') }}
         }
         Invoke-Falcon @Param
     }
@@ -440,9 +406,7 @@ function Remove-FalconIoaGroup {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'comment')
-            }
+            Format   = @{ Query = @('ids', 'comment') }
         }
         Invoke-Falcon @Param
     }
@@ -461,18 +425,14 @@ function Remove-FalconIoaRule {
         [string] $Comment
     )
     begin {
-        $Fields = @{
-            RuleGroupId = 'rule_group_id'
-        }
+        $Fields = @{ RuleGroupId = 'rule_group_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'rule_group_id', 'comment')
-            }
+            Format   = @{ Query = @('ids', 'rule_group_id', 'comment') }
         }
         Invoke-Falcon @Param
     }
@@ -489,11 +449,7 @@ function Test-FalconIoaRule {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('fields')
-                }
-            }
+            Format   = @{ Body = @{ root = @('fields') }}
         }
         Invoke-Falcon @Param
     }

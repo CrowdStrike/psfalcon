@@ -11,18 +11,14 @@ function Get-FalconDiscoverAzureAccount {
         [string] $ScanType
     )
     begin {
-        $Fields = @{
-            ScanType = 'scan-type'
-        }
+        $Fields = @{ ScanType = 'scan-type' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'scan-type')
-            }
+            Format   = @{ Query = @('ids', 'scan-type') }
         }
         Invoke-Falcon @Param
     }
@@ -40,18 +36,14 @@ function Get-FalconDiscoverGcpAccount {
         [string] $ScanType
     )
     begin {
-        $Fields = @{
-            ScanType = 'scan-type'
-        }
+        $Fields = @{ ScanType = 'scan-type' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'scan-type')
-            }
+            Format   = @{ Query = @('ids', 'scan-type') }
         }
         Invoke-Falcon @Param
     }
@@ -78,11 +70,7 @@ function New-FalconDiscoverAzureAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('subscription_id', 'tenant_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('subscription_id', 'tenant_id') }}
         }
         Invoke-Falcon @Param
     }
@@ -96,20 +84,14 @@ function New-FalconDiscoverGcpAccount {
         [string] $ParentId
     )
     begin {
-        $Fields = @{
-            ParentId = 'parent_id'
-        }
+        $Fields = @{ ParentId = 'parent_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('parent_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('parent_id') }}
         }
         Invoke-Falcon @Param
     }
@@ -121,11 +103,7 @@ function Receive-FalconDiscoverAzureScript {
             Mandatory = $true, Position = 1)]
         [ValidatePattern('^*\.sh$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -134,12 +112,8 @@ function Receive-FalconDiscoverAzureScript {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
-            Format   = @{
-                Outfile = 'path'
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
+            Format   = @{ Outfile = 'path' }
         }
         Invoke-Falcon @Param
     }
@@ -151,11 +125,7 @@ function Receive-FalconDiscoverGcpScript {
             Mandatory = $true, Position = 1)]
         [ValidatePattern('^*\.sh$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -164,12 +134,8 @@ function Receive-FalconDiscoverGcpScript {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
-            Format   = @{
-                Outfile = 'path'
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
+            Format   = @{ Outfile = 'path' }
         }
         Invoke-Falcon @Param
     }
@@ -187,9 +153,7 @@ function Update-FalconDiscoverAzureAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('id')
-            }
+            Format   = @{ Query = @('id') }
         }
         Invoke-Falcon @Param
     }

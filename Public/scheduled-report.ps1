@@ -19,8 +19,8 @@ function Get-FalconScheduledReport {
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 3)]
-        [ValidateSet('created_on.asc','created_on.desc','last_updated_on.asc','last_updated_on.desc',
-            'last_execution_on.asc','last_execution_on.desc','next_execution_on.asc','next_execution_on.desc')]
+        [ValidateSet('created_on.asc', 'created_on.desc', 'last_updated_on.asc', 'last_updated_on.desc',
+            'last_execution_on.asc', 'last_execution_on.desc', 'next_execution_on.asc', 'next_execution_on.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 4)]
@@ -49,18 +49,14 @@ function Get-FalconScheduledReport {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'q')
-            }
+            Format   = @{ Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'q') }
         }
         if ($Param.Inputs.Execution -and $Param.Inputs.Detailed) {
             $Param.Inputs.Remove('Detailed')
@@ -83,9 +79,7 @@ function Invoke-FalconScheduledReport {
         [string] $Id
     )
     begin {
-        if (!$Script:Falcon) {
-            Request-FalconToken
-        }
+        if (!$Script:Falcon.Hostname) { Request-FalconToken }
     }
     process {
         $Param = @{
@@ -113,11 +107,7 @@ function Receive-FalconScheduledReport {
             Position = 2)]
         [ValidatePattern('\.(csv|json)$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -128,9 +118,7 @@ function Receive-FalconScheduledReport {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
             Format   = @{
                 Query   = @('ids')
                 Outfile = 'path'
@@ -148,9 +136,7 @@ function Redo-FalconScheduledReport {
         [string] $Id
     )
     begin {
-        if (!$Script:Falcon) {
-            Request-FalconToken
-        }
+        if (!$Script:Falcon.Hostname) { Request-FalconToken }
     }
     process {
         $Param = @{

@@ -5,9 +5,10 @@ function Get-FalconQueue {
         [int] $Days,
 
         [Parameter(Position = 2)]
-        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname','last_seen',
-            'local_ip','mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
-            'reduced_functionality_mode','serial_number','system_manufacturer','system_product_name','tags')]
+        [ValidateSet('agent_version', 'cid', 'external_ip', 'first_seen', 'host_hidden_status', 'hostname',
+            'last_seen', 'local_ip', 'mac_address', 'os_build', 'os_version', 'platform_name', 'product_type',
+            'product_type_desc', 'reduced_functionality_mode', 'serial_number', 'system_manufacturer',
+            'system_product_name', 'tags')]
         [array] $Include
     )
     begin {
@@ -78,11 +79,7 @@ function Get-FalconQueue {
                     } else {
                         @('command_complete', 'command_stdout', 'command_stderr').foreach{
                             # Add empty command output
-                            $Value = if ($_ -eq 'command_complete') {
-                                $false
-                            } else {
-                                $null
-                            }
+                            $Value = if ($_ -eq 'command_complete') { $false } else { $null }
                             Add-Property -Object $Item -Name $_ -Value $Value
                         }
                     }
@@ -101,9 +98,7 @@ function Get-FalconQueue {
         } catch {
             throw $_
         } finally {
-            if (Test-Path $OutputFile) {
-                Get-ChildItem $OutputFile
-            }
+            if (Test-Path $OutputFile) { Get-ChildItem $OutputFile }
         }
     }
 }
@@ -249,9 +244,7 @@ function Invoke-FalconDeploy {
             }
             try {
                 for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 1000) {
-                    $Param = @{
-                        HostIds = ($HostArray[$i..($i + 999)]).device_id
-                    }
+                    $Param = @{ HostIds = ($HostArray[$i..($i + 999)]).device_id }
                     switch -Regex ($PSBoundParameters.Keys) {
                         '(QueueOffline|Timeout)' { $Param[$_] = $PSBoundParameters.$_ }
                     }
@@ -366,9 +359,7 @@ function Invoke-FalconDeploy {
             } catch {
                 throw $_
             } finally {
-                if (Test-Path $OutputFile) {
-                    Get-ChildItem $OutputFile
-                }
+                if (Test-Path $OutputFile) { Get-ChildItem $OutputFile }
             }
         }
     }
@@ -379,11 +370,11 @@ function Invoke-FalconRtr {
         [Parameter(ParameterSetName = 'HostId', Mandatory = $true, Position = 1)]
         [Parameter(ParameterSetName = 'HostIds', Mandatory = $true, Position = 1)]
         [Parameter(ParameterSetName = 'GroupId', Mandatory = $true, Position = 1)]
-        [ValidateSet('cat','cd','clear','cp','csrutil','cswindiag','encrypt','env','eventlog','filehash','get',
-            'getsid','history','ifconfig','ipconfig','kill','ls','map','memdump','mkdir','mount','mv','netstat',
-            'ps','put','put-and-run','reg delete','reg load','reg query','reg set','reg unload','restart','rm',
-            'run','runscript','shutdown','umount','unmap','update history','update install','update list',
-            'users','xmemdump','zip')]
+        [ValidateSet('cat', 'cd', 'clear', 'cp', 'csrutil', 'cswindiag', 'encrypt', 'env', 'eventlog', 'filehash',
+            'get', 'getsid', 'history', 'ifconfig', 'ipconfig', 'kill', 'ls', 'map', 'memdump', 'mkdir', 'mount',
+            'mv', 'netstat', 'ps', 'put', 'put-and-run', 'reg delete', 'reg load', 'reg query', 'reg set',
+            'reg unload', 'restart', 'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap', 'update history',
+            'update install', 'update list', 'users', 'xmemdump', 'zip')]
         [string] $Command,
 
         [Parameter(ParameterSetName = 'HostId', Position = 2)]

@@ -22,11 +22,7 @@ function ConvertTo-FalconIoaExclusion {
             pattern_name = $_.behaviors.display_name
             cl_regex     = [regex]::Escape($_.behaviors.cmdline) -replace '(\\ {1,})+','\s+'
             ifn_regex    = [regex]::Escape($_.behaviors.filepath) -replace '\\\\Device\\\\HarddiskVolume\d+','.*'
-            groups       = if ($_.device.groups) {
-                $_.device.groups
-            } else {
-                'all'
-            }
+            groups       = if ($_.device.groups) { $_.device.groups } else { 'all' }
             comment     = "Created from $($_.detection_id) by $((Show-FalconModule).UserAgent)."
         }
     }
@@ -71,9 +67,7 @@ function Edit-FalconIoaExclusion {
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
-                Body = @{
-                    root = @('cl_regex', 'ifn_regex', 'groups', 'name', 'id', 'description', 'comment')
-                }
+                Body = @{ root = @('cl_regex', 'ifn_regex', 'groups', 'name', 'id', 'description', 'comment') }
             }
         }
         Invoke-Falcon @Param
@@ -118,9 +112,7 @@ function Get-FalconIoaExclusion {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -205,9 +197,7 @@ function Remove-FalconIoaExclusion {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'comment')
-            }
+            Format   = @{ Query = @('ids', 'comment') }
         }
         Invoke-Falcon @Param
     }

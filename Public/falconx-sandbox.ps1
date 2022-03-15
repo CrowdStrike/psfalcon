@@ -38,9 +38,7 @@ function Get-FalconReport {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('filter', 'offset', 'sort', 'ids', 'limit')
-            }
+            Format   = @{ Query = @('filter', 'offset', 'sort', 'ids', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -80,9 +78,7 @@ function Get-FalconSubmission {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('filter', 'offset', 'sort', 'ids', 'limit')
-            }
+            Format   = @{ Query = @('filter', 'offset', 'sort', 'ids', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -197,11 +193,7 @@ function Receive-FalconArtifact {
 
         [Parameter(ParameterSetName = '/falconx/entities/artifacts/v1:get', Mandatory = $true, Position = 2)]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -210,12 +202,8 @@ function Receive-FalconArtifact {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
-            Format   = @{
-                Query = @('name', 'id')
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
+            Format   = @{ Query = @('name', 'id') }
         }
         Invoke-Falcon @Param
     }
@@ -227,18 +215,14 @@ function Remove-FalconReport {
         [string] $Id
     )
     begin {
-        $Fields = @{
-            Id = 'ids'
-        }
+        $Fields = @{ Id = 'ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

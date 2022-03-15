@@ -93,16 +93,16 @@ function Get-FalconIoc {
 
         [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get', Position = 2)]
         [Parameter(ParameterSetName = '/iocs/combined/indicator/v1:get', Position = 2)]
-        [ValidateSet('action.asc','action.desc','applied_globally.asc','applied_globally.desc',
-            'metadata.av_hits.asc','metadata.av_hits.desc','metadata.company_name.raw.asc',
-            'metadata.company_name.raw.desc','created_by.asc','created_by.desc','created_on.asc',
-            'created_on.desc','expiration.asc','expiration.desc','expired.asc','expired.desc',
-            'metadata.filename.raw.asc','metadata.filename.raw.desc','modified_by.asc','modified_by.desc',
-            'modified_on.asc','modified_on.desc','metadata.original_filename.raw.asc',
-            'metadata.original_filename.raw.desc','metadata.product_name.raw.asc',
-            'metadata.product_name.raw.desc','metadata.product_version.asc','metadata.product_version.desc',
-            'severity_number.asc','severity_number.desc','source.asc','source.desc','type.asc','type.desc',
-            'value.asc','value.desc')]
+        [ValidateSet('action.asc', 'action.desc', 'applied_globally.asc', 'applied_globally.desc',
+            'metadata.av_hits.asc', 'metadata.av_hits.desc', 'metadata.company_name.raw.asc',
+            'metadata.company_name.raw.desc', 'created_by.asc', 'created_by.desc', 'created_on.asc',
+            'created_on.desc', 'expiration.asc', 'expiration.desc', 'expired.asc', 'expired.desc',
+            'metadata.filename.raw.asc', 'metadata.filename.raw.desc', 'modified_by.asc', 'modified_by.desc',
+            'modified_on.asc', 'modified_on.desc', 'metadata.original_filename.raw.asc',
+            'metadata.original_filename.raw.desc', 'metadata.product_name.raw.asc',
+            'metadata.product_name.raw.desc', 'metadata.product_version.asc', 'metadata.product_version.desc',
+            'severity_number.asc', 'severity_number.desc', 'source.asc', 'source.desc', 'type.asc', 'type.desc',
+            'value.asc', 'value.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/iocs/queries/indicators/v1:get', Position = 3)]
@@ -133,9 +133,7 @@ function Get-FalconIoc {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'filter', 'offset', 'limit', 'sort', 'after')
-            }
+            Format   = @{ Query = @('ids', 'filter', 'offset', 'limit', 'sort', 'after') }
         }
         Invoke-Falcon @Param
     }
@@ -153,9 +151,7 @@ function New-FalconIoc {
                     Required = @('type', 'value', 'action', 'platforms')
                     Content  = @('action', 'platforms', 'severity', 'type')
                     Pattern  = @('expiration', 'host_groups')
-                    Format   = @{
-                        host_groups = 'HostGroups'
-                    }
+                    Format   = @{ host_groups = 'HostGroups' }
                 }
                 Confirm-Parameter @Param
             }
@@ -263,9 +259,7 @@ function Remove-FalconIoc {
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = $PSBoundParameters
-                Format    = @{
-                    Query = @('ids', 'filter', 'comment')
-                }
+                Format    = @{ Query = @('ids', 'filter', 'comment') }
             }
             Invoke-Falcon @Param
         } else {

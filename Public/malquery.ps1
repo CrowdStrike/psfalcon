@@ -6,18 +6,14 @@ function Get-FalconMalQuery {
         [array] $Id
     )
     begin {
-        $Fields = @{
-            Id = 'ids'
-        }
+        $Fields = @{ Id = 'ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -46,9 +42,7 @@ function Get-FalconMalQuerySample {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -66,11 +60,7 @@ function Group-FalconMalQuerySample {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('samples')
-                }
-            }
+            Format   = @{ Body = @{ root = @('samples') }}
         }
         Invoke-Falcon @Param
     }
@@ -144,18 +134,12 @@ function Invoke-FalconMalQuery {
         $Options = @{}
         @('FilterFiletypes', 'FilterMeta', 'Limit', 'MaxDate', 'MaxSize', 'MinDate', 'MinSize').foreach{
             if ($PSBoundParameters.$_) {
-                $Key = if ($_ -eq 'Limit') {
-                    'Limit'
-                } else {
-                    $Fields.$_
-                }
+                $Key = if ($_ -eq 'Limit') { 'Limit' } else { $Fields.$_ }
                 $Options[$Key] = $PSBoundParameters.$_
                 [void] $PSBoundParameters.Remove($_)
             }
         }
-        if ($Options.Keys) {
-            $PSBoundParameters.Add('options', $Options)
-        }
+        if ($Options.Keys) { $PSBoundParameters.Add('options', $Options) }
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
@@ -179,18 +163,12 @@ function Receive-FalconMalQuerySample {
 
         [Parameter(ParameterSetName = '/malquery/entities/download-files/v1:get', Mandatory = $true, Position = 2)]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
     begin {
-        $Fields = @{
-            Id = 'ids'
-        }
+        $Fields = @{ Id = 'ids' }
     }
     process {
         if ($PSBoundParameters.Id -match '^\w{64}$') {
@@ -204,12 +182,8 @@ function Receive-FalconMalQuerySample {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $Endpoint
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                Accept = $Accept
-            }
-            Format   = @{
-                Query = @('ids')
-            }
+            Headers  = @{ Accept = $Accept }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

@@ -32,16 +32,10 @@ function Request-FalconToken {
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 5)]
         [ValidateScript({
             @($_.Keys).foreach{
-                if ($_ -notmatch '^(Enable|Token|Uri)$') {
-                    throw "Unexpected key in 'Collector' object. ['$_']"
-                }
+                if ($_ -notmatch '^(Enable|Token|Uri)$') { throw "Unexpected key in 'Collector' object. ['$_']" }
             }
             foreach ($Key in @('Token','Uri')) {
-                if ($_.Keys -notcontains $Key) {
-                    throw "'Collector' requires '$Key'."
-                } else {
-                    $true
-                }
+                if ($_.Keys -notcontains $Key) { throw "'Collector' requires '$Key'." } else { $true }
             }
         })]
         [System.Collections.Hashtable] $Collector
@@ -143,9 +137,7 @@ function Request-FalconToken {
                 }
                 Body = "client_id=$($Script:Falcon.ClientId)&client_secret=$($Script:Falcon.ClientSecret)"
             }
-            if ($Script:Falcon.MemberCid) {
-                $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)"
-            }
+            if ($Script:Falcon.MemberCid) { $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)" }
             $Request = $Script:Falcon.Api.Invoke($Param)
             if ($Request.Result) {
                 $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
@@ -210,9 +202,7 @@ function Revoke-FalconToken {
             Write-Result -Request $Request
             [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
-        @('ClientId', 'ClientSecret', 'MemberCid').foreach{
-            [void] $Script:Falcon.Remove("$_")
-        }
+        @('ClientId', 'ClientSecret', 'MemberCid').foreach{ [void] $Script:Falcon.Remove("$_") }
     }
 }
 function Test-FalconToken {
@@ -222,11 +212,7 @@ function Test-FalconToken {
         if ($Script:Falcon) {
             [PSCustomObject] @{
                 Token     = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
-                ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(60))) {
-                    $true
-                } else {
-                    $false
-                }
+                    ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(60))) { $true } else { $false }
                 Hostname  = $Script:Falcon.Hostname
                 ClientId  = $Script:Falcon.ClientId
                 MemberCid = $Script:Falcon.MemberCid

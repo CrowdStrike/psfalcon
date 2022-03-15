@@ -45,10 +45,6 @@ function Find-FalconDuplicate {
         $Output = Group-Selection @Param
     }
     end {
-        if ($Output) {
-            $Output
-        } else {
-            Write-Warning "No duplicates found."
-        }
+        if ($Output) { $Output } else { Write-Warning "No duplicates found." }
     }
 }

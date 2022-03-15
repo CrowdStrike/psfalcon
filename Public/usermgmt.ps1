@@ -21,9 +21,7 @@ function Add-FalconRole {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('user_uuid')
-                Body  = @{
-                    root = @('roleIds')
-                }
+                Body  = @{ root = @('roleIds') }
             }
         }
         Invoke-Falcon @Param
@@ -45,9 +43,7 @@ function Edit-FalconUser {
         [string] $LastName
     )
     begin {
-        $Fields = @{
-            Id = 'user_uuid'
-        }
+        $Fields = @{ Id = 'user_uuid' }
     }
     process {
         $Param = @{
@@ -56,9 +52,7 @@ function Edit-FalconUser {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('user_uuid')
-                Body  = @{
-                    root = @('firstName', 'lastName')
-                }
+                Body  = @{ root = @('firstName', 'lastName') }
             }
         }
         Invoke-Falcon @Param
@@ -81,18 +75,14 @@ function Get-FalconRole {
         [switch] $Detailed
     )
     begin {
-        $Fields = @{
-            UserId = 'user_uuid'
-        }
+        $Fields = @{ UserId = 'user_uuid' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'user_uuid')
-            }
+            Format   = @{ Query = @('ids', 'user_uuid') }
         }
         Invoke-Falcon @Param
     }
@@ -107,11 +97,7 @@ function Get-FalconUser {
         [Parameter(ParameterSetName = '/users/queries/user-uuids-by-email/v1:get', Mandatory = $true,
             Position = 1)]
         [ValidateScript({
-            if ((Test-RegexValue $_) -eq 'email') {
-                $true
-            } else {
-                throw "'$_' is not a valid email address."
-            }
+            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
         [array] $Usernames,
 
@@ -127,29 +113,21 @@ function Get-FalconUser {
         
     )
     begin {
-        $Fields = @{
-            Usernames = 'uid'
-        }
+        $Fields = @{ Usernames = 'uid' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'uid')
-            }
+            Format   = @{ Query = @('ids', 'uid') }
         }
         $Result = Invoke-Falcon @Param
         if ($PSBoundParameters.Include) {
-            if (!$Result.uuid) {
-                $Result = @($Result).foreach{
-                    ,[PSCustomObject] @{ uuid = $_ }
-                }
-            }
+            if (!$Result.uuid) { $Result = @($Result).foreach{ ,[PSCustomObject] @{ uuid = $_ }}}
             if ($PSBoundParameters.Include -contains 'roles') {
                 @($Result).foreach{
-                    Add-Property -Object $_ -Name 'roles' -Value @(& Get-FalconRole -UserId $_.uuid)
+                    Add-Property -Object $_ -Name 'roles' -Value @(Get-FalconRole -UserId $_.uuid)
                 }
             }
         }
@@ -161,11 +139,7 @@ function New-FalconUser {
     param(
         [Parameter(ParameterSetName = '/users/entities/users/v1:post', Mandatory = $true, Position = 1)]
         [ValidateScript({
-            if ((Test-RegexValue $_) -eq 'email') {
-                $true
-            } else {
-                throw "'$_' is not a valid email address."
-            }
+            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
         [string] $Username,
 
@@ -180,20 +154,14 @@ function New-FalconUser {
         [string] $Password
     )
     begin {
-        $Fields = @{
-            Username = 'uid'
-        }
+        $Fields = @{ Username = 'uid' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('firstName', 'uid', 'lastName', 'password')
-                }
-            }
+            Format   = @{ Body = @{ root = @('firstName', 'uid', 'lastName', 'password') }}
         }
         Invoke-Falcon @Param
     }
@@ -211,18 +179,14 @@ function Remove-FalconRole {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            UserId = 'user_uuid'
-        }
+        $Fields = @{ UserId = 'user_uuid' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('user_uuid', 'ids')
-            }
+            Format   = @{ Query = @('user_uuid', 'ids') }
         }
         Invoke-Falcon @Param
     }
@@ -235,18 +199,14 @@ function Remove-FalconUser {
         [string] $Id
     )
     begin {
-        $Fields = @{
-            Id = 'user_uuid'
-        }
+        $Fields = @{ Id = 'user_uuid' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('user_uuid')
-            }
+            Format   = @{ Query = @('user_uuid') }
         }
         Invoke-Falcon @Param
     }

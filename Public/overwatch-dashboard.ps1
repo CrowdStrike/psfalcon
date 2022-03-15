@@ -11,9 +11,7 @@ function Get-FalconOverWatchEvent {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('filter')
-            }
+            Format   = @{ Query = @('filter') }
         }
         Invoke-Falcon @Param
     }
@@ -31,9 +29,7 @@ function Get-FalconOverWatchDetection {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('filter')
-            }
+            Format   = @{ Query = @('filter') }
         }
         Invoke-Falcon @Param
     }
@@ -51,9 +47,7 @@ function Get-FalconOverWatchIncident {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('filter')
-            }
+            Format   = @{ Query = @('filter') }
         }
         Invoke-Falcon @Param
     }

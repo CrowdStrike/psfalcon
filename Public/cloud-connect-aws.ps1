@@ -11,9 +11,7 @@ function Confirm-FalconDiscoverAwsAccess {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -105,17 +103,13 @@ function Get-FalconDiscoverAwsAccount {
 
         [Parameter(ParameterSetName = '/cloud-connect-aws/queries/accounts/v1:get')]
         [switch] $Total
-
-        
     )
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'limit', 'filter')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'limit', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -198,9 +192,7 @@ function Remove-FalconDiscoverAwsAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -227,11 +219,7 @@ function Update-FalconDiscoverAwsSetting {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cloudtrail_bucket_owner_id', 'static_external_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('cloudtrail_bucket_owner_id', 'static_external_id') }}
         }
         Invoke-Falcon @Param
     }

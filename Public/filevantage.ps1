@@ -33,9 +33,7 @@ function Get-FalconFimChange {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('filter', 'sort', 'limit', 'offset', 'ids')
-            }
+            Format   = @{ Query = @('filter', 'sort', 'limit', 'offset', 'ids') }
         }
         Invoke-Falcon @Param
     }

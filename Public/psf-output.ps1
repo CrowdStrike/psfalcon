@@ -101,9 +101,7 @@ function Export-FalconReport {
         }
     }
     end {
-        if ($ExportParam -and (Test-Path $ExportParam.Path)) {
-            Get-ChildItem $ExportParam.Path
-        }
+        if ($ExportParam -and (Test-Path $ExportParam.Path)) { Get-ChildItem $ExportParam.Path }
     }
 }
 function Send-FalconWebhook {
@@ -139,26 +137,18 @@ function Send-FalconWebhook {
                             title = $_.Name
                             value = if ($_.Value -is [boolean]) {
                                 # Convert [boolean] to [string]
-                                if ($_.Value -eq $true) {
-                                    'true'
-                                } else {
-                                    'false'
-                                }
+                                if ($_.Value -eq $true) { 'true' } else { 'false' }
                             } else {
-                                if ($null -eq $_.Value) {
-                                    # Add [string] value when $null
-                                    'null'
-                                } else {
-                                    $_.Value
-                                }
+                                # Add [string] value when $null
+                                if ($null -eq $_.Value) { 'null' } else { $_.Value }
                             }
                             short = $false
                         }
                     }
                     ,@{
-                        username = "PSFalcon: $($Script:Falcon.ClientId)"
-                        icon_url = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
-                        text     = $PSBoundParameters.Label
+                        username    = "PSFalcon: $($Script:Falcon.ClientId)"
+                        icon_url    = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
+                        text        = $PSBoundParameters.Label
                         attachments = @(
                             @{
                                 fallback = 'Send-FalconWebhook'
@@ -174,9 +164,7 @@ function Send-FalconWebhook {
                 $Param = @{
                     Path    = $PSBoundParameters.Path
                     Method  = 'post'
-                    Headers = @{
-                        ContentType = 'application/json'
-                    }
+                    Headers = @{ ContentType = 'application/json' }
                     Body = ConvertTo-Json -InputObject $Item -Depth 32
                 }
                 $Request = $Script:Falcon.Api.Invoke($Param)
@@ -203,14 +191,8 @@ function Show-FalconMap {
         $FalconUI = "$($Script:Falcon.Hostname -replace 'api', 'falcon')"
         $Inputs = ($PSBoundParameters.Indicators).foreach{
             $Type = Test-RegexValue $_
-            $Value = if ($Type -match '^(domain|md5|sha256)$') {
-                $_.ToLower()
-            } else {
-                $_
-            }
-            if ($Type) {
-                "$($Type):'$Value'"
-            }
+            $Value = if ($Type -match '^(domain|md5|sha256)$') { $_.ToLower() } else { $_ }
+            if ($Type) { "$($Type):'$Value'" }
         }
     }
     process {

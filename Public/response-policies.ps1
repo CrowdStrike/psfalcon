@@ -31,9 +31,7 @@ function Edit-FalconResponsePolicy {
         [string] $Description
     )
     begin {
-        $Fields = @{
-            Array = 'resources'
-        }
+        $Fields = @{ Array = 'resources' }
     }
     process {
         $Param = @{
@@ -94,9 +92,7 @@ function Get-FalconResponsePolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -144,9 +140,7 @@ function Get-FalconResponsePolicyMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'id', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'id', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -169,9 +163,7 @@ function Invoke-FalconResponsePolicyAction {
         [string] $GroupId
     )
     begin {
-        $Fields = @{
-            name = 'action_name'
-        }
+        $Fields = @{ name = 'action_name' }
     }
     process {
         $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
@@ -190,9 +182,7 @@ function Invoke-FalconResponsePolicyAction {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body  = @{
-                    root = @('ids', 'action_parameters')
-                }
+                Body  = @{ root = @('ids', 'action_parameters') }
             }
         }
         Invoke-Falcon @Param
@@ -210,9 +200,7 @@ function New-FalconResponsePolicy {
                     Endpoint = '/policy/entities/response/v1:post'
                     Required = @('name','platform_name')
                     Content  = @('platform_name')
-                    Format   = @{
-                        platform_name = 'PlatformName'
-                    }
+                    Format   = @{ platform_name = 'PlatformName' }
                 }
                 Confirm-Parameter @Param
             }
@@ -270,9 +258,7 @@ function Remove-FalconResponsePolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -291,20 +277,14 @@ function Set-FalconResponsePrecedence {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            PlatformName = 'platform_name'
-        }
+        $Fields = @{ PlatformName = 'platform_name' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('platform_name', 'ids')
-                }
-            }
+            Format   = @{ Body = @{ root = @('platform_name', 'ids') }}
         }
         Invoke-Falcon @Param
     }

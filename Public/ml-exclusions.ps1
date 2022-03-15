@@ -20,11 +20,7 @@ function ConvertTo-FalconMlExclusion {
         [PSCustomObject] @{
             value         = $_.behaviors.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
             excluded_from = @('blocking')
-            groups        = if ($_.device.groups) {
-                $_.device.groups
-            } else {
-                'all'
-            }
+            groups        = if ($_.device.groups) { $_.device.groups } else { 'all' }
             comment       = "Created from $($_.detection_id) by $((Show-FalconModule).UserAgent)."
         }
     }
@@ -48,20 +44,14 @@ function Edit-FalconMlExclusion {
         [string] $Comment
     )
     begin {
-        $Fields = @{
-            GroupIds = 'groups'
-        }
+        $Fields = @{ GroupIds = 'groups' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('groups', 'id', 'value', 'comment')
-                }
-            }
+            Format   = @{ Body = @{ root = @('groups', 'id', 'value', 'comment') }}
         }
         Invoke-Falcon @Param
     }
@@ -104,9 +94,7 @@ function Get-FalconMlExclusion {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -145,11 +133,7 @@ function New-FalconMlExclusion {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('groups', 'value', 'comment', 'excluded_from')
-                }
-            }
+            Format   = @{ Body = @{ root = @('groups', 'value', 'comment', 'excluded_from') }}
         }
         Invoke-Falcon @Param
     }
@@ -169,9 +153,7 @@ function Remove-FalconMlExclusion {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'comment')
-            }
+            Format   = @{ Query = @('ids', 'comment') }
         }
         Invoke-Falcon @Param
     }

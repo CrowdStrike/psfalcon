@@ -17,20 +17,14 @@ function Edit-FalconSvExclusion {
         [string] $Comment
     )
     begin {
-        $Fields = @{
-            GroupIds = 'groups'
-        }
+        $Fields = @{ GroupIds = 'groups' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('groups', 'id', 'value', 'comment')
-                }
-            }
+            Format   = @{ Body = @{ root = @('groups', 'id', 'value', 'comment') }}
         }
         Invoke-Falcon @Param
     }
@@ -73,9 +67,7 @@ function Get-FalconSvExclusion {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -94,20 +86,14 @@ function New-FalconSvExclusion {
         [string] $Comment
     )
     begin {
-        $Fields = @{
-            GroupIds = 'groups'
-        }
+        $Fields = @{ GroupIds = 'groups' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('groups', 'value', 'comment')
-                }
-            }
+            Format   = @{ Body = @{ root = @('groups', 'value', 'comment') }}
         }
         Invoke-Falcon @Param
     }
@@ -126,9 +112,7 @@ function Remove-FalconSvExclusion {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'comment')
-            }
+            Format   = @{ Query = @('ids', 'comment') }
         }
         Invoke-Falcon @Param
     }

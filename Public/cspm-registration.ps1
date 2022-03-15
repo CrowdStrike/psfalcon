@@ -20,11 +20,7 @@ function Edit-FalconHorizonAwsAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('account_id', 'cloudtrail_region')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('account_id', 'cloudtrail_region') }}
         }
         Invoke-Falcon @Param
     }
@@ -38,7 +34,7 @@ function Edit-FalconHorizonAzureAccount {
         [string] $Id,
 
         [Parameter(ParameterSetName = '/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
-                Mandatory = $true, Position = 1)]
+            Mandatory = $true, Position = 1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string] $SubscriptionId,
 
@@ -59,9 +55,7 @@ function Edit-FalconHorizonAzureAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('tenant-id', 'id', 'subscription_id')
-            }
+            Format   = @{ Query = @('tenant-id', 'id', 'subscription_id') }
         }
         Invoke-Falcon @Param
     }
@@ -80,20 +74,14 @@ function Edit-FalconHorizonPolicy {
         [string] $Severity
     )
     begin {
-        $Fields = @{
-            PolicyId = 'policy_id'
-        }
+        $Fields = @{ PolicyId = 'policy_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('severity', 'policy_id', 'enabled')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('severity', 'policy_id', 'enabled') }}
         }
         Invoke-Falcon @Param
     }
@@ -120,11 +108,7 @@ function Edit-FalconHorizonSchedule {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cloud_platform', 'scan_schedule')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('cloud_platform', 'scan_schedule') }}
         }
         Invoke-Falcon @Param
     }
@@ -220,18 +204,14 @@ function Get-FalconHorizonAzureAccount {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            ScanType = 'scan-type'
-        }
+        $Fields = @{ ScanType = 'scan-type' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('scan-type', 'offset', 'ids', 'status', 'limit')
-            }
+            Format   = @{ Query = @('scan-type', 'offset', 'ids', 'status', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -240,7 +220,7 @@ function Get-FalconHorizonIoa {
     [CmdletBinding(DefaultParameterSetName = '/detects/entities/ioa/v1:get')]
     param(
         [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Mandatory = $true, Position = 1)]
-        [ValidateSet('aws','azure')]
+        [ValidateSet('aws', 'azure')]
         [string] $CloudPlatform,
 
         [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 2)]
@@ -263,17 +243,18 @@ function Get-FalconHorizonIoa {
         [string] $Region,
 
         [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 7)]
-        [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
-            'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
-            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
-            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
-            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
-            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
-            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase = $false)]
+        [ValidateSet('ACM', 'ACR', 'Any', 'App Engine', 'AppService', 'BigQuery', 'Cloud Load Balancing',
+            'Cloud Logging', 'Cloud SQL', 'Cloud Storage', 'CloudFormation', 'CloudTrail', 'CloudWatch Logs',
+            'Cloudfront', 'Compute Engine', 'Config', 'Disk', 'DynamoDB', 'EBS', 'EC2', 'ECR', 'EFS', 'EKS',
+            'ELB', 'EMR', 'Elasticache', 'GuardDuty', 'IAM', 'Identity', 'KMS', 'KeyVault', 'Kinesis',
+            'Kubernetes', 'Lambda', 'LoadBalancer', 'Monitor', 'NLB/ALB', 'NetworkSecurityGroup', 'PostgreSQL',
+            'RDS', 'Redshift', 'S3', 'SES', 'SNS', 'SQLDatabase', 'SQLServer', 'SQS', 'SSM',
+            'Serverless Application Repository', 'StorageAccount', 'Subscriptions', 'VPC', 'VirtualMachine',
+            'VirtualNetwork', IgnoreCase = $false)]
         [string] $Service,
 
         [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 8)]
-        [ValidateSet('open','closed')]
+        [ValidateSet('open', 'closed')]
         [string] $State,
 
         [Parameter(ParameterSetName = '/detects/entities/ioa/v1:get', Position = 9)]
@@ -364,8 +345,8 @@ function Get-FalconHorizonIoaEvent {
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
-                Query = @('cloud_provider', 'limit', 'account_id', 'policy_id', 'offset',
-                    'azure_tenant_id', 'user_ids')
+                Query = @('cloud_provider', 'limit', 'account_id', 'policy_id', 'offset', 'azure_tenant_id',
+                    'user_ids')
             }
         }
         Invoke-Falcon @Param
@@ -413,7 +394,7 @@ function Get-FalconHorizonIom {
     [CmdletBinding(DefaultParameterSetName = '/detects/entities/iom/v1:get')]
     param(
         [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Mandatory = $true, Position = 1)]
-        [ValidateSet('aws','azure','gcp')]
+        [ValidateSet('aws', 'azure', 'gcp')]
         [string] $CloudPlatform,
 
         [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 2)]
@@ -440,13 +421,14 @@ function Get-FalconHorizonIom {
         [string] $Severity,
 
         [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 8)]
-        [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
-            'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
-            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
-            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
-            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
-            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
-            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase = $false)]
+        [ValidateSet('ACM', 'ACR', 'Any', 'App Engine', 'AppService', 'BigQuery', 'Cloud Load Balancing',
+            'Cloud Logging', 'Cloud SQL', 'Cloud Storage', 'CloudFormation', 'CloudTrail', 'CloudWatch Logs',
+            'Cloudfront', 'Compute Engine', 'Config', 'Disk', 'DynamoDB', 'EBS', 'EC2', 'ECR', 'EFS', 'EKS',
+            'ELB', 'EMR', 'Elasticache', 'GuardDuty', 'IAM', 'Identity', 'KMS', 'KeyVault', 'Kinesis',
+            'Kubernetes', 'Lambda', 'LoadBalancer', 'Monitor', 'NLB/ALB', 'NetworkSecurityGroup', 'PostgreSQL',
+            'RDS', 'Redshift', 'S3', 'SES', 'SNS', 'SQLDatabase', 'SQLServer', 'SQS', 'SSM',
+            'Serverless Application Repository', 'StorageAccount', 'Subscriptions', 'VPC', 'VirtualMachine',
+            'VirtualNetwork', IgnoreCase = $false)]
         [string] $Service,
 
         [Parameter(ParameterSetName = '/detects/entities/iom/v1:get', Position = 9)]
@@ -496,13 +478,14 @@ function Get-FalconHorizonPolicy {
         [string] $PolicyId,
 
         [Parameter(ParameterSetName = '/settings/entities/policy/v1:get', Position = 2)]
-        [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
-            'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
-            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
-            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
-            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
-            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
-            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase = $false)]
+        [ValidateSet('ACM', 'ACR', 'Any', 'App Engine', 'AppService', 'BigQuery', 'Cloud Load Balancing',
+            'Cloud Logging', 'Cloud SQL', 'Cloud Storage', 'CloudFormation', 'CloudTrail', 'CloudWatch Logs',
+            'Cloudfront', 'Compute Engine', 'Config', 'Disk', 'DynamoDB', 'EBS', 'EC2', 'ECR', 'EFS', 'EKS',
+            'ELB', 'EMR', 'Elasticache', 'GuardDuty', 'IAM', 'Identity', 'KMS', 'KeyVault', 'Kinesis',
+            'Kubernetes', 'Lambda', 'LoadBalancer', 'Monitor', 'NLB/ALB', 'NetworkSecurityGroup', 'PostgreSQL',
+            'RDS', 'Redshift', 'S3', 'SES', 'SNS', 'SQLDatabase', 'SQLServer', 'SQS', 'SSM',
+            'Serverless Application Repository', 'StorageAccount', 'Subscriptions', 'VPC', 'VirtualMachine',
+            'VirtualNetwork', IgnoreCase = $false)]
         [string] $Service,
 
         [Parameter(ParameterSetName = '/settings/entities/policy/v1:get', Position = 3)]
@@ -523,9 +506,7 @@ function Get-FalconHorizonPolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'service', 'policy-id', 'cloud-platform')
-            }
+            Format   = @{ Query = @('ids', 'service', 'policy-id', 'cloud-platform') }
         }
         Invoke-Falcon @Param
     }
@@ -538,18 +519,14 @@ function Get-FalconHorizonSchedule {
         [array] $CloudPlatform
     )
     begin {
-        $Fields = @{
-            CloudPlatform = 'cloud-platform'
-        }
+        $Fields = @{ CloudPlatform = 'cloud-platform' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('cloud-platform')
-            }
+            Format   = @{ Query = @('cloud-platform') }
         }
         Invoke-Falcon @Param
     }
@@ -557,8 +534,6 @@ function Get-FalconHorizonSchedule {
 function New-FalconHorizonAwsAccount {
     [CmdletBinding(DefaultParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post')]
     param(
-        
-
         [Parameter(ParameterSetName = '/cloud-connect-cspm-aws/entities/account/v1:post', Mandatory = $true,
             Position = 1)]
         [ValidatePattern('^\d{12}$')]
@@ -583,11 +558,7 @@ function New-FalconHorizonAwsAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('cloudtrail_region', 'account_id', 'organization_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('cloudtrail_region', 'account_id', 'organization_id') }}
         }
         Invoke-Falcon @Param
     }
@@ -614,11 +585,7 @@ function New-FalconHorizonAzureAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    resources = @('subscription_id', 'tenant_id')
-                }
-            }
+            Format   = @{ Body = @{ resources = @('subscription_id', 'tenant_id') }}
         }
         Invoke-Falcon @Param
     }
@@ -630,11 +597,7 @@ function Receive-FalconHorizonAwsScript {
             Mandatory = $true, Position = 1)]
         [ValidatePattern('^*\.sh$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -643,12 +606,8 @@ function Receive-FalconHorizonAwsScript {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
-            Format   = @{
-                Outfile = 'path'
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
+            Format   = @{ Outfile = 'path' }
         }
         Invoke-Falcon @Param
     }
@@ -660,11 +619,7 @@ function Receive-FalconHorizonAzureScript {
             Mandatory = $true, Position = 1)]
         [ValidatePattern('^*\.sh$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path,
 
@@ -674,18 +629,14 @@ function Receive-FalconHorizonAzureScript {
         [string] $TenantId
     )
     begin {
-        $Fields = @{
-            TenantId = 'tenant-id'
-        }
+        $Fields = @{ TenantId = 'tenant-id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
             Format   = @{
                 Query   = @('tenant-id')
                 Outfile = 'path'
@@ -706,18 +657,14 @@ function Remove-FalconHorizonAwsAccount {
         [array] $OrganizationIds
     )
     begin {
-        $Fields = @{
-            OrganizationIds = 'organization-ids'
-        }
+        $Fields = @{ OrganizationIds = 'organization-ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'organization-ids')
-            }
+            Format   = @{ Query = @('ids', 'organization-ids') }
         }
         Invoke-Falcon @Param
     }
@@ -734,9 +681,7 @@ function Remove-FalconHorizonAzureAccount {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

@@ -11,9 +11,7 @@ function Get-FalconRemediation {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -39,8 +37,8 @@ function Get-FalconVulnerability {
 
         [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Position = 3)]
         [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Position = 3)]
-        [ValidateSet('created_timestamp.asc','created_timestamp.desc','closed_timestamp.asc',
-            'closed_timestamp.desc','updated_timestamp.asc','updated_timestamp.desc')]
+        [ValidateSet('created_timestamp.asc', 'created_timestamp.desc', 'closed_timestamp.asc',
+            'closed_timestamp.desc', 'updated_timestamp.asc', 'updated_timestamp.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Position = 4)]
@@ -67,9 +65,7 @@ function Get-FalconVulnerability {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('after', 'sort', 'ids', 'filter', 'limit', 'facet')
-            }
+            Format   = @{ Query = @('after', 'sort', 'ids', 'filter', 'limit', 'facet') }
         }
         Invoke-Falcon @Param
     }

@@ -12,11 +12,7 @@ function Edit-FalconReconAction {
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:patch', Mandatory = $true, Position = 3)]
         [ValidateScript({
-            if ((Test-RegexValue $_) -eq 'email') {
-                $true
-            } else {
-                throw "'$_' is not a valid email address."
-            }
+            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
         [array] $Recipients,
 
@@ -30,11 +26,7 @@ function Edit-FalconReconAction {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('recipients', 'id', 'status', 'frequency')
-                }
-            }
+            Format   = @{ Body = @{ root = @('recipients', 'id', 'status', 'frequency') }}
         }
         Invoke-Falcon @Param
     }
@@ -51,9 +43,7 @@ function Edit-FalconReconNotification {
                     Endpoint = '/recon/entities/notifications/v1:patch'
                     Required = @('id', 'assigned_to_uuid', 'status')
                     Pattern  = @('id', 'assigned_to_uuid')
-                    Format   = @{
-                        assigned_to_uuid = 'AssignedToUuid'
-                    }
+                    Format   = @{ assigned_to_uuid = 'AssignedToUuid' }
                 }
                 Confirm-Parameter @Param
             }
@@ -73,15 +63,11 @@ function Edit-FalconReconNotification {
         [string] $Status
     )
     begin {
-        $Fields = @{
-            AssignedToUuid = 'assigned_to_uuid'
-        }
+        $Fields = @{ AssignedToUuid = 'assigned_to_uuid' }
     }
     process {
         if ($PSBoundParameters.Array) {
-            if (!$Script:Falcon.Hostname) {
-                Request-FalconToken
-            }
+            if (!$Script:Falcon.Hostname) { Request-FalconToken }
             $Param = @{
                 Path    = "$($Script:Falcon.Hostname)/recon/entities/notifications/v1"
                 Method  = 'patch'
@@ -102,11 +88,7 @@ function Edit-FalconReconNotification {
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-                Format   = @{
-                    Body = @{
-                        root = @('assigned_to_uuid', 'id', 'status')
-                    }
-                }
+                Format   = @{ Body = @{ root = @('assigned_to_uuid', 'id', 'status') }}
             }
             Invoke-Falcon @Param
         }
@@ -153,9 +135,7 @@ function Edit-FalconReconRule {
     )
     process {
         if ($PSBoundParameters.Array) {
-            if (!$Script:Falcon.Hostname) {
-                Request-FalconToken
-            }
+            if (!$Script:Falcon.Hostname) { Request-FalconToken }
             $Param = @{
                 Path    = "$($Script:Falcon.Hostname)/recon/entities/rules/v1"
                 Method  = 'patch'
@@ -176,11 +156,7 @@ function Edit-FalconReconRule {
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = $PSBoundParameters
-                Format   = @{
-                    Body = @{
-                        root = @('permissions', 'priority', 'name', 'id', 'filter')
-                    }
-                }
+                Format   = @{ Body = @{ root = @('permissions', 'priority', 'name', 'id', 'filter') }}
             }
             Invoke-Falcon @Param
         }
@@ -219,18 +195,14 @@ function Get-FalconReconAction {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -286,18 +258,14 @@ function Get-FalconReconNotification {
         [switch] $Combined
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -338,18 +306,14 @@ function Get-FalconReconRule {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'q', 'sort', 'offset', 'filter')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'q', 'sort', 'offset', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -371,11 +335,7 @@ function Get-FalconReconRulePreview {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('filter', 'topic')
-                }
-            }
+            Format   = @{ Body = @{ root = @('filter', 'topic') }}
         }
         Invoke-Falcon @Param
     }
@@ -397,18 +357,12 @@ function New-FalconReconAction {
 
         [Parameter(ParameterSetName = '/recon/entities/actions/v1:post', Mandatory = $true, Position = 4)]
         [ValidateScript({
-            if ((Test-RegexValue $_) -eq 'email') {
-                $true
-            } else {
-                throw "'$_' is not a valid email address."
-            }
+            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
         [array] $Recipients
     )
     begin {
-        $Fields = @{
-            RuleId = 'rule_id'
-        }
+        $Fields = @{ RuleId = 'rule_id' }
     }
     process {
         $Param = @{
@@ -465,9 +419,7 @@ function New-FalconReconRule {
     )
     process {
         if ($PSBoundParameters.Array) {
-            if (!$Script:Falcon.Hostname) {
-                Request-FalconToken
-            }
+            if (!$Script:Falcon.Hostname) { Request-FalconToken }
             $Param = @{
                 Path    = "$($Script:Falcon.Hostname)/recon/entities/rules/v1"
                 Method  = 'post'
@@ -488,11 +440,7 @@ function New-FalconReconRule {
                 Command  = $MyInvocation.MyCommand.Name
                 Endpoint = $PSCmdlet.ParameterSetName
                 Inputs   = $PSBoundParameters
-                Format   = @{
-                    Body = @{
-                        root = @('permissions', 'priority', 'name', 'filter', 'topic')
-                     }
-                }
+                Format   = @{ Body = @{ root = @('permissions', 'priority', 'name', 'filter', 'topic') }}
             }
             Invoke-Falcon @Param
         }
@@ -511,9 +459,7 @@ function Remove-FalconReconAction {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('id')
-            }
+            Format   = @{ Query = @('id') }
         }
         Invoke-Falcon @Param
     }
@@ -530,9 +476,7 @@ function Remove-FalconReconRule {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -549,9 +493,7 @@ function Remove-FalconReconNotification {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }

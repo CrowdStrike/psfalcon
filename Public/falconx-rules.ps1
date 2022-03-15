@@ -85,11 +85,7 @@ function Receive-FalconRule {
             Position = 2)]
         [ValidatePattern('\.(gz|gzip|zip)$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -104,9 +100,7 @@ function Receive-FalconRule {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = $Accept
-            }
+            Headers  = @{ Accept = $Accept }
             Format   = @{
                 Query   = @('format', 'id', 'type')
                 Outfile = 'path'

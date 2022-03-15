@@ -37,9 +37,7 @@ function Get-FalconBehavior {
             Inputs   = $PSBoundParameters
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
             }
         }
         Invoke-Falcon @Param
@@ -87,9 +85,7 @@ function Get-FalconIncident {
             Inputs   = $PSBoundParameters
             Format   = @{
                 Query = @('sort', 'offset', 'filter', 'limit')
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
             }
         }
         Invoke-Falcon @Param
@@ -124,9 +120,7 @@ function Get-FalconScore {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'limit') }
         }
         Invoke-Falcon @Param
     }

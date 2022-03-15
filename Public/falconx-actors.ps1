@@ -45,18 +45,14 @@ function Get-FalconActor {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q')
-            }
+            Format   = @{ Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q') }
         }
         Invoke-Falcon @Param
     }

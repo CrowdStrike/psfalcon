@@ -6,20 +6,14 @@ function Get-FalconSample {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            Ids = 'sha256s'
-        }
+        $Fields = @{ Ids = 'sha256s' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('sha256s')
-                }
-            }
+            Format   = @{ Body = @{ root = @('sha256s') }}
         }
         Invoke-Falcon @Param
     }
@@ -34,11 +28,7 @@ function Receive-FalconSample {
 
         [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true, Position = 2)]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path,
 
@@ -55,9 +45,7 @@ function Receive-FalconSample {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Headers  = @{
-                Accept = 'application/octet-stream'
-            }
+            Headers  = @{ Accept = 'application/octet-stream' }
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query   = @('ids', 'password_protected')
@@ -75,18 +63,14 @@ function Remove-FalconSample {
         [string] $Id
     )
     begin {
-        $Fields = @{
-            Id = 'ids'
-        }
+        $Fields = @{ Id = 'ids' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -115,11 +99,7 @@ function Send-FalconSample {
     )
     begin {
         $Fields = @{
-            FileName       = if ($PSBoundParameters.Path -match '\.zip$') {
-                'name'
-            } else {
-                'file_name'
-            }
+            FileName       = if ($PSBoundParameters.Path -match '\.zip$') { 'name' } else { 'file_name' }
             IsConfidential = 'is_confidential'
             Path           = 'body'
         }
@@ -135,15 +115,11 @@ function Send-FalconSample {
             } else {
                 $PSCmdlet.ParameterSetName
             }
-            Headers  = @{
-                ContentType = 'application/octet-stream'
-            }
+            Headers  = @{ ContentType = 'application/octet-stream' }
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('comment', 'file_name', 'name', 'is_confidential')
-                Body  = @{
-                    root = @('body')
-                }
+                Body  = @{ root = @('body') }
             }
         }
         Invoke-Falcon @Param

@@ -33,9 +33,7 @@ function Get-FalconAsset {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('filter', 'q', 'sort', 'limit', 'offset', 'ids')
-            }
+            Format   = @{ Query = @('filter', 'q', 'sort', 'limit', 'offset', 'ids') }
             Max      = 100
         }
         Invoke-Falcon @Param

@@ -70,11 +70,7 @@ function Add-FalconSensorTag {
                         [PSCustomObject] @{
                             cid       = $HostInfo.cid
                             device_id = $HostInfo.device_id
-                            tags      = if ($_.stdout) {
-                                ($_.stdout).Trim()
-                            } else {
-                                $_.stderr
-                            }
+                            tags      = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
                         }
                     }
                 }
@@ -162,17 +158,13 @@ function Get-FalconSensorTag {
                         [PSCustomObject] @{
                             cid       = $HostInfo.cid
                             device_id = $HostInfo.device_id
-                            tags      = if ($_.stdout) {
-                                ($_.stdout).Trim()
-                            } else {
-                                $_.stderr
-                            }
+                            tags      = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
                         }
                     }
                 }
             } else {
-                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Ids |
-                    Select-Object cid, device_id, platform_name
+                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Ids | Select-Object cid,
+                    device_id, platform_name
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
                     # Start session for each 'platform' type
                     $InvokeParam = @{
@@ -183,8 +175,7 @@ function Get-FalconSensorTag {
                     if ($PSBoundParameters.QueueOffline) {
                         $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
                     }
-                    Invoke-FalconRtr @InvokeParam | Select-Object aid, stdout, stderr, errors |
-                    ForEach-Object {
+                    Invoke-FalconRtr @InvokeParam | Select-Object aid, stdout, stderr, errors | ForEach-Object {
                         # Output device properties and 'tags' value
                         [PSCustomObject] @{
                             cid       = ($HostInfo | Where-Object device_id -eq $_.aid).cid
@@ -279,17 +270,13 @@ function Remove-FalconSensorTag {
                         [PSCustomObject] @{
                             cid       = $HostInfo.cid
                             device_id = $HostInfo.device_id
-                            tags      = if ($_.stdout) {
-                                ($_.stdout).Trim()
-                            } else {
-                                $_.stderr
-                            }
+                            tags      = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
                         }
                     }
                 }
             } else {
-                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Ids |
-                    Select-Object cid, device_id, platform_name
+                $HostInfo = Get-FalconHost -Ids $PSBoundParameters.Ids | Select-Object cid,
+                    device_id, platform_name
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
                     # Start session for each 'platform' type
                     $InvokeParam = @{
@@ -371,11 +358,7 @@ function Uninstall-FalconSensor {
             }
             $InitParam = @{
                 HostId       = $HostInfo.device_id
-                QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) {
-                    $true
-                } else {
-                    $false
-                }
+                QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) { $true } else { $false }
             }
             $Init = Start-FalconSession @InitParam
             if ($Init.session_id) {
@@ -384,9 +367,7 @@ function Uninstall-FalconSensor {
                     Command   = 'runscript'
                     Arguments = '-Raw=```' + $Scripts.($HostInfo.platform_name) + '```'
                 }
-                if ($Token) {
-                    $CmdParam.Arguments += " -CommandLine='$Token'"
-                }
+                if ($Token) { $CmdParam.Arguments += " -CommandLine='$Token'" }
                 $Request = Invoke-FalconAdminCommand @CmdParam
                 if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
                     do {
@@ -396,11 +377,7 @@ function Uninstall-FalconSensor {
                         $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
                     )
                     @($HostInfo | Select-Object cid, device_id).foreach{
-                        $Status = if ($Confirm.stdout) {
-                            ($Confirm.stdout).Trim()
-                        } else {
-                            $Confirm.stderr
-                        }
+                        $Status = if ($Confirm.stdout) { ($Confirm.stdout).Trim() } else { $Confirm.stderr }
                         Add-Property -Object $_ -Name 'status' -Value $Status
                         $_
                     }

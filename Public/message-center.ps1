@@ -72,14 +72,10 @@ function Edit-FalconCompleteCase {
         }
     }
     process {
-        if (!$Script:Falcon.Hostname) {
-            Request-FalconToken
-        }
+        if (!$Script:Falcon.Hostname) { Request-FalconToken }
         @('DetectionIds','IncidentIds').foreach{
             if ($PSBoundParameters.$_) {
-                [array] $PSBoundParameters.$_ = ($PSBoundParameters.$_).foreach{
-                    @{ id = $_ }
-                }
+                [array] $PSBoundParameters.$_ = ($PSBoundParameters.$_).foreach{ @{ id = $_ } }
             }
         }
         $Param = @{
@@ -115,7 +111,7 @@ function Get-FalconCompleteActivity {
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/message-center/queries/case-activities/v1:get', Position = 3)]
-        [ValidateSet('activity.created_time.asc','activity.created_time.desc','activity.type.asc',
+        [ValidateSet('activity.created_time.asc', 'activity.created_time.desc', 'activity.type.asc',
             'activity.type.desc')]
         [string] $Sort,
 
@@ -136,9 +132,7 @@ function Get-FalconCompleteActivity {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            CaseId = 'case_id'
-        }
+        $Fields = @{ CaseId = 'case_id' }
     }
     process {
         $Param = @{
@@ -146,9 +140,7 @@ function Get-FalconCompleteActivity {
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format    = @{
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
                 Query = @('case_id', 'filter', 'sort', 'limit', 'offset')
             }
         }
@@ -167,9 +159,9 @@ function Get-FalconCompleteCase {
         [string] $Filter,
 
         [Parameter(ParameterSetName = '/message-center/queries/cases/v1:get', Position = 2)]
-        [ValidateSet('case.created_time.asc','case.created_time.desc','case.id.asc','case.id.desc',
-            'case.last_modified_time.asc','case.last_modified_time.desc','case.status.asc','case.status.desc',
-            'case.type.asc','case.type.desc')]
+        [ValidateSet('case.created_time.asc', 'case.created_time.desc', 'case.id.asc', 'case.id.desc',
+            'case.last_modified_time.asc', 'case.last_modified_time.desc', 'case.status.asc', 'case.status.desc',
+            'case.type.asc', 'case.type.desc')]
         [string] $Sort,
 
         [Parameter(ParameterSetName = '/message-center/queries/cases/v1:get', Position = 3)]
@@ -193,10 +185,8 @@ function Get-FalconCompleteCase {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format    = @{
-                Body = @{
-                    root = @('ids')
-                }
+            Format   = @{
+                Body = @{ root = @('ids') }
                 Query = @('filter', 'sort', 'limit', 'offset')
             }
         }
@@ -251,14 +241,10 @@ function New-FalconCompleteCase {
         }
     }
     process {
-        if (!$Script:Falcon.Hostname) {
-            Request-FalconToken
-        }
+        if (!$Script:Falcon.Hostname) { Request-FalconToken }
         @('DetectionIds','IncidentIds').foreach{
             if ($PSBoundParameters.$_) {
-                [array] $PSBoundParameters.$_ = ($PSBoundParameters.$_).foreach{
-                    @{ id = $_ }
-                }
+                [array] $PSBoundParameters.$_ = ($PSBoundParameters.$_).foreach{ @{ id = $_ } }
             }
         }
         $Param = @{
@@ -288,11 +274,7 @@ function Receive-FalconCompleteAttachment {
         [Parameter(ParameterSetName = '/message-center/entities/case-attachment/v1:get', Mandatory = $true,
             Position = 2)]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -347,12 +329,8 @@ function Send-FalconCompleteAttachment {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{
-                ContentType = 'multipart/form-data'
-            }
-            Format    = @{
-                Formdata = @('case_id', 'user_uuid', 'file')
-            }
+            Headers  = @{ ContentType = 'multipart/form-data' }
+            Format    = @{ Formdata = @('case_id', 'user_uuid', 'file') }
         }
         Invoke-Falcon @Param
     }

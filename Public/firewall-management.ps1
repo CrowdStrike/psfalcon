@@ -65,11 +65,7 @@ function Edit-FalconFirewallGroup {
                 }
                 if ($Group) {
                     $Value = if ($_ -eq 'rulegroup_version') {
-                        if ($Group.version) {
-                            $Group.version
-                        } else {
-                            0
-                        }
+                        if ($Group.version) { $Group.version } else { 0 }
                     } elseif ($_ -eq 'rule_versions') {
                         $RuleVersions
                     } else {
@@ -116,9 +112,7 @@ function Edit-FalconFirewallPolicy {
         [string] $Description
     )
     begin {
-        $Fields = @{
-            Array = 'resources'
-        }
+        $Fields = @{ Array = 'resources' }
     }
     process {
         $Param = @{
@@ -208,10 +202,7 @@ function Edit-FalconFirewallSetting {
         ($Param.Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
             # When not provided, add required fields using existing policy settings
             if (!$Param.Inputs.$_) {
-                if (!$Existing) {
-                    $Existing = Get-FalconFirewallSetting -Ids $Param.Inputs.policy_id -ErrorAction (
-                        'SilentlyContinue')
-                }
+                if (!$Existing) { $Existing = Get-FalconFirewallSetting -Ids $Param.Inputs.policy_id -EA 0 }
                 if ($Existing) {
                     $PSBoundParameters[$_] = $Existing.$_
                 }
@@ -256,18 +247,14 @@ function Get-FalconFirewallEvent {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -298,18 +285,14 @@ function Get-FalconFirewallField {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            PlatformId = 'platform_id'
-        }
+        $Fields = @{ PlatformId = 'platform_id' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'offset', 'limit', 'platform_id')
-            }
+            Format   = @{ Query = @('ids', 'offset', 'limit', 'platform_id') }
         }
         Invoke-Falcon @Param
     }
@@ -350,18 +333,14 @@ function Get-FalconFirewallGroup {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter') }
         }
         Invoke-Falcon @Param
     }
@@ -393,9 +372,7 @@ function Get-FalconFirewallPlatform {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'offset', 'limit')
-            }
+            Format   = @{ Query = @('ids', 'offset', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -450,16 +427,12 @@ function Get-FalconFirewallPolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'ids', 'offset', 'filter', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
         }
         $Result = Invoke-Falcon @Param
         if ($PSBoundParameters.Include -and $Result) {
             if (!$Result.id) {
-                $Result = @($Result).foreach{
-                    ,[PSCustomObject] @{ id = $_ }
-                }
+                $Result = @($Result).foreach{ ,[PSCustomObject] @{ id = $_ }}
             }
             if ($PSBoundParameters.Include -contains 'settings') {
                 foreach ($Item in (Get-FalconFirewallSetting -Ids $Result.id)) {
@@ -522,9 +495,7 @@ function Get-FalconFirewallPolicyMember {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'offset', 'filter', 'id', 'limit')
-            }
+            Format   = @{ Query = @('sort', 'offset', 'filter', 'id', 'limit') }
         }
         Invoke-Falcon @Param
     }
@@ -587,14 +558,10 @@ function Get-FalconFirewallRule {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter', 'id')
-            }
+            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter', 'id') }
         }
         @(Invoke-Falcon @Param).foreach{
-            if ($_.version -and $null -eq $_.version) {
-                $_.version = 0
-            }
+            if ($_.version -and $null -eq $_.version) { $_.version = 0 }
             $_
         }
     }
@@ -611,9 +578,7 @@ function Get-FalconFirewallSetting {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -636,9 +601,7 @@ function Invoke-FalconFirewallPolicyAction {
         [string] $GroupId
     )
     begin {
-        $Fields = @{
-            name = 'action_name'
-        }
+        $Fields = @{ name = 'action_name' }
     }
     process {
         $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
@@ -658,9 +621,7 @@ function Invoke-FalconFirewallPolicyAction {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('action_name')
-                Body = @{
-                    root = @('ids', 'action_parameters')
-                }
+                Body = @{ root = @('ids', 'action_parameters') }
             }
         }
         Invoke-Falcon @Param
@@ -692,9 +653,7 @@ function New-FalconFirewallGroup {
         [string] $Comment
     )
     begin {
-        $Fields = @{
-            CloneId = 'clone_id'
-        }
+        $Fields = @{ CloneId = 'clone_id' }
     }
     process {
         $Param = @{
@@ -703,9 +662,7 @@ function New-FalconFirewallGroup {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('library', 'comment', 'clone_id')
-                Body = @{
-                    root = @('enabled', 'name', 'rules', 'description')
-                }
+                Body = @{ root = @('enabled', 'name', 'rules', 'description') }
             }
         }
         Invoke-Falcon @Param
@@ -723,9 +680,7 @@ function New-FalconFirewallPolicy {
                     Endpoint = '/policy/entities/firewall/v1:post'
                     Required = @('name', 'platform_name')
                     Content  = @('platform_name')
-                    Format   = @{
-                        platform_name = 'PlatformName'
-                    }
+                    Format   = @{ platform_name = 'PlatformName' }
                 }
                 Confirm-Parameter @Param
             }
@@ -783,9 +738,7 @@ function Remove-FalconFirewallGroup {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids', 'comment')
-            }
+            Format   = @{ Query = @('ids', 'comment') }
         }
         Invoke-Falcon @Param
     }
@@ -802,9 +755,7 @@ function Remove-FalconFirewallPolicy {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Format   = @{
-                Query = @('ids')
-            }
+            Format   = @{ Query = @('ids') }
         }
         Invoke-Falcon @Param
     }
@@ -823,20 +774,14 @@ function Set-FalconFirewallPrecedence {
         [array] $Ids
     )
     begin {
-        $Fields = @{
-            PlatformName = 'platform_name'
-        }
+        $Fields = @{ PlatformName = 'platform_name' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('platform_name', 'ids')
-                }
-            }
+            Format   = @{ Body = @{ root = @('platform_name', 'ids') }}
         }
         Invoke-Falcon @Param
     }

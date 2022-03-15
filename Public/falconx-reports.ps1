@@ -44,18 +44,14 @@ function Get-FalconIntel {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q')
-            }
+            Format   = @{ Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'fields', 'q') }
         }
         Invoke-Falcon @Param
     }
@@ -71,11 +67,7 @@ function Receive-FalconIntel {
         [Parameter(ParameterSetName = '/intel/entities/report-files/v1:get', Mandatory = $true, Position = 2)]
         [ValidatePattern('\.pdf$')]
         [ValidateScript({
-            if (Test-Path $_) {
-                throw "An item with the specified name $_ already exists."
-            } else {
-                $true
-            }
+            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
         })]
         [string] $Path
     )
@@ -84,9 +76,7 @@ function Receive-FalconIntel {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = $PSBoundParameters
-            Headers  = @{
-                Accept = 'application/pdf'
-            }
+            Headers  = @{ Accept = 'application/pdf' }
             Format   = @{
                 Query   = @('id')
                 Outfile = 'path'

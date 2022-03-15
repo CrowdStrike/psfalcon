@@ -36,9 +36,7 @@ function Get-FalconQuarantine {
         [switch] $Total
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
@@ -47,9 +45,7 @@ function Get-FalconQuarantine {
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
             Format   = @{
                 Query = @('sort', 'limit', 'filter', 'offset', 'q')
-                Body  = @{
-                    root = @('ids')
-                }
+                Body  = @{ root = @('ids') }
             }
         }
         Invoke-Falcon @Param
@@ -83,20 +79,14 @@ function Invoke-FalconQuarantineAction {
         [string] $Comment
     )
     begin {
-        $Fields = @{
-            Query = 'q'
-        }
+        $Fields = @{ Query = 'q' }
     }
     process {
         $Param = @{
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body  = @{
-                    root = @('action', 'filter', 'ids', 'comment', 'q')
-                }
-            }
+            Format   = @{ Body  = @{ root = @('action', 'filter', 'ids', 'comment', 'q') }}
             Max      = 500
         }
         Invoke-Falcon @Param
@@ -115,9 +105,7 @@ function Test-FalconQuarantineAction {
             Command  = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('filter')
-            }
+            Format   = @{ Query = @('filter') }
         }
         Invoke-Falcon @Param
     }

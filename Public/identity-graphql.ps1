@@ -6,9 +6,7 @@ function Invoke-FalconIdentityGraph {
         [string] $Query
     )
     begin {
-        if (!$Script:Falcon.Hostname) {
-            Request-FalconToken
-        }
+        if (!$Script:Falcon.Hostname) { Request-FalconToken }
     }
     process {
         $Param = @{
