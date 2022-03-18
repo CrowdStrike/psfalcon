@@ -98,7 +98,9 @@ function Get-FalconQueue {
         } catch {
             throw $_
         } finally {
-            if (Test-Path $OutputFile) { Get-ChildItem $OutputFile }
+            if (Test-Path $OutputFile) {
+                Get-ChildItem $OutputFile | Select-Object FullName, Length, LastWriteTime
+            }
         }
     }
 }
@@ -359,7 +361,9 @@ function Invoke-FalconDeploy {
             } catch {
                 throw $_
             } finally {
-                if (Test-Path $OutputFile) { Get-ChildItem $OutputFile }
+                if (Test-Path $OutputFile) {
+                    Get-ChildItem $OutputFile | Select-Object FullName, Length, LastWriteTime
+                }
             }
         }
     }
@@ -479,7 +483,8 @@ function Invoke-FalconRtr {
                         $_ | Select-Object session_id, $CmdId, complete, stdout, stderr | ForEach-Object {
                             if ($_.stdout -and $PSBoundParameters.Command -eq 'runscript') {
                                 # Attempt to convert 'stdout' from Json for 'runscript'
-                                $_.stdout = try { $_.stdout | ConvertFrom-Json } catch { $_.stdout }
+                                $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
+                                if ($StdOut) { $_.stdout = $StdOut }
                             }
                             $_
                         }
@@ -547,7 +552,8 @@ function Invoke-FalconRtr {
                             Get-RtrResult -Object $CmdRequest -Output $InitResult | ForEach-Object {
                                 if ($_.stdout -and $PSBoundParameters.Command -eq 'runscript') {
                                     # Attempt to convert 'stdout' from Json for 'runscript'
-                                    $_.stdout = try { $_.stdout | ConvertFrom-Json } catch { $_.stdout }
+                                    $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
+                                    if ($StdOut) { $_.stdout = $StdOut }
                                 }
                                 $_
                             }
