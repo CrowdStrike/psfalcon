@@ -25,7 +25,7 @@ function Request-FalconToken {
         [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 4)]
         [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 4)]
         [Alias('cid', 'member_cid')]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^\w{32}(-\w{2})?$')]
         [string] $MemberCid,
 
         [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 5)]
@@ -41,6 +41,9 @@ function Request-FalconToken {
         [System.Collections.Hashtable] $Collector
     )
     begin {
+        if ($MemberCid -match '^\w{32}-\w{2}$'){
+            $PSBoundParameters.MemberCid = $MemberCid.Split('-')[0]
+        }
         function Get-ApiCredential ($Inputs) {
             $Output = @{}
             @('ClientId', 'ClientSecret', 'Hostname', 'MemberCid').foreach{
