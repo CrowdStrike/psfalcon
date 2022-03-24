@@ -420,6 +420,10 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
+    General Changes
+    * Added 'Select-Object' to 'Get-ChildItem' output to force the display of FullName, Length and LastWriteTime
+    due to differences with how PowerShell displays Get-ChildItem on non-Windows devices.
+
     Resolved Issues
     * Issue #190: Modified Json conversion of 'stdout' when using 'runscript' with 'Invoke-FalconRtr' to reduce
     the opportunity of null output.
