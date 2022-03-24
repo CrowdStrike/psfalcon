@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.1.8'
+    ModuleVersion        = '2.1.9'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -420,34 +420,9 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
-    New Commands
-    * sensor-update-policies.ps1
-      'Get-FalconKernel'
-
-    Command Changes
-    * Added 'cswindiag' command to 'Invoke-FalconRtr' and 'Invoke-FalconAdminCommand'.
-
-    * Changed 'Limit' maximum for 'Get-FalconVulnerability' to 400 to match API.
-
-    * Added support for local Humio instances within 'Register-FalconEventCollector' while maintaining auto-
-    complete for Humio Cloud. Thank you @kra-ts!
-
-    * Added 'No queued Real-time Response sessions available' error when using 'Get-FalconQueue' when there are
-    no queued sessions.
-
-    * Added automatic Json conversion of 'stdout' and 'stderr' output when using 'runscript' with
-    'Invoke-FalconRtr', simplifying the use of results from scripts that were designed for Falcon Workflows.
-
-    * Added 'iOS' and 'Android' as valid values for 'platform_name' for 'Edit-FalconPreventionPolicy' and
-    'New-FalconPreventionPolicy'.
-
-    * Added pipeline support for 'Remove-FalconPutFile' and 'Remove-FalconScript'.
-
-    * Added the undocumented 'detection_suppress' and 'detection_unsuppress' to 'Invoke-FalconHostAction'.
-
     Resolved Issues
-    * Issue #187: Fixed typo which was causing array values to only show a single value (instead of all values)
-    when using 'Export-FalconReport'.
+    * Issue #190: Modified Json conversion of 'stdout' when using 'runscript' with 'Invoke-FalconRtr' to reduce
+    the opportunity of null output.
 "@
         }
     }
