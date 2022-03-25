@@ -68,6 +68,9 @@
       # detects.ps1
       'Edit-FalconDetection',
       'Get-FalconDetection',
+      'Get-FalconDomainHosts',
+      'Get-FalconDomainControllerHosts',
+      'Get-FalconDomains',
 
       # device-control-policies.ps1
       'Edit-FalconDeviceControlPolicy',
