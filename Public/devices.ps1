@@ -174,6 +174,120 @@ function Get-FalconHost {
         $Result
     }
 }
+function Get-FalconDomainHosts{
+    param(
+        [string] $Domain,
+        [string] $Filter,
+        [ValidateSet('device_id.asc','device_id.desc','agent_load_flags.asc','agent_load_flags.desc',
+            'agent_version.asc','agent_version.desc','bios_manufacturer.asc','bios_manufacturer.desc',
+            'bios_version.asc','bios_version.desc','config_id_base.asc','config_id_base.desc',
+            'config_id_build.asc','config_id_build.desc','config_id_platform.asc','config_id_platform.desc',
+            'cpu_signature.asc','cpu_signature.desc','external_ip.asc','external_ip.desc','first_seen.asc',
+            'first_seen.desc','hostname.asc','hostname.desc','last_login_timestamp.asc',
+            'last_login_timestamp.desc','last_seen.asc','last_seen.desc','local_ip.asc','local_ip.desc',
+            'local_ip.raw.asc','local_ip.raw.desc','mac_address.asc','mac_address.desc','machine_domain.asc',
+            'machine_domain.desc','major_version.asc','major_version.desc','minor_version.asc',
+            'minor_version.desc','modified_timestamp.asc','modified_timestamp.desc','os_version.asc',
+            'os_version.desc','ou.asc','ou.desc','platform_id.asc','platform_id.desc','platform_name.asc',
+            'platform_name.desc','product_type_desc.asc','product_type_desc.desc','reduced_functionality_mode.asc',
+            'reduced_functionality_mode.desc','release_group.asc','release_group.desc','serial_number.asc',
+            'serial_number.desc','site_name.asc','site_name.desc','status.asc','status.desc',
+            'system_manufacturer.asc','system_manufacturer.desc','system_product_name.asc',
+            'system_product_name.desc')]
+        [string] $Sort,
+        [ValidateRange(1,5000)]
+        [int] $Limit,
+        [string] $Offset,
+        [ValidateSet('login_history', 'network_history', 'zero_trust_assessment')]
+        [array] $Include,
+        [switch] $Hidden,
+        [switch] $Login,
+        [switch] $Network,
+        [switch] $Detailed,
+        [switch] $All,
+        [switch] $Total,
+        [switch] $Or
+    )
+    begin {
+        $GFH = @{}
+        $PSBoundParameters.Keys|%{
+            $GFH.Add($_, $PSBoundParameters.$_)
+        }
+        if($GFH.Filter){
+            if($GFH.Or){
+                $GFH.Filter = $GFH.Filter + ",machine_domain:`'$Domain`'"            
+            }
+            else{
+                $GFH.Filter = $GFH.Filter + "+machine_domain:`'$Domain`'"
+            }
+        }
+        else {
+            $GFH.Add("Filter","machine_domain:`'$Domain`'")
+        }
+        $GFH.Remove("Domain")
+        $GFH.Remove("Or")
+    }
+    process {
+        $Result = Get-FalconHost @GFH
+        $Result
+    }
+}
+function Get-FalconDomainControllerHosts {
+    param(
+    [string] $Domain,
+    [string] $Filter,
+    [ValidateSet('device_id.asc','device_id.desc','agent_load_flags.asc','agent_load_flags.desc',
+        'agent_version.asc','agent_version.desc','bios_manufacturer.asc','bios_manufacturer.desc',
+        'bios_version.asc','bios_version.desc','config_id_base.asc','config_id_base.desc',
+        'config_id_build.asc','config_id_build.desc','config_id_platform.asc','config_id_platform.desc',
+        'cpu_signature.asc','cpu_signature.desc','external_ip.asc','external_ip.desc','first_seen.asc',
+        'first_seen.desc','hostname.asc','hostname.desc','last_login_timestamp.asc',
+        'last_login_timestamp.desc','last_seen.asc','last_seen.desc','local_ip.asc','local_ip.desc',
+        'local_ip.raw.asc','local_ip.raw.desc','mac_address.asc','mac_address.desc','machine_domain.asc',
+        'machine_domain.desc','major_version.asc','major_version.desc','minor_version.asc',
+        'minor_version.desc','modified_timestamp.asc','modified_timestamp.desc','os_version.asc',
+        'os_version.desc','ou.asc','ou.desc','platform_id.asc','platform_id.desc','platform_name.asc',
+        'platform_name.desc','product_type_desc.asc','product_type_desc.desc','reduced_functionality_mode.asc',
+        'reduced_functionality_mode.desc','release_group.asc','release_group.desc','serial_number.asc',
+        'serial_number.desc','site_name.asc','site_name.desc','status.asc','status.desc',
+        'system_manufacturer.asc','system_manufacturer.desc','system_product_name.asc',
+        'system_product_name.desc')]
+    [string] $Sort,
+    [ValidateRange(1,5000)]
+    [int] $Limit,
+    [string] $Offset,
+    [ValidateSet('login_history', 'network_history', 'zero_trust_assessment')]
+    [array] $Include,
+    [switch] $Hidden,
+    [switch] $Login,
+    [switch] $Network,
+    [switch] $Detailed,
+    [switch] $All,
+    [switch] $Total
+    )
+    begin {
+        $GFH = @{}
+        $PSBoundParameters.Keys|%{
+            $GFH.Add($_, $PSBoundParameters.$_)
+        }
+        if($GFH.Filter){
+            $GFH.Filter = $GFH.Filter + "+machine_domain:`'$Domain`'+product_type_desc:'Domain Controller'"
+        }
+        else {
+            $GFH.Add("Filter","machine_domain:`'$Domain`'+product_type_desc:'Domain Controller'")
+        }
+        $GFH.Remove("Domain")
+    }
+    process {
+        $Result = Get-FalconHost @GFH
+        $Result
+    }
+}
+function Get-FalconDomains {
+    return $(get-FalconHost -Filter "product_type_desc:'Domain Controller'"  -Detailed -All ).machine_domain | Sort-Object -Unique
+}
+Register-ArgumentCompleter -CommandName Get-FalconDomainHosts -ParameterName Domain -ScriptBlock {Get-FalconDomains}
+Register-ArgumentCompleter -CommandName Get-FalconDomainControllerHosts -ParameterName Domain -ScriptBlock {Get-FalconDomains}
 function Invoke-FalconHostAction {
     [CmdletBinding(DefaultParameterSetName = '/devices/entities/devices-actions/v2:post')]
     param(
