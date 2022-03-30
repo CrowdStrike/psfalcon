@@ -1,72 +1,126 @@
 function Get-FalconRemediation {
-    [CmdletBinding(DefaultParameterSetName = '/spotlight/entities/remediations/v2:get')]
+<#
+.SYNOPSIS
+Retrieve detail about remediations specified in a Falcon Spotlight vulnerability
+.DESCRIPTION
+Requires 'Spotlight Vulnerabilities: Read'.
+.PARAMETER Id
+Remediation identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Spotlight
+#>
+    [CmdletBinding(DefaultParameterSetName='/spotlight/entities/remediations/v2:get')]
     param(
-        [Parameter(ParameterSetName = '/spotlight/entities/remediations/v2:get', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [Alias('ids')]
+        [string[]]$Id
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconVulnerability {
-    [CmdletBinding(DefaultParameterSetName = '/spotlight/queries/vulnerabilities/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon Spotlight vulnerabilities
+.DESCRIPTION
+Requires 'Spotlight Vulnerabilities: Read'.
+.PARAMETER Id
+Vulnerability identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Facet
+Include additional properties
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Spotlight
+#>
+    [CmdletBinding(DefaultParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/spotlight/entities/vulnerabilities/v2:get', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Mandatory = $true,
-            Position = 1)]
-        [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Mandatory,Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Position = 2)]
-        [ValidateSet('cve', 'host_info', 'remediation')]
-        [array] $Facet,
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=2)]
+        [ValidateSet('cve','host_info','remediation',IgnoreCase=$false)]
+        [string[]]$Facet,
 
-        [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Position = 3)]
-        [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Position = 3)]
-        [ValidateSet('created_timestamp.asc', 'created_timestamp.desc', 'closed_timestamp.asc',
-            'closed_timestamp.desc', 'updated_timestamp.asc', 'updated_timestamp.desc')]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=3)]
+        [ValidateSet('created_timestamp.asc','created_timestamp.desc','closed_timestamp.asc',
+            'closed_timestamp.desc','updated_timestamp.asc','updated_timestamp.desc',IgnoreCase=$false)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Position = 4)]
-        [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Position = 4)]
+        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=4)]
         [ValidateRange(1,400)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get', Position = 5)]
-        [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Position = 5)]
-        [string] $After,
+        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=5)]
+        [string]$After,
 
-        [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get', Mandatory = $true)]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Mandatory)]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get')]
-        [Parameter(ParameterSetName = '/spotlight/combined/vulnerabilities/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/spotlight/queries/vulnerabilities/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('after', 'sort', 'ids', 'filter', 'limit', 'facet') }
+            Format = @{ Query = @('after','sort','ids','filter','limit','facet') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }

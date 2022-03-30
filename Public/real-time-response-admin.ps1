@@ -1,41 +1,97 @@
 function Confirm-FalconAdminCommand {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/admin-command/v1:get')]
-    param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/admin-command/v1:get', Mandatory = $true,
-            Position = 1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [string] $CloudRequestId,
+<#
+.SYNOPSIS
+Verify the status of a Real-time Response 'admin' command issued to a single-host session
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
 
-        [Parameter(ParameterSetName = '/real-time-response/entities/admin-command/v1:get', Position = 2)]
-        [int] $SequenceId
+Confirms the status of an executed 'admin' command. The single-host Real-time Response APIs require that commands
+be confirmed to 'acknowledge' that they have been processed as part of your API-based workflow. Failing to confirm
+after commands can lead to unexpected results.
+
+A 'sequence_id' value of 0 is added if the parameter is not specified.
+.PARAMETER SequenceId
+Sequence identifier
+.PARAMETER CloudRequestId
+Command request identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/admin-command/v1:get')]
+    param(
+        [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:get',Position=1)]
+        [Alias('sequence_id')]
+        [int32]$SequenceId,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:get',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [Alias('cloud_request_id','task_id')]
+        [string]$CloudRequestId
     )
     begin {
-        $Fields = @{
-            CloudRequestId = 'cloud_request_id'
-            SequenceId     = 'sequence_id'
-        }
-    }
-    process {
-        if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['sequence_id'] = 0 }
+        if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['SequenceId'] = 0 }
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('cloud_request_id', 'sequence_id') }
+            Format = @{ Query = @('cloud_request_id','sequence_id') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Edit-FalconScript {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/scripts/v1:patch')]
+<#
+.SYNOPSIS
+Modify a Real-time Response script
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+.PARAMETER Platform
+Operating system platform
+.PARAMETER PermissionType
+Permission level [public: 'Administrators' and 'Active Responders', group: 'Administrators', private: creator]
+.PARAMETER Name
+Script name
+.PARAMETER Description
+Script description
+.PARAMETER Comment
+Audit log comment
+.PARAMETER Path
+Path to script file
+.PARAMETER Id
+Script identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
-        [string] $Id,
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=1)]
+        [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
+        [string[]]$Platform,
 
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Mandatory = $true,
-            Position = 2)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=2)]
+        [ValidateSet('private','group','public',IgnoreCase=$false)]
+        [Alias('permission_type')]
+        [string]$PermissionType,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=3)]
+        [string]$Name,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=4)]
+        [string]$Description,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=5)]
+        [ValidateLength(1,4096)]
+        [Alias('comments_for_audit_log')]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,Position=6)]
+        [Alias('content','FullName')]
         [ValidateScript({
             if (Test-Path -Path $_ -PathType Leaf) {
                 $true
@@ -43,240 +99,406 @@ function Edit-FalconScript {
                 throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
-        [string] $Path,
+        [string]$Path,
 
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Position = 3)]
-        [ValidateSet('windows', 'mac', 'linux')]
-        [array] $Platform,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Position = 4)]
-        [ValidateSet('private', 'group', 'public')]
-        [string] $PermissionType,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Position = 5)]
-        [string] $Name,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Position = 6)]
-        [string] $Description,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:patch', Position = 7)]
-        [ValidateLength(1,4096)]
-        [string] $Comment
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=7)]
+        [ValidatePattern('^\w{32}_\w{32}$')]
+        [string]$Id
     )
     begin {
-        $Fields = @{
-            Comment        = 'comments_for_audit_log'
-            Path           = 'content'
-            PermissionType = 'permission_type'
-        }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{ ContentType = 'multipart/form-data' }
-            Format   = @{
-                Formdata = @('id', 'platform', 'permission_type', 'name', 'description', 'comments_for_audit_log',
+            Headers = @{ ContentType = 'multipart/form-data' }
+            Format = @{
+                Formdata = @('id','platform','permission_type','name','description','comments_for_audit_log',
                     'content')
             }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconPutFile {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/queries/put-files/v1:get')]
+<#
+.SYNOPSIS
+Search for Real-time Response 'put' files
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+.PARAMETER Id
+'Put' file identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/put-files/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:get', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get', Position = 2)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=2)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get', Position = 3)]
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=3)]
         [ValidateRange(1,100)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get', Position = 4)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=4)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/put-files/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
+            Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconScript {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/queries/scripts/v1:get')]
+<#
+.SYNOPSIS
+Search for custom Real-time Response scripts
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+.PARAMETER Id
+Script identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/scripts/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:get', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get', Position = 2)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=2)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get', Position = 3)]
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=3)]
         [ValidateRange(1,100)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get', Position = 4)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=4)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/real-time-response/queries/scripts/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
+            Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Invoke-FalconAdminCommand {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/admin-command/v1:post')]
+<#
+.SYNOPSIS
+Issue a Real-time Response admin command to an existing single-host or batch session
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+
+Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id'
+or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
+
+The 'Confirm' parameter will use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to check for command
+results every 5 seconds for a total of 60 seconds.
+.PARAMETER Command
+Real-time Response command
+.PARAMETER Argument
+Arguments to include with the command
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds
+.PARAMETER OptionalHostId
+Restrict execution to specific host identifiers
+.PARAMETER SessionId
+Session identifier
+.PARAMETER BatchId
+Batch session identifier
+.PARAMETER Confirm
+Use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to retrieve command results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-admin-command/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/admin-command/v1:post', Mandatory = $true,
-            Position = 1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [string] $SessionId,
+        [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Mandatory,
+            Position=1)]
+        [ValidateSet('cat','cd','clear','cp','csrutil','cswindiag','encrypt','env','eventlog','filehash',
+            'get','getsid','help','history','ifconfig','ipconfig','kill','ls','map','memdump','mkdir',
+            'mount','mv','netstat','ps','put','put-and-run','reg delete','reg load','reg query',
+            'reg set','reg unload','restart','rm','run','runscript','shutdown','umount','unmap',
+            'update history','update install','update list','update install','users','xmemdump','zip',
+            IgnoreCase=$false)]
+        [Alias('base_command')]
+        [string]$Command,
 
-        [Parameter(ParameterSetName = '/real-time-response/combined/batch-admin-command/v1:post',
-            Mandatory = $true, Position = 1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [string] $BatchId,
+        [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Position=2)]
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=2)]
+        [Alias('Arguments')]
+        [string]$Argument,
 
-        [Parameter(ParameterSetName = '/real-time-response/entities/admin-command/v1:post', Mandatory = $true,
-            Position = 2)]
-        [Parameter(ParameterSetName = '/real-time-response/combined/batch-admin-command/v1:post',
-            Mandatory = $true, Position = 2)]
-        [ValidateSet('cat', 'cd', 'clear', 'cp', 'csrutil', 'cswindiag', 'encrypt', 'env', 'eventlog', 'filehash',
-            'get', 'getsid', 'help', 'history', 'ifconfig', 'ipconfig', 'kill', 'ls', 'map', 'memdump', 'mkdir',
-            'mount', 'mv', 'netstat', 'ps', 'put', 'put-and-run', 'reg delete', 'reg load', 'reg query',
-            'reg set', 'reg unload', 'restart', 'rm', 'run', 'runscript', 'shutdown', 'umount', 'unmap',
-            'update history', 'update install', 'update list', 'update install', 'users', 'xmemdump', 'zip')]
-        [string] $Command,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/admin-command/v1:post', Position = 3)]
-        [Parameter(ParameterSetName = '/real-time-response/combined/batch-admin-command/v1:post', Position = 3)]
-        [string] $Arguments,
-
-        [Parameter(ParameterSetName = '/real-time-response/combined/batch-admin-command/v1:post', Position = 4)]
-        [ValidatePattern('^\w{32}$')]
-        [array] $OptionalHostIds,
-
-        [Parameter(ParameterSetName = '/real-time-response/combined/batch-admin-command/v1:post', Position = 5)]
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=3)]
         [ValidateRange(30,600)]
-        [int] $Timeout
+        [int32]$Timeout,
+
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=4)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('optional_hosts','OptionalHostIds')]
+        [string[]]$OptionalHostId,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [Alias('session_id')]
+        [string]$SessionId,
+
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName)]
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [Alias('batch_id')]
+        [string]$BatchId,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post')]
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post')]
+        [switch]$Confirm
     )
     begin {
-        $Fields = @{
-            BatchId         = 'batch_id'
-            Command         = 'base_command'
-            OptionalHostIds = 'optional_hosts'
-            SessionId       = 'session_id'
-        }
-    }
-    process {
-        $CommandString = if ($PSBoundParameters.Arguments) {
-            @($PSBoundParameters.Command, $PSBoundParameters.Arguments) -join ' '
-            [void] $PSBoundParameters.Remove('Arguments')
-        } else {
-            $PSBoundParameters.Command
-        }
-        $PSBoundParameters['command_string'] = $CommandString
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
+            Command = $MyInvocation.MyCommand.Name
+            Format = @{
                 Query = @('timeout')
-                Body  = @{ root = @('session_id', 'base_command', 'command_string', 'optional_hosts', 'batch_id') }
+                Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
             }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($OptionalHostId) { @($OptionalHostId).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($PSBoundParameters.BatchId -and $PSBoundParameters.Command -eq 'get') {
+            # Redirect to 'Invoke-FalconBatchGet' for multi-host 'get' requests
+            $GetParam = @{
+                FilePath = $PSBoundParameters.Argument
+                BatchId = $PSBoundParameters.BatchId
+                Confirm = $PSBoundParameters.Confirm
+            }
+            if ($Timeout) { $GetParam['Timeout'] = $PSBoundParameters.Timeout }
+            if ($IdArray) { $GetParam['OptionalHostId'] = @($IdArray | Select-Object -Unique) }
+            Invoke-FalconBatchGet @GetParam
+        } else {
+            # Verify 'Endpoint' using BatchId/SessionId
+            $Endpoint = if ($PSBoundParameters.BatchId) {
+                if ($IdArray) { $PSBoundParameters['OptionalHostId'] = @($IdArray | Select-Object -Unique) }
+                '/real-time-response/combined/batch-admin-command/v1:post'
+            } elseif ($PSBoundParameters.SessionId) {
+                '/real-time-response/entities/admin-command/v1:post'
+            }
+            if ($Endpoint) {
+                $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
+                    # Join 'Command' and 'Argument' into 'command_string'
+                    @($PSBoundParameters.Command,$PSBoundParameters.Argument) -join ' '
+                    [void]$PSBoundParameters.Remove('Argument')
+                } else {
+                    $PSBoundParameters.Command
+                }
+                @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
+                    if ($BatchId) {
+                        # Add 'batch_id' to each result and output
+                        Add-Property -Object $_ -Name 'batch_id' -Value $BatchId
+                        $_
+                    } elseif ($SessionId -and $Confirm) {
+                        for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
+                            # Attempt to 'confirm' for 60 seconds
+                            Start-Sleep 5
+                            $Result = if ($Command -eq 'get') {
+                                $_ | Confirm-FalconGetFile
+                            } else {
+                                $_ | Confirm-FalconAdminCommand
+                            }
+                        }
+                        $Result
+                    } else {
+                        $_
+                    }
+                }
+            }
+        }
     }
 }
 function Remove-FalconPutFile {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/put-files/v1:delete')]
+<#
+.SYNOPSIS
+Remove a Real-time Response 'put' file
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+.PARAMETER Id
+Real-time Response 'put' file identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:delete', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [string] $Id
+        [Alias('ids')]
+        [string]$Id
     )
     begin {
-        $Fields = @{ Id = 'ids' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Remove-FalconScript {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/scripts/v1:delete')]
+<#
+.SYNOPSIS
+Remove a custom Real-time Response script
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+.PARAMETER Id
+Script identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:delete', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [string] $Id
+        [Alias('ids')]
+        [string]$Id
     )
     begin {
-        $Fields = @{ Id = 'ids' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Send-FalconPutFile {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/put-files/v1:post')]
+<#
+.SYNOPSIS
+Upload a Real-time Response 'put' file
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+.PARAMETER Name
+File name
+.PARAMETER Description
+File description
+.PARAMETER Comment
+Comment for audit log
+.PARAMETER Path
+Path to local file
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:post', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',
+            ValueFromPipelineByPropertyName,Position=1)]
+        [string]$Name,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Position=2)]
+        [string]$Description,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Position=3)]
+        [ValidateLength(1,4096)]
+        [Alias('comments_for_audit_log')]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidateScript({
             if (Test-Path -Path $_ -PathType Leaf) {
                 $true
@@ -284,40 +506,65 @@ function Send-FalconPutFile {
                 throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
-        [string] $Path,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:post', Position = 2)]
-        [string] $Name,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:post', Position = 3)]
-        [string] $Description,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/put-files/v1:post', Position = 4)]
-        [ValidateLength(1,4096)]
-        [string] $Comment
+        [Alias('file','FullName')]
+        [string]$Path
     )
     begin {
-        $Fields = @{
-            Comment = 'comments_for_audit_log'
-            Path    = 'file'
-        }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{ ContentType = 'multipart/form-data' }
-            Format   = @{ Formdata = @('file', 'name', 'description', 'comments_for_audit_log') }
+            Headers = @{ ContentType = 'multipart/form-data' }
+            Format = @{ Formdata = @('file','name','description','comments_for_audit_log') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Send-FalconScript {
-    [CmdletBinding(DefaultParameterSetName = '/real-time-response/entities/scripts/v1:post')]
+<#
+.SYNOPSIS
+Upload a custom Real-time Response script
+.DESCRIPTION
+Requires 'Real Time Response (Admin): Write'.
+.PARAMETER Platform
+Operating system platform
+.PARAMETER PermissionType
+Permission level [public: 'Administrators' and 'Active Responders', group: 'Administrators', private: creator]
+.PARAMETER Name
+Script name
+.PARAMETER Description
+Script description
+.PARAMETER Comment
+Audit log comment
+.PARAMETER Path
+Path to local file
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+#>
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:post', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,Position=1)]
+        [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
+        [string[]]$Platform,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,Position=2)]
+        [ValidateSet('private','group','public',IgnoreCase=$false)]
+        [Alias('permission_type')]
+        [string]$PermissionType,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',
+            ValueFromPipelineByPropertyName,Position=3)]
+        [string]$Name,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Position=4)]
+        [string]$Description,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Position=5)]
+        [ValidateLength(1,4096)]
+        [Alias('comments_for_audit_log')]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=6)]
         [ValidateScript({
             if (Test-Path -Path $_ -PathType Leaf) {
                 $true
@@ -325,46 +572,19 @@ function Send-FalconScript {
                 throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
-        [string] $Path,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:post', Mandatory = $true,
-            Position = 2)]
-        [ValidateSet('windows', 'mac', 'linux')]
-        [array] $Platform,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:post', Mandatory = $true,
-            Position = 3)]
-        [ValidateSet('private', 'group', 'public')]
-        [string] $PermissionType,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:post', Position = 4)]
-        [string] $Name,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:post', Position = 5)]
-        [string] $Description,
-
-        [Parameter(ParameterSetName = '/real-time-response/entities/scripts/v1:post', Position = 6)]
-        [ValidateLength(1,4096)]
-        [string] $Comment
+        [Alias('content','FullName')]
+        [string]$Path
     )
     begin {
-        $Fields = @{
-            Comment        = 'comments_for_audit_log'
-            Path           = 'content'
-            PermissionType = 'permission_type'
-        }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Headers  = @{ ContentType = 'multipart/form-data' }
-            Format   = @{
-                Formdata = @('platform', 'permission_type', 'name', 'description', 'comments_for_audit_log',
+            Headers = @{ ContentType = 'multipart/form-data' }
+            Format = @{
+                Formdata = @('platform','permission_type','name','description','comments_for_audit_log',
                     'content')
             }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }

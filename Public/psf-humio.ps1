@@ -1,39 +1,55 @@
 function Register-FalconEventCollector {
+<#
+.SYNOPSIS
+Define Humio ingestion endpoint and token for logging
+.DESCRIPTION
+Once configured,the Humio destination can be used by PSFalcon but the module will not send events to Humio
+until 'Enable' options are chosen. 'Remove-FalconEventCollector' can be used to remove a configured destination
+and stop the transmission of events.
+.PARAMETER Uri
+Humio cloud
+.PARAMETER Token
+Humio ingestion token
+.PARAMETER Enable
+Define events to send to the collector
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
-        [System.Uri] $Uri,
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=1)]
+        [System.Uri]$Uri,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 2)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [string] $Token,
+        [string]$Token,
 
-        [Parameter(ValueFromPipeLineByPropertyName = $true, Position = 3)]
-        [ValidateSet('responses', 'requests')]
-        [array] $Enable
+        [Parameter(ValueFromPipelineByPropertyName,Position=3)]
+        [ValidateSet('responses','requests')]
+        [string[]]$Enable
     )
     process {
         if (!$Script:Falcon.Api) {
             throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
         }
         $Script:Falcon.Api.Collector = @{
-            Uri   = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
+            Uri = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
             Token = $PSBoundParameters.Token
         }
         $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Uri)'"
         if ($PSBoundParameters.Enable) {
             $Script:Falcon.Api.Collector['Enable'] = $PSBoundParameters.Enable
-            $Message += " for $(@($PSBoundParameters.Enable).foreach{ "'$_'" } -join ', ')"
+            $Message += " for $(@($PSBoundParameters.Enable).foreach{ "'$_'" } -join ',')"
         }
         Write-Verbose "$Message."
     }
 }
 $Register = @{
-    CommandName   = 'Register-FalconEventCollector'
+    CommandName = 'Register-FalconEventCollector'
     ParameterName = 'Uri'
-    ScriptBlock   = {
-        param($CommandName, $ParameterName, $WordToComplete, $CommandAst, $FakeBoundParameters)
-        $PublicClouds = @('https://cloud.community.humio.com/', 'https://cloud.humio.com/',
+    ScriptBlock = {
+        param($CommandName,$ParameterName,$WordToComplete,$CommandAst,$FakeBoundParameters)
+        $PublicClouds = @('https://cloud.community.humio.com/','https://cloud.humio.com/',
             'https://cloud.us.humio.com/')
         $Match = $PublicClouds | Where-Object { $_ -like "$WordToComplete*" }
         $Match | ForEach-Object {
@@ -46,11 +62,22 @@ $Register = @{
 }
 Register-ArgumentCompleter @Register
 function Send-FalconEvent {
+<#
+.SYNOPSIS
+Create Humio events from PSFalcon command results
+.DESCRIPTION
+Uses the pre-defined 'Path' and 'Token' values from 'Register-FalconEventCollector' to create events from the
+output provided by a PSFalcon command.
+.PARAMETER Object
+PSFalcon command output
+.LINK
+
+#>
     [CmdletBinding()]
     [OutputType([void])]
     param(
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
-        [object] $Object
+        [Parameter(Mandatory,ValueFromPipeline,Position=1)]
+        [System.Object]$Object
     )
     begin {
         $OriginalProgress = $ProgressPreference
@@ -60,9 +87,9 @@ function Send-FalconEvent {
         if (!$Script:Falcon.Api.Collector.Uri -or !$Script:Falcon.Api.Collector.Token) {
             throw "Humio destination has not been configured. Try 'Register-FalconEventCollector'."
         }
-        [array] $Events = $PSBoundParameters.Object | ForEach-Object {
+        [array]$Events = $PSBoundParameters.Object | ForEach-Object {
             $Item = @{
-                timestamp  = Get-Date -Format o
+                timestamp = Get-Date -Format o
                 attributes = @{}
             }
             if ($_ -is [System.Management.Automation.PSCustomObject]) {
@@ -75,16 +102,16 @@ function Send-FalconEvent {
             $Item
         }
         $Param = @{
-            Uri     = $Script:Falcon.Api.Collector.Uri
-            Method  = 'post'
+            Uri = $Script:Falcon.Api.Collector.Uri
+            Method = 'post'
             Headers = @{
-                Authorization = @('Bearer', $Script:Falcon.Api.Collector.Token) -join ' '
-                ContentType   = 'application/json'
+                Authorization = @('Bearer',$Script:Falcon.Api.Collector.Token) -join ' '
+                ContentType = 'application/json'
             }
-            Body    = ConvertTo-Json -InputObject @(
+            Body = ConvertTo-Json -InputObject @(
                 @{
-                    tags   = @{
-                        host   = [System.Net.Dns]::GetHostname()
+                    tags = @{
+                        host = [System.Net.Dns]::GetHostname()
                         source = (Show-FalconModule).UserAgent
                     }
                     events = $Events
@@ -98,6 +125,12 @@ function Send-FalconEvent {
     }
 }
 function Show-FalconEventCollector {
+<#
+.SYNOPSIS
+Display existing Humio ingestion endpoint and token
+.LINK
+
+#>
     [CmdletBinding()]
     param()
     process {
@@ -105,13 +138,19 @@ function Show-FalconEventCollector {
             throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
         }
         [PSCustomObject] @{
-            Uri     = $Script:Falcon.Api.Collector.Uri
-            Token   = $Script:Falcon.Api.Collector.Token
+            Uri = $Script:Falcon.Api.Collector.Uri
+            Token = $Script:Falcon.Api.Collector.Token
             Enabled = $Script:Falcon.Api.Collector.Enable
         }
     }
 }
 function Unregister-FalconEventCollector {
+<#
+.SYNOPSIS
+Remove an existing Humio ingestion endpoint and token
+.LINK
+
+#>
     [CmdletBinding()]
     param()
     process {

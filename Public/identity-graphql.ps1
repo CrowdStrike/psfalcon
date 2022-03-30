@@ -1,24 +1,39 @@
 function Invoke-FalconIdentityGraph {
-    [CmdletBinding(DefaultParameterSetName = '/identity-protection/combined/graphql/v1:post')]
+<#
+.SYNOPSIS
+Interact with Falcon Identity using GraphQL
+.DESCRIPTION
+Requires 'Identity Protection GraphQL: Write'.
+.PARAMETER Query
+GraphQL query statement
+#>
+    [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/identity-protection/combined/graphql/v1:post', Mandatory = $true,
-            Position = 1)]
-        [string] $Query
+        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+        [string]$Query
     )
     begin {
-        if (!$Script:Falcon.Hostname) { Request-FalconToken }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('query') }}
+        }
     }
     process {
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        <#
         $Param = @{
-            Path    = "$($Script:Falcon.Hostname)/identity-protection/combined/graphql/v1"
-            Method  = 'post'
+            Path = "$($Script:Falcon.Hostname)/identity-protection/combined/graphql/v1"
+            Method = 'post'
             Headers = @{
-                Accept      = 'application/json'
+                Accept = 'application/json'
                 ContentType = 'application/json'
             }
             Body = ConvertTo-Json -InputObject @{ query = "{$($PSBoundParameters.Query)}" } -Compress
         }
         $Request = $Script:Falcon.Api.Invoke($Param)
         Write-Result -Request $Request
+        #>
     }
 }

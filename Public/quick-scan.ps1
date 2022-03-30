@@ -1,48 +1,94 @@
 function Get-FalconQuickScan {
-    [CmdletBinding(DefaultParameterSetName = '/scanner/queries/scans/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon QuickScan results
+.DESCRIPTION
+Requires 'Quick Scan (Falcon X): Read'.
+.PARAMETER Id
+QuickScan identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+#>
+    [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/scanner/entities/scans/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/scanner/entities/scans/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get', Position = 2)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=2)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get', Position = 3)]
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=3)]
         [ValidateRange(1,500)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get', Position = 4)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=4)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/scanner/queries/scans/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
+            Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconQuickScanQuota {
-    [CmdletBinding(DefaultParameterSetName = '/scanner/queries/scans/v1:get')]
+<#
+.SYNOPSIS
+Display monthly Falcon QuickScan quota
+.DESCRIPTION
+Requires 'Quick Scan (Falcon X): Read'.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+#>
+    [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get')]
     param()
     process {
-        $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput
+        $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta.quota
         } else {
@@ -51,22 +97,42 @@ function Get-FalconQuickScanQuota {
     }
 }
 function New-FalconQuickScan {
-    [CmdletBinding(DefaultParameterSetName = '/scanner/entities/scans/v1:post')]
+<#
+.SYNOPSIS
+Submit a volume of files to Falcon QuickScan
+.DESCRIPTION
+Requires 'Quick Scan (Falcon X): Write'.
+
+'Ids' values (Sha256 hashes) are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be
+uploaded before they can be used with Falcon QuickScan.
+
+Time required for analysis increases with the number of samples in a volume but usually takes less than 1 minute.
+.PARAMETER Id
+Sha256 hash value
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+#>
+    [CmdletBinding(DefaultParameterSetName='/scanner/entities/scans/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/scanner/entities/scans/v1:post', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/scanner/entities/scans/v1:post',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{64}$')]
-        [array] $Ids
+        [Alias('samples','ids')]
+        [string[]]$Id
     )
     begin {
-        $Fields = @{ Ids = 'samples' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Body = @{ root = @('samples') }}
+            Format = @{ Body = @{ root = @('samples') }}
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }

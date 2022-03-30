@@ -1,384 +1,551 @@
 function Edit-FalconSensorUpdatePolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v2:patch')]
+<#
+.SYNOPSIS
+Modify Sensor Update policies
+.DESCRIPTION
+Requires 'Sensor Update Policies: Write'.
+.PARAMETER Array
+An array of policies to modify in a single request
+.PARAMETER Name
+Policy name
+.PARAMETER Settings
+Hashtable of policy settings
+.PARAMETER Description
+Policy description
+.PARAMETER Id
+Policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch')]
     param(
-        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='array',Mandatory)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
-                    Object   = $Object
-                    Command  = 'Edit-FalconSensorUpdatePolicy'
+                    Object = $Object
+                    Command = 'Edit-FalconSensorUpdatePolicy'
                     Endpoint = '/policy/entities/sensor-update/v2:patch'
                     Required = @('id')
-                    Pattern  = @('id')
+                    Pattern = @('id')
                 }
                 Confirm-Parameter @Param
             }
         })]
-        [array] $Array,
+        [Alias('resources')]
+        [array]$Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=1)]
+        [string]$Name,
+
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=2)]
+        [System.Object]$Settings,
+
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=3)]
+        [string]$Description,
+
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
-
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Position = 2)]
-        [string] $Name,
-
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Position = 3)]
-        [object] $Settings,
-
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:patch', Position = 4)]
-        [string] $Description
+        [string]$Id
     )
     begin {
-        $Fields = @{ Array = 'resources' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/sensor-update/v2:patch'
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
+            Format = @{
                 Body = @{
-                    resources = @('name', 'id', 'description', 'settings')
-                    root      = @('resources')
+                    resources = @('name','id','description','settings')
+                    root = @('resources')
                 }
             }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconBuild {
-    [CmdletBinding(DefaultParameterSetName = '/policy/combined/sensor-update-builds/v1:get')]
+<#
+.SYNOPSIS
+Retrieve Falcon Sensor builds for assignment in Sensor Update policies
+.DESCRIPTION
+Requires 'Sensor Update Policies: Read'.
+.PARAMETER Platform
+Operating system platform
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-builds/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-builds/v1:get')]
-        [ValidateSet('linux', 'mac', 'windows')]
-        [string] $Platform
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-builds/v1:get')]
+        [ValidateSet('linux','mac','windows',IgnoreCase=$false)]
+        [string]$Platform
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('platform') }
+            Format = @{ Query = @('platform') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconKernel {
-    [CmdletBinding(DefaultParameterSetName = '/policy/combined/sensor-update-kernels/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon kernel compatibility information for Sensor builds
+.DESCRIPTION
+Requires 'Sensor Update Policies: Read'.
+.PARAMETER Field
+Return values for a specific field
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Mandatory = $true,
-            Position = 1)]
-        [ValidateSet('architecture', 'base_package_supported_sensor_versions', 'distro', 'distro_version',
-            'flavor', 'release', 'vendor', 'version', 'ztl_supported_sensor_versions')]
-        [string] $Field,
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Mandatory,
+           Position=1)]
+        [ValidateSet('architecture','base_package_supported_sensor_versions','distro','distro_version',
+            'flavor','release','vendor','version','ztl_supported_sensor_versions',IgnoreCase=$false)]
+        [string]$Field,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 1)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 2)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=2)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 2)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 3)]
-        [ValidateSet('architecture.asc', 'architecture.desc', 'distro.asc', 'distro.desc', 'distro_version.asc',
-            'distro_version.desc', 'flavor.asc', 'flavor.desc', 'release.asc', 'release.desc', 'vendor.asc',
-            'vendor.desc', 'version.asc', 'version.desc')]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=3)]
+        [ValidateSet('architecture.asc','architecture.desc','distro.asc','distro.desc','distro_version.asc',
+            'distro_version.desc','flavor.asc','flavor.desc','release.asc','release.desc','vendor.asc',
+            'vendor.desc','version.asc','version.desc',IgnoreCase=$false)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 3)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 4)]
-        [ValidateRange(1, 5000)]
-        [int] $Limit,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=4)]
+        [ValidateRange(1,5000)]
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get', Position = 4)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get', Position = 5)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=5)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get')]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-kernels/{field}/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-kernels/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = if ($PSBoundParameters.Field) {
-                $PSCmdlet.ParameterSetName -replace '\{field\}', $PSBoundParameters.Field
-                [void] $PSBoundParameters.Remove('Field')
+                $PSCmdlet.ParameterSetName -replace '\{field\}',$PSBoundParameters.Field
+                [void]$PSBoundParameters.Remove('Field')
             } else {
                 $PSCmdlet.ParameterSetName
             }
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('offset', 'filter', 'sort', 'limit') }
+            Format = @{ Query = @('offset','filter','sort','limit') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconSensorUpdatePolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/queries/sensor-update/v1:get')]
+<#
+.SYNOPSIS
+Search for Sensor Update policies
+.DESCRIPTION
+Requires 'Sensor Update Policies: Read'.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get', Position = 1)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=1)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get', Position = 2)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get', Position = 2)]
-        [ValidateSet('created_by.asc', 'created_by.desc', 'created_timestamp.asc', 'created_timestamp.desc',
-            'enabled.asc', 'enabled.desc', 'modified_by.asc', 'modified_by.desc', 'modified_timestamp.asc',
-            'modified_timestamp.desc', 'name.asc', 'name.desc', 'platform_name.asc', 'platform_name.desc',
-            'precedence.asc', 'precedence.desc')]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=2)]
+        [ValidateSet('created_by.asc','created_by.desc','created_timestamp.asc','created_timestamp.desc',
+            'enabled.asc','enabled.desc','modified_by.asc','modified_by.desc','modified_timestamp.asc',
+            'modified_timestamp.desc','name.asc','name.desc','platform_name.asc','platform_name.desc',
+            'precedence.asc','precedence.desc',IgnoreCase=$false)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get', Position = 3)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get', Position = 3)]
-        [ValidateRange(1, 5000)]
-        [int] $Limit,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=3)]
+        [ValidateRange(1,5000)]
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get', Position = 4)]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get', Position = 4)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=4)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get', Mandatory = $true)]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Mandatory)]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update/v2:get')]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get')]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
+            Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconSensorUpdatePolicyMember {
-    [CmdletBinding(DefaultParameterSetName = '/policy/queries/sensor-update-members/v1:get')]
+<#
+.SYNOPSIS
+Search for members of Sensor Update policies
+.DESCRIPTION
+Requires 'Sensor Update Policies: Read'.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update-members/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get',
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get',
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get', Position = 2)]
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get', Position = 2)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=2)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get', Position = 3)]
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get', Position = 3)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=3)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get', Position = 4)]
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get', Position = 4)]
-        [ValidateRange(1, 5000)]
-        [int] $Limit,
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=4)]
+        [ValidateRange(1,5000)]
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get', Position = 5)]
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get', Position = 5)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=5)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get', Mandatory = $true)]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Mandatory)]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/policy/combined/sensor-update-members/v1:get')]
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/policy/queries/sensor-update-members/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'offset', 'filter', 'id', 'limit') }
+            Format = @{ Query = @('sort','offset','filter','id','limit') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconUninstallToken {
-    [CmdletBinding(DefaultParameterSetName = '/policy/combined/reveal-uninstall-token/v1:post')]
+<#
+.SYNOPSIS
+Retrieve an uninstallation or maintenance token
+.DESCRIPTION
+Requires 'Sensor Update Policies: Write'.
+.PARAMETER AuditMessage
+Audit log comment
+.PARAMETER Id
+Host identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/combined/reveal-uninstall-token/v1:post', Mandatory = $true,
-            ValueFromPipeline = $true, Position = 1)]
-        [Alias('device_id')]
-        [ValidatePattern('^(\w{32}|MAINTENANCE)$')]
-        [string] $DeviceId,
+        [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=1)]
+        [Alias('audit_message')]
+        [string]$AuditMessage,
 
-        [Parameter(ParameterSetName = '/policy/combined/reveal-uninstall-token/v1:post', Position = 2)]
-        [string] $AuditMessage
+        [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+        [Alias('device_id','DeviceId')]
+        [ValidatePattern('^(\w{32}|MAINTENANCE)$')]
+        [string]$Id
     )
     begin {
-        $Fields = @{
-            DeviceId     = 'device_id'
-            AuditMessage = 'audit_message'
-        }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Body = @{ root = @('audit_message', 'device_id') }}
+            Format = @{ Body = @{ root = @('audit_message','device_id') }}
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Invoke-FalconSensorUpdatePolicyAction {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update-actions/v1:post')]
+<#
+.SYNOPSIS
+Perform actions on Sensor Update policies
+.DESCRIPTION
+Requires 'Sensor Update Policies: Write'.
+.PARAMETER Name
+Action to perform
+.PARAMETER Id
+Policy identifier
+.PARAMETER GroupId
+Host group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true,
-            Position = 1)]
-        [ValidateSet('add-host-group', 'disable', 'enable', 'remove-host-group')]
-        [string] $Name,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,
+           Position=1)]
+        [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
+        [Alias('action_name')]
+        [string]$Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 2)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-actions/v1:post', Position = 3)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string] $GroupId
+        [string]$GroupId
     )
     begin {
-        $Fields = @{ name = 'action_name' }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Query = @('action_name')
+                Body = @{ root = @('ids','action_parameters') }
+            }
+        }
     }
     process {
-        $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
-        [void] $PSBoundParameters.Remove('Id')
+        $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+        [void]$PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
             $PSBoundParameters['action_parameters'] = @(
                 @{
-                    name  = 'group_id'
+                    name = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
             )
-            [void] $PSBoundParameters.Remove('GroupId')
+            [void]$PSBoundParameters.Remove('GroupId')
         }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('action_name')
-                Body  = @{ root = @('ids', 'action_parameters') }
-            }
-        }
-        Invoke-Falcon @Param
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconSensorUpdatePolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v2:post')]
+<#
+.SYNOPSIS
+Create Sensor Update policies
+.DESCRIPTION
+Requires 'Sensor Update Policies: Write'.
+.PARAMETER Array
+An array of policies to create in a single request
+.PARAMETER PlatformName
+Operating system platform
+.PARAMETER Name
+Policy name
+.PARAMETER Settings
+Hashtable of policy settings
+.PARAMETER Description
+Policy description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post')]
     param(
-        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='array',Mandatory)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
-                    Object   = $Object
-                    Command  = 'New-FalconSensorUpdatePolicy'
+                    Object = $Object
+                    Command = 'New-FalconSensorUpdatePolicy'
                     Endpoint = '/policy/entities/sensor-update/v2:post'
                     Required = @('name','platform_name')
-                    Content  = @('platform_name')
-                    Format   = @{ platform_name = 'PlatformName' }
+                    Content = @('platform_name')
+                    Format = @{ platform_name = 'PlatformName' }
                 }
                 Confirm-Parameter @Param
             }
         })]
-        [array] $Array,
+        [Alias('resources')]
+        [array]$Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Mandatory = $true, Position = 1)]
-        [ValidateSet('Windows', 'Mac', 'Linux')]
-        [string] $PlatformName,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=1)]
+        [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
+        [Alias('platform_name')]
+        [string]$PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Mandatory = $true, Position = 2)]
-        [string] $Name,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=2)]
+        [string]$Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Position = 3)]
-        [object] $Settings,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=3)]
+        [System.Object]$Setting,
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v2:post', Position = 4)]
-        [string] $Description
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=4)]
+        [string]$Description
     )
     begin {
-        $Fields = @{
-            Array        = 'resources'
-            PlatformName = 'platform_name'
-        }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/sensor-update/v2:post'
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
+            Format = @{
                 Body = @{
-                    resources = @('description', 'platform_name', 'name', 'settings')
+                    resources = @('description','platform_name','name','settings')
                     root =      @('resources')
                 }
             }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Remove-FalconSensorUpdatePolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update/v1:delete')]
+<#
+.SYNOPSIS
+Remove Sensor Update policies
+.DESCRIPTION
+Requires 'Sensor Update Policies: Write'.
+.PARAMETER Id
+Policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update/v1:delete', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v1:delete',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [Alias('ids')]
+        [string[]]$Id
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Set-FalconSensorUpdatePrecedence {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sensor-update-precedence/v1:post')]
-    param(
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-precedence/v1:post', Mandatory = $true,
-            Position = 1)]
-        [ValidateSet('Windows', 'Mac', 'Linux')]
-        [string] $PlatformName,
+<#
+.SYNOPSIS
+Set Sensor Update policy precedence
+.DESCRIPTION
+Requires 'Sensor Update Policies: Write'.
 
-        [Parameter(ParameterSetName = '/policy/entities/sensor-update-precedence/v1:post', Mandatory = $true,
-            Position = 2)]
+All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
+policy precedence.
+.PARAMETER PlatformName
+Operating system platform
+.PARAMETER Id
+Policy identifiers in desired precedence order
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-precedence/v1:post')]
+    param(
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-precedence/v1:post',Mandatory,Position=1)]
+        [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
+        [Alias('platform_name')]
+        [string]$PlatformName,
+
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-precedence/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [Alias('ids')]
+        [string[]]$Id
     )
     begin {
-        $Fields = @{ PlatformName = 'platform_name' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Body = @{ root = @('platform_name', 'ids') }}
+            Format = @{ Body = @{ root = @('platform_name','ids') }}
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }

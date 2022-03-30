@@ -1,41 +1,79 @@
 function Get-FalconAsset {
-    [CmdletBinding(DefaultParameterSetName = '/discover/queries/hosts/v1:get')]
+<#
+.SYNOPSIS
+Search for assets in Falcon Discover
+.DESCRIPTION
+Requires 'Falcon Discover: Read'.
+.PARAMETER Id
+Asset identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Discover
+#>
+    [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/discover/entities/hosts/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/discover/entities/hosts/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w+$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get', Position = 2)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=2)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get', Position = 3)]
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=3)]
         [ValidateRange(1,100)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get', Position = 4)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=4)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/discover/queries/hosts/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('filter', 'q', 'sort', 'limit', 'offset', 'ids') }
-            Max      = 100
+            Format = @{ Query = @('filter','sort','limit','offset','ids') }
+            Max = 100
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }

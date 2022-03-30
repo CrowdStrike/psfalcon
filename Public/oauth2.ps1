@@ -1,35 +1,65 @@
 function Request-FalconToken {
-    [CmdletBinding(DefaultParameterSetName = 'Hostname')]
+<#
+.SYNOPSIS
+Request an OAuth2 access token
+.DESCRIPTION
+Requests an OAuth2 access token.
+
+If successful,your credentials ('ClientId','ClientSecret','MemberCid' and 'Cloud'/'Hostname') and token are
+cached for re-use.
+
+If an active OAuth2 access token is due to expire in less than 60 seconds,a new token will automatically be
+requested using your cached credentials.
+
+The 'Collector' parameter allows for the submission of a [System.Collections.Hashtable] object containing the
+parameters included with a 'Register-FalconEventCollector' command ('Path','Token' and 'Enabled') in order to
+log an initial OAuth2 access token request.
+.PARAMETER ClientId
+OAuth2 client identifier
+.PARAMETER ClientSecret
+OAuth2 client secret
+.PARAMETER Cloud
+CrowdStrike cloud [default: 'us-1']
+.PARAMETER Hostname
+CrowdStrike API hostname
+.PARAMETER MemberCid
+Member CID,used when authenticating within a multi-CID environment ('Falcon Flight Control')
+.PARAMETER Collector
+A hashtable containing 'Path','Token' and 'Enabled' properties for 'Register-FalconEventCollector'
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Authentication
+#>
+    [CmdletBinding(DefaultParameterSetName='Hostname')]
     param(
-        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 1)]
-        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 1)]
+        [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=1)]
         [Alias('client_id')]
         [ValidatePattern('^\w{32}$')]
-        [string] $ClientId,
+        [string]$ClientId,
 
-        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 2)]
-        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 2)]
+        [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=2)]
         [Alias('client_secret')]
         [ValidatePattern('^\w{40}$')]
-        [string] $ClientSecret,
+        [string]$ClientSecret,
 
-        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 3)]
-        [ValidateSet('eu-1', 'us-gov-1', 'us-1', 'us-2')]
-        [string] $Cloud,
+        [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=3)]
+        [ValidateSet('eu-1','us-gov-1','us-1','us-2',IgnoreCase=$false)]
+        [string]$Cloud,
 
-        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 3)]
-        [ValidateSet('https://api.crowdstrike.com', 'https://api.us-2.crowdstrike.com',
-            'https://api.laggar.gcw.crowdstrike.com', 'https://api.eu-1.crowdstrike.com')]
-        [string] $Hostname,
+        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=3)]
+        [ValidateSet('https://api.crowdstrike.com','https://api.us-2.crowdstrike.com',
+            'https://api.laggar.gcw.crowdstrike.com','https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
+        [string]$Hostname,
 
-        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 4)]
-        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 4)]
-        [Alias('cid', 'member_cid')]
+        [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=4)]
+        [Alias('cid','member_cid')]
         [ValidatePattern('^\w{32}(-\w{2})?$')]
-        [string] $MemberCid,
+        [string]$MemberCid,
 
-        [Parameter(ParameterSetName = 'Cloud', ValueFromPipelineByPropertyName = $true, Position = 5)]
-        [Parameter(ParameterSetName = 'Hostname', ValueFromPipelineByPropertyName = $true, Position = 5)]
+        [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=5)]
+        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=5)]
         [ValidateScript({
             @($_.Keys).foreach{
                 if ($_ -notmatch '^(Enable|Token|Uri)$') { throw "Unexpected key in 'Collector' object. ['$_']" }
@@ -38,43 +68,32 @@ function Request-FalconToken {
                 if ($_.Keys -notcontains $Key) { throw "'Collector' requires '$Key'." } else { $true }
             }
         })]
-        [System.Collections.Hashtable] $Collector
+        [System.Collections.Hashtable]$Collector
     )
     begin {
-        if ($MemberCid -match '^\w{32}-\w{2}$'){
-            $PSBoundParameters.MemberCid = $MemberCid.Split('-')[0]
+        if ($PSBoundParameters.MemberCid -match '^\w{32}-\w{2}$'){
+            $PSBoundParameters.MemberCid = $PSBoundParameters.MemberCid.Split('-')[0]
         }
         function Get-ApiCredential ($Inputs) {
             $Output = @{}
-            @('ClientId', 'ClientSecret', 'Hostname', 'MemberCid').foreach{
-                $Value = if ($Inputs.$_) {
-                    # Use input
-                    $Inputs.$_
-                } elseif ($null -ne $Script:Falcon.$_) {
-                    # Use ApiClient value
-                    $Script:Falcon.$_
-                }
+            @('ClientId','ClientSecret','Hostname','MemberCid').foreach{
+                # Use input before existing ApiClient value
+                $Value = if ($Inputs.$_) { $Inputs.$_ } elseif ($null -ne $Script:Falcon.$_) { $Script:Falcon.$_ }
                 if (!$Value -and $_ -match '^(ClientId|ClientSecret)$') {
                     # Prompt for ClientId/ClientSecret and validate input
                     $Value = Read-Host $_
                     $BaseError = 'Cannot validate argument on parameter "{0}". The argument "{1}" does not ' +
                         'match the "{2}" pattern. Supply an argument that matches "{2}" and try the command again.'
-                    $ValidPattern = if ($_ -eq 'ClientId') {
-                        '^\w{32}$'
-                    } else {
-                        '^\w{40}$'
-                    }
+                    $ValidPattern = if ($_ -eq 'ClientId') { '^\w{32}$' } else { '^\w{40}$' }
                     if ($Value -notmatch $ValidPattern) {
-                        $InvalidValue = $BaseError -f $_, $Value, $ValidPattern
+                        $InvalidValue = $BaseError -f $_,$Value,$ValidPattern
                         throw $InvalidValue
                     }
                 } elseif (!$Value -and $_ -eq 'Hostname') {
                     # Default to 'us-1' cloud
                     $Value = 'https://api.crowdstrike.com'
                 }
-                if ($Value) {
-                    $Output.Add($_, $Value)
-                }
+                if ($Value) { $Output.Add($_,$Value) }
             }
             return $Output
         }
@@ -89,13 +108,13 @@ function Request-FalconToken {
                 'us-2'     { 'https://api.us-2.crowdstrike.com' }
             }
             $PSBoundParameters['Hostname'] = $Value
-            [void] $PSBoundParameters.Remove('Cloud')
+            [void]$PSBoundParameters.Remove('Cloud')
         }
         if (!$Script:Falcon) {
             try {
-                # Initiate ApiClient, set SslProtocol and UserAgent
+                # Initiate ApiClient,set SslProtocol and UserAgent
                 $Script:Falcon = Get-ApiCredential $PSBoundParameters
-                $Script:Falcon.Add('Api', [ApiClient]::New())
+                $Script:Falcon.Add('Api',[ApiClient]::New())
                 if ($Script:Falcon.Api) {
                     try {
                         # Set TLS 1.2 for [System.Net.Http.HttpClientHandler]
@@ -120,10 +139,8 @@ function Request-FalconToken {
             }
         } else {
             (Get-ApiCredential $PSBoundParameters).GetEnumerator().foreach{
-                if ($Script:Falcon.($_.Key) -ne $_.Value) {
-                    # Update existing ApiClient with new input
-                    $Script:Falcon.($_.Key) = $_.Value
-                }
+                # Update existing ApiClient with new input
+                if ($Script:Falcon.($_.Key) -ne $_.Value) { $Script:Falcon.($_.Key) = $_.Value }
             }
         }
         if ($PSBoundParameters.Collector) {
@@ -132,10 +149,10 @@ function Request-FalconToken {
         }
         if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             $Param = @{
-                Path    = "$($Script:Falcon.Hostname)/oauth2/token"
-                Method  = 'post'
+                Path = "$($Script:Falcon.Hostname)/oauth2/token"
+                Method = 'post'
                 Headers = @{
-                    Accept      = 'application/json'
+                    Accept = 'application/json'
                     ContentType = 'application/x-www-form-urlencoded'
                 }
                 Body = "client_id=$($Script:Falcon.ClientId)&client_secret=$($Script:Falcon.ClientSecret)"
@@ -160,7 +177,7 @@ function Request-FalconToken {
                     # Cache access token in ApiClient
                     $Token = "$($Result.token_type) $($Result.access_token)"
                     if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
-                        $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization', $Token)
+                        $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization',$Token)
                     } else {
                         $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
                     }
@@ -171,10 +188,8 @@ function Request-FalconToken {
                     & $MyInvocation.MyCommand.Name
                 }
             } else {
-                @('ClientId', 'ClientSecret', 'MemberCid').foreach{
-                    [void] $Script:Falcon.Remove("$_")
-                }
-                [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
+                @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove("$_") }
+                [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
                 throw 'Authorization token request failed.'
             }
         } else {
@@ -183,41 +198,59 @@ function Request-FalconToken {
     }
 }
 function Revoke-FalconToken {
-    [CmdletBinding(DefaultParameterSetName = '/oauth2/revoke:post')]
+<#
+.SYNOPSIS
+Revoke your active OAuth2 access token
+.DESCRIPTION
+Revokes your active OAuth2 access token and clears cached credential information ('ClientId','ClientSecret',
+'MemberCid','Cloud'/'Hostname') from the module.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Authentication
+#>
+    [CmdletBinding(DefaultParameterSetName='/oauth2/revoke:post')]
     param()
     process {
         if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter -and
         $Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             # Revoke OAuth2 access token
             $Param = @{
-                Path    = "$($Script:Falcon.Hostname)/oauth2/revoke"
-                Method  = 'post'
+                Path = "$($Script:Falcon.Hostname)/oauth2/revoke"
+                Method = 'post'
                 Headers = @{
-                    Accept        = 'application/json'
-                    ContentType   = 'application/x-www-form-urlencoded'
+                    Accept = 'application/json'
+                    ContentType = 'application/x-www-form-urlencoded'
                     Authorization = "basic $([System.Convert]::ToBase64String(
                         [System.Text.Encoding]::ASCII.GetBytes(
                         "$($Script:Falcon.ClientId):$($Script:Falcon.ClientSecret)")))"
                 }
-                Body    = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
+                Body = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
             $Request = $Script:Falcon.Api.Invoke($Param)
             Write-Result -Request $Request
-            [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
+            [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
-        @('ClientId', 'ClientSecret', 'MemberCid').foreach{ [void] $Script:Falcon.Remove("$_") }
+        @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove("$_") }
     }
 }
 function Test-FalconToken {
+<#
+.SYNOPSIS
+Display OAuth2 access token status
+.DESCRIPTION
+Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname','ClientId' and
+'MemberCid' values.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Authentication
+#>
     [CmdletBinding()]
     param()
     process {
         if ($Script:Falcon) {
             [PSCustomObject] @{
-                Token     = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
+                Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
                     ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(60))) { $true } else { $false }
-                Hostname  = $Script:Falcon.Hostname
-                ClientId  = $Script:Falcon.ClientId
+                Hostname = $Script:Falcon.Hostname
+                ClientId = $Script:Falcon.ClientId
                 MemberCid = $Script:Falcon.MemberCid
             }
         } else {

@@ -1,15 +1,38 @@
 function Export-FalconReport {
+<#
+.SYNOPSIS
+Format a response object and output to console or CSV
+.DESCRIPTION
+Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with
+each column having an appended 'prefix'--and then exported to the console or designated file path.
+
+For instance,if the object contains a property called 'device_policies',and that contains other objects called
+'prevention' and 'sensor_update',the result will contain properties labelled 'device_policies.prevention' and
+'device_policies.sensor_update' with additional '.<field_name>' values for any sub-properties of those objects.
+
+When the result contains an array with similarly named properties,it will attempt to add each sub-property with
+an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example,
+@{ hosts = @( @{ device_id = 123; hostname = 'abc' },@{ device_id = 456; hostname = 'def' })} will be displayed
+under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
+becomes part of the column.
+.PARAMETER Path
+Destination path
+.PARAMETER Object
+Response object to format
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Position = 1)]
+        [Parameter(Position=1)]
         [ValidatePattern('\.csv$')]
-        [string] $Path,
+        [string]$Path,
 
-        [Parameter(Mandatory = $true, ValueFromPipeLine = $true, Position = 2)]
-        [object] $Object
+        [Parameter(Mandatory,ValueFromPipeline,Position=2)]
+        [System.Object]$Object
     )
     begin {
-        function Get-Array ($Array, $Output, $Name) {
+        function Get-Array ($Array,$Output,$Name) {
             foreach ($Item in $Array) {
                 if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
                     # Add sub-objects to output
@@ -33,21 +56,21 @@ function Export-FalconReport {
                     # Add property to output as 'name'
                     $AddParam = @{
                         Object = $Output
-                        Name   = $Name
-                        Value  = $Array -join ','
+                        Name = $Name
+                        Value = $Array -join ','
                     }
                     Add-Property @AddParam
                 }
             }
         }
-        function Get-PSObject ($Object, $Output, $Prefix) {
+        function Get-PSObject ($Object,$Output,$Prefix) {
             foreach ($Item in ($Object.PSObject.Properties | Where-Object { $_.MemberType -eq 'NoteProperty' })) {
                 if ($Item.Value.PSObject.TypeNames -contains 'System.Object[]') {
                     # Add array members to output with 'prefix.name'
                     $ArrayParam = @{
-                        Array  = $Item.Value
+                        Array = $Item.Value
                         Output = $Output
-                        Name   = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
                     }
                     Get-Array @ArrayParam
                 } elseif ($Item.Value.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
@@ -62,8 +85,8 @@ function Export-FalconReport {
                     # Add property to output with 'prefix.name'
                     $AddParam = @{
                         Object = $Output
-                        Name   = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
-                        Value  = $Item.Value
+                        Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Value = $Item.Value
                     }
                     Add-Property @AddParam
                 }
@@ -80,8 +103,8 @@ function Export-FalconReport {
                 # Add strings to output as 'id'
                 $AddParam = @{
                     Object = $Output
-                    Name   = 'id'
-                    Value  = $Item
+                    Name = 'id'
+                    Value = $Item
                 }
                 Add-Property @AddParam
             }
@@ -89,10 +112,10 @@ function Export-FalconReport {
         if ($PSBoundParameters.Path) {
             # Output to CSV
             $ExportParam = @{
-                InputObject       = $Output
-                Path              = $Script:Falcon.Api.Path($PSBoundParameters.Path)
+                InputObject = $Output
+                Path = $Script:Falcon.Api.Path($PSBoundParameters.Path)
                 NoTypeInformation = $true
-                Append            = $true
+                Append = $true
             }
             Export-Csv @ExportParam
         } else {
@@ -101,38 +124,56 @@ function Export-FalconReport {
         }
     }
     end {
-        if ($ExportParam -and (Test-Path $ExportParam.Path)) { Get-ChildItem $ExportParam.Path }
+        if ($ExportParam -and (Test-Path $ExportParam.Path)) {
+            Get-ChildItem $ExportParam.Path | Select-Object FullName,Length,LastWriteTime
+        }
     }
 }
 function Send-FalconWebhook {
+<#
+.SYNOPSIS
+Send a PSFalcon object to a supported Webhook
+.DESCRIPTION
+Sends an object to a Webhook,converting the object to an acceptable format when required.
+.PARAMETER Type
+Webhook type
+.PARAMETER Path
+Webhook URL
+.PARAMETER Label
+Message label
+.PARAMETER Object
+Response object to format
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 1)]
+        [Parameter(Mandatory,Position=1)]
         [ValidateSet('Slack')]
-        [string] $Type,
+        [string]$Type,
 
-        [Parameter(Mandatory = $true, Position = 2)]
-        [System.Uri] $Path,
+        [Parameter(Mandatory,Position=2)]
+        [System.Uri]$Path,
 
-        [Parameter(Position = 3)]
-        [string] $Label,
+        [Parameter(Position=3)]
+        [string]$Label,
 
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 4)]
-        [object] $Object
+        [Parameter(Mandatory,ValueFromPipeline,Position=4)]
+        [System.Object]$Object
     )
     begin {
         $Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
             # Remove default Falcon authorization token
             $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization
-            [void] $Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
+            [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
     }
     process {
-        [array] $Content = switch ($PSBoundParameters.Type) {
+        [array]$Content = switch ($PSBoundParameters.Type) {
             'Slack' {
                 # Create 'attachment' for each object in submission
                 @($Object | Export-FalconReport).foreach{
-                    [array] $Fields = @($_.PSObject.Properties).foreach{
+                    [array]$Fields = @($_.PSObject.Properties).foreach{
                         ,@{
                             title = $_.Name
                             value = if ($_.Value -is [boolean]) {
@@ -146,13 +187,13 @@ function Send-FalconWebhook {
                         }
                     }
                     ,@{
-                        username    = "PSFalcon: $($Script:Falcon.ClientId)"
-                        icon_url    = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
-                        text        = $PSBoundParameters.Label
+                        username = "PSFalcon: $($Script:Falcon.ClientId)"
+                        icon_url = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
+                        text = $PSBoundParameters.Label
                         attachments = @(
                             @{
                                 fallback = 'Send-FalconWebhook'
-                                fields   = $Fields
+                                fields = $Fields
                             }
                         )
                     }
@@ -162,8 +203,8 @@ function Send-FalconWebhook {
         foreach ($Item in $Content) {
             try {
                 $Param = @{
-                    Path    = $PSBoundParameters.Path
-                    Method  = 'post'
+                    Path = $PSBoundParameters.Path
+                    Method = 'post'
                     Headers = @{ ContentType = 'application/json' }
                     Body = ConvertTo-Json -InputObject $Item -Depth 32
                 }
@@ -177,18 +218,31 @@ function Send-FalconWebhook {
     end {
         if ($Token -and !$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
             # Restore default Falcon authorization token
-            $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization', $Token)
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization',$Token)
         }
     }
 }
 function Show-FalconMap {
+<#
+.SYNOPSIS
+Display indicators on the Falcon X Indicator Map
+.DESCRIPTION
+Your default web browser will be used to view the Indicator Map.
+
+Invalid indicator values are ignored.
+.PARAMETER Indicator
+Indicator to display on the Indicator map
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 1)]
-        [array] $Indicators
+        [Parameter(Mandatory,Position=1)]
+        [Alias('Indicators')]
+        [string[]]$Indicator
     )
     begin {
-        $FalconUI = "$($Script:Falcon.Hostname -replace 'api', 'falcon')"
+        $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
         $Inputs = ($PSBoundParameters.Indicators).foreach{
             $Type = Test-RegexValue $_
             $Value = if ($Type -match '^(domain|md5|sha256)$') { $_.ToLower() } else { $_ }
@@ -200,6 +254,15 @@ function Show-FalconMap {
     }
 }
 function Show-FalconModule {
+<#
+.SYNOPSIS
+Display information about your PSFalcon module
+.DESCRIPTION
+Outputs an object containing module,user and system version information that is helpful for diagnosing
+problems with the PSFalcon module.
+.LINK
+
+#>
     [CmdletBinding()]
     param()
     process {
@@ -207,12 +270,12 @@ function Show-FalconModule {
         if (Test-Path $ManifestPath) {
             $ModuleData = Import-PowerShellDataFile -Path $ManifestPath
             [PSCustomObject] @{
-                PSVersion      = "$($PSVersionTable.PSEdition) [$($PSVersionTable.PSVersion)]"
-                ModuleVersion  = "v$($ModuleData.ModuleVersion) {$($ModuleData.GUID)}"
-                ModulePath     = Split-Path -Path $ManifestPath -Parent
+                PSVersion = "$($PSVersionTable.PSEdition) [$($PSVersionTable.PSVersion)]"
+                ModuleVersion = "v$($ModuleData.ModuleVersion) {$($ModuleData.GUID)}"
+                ModulePath = Split-Path -Path $ManifestPath -Parent
                 UserModulePath = $env:PSModulePath
-                UserHome       = $HOME
-                UserAgent      = "crowdstrike-psfalcon/$($ModuleData.ModuleVersion)"
+                UserHome = $HOME
+                UserAgent = "crowdstrike-psfalcon/$($ModuleData.ModuleVersion)"
             }
         } else {
             throw "Unable to locate '$ManifestPath'"

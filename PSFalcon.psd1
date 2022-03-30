@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.1.9'
+    ModuleVersion        = '3.0.0'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -420,13 +420,113 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
+    New Commands
+
     General Changes
-    * Added 'Select-Object' to 'Get-ChildItem' output to force the display of FullName, Length and LastWriteTime
-    due to differences with how PowerShell displays Get-ChildItem on non-Windows devices.
+
+    * Thanks to some knowledge shared by @kra-ts, PowerShell pipeline support is now cross-module and no longer
+    restricted to specific commands!
+
+    Before this release, PSFalcon supported pipeline input when a command accepted a single 'id'. With these
+    changes, PSFalcon collects multiple 'ids' passed through the pipeline, groups them and sends appropriately
+    sized API requests.
+
+    This change also required the re-positioning of many parameters, the addition of aliases, and the majority of
+    [array] parameters being converted into [string[]] or [int[]].
+
+    * Renamed plural parameters ('Ids') to singular ('Id') to follow PowerShell best practices. Each updated
+    parameter kept maintains the plural version as an alias to prevent errors with existing scripts.
+
+    * Modified commands to use the alias values for parameters instead of the 'Fields' variable that was used to
+    to rename parameters to fit API submission structure. Removing 'Fields' also enabled the removal of the
+    private function 'Update-FieldName'.
+
+    * Added case enforcement to all 'ValidateSet' values. This ensures that proper case is used with parameters
+    that have a pre-defined list of accepted values and preventing errors from the resulting API.
+
+    * Re-added basic help information to each command. This will increase module size, but will eliminate the
+    need to 'Update-Help' to get descriptions for each command, its parameters and the required API permission(s).
+
+    * When applicable, the 'Id' parameter attributes were modified to ensure that 'Get-Help' properly displayed
+    that the parameter name needs to be explicitly included.
+
+    * Added 'raw_array' as a field to be used when defining the format of a 'body' submission. Using it will
+    instruct the module to create a 'body' object that has a base [array] value containing the object properties to
+    be converted to Json.
+
+    * Created 'Assert-Extension' private function to validate a given file extension when using 'Receive' commands.
+
+    * Created 'Test-OutFile' private function to validate the presence of an existing file and generate error
+    messages when using 'Receive' commands.
+
+    * Moved verbose output of 'body' and 'formdata' payloads from 'Build-Content' to ApiClient.Invoke() during a
+    request. This ensures that individual submissions are displayed, rather than the initial submission before it
+    has been broken up into groups.
+
+    * Moved verbose output of Header keys and values within an API response from 'Write-Result' to
+    ApiClient.Invoke(). 'Write-Result' continues to display the 'meta' Json values due to the addition of an
+    internal function called 'Write-Meta'.
+
+    Command Changes
+
+    * Contribution from @kra-ts: Added support for a CCID value in the '-MemberCid' parameter when using
+    'Request-FalconToken', which leads to the checksum value being silently dropped but the CID itself being
+    accepted.
+
+    * Updated 'Get-FalconHorizonIoaEvent' and 'Get-FalconHorizonIoaUser' to match 'Get-FalconHorizonIoa',
+    replacing '-AccountId' with '-AwsAccountId', '-AzureSubscriptionId' and '-AzureTenantId'.
+
+    * Corrected 'Get-FalconHorizonIom' parameter '-AwsAccountId' to '-AccountId', which accepts an AWS account ID
+    or GCP Project Number value.
+
+    * Corrected the accepted '-Status' value 'recurring' to 'reoccurring' for 'Get-FalconHorizonIom'.
+
+    * Updated 'Get-FalconHost' to not force '-Detailed' output when using '-Include group_names', and instead
+    include 'device_id' and 'groups'. Using '-Detailed' and '-Include group_names' maintains full output.
+
+    * Corrected 'ConvertTo-FalconMlExclusion' and 'ConvertTo-FalconIoaExclusion' to properly produce individual
+    exclusions for each relevant behavior within a detection (rather than one exclusion with values from multiple
+    behaviors).
+
+    * Removed the '-CloneId' parameter from the following commands due to inconsistencies in the created policies:
+      'New-FalconDeviceControlPolicy'
+      'New-FalconFirewallPolicy'
+      'New-FalconPreventionPolicy'
+
+    The 'Copy-Falcon...Policy' commands continue to be available for use instead.
+
+    * 'Start-FalconSession' now uses '-Id' to define both single-host and multi-host sessions. When host identifier
+    values are passed in the pipeline, the command will default to a multi-host (batch) session.
+
+    Additionally, because 'Start-FalconSession' output can be pipelined to 'Invoke-FalconCommand' (or the related
+    commands with higher permission levels), 'Start-FalconSession' will generate a warning message for each host
+    that failed to join a batch session.
+
+    * 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand' have all been modified
+    to append 'batch_id' to each multi-host result, plus have a new parameter '-Confirm' to automatically confirm
+    and retrieve the output from single-host or batch 'get' commands.
+
+    * Updated 'Invoke-FalconAdminCommand' and 'Invoke-FalconResponderCommand' within a multi-host session to
+    automatically redirect to 'Invoke-FalconBatchGet' when using 'get'.
+
+    * Added '-Force' function to the following commands to overwrite an existing file when present:
+      'Receive-FalconHorizonAwsScript'
+      'Receive-FalconHorizonAzureScript'
+      'Receive-FalconDiscoverAzureScript'
+      'Receive-FalconDiscoverGcpScript'
+      'Receive-FalconIntel'
+      'Receive-FalconRule'
+      'Receive-FalconArtifact'
+      'Receive-FalconContainerYaml'
+      'Receive-FalconMalQuerySample'
+      'Receive-FalconCompleteAttachment'
+      'Receive-FalconGetFile'
+      'Receive-FalconSample'
+      'Receive-FalconScheduledReport'
+      'Receive-FalconInstaller'
 
     Resolved Issues
-    * Issue #190: Modified Json conversion of 'stdout' when using 'runscript' with 'Invoke-FalconRtr' to reduce
-    the opportunity of null output.
+    *
 "@
         }
     }

@@ -1,119 +1,208 @@
 function Edit-FalconSvExclusion {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:patch')]
+<#
+.SYNOPSIS
+Modify a Sensor Visibility exclusion
+.DESCRIPTION
+Requires 'Sensor Visibility Exclusions: Write'.
+.PARAMETER Id
+Exclusion identifier
+.PARAMETER Value
+RegEx pattern value
+.PARAMETER GroupIds
+Host group identifier or 'all'
+.PARAMETER Comment
+Audit log comment
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:patch')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:patch', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
-        [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Position=2)]
+        [string]$Value,
 
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:patch', Position = 2)]
-        [string] $Value,
-
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:patch', Position = 3)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Position=3)]
         [ValidatePattern('^(\w{32}|all)$')]
-        [array] $GroupIds,
+        [Alias('groups','GroupIds')]
+        [string[]]$GroupId,
 
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:patch', Position = 4)]
-        [string] $Comment
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Position=4)]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
+        [ValidatePattern('^\w{32}$')]
+        [string]$Id
     )
     begin {
-        $Fields = @{ GroupIds = 'groups' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Body = @{ root = @('groups', 'id', 'value', 'comment') }}
+            Format = @{ Body = @{ root = @('groups','id','value','comment') }}
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconSvExclusion {
-    [CmdletBinding(DefaultParameterSetName = '/policy/queries/sv-exclusions/v1:get')]
+<#
+.SYNOPSIS
+Search for Sensor Visibility exclusions
+.DESCRIPTION
+Requires 'Sensor Visibility Exclusions: Read'.
+.PARAMETER Id
+Exclusion identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/sv-exclusions/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get', Position = 2)]
-        [ValidateSet('applied_globally.asc', 'applied_globally.desc', 'created_by.asc', 'created_by.desc',
-            'created_on.asc', 'created_on.desc', 'last_modified.asc', 'last_modified.desc', 'modified_by.asc',
-            'modified_by.desc', 'value.asc', 'value.desc')]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=2)]
+        [ValidateSet('applied_globally.asc','applied_globally.desc','created_by.asc','created_by.desc',
+            'created_on.asc','created_on.desc','last_modified.asc','last_modified.desc','modified_by.asc',
+            'modified_by.desc','value.asc','value.desc',IgnoreCase=$false)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get', Position = 3)]
+        [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=3)]
         [ValidateRange(1,500)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get', Position = 4)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=4)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/policy/queries/sv-exclusions/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
+            Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function New-FalconSvExclusion {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:post')]
+<#
+.SYNOPSIS
+Create a Sensor Visibility exclusion
+.DESCRIPTION
+Requires 'Sensor Visibility Exclusions: Write'.
+.PARAMETER Value
+RegEx pattern value
+.PARAMETER GroupIds
+Host group identifier or 'all'
+.PARAMETER Comment
+Audit log comment
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post', Mandatory = $true, Position = 1)]
-        [string] $Value,
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,Position=1)]
+        [string]$Value,
 
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post', Mandatory = $true, Position = 2)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Position=2)]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,Position=3)]
         [ValidatePattern('^(\w{32}|all)$')]
-        [array] $GroupIds,
-
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:post', Position = 3)]
-        [string] $Comment
+        [Alias('groups','id','group_ids','GroupIds')]
+        [string[]]$GroupId
     )
     begin {
-        $Fields = @{ GroupIds = 'groups' }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('groups','value','comment') }}
+        }
+        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Body = @{ root = @('groups', 'value', 'comment') }}
-        }
-        Invoke-Falcon @Param
+        if ($GroupId) { @($GroupId).foreach{ [void]$IdArray.Add($_) }}
+    }
+    end {
+        if ($IdArray) { $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Remove-FalconSvExclusion {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/sv-exclusions/v1:delete')]
+<#
+.SYNOPSIS
+Remove Sensor Visibility exclusions
+.DESCRIPTION
+Requires 'Sensor Visibility Exclusions: Write'.
+.PARAMETER Comment
+Audit log comment
+.PARAMETER Id
+Exclusion identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete', Mandatory = $true, Position = 1)]
-        [array] $Ids,
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:delete',Position=1)]
+        [string]$Comment,
 
-        [Parameter(ParameterSetName = '/policy/entities/sv-exclusions/v1:delete', Position = 2)]
-        [string] $Comment
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:delete',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=2)]
+        [Alias('ids')]
+        [string[]]$Id
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids', 'comment') }
+            Format = @{ Query = @('ids','comment') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}
+    }
+    end {
+        if ($IdArray) { $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }

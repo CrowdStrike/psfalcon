@@ -1,17 +1,35 @@
 function Get-FalconZta {
-    [CmdletBinding(DefaultParameterSetName = '/zero-trust-assessment/entities/audit/v1:get')]
+<#
+.SYNOPSIS
+Search for Zero Trust Assessment results
+.DESCRIPTION
+Requires 'Zero Trust Assessment: Read'.
+.PARAMETER Id
+Host identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Zero-Trust-Assessment
+#>
+    [CmdletBinding(DefaultParameterSetName='/zero-trust-assessment/entities/audit/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/zero-trust-assessment/entities/assessments/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [Alias('ids','device_id','host_ids','aid')]
+        [string[]]$Id
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }

@@ -1,19 +1,48 @@
 function Edit-FalconFirewallGroup {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/rule-groups/v1:patch')]
-    param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
-        [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+<#
+.SYNOPSIS
+Modify Falcon Firewall Management rule groups
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Mandatory = $true, Position = 2)]
+All fields (plus 'rulegroup_version') are required when making a rule group change. PSFalcon adds missing values
+automatically using data from your existing rule group.
+
+'DiffOperations' array objects must contain 'op','path' and 'value' properties. Accepted 'op' values are 'add',
+'remove' and 'replace'.
+
+When adding a rule to a rule group,the required rule fields must be included along with a 'temp_id' (in both the
+rule properties and in precedence order within 'rule_ids') to establish proper placement of the rule within the
+rule group. Simlarly,the value 'null' must be placed within 'rule_versions' in precedence order.
+
+PSFalcon will accept 'temp_id' values between 1 and 500,allowing batches of up to 500 rules per request.
+.PARAMETER Id
+Rule group identifier
+.PARAMETER DiffOperations
+An array of hashtables containing rule or rule group changes
+.PARAMETER RuleIds
+Rule identifier within the existing rule group
+.PARAMETER RuleVersions
+Rule version value ['null' for each new rule]
+.PARAMETER Comment
+Audit log comment
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:patch')]
+    param(
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,Position=1)]
+        [ValidatePattern('^\w{32}$')]
+        [string]$Id,
+
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,Position=2)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
-                    Object   = $Object
-                    Command  = 'Edit-FalconFirewallGroup'
+                    Object = $Object
+                    Command = 'Edit-FalconFirewallGroup'
                     Endpoint = '/fwmgr/entities/rule-groups/v1:patch'
-                    Required = @('op', 'path', 'value')
+                    Required = @('op','path','value')
                 }
                 Confirm-Parameter @Param
                 if ($Object.op -notmatch '^(add|remove|replace)$') {
@@ -22,46 +51,41 @@ function Edit-FalconFirewallGroup {
                 }
             }
         })]
-        [array] $DiffOperations,
+        [Alias('diff_operations','DiffOperations')]
+        [object[]]$DiffOperation,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Position = 3)]
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=3)]
         [ValidatePattern('^(([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)|\w{32})$')]
-        [array] $RuleIds,
+        [Alias('rule_ids','RuleIds')]
+        [string[]]$RuleId,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Position = 4)]
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=4)]
         [ValidatePattern('^(null|\d+)$')]
-        [array] $RuleVersions,
+        [Alias('rule_versions','RuleVersions')]
+        [string[]]$RuleVersion,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:patch', Position = 6)]
-        [string] $Comment
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=6)]
+        [string]$Comment
     )
     begin {
-        $Fields = @{
-            DiffOperations   = 'diff_operations'
-            RuleIds          = 'rule_ids'
-            RuleVersions     = 'rule_versions'
-        }
-    }
-    process {
-        $PSBoundParameters['diff_type'] = 'application/json-patch+json'
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
+            Format = @{
                 Query = @('comment')
-                Body  = @{
-                    root = @('rule_ids', 'tracking', 'id', 'diff_type', 'rule_versions', 'diff_operations',
+                Body = @{
+                    root = @('rule_ids','tracking','id','diff_type','rule_versions','diff_operations',
                         'rulegroup_version')
                 }
             }
         }
+        $PSBoundParameters['diff_type'] = 'application/json-patch+json'
         ($Param.Format.Body.root | Where-Object { $_ -notmatch '^(diff_operations|id)$' }).foreach{
-            # When not provided, add required fields using existing rule group
+            # When not provided,add required fields using existing rule group
             if (!$Param.Inputs.$_) {
                 if (!$Group) {
-                    $Group = Get-FalconFirewallGroup -Ids $Param.Inputs.id -ErrorAction 'SilentlyContinue'
-                    $RuleVersions = (Get-FalconFirewallRule -Ids $Group.rule_ids).version
+                    $Group = Get-FalconFirewallGroup -Id $Param.Inputs.id -EA 0
+                    $RuleVersions = (Get-FalconFirewallRule -Id $Group.rule_ids).version
                 }
                 if ($Group) {
                     $Value = if ($_ -eq 'rulegroup_version') {
@@ -75,371 +99,591 @@ function Edit-FalconFirewallGroup {
                 }
             }
         }
+    }
+    process {
         if ($PSBoundParameters.Tracking) {
-            Invoke-Falcon @Param
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         } else {
             throw "Unable to obtain 'tracking' value from rule group '$($PSBoundParameters.Id)'."
         }
     }
 }
 function Edit-FalconFirewallPolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall/v1:patch')]
+<#
+.SYNOPSIS
+Modify Falcon Firewall Management policies
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+.PARAMETER Array
+An array of policies to modify in a single request
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:patch')]
     param(
-        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='array',Mandatory)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
-                    Object   = $Object
-                    Command  = 'Edit-FalconFirewallPolicy'
+                    Object = $Object
+                    Command = 'Edit-FalconFirewallPolicy'
                     Endpoint = '/policy/entities/firewall/v1:patch'
                     Required = @('id')
-                    Pattern  = @('id')
+                    Pattern = @('id')
                 }
                 Confirm-Parameter @Param
             }
         })]
-        [array] $Array,
+        [Alias('resources')]
+        [array]$Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:patch', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:patch', Position = 2)]
-        [string] $Name,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Position=2)]
+        [string]$Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:patch', Position = 3)]
-        [string] $Description
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Position=3)]
+        [string]$Description
     )
     begin {
-        $Fields = @{ Array = 'resources' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/firewall/v1:patch'
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
+            Format = @{
                 Body = @{
-                    resources = @('name', 'id', 'description')
-                    root      = @('resources')
+                    resources = @('name','id','description')
+                    root = @('resources')
                 }
             }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Edit-FalconFirewallSetting {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/policies/v1:put')]
+<#
+.SYNOPSIS
+Modify Falcon Firewall Management policy settings
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+
+All fields are required to modify policy settings. PSFalcon adds missing values automatically using data from
+your existing policy.
+
+If adding or removing rule groups,all rule groups must be supplied in precedence order.
+.PARAMETER PolicyId
+Policy identifier
+.PARAMETER PlatformId
+Operating System platform identifier
+.PARAMETER Enforce
+Policy enforcement status
+.PARAMETER RuleGroupId
+Rule group identifier
+.PARAMETER DefaultInbound
+Default action for inbound traffic
+.PARAMETER DefaultOutbound
+Default action for outbound traffic
+.PARAMETER MonitorMode
+Override all block rules and enable monitoring
+.PARAMETER LocalLogging
+Enable local logging of firewall events
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:put')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
         [Alias('policy_id')]
-        [string] $PolicyId,
+        [string]$PolicyId,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
-            Position = 2)]
-        [ValidateSet('0')]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
+           Position=2)]
+        [ValidateSet('0','1')]
         [Alias('platform_id')]
-        [string] $PlatformId,
+        [string]$PlatformId,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
-            Position = 3)]
-        [boolean] $Enforce,
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
+           Position=3)]
+        [boolean]$Enforce,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
-            Position = 4)]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
+           Position=4)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('rule_group_ids')]
-        [array] $RuleGroupIds,
+        [Alias('rule_group_ids','RuleGroupIds')]
+        [string[]]$RuleGroupId,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
-            Position = 6)]
-        [ValidateSet('ALLOW', 'DENY')]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
+           Position=6)]
+        [ValidateSet('ALLOW','DENY',IgnoreCase=$false)]
         [Alias('default_inbound')]
-        [string] $DefaultInbound,
+        [string]$DefaultInbound,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
-            Position = 7)]
-        [ValidateSet('ALLOW', 'DENY')]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
+           Position=7)]
+        [ValidateSet('ALLOW','DENY',IgnoreCase=$false)]
         [Alias('default_outbound')]
-        [string] $DefaultOutbound,
+        [string]$DefaultOutbound,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
-            Position = 8)]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
+           Position=8)]
         [Alias('test_mode')]
-        [boolean] $MonitorMode,
+        [boolean]$MonitorMode,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:put', ValueFromPipelineByPropertyName = $true,
-            Position = 9)]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
+           Position=9)]
         [Alias('local_logging')]
-        [boolean] $LocalLogging
+        [boolean]$LocalLogging
     )
     begin {
-        $Fields = @{
-            DefaultInbound  = 'default_inbound'
-            DefaultOutbound = 'default_outbound'
-            LocalLogging    = 'local_logging'
-            MonitorMode     = 'test_mode'
-            PlatformId      = 'platform_id'
-            PolicyId        = 'policy_id'
-            RuleGroupIds    = 'rule_group_ids'
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Body = @{
+                    root = @('platform_id','tracking','policy_id','test_mode','enforce','default_outbound',
+                        'default_inbound','rule_group_ids','local_logging')
+                }
+            }
         }
     }
     process {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body = @{
-                    root = @('platform_id', 'tracking', 'policy_id', 'test_mode', 'enforce', 'default_outbound',
-                        'default_inbound', 'rule_group_ids', 'local_logging')
-                }
-            }
-        }
         ($Param.Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
-            # When not provided, add required fields using existing policy settings
-            if (!$Param.Inputs.$_) {
-                if (!$Existing) { $Existing = Get-FalconFirewallSetting -Ids $Param.Inputs.policy_id -EA 0 }
-                if ($Existing) {
-                    $PSBoundParameters[$_] = $Existing.$_
-                }
+            # When not provided,add required fields using existing policy settings
+            if (!$PSBoundParameters.$_) {
+                if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $PolicyId -EA 0 }
+                if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
             }
         }
-        Invoke-Falcon @Param
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconFirewallEvent {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/events/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon Firewall Management events
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Event identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/events/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/events/v1:get', Mandatory = $true, Position = 1)]
-        [array] $Ids,
+        [Parameter(ParameterSetName='/fwmgr/entities/events/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 2)]
-        [string] $Query,
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=2)]
+        [Alias('q')]
+        [string]$Query,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 3)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=3)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 4)]
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=4)]
         [ValidateRange(1,5000)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 5)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=5)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get', Position = 6)]
-        [string] $After,
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=6)]
+        [string]$After,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/events/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get')]
+        [switch]$Total
     )
     begin {
-        $Fields = @{ Query = 'q' }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('limit','ids','sort','q','offset','after','filter') }
+        }
+        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter') }
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconFirewallField {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/firewall-fields/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon Firewall Management fields
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Field identifier
+.PARAMETER PlatformId
+Operating System platform
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/firewall-fields/v1:get', Mandatory = $true, Position = 1)]
-        [array] $Ids,
+        [Parameter(ParameterSetName='/fwmgr/entities/firewall-fields/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get', Position = 1)]
-        [string] $PlatformId,
+        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get',Position=1)]
+        [ValidateSet('0','1')]
+        [Alias('platform_id')]
+        [string]$PlatformId,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get', Position = 2)]
+        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get',Position=2)]
         [ValidateRange(1,5000)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get', Position = 3)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get',Position=3)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/firewall-fields/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
+        [switch]$Total
     )
     begin {
-        $Fields = @{ PlatformId = 'platform_id' }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('ids','offset','limit','platform_id') }
+        }
+        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('ids', 'offset', 'limit', 'platform_id') }
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconFirewallGroup {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/rule-groups/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon Firewall Management rule groups
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Rule group identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:get', Mandatory = $true, Position = 1)]
-        [array] $Ids,
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 2)]
-        [string] $Query,
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=2)]
+        [Alias('q')]
+        [string]$Query,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 3)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=3)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 4)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=4)]
         [ValidateRange(1,5000)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 5)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=5)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get', Position = 6)]
-        [string] $After,
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=6)]
+        [string]$After,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rule-groups/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
+        [switch]$Total
     )
     begin {
-        $Fields = @{ Query = 'q' }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('limit','ids','sort','q','offset','after','filter') }
+        }
+        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter') }
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconFirewallPlatform {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/platforms/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon Firewall Management platforms
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Platform identifier
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/platforms/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/platforms/v1:get', Mandatory = $true, Position = 1)]
-        [array] $Ids,
+        [Parameter(ParameterSetName='/fwmgr/entities/platforms/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [ValidateSet('0','1')]
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get',Position=1)]
         [ValidateRange(1,5000)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get', Position = 2)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get',Position=2)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/platforms/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids', 'offset', 'limit') }
+            Format = @{ Query = @('ids','offset','limit') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconFirewallPolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/queries/firewall/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon Firewall Management policies
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Include
+Include additional properties
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 1)]
-        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 2)]
-        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 2)]
-        [ValidateSet('created_by.asc', 'created_by.desc', 'created_timestamp.asc', 'created_timestamp.desc',
-            'enabled.asc', 'enabled.desc', 'modified_by.asc', 'modified_by.desc', 'modified_timestamp.asc',
-            'modified_timestamp.desc', 'name.asc', 'name.desc', 'platform_name.asc', 'platform_name.desc',
-            'precedence.asc', 'precedence.desc')]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=2)]
+        [ValidateSet('created_by.asc','created_by.desc','created_timestamp.asc','created_timestamp.desc',
+            'enabled.asc','enabled.desc','modified_by.asc','modified_by.desc','modified_timestamp.asc',
+            'modified_timestamp.desc','name.asc','name.desc','platform_name.asc','platform_name.desc',
+            'precedence.asc','precedence.desc',IgnoreCase=$false)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 3)]
-        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 3)]
-        [ValidateRange(1, 5000)]
-        [int] $Limit,
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=3)]
+        [ValidateRange(1,5000)]
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 4)]
-        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 4)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=4)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:get', Position = 2)]
-        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Position = 5)]
-        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get', Position = 5)]
-        [ValidateSet('settings')]
-        [array] $Include,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=5)]
+        [ValidateSet('settings',IgnoreCase=$false)]
+        [string[]]$Include,
 
-        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get', Mandatory = $true)]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Mandatory)]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/policy/combined/firewall/v1:get')]
-        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/policy/queries/firewall/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get')]
+        [switch]$Total
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'ids', 'offset', 'filter', 'limit') }
+            Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        $Result = Invoke-Falcon @Param
-        if ($PSBoundParameters.Include -and $Result) {
-            if (!$Result.id) {
-                $Result = @($Result).foreach{ ,[PSCustomObject] @{ id = $_ }}
-            }
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+        if ($PSBoundParameters.Include -and $Request) {
+            if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject] @{ id = $_ }}}
             if ($PSBoundParameters.Include -contains 'settings') {
-                foreach ($Item in (Get-FalconFirewallSetting -Ids $Result.id)) {
+                foreach ($Item in (Get-FalconFirewallSetting -Id $Request.id)) {
                     $AddParam = @{
-                        Object = $Result | Where-Object { $_.id -eq $Item.policy_id }
-                        Name   = 'settings'
-                        Value  = $Item | ForEach-Object {
+                        Object = $Request | Where-Object { $_.id -eq $Item.policy_id }
+                        Name = 'settings'
+                        Value = $Item | ForEach-Object {
                             $_.PSObject.Properties.Remove('policy_id')
                             $_
                         }
@@ -448,341 +692,510 @@ function Get-FalconFirewallPolicy {
                 }
             }
         }
-        $Result
+        $Request
     }
 }
 function Get-FalconFirewallPolicyMember {
-    [CmdletBinding(DefaultParameterSetName = '/policy/queries/firewall-members/v1:get')]
+<#
+.SYNOPSIS
+Search for Falcon Firewall Management policy members
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall-members/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get',
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
-        [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get',
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get', Position = 2)]
-        [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get', Position = 2)]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=2)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get', Position = 3)]
-        [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get', Position = 3)]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=3)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get', Position = 4)]
-        [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get', Position = 4)]
-        [ValidateRange(1, 5000)]
-        [int] $Limit,
-
-        [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get', Position = 5)]
-        [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get', Position = 5)]
-        [int] $Offset,
-
-        [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get', Mandatory = $true)]
-        [switch] $Detailed,
-
-        [Parameter(ParameterSetName = '/policy/combined/firewall-members/v1:get')]
-        [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get')]
-        [switch] $All,
-
-        [Parameter(ParameterSetName = '/policy/queries/firewall-members/v1:get')]
-        [switch] $Total
-
-    )
-    process {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('sort', 'offset', 'filter', 'id', 'limit') }
-        }
-        Invoke-Falcon @Param
-    }
-}
-function Get-FalconFirewallRule {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/queries/rules/v1:get')]
-    param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/rules/v1:get', Mandatory = $true, Position = 1)]
-        [array] $Ids,
-
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Mandatory = $true, Position = 1)]
-        [ValidatePattern('^\w{32}$')]
-        [string] $PolicyId,
-
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 2)]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
-
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 3)]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 2)]
-        [string] $Query,
-
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 4)]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 3)]
-        [string] $Sort,
-
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 5)]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 4)]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=4)]
         [ValidateRange(1,5000)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get', Position = 6)]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 5)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=5)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get', Position = 6)]
-        [string] $After,
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Mandatory)]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get')]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get')]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
+        [switch]$Total
 
-        [Parameter(ParameterSetName = '/fwmgr/queries/policy-rules/v1:get')]
-        [Parameter(ParameterSetName = '/fwmgr/queries/rules/v1:get')]
-        [switch] $Total
     )
     begin {
-        $Fields = @{
-            PolicyId = 'id'
-            Query    = 'q'
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('sort','offset','filter','id','limit') }
         }
     }
-    process {
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
+function Get-FalconFirewallRule {
+<#
+.SYNOPSIS
+Search for Falcon Firewall Management rules
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Rule identifier
+.PARAMETER PolicyId
+Return rules in precedence order for a specific policy
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rules/v1:get')]
+    param(
+        [Parameter(ParameterSetName='/fwmgr/entities/rules/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [Alias('ids')]
+        [string[]]$Id,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Mandatory,Position=1)]
+        [ValidatePattern('^\w{32}$')]
+        [string]$PolicyId,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
+        [string]$Filter,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=2)]
+        [Alias('q')]
+        [string]$Query,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=3)]
+        [string]$Sort,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=4)]
+        [ValidateRange(1,5000)]
+        [int32]$Limit,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=5)]
+        [int32]$Offset,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=6)]
+        [string]$After,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get')]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get')]
+        [switch]$Detailed,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get')]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get')]
+        [switch]$All,
+
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get')]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get')]
+        [switch]$Total
+    )
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('limit', 'ids', 'sort', 'q', 'offset', 'after', 'filter', 'id') }
+            Format = @{ Query = @('limit','ids','sort','q','offset','after','filter','id') }
         }
-        @(Invoke-Falcon @Param).foreach{
-            if ($_.version -and $null -eq $_.version) { $_.version = 0 }
-            $_
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } else {
+            @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
+                if ($_.version -and $null -eq $_.version) { $_.version = 0 }
+                $_
+            }
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
+                if ($_.version -and $null -eq $_.version) { $_.version = 0 }
+                $_
+            }
         }
     }
 }
 function Get-FalconFirewallSetting {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/policies/v1:get')]
+<#
+.SYNOPSIS
+Retrieve general settings for a Falcon Firewall Management policy
+.DESCRIPTION
+Requires 'Firewall Management: Read'.
+.PARAMETER Id
+Policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/policies/v1:get', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [Alias('ids')]
+        [string[]]$Id
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Invoke-FalconFirewallPolicyAction {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall-actions/v1:post')]
+<#
+.SYNOPSIS
+Perform actions on Falcon Firewall Management policies
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+.PARAMETER Name
+Action to perform
+.PARAMETER Id
+Policy identifier
+.PARAMETER GroupId
+Host group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/firewall-actions/v1:post', Mandatory = $true,
-            Position = 1)]
-        [ValidateSet('add-host-group', 'disable', 'enable', 'remove-host-group')]
-        [string] $Name,
+        [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Mandatory,Position=1)]
+        [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
+        [Alias('action_name')]
+        [string]$Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall-actions/v1:post', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 2)]
+        [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall-actions/v1:post', Position = 3)]
+        [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string] $GroupId
+        [string]$GroupId
     )
     begin {
-        $Fields = @{ name = 'action_name' }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Query = @('action_name')
+                Body = @{ root = @('ids','action_parameters') }
+            }
+        }
     }
     process {
-        $PSBoundParameters['Ids'] = @( $PSBoundParameters.Id )
-        [void] $PSBoundParameters.Remove('Id')
+        $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+        [void]$PSBoundParameters.Remove('Id')
         if ($PSBoundParameters.GroupId) {
             $PSBoundParameters['action_parameters'] = @(
                 @{
-                    name  = 'group_id'
+                    name = 'group_id'
                     value = $PSBoundParameters.GroupId
                 }
             )
-            [void] $PSBoundParameters.Remove('GroupId')
+            [void]$PSBoundParameters.Remove('GroupId')
         }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('action_name')
-                Body = @{ root = @('ids', 'action_parameters') }
-            }
-        }
-        Invoke-Falcon @Param
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconFirewallGroup {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/rule-groups/v1:post')]
+<#
+.SYNOPSIS
+Create Falcon Firewall Management rule groups
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+.PARAMETER Name
+Rule group name
+.PARAMETER Enabled
+Rule group status
+.PARAMETER Library
+Clone default Firewall rules
+.PARAMETER Rules
+An array of rule properties
+.PARAMETER Description
+Rule group description
+.PARAMETER Comment
+Audit log comment
+.PARAMETER CloneId
+Clone an existing rule group
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Mandatory = $true, Position = 1)]
-        [string] $Name,
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Mandatory,Position=1)]
+        [string]$Name,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Mandatory = $true, Position = 2)]
-        [boolean] $Enabled,
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Mandatory,Position=2)]
+        [boolean]$Enabled,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Position = 3)]
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=3)]
+        [string]$Library,
+
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=4)]
+        [array]$Rules,
+
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=5)]
+        [string]$Description,
+
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=6)]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=7)]
         [ValidatePattern('^\w{32}$')]
-        [string] $CloneId,
-
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Position = 4)]
-        [string] $Library,
-
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Position = 5)]
-        [array] $Rules,
-
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Position = 6)]
-        [string] $Description,
-
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:post', Position = 7)]
-        [string] $Comment
+        [Alias('clone_id')]
+        [string]$CloneId
     )
     begin {
-        $Fields = @{ CloneId = 'clone_id' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('library', 'comment', 'clone_id')
-                Body = @{ root = @('enabled', 'name', 'rules', 'description') }
+            Format = @{
+                Query = @('library','comment','clone_id')
+                Body = @{ root = @('enabled','name','rules','description') }
             }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function New-FalconFirewallPolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall/v1:post')]
+<#
+.SYNOPSIS
+Create Falcon Firewall Management policies
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+.PARAMETER Array
+An array of policies to create in a single request
+.PARAMETER PlatformName
+Operating system platform
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:post')]
     param(
-        [Parameter(ParameterSetName = 'array', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='array',Mandatory)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
-                    Object   = $Object
-                    Command  = 'New-FalconFirewallPolicy'
+                    Object = $Object
+                    Command = 'New-FalconFirewallPolicy'
                     Endpoint = '/policy/entities/firewall/v1:post'
-                    Required = @('name', 'platform_name')
-                    Content  = @('platform_name')
-                    Format   = @{ platform_name = 'PlatformName' }
+                    Required = @('name','platform_name')
+                    Content = @('platform_name')
+                    Format = @{ platform_name = 'PlatformName' }
                 }
                 Confirm-Parameter @Param
             }
         })]
-        [array] $Array,
+        [Alias('resources')]
+        [array]$Array,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:post', Mandatory = $true, Position = 1)]
-        [ValidateSet('Windows', 'Mac', 'Linux')]
-        [string] $PlatformName,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:post',Mandatory,Position=1)]
+        [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
+        [Alias('platform_name')]
+        [string]$PlatformName,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:post', Mandatory = $true, Position = 2)]
-        [string] $Name,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:post',Mandatory,Position=2)]
+        [string]$Name,
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:post', Position = 3)]
-        [string] $Description,
-
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:post', Position = 4)]
-        [ValidatePattern('^\w{32}$')]
-        [string] $CloneId
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:post',Position=3)]
+        [string]$Description
     )
     begin {
-        $Fields = @{
-            Array        = 'resources'
-            CloneId      = 'clone_id'
-            PlatformName = 'platform_name'
-        }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = '/policy/entities/firewall/v1:post'
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Body  = @{
-                    resources = @('description', 'platform_name', 'name')
-                    root      = @('resources')
+            Format = @{
+                Body = @{
+                    resources = @('description','platform_name','name')
+                    root = @('resources')
                 }
-                Query = @('clone_id')
             }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Remove-FalconFirewallGroup {
-    [CmdletBinding(DefaultParameterSetName = '/fwmgr/entities/rule-groups/v1:delete')]
+<#
+.SYNOPSIS
+Remove Falcon Firewall Management rule groups
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+.PARAMETER Comment
+Audit log comment
+.PARAMETER Id
+Rule group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:delete', Mandatory = $true, Position = 1)]
-        [array] $Ids,
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:delete',Position=1)]
+        [string]$Comment,
 
-        [Parameter(ParameterSetName = '/fwmgr/entities/rule-groups/v1:delete', Position = 2)]
-        [string] $Comment
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=2)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('ids')]
+        [string[]]$Id
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids', 'comment') }
+            Format = @{ Query = @('ids','comment') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Remove-FalconFirewallPolicy {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall/v1:delete')]
+<#
+.SYNOPSIS
+Remove Falcon Firewall Management policies
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+.PARAMETER Id
+Policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:delete')]
     param(
-        [Parameter(ParameterSetName = '/policy/entities/firewall/v1:delete', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:delete',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [Alias('ids')]
+        [string[]]$Id
     )
-    process {
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Set-FalconFirewallPrecedence {
-    [CmdletBinding(DefaultParameterSetName = '/policy/entities/firewall-precedence/v1:post')]
-    param(
-        [Parameter(ParameterSetName = '/policy/entities/firewall-precedence/v1:post', Mandatory = $true,
-            Position = 1)]
-        [ValidateSet('Windows', 'Mac', 'Linux')]
-        [string] $PlatformName,
+<#
+.SYNOPSIS
+Set Falcon Firewall Management policy precedence
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
 
-        [Parameter(ParameterSetName = '/policy/entities/firewall-precedence/v1:post', Mandatory = $true,
-            Position = 2)]
+All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
+policy precedence.
+.PARAMETER PlatformName
+Operating system platform
+.PARAMETER Id
+Policy identifiers in desired precedence order
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-precedence/v1:post')]
+    param(
+        [Parameter(ParameterSetName='/policy/entities/firewall-precedence/v1:post',Mandatory,Position=1)]
+        [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
+        [Alias('platform_name')]
+        [string]$PlatformName,
+
+        [Parameter(ParameterSetName='/policy/entities/firewall-precedence/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids
+        [Alias('ids')]
+        [string[]]$Id
     )
     begin {
-        $Fields = @{ PlatformName = 'platform_name' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Body = @{ root = @('platform_name', 'ids') }}
+            Format = @{ Body = @{ root = @('platform_name','ids') }}
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }

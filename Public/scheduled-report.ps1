@@ -1,154 +1,241 @@
 function Get-FalconScheduledReport {
-    [CmdletBinding(DefaultParameterSetName = '/reports/queries/scheduled-reports/v1:get')]
+<#
+.SYNOPSIS
+Search for scheduled report or searches and their execution information
+.DESCRIPTION
+Requires 'Scheduled Reports: Read'.
+.PARAMETER Id
+Scheduled report or scheduled search identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Execution
+Retrieve information about scheduled report execution
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+#>
+    [CmdletBinding(DefaultParameterSetName='/reports/queries/scheduled-reports/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/reports/entities/scheduled-reports/v1:get', Mandatory = $true,
-            Position = 1)]
-        [Parameter(ParameterSetName = '/reports/entities/report-executions/v1:get', Mandatory = $true,
-            Position = 1)]
+        [Parameter(ParameterSetName='/reports/entities/scheduled-reports/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [array] $Ids,
+        [Alias('ids')]
+        [string[]]$Id,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 1)]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 1)]
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
-        [string] $Filter,
+        [string]$Filter,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 2)]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 2)]
-        [string] $Query,
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=2)]
+        [Alias('q')]
+        [string]$Query,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 3)]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 3)]
-        [ValidateSet('created_on.asc', 'created_on.desc', 'last_updated_on.asc', 'last_updated_on.desc',
-            'last_execution_on.asc', 'last_execution_on.desc', 'next_execution_on.asc', 'next_execution_on.desc')]
-        [string] $Sort,
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=3)]
+        [ValidateSet('created_on.asc','created_on.desc','last_updated_on.asc','last_updated_on.desc',
+            'last_execution_on.asc','last_execution_on.desc','next_execution_on.asc','next_execution_on.desc',
+            IgnoreCase=$false)]
+        [string]$Sort,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 4)]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 4)]
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=4)]
         [ValidateRange(1,5000)]
-        [int] $Limit,
+        [int32]$Limit,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get', Position = 5)]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Position = 5)]
-        [int] $Offset,
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=5)]
+        [int32]$Offset,
 
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get', Mandatory = $true)]
-        [Parameter(ParameterSetName = '/reports/entities/report-executions/v1:get', Mandatory = $true)]
-        [switch] $Execution,
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Mandatory)]
+        [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory)]
+        [switch]$Execution,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get')]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get')]
-        [switch] $Detailed,
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get')]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get')]
+        [switch]$Detailed,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get')]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get')]
-        [switch] $All,
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get')]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get')]
+        [switch]$All,
 
-        [Parameter(ParameterSetName = '/reports/queries/scheduled-reports/v1:get')]
-        [Parameter(ParameterSetName = '/reports/queries/report-executions/v1:get')]
-        [switch] $Total
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get')]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get')]
+        [switch]$Total
     )
     begin {
-        $Fields = @{ Query = 'q' }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('sort','limit','ids','filter','offset','q') }
+        }
+        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('sort', 'limit', 'ids', 'filter', 'offset', 'q') }
-        }
-        if ($Param.Inputs.Execution -and $Param.Inputs.Detailed) {
-            $Param.Inputs.Remove('Detailed')
-            $Request = Invoke-Falcon @Param
-            if ($Request) {
-                & $MyInvocation.MyCommand.Name -Execution -Ids $Request
-            }
+        if ($Id) {
+            @($Id).foreach{ [void]$IdArray.Add($_) }
+        } elseif ($Execution -and $Detailed) {
+            [void]$PSBoundParameters.Remove('Detailed')
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($Request) { & $MyInvocation.MyCommand.Name -Id $Request -Execution }
         } else {
-            Invoke-Falcon @Param
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Invoke-FalconScheduledReport {
-    [CmdletBinding(DefaultParameterSetName = '/reports/entities/scheduled-reports/execution/v1:post')]
+<#
+.SYNOPSIS
+Execute a scheduled report
+.DESCRIPTION
+Requires 'Scheduled Reports: Read'.
+.PARAMETER Id
+Report identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+#>
+    [CmdletBinding(DefaultParameterSetName='/reports/entities/scheduled-reports/execution/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/reports/entities/scheduled-reports/execution/v1:post', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id
+        [string]$Id
     )
     begin {
-        if (!$Script:Falcon.Hostname) { Request-FalconToken }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('raw_array') }}
+        }
     }
     process {
-        $Param = @{
-            Path    = "$($Script:Falcon.Hostname)/reports/entities/scheduled-reports/execution/v1"
-            Method  = 'post'
-            Headers = @{
-                Accept      = 'application/json'
-                ContentType = 'application/json'
-            }
-            Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
-        }
-        $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request
+        $PSBoundParameters['raw_array'] = @{ id = $PSBoundParameters.Id }
+        [void]$PSBoundParameters.Remove('Id')
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Receive-FalconScheduledReport {
-    [CmdletBinding(DefaultParameterSetName = '/reports/entities/report-executions-download/v1:get')]
+<#
+.SYNOPSIS
+Download a scheduled report or search result
+.DESCRIPTION
+Requires 'Scheduled Reports: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Id
+Report identifier
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+#>
+    [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-download/v1:get')]
     param(
-        [Parameter(ParameterSetName = '/reports/entities/report-executions-download/v1:get', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
-        [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get',
+            ValueFromPipelineByPropertyName,Position=1)]
+        [Alias('result_metadata','last_execution')]
+        [object]$Path,
 
-        [Parameter(ParameterSetName = '/reports/entities/report-executions-download/v1:get', Mandatory = $true,
-            Position = 2)]
-        [ValidatePattern('\.(csv|json)$')]
-        [ValidateScript({
-            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
-        })]
-        [string] $Path
+        [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('ids')]
+        [string]$Id,
+
+        [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get')]
+        [switch]$Force
     )
-    process {
-        $PSBoundParameters['ids'] = @( $PSBoundParameters.Id )
-        [void] $PSBoundParameters.Remove('id')
+    begin {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = $PSBoundParameters
-            Headers  = @{ Accept = 'application/octet-stream' }
-            Format   = @{
-                Query   = @('ids')
+            Headers = @{ Accept = 'application/octet-stream' }
+            Format = @{
+                Query = @('ids')
                 Outfile = 'path'
             }
         }
-        Invoke-Falcon @Param
+    }
+    process {
+        if ($PSBoundParameters.Id -and !$PSBoundParameters.Path) {
+            # If 'Id' is present without 'Path', attempt to retry with report/execution detail
+            $Request = Get-FalconScheduledReport -Id $PSBoundParameters.Id -EA 0
+            if (!$Request) {
+                $Request = Get-FalconScheduledReport -Execution -Id $PSBoundParameters.Id -EA 0
+            }
+            $Request | & $MyInvocation.MyCommand.Name
+        } else {
+            $PSBoundParameters.Path = switch ($PSBoundParameters.Path) {
+                # Update 'Path' using report detail
+                { $_.result_metadata.report_file_name } {
+                    # Update 'Id' using 'last_execution.id' if provided with report properties
+                    $PSBoundParameters.Id = $_.id
+                    $_.result_metadata.report_file_name
+                }
+                { $_.report_file_name } { $_.report_file_name }
+                { $_ -is [string] } { $_ }
+            }
+            $OutPath = Test-OutFile $PSBoundParameters.Path
+            if ($OutPath.Category -eq 'ObjectNotFound') {
+                Write-Error @OutPath
+            } elseif ($OutPath.Category -eq 'WriteError' -and !$PSBoundParameters.Force) {
+                Write-Error @OutPath
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
     }
 }
 function Redo-FalconScheduledReport {
-    [CmdletBinding(DefaultParameterSetName = '/reports/entities/report-executions-retry/v1:post')]
+<#
+.SYNOPSIS
+Retry a scheduled report execution
+.DESCRIPTION
+Requires 'Scheduled Reports: Read'.
+.PARAMETER Id
+Report identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+#>
+    [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-retry/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/reports/entities/report-executions-retry/v1:post', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/reports/entities/report-executions-retry/v1:post',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id
+        [string]$Id
     )
     begin {
-        if (!$Script:Falcon.Hostname) { Request-FalconToken }
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('raw_array') }}
+        }
     }
     process {
-        $Param = @{
-            Path    = "$($Script:Falcon.Hostname)/reports/entities/report-executions-retry/v1"
-            Method  = 'post'
-            Headers = @{
-                Accept      = 'application/json'
-                ContentType = 'application/json'
-            }
-            Body = '[{ "id": "' + $PSBoundParameters.Id + '" }]'
-        }
-        $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request
+        $PSBoundParameters['raw_array'] = @{ id = $PSBoundParameters.id }
+        [void]$PSBoundParameters.Remove('Id')
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }

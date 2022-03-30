@@ -1,20 +1,36 @@
 function Copy-FalconDeviceControlPolicy {
+<#
+.SYNOPSIS
+Duplicate a Falcon Device Control policy
+.DESCRIPTION
+Requires 'device-control-policies:read','device-control-policies:write'.
+
+The specified Falcon Device Control policy will be duplicated without assigned Host Groups. If a policy
+description is not supplied,the description from the existing policy will be used.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true,
-            ValueFromPipeline = $true)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Name,
+        [Parameter(Mandatory,Position=2)]
+        [string]$Name,
 
-        [Parameter(Position = 3)]
-        [string] $Description
+        [Parameter(Position=3)]
+        [string]$Description
     )
     process {
         $Output = try {
-            $Policy = Get-FalconDeviceControlPolicy -Ids $Id
+            $Policy = Get-FalconDeviceControlPolicy -Id $Id
             $Settings = $Policy.settings
             if ($Settings.classes) {
                 foreach ($Class in ($Settings.classes | Where-Object { $_.exceptions })) {
@@ -26,8 +42,8 @@ function Copy-FalconDeviceControlPolicy {
             }
             $Param = @{
                 PlatformName = $Policy.platform_name
-                Name         = $PSBoundParameters.Name
-                Description  = if ($PSBoundParameters.Description) {
+                Name = $PSBoundParameters.Name
+                Description = if ($PSBoundParameters.Description) {
                     $PSBoundParameters.Description
                 } else {
                     $Policy.description
@@ -39,7 +55,7 @@ function Copy-FalconDeviceControlPolicy {
                 if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
                     $Param = @{
                         Name = 'enable'
-                        Id   = $Clone.id
+                        Id = $Clone.id
                     }
                     Invoke-FalconDeviceControlPolicyAction @Param
                 }
@@ -53,75 +69,111 @@ function Copy-FalconDeviceControlPolicy {
     }
 }
 function Copy-FalconFirewallPolicy {
+<#
+.SYNOPSIS
+Duplicate a Falcon Firewall Management policy
+.DESCRIPTION
+Requires 'firewall-management:read','firewall-management:write'.
+
+The specified Falcon Firewall Management policy will be duplicated without assigned Host Groups. If a policy
+description is not supplied,the description from the existing policy will be used.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true,
-            ValueFromPipeline = $true)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Name,
+        [Parameter(Mandatory,Position=2)]
+        [string]$Name,
 
-        [Parameter(Position = 3)]
-        [string] $Description
+        [Parameter(Position=3)]
+        [string]$Description
     )
+    begin {
+        $Policy = Get-FalconFirewallPolicy -Id $Id -EA 0
+    }
     process {
+        if (!$Policy) { throw "Policy '$Id' not found." }
         $Output = try {
-            $Policy = Get-FalconFirewallPolicy -Ids $Id -Include settings
             $Param = @{
                 PlatformName = $Policy.platform_name
-                Name         = $PSBoundParameters.Name
-                Description  = if ($PSBoundParameters.Description) {
+                Name = $PSBoundParameters.Name
+                Description = if ($PSBoundParameters.Description) {
                     $PSBoundParameters.Description
                 } else {
                     $Policy.description
                 }
             }
             $Clone = New-FalconFirewallPolicy @Param
-            if ($Clone.id -and $Settings) {
-                $Policy.settings | Edit-FalconFirewallSetting -PolicyId $Clone.id
+            if ($Clone.id) {
+                Get-FalconFirewallSetting -Id $Policy.id | Edit-FalconFirewallSetting -PolicyId $Clone.id
                 if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
-                    $Param = @{
-                        Name = 'enable'
-                        Id   = $Clone.id
-                    }
-                    Invoke-FalconFirewallPolicyAction @Param
+                    Invoke-FalconFirewallPolicyAction -Name enable -Id $Clone.id
                 }
             }
         } catch {
             throw $_
         }
+        <#
         $Output = if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } else { $Output }
         if ($Policy.settings -and !$Output.settings) {
-            Get-FalconFirewallPolicy -Ids $Output.id -Include settings
+            Get-FalconFirewallPolicy -Id $Output.id -Include settings
         } else {
             $Output
         }
+        #>
+    }
+    end {
+        $Output #if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } elseif ($Output) { $Output }
     }
 }
 function Copy-FalconPreventionPolicy {
+<#
+.SYNOPSIS
+Duplicate a Prevention policy
+.DESCRIPTION
+Requires 'prevention-policies:read','prevention-policies:write'.
+
+The specified Prevention policy will be duplicated without assigned Host Groups. If a policy description is not
+supplied,the description from the existing policy will be used.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true,
-            ValueFromPipeline = $true)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Name,
+        [Parameter(Mandatory,Position=2)]
+        [string]$Name,
 
-        [Parameter(Position = 3)]
-        [string] $Description
+        [Parameter(Position=3)]
+        [string]$Description
     )
     process {
         $Output = try {
-            $Policy = Get-FalconPreventionPolicy -Ids $Id
-            $Settings = $Policy.prevention_settings.settings | Select-Object id, value
+            $Policy = Get-FalconPreventionPolicy -Id $Id
+            $Settings = $Policy.prevention_settings.settings | Select-Object id,value
             $Param = @{
                 PlatformName = $Policy.platform_name
-                Name         = $PSBoundParameters.Name
-                Description  = if ($PSBoundParameters.Description) {
+                Name = $PSBoundParameters.Name
+                Description = if ($PSBoundParameters.Description) {
                     $PSBoundParameters.Description
                 } else {
                     $Policy.description
@@ -133,8 +185,8 @@ function Copy-FalconPreventionPolicy {
                 if ($Policy.ioa_rule_groups) {
                     foreach ($GroupId in $Policy.ioa_rule_groups.id) {
                         $Param = @{
-                            Name    = 'add-rule-group'
-                            Id      = $Clone.id
+                            Name = 'add-rule-group'
+                            Id = $Clone.id
                             GroupId = $GroupId
                         }
                         Invoke-FalconPreventionPolicyAction @Param
@@ -143,7 +195,7 @@ function Copy-FalconPreventionPolicy {
                 if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
                     $Param = @{
                         Name = 'enable'
-                        Id   = $Clone.id
+                        Id = $Clone.id
                     }
                     Invoke-FalconPreventionPolicyAction @Param
                 }
@@ -157,27 +209,43 @@ function Copy-FalconPreventionPolicy {
     }
 }
 function Copy-FalconResponsePolicy {
+<#
+.SYNOPSIS
+Duplicate a Real-time Response policy
+.DESCRIPTION
+Requires 'response-policies:read','response-policies:write'.
+
+The specified Real-time Response policy will be duplicated without assigned Host Groups. If a policy description
+is not supplied,the description from the existing policy will be used.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true,
-            ValueFromPipeline = $true)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Name,
+        [Parameter(Mandatory,Position=2)]
+        [string]$Name,
 
-        [Parameter(Position = 3)]
-        [string] $Description
+        [Parameter(Position=3)]
+        [string]$Description
     )
     process {
         $Output = try {
-            $Policy = Get-FalconResponsePolicy -Ids $Id
-            $Settings = $Policy.settings.settings | Select-Object id, value
+            $Policy = Get-FalconResponsePolicy -Id $Id
+            $Settings = $Policy.settings.settings | Select-Object id,value
             $Param = @{
                 PlatformName = $Policy.platform_name
-                Name         = $PSBoundParameters.Name
-                Description  = if ($PSBoundParameters.Description) {
+                Name = $PSBoundParameters.Name
+                Description = if ($PSBoundParameters.Description) {
                     $PSBoundParameters.Description
                 } else {
                     $Policy.description
@@ -189,7 +257,7 @@ function Copy-FalconResponsePolicy {
                 if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
                     $Param = @{
                         Name = 'enable'
-                        Id   = $Clone.id
+                        Id = $Clone.id
                     }
                     Invoke-FalconResponsePolicyAction @Param
                 }
@@ -203,26 +271,42 @@ function Copy-FalconResponsePolicy {
     }
 }
 function Copy-FalconSensorUpdatePolicy {
+<#
+.SYNOPSIS
+Duplicate a Sensor Update policy
+.DESCRIPTION
+Requires 'sensor-update-policies:read','sensor-update-policies:write'.
+
+The specified Sensor Update policy will be duplicated without assigned Host Groups. If a policy description is
+not supplied,the description from the existing policy will be used.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.LINK
+
+#>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 1, ValueFromPipelineByPropertyName = $true,
-            ValueFromPipeline = $true)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string] $Id,
+        [string]$Id,
 
-        [Parameter(Mandatory = $true, Position = 2)]
-        [string] $Name,
+        [Parameter(Mandatory,Position=2)]
+        [string]$Name,
 
-        [Parameter(Position = 3)]
-        [string] $Description
+        [Parameter(Position=3)]
+        [string]$Description
     )
     process {
         $Output = try {
-            $Policy = Get-FalconSensorUpdatePolicy -Ids $Id
+            $Policy = Get-FalconSensorUpdatePolicy -Id $Id
             $Param = @{
                 PlatformName = $Policy.platform_name
-                Name         = $PSBoundParameters.Name
-                Description  = if ($PSBoundParameters.Description) {
+                Name = $PSBoundParameters.Name
+                Description = if ($PSBoundParameters.Description) {
                     $PSBoundParameters.Description
                 } else {
                     $Policy.description
@@ -234,7 +318,7 @@ function Copy-FalconSensorUpdatePolicy {
                 if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
                     $Param = @{
                         Name = 'enable'
-                        Id   = $Clone.id
+                        Id = $Clone.id
                     }
                     Invoke-FalconSensorUpdatePolicyAction @Param
                 }

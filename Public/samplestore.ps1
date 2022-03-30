@@ -1,84 +1,163 @@
 function Get-FalconSample {
-    [CmdletBinding(DefaultParameterSetName = '/samples/queries/samples/GET/v1:post')]
+<#
+.SYNOPSIS
+Retrieve detailed information about accessible sample files
+.DESCRIPTION
+Requires 'Sample Uploads: Read'.
+.PARAMETER Id
+Sha256 hash value
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+#>
+    [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post')]
     param(
-        [Parameter(ParameterSetName = '/samples/queries/samples/GET/v1:post', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{64}$')]
-        [array] $Ids
+        [Alias('sha256s','sha256','ids')]
+        [string[]]$Id
     )
     begin {
-        $Fields = @{ Ids = 'sha256s' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Body = @{ root = @('sha256s') }}
+            Format = @{ Body = @{ root = @('sha256s') }}
         }
-        Invoke-Falcon @Param
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Receive-FalconSample {
-    [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:get')]
+<#
+.SYNOPSIS
+Download a sample
+.DESCRIPTION
+Requires 'Sample Uploads: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER PasswordProtected
+Archive and password protect the sample with password 'infected'
+.PARAMETER Id
+Sha256 hash value
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+#>
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get')]
     param(
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true, Position = 1)]
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,Position=1)]
+        [string]$Path,
+
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Position=2)]
+        [Alias('password_protected')]
+        [boolean]$PasswordProtected,
+
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{64}$')]
-        [string] $Id,
+        [Alias('ids')]
+        [string]$Id,
 
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Mandatory = $true, Position = 2)]
-        [ValidateScript({
-            if (Test-Path $_) { throw "An item with the specified name $_ already exists." } else { $true }
-        })]
-        [string] $Path,
-
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:get', Position = 3)]
-        [boolean] $PasswordProtected
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:get')]
+        [switch]$Force
     )
     begin {
-        $Fields = @{
-            Id                = 'ids'
-            PasswordProtected = 'password_protected'
-        }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Headers  = @{ Accept = 'application/octet-stream' }
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query   = @('ids', 'password_protected')
+            Headers = @{ Accept = 'application/octet-stream' }
+            Format = @{
+                Query = @('ids','password_protected')
                 Outfile = 'path'
             }
         }
-        Invoke-Falcon @Param
+    }
+    process {
+        $OutPath = Test-OutFile $PSBoundParameters.Path
+        if ($OutPath.Category -eq 'ObjectNotFound') {
+            Write-Error @OutPath
+        } elseif ($PSBoundParameters.Path) {
+            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+                Write-Error @OutPath
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
     }
 }
 function Remove-FalconSample {
-    [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:delete')]
+<#
+.SYNOPSIS
+Remove a sample
+.DESCRIPTION
+Requires 'Sample Uploads: Write'.
+.PARAMETER Id
+Sha256 hash value
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+#>
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete')]
     param(
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:delete', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{64}$')]
-        [string] $Id
+        [Alias('ids')]
+        [string]$Id
     )
     begin {
-        $Fields = @{ Id = 'ids' }
-    }
-    process {
         $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
+            Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{ Query = @('ids') }
+            Format = @{ Query = @('ids') }
         }
-        Invoke-Falcon @Param
     }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Send-FalconSample {
-    [CmdletBinding(DefaultParameterSetName = '/samples/entities/samples/v3:post')]
+<#
+.SYNOPSIS
+Upload a sample file
+.DESCRIPTION
+Requires 'Sample Uploads: Write'.
+
+A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon X Sandbox or
+Falcon QuickScan.
+
+Maximum file size is 256MB. ZIP archives will automatically redirect to the archive submission API.
+.PARAMETER FileName
+File name
+.PARAMETER IsConfidential
+Prohibit sample from being displayed in MalQuery [default: True]
+.PARAMETER Comment
+Sample comment
+.PARAMETER Path
+Path to local file
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+#>
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post')]
     param(
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:post', Mandatory = $true, Position = 1)]
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',ValueFromPipelineByPropertyName,
+            Position=1)]
+        [Alias('file_name','name')]
+        [string]$FileName,
+
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=2)]
+        [Alias('is_confidential')]
+        [boolean]$IsConfidential,
+
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=3)]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidateScript({
             if (Test-Path -Path $_ -PathType Leaf) {
                 $true
@@ -86,42 +165,29 @@ function Send-FalconSample {
                 throw "Cannot find path '$_' because it does not exist or is a directory."
             }
         })]
-        [string] $Path,
-
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:post', Position = 2)]
-        [string] $FileName,
-
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:post', Position = 3)]
-        [boolean] $IsConfidential,
-
-        [Parameter(ParameterSetName = '/samples/entities/samples/v3:post', Position = 4)]
-        [string] $Comment
+        [Alias('body','FullName')]
+        [string]$Path
     )
     begin {
-        $Fields = @{
-            FileName       = if ($PSBoundParameters.Path -match '\.zip$') { 'name' } else { 'file_name' }
-            IsConfidential = 'is_confidential'
-            Path           = 'body'
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Headers = @{ ContentType = 'application/octet-stream' }
+            Format = @{
+                Query = @('comment','file_name','is_confidential','name')
+                Body = @{ root = @('body') }
+            }
         }
     }
     process {
         if (!$PSBoundParameters.FileName) {
             $PSBoundParameters['FileName'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
         }
-        $Param = @{
-            Command  = $MyInvocation.MyCommand.Name
-            Endpoint = if ($PSBoundParameters.Path -match '\.zip$') {
-                '/archives/entities/archives/v1:post'
-            } else {
-                $PSCmdlet.ParameterSetName
-            }
-            Headers  = @{ ContentType = 'application/octet-stream' }
-            Inputs   = Update-FieldName -Fields $Fields -Inputs $PSBoundParameters
-            Format   = @{
-                Query = @('comment', 'file_name', 'name', 'is_confidential')
-                Body  = @{ root = @('body') }
-            }
+        if ($PSBoundParameters.FileName -match '\.zip$') {
+            $Param.Endpoint = '/archives/entities/archives/v1:post'
+            $PSBoundParameters['name'] = $PSBoundParameters.FileName
+            [void]$PSBoundParameters.Remove('FileName')
         }
-        Invoke-Falcon @Param
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
