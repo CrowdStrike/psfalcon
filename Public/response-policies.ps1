@@ -39,7 +39,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [string]$Name,
 
         [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=2)]
-        [array]$Settings,
+        [Alias('settings')]
+        [object[]]$Setting,
 
         [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=3)]
         [string]$Description,
@@ -325,8 +326,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [string]$Name,
 
         [Parameter(ParameterSetName='/policy/entities/response/v1:post',Position=3)]
-        [Alias('Settings')]
-        [array]$Setting,
+        [Alias('settings')]
+        [object[]]$Setting,
 
         [Parameter(ParameterSetName='/policy/entities/response/v1:post',Position=4)]
         [string]$Description

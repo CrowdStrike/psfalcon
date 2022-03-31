@@ -39,7 +39,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [string]$Name,
 
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=2)]
-        [System.Object]$Settings,
+        [Alias('settings')]
+        [System.Object]$Setting,
 
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=3)]
         [string]$Description,
@@ -458,6 +459,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [string]$Name,
 
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=3)]
+        [Alias('settings')]
         [System.Object]$Setting,
 
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=4)]

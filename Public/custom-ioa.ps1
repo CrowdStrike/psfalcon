@@ -78,7 +78,7 @@ If an existing rule is submitted within 'rule_updates',it will be filtered to th
 including those under 'field_values' ('name','label','type' and 'values').
 .PARAMETER Comment
 Audit log comment
-.PARAMETER RuleUpdates
+.PARAMETER RuleUpdate
 An array of rule properties
 .PARAMETER RulegroupId
 Rule group identifier
@@ -92,8 +92,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',ValueFromPipelineByPropertyName,
            Position=2)]
-        [Alias('rule_updates','rules')]
-        [PSCustomObject[]]$RuleUpdates,
+        [Alias('rule_updates','rules','RuleUpdates')]
+        [PSCustomObject[]]$RuleUpdate,
 
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
@@ -109,13 +109,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
     }
     process {
-        if ($RuleUpdates) {
+        if ($RuleUpdate) {
             # Filter 'rule_updates' to required fields
             $RuleRequired = @('instance_id','pattern_severity','enabled','disposition_id','name',
                 'description','comment','field_values')
             $FieldRequired = @('name','label','type','values')
-            [array]$RuleUpdates = ,(
-                @($RuleUpdates | Select-Object $RuleRequired).foreach{
+            [array]$RuleUpdate = ,(
+                @($RuleUpdate | Select-Object $RuleRequired).foreach{
                     $_.field_values = $_.field_values | Select-Object $FieldRequired
                     $_
                 }

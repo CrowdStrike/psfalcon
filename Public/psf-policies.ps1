@@ -51,7 +51,7 @@ Policy description
             }
             $Clone = New-FalconDeviceControlPolicy @Param
             if ($Clone.id) {
-                Edit-FalconDeviceControlPolicy -Id $Clone.id -Settings $Settings
+                Edit-FalconDeviceControlPolicy -Id $Clone.id -Setting $Settings
                 if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
                     $Param = @{
                         Name = 'enable'
@@ -181,7 +181,7 @@ Policy description
             }
             $Clone = New-FalconPreventionPolicy @Param
             if ($Clone.id) {
-                Edit-FalconPreventionPolicy -Id $Clone.id -Settings $Settings
+                Edit-FalconPreventionPolicy -Id $Clone.id -Setting $Settings
                 if ($Policy.ioa_rule_groups) {
                     foreach ($GroupId in $Policy.ioa_rule_groups.id) {
                         $Param = @{
@@ -253,7 +253,7 @@ Policy description
             }
             $Clone = New-FalconResponsePolicy @Param
             if ($Clone.id) {
-                Edit-FalconResponsePolicy -Id $Clone.id -Settings $Settings
+                Edit-FalconResponsePolicy -Id $Clone.id -Setting $Settings
                 if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
                     $Param = @{
                         Name = 'enable'

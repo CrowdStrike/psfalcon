@@ -39,7 +39,8 @@ Policy identifier
         [string]$Name,
 
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=2)]
-        [System.Collections.Hashtable]$Settings,
+        [Alias('settings')]
+        [System.Collections.Hashtable]$Setting,
 
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=3)]
         [string]$Description,

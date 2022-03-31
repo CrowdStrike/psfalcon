@@ -18,7 +18,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         [Parameter(ParameterSetName='ExportItem',Position=1)]
         [ValidateSet('HostGroup','IoaGroup','FirewallGroup','DeviceControlPolicy','FirewallPolicy',
             'PreventionPolicy','ResponsePolicy','SensorUpdatePolicy','Ioc','IoaExclusion','MlExclusion',
-            'SvExclusion')]
+            'Script','SvExclusion')]
         [Alias('Items')]
         [string[]]$Select,
 
@@ -665,7 +665,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                                         Command = 'Edit-FalconIoaRule'
                                         Content = @{
                                             RulegroupId = $NewGroup.id
-                                            RuleUpdates = $Created
+                                            RuleUpdate = $Created
                                             Comment = if ($Rule.comment) {
                                                 $Rule.comment
                                             } else {
@@ -783,7 +783,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                                 Command = "Edit-Falcon$($Pair.Key)"
                                 Content = @{
                                     Id = $Policy.id
-                                    Settings = if ($Import.prevention_settings) {
+                                    Setting = if ($Import.prevention_settings) {
                                         $Import.prevention_settings
                                     } else {
                                         $Import.settings

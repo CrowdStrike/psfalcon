@@ -10,7 +10,7 @@ An array of policies to modify in a single request
 Policy identifier
 .PARAMETER Name
 Policy name
-.PARAMETER Settings
+.PARAMETER Setting
 An array of policy settings
 .PARAMETER Description
 Policy description
@@ -45,8 +45,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',ValueFromPipelineByPropertyName,
             Position=3)]
-        [Alias('prevention_settings')]
-        [array]$Settings,
+        [Alias('settings','prevention_settings')]
+        [object[]]$Setting,
 
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=4)]
         [string]$Description
