@@ -212,7 +212,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Request -and $PSBoundParameters.Include) {
-            if (!$Request.uuid) { $Request = @($Request).foreach{ ,[PSCustomObject] @{ uuid = $_ }}}
+            if (!$Request.uuid) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}}
             if ($PSBoundParameters.Include -contains 'roles') {
                 @($Request).foreach{
                     Add-Property $_ 'roles' @(Get-FalconRole -UserId $_.uuid)
