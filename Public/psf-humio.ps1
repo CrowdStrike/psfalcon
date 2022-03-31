@@ -3,7 +3,7 @@ function Register-FalconEventCollector {
 .SYNOPSIS
 Define Humio ingestion endpoint and token for logging
 .DESCRIPTION
-Once configured,the Humio destination can be used by PSFalcon but the module will not send events to Humio
+Once configured, the Humio destination can be used by PSFalcon but the module will not send events to Humio
 until 'Enable' options are chosen. 'Remove-FalconEventCollector' can be used to remove a configured destination
 and stop the transmission of events.
 .PARAMETER Uri
@@ -55,7 +55,7 @@ $Register = @{
         $Match | ForEach-Object {
             New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
             $_,
-            "ParameterValue",
+            'ParameterValue',
             $_
         }
     }
@@ -110,10 +110,7 @@ PSFalcon command output
             }
             Body = ConvertTo-Json -InputObject @(
                 @{
-                    tags = @{
-                        host = [System.Net.Dns]::GetHostname()
-                        source = (Show-FalconModule).UserAgent
-                    }
+                    tags = @{ host = [System.Net.Dns]::GetHostname(); source = (Show-FalconModule).UserAgent }
                     events = $Events
                 }
             ) -Depth 8 -Compress
