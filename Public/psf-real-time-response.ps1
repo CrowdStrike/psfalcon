@@ -32,13 +32,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     begin {
         $Days = if ($PSBoundParameters.Days) { $PSBoundParameters.Days } else { 7 }
         # Properties to capture from request results
-        $Properties = @{
+        $Select = @{
             Session = @('aid','user_id','user_uuid','id','created_at','deleted_at','status')
             Command = @('stdout','stderr','complete')
         }
         # Define output path
-        $OutputFile = Join-Path -Path (Get-Location).Path -ChildPath "FalconQueue_$(
-            Get-Date -Format FileDateTime).csv"
+        $OutputFile = Join-Path (Get-Location).Path "FalconQueue_$(Get-Date -Format FileDateTime).csv"
     }
     process {
         try {
@@ -52,14 +51,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             if (-not $Sessions) { throw "No queued Real-time Response sessions available." }
             [array]$HostInfo = if ($PSBoundParameters.Include) {
                 # Capture host information for eventual output
-                Get-FalconHost -Id ($Sessions.device_id | Group-Object).Name | Select-Object @(
-                    $PSBoundParameters.Include + 'device_id')
+                $Sessions.device_id | Get-FalconHost | Select-Object @($PSBoundParameters.Include + 'device_id')
             }
-            foreach ($Session in (Get-FalconSession -Id $Sessions.id -Queue -Verbose)) {
+            foreach ($Session in ($Sessions.id | Get-FalconSession -Queue -Verbose)) {
                 @($Session.Commands).foreach{
                     # Create output for each individual command in queued session
-                    $Item = [PSCustomObject] @{}
-                    @($Session | Select-Object $Properties.Session).foreach{
+                    $Obj = [PSCustomObject] @{}
+                    @($Session | Select-Object $Select.Session).foreach{
                         @($_.PSObject.Properties).foreach{
                             # Add session properties with 'session' prefix
                             $Name = if ($_.Name -match '^(id|(created|deleted|updated)_at|status)$') {
@@ -67,7 +65,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             } else {
                                 $_.Name
                             }
-                            Add-Property -Object $Item -Name $Name -Value $_.Value
+                            Add-Property $Obj $Name $_.Value
                         }
                     }
                     @($_.PSObject.Properties).foreach{
@@ -77,46 +75,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                         } else {
                             $_.Name
                         }
-                        Add-Property -Object $Item -Name $Name -Value $_.Value
+                        Add-Property $Obj $Name $_.Value
                     }
-                    if ($Item.command_status -eq 'FINISHED') {
+                    if ($Obj.command_status -eq 'FINISHED') {
                         # Update command properties with results
-                        $Param = @{
-                            CloudRequestId = $Item.cloud_request_id
-                            Verbose = $true
-                            ErrorAction = 'SilentlyContinue'
-                        }
-                        $ConfirmCmd = Get-RtrCommand $Item.base_command -ConfirmCommand
-                        @(& $ConfirmCmd @Param | Select-Object $Properties.Command).foreach{
-                            @($_.PSObject.Properties).foreach{
-                                Add-Property -Object $Item -Name "command_$($_.Name)" -Value $_.Value
-                            }
+                        $ConfirmCmd = Get-RtrCommand $Obj.base_command -ConfirmCommand
+                        @($Obj.cloud_request_id | & $ConfirmCmd -Verbose -EA 4 |
+                        Select-Object $Select.Command).foreach{
+                            @($_.PSObject.Properties).foreach{ Add-Property $Obj "command_$($_.Name)" $_.Value }
                         }
                     } else {
                         @('command_complete','command_stdout','command_stderr').foreach{
                             # Add empty command output
                             $Value = if ($_ -eq 'command_complete') { $false } else { $null }
-                            Add-Property -Object $Item -Name $_ -Value $Value
+                            Add-Property $Obj $_ $Value
                         }
                     }
                     if ($PSBoundParameters.Include -and $HostInfo) {
-                        @($HostInfo.Where({ $_.device_id -eq $Item.aid })).foreach{
+                        @($HostInfo.Where({ $_.device_id -eq $Obj.aid })).foreach{
                             @($_.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
                                 # Add 'Include' properties
-                                Add-Property -Object $Item -Name $_.Name -Value $_.Value
+                                Add-Property $Obj $_.Name $_.Value
                             }
                         }
                     }
-                    # Export using 'Export-FalconReport' and suppress 'Get-ChildItem' output
-                    [void] ($Item | Export-FalconReport $OutputFile)
+                    $Obj | Export-Csv $OutputFile -NoTypeInformation -Append
                 }
             }
         } catch {
             throw $_
         } finally {
-            if (Test-Path $OutputFile) {
-                Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime
-            }
+            if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
         }
     }
 }
@@ -495,10 +484,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                         stdout = $null
                     }
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        Add-Property -Object $Item -Name 'batch_get_cmd_req_id' -Value $null
+                        Add-Property $Item 'batch_get_cmd_req_id' $null
                     }
                     if ($PSBoundParameters.GroupId) {
-                        Add-Property -Object $Item -Name 'host_group_id' -Value $PSBoundParameters.GroupId
+                        Add-Property $Item 'host_group_id' $PSBoundParameters.GroupId
                     }
                     $Item
                 }
@@ -543,7 +532,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     $Confirm | ForEach-Object {
                         $CmdId = if ($_.task_id -and !$_.cloud_request_id) {
                             # Rename 'task_id' to 'cloud_request_id'
-                            Add-Property -Object $_ -Name 'cloud_request_id' -Value $_.task_id
+                            Add-Property $_ 'cloud_request_id' $_.task_id
                             $_.PSObject.Properties.Remove('task_id')
                             'cloud_request_id'
                         } else {
@@ -612,7 +601,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             $CmdContent = Get-RtrResult -Object $CmdRequest.hosts -Output $InitResult
                             @($CmdContent | Where-Object { $_.session_id -and $_.complete -eq $true }).foreach{
                                 # Add 'batch_get_cmd_req_id' to output
-                                Add-Property -Object $_ -Name 'batch_get_cmd_req_id' -Value (
+                                Add-Property $_ 'batch_get_cmd_req_id' (
                                     $CmdRequest.batch_get_cmd_req_id)
                             }
                             $CmdContent
