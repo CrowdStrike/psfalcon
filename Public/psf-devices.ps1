@@ -5,13 +5,16 @@ Find potential duplicate hosts within your Falcon environment
 .DESCRIPTION
 Requires 'devices:read' and 'devices:write'.
 
-If the 'Hosts' parameter is not provided,all Host information will be retrieved. An error will be
-displayed if required fields 'cid','device_id','first_seen','last_seen','hostname' and any defined
+If the 'Hosts' parameter is not provided, all Host information will be retrieved. An error will be
+displayed if required fields 'cid', 'device_id', 'first_seen', 'last_seen', 'hostname' and any defined
 'filter' value are not present.
 
-Hosts are grouped by 'cid','hostname' and any defined 'filter' value,then sorted by 'last_seen' time. Any
+Hosts are grouped by 'cid' ,'hostname' and any defined 'filter' values, then sorted by 'last_seen' time. Any
 result other than the one with the most recent 'last_seen' time is considered a duplicate host and is returned
 within the output.
+
+Hosts can be hidden from the Falcon console by piping the results of 'Find-FalconDuplicate' to
+'Invoke-FalconHostAction' using the action 'hide_host'.
 .PARAMETER Hosts
 Array of detailed Host results
 .PARAMETER Filter
