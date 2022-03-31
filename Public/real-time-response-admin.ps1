@@ -389,7 +389,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
                     if ($BatchId) {
                         # Add 'batch_id' to each result and output
-                        Add-Property -Object $_ -Name 'batch_id' -Value $BatchId
+                        Add-Property $_ 'batch_id' $BatchId
                         $_
                     } elseif ($SessionId -and $Confirm) {
                         for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
