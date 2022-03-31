@@ -211,10 +211,10 @@ Requires 'Host Groups: Write'.
 Adds or removes hosts from host groups in batches of 500.
 .PARAMETER Name
 Action to perform
-.PARAMETER HostId
-Host identifier
 .PARAMETER Id
 Host group identifier
+.PARAMETER HostId
+Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
@@ -225,15 +225,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Alias('action_name')]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=3)]
+        [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids','device_id','HostIds')]
-        [string[]]$HostId,
+        [string]$Id,
 
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id
+        [Alias('ids','device_id','HostIds')]
+        [string[]]$HostId
     )
     begin {
         $Param = @{
