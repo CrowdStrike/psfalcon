@@ -97,7 +97,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post')]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:post',ValueFromPipeline,
+        [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('subscription_id')]

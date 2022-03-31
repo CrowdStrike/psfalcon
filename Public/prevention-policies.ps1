@@ -6,14 +6,14 @@ Modify Prevention policies
 Requires 'Prevention Policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
-.PARAMETER Id
-Policy identifier
 .PARAMETER Name
 Policy name
-.PARAMETER Setting
-An array of policy settings
 .PARAMETER Description
 Policy description
+.PARAMETER Setting
+Policy settings
+.PARAMETER Id
+Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
@@ -33,23 +33,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             }
         })]
         [Alias('resources')]
-        [array]$Array,
+        [object[]]$Array,
 
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
-        [string]$Id,
-
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
+
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
+        [string]$Description,
 
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',ValueFromPipelineByPropertyName,
             Position=3)]
         [Alias('settings','prevention_settings')]
         [object[]]$Setting,
 
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=4)]
-        [string]$Description
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,Position=4)]
+        [ValidatePattern('^\w{32}$')]
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -64,7 +66,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
     }
     process {
-        # if settings, settings = settings.prevention_settings | select id, value
+        if ($PSBoundParameters.Setting.settings) {
+            # Select required values from 'settings' object
+            $PSBoundParameters.Setting = $PSBoundParameters.Setting.settings | Select-Object id,value
+        }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
@@ -234,31 +239,29 @@ Perform actions on Prevention policies
 Requires 'Prevention Policies: Write'.
 .PARAMETER Name
 Action to perform
-.PARAMETER Id
-Policy identifier
 .PARAMETER GroupId
 Host or rule group identifier
+.PARAMETER Id
+Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,
-           Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','add-rule-group','disable','enable','remove-host-group',
             'remove-rule-group',IgnoreCase=$false)]
         [Alias('action_name')]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,
-           Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id,
+        [string]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string]$GroupId
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -330,15 +333,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:post',Mandatory,Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidateSet('Windows','Mac','Linux','iOS','Android',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
 
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:post',ValueFromPipelineByPropertyName,
+            Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:post',Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [Alias('settings','prevention_settings')]
         [object[]]$Setting
     )
@@ -355,7 +361,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
     }
     process { 
-        # if settings, settings = settings.prevention_settings | select id,value
+        if ($PSBoundParameters.Setting.settings) {
+            # Select required values from 'settings' object
+            $PSBoundParameters.Setting = $PSBoundParameters.Setting.settings | Select-Object id,value
+        }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }

@@ -193,7 +193,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         # Fields to collect from 'Put' files list
         $PutFields = @('id','name','created_timestamp','modified_timestamp','sha256')
         function Write-RtrResult ($Object,$Step,$BatchId) {
-            # Create output,append results and output to CSV
+            # Create output, append results and output to CSV
             $Output = foreach ($Item in $Object) {
                 [PSCustomObject] @{
                     aid = $Item.aid
@@ -307,7 +307,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             $_.offline_queued -eq $true }).aid
                     }
                     if ($SessionHosts) {
-                        # Change to a 'temp' directory for each device,by platform
+                        # Change to a 'temp' directory for each device by platform
                         Write-Host "Initiated session with $(($SessionHosts | Measure-Object).Count) host..."
                         foreach ($Pair in (@{
                             Windows = ($HostArray | Where-Object { $SessionHosts -contains $_.device_id -and

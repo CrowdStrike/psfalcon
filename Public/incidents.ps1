@@ -255,8 +255,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Alias('overwrite_detects')]
         [boolean]$OverwriteDetects,
 
-        [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=5)]
+        [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^inc:\w{32}:\w{32}$')]
         [Alias('ids','incident_id')]
         [string[]]$Id

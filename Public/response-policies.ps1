@@ -8,10 +8,10 @@ Requires 'Response Policies: Write'.
 An array of policies to modify in a single request
 .PARAMETER Name
 Policy name
-.PARAMETER Settings
-An array of policy settings
 .PARAMETER Description
 Policy description
+.PARAMETER Setting
+Policy settings
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -35,18 +35,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [Alias('resources')]
         [array]$Array,
 
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
+        [string]$Description,
+
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [Alias('settings')]
         [object[]]$Setting,
 
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=3)]
-        [string]$Description,
-
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=4)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id
     )
@@ -62,7 +65,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($PSBoundParameters.Settings.settings) {
+            # Select required values from 'settings' object
+            $PSBoundParameters.Settings = $PSBoundParameters.Settings.settings | Select-Object id,value
+        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
 }
 function Get-FalconResponsePolicy {
 <#
@@ -230,29 +239,28 @@ Perform actions on Real-time Response policies
 Requires 'Response Policies: Write'.
 .PARAMETER Name
 Action to perform
-.PARAMETER Id
-Policy identifier
 .PARAMETER GroupId
 Host group identifier
+.PARAMETER Id
+Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,
-           Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
         [Alias('action_name')]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id,
+        [string]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string]$GroupId
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -287,14 +295,14 @@ Create Real-time Response policies
 Requires 'Response Policies: Write'.
 .PARAMETER Array
 An array of policies to create in a single request
-.PARAMETER PlatformName
-Operating system platform
 .PARAMETER Name
 Policy name
-.PARAMETER Settings
-An array of policy settings
+.PARAMETER PlatformName
+Operating system platform
 .PARAMETER Description
 Policy description
+.PARAMETER Settings
+Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
@@ -318,19 +326,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [array]$Array,
 
         [Parameter(ParameterSetName='/policy/entities/response/v1:post',Mandatory,Position=1)]
+        [string]$Name,
+
+        [Parameter(ParameterSetName='/policy/entities/response/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
 
-        [Parameter(ParameterSetName='/policy/entities/response/v1:post',Mandatory,Position=2)]
-        [string]$Name,
+        [Parameter(ParameterSetName='/policy/entities/response/v1:post',ValueFromPipelineByPropertyName,
+            Position=3)]
+        [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/response/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/response/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [Alias('settings')]
-        [object[]]$Setting,
-
-        [Parameter(ParameterSetName='/policy/entities/response/v1:post',Position=4)]
-        [string]$Description
+        [object[]]$Setting
     )
     begin {
         $Param = @{
@@ -344,7 +355,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($PSBoundParameters.Setting.settings) {
+            # Select required values from 'settings' object
+            $PSBoundParameters.Setting = $PSBoundParameters.Setting.settings | Select-Object id,value
+        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
 }
 function Remove-FalconResponsePolicy {
 <#

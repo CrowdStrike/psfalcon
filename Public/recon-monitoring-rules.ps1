@@ -17,34 +17,50 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=1)]
         [ValidateSet('asap','daily','weekly',IgnoreCase=$false)]
         [string]$Frequency,
 
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidateScript({
             if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
         [Alias('Recipients')]
         [string[]]$Recipient,
 
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,Position=3)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidateSet('enabled','muted',IgnoreCase=$false)]
         [string]$Status,
 
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=4)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string]$Id
 
     )
-    process {
+    begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('recipients','id','status','frequency') }}
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        [System.Collections.ArrayList] $EmailArray = @()
+    }
+    process {
+        if ($Recipient) {
+            @($Recipient).foreach{ [void] $EmailArray.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($EmailArray) {
+            $PSBoundParameters['Recipient'] = @($EmailArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Edit-FalconReconNotification {
@@ -83,15 +99,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Alias('resources')]
         [array]$Array,
 
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,Position=1)]
         [string]$Status,
 
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('assigned_to_uuid')]
         [string]$AssignedToUuid,
 
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{76}$')]
         [string]$Id

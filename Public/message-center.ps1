@@ -4,39 +4,39 @@ function Add-FalconCompleteActivity {
 Add an activity to a Falcon Complete case
 .DESCRIPTION
 Requires 'Message Center: Write'.
-.PARAMETER Id
-Case identifier
-.PARAMETER UserId
-User identifier
 .PARAMETER Type
 Activity type
 .PARAMETER Content
 Activity content
+.PARAMETER UserId
+User identifier
+.PARAMETER Id
+Case identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-activity/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('case_id')]
-        [string]$Id,
+           Position=1)]
+        [ValidateSet('comment',IgnoreCase=$false)]
+        [string]$Type,
 
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
+           Position=2)]
+        [Alias('body')]
+        [string]$Content,
+
+        [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$UserId,
 
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
-           Position=3)]
-        [ValidateSet('comment',IgnoreCase=$false)]
-        [string]$Type,
-
-        [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
-           Position=4)]
-        [Alias('body')]
-        [string]$Content
+            ValueFromPipelineByPropertyName,Position=4)]
+        [Alias('case_id')]
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -70,20 +70,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [Alias('body')]
         [string]$Content,
 
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidatePattern('^ldt:\w{32}:\d+$')]
         [Alias('detections','detection_id','DetectionIds')]
         [string[]]$DetectionId,
 
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidatePattern('^inc:\w{32}:\w{32}$')]
         [Alias('incidents','incident_id','IncidentIds')]
         [string[]]$IncidentId,
 
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=4)]
+            ValueFromPipelineByPropertyName,Position=4)]
         [string]$Id
     )
     begin {
@@ -317,8 +317,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [Alias('body')]
         [string]$Content,
 
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',
-            ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [ValidatePattern('^ldt:\w{32}:\d+$')]
         [ValidateScript({
             if ($PSBoundParameters.Type -eq 'fc:detection-support') {
@@ -330,8 +330,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [Alias('detections','detection_id','DetectionIds')]
         [string[]]$DetectionId,
 
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',
-            ValueFromPipelineByPropertyName,Position=5)]
+        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
+            Position=5)]
         [ValidatePattern('^inc:\w{32}:\w{32}$')]
         [ValidateScript({
             if ($PSBoundParameters.Type -eq 'fc:incident-support') {
@@ -343,7 +343,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [Alias('incidents','incident_id','IncidentIds')]
         [string[]]$IncidentId,
 
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=6)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('user_uuid','uuid')]
@@ -444,8 +444,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:post')]
     param(
-        [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,
-           Position=2)]
+        [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]
         [ValidatePattern('\.(bmp|csv|doc|docx|gif|jpg|jpeg|pdf|png|pptx|txt|xls|xlsx)$')]
         [ValidateScript({
             if (Test-Path -Path $_ -PathType Leaf) {
@@ -472,7 +471,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 
 
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+            ValueFromPipelineByPropertyName,Position=3)]
         [Alias('case_id')]
         [string]$Id
     )

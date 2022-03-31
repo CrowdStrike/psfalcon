@@ -8,7 +8,7 @@ Requires 'Sensor Visibility Exclusions: Write'.
 Exclusion identifier
 .PARAMETER Value
 RegEx pattern value
-.PARAMETER GroupIds
+.PARAMETER GroupId
 Host group identifier or 'all'
 .PARAMETER Comment
 Audit log comment
@@ -17,19 +17,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Value,
 
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidatePattern('^(\w{32}|all)$')]
-        [Alias('groups','GroupIds')]
-        [string[]]$GroupId,
+        [Alias('groups','id','group_ids','GroupIds')]
+        [object[]]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [string]$Comment,
 
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id
     )
@@ -39,8 +42,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('groups','id','value','comment') }}
         }
+        [System.Collections.ArrayList]$IdArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($GroupId) {
+            @($GroupId).foreach{
+                if ($_.id) {
+                    [void]$IdArray.Add($_.id)
+                } elseif ($_ -is [string] -and $_ -match '^(\w{32}|all)$') {
+                    [void]$IdArray.Add($_)
+                }
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($IdArray) {
+            $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
 }
 function Get-FalconSvExclusion {
 <#
@@ -131,25 +153,28 @@ Create a Sensor Visibility exclusion
 Requires 'Sensor Visibility Exclusions: Write'.
 .PARAMETER Value
 RegEx pattern value
-.PARAMETER GroupIds
-Host group identifier or 'all'
 .PARAMETER Comment
 Audit log comment
+.PARAMETER GroupIds
+Host group identifier or 'all'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:post')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=1)]
         [string]$Value,
 
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Position=2)]
-        [string]$Comment,
-
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^(\w{32}|all)$')]
         [Alias('groups','id','group_ids','GroupIds')]
-        [string[]]$GroupId
+        [string[]]$GroupId,
+
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
+            Position=3)]
+        [string]$Comment
     )
     begin {
         $Param = @{

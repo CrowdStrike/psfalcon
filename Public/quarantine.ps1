@@ -109,10 +109,8 @@ Quarantined file identifier
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,
-           Position=1)]
-        [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory,
-           Position=1)]
+        [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory,Position=1)]
         [ValidateSet('release','unrelease','delete',IgnoreCase=$false)]
         [string]$Action,
 
@@ -170,8 +168,7 @@ Falcon Query Language statement
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/aggregates/action-update-count/v1:get')]
     param(
-        [Parameter(ParameterSetName='/quarantine/aggregates/action-update-count/v1:get',Mandatory,
-           Position=1)]
+        [Parameter(ParameterSetName='/quarantine/aggregates/action-update-count/v1:get',Mandatory,Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter
     )

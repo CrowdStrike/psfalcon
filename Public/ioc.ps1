@@ -37,48 +37,59 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [ValidateSet('no_action','allow','prevent_no_ui','detect','prevent',IgnoreCase=$false)]
         [string]$Action,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidateSet('linux','mac','windows',IgnoreCase=$false)]
         [Alias('Platforms')]
         [string[]]$Platform,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidateRange(1,256)]
         [string]$Source,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=4)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=4)]
         [ValidateSet('informational','low','medium','high','critical',IgnoreCase=$false)]
         [string]$Severity,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=5)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=5)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=6)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=6)]
         [Alias('metadata.filename')]
         [string]$Filename,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=7)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=7)]
         [Alias('tags')]
         [string[]]$Tag,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=8)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=8)]
         [ValidatePattern('^\w{32}$')]
         [Alias('host_groups', 'HostGroups')]
         [string[]]$HostGroup,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=9)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=9)]
         [Alias('applied_globally')]
         [boolean]$AppliedGlobally,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=10)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=10)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
         [string]$Expiration,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=11)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=11)]
         [string]$Comment,
 
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=12)]
@@ -89,8 +100,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('ignore_warnings','IgnoreWarnings')]
         [boolean]$IgnoreWarning,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=14)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=14)]
         [ValidatePattern('^\w{64}$')]
         [string]$Id
     )
@@ -106,9 +117,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                         'metadata.filename','source','host_groups','severity','action','platforms')
                 }
             }
+            [System.Collections.ArrayList]$IdArray = @()
+            [System.Collections.ArrayList]$PlatformArray = @()
+            [System.Collections.ArrayList]$TagArray = @()
         }
     }
     process {
+        if ($HostGroup -or $Platform -or $Tag) {
+            if ($HostGroup) { @($HostGroup).foreach{ [void]$IdArray.Add($_) }}
+            if ($Platform) { @($Platform).foreach{ [void]$PlatformArray.Add($_) }}
+            if ($Tag) { @($Tag).foreach{ [void]$TagArray.Add($_) }}
+        }
+    }
+    end {
+        if ($IdArray -or $PlatformArray -or $TagArray) {
+            if ($IdArray) { $PSBoundParameters['HostGroup'] = @($IdArray | Select-Object -Unique) }
+            if ($PlatformArray) { $PSBoundParameters['Platform'] = @($PlatformArray | Select-Object -Unique) }
+            if ($TagArray) { $PSBoundParameters['Tag'] = @($TagArray | Select-Object -Unique) }
+        }
         if (!$PSBoundParameters.HostGroup -and !$PSBoundParameters.AppliedGlobally) {
             throw "'HostGroup' or 'AppliedGlobally' must be provided."
         } else {
@@ -276,48 +302,59 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('indicators')]
         [array]$Array,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=1)]
         [ValidateSet('no_action','allow','prevent_no_ui','detect','prevent',IgnoreCase=$false)]
         [string]$Action,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidateSet('linux','mac','windows',IgnoreCase=$false)]
         [Alias('Platforms')]
         [string[]]$Platform,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidateRange(1,256)]
         [string]$Source,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=4)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [ValidateSet('informational','low','medium','high','critical',IgnoreCase=$false)]
         [string]$Severity,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=5)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=5)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=6)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=6)]
         [Alias('metadata.filename')]
         [string]$Filename,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=7)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=7)]
         [Alias('Tags')]
         [string[]]$Tag,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=8)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=8)]
         [ValidatePattern('^\w{32}$')]
         [Alias('host_groups','HostGroups')]
         [string[]]$HostGroup,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=9)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=9)]
         [Alias('applied_globally')]
         [boolean]$AppliedGlobally,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=10)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=10)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
         [string]$Expiration,
 
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=11)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',ValueFromPipelineByPropertyName,
+            Position=11)]
         [Parameter(ParameterSetName='array',Position=2)]
         [string]$Comment,
 
@@ -354,8 +391,29 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 }
             }
         }
+        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.ArrayList]$PlatformArray = @()
+        [System.Collections.ArrayList]$TagArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($HostGroup -or $Platform -or $Tag) {
+            if ($HostGroup) { @($HostGroup).foreach{ [void]$IdArray.Add($_) }}
+            if ($Platform) { @($Platform).foreach{ [void]$PlatformArray.Add($_) }}
+            if ($Tag) { @($Tag).foreach{ [void]$TagArray.Add($_) }}
+        }
+    }
+    end {
+        if ($IdArray -or $PlatformArray -or $TagArray) {
+            if ($IdArray) { $PSBoundParameters['HostGroup'] = @($IdArray | Select-Object -Unique) }
+            if ($PlatformArray) { $PSBoundParameters['Platform'] = @($PlatformArray | Select-Object -Unique) }
+            if ($TagArray) { $PSBoundParameters['Tag'] = @($TagArray | Select-Object -Unique) }
+        }
+        if (!$PSBoundParameters.HostGroup -and !$PSBoundParameters.AppliedGlobally) {
+            throw "'HostGroup' or 'AppliedGlobally' must be provided."
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
 }
 function Remove-FalconIoc {
 <#

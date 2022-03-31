@@ -138,13 +138,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
             'yara-update','yara-changelog','common-event-format','netwitness',IgnoreCase=$false)]
         [string]$Type,
 
-        [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=2)]
         [ValidatePattern('\.(gz|gzip|zip)$')]
         [string]$Path,
 
         [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+            ValueFromPipelineByPropertyName,Position=2)]
         [int32]$Id,
 
         [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get')]

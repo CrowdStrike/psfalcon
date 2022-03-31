@@ -13,15 +13,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+            ValueFromPipelineByPropertyName,Position=1)]
+        [Alias('cloudtrail_region')]
+        [string]$CloudtrailRegion,
+
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('account_id','id')]
-        [string]$AccountId,
-
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Position=2)]
-        [Alias('cloudtrail_region')]
-        [string]$CloudtrailRegion
+        [string]$AccountId
     )
     begin {
         $Param = @{
@@ -50,21 +51,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string]$Id,
 
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
-            Mandatory)]
+            Mandatory,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('subscription_id')]
         [string]$SubscriptionId,
 
-        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',
+            ValueFromPipelineByPropertyName,Position=2)]
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
-           Position=2)]
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('tenant-id')]
+        [Alias('tenant-id','tenant_id')]
         [string]$TenantId
     )
     begin {
@@ -93,15 +95,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=1)]
         [ValidateSet('informational','medium','high',IgnoreCase=$false)]
         [string]$Severity,
 
-        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=2)]
         [boolean]$Enabled,
 
-        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=3)]
         [Alias('policy_id')]
         [int32]$PolicyId
     )
@@ -129,13 +133,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:post')]
     param(
-        [Parameter(ParameterSetName='/settings/scan-schedule/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/settings/scan-schedule/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=1)]
         [ValidateSet('2h','6h','12h','24h',IgnoreCase=$false)]
         [Alias('scan_schedule')]
         [string]$ScanSchedule,
 
-        [Parameter(ParameterSetName='/settings/scan-schedule/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/settings/scan-schedule/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('cloud_platform','cloud_provider')]
         [string]$CloudPlatform
@@ -370,8 +375,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get')]
     param(
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('cloud_provider','cloud_platform')]
         [string]$CloudPlatform,

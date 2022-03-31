@@ -17,19 +17,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
+            ValueFromPipelineByPropertyName,Position=1)]
         [string]$Label,
 
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
         [Alias('expires_timestamp')]
         [string]$ExpiresTimestamp,
 
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
+            ValueFromPipelineByPropertyName,Position=3)]
         [boolean]$Revoked,
 
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=4)]
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{32}$')]
         [Alias('ids')]
         [string[]]$Id

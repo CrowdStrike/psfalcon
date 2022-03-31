@@ -58,34 +58,40 @@ https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('external_id')]
         [string]$ExternalId,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=2)]
         [Alias('iam_role_arn')]
         [string]$IamRoleArn,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\d{12}$')]
         [Alias('cloudtrail_bucket_owner_id')]
         [string]$CloudtrailBucketOwnerId,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Position=4)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=4)]
         [Alias('cloudtrail_bucket_region')]
         [string]$CloudtrailBucketRegion,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Position=5)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=5)]
         [Alias('rate_limit_time')]
         [int64]$RateLimitTime,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Position=6)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+            ValueFromPipelineByPropertyName,Position=6)]
         [Alias('rate_limit_reqs','RateLimitReqs')]
         [int32]$RateLimitReq,
 
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=7)]
+            ValueFromPipelineByPropertyName,Position=7)]
         [ValidatePattern('^\d{12}$')]
         [string]$Id
     )
@@ -202,8 +208,6 @@ function New-FalconDiscoverAwsAccount {
 Provision Falcon Discover for Cloud AWS Accounts
 .DESCRIPTION
 Requires 'AWS Accounts: Write'.
-.PARAMETER Id
-AWS account identifier
 .PARAMETER Mode
 Provisioning mode [default: manual]
 .PARAMETER ExternalId
@@ -218,45 +222,54 @@ AWS region where the account containing cloudtrail logs resides
 Number of seconds between requests defined by 'RateLimitReq'
 .PARAMETER RateLimitReq
 Maximum number of requests within 'RateLimitTime'
+.PARAMETER Id
+AWS account identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:post')]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName= $true,Position=1)]
-        [ValidatePattern('^\d{12}$')]
-        [string]$Id,
-
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Position=2)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidateSet('cloudformation','manual',IgnoreCase=$false)]
         [string]$Mode,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\d{12}$')]
         [Alias('external_id')]
         [string]$ExternalId,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Position=4)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+            ValueFromPipelineByPropertyName,Position=3)]
         [Alias('iam_role_arn')]
         [string]$IamRoleArn,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Position=5)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\d{12}$')]
         [Alias('cloudtrail_bucket_owner_id')]
         [string]$CloudtrailBucketOwnerId,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Position=6)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+            ValueFromPipelineByPropertyName,Position=5)]
         [Alias('cloudtrail_bucket_region')]
         [string]$CloudtrailBucketRegion,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Position=7)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+            ValueFromPipelineByPropertyName,Position=6)]
         [Alias('rate_limit_time')]
         [int64]$RateLimitTime,
 
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Position=8)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+            ValueFromPipelineByPropertyName,Position=7)]
         [Alias('rate_limit_reqs','RateLimitReqs')]
-        [int32]$RateLimitReq
+        [int32]$RateLimitReq,
+
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=8)]
+        [ValidatePattern('^\d{12}$')]
+        [string]$Id
     )
     begin {
         $Param = @{

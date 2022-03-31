@@ -112,7 +112,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         }
         if (!$Script:Falcon) {
             try {
-                # Initiate ApiClient,set SslProtocol and UserAgent
+                # Initiate ApiClient, set SslProtocol and UserAgent
                 $Script:Falcon = Get-ApiCredential $PSBoundParameters
                 $Script:Falcon.Add('Api',[ApiClient]::New())
                 if ($Script:Falcon.Api) {

@@ -80,26 +80,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
         [Alias('cl_regex')]
         [string]$ClRegex,
 
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [Alias('ifn_regex')]
         [string]$IfnRegex,
 
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=4)]
         [ValidatePattern('^(\w{32}|all)$')]
         [Alias('groups','GroupIds')]
         [string[]]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Position=5)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=5)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Position=6)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=6)]
         [string]$Comment,
 
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Mandatory,
@@ -118,11 +124,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        if ($GroupId) { @($GroupId).foreach{ [void]$IdArray.Add($_) }}
+        if ($GroupId) {
+            @($GroupId).foreach{
+                if ($_.id) {
+                    [void]$IdArray.Add($_.id)
+                } elseif ($_ -is [string] -and $_ -match '^(\w{32}|all)$') {
+                    [void]$IdArray.Add($_)
+                }
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
     end {
-        if ($IdArray) { $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($IdArray) {
+            $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconIoaExclusion {
@@ -264,12 +282,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',ValueFromPipelineByPropertyName,
             Position=7)]
         [Alias('groups','id','group_ids','GroupIds')]
-        [object]$GroupId,
+        [object[]]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',Position=8)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',ValueFromPipelineByPropertyName,
+            Position=8)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',Position=9)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',ValueFromPipelineByPropertyName,
+            Position=9)]
         [string]$Comment
     )
     begin {
@@ -294,11 +314,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                     [void]$IdArray.Add($_)
                 }
             }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) { $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($IdArray) {
+            $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Remove-FalconIoaExclusion {

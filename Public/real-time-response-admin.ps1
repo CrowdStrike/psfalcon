@@ -102,7 +102,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [string]$Path,
 
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=7)]
+            ValueFromPipelineByPropertyName,Position=7)]
         [ValidatePattern('^\w{32}_\w{32}$')]
         [string]$Id
     )

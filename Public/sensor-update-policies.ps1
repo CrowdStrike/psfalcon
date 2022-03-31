@@ -8,10 +8,10 @@ Requires 'Sensor Update Policies: Write'.
 An array of policies to modify in a single request
 .PARAMETER Name
 Policy name
-.PARAMETER Settings
-Hashtable of policy settings
 .PARAMETER Description
 Policy description
+.PARAMETER Setting
+Policy settings
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -35,15 +35,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Alias('resources')]
         [array]$Array,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
+        [string]$Description,
+
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [Alias('settings')]
         [System.Object]$Setting,
-
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=3)]
-        [string]$Description,
 
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=4)]
@@ -363,29 +366,28 @@ Perform actions on Sensor Update policies
 Requires 'Sensor Update Policies: Write'.
 .PARAMETER Name
 Action to perform
-.PARAMETER Id
-Policy identifier
 .PARAMETER GroupId
 Host group identifier
+.PARAMETER Id
+Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-actions/v1:post')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,
-           Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
         [Alias('action_name')]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id,
+        [string]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string]$GroupId
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -424,10 +426,10 @@ An array of policies to create in a single request
 Operating system platform
 .PARAMETER Name
 Policy name
-.PARAMETER Settings
-Hashtable of policy settings
 .PARAMETER Description
 Policy description
+.PARAMETER Setting
+Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
@@ -451,19 +453,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [array]$Array,
 
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=1)]
+        [string]$Name,
+
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=2)]
-        [string]$Name,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',ValueFromPipelineByPropertyName,
+            Position=3)]
+        [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [Alias('settings')]
-        [System.Object]$Setting,
-
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=4)]
-        [string]$Description
+        [System.Object]$Setting
     )
     begin {
         $Param = @{

@@ -57,10 +57,10 @@ Modify a Machine Learning exclusion
 Requires 'Machine Learning Exclusions: Write'.
 .PARAMETER Value
 RegEx pattern value
-.PARAMETER Comment
-Audit log comment
 .PARAMETER GroupId
 Host group identifier or 'all'
+.PARAMETER Comment
+Audit log comment
 .PARAMETER Id
 Exclusion identifier
 .LINK
@@ -68,20 +68,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Value,
 
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Position=2)]
-        [string]$Comment,
-
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
+            Position=2)]
         [ValidatePattern('^(\w{32}|all)$')]
         [Alias('groups','GroupIds')]
         [string[]]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,ValueFromPipeline,
-            Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id
     )
@@ -94,7 +96,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        if ($GroupId) { @($GroupId).foreach{ [void]$IdArray.Add($_) }}
+        if ($GroupId) {
+            @($GroupId).foreach{
+                if ($_.id) {
+                    [void]$IdArray.Add($_.id)
+                } elseif ($_ -is [string] -and $_ -match '^(\w{32}|all)$') {
+                    [void]$IdArray.Add($_)
+                }
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
     end {
         if ($IdArray) {
@@ -216,15 +228,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('excluded_from')]
         [string[]]$ExcludedFrom,
 
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',
-            ValueFromPipelineByPropertyName,Position=3)]
-        [string]$Comment,
-
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=4)]
+            ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^(\w{32}|all)$')]
         [Alias('groups','id','group_ids','GroupIds')]
-        [string[]]$GroupId
+        [string[]]$GroupId,
+
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
+        [string]$Comment
     )
     begin {
         $Param = @{
@@ -235,11 +247,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        if ($GroupId) { @($GroupId).foreach{ [void]$IdArray.Add($_) }}
+        if ($GroupId) {
+            @($GroupId).foreach{
+                if ($_.id) {
+                    [void]$IdArray.Add($_.id)
+                } elseif ($_ -is [string] -and $_ -match '^(\w{32}|all)$') {
+                    [void]$IdArray.Add($_)
+                }
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
     end {
-        if ($IdArray) { $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($IdArray) {
+            $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Remove-FalconMlExclusion {

@@ -10,8 +10,8 @@ An array of policies to modify in a single request
 Policy name
 .PARAMETER Description
 Policy description
-.PARAMETER Settings
-Hashtable of policy settings
+.PARAMETER Setting
+Policy settings
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -35,17 +35,20 @@ Policy identifier
         [Alias('resources')]
         [array]$Array,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=2)]
-        [Alias('settings')]
-        [System.Collections.Hashtable]$Setting,
-
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
+        [Alias('settings')]
+        [System.Object]$Setting,
+
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id
@@ -230,10 +233,10 @@ Perform actions on Falcon Device Control policies
 Requires 'Device Control Policies: Write'.
 .PARAMETER Name
 Action to perform
-.PARAMETER Id
-Policy identifier
 .PARAMETER GroupId
 Host group identifier
+.PARAMETER Id
+Policy identifier
 .LINK
 
 #>
@@ -245,14 +248,14 @@ Host group identifier
         [Alias('action_name')]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id,
+        [string]$GroupId,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string]$GroupId
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -320,17 +323,20 @@ Hashtable of policy settings
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',ValueFromPipelineByPropertyName,
+            Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [Alias('settings')]
-        [System.Collections.Hashtable]$Setting
+        [System.Object]$Setting
     )
     begin {
         $Param = @{
@@ -344,7 +350,13 @@ Hashtable of policy settings
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($PSBoundParameters.Setting.classes.exceptions) {
+            # Remove exception 'id' values from 'settings' object
+            @($PSBoundParameters.Setting.classes.exceptions).foreach{ $_.PSObject.Properties.Remove('id') }
+        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
 }
 function Remove-FalconDeviceControlPolicy {
 <#

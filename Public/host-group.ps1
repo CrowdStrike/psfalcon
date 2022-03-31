@@ -17,17 +17,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [Alias('assignment_rule')]
         [string]$AssignmentRule,
 
-        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id
@@ -208,10 +211,10 @@ Requires 'Host Groups: Write'.
 Adds or removes hosts from host groups in batches of 500.
 .PARAMETER Name
 Action to perform
-.PARAMETER Id
-Host group identifier
 .PARAMETER HostId
 Host identifier
+.PARAMETER Id
+Host group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
@@ -222,15 +225,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Alias('action_name')]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id,
+        [Alias('ids','device_id','HostIds')]
+        [string[]]$HostId,
 
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids','device_id','HostIds')]
-        [string[]]$HostId
+        [string]$Id
     )
     begin {
         $Param = @{

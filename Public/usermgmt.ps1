@@ -20,7 +20,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [string]$UserId,
 
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,ValueFromPipeline,
-            Position=2)]
+            ValueFromPipelineByPropertyName,Position=2)]
         [Alias('roleIds','ids')]
         [string[]]$Id
     )

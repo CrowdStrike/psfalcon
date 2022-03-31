@@ -131,12 +131,12 @@ A successful upload will provide a 'sha256' value that can be used in submission
 Falcon QuickScan.
 
 Maximum file size is 256MB. ZIP archives will automatically redirect to the archive submission API.
-.PARAMETER FileName
-File name
 .PARAMETER IsConfidential
 Prohibit sample from being displayed in MalQuery [default: True]
 .PARAMETER Comment
 Sample comment
+.PARAMETER FileName
+File name
 .PARAMETER Path
 Path to local file
 .LINK
@@ -144,19 +144,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post')]
     param(
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [Alias('file_name','name')]
-        [string]$FileName,
-
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=2)]
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
         [Alias('is_confidential')]
         [boolean]$IsConfidential,
 
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=3)]
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=2)]
         [string]$Comment,
 
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',ValueFromPipelineByPropertyName,
+            Position=3)]
+        [Alias('file_name','name')]
+        [string]$FileName,
+
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Mandatory,
             ValueFromPipelineByPropertyName)]
         [ValidateScript({
             if (Test-Path -Path $_ -PathType Leaf) {

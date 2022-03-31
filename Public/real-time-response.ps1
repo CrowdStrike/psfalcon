@@ -737,8 +737,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/sessions/v1:delete')]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:delete',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:delete',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('session_id')]
         [string]$Id

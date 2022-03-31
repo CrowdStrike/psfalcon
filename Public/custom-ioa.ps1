@@ -15,30 +15,34 @@ Rule group enablement status
 Rule group description
 .PARAMETER Comment
 Audit log comment
-.PARAMETER RulegroupId
+.PARAMETER Id
 Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Position=1)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+            Position=2)]
         [boolean]$Enabled,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Position=3)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Position=4)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+            Position=4)]
         [string]$Comment,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('id')]
-        [string]$RulegroupId
+        [Alias('id','RulegroupId')]
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -51,7 +55,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     }
     process {
         ($Param.Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
-            # When not provided,add required fields using existing policy settings
+            # When not provided, add required fields using existing policy settings
             if (!$PSBoundParameters.$_) {
                 if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.Id -EA 0 }
                 if ($Existing) {
@@ -93,10 +97,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',ValueFromPipelineByPropertyName,
            Position=2)]
         [Alias('rule_updates','rules','RuleUpdates')]
-        [PSCustomObject[]]$RuleUpdate,
+        [object[]]$RuleUpdate,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidatePattern('^\w{32}$')]
         [Alias('rulegroup_id','id')]
         [string]$RulegroupId
@@ -114,17 +118,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             $RuleRequired = @('instance_id','pattern_severity','enabled','disposition_id','name',
                 'description','comment','field_values')
             $FieldRequired = @('name','label','type','values')
-            [array]$RuleUpdate = ,(
-                @($RuleUpdate | Select-Object $RuleRequired).foreach{
+            [object[]]$RuleUpdate = ,(@($RuleUpdate | Select-Object $RuleRequired).foreach{
                     $_.field_values = $_.field_values | Select-Object $FieldRequired
                     $_
                 }
             )
         }
         ($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
-            # When not provided,add required fields using existing policy settings
+            # When not provided, add required fields using existing policy settings
             if (!$PSBoundParameters.$_) {
-                if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.rulegroup_id -EA 0 }
+                if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.RulegroupId -EA 0 }
                 if ($Existing) {
                     $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
                     $PSBoundParameters[$_] = $Value
@@ -580,8 +583,6 @@ Requires 'Custom IOA Rules: Write'.
 
 'RuleTypeId' and 'DispositionId' values can be found using 'Get-FalconIoaType -Detailed' under the 'id' and
 'disposition_map' properties.
-.PARAMETER RulegroupId
-Rule group identifier
 .PARAMETER Name
 Rule name
 .PARAMETER PatternSeverity
@@ -596,44 +597,50 @@ An array of rule properties
 Rule description
 .PARAMETER Comment
 Audit log comment
+.PARAMETER RulegroupId
+Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post')]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
-        [Alias('rulegroup_id','id')]
-        [string]$RulegroupId,
-
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,Position=3)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
         [Alias('pattern_severity')]
         [string]$PatternSeverity,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,Position=4)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=3)]
         [ValidateSet(1,2,5,6,9,10,11,12)]
         [Alias('ruletype_id')]
         [string]$RuletypeId,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,Position=5)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidateSet(10,20,30)]
         [Alias('disposition_id')]
         [int32]$DispositionId,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,Position=6)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=5)]
         [Alias('field_values','FieldValues')]
         [object[]]$FieldValue,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post')]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post')]
-        [string]$Comment
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName)]
+        [string]$Comment,
+
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=6)]
+        [ValidatePattern('^\w{32}$')]
+        [Alias('rulegroup_id','id')]
+        [string]$RulegroupId
     )
     begin {
         $Param = @{
@@ -712,10 +719,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
             Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('rule_group_id')]
+        [Alias('rule_group_id','rulegroup_id')]
         [string]$RuleGroupId,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\d+$')]
         [Alias('ids','rule_ids','instance_id')]
