@@ -34,7 +34,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     process {
         if ($_.behaviors -and $_.device) {
             @($_.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
-                [void]$Output.Add(([PSCustomObject] @{
+                [void]$Output.Add(([PSCustomObject]@{
                     pattern_id = $_.behavior_id
                     pattern_name = $_.display_name
                     cl_regex = [regex]::Escape($_.cmdline) -replace '(\\ {1,})+','\s+'
@@ -255,7 +255,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:post')]
     param(
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=1)]
         [string]$Name,
 
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',Mandatory,

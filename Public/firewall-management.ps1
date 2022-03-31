@@ -680,7 +680,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($PSBoundParameters.Include -and $Request) {
-            if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject] @{ id = $_ }}}
+            if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}}
             if ($PSBoundParameters.Include -contains 'settings') {
                 foreach ($Item in (Get-FalconFirewallSetting -Id $Request.id)) {
                     $AddParam = @{

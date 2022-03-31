@@ -182,7 +182,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 $Request = if ($PSBoundParameters.Include -contains 'group_names') {
                     & $MyInvocation.MyCommand.Name -Id $Request | Select-Object device_id,groups
                 } else {
-                    @($Request).foreach{ ,[PSCustomObject] @{ device_id = $_ }}
+                    @($Request).foreach{ ,[PSCustomObject]@{ device_id = $_ }}
                 }
             }
             if ($PSBoundParameters.Include -contains 'group_names') {

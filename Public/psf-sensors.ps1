@@ -85,7 +85,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         $_
                     } else {
                         # Output device properties and 'tags' value
-                        [PSCustomObject] @{
+                        [PSCustomObject]@{
                             cid = $HostInfo.cid
                             device_id = $HostInfo.device_id
                             tags = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
@@ -108,7 +108,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     Invoke-FalconRtr @InvokeParam | Select-Object aid,stdout,stderr,errors |
                     ForEach-Object {
                         # Output device properties and 'tags' value
-                        [PSCustomObject] @{
+                        [PSCustomObject]@{
                             cid = ($HostInfo | Where-Object device_id -eq $_.aid).cid
                             device_id = $_.aid
                             tags = if ($_.stdout) {
@@ -184,7 +184,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         $_
                     } else {
                         # Output device properties and 'tags' value
-                        [PSCustomObject] @{
+                        [PSCustomObject]@{
                             cid = $HostInfo.cid
                             device_id = $HostInfo.device_id
                             tags = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
@@ -205,7 +205,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     }
                     Invoke-FalconRtr @InvokeParam | Select-Object aid,stdout,stderr,errors | ForEach-Object {
                         # Output device properties and 'tags' value
-                        [PSCustomObject] @{
+                        [PSCustomObject]@{
                             cid = ($HostInfo | Where-Object device_id -eq $_.aid).cid
                             device_id = $_.aid
                             tags = if ($_.stdout) {
@@ -311,7 +311,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         $_
                     } else {
                         # Output device properties and 'tags' value
-                        [PSCustomObject] @{
+                        [PSCustomObject]@{
                             cid = $HostInfo.cid
                             device_id = $HostInfo.device_id
                             tags = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
@@ -334,7 +334,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     Invoke-FalconRtr @InvokeParam | Select-Object aid,stdout,stderr,errors |
                     ForEach-Object {
                         # Output device properties and 'tags' value
-                        [PSCustomObject] @{
+                        [PSCustomObject]@{
                             cid = ($HostInfo | Where-Object device_id -eq $_.aid).cid
                             device_id = $_.aid
                             tags = if ($_.stdout) {
@@ -436,7 +436,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     )
                     @($HostInfo | Select-Object cid,device_id).foreach{
                         $Status = if ($Confirm.stdout) { ($Confirm.stdout).Trim() } else { $Confirm.stderr }
-                        Add-Property -Object $_ -Name 'status' -Value $Status
+                        Add-Property $_ 'status' $Status
                         $_
                     }
                 } else {

@@ -305,7 +305,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
             if ($_.batch_get_cmd_req_id -and $_.combined.resources) {
                 # Output result with 'batch_get_cmd_req_id' and 'hosts' values
-                $Request = [PSCustomObject] @{
+                $Request = [PSCustomObject]@{
                     batch_get_cmd_req_id = $_.batch_get_cmd_req_id
                     hosts = $_.combined.resources.PSObject.Properties.Value
                 }
@@ -826,10 +826,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 if ($_.batch_id -and $_.resources) {
                     @($_.resources.PSObject.Properties.Value).Where({ $_.errors }).foreach{
                         # Write warning for hosts in batch that produced errors
-                        Write-Warning "[Start-FalconSession]$(@($_.errors.code,$_.errors.message) -join ': ') [$(
+                        Write-Warning "[Start-FalconSession] $(@($_.errors.code,$_.errors.message) -join ': ') [$(
                             $_.aid)]"
                     }
-                    [PSCustomObject] @{
+                    [PSCustomObject]@{
                         batch_id = $_.batch_id
                         hosts = $_.resources.PSObject.Properties.Value
                     }
@@ -917,11 +917,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 if ($Endpoint -eq '/real-time-response/combined/batch-refresh-session/v1:post') {
                     @($_.PSObject.Properties.Value).Where({ $_.errors }).foreach{
                         # Write warning for hosts in batch that produced errors
-                        Write-Warning "[Update-FalconSession]$(@($_.errors.code,$_.errors.message) -join ': ') [$(
+                        Write-Warning "[Update-FalconSession] $(@($_.errors.code,$_.errors.message) -join ': ') [$(
                             $_.aid)]"
                     }
                     # Output 'batch_id' and 'hosts' containing result
-                    [PSCustomObject] @{
+                    [PSCustomObject]@{
                         batch_id = $BatchId
                         hosts = $_.PSObject.Properties.Value
                     }

@@ -132,7 +132,7 @@ Display existing Humio ingestion endpoint and token
         if (!$Script:Falcon.Api.Collector) {
             throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
         }
-        [PSCustomObject] @{
+        [PSCustomObject]@{
             Uri = $Script:Falcon.Api.Collector.Uri
             Token = $Script:Falcon.Api.Collector.Token
             Enabled = $Script:Falcon.Api.Collector.Enable

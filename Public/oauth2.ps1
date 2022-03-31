@@ -246,7 +246,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
     param()
     process {
         if ($Script:Falcon) {
-            [PSCustomObject] @{
+            [PSCustomObject]@{
                 Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
                     ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(60))) { $true } else { $false }
                 Hostname = $Script:Falcon.Hostname

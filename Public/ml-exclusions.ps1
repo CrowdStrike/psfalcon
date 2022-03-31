@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     process {
         if ($_.behaviors -and $_.device) {
             @($_.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
-                [void]$Output.Add(([PSCustomObject] @{
+                [void]$Output.Add(([PSCustomObject]@{
                     value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
                     excluded_from = @('blocking')
                     groups = if ($Detection.device.groups) { $Detection.device.groups } else { 'all' }
