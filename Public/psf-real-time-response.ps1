@@ -134,10 +134,10 @@ Arguments to include when running the executable
 Length of time to wait for a result, in seconds
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
-.PARAMETER HostId
-Host identifier
 .PARAMETER GroupId
 Host group identifier
+.PARAMETER HostId
+Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
@@ -165,18 +165,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [ValidateRange(1,600)]
         [int32]$Timeout,
 
-        [Parameter(ParameterSetName='HostId')]
-        [Parameter(ParameterSetName='GroupId')]
+        [Parameter(ParameterSetName='HostId',Position=4)]
+        [Parameter(ParameterSetName='GroupId',Position=4)]
         [boolean]$QueueOffline,
 
-        [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='GroupId',Mandatory)]
+        [ValidatePattern('^\w{32}$')]
+        [string]$GroupId,
+
+        [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
         [Alias('HostIds','device_id','host_ids','aid')]
-        [string[]]$HostId,
-
-        [Parameter(ParameterSetName='GroupId',Mandatory,ValueFromPipeline)]
-        [ValidatePattern('^\w{32}$')]
-        [string]$GroupId
+        [string[]]$HostId
     )
     begin {
         # Fields to collect from 'Put' files list
@@ -205,6 +205,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         $Filename = "$([System.IO.Path]::GetFileName($FilePath))"
         $ProcessName = "$([System.IO.Path]::GetFileNameWithoutExtension($FilePath))"
         [System.Collections.Arraylist]$HostArray = @()
+        [System.Collections.Arraylist]$IdArray = @()
     }
     process {
         if ($PSBoundParameters.GroupId) {
@@ -212,18 +213,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 # Stop if number of members exceeds API limit
                 throw "Group size exceeds maximum number of results. [10,000]"
             } else {
-                # Find Host Group member identifiers
+                # Retrieve Host Group member device_id and platform_name
                 @($PSBoundParameters.GroupId | Get-FalconHostGroupMember -Detailed -All |
                     Select-Object device_id,platform_name).foreach{ [void]$HostArray.Add($_) }
             }
         } elseif ($PSBoundParameters.HostId) {
             # Use provided Host identifiers
-            @($PSBoundParameters.HostId | Get-FalconHost | Select-Object device_id,platform_name).foreach{
-                [void]$HostArray.Add($_)
-            }
+            @($PSBoundParameters.HostId).foreach{ [void]$IdArray.Add($_) }
         }
     }
     end {
+        if ($IdArray) {
+            @(Get-FalconHost -Id @($IdArray | Select-Object -Unique) |
+                Select-Object device_id,platform_name).foreach{ [void]$HostArray.Add($_) }
+        }
         if ($HostArray) {
             try {
                 Write-Host "Checking cloud for existing file..."
@@ -284,7 +287,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             if ($AddPut.writes.resources_affected -ne 1 -and !$CloudFile.id) { throw "Upload failed." }
             try {
                 for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 1000) {
-                    $Param = @{ Id = @(($HostArray[$i..($i + 999)]).device_id) }
+                    $Param = @{ Id = @($HostArray[$i..($i + 999)].device_id) }
                     switch -Regex ($PSBoundParameters.Keys) {
                         '(QueueOffline|Timeout)' { $Param[$_] = $PSBoundParameters.$_ }
                     }
@@ -417,12 +420,10 @@ Arguments to include with the command
 Length of time to wait for a result, in seconds
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
-.PARAMETER HostId
-Host identifier
-.PARAMETER HostId
-Host identifier
 .PARAMETER GroupId
 Host group identifier
+.PARAMETER HostId
+Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
@@ -451,26 +452,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='GroupId')]
         [boolean]$QueueOffline,
 
-        #[Parameter(ParameterSetName='HostId',ValueFromPipeline,Mandatory)]
-        #[ValidatePattern('^\w{32}$')]
-        #[Alias('device_id')]
-        #[string]$HostId,
+        [Parameter(ParameterSetName='GroupId',Mandatory)]
+        [ValidatePattern('^\w{32}$')]
+        [string]$GroupId,
 
         [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('device_id','host_ids','HostIds')]
-        [string[]]$HostId,
-
-        [Parameter(ParameterSetName='GroupId',Mandatory)]
-        [ValidatePattern('^\w{32}$')]
-        [string]$GroupId
+        [Alias('device_id','host_ids','aid','HostIds')]
+        [string[]]$HostId
     )
     begin {
         if ($PSCmdlet.ParameterSetName -ne 'HostId') {
-            function Initialize-Output ([array]$HostIds) {
+            function Initialize-Output ($Array) {
                 # Create initial array of output for each host
-                ($HostIds).foreach{
-                    $Item = [PSCustomObject]@{
+                @($Array).foreach{
+                    $i = [PSCustomObject]@{
                         aid = $_
                         batch_id = $null
                         session_id = $null
@@ -482,10 +478,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                         stdout = $null
                     }
                     if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        Add-Property $Item 'batch_get_cmd_req_id' $null
+                        Add-Property $i 'batch_get_cmd_req_id' $null
                     }
                     if ($PSBoundParameters.GroupId) {
-                        Add-Property $Item 'host_group_id' $PSBoundParameters.GroupId
+                        Add-Property $i 'host_group_id' $PSBoundParameters.GroupId
                     }
                     $Item
                 }
@@ -495,15 +491,33 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 # Force 'Timeout' into 'Arguments' when using 'runscript'
                 $PSBoundParameters.Argument += " -Timeout=$($PSBoundParameters.Timeout)"
             }
-            # Determine Real-time Response command to invoke
-            $InvokeCmd = if ($PSBoundParameters.Command -eq 'get') {
-                'Invoke-FalconBatchGet'
+        }
+        [System.Collections.ArrayList]$HostArray = @()
+        [System.Collections.ArrayList]$IdArray = @()
+    }
+    process {
+        if ($PSBoundParameters.GroupId) {
+            if (($PSBoundParameters.GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
+                # Stop if number of members exceeds API limit
+                throw "Group size exceeds maximum number of results. [10,000]"
             } else {
-                Get-RtrCommand $PSBoundParameters.Command
+                # Find Host Group member identifiers
+                @($PSBoundParameters.GroupId | Get-FalconHostGroupMember -Detailed -All |
+                    Select-Object device_id,platform_name).foreach{ [void]$HostArray.Add($_) }
+            }
+        } elseif ($PSBoundParameters.HostId) {
+            @($PSBoundParameters.HostId).foreach{
+                if ($_.device_id -and $_.platform_name) {
+                    # Collect provided Host detail
+                    [void]$HostArray.Add($_)
+                } else {
+                    # Collect host identifier
+                    [void]$IdArray.Add($_)
+                }
             }
         }
     }
-    process {
+    end {
         try {
             if ($PSCmdlet.ParameterSetName -eq 'HostId') {
                 $InitParam = @{
