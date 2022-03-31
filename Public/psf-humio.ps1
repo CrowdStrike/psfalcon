@@ -82,42 +82,40 @@ PSFalcon command output
     begin {
         $OriginalProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
+        [System.Collections.ArrayList]$ObjArray = @()
     }
-    process {
+    process { if ($Object) { @($Object).foreach{ [void]$ObjArray.Add($_) }}}
+    end {
         if (!$Script:Falcon.Api.Collector.Uri -or !$Script:Falcon.Api.Collector.Token) {
             throw "Humio destination has not been configured. Try 'Register-FalconEventCollector'."
-        }
-        [array]$Events = $PSBoundParameters.Object | ForEach-Object {
-            $Item = @{
-                timestamp = Get-Date -Format o
-                attributes = @{}
-            }
-            if ($_ -is [System.Management.Automation.PSCustomObject]) {
-                $_.PSObject.Properties | Where-Object { $_.Name -notmatch '\.' } | ForEach-Object {
-                    $Item.attributes[$_.Name] = $_.Value
+        } elseif ($ObjArray) {
+            [object[]]$Events = @($ObjArray).foreach{
+                $Item = @{ timestamp = Get-Date -Format o; attributes = @{}}
+                if ($_ -is [PSCustomObject]) {
+                    @($_.PSObject.Properties | Where-Object { $_.Name -notmatch '\.' }).foreach{
+                        $Item.attributes[$_.Name] = $_.Value
+                    }
+                } elseif ($_ -is [string]) {
+                    $Item.attributes['id'] = $_
                 }
-            } elseif ($_ -is [string]) {
-                $Item.attributes['id'] = $_
+                $Item
             }
-            $Item
-        }
-        $Param = @{
-            Uri = $Script:Falcon.Api.Collector.Uri
-            Method = 'post'
-            Headers = @{
-                Authorization = @('Bearer',$Script:Falcon.Api.Collector.Token) -join ' '
-                ContentType = 'application/json'
-            }
-            Body = ConvertTo-Json -InputObject @(
-                @{
-                    tags = @{ host = [System.Net.Dns]::GetHostname(); source = (Show-FalconModule).UserAgent }
-                    events = $Events
+            $Param = @{
+                Uri = $Script:Falcon.Api.Collector.Uri
+                Method = 'post'
+                Headers = @{
+                    Authorization = @('Bearer',$Script:Falcon.Api.Collector.Token) -join ' '
+                    ContentType = 'application/json'
                 }
-            ) -Depth 8 -Compress
+                Body = ConvertTo-Json -InputObject @(
+                    @{
+                        tags = @{ host = [System.Net.Dns]::GetHostname(); source = (Show-FalconModule).UserAgent }
+                        events = $Events
+                    }
+                ) -Depth 8 -Compress
+            }
+            [void] (Invoke-WebRequest @Param -UseBasicParsing)
         }
-        [void] (Invoke-WebRequest @Param -UseBasicParsing)
-    }
-    end {
         $ProgressPreference = $OriginalProgress
     }
 }
