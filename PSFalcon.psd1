@@ -527,6 +527,8 @@
       'Receive-FalconScheduledReport'
       'Receive-FalconInstaller'
 
+    * Updated 'Find-FalconDuplicate' to accommodate multiple 'Filter' values.
+
     Resolved Issues
     *
 "@

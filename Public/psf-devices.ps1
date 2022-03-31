@@ -22,12 +22,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     [CmdletBinding()]
     param(
         [Parameter(Position=1)]
-        [array]$Hosts,
+        [object[]]$Hosts,
 
         [Parameter(Position=2)]
         [ValidateSet('external_ip','local_ip','mac_address','os_version','platform_name','serial_number',
             IgnoreCase=$false)]
-        [string]$Filter
+        [string[]]$Filter
     )
     begin {
         function Group-Selection ($Object,$GroupBy) {
@@ -36,14 +36,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
         }
         # Comparison criteria and required properties for host results
-        $Criteria = @('cid','hostname')
-        $Required = @('cid','device_id','first_seen','last_seen','hostname')
+        [string[]]$Criteria = @('cid','hostname')
+        [string[]]$Required = @('cid','device_id','first_seen','last_seen','hostname')
         if ($PSBoundParameters.Filter) {
-            $Criteria += $PSBoundParameters.Filter
-            $Required += $PSBoundParameters.Filter
+            $Criteria = $Criteria + $PSBoundParameters.Filter
+            $Required = $Required + $PSBoundParameters.Filter
         }
         # Create filter for excluding results with empty $Criteria values
-        $FilterScript = { (($Criteria).foreach{ "`$_.$($_)" }) -join ' -and ' }
+        $FilterScript = "$(($Criteria).foreach{ "`$_.$($_)" } -join ' -and ')"
     }
     process {
         $HostArray = if (!$PSBoundParameters.Hosts) {
@@ -58,9 +58,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 throw "Missing required property '$_'."
             }
         }
-        # Group,sort and output result
+        # Group, sort and output result
         $Param = @{
-            Object = $HostArray | Select-Object $Required | Where-Object -FilterScript $FilterScript
+            Object = $HostArray | Select-Object $Required | Where-Object -FilterScript {$FilterScript}
             GroupBy = $Criteria
         }
         $Output = Group-Selection @Param
