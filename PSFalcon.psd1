@@ -435,7 +435,8 @@
     [array] parameters being converted into [string[]] or [int[]].
 
     * Renamed plural parameters ('Ids') to singular ('Id') to follow PowerShell best practices. Each updated
-    parameter kept maintains the plural version as an alias to prevent errors with existing scripts.
+    parameter kept maintains the plural version as an alias (or the original parameter name when switching to the
+    singular was not possible due to incompatibilities with PowerShell) to prevent errors with existing scripts.
 
     * Modified commands to use the alias values for parameters instead of the 'Fields' variable that was used to
     to rename parameters to fit API submission structure. Removing 'Fields' also enabled the removal of the
@@ -510,6 +511,7 @@
     automatically redirect to 'Invoke-FalconBatchGet' when using 'get'.
 
     * Added '-Force' function to the following commands to overwrite an existing file when present:
+      'Export-FalconConfig'
       'Receive-FalconHorizonAwsScript'
       'Receive-FalconHorizonAzureScript'
       'Receive-FalconDiscoverAzureScript'

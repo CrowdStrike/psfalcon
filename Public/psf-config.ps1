@@ -3,11 +3,13 @@ function Export-FalconConfig {
 .SYNOPSIS
 Create an archive containing Falcon configuration files
 .DESCRIPTION
-Uses various PSFalcon commands to gather and export groups,policies and exclusions as a collection
+Uses various PSFalcon commands to gather and export groups, policies and exclusions as a collection
 of Json files within a zip archive. The exported files can be used with 'Import-FalconConfig' to restore
-configurations to your existing CID, or create them in another CID.
-.PARAMETER Item
-Items to export from your current CID, or leave blank to export all available items
+configurations to your existing CID or create them in another CID.
+.PARAMETER Select
+Selected items to export from your current CID, or leave blank to export all available items
+.PARAMETER Force
+Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
 #>
@@ -18,87 +20,89 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             'PreventionPolicy','ResponsePolicy','SensorUpdatePolicy','Ioc','IoaExclusion','MlExclusion',
             'SvExclusion')]
         [Alias('Items')]
-        [string[]]$Item
+        [string[]]$Select,
+
+        [Parameter(ParameterSetName='ExportItem')]
+        [switch]$Force
     )
     begin {
-        function Get-ItemContent ($Item) {
+        function Get-ItemContent ([string]$String) {
             # Request content for provided 'Item'
-            Write-Host "Exporting '$Item'..."
-            $ItemFile = Join-Path -Path $Location -ChildPath "$Item.json"
+            Write-Host "Exporting '$String'..."
+            $ConfigFile = Join-Path -Path $Location -ChildPath "$String.json"
             $Param = @{
                 Detailed = $true
                 All = $true
             }
-            $FileContent = if ($Item -match '^(DeviceControl|Firewall|Prevention|Response|SensorUpdate)Policy$') {
+            $Config = if ($String -match '^(DeviceControl|Firewall|Prevention|Response|SensorUpdate)Policy$') {
                 # Create policy exports in 'platform_name' order to retain precedence
                 @('Windows','Mac','Linux').foreach{
-                    & "Get-Falcon$($Item)" @Param -Filter "platform_name:'$_'+name:!'platform_default'" 2>$null
+                    & "Get-Falcon$String" @Param -Filter "platform_name:'$_'+name:!'platform_default'" 2>$null
                 }
             } else {
-                & "Get-Falcon$($Item)" @Param 2>$null
+                & "Get-Falcon$String" @Param 2>$null
             }
-            if ($FileContent -and $Item -eq 'FirewallPolicy') {
+            if ($Config -and $String -eq 'FirewallPolicy') {
                 # Export firewall settings
                 Write-Host "Exporting 'FirewallSetting'..."
-                $Settings = Get-FalconFirewallSetting -Id $FileContent.id 2>$null
+                $Settings = Get-FalconFirewallSetting -Id $Config.id 2>$null
                 foreach ($Result in $Settings) {
-                    ($FileContent | Where-Object { $_.id -eq $Result.policy_id }).PSObject.Properties.Add(
+                    ($Config | Where-Object { $_.id -eq $Result.policy_id }).PSObject.Properties.Add(
                         (New-Object PSNoteProperty('settings',$Result)))
                 }
             }
-            if ($FileContent) {
+            if ($Config) {
                 # Export results to json file and output created file name
-                ConvertTo-Json -InputObject @($FileContent) -Depth 32 | Out-File -FilePath $ItemFile -Append
-                $ItemFile
+                ConvertTo-Json @($Config) -Depth 32 | Out-File $ConfigFile -Append
+                $ConfigFile
             }
         }
         # Get current location
         $Location = (Get-Location).Path
-        $Export = if ($PSBoundParameters.Item) {
-            # Use specified items
-            $PSBoundParameters.Item
-        } else {
-            # Use items in 'ValidateSet' when not provided
-            (Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({ $_.Name -eq
-            'ExportItem' }).Parameters.Where({ $_.Name -eq 'Item' }).Attributes.ValidValues
-        }
+        
         # Set output archive path
-        $ArchiveFile = Join-Path $Location -ChildPath "FalconConfig_$(Get-Date -Format FileDate).zip"
+        $ExportFile = Join-Path $Location "FalconConfig_$(Get-Date -Format FileDate).zip"
     }
     process {
-        if (Test-Path $ArchiveFile) {
-            throw "An item with the specified name $ArchiveFile already exists."
-        }
-        [array]$Export += switch ($Export) {
-            { $_ -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and $Export -notcontains 'HostGroup' } {
+        $OutPath = Test-OutFile $ExportFile
+        if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+            Write-Error @OutPath
+        } else {
+            if (!$PSBoundParameters.Select) {
+                # Use items in 'ValidateSet' when not provided
+                $PSBoundParameters.Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({
+                    $_.Name -eq 'ExportItem' }).Parameters.Where({ $_.Name -eq
+                    'Select' }).Attributes.ValidValues).foreach{ $_ }
+            }
+            if ($PSBoundParameters.Select -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and
+            $PSBoundParameters.Select -notcontains 'HostGroup') {
                 # Force 'HostGroup' when exporting Exclusions or IOCs
-                'HostGroup'
+                $PSBoundParameters.Select += ,'HostGroup'
             }
-            { $_ -contains 'FirewallGroup' } {
+            if ($PSBoundParameters.Select -contains 'FirewallGroup') {
                 # Force 'FirewallRule' when exporting 'FirewallGroup'
-                'FirewallRule'
+                $PSBoundParameters.Select += ,'FirewallRule'
             }
-        }
-        $JsonFiles = foreach ($Item in $Export) {
-            # Retrieve results,export to Json and capture file name
-            ,(Get-ItemContent -Item $Item)
-        }
-        if ($JsonFiles) {
-            # Archive Json exports with content
-            $Param = @{
-                Path = (Get-ChildItem | Where-Object { $JsonFiles -contains $_.FullName -and
-                    $_.Length -gt 0 }).FullName
-                DestinationPath = $ArchiveFile
+            # Retrieve results, export to Json and capture file name
+            $JsonFiles = foreach ($String in $PSBoundParameters.Select) { ,(Get-ItemContent $String) }
+            if ($JsonFiles) {
+                # Archive Json exports with content and remove them when complete
+                $Param = @{
+                    Path = (Get-ChildItem | Where-Object { $JsonFiles -contains $_.FullName -and
+                        $_.Length -gt 0 }).FullName
+                    DestinationPath = $ExportFile
+                    Force = $Force
+                }
+                Compress-Archive @Param
+                @($JsonFiles).foreach{
+                    if (Test-Path $_) {
+                        Write-Verbose "Deleting '$_'."
+                        Remove-Item $_ -Force
+                    }
+                }
             }
-            Compress-Archive @Param
-            if (Test-Path $ArchiveFile) {
-                # Display created archive
-                Get-ChildItem $ArchiveFile
-            }
-            if (Test-Path $JsonFiles) {
-                # Remove Json files when archived
-                Remove-Item -Path $JsonFiles -Force
-            }
+            # Display created archive
+            if (Test-Path $ExportFile) { Get-ChildItem $ExportFile | Select-Object FullName,Length,LastWriteTime }
         }
     }
 }
@@ -911,9 +915,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     } | Export-Csv -Path $OutputFile -NoTypeInformation -Append
                 }
             }
-            if (Test-Path $OutputFile) {
-                Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime
-            }
+            if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
         } else {
             Write-Warning 'No items created.'
         }

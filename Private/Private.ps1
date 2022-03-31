@@ -449,7 +449,7 @@ function Invoke-Falcon {
                     $Request
                 } elseif ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
                     # Display 'Outfile'
-                    Get-ChildItem $ParamSet.Endpoint.Outfile
+                    Get-ChildItem $ParamSet.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
                 } elseif ($Request.Result.Content) {
                     # Capture pagination for 'Total' and 'All'
                     $Pagination = (ConvertFrom-Json (
