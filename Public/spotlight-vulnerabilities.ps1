@@ -74,7 +74,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
         [string]$Filter,
 
         [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=2)]
-        [ValidateSet('cve','host_info','remediation',IgnoreCase=$false)]
+        [ValidateSet('cve','evaluation_logic','host_info','remediation',IgnoreCase=$false)]
         [string[]]$Facet,
 
         [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Position=3)]
