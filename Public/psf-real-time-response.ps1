@@ -462,38 +462,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [string[]]$HostId
     )
     begin {
-        if ($PSCmdlet.ParameterSetName -ne 'HostId') {
-            function Initialize-Output ($Array) {
-                # Create initial array of output for each host
-                @($Array).foreach{
-                    $i = [PSCustomObject]@{
-                        aid = $_
-                        batch_id = $null
-                        session_id = $null
-                        cloud_request_id = $null
-                        complete = $false
-                        offline_queued = $false
-                        errors = $null
-                        stderr = $null
-                        stdout = $null
-                    }
-                    if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        Add-Property $i 'batch_get_cmd_req_id' $null
-                    }
-                    if ($PSBoundParameters.GroupId) {
-                        Add-Property $i 'host_group_id' $PSBoundParameters.GroupId
-                    }
-                    $Item
+        function Initialize-Output ($Array) {
+            # Create initial array of output for each host
+            @($Array).foreach{
+                [PSCustomObject]@{
+                    aid = $_
+                    batch_id = $null
+                    session_id = $null
+                    cloud_request_id = $null
+                    complete = $false
+                    offline_queued = $false
+                    errors = $null
+                    stderr = $null
+                    stdout = $null
                 }
             }
-            if ($PSBoundParameters.Timeout -and $PSBoundParameters.Command -eq 'runscript' -and
-            $PSBoundParameters.Argument -notmatch '-Timeout=\d{2,3}') {
-                # Force 'Timeout' into 'Arguments' when using 'runscript'
-                $PSBoundParameters.Argument += " -Timeout=$($PSBoundParameters.Timeout)"
-            }
         }
-        [System.Collections.ArrayList]$HostArray = @()
-        [System.Collections.ArrayList]$IdArray = @()
+        if ($PSBoundParameters.Timeout -and $PSBoundParameters.Command -eq 'runscript' -and
+        $PSBoundParameters.Argument -notmatch '-Timeout=\d{2,3}') {
+            # Force 'Timeout' into 'Arguments' when using 'runscript'
+            $PSBoundParameters.Argument += " -Timeout=$($PSBoundParameters.Timeout)"
+        }
+        [System.Collections.Arraylist]$IdArray = @()
     }
     process {
         if ($PSBoundParameters.GroupId) {
@@ -501,138 +491,54 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 # Stop if number of members exceeds API limit
                 throw "Group size exceeds maximum number of results. [10,000]"
             } else {
-                # Find Host Group member identifiers
-                @($PSBoundParameters.GroupId | Get-FalconHostGroupMember -Detailed -All |
-                    Select-Object device_id,platform_name).foreach{ [void]$HostArray.Add($_) }
+                # Retrieve Host Group member device_id and platform_name
+                @($PSBoundParameters.GroupId | Get-FalconHostGroupMember -All).foreach{ [void]$IdArray.Add($_) }
             }
         } elseif ($PSBoundParameters.HostId) {
-            @($PSBoundParameters.HostId).foreach{
-                if ($_.device_id -and $_.platform_name) {
-                    # Collect provided Host detail
-                    [void]$HostArray.Add($_)
-                } else {
-                    # Collect host identifier
-                    [void]$IdArray.Add($_)
-                }
-            }
+            # Use provided Host identifiers
+            @($PSBoundParameters.HostId).foreach{ [void]$IdArray.Add($_) }
         }
     }
     end {
-        try {
-            if ($PSCmdlet.ParameterSetName -eq 'HostId') {
-                $InitParam = @{
-                    HostId = $PSBoundParameters.HostId
-                    QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) { $true } else { $false }
-                }
-                $Init = Start-FalconSession @InitParam
-                $Request = if ($Init.session_id) {
-                    # Set baseline command parameters
-                    $CmdParam = @{ SessionId = $Init.session_id }
-                    switch -Regex ($PSBoundParameters.Keys) {
-                        '^(Command|Arguments)$' { $CmdParam[$_] = $PSBoundParameters.$_ }
+        if ($IdArray) {
+            $Output = Initialize-Output @($IdArray | Select-Object -Unique)
+            if ($PSBoundParameters.GroupId) {
+                # Append 'group_id' field to results
+                @($Output).foreach{ Add-Property $_ 'group_id' $PSBoundParameters.GroupId }
+            }
+            if ($PSBoundParameters.Command -eq 'get' -and $IdArray.Count -gt 1) {
+                # Append 'batch_get_cmd_req_id' field to results
+                @($Output).foreach{ Add-Property $_ 'batch_get_cmd_req_id' $null }
+            }
+            $Init = @{}
+            @('QueueOffline').foreach{ if ($PSBoundParameters.$_) { $Init[$_] = $PSBoundParameters.$_ }}
+            # Start session and capture result
+            $InitReq = $IdArray | Start-FalconSession @Init
+            $Output = Get-RtrResult $InitReq $Output
+            <#if ($InitReq.hosts) {
+                Get-RtrResult $InitReq.hosts $Output
+            } else {
+                Get-RtrResult $InitReq $Output
+            }#>
+            if ($InitReq.batch_id -or $InitReq.session_id) {
+                # Issue command and capture result
+                $InvokeCmd = Get-RtrCommand $PSBoundParameters.Command
+                $Cmd = @{ Command = $PSBoundParameters.Command }
+                @('Argument','Timeout').foreach{ if ($PSBoundParameters.$_) { $Cmd[$_] = $PSBoundParameters.$_ }}
+                $CmdReq = $InitReq | & $InvokeCmd @Cmd -Confirm
+                foreach ($Result in @(Get-RtrResult $CmdReq $Output)) {
+                    # Clear 'stdout' for batch 'get' requests
+                    if ($Result.stdout -and $Result.batch_get_cmd_req_id) { $Result.stdout = $null }
+                    if ($Result.stdout -and $Cmd.Command -eq 'runscript') {
+                        # Attempt to convert 'stdout' from Json for 'runscript'
+                        $StdOut = try { $Result.stdout | ConvertFrom-Json } catch { $null }
+                        if ($StdOut) { $Result.stdout = $StdOut }
                     }
-                    Invoke-FalconAdminCommand @CmdParam
-                }
-                if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
-                    do {
-                        # Retry command confirmation until result is provided
-                        Start-Sleep -Seconds 5
-                        $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
-                    } until (
-                        $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
-                    )
-                    $Confirm | ForEach-Object {
-                        $CmdId = if ($_.task_id -and !$_.cloud_request_id) {
-                            # Rename 'task_id' to 'cloud_request_id'
-                            Add-Property $_ 'cloud_request_id' $_.task_id
-                            $_.PSObject.Properties.Remove('task_id')
-                            'cloud_request_id'
-                        } else {
-                            'task_id'
-                        }
-                        $_ | Select-Object session_id,$CmdId,complete,stdout,stderr | ForEach-Object {
-                            if ($_.stdout -and $PSBoundParameters.Command -eq 'runscript') {
-                                # Attempt to convert 'stdout' from Json for 'runscript'
-                                $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
-                                if ($StdOut) { $_.stdout = $StdOut }
-                            }
-                            $_
-                        }
-                    }
-                } else {
-                    $Request
+                    $Result
                 }
             } else {
-                [array]$HostArray = if ($PSCmdlet.ParameterSetName -eq 'GroupId') {
-                    if ((Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -Total) -gt 10000) {
-                        # Stop if number of members exceeds API limit
-                        throw "Group size exceeds maximum number of results [10,000]"
-                    } else {
-                        # Find Host Group member identifiers
-                        ,(Get-FalconHostGroupMember -Id $PSBoundParameters.GroupId -All)
-                    }
-                } else {
-                    # Use provided Host identifiers
-                    ,$PSBoundParameters.HostIds
-                }
-                for ($i = 0; $i -lt ($HostArray | Measure-Object).Count; $i += 1000) {
-                    # Create baseline output and define request parameters
-                    [array]$Group = Initialize-Output $HostArray[$i..($i + 999)]
-                    $InitParam = @{
-                        HostId = $Group.aid
-                        QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) { $true } else { $false }
-                    }
-                    # Define command request parameters
-                    if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                        $CmdParam = @{ FilePath = $PSBoundParameters.Argument }
-                    } else {
-                        $CmdParam = @{ Command = $PSBoundParameters.Command }
-                        if ($PSBoundParameters.Argument) {
-                            $CmdParam['Argument'] = $PSBoundParameters.Argument
-                        }
-                    }
-                    if ($PSBoundParameters.Timeout) {
-                        @($InitParam,$CmdParam).foreach{
-                            $_['Timeout'] = $PSBoundParameters.Timeout
-                        }
-                    }
-                    # Start session
-                    $InitRequest = Start-FalconSession @InitParam
-                    if ($InitRequest.batch_id) {
-                        # Capture session initialization result
-                        $InitResult = Get-RtrResult -Object $InitRequest.hosts -Output $Group
-                        @($InitResult | Where-Object { $_.session_id }).foreach{
-                            # Add batch_id and clear 'stdout'
-                            $_.batch_id = $InitRequest.batch_id
-                            $_.stdout = $null
-                        }
-                        # Perform command request
-                        $CmdRequest = & $InvokeCmd @CmdParam -BatchId $InitRequest.batch_id
-                        if ($InvokeCmd -eq 'Invoke-FalconBatchGet') {
-                            # Capture 'hosts' for 'Invoke-FalconBatchGet'
-                            $CmdContent = Get-RtrResult -Object $CmdRequest.hosts -Output $InitResult
-                            @($CmdContent | Where-Object { $_.session_id -and $_.complete -eq $true }).foreach{
-                                # Add 'batch_get_cmd_req_id' to output
-                                Add-Property $_ 'batch_get_cmd_req_id' (
-                                    $CmdRequest.batch_get_cmd_req_id)
-                            }
-                            $CmdContent
-                        } else {
-                            # Output result
-                            Get-RtrResult -Object $CmdRequest -Output $InitResult | ForEach-Object {
-                                if ($_.stdout -and $PSBoundParameters.Command -eq 'runscript') {
-                                    # Attempt to convert 'stdout' from Json for 'runscript'
-                                    $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
-                                    if ($StdOut) { $_.stdout = $StdOut }
-                                }
-                                $_
-                            }
-                        }
-                    }
-                }
+                $Output
             }
-        } catch {
-            throw $_
         }
     }
 }

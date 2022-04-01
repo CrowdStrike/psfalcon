@@ -347,16 +347,15 @@ function Get-RtrCommand {
             }
         }
     }
-    end {
-        if ($PSBoundParameters.ConfirmCommand) { $Result -replace 'Invoke','Confirm' } else { $Result }
-    }
+    end { if ($PSBoundParameters.ConfirmCommand) { $Result -replace 'Invoke','Confirm' } else { $Result }}
 }
 function Get-RtrResult {
     [CmdletBinding()]
     param([System.Object]$Object,[System.Object]$Output)
     begin {
         # Real-time Response fields to capture from results
-        $RtrFields = @('aid','complete','errors','offline_queued','session_id','stderr','stdout','task_id')
+        $RtrFields = @('aid','batch_id','complete','errors','offline_queued','session_id','stderr','stdout',
+            'task_id','batch_get_cmd_req_id')
     }
     process {
         # Update $Output with results from $Object
@@ -371,9 +370,13 @@ function Get-RtrResult {
                 } else {
                     $_.Value
                 }
-                # Rename 'task_id' to 'cloud_request_id'
+                # Rename 'task_id' to 'cloud_request_id', and output using 'aid' or 'session_id'
                 $Name = if ($_.Name -eq 'task_id') { 'cloud_request_id' } else { $_.Name }
-                @($Output | Where-Object { $_.aid -eq $Result.aid }).foreach{ $_.$Name = $Value }
+                if ($Result.aid) {
+                    @($Output | Where-Object { $Result.aid -eq $_.aid }).foreach{ $_.$Name = $Value }
+                } else {
+                    @($Output | Where-Object { $Result.session_id -eq $_.session_id }).foreach{ $_.$Name = $Value }
+                }
             }
         }
     }
