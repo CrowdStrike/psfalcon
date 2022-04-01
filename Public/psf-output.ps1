@@ -6,19 +6,21 @@ Format a response object and output to console or CSV
 Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with
 each column having an appended 'prefix'--and then exported to the console or designated file path.
 
-For instance,if the object contains a property called 'device_policies',and that contains other objects called
+For instance, if the object contains a property called 'device_policies',and that contains other objects called
 'prevention' and 'sensor_update',the result will contain properties labelled 'device_policies.prevention' and
 'device_policies.sensor_update' with additional '.<field_name>' values for any sub-properties of those objects.
 
-When the result contains an array with similarly named properties,it will attempt to add each sub-property with
+When the result contains an array with similarly named properties, it will attempt to add each sub-property with
 an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example,
 @{ hosts = @( @{ device_id = 123; hostname = 'abc' },@{ device_id = 456; hostname = 'def' })} will be displayed
 under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
-becomes part of the column.
+becomes a column.
 .PARAMETER Path
 Destination path
 .PARAMETER Object
 Response object to format
+.PARAMETER Force
+Overwrite an existing file when present
 .LINK
 
 #>
@@ -92,35 +94,40 @@ Response object to format
                 }
             }
         }
-        $Output = [PSCustomObject] @{}
+        $Output = [PSCustomObject]@{}
     }
     process {
-        foreach ($Item in $PSBoundParameters.Object) {
-            if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
-                # Add sorted properties to output
-                Get-PSObject -Object $Item -Output $Output
-            } else {
-                # Add strings to output as 'id'
-                $AddParam = @{
-                    Object = $Output
-                    Name = 'id'
-                    Value = $Item
-                }
-                Add-Property @AddParam
-            }
-        }
-        if ($PSBoundParameters.Path) {
-            # Output to CSV
-            $ExportParam = @{
-                InputObject = $Output
-                Path = $Script:Falcon.Api.Path($PSBoundParameters.Path)
-                NoTypeInformation = $true
-                Append = $true
-            }
-            Export-Csv @ExportParam
+        $OutPath = Test-OutFile $PSBoundParameters.Path
+        if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+            Write-Error @OutPath
         } else {
-            # Output to console
-            $Output
+            foreach ($Item in $PSBoundParameters.Object) {
+                if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+                    # Add sorted properties to output
+                    Get-PSObject -Object $Item -Output $Output
+                } else {
+                    # Add strings to output as 'id'
+                    $AddParam = @{
+                        Object = $Output
+                        Name = 'id'
+                        Value = $Item
+                    }
+                    Add-Property @AddParam
+                }
+            }
+            if ($PSBoundParameters.Path) {
+                # Output to CSV
+                $ExportParam = @{
+                    InputObject = $Output
+                    Path = $Script:Falcon.Api.Path($PSBoundParameters.Path)
+                    NoTypeInformation = $true
+                    Append = $true
+                }
+                Export-Csv @ExportParam
+            } else {
+                # Output to console
+                $Output
+            }
         }
     }
     end {
@@ -269,7 +276,7 @@ problems with the PSFalcon module.
         $ManifestPath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'PSFalcon.psd1'
         if (Test-Path $ManifestPath) {
             $ModuleData = Import-PowerShellDataFile -Path $ManifestPath
-            [PSCustomObject] @{
+            [PSCustomObject]@{
                 PSVersion = "$($PSVersionTable.PSEdition) [$($PSVersionTable.PSVersion)]"
                 ModuleVersion = "v$($ModuleData.ModuleVersion) {$($ModuleData.GUID)}"
                 ModulePath = Split-Path -Path $ManifestPath -Parent
