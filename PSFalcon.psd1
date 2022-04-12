@@ -507,9 +507,14 @@
     commands with higher permission levels), 'Start-FalconSession' will generate a warning message for each host
     that failed to join a batch session.
 
-    * 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand' have all been modified
-    to append 'batch_id' to each multi-host result, plus have a new parameter '-Confirm' to automatically confirm
-    and retrieve the output from single-host or batch 'get' commands.
+    * Updated 'Start-FalconSession' to append 'batch_id' to each host that was successfully initiated.
+
+    * Modified 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand' and
+    'Start-FalconSession' to append 'batch_id' to each multi-host result.
+
+    * Added the '-Confirm' parameter to 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', and
+    'Invoke-FalconAdminCommand' to automatically confirm and retrieve the output from single-host or batch 'get'
+    commands.
 
     * Updated 'Invoke-FalconAdminCommand' and 'Invoke-FalconResponderCommand' within a multi-host session to
     automatically redirect to 'Invoke-FalconBatchGet' when using 'get'.
