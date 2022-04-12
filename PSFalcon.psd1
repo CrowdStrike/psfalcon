@@ -503,21 +503,20 @@
     * 'Start-FalconSession' now uses '-Id' to define both single-host and multi-host sessions. When host identifier
     values are passed in the pipeline, the command will default to a multi-host (batch) session.
 
-    Additionally, because 'Start-FalconSession' output can be pipelined to 'Invoke-FalconCommand' (or the related
-    commands with higher permission levels), 'Start-FalconSession' will generate a warning message for each host
-    that failed to join a batch session.
-
-    * Updated 'Start-FalconSession' to append 'batch_id' to each host that was successfully initiated.
-
-    * Modified 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand' and
-    'Start-FalconSession' to append 'batch_id' to each multi-host result.
+    * Updated 'Start-FalconSession', 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand' and
+    'Invoke-FalconAdminCommand' to append 'batch_id' to each host that was successfully initiated.
 
     * Added the '-Confirm' parameter to 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', and
-    'Invoke-FalconAdminCommand' to automatically confirm and retrieve the output from single-host or batch 'get'
+    'Invoke-FalconAdminCommand' to confirm and retrieve the output from both single-host commands and batch 'get'
     commands.
 
     * Updated 'Invoke-FalconAdminCommand' and 'Invoke-FalconResponderCommand' within a multi-host session to
     automatically redirect to 'Invoke-FalconBatchGet' when using 'get'.
+
+    * Added warning messages when hosts are not included in a batch Real-time Response session
+    ('Start-FalconSession') or when Real-time Response commands produce errors ('Invoke-FalconCommand',
+    'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconBatchGet') so it will be more
+    obvious what happened when hosts are missing from the final result that was passed through the pipeline.
 
     * Added '-Force' function to the following commands to overwrite an existing file when present:
       'Export-FalconConfig'
