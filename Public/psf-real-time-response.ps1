@@ -514,12 +514,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             @('QueueOffline').foreach{ if ($PSBoundParameters.$_) { $Init[$_] = $PSBoundParameters.$_ }}
             # Start session and capture result
             $InitReq = $IdArray | Start-FalconSession @Init
-            $Output = Get-RtrResult $InitReq $Output
-            <#if ($InitReq.hosts) {
-                Get-RtrResult $InitReq.hosts $Output
+            $Output = if ($InitReq.hosts) {
+                @(Get-RtrResult $InitReq.hosts $Output).foreach{
+                    # Clear 'stdout' from batch initialization
+                    $_.stdout = $null
+                    $_
+                }
             } else {
                 Get-RtrResult $InitReq $Output
-            }#>
+            }
             if ($InitReq.batch_id -or $InitReq.session_id) {
                 # Issue command and capture result
                 $InvokeCmd = Get-RtrCommand $PSBoundParameters.Command
@@ -536,8 +539,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                     $Result
                 }
-            } else {
-                $Output
             }
         }
     }
