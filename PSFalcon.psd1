@@ -428,6 +428,9 @@
 
     General Changes
 
+    * Re-added basic help information to each command. This will increase module size, but will eliminate the
+    need to 'Update-Help' to get descriptions for each command, its parameters and the required API permission(s).
+
     * Thanks to some knowledge shared by @kra-ts, PowerShell pipeline support is now cross-module and no longer
     restricted to specific commands!
 
@@ -436,7 +439,8 @@
     sized API requests.
 
     This change also required the re-positioning of many parameters, the addition of aliases, and the majority of
-    [array] parameters being converted into [string[]] or [int[]].
+    [array] parameters being converted into [string[]] or [int[]]. When it was logically possible, [array] values
+    were also converted into [object[]] to allow for the processing of both 'id' and 'detailed' values.
 
     * Renamed plural parameters ('Ids') to singular ('Id') to follow PowerShell best practices. Each updated
     parameter kept maintains the plural version as an alias (or the original parameter name when switching to the
@@ -446,18 +450,15 @@
     to rename parameters to fit API submission structure. Removing 'Fields' also enabled the removal of the
     private function 'Update-FieldName'.
 
-    * Added case enforcement to all 'ValidateSet' values. This ensures that proper case is used with parameters
-    that have a pre-defined list of accepted values and preventing errors from the resulting API.
-
-    * Re-added basic help information to each command. This will increase module size, but will eliminate the
-    need to 'Update-Help' to get descriptions for each command, its parameters and the required API permission(s).
-
     * When applicable, the 'Id' parameter attributes were modified to ensure that 'Get-Help' properly displayed
     that the parameter name needs to be explicitly included.
 
-    * Added 'raw_array' as a field to be used when defining the format of a 'body' submission. Using it will
-    instruct the module to create a 'body' object that has a base [array] value containing the object properties to
-    be converted to Json.
+    * Added case enforcement to all 'ValidateSet' values. This ensures that proper case is used with parameters
+    that have a pre-defined list of accepted values and preventing errors from the resulting API.
+
+    * Added 'raw_array' as a field to be used when defining the format of a 'body' submission inside of a PSFalcon
+    command. Using it will instruct the module to create a 'body' object that has a base [array] value containing
+    the object properties to be converted to Json.
 
     * Created 'Assert-Extension' private function to validate a given file extension when using 'Receive' commands.
 
