@@ -392,6 +392,7 @@
       # spotlight-vulnerabilities.ps1
       'Get-FalconRemediation',
       'Get-FalconVulnerability',
+      'Get-FalconVulnerabilityLogic',
 
       # streaming.ps1
       'Get-FalconStream',
@@ -421,6 +422,9 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
     New Commands
+
+    * spotlight-vulnerabilities.ps1
+      'Get-FalconVulnerabilityLogic'
 
     General Changes
 
@@ -528,6 +532,8 @@
       'Receive-FalconInstaller'
 
     * Updated 'Find-FalconDuplicate' to accommodate multiple 'Filter' values.
+
+    * Added 'evaluation_logic' to the 'Facet' parameter of 'Get-FalconVulnerability'.
 
     Resolved Issues
     *
