@@ -182,9 +182,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
         if ($PSBoundParameters.Id -and !$PSBoundParameters.Path) {
             # If 'Id' is present without 'Path', attempt to retry with report/execution detail
             $Request = Get-FalconScheduledReport -Id $PSBoundParameters.Id -EA 0
-            if (!$Request) {
-                $Request = Get-FalconScheduledReport -Execution -Id $PSBoundParameters.Id -EA 0
-            }
+            if (!$Request) { $Request = Get-FalconScheduledReport -Execution -Id $PSBoundParameters.Id -EA 0 }
             $Request | & $MyInvocation.MyCommand.Name
         } else {
             $PSBoundParameters.Path = switch ($PSBoundParameters.Path) {
