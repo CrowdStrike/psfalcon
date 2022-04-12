@@ -309,6 +309,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     batch_get_cmd_req_id = $_.batch_get_cmd_req_id
                     hosts = $_.combined.resources.PSObject.Properties.Value
                 }
+                $Request.hosts.Where({ $_.errors }).foreach{
+                    # Write warning for hosts in batch that produced errors
+                    Write-Warning "[Invoke-FalconBatchGet] $(
+                        @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]"
+                }
+                $Request.hosts.Where({ $_.stderr }).foreach{
+                    # Write warning for hosts in batch that produced 'stderr'
+                    Write-Warning "[Invoke-FalconBatchGet] $($_.stderr) [aid: $($_.aid)]"
+                }
                 if ($Confirm) {
                     for ($i = 0; $i -lt 60 -and !$Result.sha256; $i += 5) {
                         # Attempt to 'confirm' for 60 seconds
@@ -824,10 +833,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             }
             @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
                 if ($_.batch_id -and $_.resources) {
+                    $BatchId = $_.batch_id
                     @($_.resources.PSObject.Properties.Value).Where({ $_.errors }).foreach{
                         # Write warning for hosts in batch that produced errors
-                        Write-Warning "[Start-FalconSession] $(@($_.errors.code,$_.errors.message) -join ': ') [$(
-                            $_.aid)]"
+                        Write-Warning "[Start-FalconSession] $(
+                            @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]"
+                    }
+                    @($_.resources.PSObject.Properties.Value).Where({ $_.session_id }).foreach{
+                        # Append 'batch_id' for hosts with a 'session_id'
+                        Add-Property $_ batch_id $BatchId
                     }
                     [PSCustomObject]@{
                         batch_id = $_.batch_id
@@ -917,8 +931,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 if ($Endpoint -eq '/real-time-response/combined/batch-refresh-session/v1:post') {
                     @($_.PSObject.Properties.Value).Where({ $_.errors }).foreach{
                         # Write warning for hosts in batch that produced errors
-                        Write-Warning "[Update-FalconSession] $(@($_.errors.code,$_.errors.message) -join ': ') [$(
-                            $_.aid)]"
+                        Write-Warning "[Update-FalconSession] $(
+                            @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]"
                     }
                     # Output 'batch_id' and 'hosts' containing result
                     [PSCustomObject]@{
