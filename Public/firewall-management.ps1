@@ -982,12 +982,12 @@ Rule group name
 Rule group status
 .PARAMETER Description
 Rule group description
-.PARAMETER Library
-Clone default Firewall rules
 .PARAMETER Rule
 Firewall rules
 .PARAMETER Comment
 Audit log comment
+.PARAMETER Library
+Clone default Firewall rules
 .PARAMETER CloneId
 Clone an existing rule group
 .LINK
@@ -995,7 +995,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:post')]
     param(
-        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=1)]
         [string]$Name,
 
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Mandatory,
@@ -1006,20 +1007,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=4)]
-        [string]$Library,
-
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
-            Position=5)]
+            Position=4)]
         [Alias('rules')]
         [object[]]$Rule,
 
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
-            Position=6)]
+            Position=5)]
         [string]$Comment,
 
-        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=7)]
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=6)]
+        [string]$Library,
+
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=7)]
         [ValidatePattern('^\w{32}$')]
         [Alias('clone_id','id')]
         [string]$CloneId
@@ -1033,20 +1033,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 Body = @{ root = @('enabled','name','rules','description') }
             }
         }
-        [System.Collections.ArrayList]$RuleArray = @()
     }
     process {
-        if ($Rule) {
-            @($Rule).foreach{ [void]$RuleArray.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($PSBoundParameters.Rule) {
+            $Fields = @('name','description','enabled','platform_ids','direction','action','address_family',
+                'local_address','remote_address','protocol','local_port','remote_port','icmp','monitor','fields')
+            [object[]] $PSBoundParameters.Rule = foreach ($i in $PSBoundParameters.Rule) {
+                # Filter 'rule' to required properties that contain a value
+                $Select = @($Fields).foreach{ if ($i.$_) { $_ } }
+                $i | Select-Object $Select
+            }
         }
-    }
-    end {
-        if ($RuleArray) {
-            $PSBoundParameters['Rule'] = @($RuleArray | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconFirewallPolicy {
