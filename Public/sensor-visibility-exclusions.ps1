@@ -23,8 +23,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=2)]
-        [ValidatePattern('^(\w{32}|all)$')]
-        [Alias('groups','id','group_ids','GroupIds')]
+        [Alias('groups','GroupIds')]
         [object[]]$GroupId,
 
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
@@ -42,26 +41,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('groups','id','value','comment') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        if ($GroupId) {
-            @($GroupId).foreach{
-                if ($_.id) {
-                    [void]$IdArray.Add($_.id)
-                } elseif ($_ -is [string] -and $_ -match '^(\w{32}|all)$') {
-                    [void]$IdArray.Add($_)
-                }
+        if ($PSBoundParameters.GroupId.id) {
+            # Filter to 'id' if supplied with 'detailed' objects
+            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+        }
+        if ($PSBoundParameters.GroupId) {
+            @($PSBoundParameters.GroupId).foreach{
+                if ($_ -notmatch '^\w{32}$') { throw "'$_' is not a valid Host Group identifier." }
             }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-    }
-    end {
-        if ($IdArray) {
-            $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconSvExclusion {
@@ -168,9 +159,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^(\w{32}|all)$')]
-        [Alias('groups','id','group_ids','GroupIds')]
-        [string[]]$GroupId,
+        [Alias('groups','GroupIds')]
+        [object[]]$GroupId,
 
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
             Position=3)]
@@ -182,13 +172,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('groups','value','comment') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        if ($GroupId) { @($GroupId).foreach{ [void]$IdArray.Add($_) }}
-    }
-    end {
-        if ($IdArray) { $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique) }
+        if ($PSBoundParameters.GroupId.id) {
+            # Filter to 'id' if supplied with 'detailed' objects
+            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+        }
+        if ($PSBoundParameters.GroupId) {
+            @($PSBoundParameters.GroupId).foreach{
+                if ($_ -notmatch '^\w{32}$') { throw "'$_' is not a valid Host Group identifier." }
+            }
+        }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
