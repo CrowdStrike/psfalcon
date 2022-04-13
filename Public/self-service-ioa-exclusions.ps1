@@ -68,7 +68,7 @@ Command line RegEx
 .PARAMETER IfnRegex
 Image Filename RegEx
 .PARAMETER GroupId
-Host group identifier or 'all'
+Host group identifier or 'all' to apply to all hosts
 .PARAMETER Description
 Exclusion description
 .PARAMETER Comment
