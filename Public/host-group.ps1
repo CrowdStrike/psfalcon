@@ -284,7 +284,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -296,14 +296,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     Format = @{ group_type = 'GroupType' }
                 }
                 Confirm-Parameter @Param
-                if ($Object.group_type -eq 'static' -and $Object.assignment_rule) {
-                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
-                    throw "'assignment_rule' can only be used with 'group_type = dynamic'. $ObjectString"
-                }
             }
         })]
         [Alias('resources')]
-        [array]$Array,
+        [object[]]$Array,
 
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Mandatory,Position=1)]
         [ValidateSet('static','dynamic',IgnoreCase=$false)]
@@ -338,8 +334,29 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         }
+        [System.Collections.ArrayList]$GroupArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($Array) {
+            @($Array).foreach{
+                if ($_.group_type -ne 'dynamic' -and $_.assignment_rule) {
+                    # Remove 'assignment_rule' from non-dynamic groups
+                    $_.PSObject.Properties.Remove('assignment_rule')
+                }
+                [void]$GroupArray.Add($_)
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($GroupArray) {
+            for ($i = 0; $i -lt $GroupArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($GroupArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
 }
 function Remove-FalconHostGroup {
 <#
