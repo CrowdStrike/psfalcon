@@ -9,7 +9,7 @@ Exclusion identifier
 .PARAMETER Value
 RegEx pattern value
 .PARAMETER GroupId
-Host group identifier or 'all'
+Host group identifier or 'all' to apply to all hosts
 .PARAMETER Comment
 Audit log comment
 .LINK
@@ -49,7 +49,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^\w{32}$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -146,8 +146,8 @@ Requires 'Sensor Visibility Exclusions: Write'.
 RegEx pattern value
 .PARAMETER Comment
 Audit log comment
-.PARAMETER GroupIds
-Host group identifier or 'all'
+.PARAMETER GroupId
+Host group identifier or 'all' to apply to all hosts
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
@@ -180,7 +180,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^\w{32}$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
