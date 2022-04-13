@@ -175,7 +175,7 @@ function Confirm-Parameter {
         $ObjectString = ConvertTo-Json -InputObject $Object -Depth 32 -Compress
     }
     process {
-        if ($Object -is [hashtable]) {
+        if ($Object -is [System.Collections.Hashtable]) {
             ($Required).foreach{
                 # Verify object contains required fields
                 if ($Object.Keys -notcontains $_) { throw "Missing '$_'. $ObjectString" } else { $true }
@@ -386,8 +386,14 @@ function Get-RtrResult {
 }
 function Invoke-Falcon {
     [CmdletBinding()]
-    param([string]$Command,[string]$Endpoint,[System.Collections.Hashtable]$Headers,[System.Object]$Inputs,
-        [System.Object]$Format,[switch]$RawOutput,[int32]$Max)
+    param(
+        [string]$Command,
+        [string]$Endpoint,
+        [System.Collections.Hashtable]$Headers,
+        [System.Object]$Inputs,
+        [System.Object]$Format,
+        [switch]$RawOutput,
+        [int32]$Max)
     begin {
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
             # Request initial authorization token
@@ -577,7 +583,7 @@ function Test-FqlStatement {
 function Test-OutFile {
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
-    param($Path)
+    param([string]$Path)
     process {
         if (!$Path) {
             @{
