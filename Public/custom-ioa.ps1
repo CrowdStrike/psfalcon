@@ -539,10 +539,10 @@ function New-FalconIoaGroup {
 Create a custom Indicator of Attack rule group
 .DESCRIPTION
 Requires 'Custom IOA Rules: Write'.
-.PARAMETER Platform
-Operating system platform
 .PARAMETER Name
 Rule group name
+.PARAMETER Platform
+Operating system platform
 .PARAMETER Description
 Rule group description
 .PARAMETER Comment
@@ -552,17 +552,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post')]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,Position=1)]
-        [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
-        [string]$Platform,
-
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
+        [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
+        [Alias('platform_name')]
+        [string]$Platform,
+
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
+            Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Position=4)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [string]$Comment
     )
     begin {
