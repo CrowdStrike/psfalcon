@@ -96,9 +96,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=4)]
-        [ValidatePattern('^(\w{32}|all)$')]
         [Alias('groups','GroupIds')]
-        [string[]]$GroupId,
+        [object[]]$GroupId,
 
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=5)]
@@ -110,7 +109,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=7)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^(\w{32}|all)$')]
         [string]$Id
     )
     begin {
@@ -121,26 +120,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 Body = @{ root = @('cl_regex','ifn_regex','groups','name','id','description','comment') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        if ($GroupId) {
-            @($GroupId).foreach{
-                if ($_.id) {
-                    [void]$IdArray.Add($_.id)
-                } elseif ($_ -is [string] -and $_ -match '^(\w{32}|all)$') {
-                    [void]$IdArray.Add($_)
-                }
+        if ($PSBoundParameters.GroupId.id) {
+            # Filter to 'id' if supplied with 'detailed' objects
+            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+        }
+        if ($PSBoundParameters.GroupId) {
+            @($PSBoundParameters.GroupId).foreach{
+                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-    }
-    end {
-        if ($IdArray) {
-            $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconIoaExclusion {
@@ -245,7 +236,7 @@ Command line RegEx
 .PARAMETER IfnRegex
 Image Filename RegEx
 .PARAMETER GroupId
-Host group identifier, or leave blank to apply to all hosts
+Host group identifier, or leave undefined to apply to all hosts
 .PARAMETER Description
 Exclusion description
 .PARAMETER Comment
@@ -282,7 +273,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',ValueFromPipelineByPropertyName,
             Position=7)]
-        [Alias('groups','id','group_ids','GroupIds')]
+        [Alias('groups','GroupIds')]
         [object[]]$GroupId,
 
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',ValueFromPipelineByPropertyName,
@@ -304,26 +295,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
     }
     process {
-        if ($GroupId) {
-            @($GroupId).foreach{
-                if ($_.id) {
-                    [void]$IdArray.Add($_.id)
-                } elseif ($_ -is [string] -and $_ -match '^(\w{32}|all)$') {
-                    [void]$IdArray.Add($_)
-                }
+        if ($PSBoundParameters.GroupId.id) {
+            # Filter to 'id' if supplied with 'detailed' objects
+            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+        }
+        if ($PSBoundParameters.GroupId) {
+            @($PSBoundParameters.GroupId).foreach{
+                if ($_ -notmatch '^\w{32}$') { throw "'$_' is not a valid Host Group identifier." }
             }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-    }
-    end {
-        if ($IdArray) {
-            $PSBoundParameters['GroupId'] = @($IdArray | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Remove-FalconIoaExclusion {
