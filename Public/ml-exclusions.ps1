@@ -58,7 +58,7 @@ Requires 'Machine Learning Exclusions: Write'.
 .PARAMETER Value
 RegEx pattern value
 .PARAMETER GroupId
-Host group identifier or 'all'
+Host group identifier or 'all' to apply to all hosts
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -201,7 +201,7 @@ RegEx pattern value
 .PARAMETER ExcludedFrom
 Actions to exclude
 .PARAMETER GroupId
-Host group identifier or 'all'
+Host group identifier or 'all' to apply to all hosts
 .PARAMETER Comment
 Audit log comment
 .LINK
