@@ -303,7 +303,7 @@ Hashtable of policy settings
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -318,23 +318,20 @@ Hashtable of policy settings
             }
         })]
         [Alias('resources')]
-        [array]$Array,
+        [object[]]$Array,
 
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=2)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',ValueFromPipelineByPropertyName,
-            Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',ValueFromPipelineByPropertyName,
-            Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Position=4)]
         [Alias('settings')]
         [System.Object]$Setting
     )
@@ -349,13 +346,36 @@ Hashtable of policy settings
                 }
             }
         }
+        [System.Collections.ArrayList]$PolicyArray = @()
     }
     process {
-        if ($PSBoundParameters.Setting.classes.exceptions) {
-            # Remove exception 'id' values from 'settings' object
-            @($PSBoundParameters.Setting.classes.exceptions).foreach{ $_.PSObject.Properties.Remove('id') }
+        if ($Array) {
+            foreach ($i in $Array) {
+                if ($i.settings.classes.exceptions) {
+                    @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
+                        # Remove exception 'id' values from 'settings' object
+                        $i.PSObject.Properties.Remove('id')
+                    }
+                }
+                # Select allowed fields, when populated
+                [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
+                [void]$PolicyArray.Add(($i | Select-Object $Select))
+            }
+        } else {
+            if ($PSBoundParameters.Setting.classes.exceptions) {
+                # Remove exception 'id' values from 'settings' object
+                @($PSBoundParameters.Setting.classes.exceptions).foreach{ $_.PSObject.Properties.Remove('id') }
+            }
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+    end {
+        if ($PolicyArray) {
+            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
     }
 }
 function Remove-FalconDeviceControlPolicy {
