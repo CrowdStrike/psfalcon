@@ -435,7 +435,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -450,23 +450,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
             }
         })]
         [Alias('resources')]
-        [array]$Array,
+        [object[]]$Array,
 
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=1)]
         [string]$Name,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=2)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',ValueFromPipelineByPropertyName,
-            Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=3)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',ValueFromPipelineByPropertyName,
-            Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=4)]
         [Alias('settings')]
         [System.Object]$Setting
     )
@@ -481,8 +478,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
                 }
             }
         }
+        [System.Collections.ArrayList]$PolicyArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($Array) {
+            foreach ($i in $Array) {
+                # Select allowed fields, when populated
+                [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
+                [void]$PolicyArray.Add(($i | Select-Object $Select))
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($PolicyArray) {
+            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
 }
 function Remove-FalconSensorUpdatePolicy {
 <#
