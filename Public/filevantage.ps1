@@ -30,27 +30,20 @@ https://github.com/crowdstrike/psfalcon/wiki/FileVantage
         [ValidatePattern('^\w{32}$')]
         [Alias('ids')]
         [string[]]$Id,
-
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=3)]
         [string]$Sort,
-
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=5)]
         [int32]$Offset,
-
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get')]
         [switch]$Detailed,
-
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get')]
         [switch]$All,
-
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get')]
         [switch]$Total
     )
