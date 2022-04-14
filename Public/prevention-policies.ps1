@@ -339,7 +339,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             foreach ($i in $Array) {
                 if ($i.prevention_settings.settings) {
                     # Migrate 'prevention_settings' to 'settings' containing required values
-                    Add-Property $i 'settings' ($i.prevention_settings.settings | Select-Object id,value)
+                    Add-Property $i settings ($i.prevention_settings.settings | Select-Object id,value)
                     $i.PSObject.Properties.Remove('prevention_settings')
                 }
                 # Select allowed fields, when populated
