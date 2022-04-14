@@ -41,7 +41,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('id','RulegroupId')]
+        [Alias('RulegroupId')]
         [string]$Id
     )
     begin {
@@ -77,9 +77,9 @@ Requires 'Custom IOA Rules: Write'.
 All fields are required (plus 'rulegroup_version') when making a rule group change. PSFalcon adds missing values
 automatically using data from your existing rule group.
 
-If an existing rule is submitted within 'rule_updates',it will be filtered to the required properties ('comment',
-'description','disposition_id','enabled','field_values','instance_id','name',and 'pattern_severity')
-including those under 'field_values' ('name','label','type' and 'values').
+If an existing rule is submitted within 'rule_updates', it will be filtered to the required properties ('comment',
+'description', 'disposition_id', 'enabled', 'field_values', 'instance_id', 'name', and 'pattern_severity')
+including those under 'field_values' ('name', 'label', 'type' and 'values').
 .PARAMETER Comment
 Audit log comment
 .PARAMETER RuleUpdate
@@ -595,7 +595,7 @@ Rule severity
 .PARAMETER RuletypeId
 Rule type
 .PARAMETER DispositionId
-Disposition identifier [10: Monitor,20: Detect,30: Block]
+Disposition identifier [10: Monitor, 20: Detect, 30: Block]
 .PARAMETER FieldValue
 An array of rule properties
 .PARAMETER Description
@@ -609,7 +609,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post')]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=1)]
         [string]$Name,
 
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
@@ -635,14 +636,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('field_values','FieldValues')]
         [object[]]$FieldValue,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName,Position=6)]
         [string]$Description,
 
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName,Position=7)]
         [string]$Comment,
 
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
-            Position=6)]
+            Position=8)]
         [ValidatePattern('^\w{32}$')]
         [Alias('rulegroup_id','id')]
         [string]$RulegroupId
@@ -659,7 +660,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($PSBoundParameters.FieldValue) {
+            # Filter 'field_values' to required fields
+            $PSBoundParameters.FieldValue = $PSBoundParameters.FieldValue | Select-Object name,label,type,values
+        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
 }
 function Remove-FalconIoaGroup {
 <#
