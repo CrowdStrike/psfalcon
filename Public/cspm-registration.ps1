@@ -497,7 +497,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=4)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('aws_account_id')]
+        [Alias('aws_account_id','AccountId')]
         [string]$AwsAccountId,
 
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=5)]
@@ -570,7 +570,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=3)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('aws_account_id')]
+        [Alias('aws_account_id','AccountId')]
         [string]$AwsAccountId,
 
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=4)]
@@ -640,7 +640,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=2)]
         [ValidatePattern('^(\d{12}|\w{6,30})$')]
-        [Alias('account_id')]
+        [Alias('account_id','AwsAccountId')]
         [string]$AccountId,
 
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=3)]
