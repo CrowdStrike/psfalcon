@@ -501,9 +501,8 @@
       Commands have been corrected to properly produce individual exclusions for each relevant behavior within a
       detection (rather than one exclusion with values from multiple behaviors).
 
-    * 'Import-FalconConfig'
-      Completely re-written to utilize the pipeline and excluded items (with the reason they were excluded) are
-      now included within the resulting CSV output.
+    * 'Edit-FalconFirewallSetting'
+      Renamed '-PolicyId' to '-Id'.
 
     * 'Find-FalconDuplicate'
       Updated to accommodate multiple 'Filter' values.
@@ -522,6 +521,10 @@
 
     * 'Get-FalconVulnerability'
       Added 'evaluation_logic' to the 'Facet' parameter.
+
+    * 'Import-FalconConfig'
+      Completely re-written to utilize the pipeline and excluded items (with the reason they were excluded) are
+      now included within the resulting CSV output.
 
     * 'Invoke-FalconBatchGet', 'Invoke-FalconCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconResponderCommand'
       Added a new '-Confirm' parameter to confirm and retrieve the output from both single-host commands and batch
