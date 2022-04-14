@@ -339,8 +339,10 @@ Hashtable of policy settings
             }
         } else {
             if ($PSBoundParameters.Setting.classes.exceptions) {
-                # Remove exception 'id' values from 'settings' object
-                @($PSBoundParameters.Setting.classes.exceptions).foreach{ $_.PSObject.Properties.Remove('id') }
+                @($PSBoundParameters.Setting.classes.exceptions).Where({ $_.id }).foreach{
+                    # Remove exception 'id' values from 'settings' object
+                    $_.PSObject.Properties.Remove('id')
+                }
             }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
