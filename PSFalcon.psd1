@@ -501,11 +501,9 @@
       Commands have been corrected to properly produce individual exclusions for each relevant behavior within a
       detection (rather than one exclusion with values from multiple behaviors).
 
-    * 'Export-FalconConfig', 'Import-FalconConfig'
-      These commands now include 'Script' (Real-time Response scripts) as an item for export/import.
-
-      'Import-FalconConfig' has been completely re-written to utilize the pipeline and excluded items (with the
-      reason they were excluded) are now included within the resulting CSV output.
+    * 'Import-FalconConfig'
+      Completely re-written to utilize the pipeline and excluded items (with the reason they were excluded) are
+      now included within the resulting CSV output.
 
     * 'Find-FalconDuplicate'
       Updated to accommodate multiple 'Filter' values.
