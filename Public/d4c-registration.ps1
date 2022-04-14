@@ -17,7 +17,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [ValidateSet('full','dry',IgnoreCase=$false)]
         [Alias('scan-type')]
         [string]$ScanType,
-
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
@@ -59,7 +58,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [ValidateSet('full','dry',IgnoreCase=$false)]
         [Alias('scan-type')]
         [string]$ScanType,
-
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\d{10,}$')]
@@ -102,7 +100,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('subscription_id')]
         [string]$SubscriptionId,
-
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:post',
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
@@ -164,7 +161,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
            Position=1)]
         [string]$Path,
-
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
         [switch]$Force
     )
@@ -208,7 +204,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',Mandatory,
            Position=1)]
         [string]$Path,
-
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
         [switch]$Force
     )
