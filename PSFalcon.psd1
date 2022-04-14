@@ -442,6 +442,11 @@
     [array] parameters being converted into [string[]] or [int[]]. When it was logically possible, [array] values
     were also converted into [object[]] to allow for the processing of both 'id' and 'detailed' values.
 
+    * Warning messages have been added when hosts are not included in a batch Real-time Response session
+    ('Start-FalconSession') or when Real-time Response commands produce errors ('Invoke-FalconCommand',
+    'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconBatchGet') so it will be more
+    obvious what happened when hosts are missing from the final result that was passed through the pipeline.
+
     * Renamed plural parameters ('Ids') to singular ('Id') to follow PowerShell best practices. Each updated
     parameter kept maintains the plural version as an alias (or the original parameter name when switching to the
     singular was not possible due to incompatibilities with PowerShell) to prevent errors with existing scripts.
@@ -473,52 +478,6 @@
     ApiClient.Invoke(). 'Write-Result' continues to display the 'meta' Json values due to the addition of an
     internal function called 'Write-Meta'.
 
-    Command Changes
-
-    * Contribution from @kra-ts: Added support for a CCID value in the '-MemberCid' parameter when using
-    'Request-FalconToken', which leads to the checksum value being silently dropped but the CID itself being
-    accepted.
-
-    * Updated 'Get-FalconHorizonIoaEvent' and 'Get-FalconHorizonIoaUser' to match 'Get-FalconHorizonIoa',
-    replacing '-AccountId' with '-AwsAccountId', '-AzureSubscriptionId' and '-AzureTenantId'.
-
-    * Corrected 'Get-FalconHorizonIom' parameter '-AwsAccountId' to '-AccountId', which accepts an AWS account ID
-    or GCP Project Number value.
-
-    * Corrected the accepted '-Status' value 'recurring' to 'reoccurring' for 'Get-FalconHorizonIom'.
-
-    * Updated 'Get-FalconHost' to not force '-Detailed' output when using '-Include group_names', and instead
-    include 'device_id' and 'groups'. Using '-Detailed' and '-Include group_names' maintains full output.
-
-    * Corrected 'ConvertTo-FalconMlExclusion' and 'ConvertTo-FalconIoaExclusion' to properly produce individual
-    exclusions for each relevant behavior within a detection (rather than one exclusion with values from multiple
-    behaviors).
-
-    * Removed the '-CloneId' parameter from the following commands due to inconsistencies in the created policies:
-      'New-FalconDeviceControlPolicy'
-      'New-FalconFirewallPolicy'
-      'New-FalconPreventionPolicy'
-
-    The 'Copy-Falcon...Policy' commands continue to be available for use instead.
-
-    * 'Start-FalconSession' now uses '-Id' to define both single-host and multi-host sessions. When host identifier
-    values are passed in the pipeline, the command will default to a multi-host (batch) session.
-
-    * Updated 'Start-FalconSession', 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand' and
-    'Invoke-FalconAdminCommand' to append 'batch_id' to each host that was successfully initiated.
-
-    * Added the '-Confirm' parameter to 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', and
-    'Invoke-FalconAdminCommand' to confirm and retrieve the output from both single-host commands and batch 'get'
-    commands.
-
-    * Updated 'Invoke-FalconAdminCommand' and 'Invoke-FalconResponderCommand' within a multi-host session to
-    automatically redirect to 'Invoke-FalconBatchGet' when using 'get'.
-
-    * Added warning messages when hosts are not included in a batch Real-time Response session
-    ('Start-FalconSession') or when Real-time Response commands produce errors ('Invoke-FalconCommand',
-    'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconBatchGet') so it will be more
-    obvious what happened when hosts are missing from the final result that was passed through the pipeline.
-
     * Added '-Force' function to the following commands to overwrite an existing file when present:
       'Export-FalconConfig'
       'Receive-FalconHorizonAwsScript'
@@ -536,9 +495,57 @@
       'Receive-FalconScheduledReport'
       'Receive-FalconInstaller'
 
-    * Updated 'Find-FalconDuplicate' to accommodate multiple 'Filter' values.
+    Command Changes
 
-    * Added 'evaluation_logic' to the 'Facet' parameter of 'Get-FalconVulnerability'.
+    * 'ConvertTo-FalconMlExclusion', 'ConvertTo-FalconIoaExclusion'
+      Commands have been corrected to properly produce individual exclusions for each relevant behavior within a
+      detection (rather than one exclusion with values from multiple behaviors).
+
+    * 'Export-FalconConfig', 'Import-FalconConfig'
+      These commands now include 'Script' (Real-time Response scripts) as an item for export/import.
+
+      'Import-FalconConfig' has been completely re-written to utilize the pipeline and excluded items (with the
+      reason they were excluded) are now included within the resulting CSV output.
+
+    * 'Find-FalconDuplicate'
+      Updated to accommodate multiple 'Filter' values.
+
+    * 'Get-FalconHorizonIoaEvent', 'Get-FalconHorizonIoaUser'
+      Replaced '-AccountId' with '-AwsAccountId' and added '-AzureSubscriptionId' and '-AzureTenantId' to match
+      'Get-FalconHorizonIoa'.
+
+    * 'Get-FalconHorizonIom'
+      Renamed parameter '-AwsAccountId' to '-AccountId', which accepts an AWS account ID or GCP Project Number
+      value. Also corrected the accepted '-Status' value 'recurring' to 'reoccurring'.
+
+    * 'Get-FalconHost'
+      '-Detailed' output will no longer be forced when using '-Include group_names', and instead will include
+      'device_id' and 'groups'. Using '-Detailed' and '-Include group_names' maintains full output.
+
+    * 'Get-FalconVulnerability'
+      Added 'evaluation_logic' to the 'Facet' parameter.
+
+    * 'Invoke-FalconBatchGet', 'Invoke-FalconCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconResponderCommand'
+      Added a new '-Confirm' parameter to confirm and retrieve the output from both single-host commands and batch
+      'get' commands.
+
+      'Invoke-FalconAdminCommand' and 'Invoke-FalconResponderCommand' will now redirect to 'Invoke-FalconBatchGet'
+      when used to 'get' within a multi-host session.
+
+      Each of the commands now appends 'batch_id' to the output of commands issued within a batch session.
+
+    * 'New-FalconDeviceControlPolicy', 'New-FalconFirewallPolicy', 'New-FalconPreventionPolicy'
+      Removed the '-CloneId' parameter from the following commands due to inconsistencies in created policies. The
+      'Copy-Falcon...Policy' commands continue to be available for use instead.
+
+    * 'Request-FalconToken'
+      Contribution from @kra-ts: Added support for a CCID value in the '-MemberCid' parameter which leads to the
+      checksum value being silently dropped but the CID itself being accepted.
+
+    * 'Start-FalconSession'
+      Now uses '-Id' to define both single-host and multi-host sessions. When host identifier values are passed in
+      the pipeline the command will default to a multi-host (batch) session. Additionally, this command now appends
+      'batch_id' to each host that was successfully initiated within a multi-host session.
 
     Resolved Issues
     *
