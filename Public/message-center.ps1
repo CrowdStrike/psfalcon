@@ -439,7 +439,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$UserId,
-
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=3)]
         [Alias('case_id')]
