@@ -30,27 +30,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [ValidatePattern('^\w{32}_\w{32}$')]
         [Alias('ids')]
         [string[]]$Id,
-
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=2)]
         [string]$Sort,
-
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=4)]
         [int32]$Offset,
-
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
         [switch]$Detailed,
-
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
         [switch]$All,
-
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
         [switch]$Total
     )
