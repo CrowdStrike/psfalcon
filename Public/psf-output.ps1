@@ -29,7 +29,6 @@ Overwrite an existing file when present
         [Parameter(Position=1)]
         [ValidatePattern('\.csv$')]
         [string]$Path,
-
         [Parameter(Mandatory,ValueFromPipeline,Position=2)]
         [System.Object]$Object
     )
@@ -158,13 +157,10 @@ Response object to format
         [Parameter(Mandatory,Position=1)]
         [ValidateSet('Slack')]
         [string]$Type,
-
         [Parameter(Mandatory,Position=2)]
         [System.Uri]$Path,
-
         [Parameter(Position=3)]
         [string]$Label,
-
         [Parameter(Mandatory,ValueFromPipeline,Position=4)]
         [System.Object]$Object
     )
