@@ -30,27 +30,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
         [ValidatePattern('^\w{32}_\w+$')]
         [Alias('ids')]
         [string[]]$Id,
-
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=2)]
         [string]$Sort,
-
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=3)]
         [ValidateRange(1,100)]
         [int32]$Limit,
-
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=4)]
         [int32]$Offset,
-
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [switch]$Detailed,
-
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [switch]$All,
-
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [switch]$Total
     )
