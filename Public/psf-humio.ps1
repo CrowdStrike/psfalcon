@@ -19,11 +19,9 @@ Define events to send to the collector
     param(
         [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=1)]
         [System.Uri]$Uri,
-
         [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string]$Token,
-
         [Parameter(ValueFromPipelineByPropertyName,Position=3)]
         [ValidateSet('responses','requests')]
         [string[]]$Enable
