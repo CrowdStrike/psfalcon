@@ -20,17 +20,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
             ValueFromPipelineByPropertyName,Position=1)]
         [string]$Label,
-
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
         [Alias('expires_timestamp')]
         [string]$ExpiresTimestamp,
-
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
             ValueFromPipelineByPropertyName,Position=3)]
         [boolean]$Revoked,
-
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{32}$')]
@@ -92,23 +89,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=2)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=3)]
         [string]$Sort,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=4)]
         [ValidateRange(1,1000)]
         [int32]$Limit,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=5)]
         [int32]$Offset,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
         [switch]$Detailed,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
         [switch]$All,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
         [switch]$Total
     )
@@ -166,26 +157,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [ValidatePattern('^\w{32}$')]
         [Alias('ids')]
         [string[]]$Id,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=2)]
         [string]$Sort,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=3)]
         [int32]$Limit,
         
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=4)]
         [int32]$Offset,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
         [switch]$Detailed,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
         [switch]$All,
-
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
         [switch]$Total
     )
@@ -244,7 +229,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=1)]
         [string]$Label,
-
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
         [Alias('expires_timestamp')]
