@@ -21,10 +21,8 @@ Policy description
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id,
-
         [Parameter(Mandatory,Position=2)]
         [string]$Name,
-
         [Parameter(Position=3)]
         [string]$Description
     )
@@ -91,10 +89,8 @@ Policy description
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id,
-
         [Parameter(Mandatory,Position=2)]
         [string]$Name,
-
         [Parameter(Position=3)]
         [string]$Description
     )
@@ -159,10 +155,8 @@ Policy description
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id,
-
         [Parameter(Mandatory,Position=2)]
         [string]$Name,
-
         [Parameter(Position=3)]
         [string]$Description
     )
@@ -231,10 +225,8 @@ Policy description
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id,
-
         [Parameter(Mandatory,Position=2)]
         [string]$Name,
-
         [Parameter(Position=3)]
         [string]$Description
     )
@@ -293,10 +285,8 @@ Policy description
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id,
-
         [Parameter(Mandatory,Position=2)]
         [string]$Name,
-
         [Parameter(Position=3)]
         [string]$Description
     )
