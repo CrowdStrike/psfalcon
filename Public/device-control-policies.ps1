@@ -330,7 +330,7 @@ Hashtable of policy settings
                 if ($i.settings.classes.exceptions) {
                     @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
                         # Remove exception 'id' values from 'settings' object
-                        $i.PSObject.Properties.Remove('id')
+                        $_.PSObject.Properties.Remove('id')
                     }
                 }
                 # Select allowed fields, when populated
