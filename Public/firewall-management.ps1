@@ -188,7 +188,7 @@ Default action for outbound traffic
 Override all block rules and enable monitoring
 .PARAMETER LocalLogging
 Enable local logging of firewall events
-.PARAMETER PolicyId
+.PARAMETER Id
 Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
@@ -229,8 +229,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',Mandatory,ValueFromPipelineByPropertyName,
             Position=8)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('policy_id')]
-        [string]$PolicyId
+        [Alias('policy_id','PolicyId')]
+        [string]$Id
     )
     begin {
         $Param = @{
