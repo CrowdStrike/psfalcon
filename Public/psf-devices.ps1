@@ -26,7 +26,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     param(
         [Parameter(Position=1)]
         [object[]]$Hosts,
-
         [Parameter(Position=2)]
         [ValidateSet('external_ip','local_ip','mac_address','os_version','platform_name','serial_number',
             IgnoreCase=$false)]
