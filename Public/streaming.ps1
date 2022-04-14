@@ -15,7 +15,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Event-Streams
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed/v2:get',Mandatory,Position=1)]
         [string]$AppId,
-
         [Parameter(ParameterSetName='/sensors/entities/datafeed/v2:get',Position=2)]
         [ValidateSet('json','flatjson',IgnoreCase=$false)]
         [string]$Format
@@ -48,7 +47,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Event-Streams
             Position=1)]
         [ValidatePattern('^\w{1,32}$')]
         [string]$AppId,
-
         [Parameter(ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',Mandatory,
            Position=2)]
         [int32]$Partition
