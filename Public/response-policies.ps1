@@ -6,20 +6,20 @@ Modify Real-time Response policies
 Requires 'Response Policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
+.PARAMETER Id
+Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
 Policy description
 .PARAMETER Setting
 Policy settings
-.PARAMETER Id
-Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -33,21 +33,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
             }
         })]
         [Alias('resources')]
-        [array]$Array,
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('settings')]
-        [object[]]$Setting,
-        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-            Position=4)]
+        [object[]]$Array,
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id
+        [string]$Id,
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=2)]
+        [string]$Name,
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=3)]
+        [string]$Description,
+        [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=4)]
+        [Alias('settings')]
+        [object[]]$Setting
     )
     begin {
         $Param = @{
@@ -60,13 +56,33 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
                 }
             }
         }
+        [System.Collections.ArrayList]$PolicyArray = @()
     }
     process {
-        if ($PSBoundParameters.Settings.settings) {
-            # Select required values from 'settings' object
-            $PSBoundParameters.Settings = $PSBoundParameters.Settings.settings | Select-Object id,value
+        if ($Array) {
+            @($Array).foreach{
+                $i = $_
+                if ($i.settings.settings) {
+                    # Select required values from 'settings' sub-object
+                    $i.settings = $i.settings.settings | Select-Object id,value
+                }
+                # Select allowed fields, when populated
+                [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
+                    if ($i.$_) { $_ }
+                }
+                [void]$PolicyArray.Add(($i | Select-Object $Select))
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+    end {
+        if ($PolicyArray) {
+            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
     }
 }
 function Get-FalconResponsePolicy {
@@ -331,7 +347,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
     }
     process {
         if ($Array) {
-            foreach ($i in $Array) {
+            @($Array).foreach{
+                $i = $_
                 if ($i.settings.settings) {
                     # Select required values from 'settings' sub-object
                     $i.settings = $i.settings.settings | Select-Object id,value
@@ -341,10 +358,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
                 [void]$PolicyArray.Add(($i | Select-Object $Select))
             }
         } else {
-            if ($PSBoundParameters.Setting.settings) {
-                # Select required values from 'settings' sub-object
-                $PSBoundParameters.Setting = $PSBoundParameters.Setting.settings | Select-Object id,value
-            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
