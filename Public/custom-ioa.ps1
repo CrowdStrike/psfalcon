@@ -719,8 +719,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/validate/v1:post')]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/validate/v1:post',Mandatory,Position=1)]
-        [Alias('fields')]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/validate/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=1)]
+        [Alias('fields','field_values')]
         [object[]]$Field
     )
     begin {
