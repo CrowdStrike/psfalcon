@@ -13,15 +13,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
-            ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('cloudtrail_region')]
-        [string]$CloudtrailRegion,
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('account_id','id')]
-        [string]$AccountId
+        [string]$AccountId,
+
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+            ValueFromPipelineByPropertyName,Position=2)]
+        [Alias('cloudtrail_region')]
+        [string]$CloudtrailRegion
     )
     begin {
         $Param = @{
@@ -85,7 +86,7 @@ Requires 'CSPM Registration: Write'.
 Severity level
 .PARAMETER Enabled
 Policy enablement status
-.PARAMETER PolicyId
+.PARAMETER Id
 Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
@@ -101,8 +102,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [boolean]$Enabled,
         [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=3)]
-        [Alias('policy_id')]
-        [int32]$PolicyId
+        [Alias('policy_id','PolicyId')]
+        [int32]$Id
     )
     begin {
         $Param = @{
@@ -180,29 +181,29 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\d{12}$')]
         [Alias('ids')]
         [string[]]$Id,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=1)]
         [ValidatePattern('^o-[0-9a-z]{10,32}$')]
         [Alias('organization-ids','OrganizationIds')]
         [string[]]$OrganizationId,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=2)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
         [Alias('scan-type')]
         [string]$ScanType,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=3)]
         [ValidateSet('provisioned','operational',IgnoreCase=$false)]
         [string]$Status,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=4)]
         [ValidateSet('organization',IgnoreCase=$false)]
         [Alias('group_by')]
         [string]$GroupBy,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=5)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=7)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=6)]
         [int32]$Offset,
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
         [switch]$All,
@@ -275,21 +276,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('ids')]
         [string[]]$Id,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=1)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
         [Alias('scan-type')]
         [string]$ScanType,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=2)]
         [ValidateSet('provisioned','operational',IgnoreCase=$false)]
         [string]$Status,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=4)]
         [int32]$Offset,
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
         [switch]$All,
@@ -355,22 +356,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get')]
     param(
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Mandatory,ValueFromPipelineByPropertyName,
-            Position=1)]
-        [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=1)]
+        [ValidateSet('aws','azure',IgnoreCase=$false)]
         [Alias('cloud_provider','cloud_platform')]
         [string]$CloudPlatform,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('aws_account_id')]
+        [Alias('aws_account_id','account_id')]
         [string]$AwsAccountId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('azure_subscription_id')]
+        [Alias('azure_subscription_id','subscription_id')]
         [string]$AzureSubscriptionId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('azure_tenant_id')]
+        [Alias('azure_tenant_id','tenant_id')]
         [string]$AzureTenantId,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=5)]
         [ValidateSet('High','Medium','Informational',IgnoreCase=$false)]
@@ -414,7 +414,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if (!$PSBoundParameters.CloudPlatform){
+            $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AwsAccountId) {
+                'aws'
+            } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
+                'azure'
+            }
+        }
+        if (!$PSBoundParameters.CloudPlatform) {
+            throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
 }
 function Get-FalconHorizonIoaEvent {
 <#
@@ -426,14 +439,14 @@ Requires 'CSPM Registration: Read'.
 Cloud platform
 .PARAMETER PolicyId
 Policy identifier
-.PARAMETER UserIds
-User identifier
 .PARAMETER AwsAccountId
 AWS account identifier
 .PARAMETER AzureSubscriptionId
 Azure subscription identifier
 .PARAMETER AzureTenantId
 Azure tenant identifier
+.PARAMETER UserIds
+User identifier
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -449,29 +462,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
     param(
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]
-        [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
-        [Alias('cloud_provider','cloud_platform')]
-        [string]$CloudPlatform,
-        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
-           Position=2)]
         [ValidatePattern('^\d+$')]
         [Alias('policy_id')]
         [int32]$PolicyId,
-        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=3)]
-        [Alias('user_ids')]
-        [string[]]$UserIds,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=2)]
+        [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
+        [Alias('cloud_provider','cloud_platform')]
+        [string]$CloudPlatform,
+        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('aws_account_id','AccountId')]
+        [Alias('aws_account_id','account_id','AccountId')]
         [string]$AwsAccountId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('azure_subscription_id')]
         [string]$AzureSubscriptionId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('azure_tenant_id')]
         [string]$AzureTenantId,
+        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=6)]
+        [Alias('user_ids')]
+        [string[]]$UserIds,
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=7)]
         [ValidateRange(1,500)]
         [int32]$Limit,
@@ -492,7 +504,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if (!$PSBoundParameters.CloudPlatform){
+            $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AwsAccountId) {
+                'aws'
+            } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
+                'azure'
+            }
+        }
+        if (!$PSBoundParameters.CloudPlatform) {
+            throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
 }
 function Get-FalconHorizonIoaUser {
 <#
@@ -500,10 +525,10 @@ function Get-FalconHorizonIoaUser {
 Search for Falcon Horizon Indicator of Attack users
 .DESCRIPTION
 Requires 'CSPM Registration: Read'.
-.PARAMETER CloudPlatform
-Cloud platform
 .PARAMETER PolicyId
 Policy identifier
+.PARAMETER CloudPlatform
+Cloud platform
 .PARAMETER AwsAccountId
 AWS account identifier
 .PARAMETER AzureSubscriptionId
@@ -517,23 +542,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
     param(
         [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]
-        [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
-        [Alias('cloud_provider','cloud_platform')]
-        [string]$CloudPlatform,
-        [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Mandatory,ValueFromPipelineByPropertyName,
-           Position=2)]
         [ValidatePattern('^\d+$')]
         [Alias('policy_id')]
         [int32]$PolicyId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Position=2)]
+        [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
+        [Alias('cloud_provider','cloud_platform')]
+        [string]$CloudPlatform,
+        [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('aws_account_id','AccountId')]
+        [Alias('aws_account_id','account_id','AccountId')]
         [string]$AwsAccountId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('azure_subscription_id')]
         [string]$AzureSubscriptionId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('azure_tenant_id')]
         [string]$AzureTenantId
@@ -548,7 +572,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if (!$PSBoundParameters.CloudPlatform){
+            $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AwsAccountId) {
+                'aws'
+            } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
+                'azure'
+            }
+        }
+        if (!$PSBoundParameters.CloudPlatform) {
+            throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
 }
 function Get-FalconHorizonIom {
 <#
@@ -587,20 +624,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/iom/v1:get')]
     param(
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Mandatory,ValueFromPipelineByPropertyName,
-           Position=1)]
+        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('cloud_provider','cloud_platform')]
         [string]$CloudPlatform,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^(\d{12}|\w{6,30})$')]
         [Alias('account_id','AwsAccountId')]
         [string]$AccountId,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('azure_subscription_id')]
         [string]$AzureSubscriptionId,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('azure_tenant_id')]
         [string]$AzureTenantId,
@@ -643,7 +679,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if (!$PSBoundParameters.CloudPlatform){
+            $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AccountId) {
+                if ($PSBoundParameters.AccountId -match '^\d{12}$') { 'aws' } else { 'gcp' }
+            } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
+                'azure'
+            }
+        }
+        if (!$PSBoundParameters.CloudPlatform) {
+            throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
 }
 function Get-FalconHorizonPolicy {
 <#
@@ -669,7 +718,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/settings/entities/policy-details/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Mandatory)]
         [ValidatePattern('^\d+$')]
-        [Alias('policy_id','ids')]
+        [Alias('ids','policy_id')]
         [int32[]]$Id,
         [Parameter(ParameterSetName='/settings/entities/policy/v1:get',Position=1)]
         [ValidatePattern('^\d+$')]
@@ -739,14 +788,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cloud-platform') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.ArrayList]$CloudArray = @()
     }
     process {
-        if ($CloudPlatform) { @($CloudPlatform).foreach{ [void]$IdArray.Add($_) }}
+        if ($CloudPlatform) { @($CloudPlatform).foreach{ [void]$CloudArray.Add($_) }}
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['CloudPlatform'] = @($IdArray | Select-Object -Unique)
+        if ($CloudArray) {
+            $PSBoundParameters['CloudPlatform'] = @($CloudArray | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -927,24 +976,25 @@ function Remove-FalconHorizonAwsAccount {
 Remove Falcon Horizon AWS accounts
 .DESCRIPTION
 Requires 'CSPM Registration: Write'.
-.PARAMETER OrganizationId
-AWS organization identifier
 .PARAMETER Id
 AWS account identifier
+.PARAMETER OrganizationId
+AWS organization identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete')]
     param(
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+        [ValidatePattern('^\d{12}$')]
+        [Alias('ids')]
+        [string[]]$Id,
+
         [Parameter(ParameterSetName='OrganizationIds',Mandatory)]
         [ValidatePattern('^o-[0-9a-z]{10,32}$')]
         [Alias('organization-ids','OrganizationIds')]
-        [string[]]$OrganizationId,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
-        [string[]]$Id
+        [string[]]$OrganizationId
     )
     begin {
         $Param = @{
