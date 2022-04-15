@@ -89,8 +89,14 @@ function Build-Content {
             $Formdata = @{}
             $Inputs.GetEnumerator().Where({ $Format.Formdata -contains $_.Key }).foreach{
                 $Formdata[($_.Key).ToLower()] = if ($_.Key -eq 'content') {
-                    # Collect file content as a string
-                    [string] (Get-Content ($Script:Falcon.Api.Path($_.Value)) -Raw)
+                    $Content = try {
+                        # Collect file content as a string
+                        [string](Get-Content ($Script:Falcon.Api.Path($_.Value)) -Raw -EA 0)
+                    } catch {
+                        $null
+                    }
+                    # Supply original value if no file content is gathered
+                    if ($Content) { $Content } else { $_.Value }
                 } else {
                     $_.Value
                 }
