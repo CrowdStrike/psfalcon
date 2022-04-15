@@ -70,6 +70,8 @@ Restrict search to 'hidden' hosts
 Retrieve user login history
 .PARAMETER Network
 Retrieve network address history
+.PARAMETER Network
+Retrieve online status
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -83,10 +85,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/devices/combined/devices/network-address-history/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
         [Alias('ids','device_id','host_ids','aid')]
         [string[]]$Id,
@@ -122,15 +126,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [string]$Offset,
         [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=5)]
         [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=5)]
-        [ValidateSet('group_names','login_history','network_history','zero_trust_assessment',IgnoreCase=$false)]
+        [ValidateSet('group_names','login_history','network_history','online_state',
+            'zero_trust_assessment',IgnoreCase=$false)]
         [string[]]$Include,
         [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Mandatory)]
         [switch]$Hidden,
-        
         [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory)]
         [switch]$Login,
         [Parameter(ParameterSetName='/devices/combined/devices/network-address-history/v1:post',Mandatory)]
         [switch]$Network,
+        [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory)]
+        [switch]$State,
         [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get')]
         [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get')]
         [switch]$Detailed,
@@ -201,6 +207,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         Object = $Request | Where-Object { $_.device_id -eq $Item.device_id }
                         Name = 'network_history'
                         Value = $Item.history
+                    }
+                    Add-Property @AddParam
+                }
+            }
+            if ($PSBoundParameters.Include -contains 'online_state') {
+                foreach ($Item in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -State -EA 0)) {
+                    $AddParam = @{
+                        Object = $Request | Where-Object { $_.device_id -eq $Item.id }
+                        Name = 'online_state'
+                        Value = $Item
                     }
                     Add-Property @AddParam
                 }
