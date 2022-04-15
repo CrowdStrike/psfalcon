@@ -508,6 +508,9 @@
     * 'Edit-FalconFirewallSetting'
       Renamed '-PolicyId' to '-Id'.
 
+    * 'Edit-FalconHorizonPolicy'
+      Renamed '-PolicyId' to '-Id'.
+
     * 'Export-FalconConfig'
       Now includes 'Script' (Real-time Response scripts) as an exportable item.
 
@@ -516,6 +519,11 @@
 
     * 'Find-FalconDuplicate'
       Updated to accommodate multiple 'Filter' values.
+
+    * 'Get-FalconHorizonIoa', 'Get-FalconHorizonIoaEvent', 'Get-FalconHorizonIoaUser', 'Get-FalconHorizonIom'
+      Removed 'Mandatory' status for '-CloudPlatform', instead populating it if 'AwsAccountId' (or 'AccountId',
+      in the case of 'Get-FalconHorizonIom'), 'AzureSubscriptionId', or 'AzureTenantId' are provided. Without one
+      of the four values, the command will produce an exception.
 
     * 'Get-FalconHorizonIoaEvent', 'Get-FalconHorizonIoaUser'
       Replaced '-AccountId' with '-AwsAccountId' and added '-AzureSubscriptionId' and '-AzureTenantId' to match
