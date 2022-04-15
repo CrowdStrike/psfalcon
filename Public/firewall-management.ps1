@@ -112,18 +112,18 @@ Modify Falcon Firewall Management policies
 Requires 'Firewall Management: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
+.PARAMETER Id
+Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
 Policy description
-.PARAMETER Id
-Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:patch')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -138,16 +138,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         })]
         [Alias('resources')]
         [array]$Array,
-        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-            Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id
+        [string]$Id,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Position=2)]
+        [string]$Name,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Position=3)]
+        [string]$Description
     )
     begin {
         $Param = @{
@@ -160,8 +157,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 }
             }
         }
+        [System.Collections.ArrayList]$PolicyArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($Array) {
+            @($Array).foreach{
+                $i = $_
+                [string[]]$Select = @('id','name','description').foreach{ if ($i.$_) { $_ }}
+                [void]$PolicyArray.Add(($i | Select-Object $Select))
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($PolicyArray) {
+            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
 }
 function Edit-FalconFirewallSetting {
 <#
@@ -248,7 +264,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         ($Param.Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
             # When not provided, add required fields using existing policy settings
             if (!$PSBoundParameters.$_) {
-                if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $PolicyId -EA 0 }
+                if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
                 if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
             }
         }
