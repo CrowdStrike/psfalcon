@@ -465,6 +465,10 @@
     command. Using it will instruct the module to create a 'body' object that has a base [array] value containing
     the object properties to be converted to Json.
 
+    * Updated 'Build-Formdata' private function to attempt to gather file content for the 'content' field, or
+    supply the original value if that fails. This change was made to allow 'Send-FalconScript' to use a file
+    path or string-based script content.
+
     * Created 'Assert-Extension' private function to validate a given file extension when using 'Receive' commands.
 
     * Created 'Test-OutFile' private function to validate the presence of an existing file and generate error
@@ -504,6 +508,12 @@
     * 'Edit-FalconFirewallSetting'
       Renamed '-PolicyId' to '-Id'.
 
+    * 'Export-FalconConfig'
+      Now includes 'Script' (Real-time Response scripts) as an exportable item.
+
+      Output filename now contains a 'FileDateTime' timestamp instead of simply 'FileDate'. This was done to
+      match changes made to 'Import-FalconConfig'.
+
     * 'Find-FalconDuplicate'
       Updated to accommodate multiple 'Filter' values.
 
@@ -526,6 +536,14 @@
       Completely re-written to utilize the pipeline and excluded items (with the reason they were excluded) are
       now included within the resulting CSV output.
 
+      Now includes 'Script' (Real-time Response scripts) as an importable item.
+
+      Output filename now contains a 'FileDateTime' timestamp instead of simply 'FileDate'. This was done because
+      verbosity of the output was increased and appending to an existing file would cause output problems.
+
+      Removed warning message that was generated when no items were created because the CSV output now displays
+      both excluded and created items.
+
     * 'Invoke-FalconBatchGet', 'Invoke-FalconCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconResponderCommand'
       Added a new '-Confirm' parameter to confirm and retrieve the output from both single-host commands and batch
       'get' commands.
@@ -542,6 +560,9 @@
     * 'Request-FalconToken'
       Contribution from @kra-ts: Added support for a CCID value in the '-MemberCid' parameter which leads to the
       checksum value being silently dropped but the CID itself being accepted.
+
+    * 'Send-FalconScript'
+      Updated to allow 'Path' to contain string based script content or a path to a file.
 
     * 'Start-FalconSession'
       Now uses '-Id' to define both single-host and multi-host sessions. When host identifier values are passed in
