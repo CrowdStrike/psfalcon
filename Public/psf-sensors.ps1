@@ -15,10 +15,9 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='HostId')]
+    [CmdletBinding()]
     param(
-        [Parameter(ParameterSetName='HostId',Mandatory,Position=1)]
-        [Parameter(ParameterSetName='HostIds',Mandatory,Position=1)]
+        [Parameter(Mandatory,Position=1)]
         [ValidateScript({
             @($_).foreach{
                 if ((Test-RegexValue $_) -eq 'tag') {
@@ -29,15 +28,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
         })]
         [string[]]$Tags,
-        #[Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,Position=2)]
-        #[ValidatePattern('^\w{32}$')]
-        #[Alias('device_id')]
-        #[string]$Id,
-        [Parameter(ParameterSetName='HostId',Position=3)]
-        [Parameter(ParameterSetName='HostIds',Position=3)]
+        [Parameter(Position=2)]
         [boolean]$QueueOffline,
-        [Parameter(ParameterSetName='HostIds',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,
-            Position=2)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
         [Alias('ids','device_id','host_ids','aid')]
         [string[]]$Id
@@ -61,49 +54,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 'lect-Object -Unique) -join "," } else { $args }; [void] (reg add $K /v GroupingTags /d $V /f); ' +
                 '"$((((reg query $K) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
         }
+        [System.Collections.Arraylist]$IdArray = @()
     }
-    process {
-        try {
-            # Get device info to determine script and begin session
-            if ($PSCmdlet.ParameterSetName -eq 'HostId') {
-                $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
-                $InvokeParam = @{
-                    HostId = $HostInfo.device_id
-                    Command = 'runscript'
-                    Argument = '-Raw=```' + $Scripts.($HostInfo.platform_name) + '``` -CommandLine="' +
-                        ($PSBoundParameters.Tags -join ',') + '"'
-                }
-                if ($PSBoundParameters.QueueOffline) {
-                    $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
-                }
-                Invoke-FalconRtr @InvokeParam | ForEach-Object {
-                    if ($PSBoundParameters.QueueOffline) {
-                        # Output queued command result
-                        $_
-                    } else {
-                        # Output device properties and 'tags' value
-                        [PSCustomObject]@{
-                            cid = $HostInfo.cid
-                            device_id = $HostInfo.device_id
-                            tags = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
-                        }
-                    }
-                }
-            } else {
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            try {
+                # Get device info to determine script and begin session
                 $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
                     # Start sessions for each 'platform' type
-                    $InvokeParam = @{
+                    $Param = @{
                         Command = 'runscript'
                         Argument =  '-Raw=```' + $Scripts.$Platform + '``` -CommandLine="' +
                             ($PSBoundParameters.Tags -join ',') + '"'
                         HostId = ($HostInfo | Where-Object { $_.platform_name -eq $Platform }).device_id
                     }
                     if ($PSBoundParameters.QueueOffline) {
-                        $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
+                        $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
                     }
-                    Invoke-FalconRtr @InvokeParam | Select-Object aid,stdout,stderr,errors |
-                    ForEach-Object {
+                    Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
                         # Output device properties and 'tags' value
                         [PSCustomObject]@{
                             cid = ($HostInfo | Where-Object device_id -eq $_.aid).cid
@@ -118,9 +88,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -137,15 +107,11 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='HostId')]
+    [CmdletBinding()]
     param(
-        #[Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,Position=1)]
-        #[ValidatePattern('^\w{32}$')]
-        #[Alias('device_id')]
-        #[string]$Id,
-        [Parameter(ParameterSetName='HostId',Position=3)]
+        [Parameter(Position=1)]
         [boolean]$QueueOffline,
-        [Parameter(ParameterSetName='HostId',Mandatory,Position=1)]
+        [Parameter(Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
         [Alias('ids','device_id','host_ids','aid')]
         [string[]]$Id
@@ -160,45 +126,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 '88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($T) { "$(($T -' +
                 'split "REG_SZ")[-1].Trim())" }'
         }
+        [System.Collections.Arraylist]$IdArray = @()
     }
-    process {
-        try {
-            if ($PSCmdlet.ParameterSetName -eq 'HostId') {
-                $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
-                $InvokeParam = @{
-                    HostId = $HostInfo.device_id
-                    Command = 'runscript'
-                    Argument = '-Raw=```' + $Scripts.($HostInfo.platform_name) + '```'
-                }
-                if ($PSBoundParameters.QueueOffline) {
-                    $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
-                }
-                Invoke-FalconRtr @InvokeParam | ForEach-Object {
-                    if ($PSBoundParameters.QueueOffline) {
-                        # Output queued command result
-                        $_
-                    } else {
-                        # Output device properties and 'tags' value
-                        [PSCustomObject]@{
-                            cid = $HostInfo.cid
-                            device_id = $HostInfo.device_id
-                            tags = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
-                        }
-                    }
-                }
-            } else {
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            try {
+                # Get device info to determine script and begin session
                 $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
-                    # Start session for each 'platform' type
-                    $InvokeParam = @{
+                    # Start sessions for each 'platform' type
+                    $Param = @{
                         Command = 'runscript'
-                        Argument =  '-Raw=```' + $Scripts.$Platform + '```'
+                        Argument =  '-Raw=```' + $Scripts.$Platform + '``` -CommandLine="' +
+                            ($PSBoundParameters.Tags -join ',') + '"'
                         HostId = ($HostInfo | Where-Object { $_.platform_name -eq $Platform }).device_id
                     }
                     if ($PSBoundParameters.QueueOffline) {
-                        $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
+                        $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
                     }
-                    Invoke-FalconRtr @InvokeParam | Select-Object aid,stdout,stderr,errors | ForEach-Object {
+                    Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
                         # Output device properties and 'tags' value
                         [PSCustomObject]@{
                             cid = ($HostInfo | Where-Object device_id -eq $_.aid).cid
@@ -213,9 +160,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -235,10 +182,9 @@ Add command request to the offline queue
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='HostId')]
+    [CmdletBinding()]
     param(
-        [Parameter(ParameterSetName='HostId',Mandatory,Position=1)]
-        [Parameter(ParameterSetName='HostIds',Mandatory,Position=1)]
+        [Parameter(Mandatory,Position=1)]
         [ValidateScript({
             @($_).foreach{
                 if ((Test-RegexValue $_) -eq 'tag') {
@@ -249,14 +195,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
         })]
         [string[]]$Tags,
-        #[Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,Position=2)]
-        #[ValidatePattern('^\w{32}$')]
-        #[Alias('device_id')]
-        #[string]$Id,
-        [Parameter(ParameterSetName='HostId',Position=3)]
-        [Parameter(ParameterSetName='HostIds',Position=3)]
+        [Parameter(Position=2)]
         [boolean]$QueueOffline,
-        [Parameter(ParameterSetName='HostIds',Mandatory,Position=2)]
+        [Parameter(Mandatory,Position=3)]
         [ValidatePattern('^\w{32}$')]
         [Alias('ids','device_id','host_ids','aid')]
         [string[]]$Id
@@ -283,48 +224,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 'elete $K /v GroupingTags /f) }}; $T = (reg query $K) -match "GroupingTags"; if ($T) { ($T -spli' +
                 't "REG_SZ")[-1].Trim() }'
         }
+        [System.Collections.Arraylist]$IdArray = @()
     }
-    process {
-        try {
-            if ($PSCmdlet.ParameterSetName -eq 'HostId') {
-                $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
-                $InvokeParam = @{
-                    HostId = $HostInfo.device_id
-                    Command = 'runscript'
-                    Argument = '-Raw=```' + $Scripts.($HostInfo.platform_name) + '``` -CommandLine="' +
-                        ($PSBoundParameters.Tags -join ',') + '"'
-                }
-                if ($PSBoundParameters.QueueOffline) {
-                    $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
-                }
-                Invoke-FalconRtr @InvokeParam | ForEach-Object {
-                    if ($PSBoundParameters.QueueOffline) {
-                        # Output queued command result
-                        $_
-                    } else {
-                        # Output device properties and 'tags' value
-                        [PSCustomObject]@{
-                            cid = $HostInfo.cid
-                            device_id = $HostInfo.device_id
-                            tags = if ($_.stdout) { ($_.stdout).Trim() } else { $_.stderr }
-                        }
-                    }
-                }
-            } else {
+    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    end {
+        if ($IdArray) {
+            try {
+                # Get device info to determine script and begin session
                 $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
                 foreach ($Platform in ($HostInfo.platform_name | Group-Object).Name) {
-                    # Start session for each 'platform' type
-                    $InvokeParam = @{
+                    # Start sessions for each 'platform' type
+                    $Param = @{
                         Command = 'runscript'
                         Argument =  '-Raw=```' + $Scripts.$Platform + '``` -CommandLine="' +
                             ($PSBoundParameters.Tags -join ',') + '"'
                         HostId = ($HostInfo | Where-Object { $_.platform_name -eq $Platform }).device_id
                     }
                     if ($PSBoundParameters.QueueOffline) {
-                        $InvokeParam['QueueOffline'] = $PSBoundParameters.QueueOffline
+                        $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
                     }
-                    Invoke-FalconRtr @InvokeParam | Select-Object aid,stdout,stderr,errors |
-                    ForEach-Object {
+                    Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
                         # Output device properties and 'tags' value
                         [PSCustomObject]@{
                             cid = ($HostInfo | Where-Object device_id -eq $_.aid).cid
@@ -339,9 +258,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -354,21 +273,21 @@ Requires 'devices:read','sensor-update-policies:write',and 'real-time-response-a
 
 This command uses information from the registry of the target host to uninstall the Falcon sensor. If the sensor
 is damaged or malfunctioning,Real-time Response may not work properly and/or the uninstallation may not succeed.
-.PARAMETER HostId
-Host identifier
 .PARAMETER QueueOffline
 Add command request to the offline queue
+.PARAMETER Id
+Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory,ValueFromPipeline,Position=1)]
+        [Parameter(Position=1)]
+        [boolean]$QueueOffline,
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('device_id')]
-        [string]$Id,
-        [Parameter(Position=2)]
-        [boolean]$QueueOffline
+        [Alias('HostId','device_id','host_ids','aid')]
+        [string]$Id
     )
     begin {
         $Scripts = @{
@@ -397,41 +316,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             if ($HostInfo.platform_name -eq 'Mac') {
                 throw 'Only Windows and Linux hosts are currently supported in PSFalcon.'
             }
+            $Param = @{
+                Command = 'runscript'
+                Argument = '-Raw=```' + $Scripts.($HostInfo.platform_name) + '```'
+            }
+            if ($PSBoundParameters.QueueOffline) {
+                $Param['QueueOffline'] = $PSBoundParameters.QueueOffline
+            }
             $IdValue = switch ($HostInfo.device_policies.sensor_update.uninstall_protection) {
                 'ENABLED'          { $HostInfo.device_id }
                 'MAINTENANCE_MODE' { 'MAINTENANCE' }
             }
-            $Token = if ($IdValue) {
-                (Get-FalconUninstallToken -DeviceId $IdValue -AuditMessage (
+            if ($IdValue) {
+                $Token = (Get-FalconUninstallToken -DeviceId $IdValue -AuditMessage (
                     "Uninstall-FalconSensor [$((Show-FalconModule).UserAgent)]")).uninstall_token
+                if ($Token) { $Param.Argument += " -CommandLine='$Token'" }
             }
-            $InitParam = @{
-                HostId = $HostInfo.device_id
-                QueueOffline = if ($PSBoundParameters.QueueOffline -eq $true) { $true } else { $false }
-            }
-            $Init = Start-FalconSession @InitParam
-            if ($Init.session_id) {
-                $CmdParam = @{
-                    SessionId = $Init.session_id
-                    Command = 'runscript'
-                    Argument = '-Raw=```' + $Scripts.($HostInfo.platform_name) + '```'
-                }
-                if ($Token) { $CmdParam.Argument += " -CommandLine='$Token'" }
-                $Request = Invoke-FalconAdminCommand @CmdParam
-                if ($Init.offline_queued -eq $false -and $Request.cloud_request_id) {
-                    do {
-                        Start-Sleep -Seconds 5
-                        $Confirm = Confirm-FalconAdminCommand -CloudRequestId $Request.cloud_request_id
-                    } until (
-                        $Confirm.complete -ne $false -or $Confirm.stdout -or $Confirm.stderr
-                    )
-                    @($HostInfo | Select-Object cid,device_id).foreach{
-                        $Status = if ($Confirm.stdout) { ($Confirm.stdout).Trim() } else { $Confirm.stderr }
-                        Add-Property $_ 'status' $Status
-                        $_
-                    }
-                } else {
-                    $Request
+            $Request = $HostInfo | Invoke-FalconRtr @Param
+            if ($Request) {
+                @($HostInfo | Select-Object cid,device_id).foreach{
+                    $Status = if ($Request.stdout) { ($Request.stdout).Trim() } else { $Request.stderr }
+                    Add-Property $_ 'status' $Status
+                    $_
                 }
             }
         } catch {
