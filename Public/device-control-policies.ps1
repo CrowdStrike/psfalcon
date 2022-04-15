@@ -6,20 +6,20 @@ Modify Falcon Device Control policies
 Requires 'Device Control Policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
+.PARAMETER Id
+Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
 Policy description
 .PARAMETER Setting
 Policy settings
-.PARAMETER Id
-Policy identifier
 .LINK
 
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -33,21 +33,17 @@ Policy identifier
             }
         })]
         [Alias('resources')]
-        [array]$Array,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [Alias('settings')]
-        [System.Object]$Setting,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=4)]
+        [object[]]$Array,
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id
+        [string]$Id,
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=2)]
+        [string]$Name,
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=3)]
+        [string]$Description,
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=4)]
+        [Alias('settings')]
+        [System.Object]$Setting
     )
     begin {
         $Param = @{
@@ -60,8 +56,36 @@ Policy identifier
                 }
             }
         }
+        [System.Collections.ArrayList]$PolicyArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($Array) {
+            @($Array).foreach{
+                $i = $_
+                if ($i.settings.classes.exceptions) {
+                    @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
+                        # Remove exception 'id' values from 'settings' object
+                        $_.PSObject.Properties.Remove('id')
+                    }
+                }
+                # Select allowed fields, when populated
+                [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
+                    if ($i.$_) { $_ }
+                }
+                [void]$PolicyArray.Add(($i | Select-Object $Select))
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($PolicyArray) {
+            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
 }
 function Get-FalconDeviceControlPolicy {
 <#
@@ -326,7 +350,8 @@ Hashtable of policy settings
     }
     process {
         if ($Array) {
-            foreach ($i in $Array) {
+            @($Array).foreach{
+                $i = $_
                 if ($i.settings.classes.exceptions) {
                     @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
                         # Remove exception 'id' values from 'settings' object
@@ -338,12 +363,6 @@ Hashtable of policy settings
                 [void]$PolicyArray.Add(($i | Select-Object $Select))
             }
         } else {
-            if ($PSBoundParameters.Setting.classes.exceptions) {
-                @($PSBoundParameters.Setting.classes.exceptions).Where({ $_.id }).foreach{
-                    # Remove exception 'id' values from 'settings' object
-                    $_.PSObject.Properties.Remove('id')
-                }
-            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
