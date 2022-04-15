@@ -506,37 +506,34 @@ Script description
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Path
-Path to local file
+Path to local file or string-based script content
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post')]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=1)]
         [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
         [string[]]$Platform,
-        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidateSet('private','group','public',IgnoreCase=$false)]
         [Alias('permission_type')]
         [string]$PermissionType,
-        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
+            Position=3)]
         [string]$Name,
-        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Position=4)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
+            Position=4)]
         [string]$Description,
-        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Position=5)]
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
+            Position=5)]
         [ValidateLength(1,4096)]
         [Alias('comments_for_audit_log')]
         [string]$Comment,
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=6)]
-        [ValidateScript({
-            if (Test-Path -Path $_ -PathType Leaf) {
-                $true
-            } else {
-                throw "Cannot find path '$_' because it does not exist or is a directory."
-            }
-        })]
         [Alias('content','FullName')]
         [string]$Path
     )
