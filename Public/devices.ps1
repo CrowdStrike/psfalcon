@@ -70,7 +70,7 @@ Restrict search to 'hidden' hosts
 Retrieve user login history
 .PARAMETER Network
 Retrieve network address history
-.PARAMETER Network
+.PARAMETER State
 Retrieve online status
 .PARAMETER Detailed
 Retrieve detailed information
