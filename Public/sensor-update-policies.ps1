@@ -6,20 +6,20 @@ Modify Sensor Update policies
 Requires 'Sensor Update Policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
+.PARAMETER Id
+Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
 Policy description
 .PARAMETER Setting
 Policy settings
-.PARAMETER Id
-Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -33,21 +33,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
             }
         })]
         [Alias('resources')]
-        [array]$Array,
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('settings')]
-        [System.Object]$Setting,
-        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=4)]
+        [object[]]$Array,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id
+        [string]$Id,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=2)]
+        [string]$Name,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=3)]
+        [string]$Description,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=4)]
+        [Alias('settings')]
+        [System.Object]$Setting
     )
     begin {
         $Param = @{
@@ -60,8 +56,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
                 }
             }
         }
+        [System.Collections.ArrayList]$PolicyArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($Array) {
+            @($Array).foreach{
+                # Select allowed fields, when populated
+                $i = $_
+                [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
+                    if ($i.$_) { $_ }
+                }
+                [void]$PolicyArray.Add(($i | Select-Object $Select))
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($PolicyArray) {
+            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
 }
 function Get-FalconBuild {
 <#
@@ -451,8 +469,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
     }
     process {
         if ($Array) {
-            foreach ($i in $Array) {
+            @($Array).foreach{
                 # Select allowed fields, when populated
+                $i = $_
                 [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
                 [void]$PolicyArray.Add(($i | Select-Object $Select))
             }
