@@ -529,6 +529,10 @@
       '-Detailed' output will no longer be forced when using '-Include group_names', and instead will include
       'device_id' and 'groups'. Using '-Detailed' and '-Include group_names' maintains full output.
 
+      Added 'online_state' to '-Include' to retrieve detail from new 'online status' API.
+
+      Added '-State' switch to be used with '-Id' to retrieve detail from the new 'online status' API.
+
     * 'Get-FalconVulnerability'
       Added 'evaluation_logic' to the 'Facet' parameter.
 
