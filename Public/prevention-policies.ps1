@@ -6,20 +6,20 @@ Modify Prevention policies
 Requires 'Prevention Policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
+.PARAMETER Id
+Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
 Policy description
 .PARAMETER Setting
 Policy settings
-.PARAMETER Id
-Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:patch')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -34,20 +34,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         })]
         [Alias('resources')]
         [object[]]$Array,
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('settings','prevention_settings')]
-        [object[]]$Setting,
-        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [string]$Id
+        [string]$Id,
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=2)]
+        [string]$Name,
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=3)]
+        [string]$Description,
+        [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=4)]
+        [Alias('settings','prevention_settings')]
+        [object[]]$Setting
     )
     begin {
         $Param = @{
@@ -60,13 +56,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 }
             }
         }
+        [System.Collections.ArrayList]$PolicyArray = @()
     }
     process {
-        if ($PSBoundParameters.Setting.settings) {
-            # Select required values from 'settings' object
-            $PSBoundParameters.Setting = $PSBoundParameters.Setting.settings | Select-Object id,value
+        if ($Array) {
+            @($Array).foreach{
+                $i = $_
+                if ($i.prevention_settings.settings) {
+                    # Migrate 'prevention_settings' to 'settings' containing required values
+                    Add-Property $i settings ($i.prevention_settings.settings | Select-Object id,value)
+                    $i.PSObject.Properties.Remove('prevention_settings')
+                }
+                # Select allowed fields, when populated
+                [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
+                    if ($i.$_) { $_ }
+                }
+                [void]$PolicyArray.Add(($i | Select-Object $Select))
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+    end {
+        if ($PolicyArray) {
+            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
     }
 }
 function Get-FalconPreventionPolicy {
@@ -336,21 +353,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     }
     process {
         if ($Array) {
-            foreach ($i in $Array) {
+            @($Array).foreach{
+                $i = $_
                 if ($i.prevention_settings.settings) {
                     # Migrate 'prevention_settings' to 'settings' containing required values
-                    Add-Property $i settings ($i.prevention_settings.settings | Select-Object id,value)
+                    Add-Property $i settings @(($i.prevention_settings.settings | Select-Object id,value))
                     $i.PSObject.Properties.Remove('prevention_settings')
                 }
                 # Select allowed fields, when populated
-                [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
+                [string[]]$Select = @('name','description','platform_name','settings').foreach{
+                    if ($i.$_) { $_ }
+                }
                 [void]$PolicyArray.Add(($i | Select-Object $Select))
             }
         } else {
-            if ($PSBoundParameters.Setting.settings) {
-                # Select required values from 'settings' sub-object
-                $PSBoundParameters.Setting = $PSBoundParameters.Setting.settings | Select-Object id,value
-            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
