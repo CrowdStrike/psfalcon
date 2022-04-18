@@ -272,18 +272,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     # Set 'groups' to 'all' for global exclusion
                     [string[]]$i.groups = 'all'
                 }
-                if ($i.groups.id) {
-                    # Filter 'groups' to 'id' values
-                    [string[]]$i.groups = $i.groups.id
-                }
-                if ($i.rule_group.id) {
-                    # Filter 'rule_group' to 'id' values
-                    [string[]]$i.rule_group = $i.rule_group.id
-                }
-                if ($i.ioa_rule_groups.id) {
-                    # Filter 'ioa_rule_groups' to 'id' values
-                    [string[]]$i.ioa_rule_groups = $i.ioa_rule_groups.id
-                }
+                # Filter 'groups' to 'id' values
+                if ($i.groups.id) { [string[]]$i.groups = $i.groups.id }
+                # Filter 'rule_group' to 'id' values
+                if ($i.rule_group.id) { [string[]]$i.rule_group = $i.rule_group.id }
+                # Filter 'ioa_rule_groups' to 'id' values
+                if ($i.ioa_rule_groups.id) { [string[]]$i.ioa_rule_groups = $i.ioa_rule_groups.id }
             }
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(Ids|Excluded)$' })) {
@@ -439,7 +433,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     if ($Script) { $i | Select-Object name,platform }
                 }
             } else {
-                # Create policies and exclusions
+                # Create exclusions, IOCs and policies
                 $Pair.Value.Import | & "New-Falcon$($Pair.Key)"
             }
             foreach ($i in $Pair.Value.Created) {
@@ -471,10 +465,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     $_.platform_name -eq $Policy.platform_name }
                 $Clone.id = $Policy.id
                 if ($Pair.Key -eq 'FirewallPolicy') {
-                    if ($Clone.settings.policy_id) {
-                        # Add new policy 'id' to FirewallPolicy settings
-                        $Clone.settings.policy_id = $Policy.id
-                    }
+                    # Add new policy 'id' to FirewallPolicy settings
+                    if ($Clone.settings.policy_id) { $Clone.settings.policy_id = $Policy.id }
                     foreach ($OldId in $Config.Ids.FirewallGroup.old_id) {
                         # Update 'rule_group_ids' with new 'id' values
                         $NewId = ($Config.Ids.FirewallGroup | Where-Object { $_.old_id -eq $OldId }).new_id
@@ -559,7 +551,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 }
             }
         }
-        $Config
-        #if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
+        if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
 }
