@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/scanner/entities/scans/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -110,7 +110,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/scanner/entities/scans/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{64}$')]
-        [Alias('samples','ids')]
+        [Alias('samples','Ids')]
         [string[]]$Id
     )
     begin {

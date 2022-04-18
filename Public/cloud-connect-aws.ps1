@@ -14,7 +14,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -131,7 +131,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',Position=1)]
         [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Position=1)]
@@ -280,7 +280,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

@@ -14,7 +14,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
         [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string]$Id
     )
     begin {
@@ -62,7 +62,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
         [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{64}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -245,7 +245,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^(\w{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string]$Id,
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get')]
         [switch]$Force

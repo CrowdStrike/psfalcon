@@ -39,7 +39,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^ldt:\w{32}:\d+$')]
-        [Alias('ids','detection_id','detection_ids')]
+        [Alias('Ids','detection_id','detection_ids')]
         [string[]]$Id
     )
     begin {
@@ -91,7 +91,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^ldt:\w{32}:\d+$')]
-        [Alias('ids','detection_id','detection_ids')]
+        [Alias('Ids','detection_id','detection_ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]

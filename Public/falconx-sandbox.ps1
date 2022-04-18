@@ -32,7 +32,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/falconx/entities/report-summaries/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/falconx/queries/reports/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -105,7 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/falconx/queries/submissions/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -340,7 +340,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
     param(
         [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string]$Id
     )
     begin {

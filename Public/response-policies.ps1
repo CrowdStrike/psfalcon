@@ -115,7 +115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [Parameter(ParameterSetName='/policy/entities/response/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/response/v1:get',Position=1)]
         [Parameter(ParameterSetName='/policy/queries/response/v1:get',Position=1)]
@@ -386,7 +386,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [Parameter(ParameterSetName='/policy/entities/response/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -429,7 +429,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/response-precedence/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

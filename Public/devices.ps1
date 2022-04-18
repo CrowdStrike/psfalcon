@@ -26,7 +26,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('device_ids','device_id','ids')]
+        [Alias('device_ids','device_id','Ids')]
         [string[]]$Id
     )
     begin {
@@ -92,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids','device_id','host_ids','aid')]
+        [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=1)]
         [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=1)]
@@ -266,7 +266,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids','device_id')]
+        [Alias('Ids','device_id')]
         [string[]]$Id
     )
     begin {
@@ -333,7 +333,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('device_ids','device_id','ids')]
+        [Alias('device_ids','device_id','Ids')]
         [string[]]$Id
     )
     begin {

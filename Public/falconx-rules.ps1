@@ -40,7 +40,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
         [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\d{4,}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Mandatory,Position=1)]
         [ValidateSet('snort-suricata-master','snort-suricata-update','snort-suricata-changelog','yara-master',

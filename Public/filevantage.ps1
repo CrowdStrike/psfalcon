@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/FileVantage
         [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]

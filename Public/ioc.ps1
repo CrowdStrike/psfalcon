@@ -161,7 +161,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{64}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=1)]
         [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Position=1)]
@@ -388,7 +388,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:delete',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{64}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

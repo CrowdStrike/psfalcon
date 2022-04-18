@@ -163,7 +163,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=1)]
         [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=1)]
@@ -248,7 +248,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get',Position=1)]
         [ValidateRange(1,500)]
@@ -316,7 +316,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\d+$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -398,7 +398,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
-        [Alias('ids','pattern_severity')]
+        [Alias('Ids','pattern_severity')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get',Position=1)]
         [ValidateRange(1,500)]
@@ -460,7 +460,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\d{1,2}$')]
-        [Alias('ids','ruletype_id')]
+        [Alias('Ids','ruletype_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get',Position=1)]
         [ValidateRange(1,500)]
@@ -641,7 +641,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -687,7 +687,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\d+$')]
-        [Alias('ids','rule_ids','instance_id')]
+        [Alias('Ids','rule_ids','instance_id')]
         [string[]]$Id
     )
     begin {

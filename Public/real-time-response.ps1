@@ -180,7 +180,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/entities/sessions/GET/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -688,7 +688,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/entities/file/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{64}$')]
-        [Alias('ids','sha256')]
+        [Alias('Ids','sha256')]
         [string]$Id
     )
     begin {

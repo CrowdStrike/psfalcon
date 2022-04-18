@@ -20,7 +20,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [string]$UserId,
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [Alias('roleIds','ids')]
+        [Alias('roleIds','Ids')]
         [string[]]$Id
     )
     begin {
@@ -102,7 +102,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
     param(
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/user-roles/queries/user-role-ids-by-user-uuid/v1:get',Mandatory,
             ValueFromPipelineByPropertyName)]
@@ -176,7 +176,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Parameter(ParameterSetName='/users/entities/users/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids','uuid')]
+        [Alias('Ids','uuid')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/users/queries/user-uuids-by-cid/v1:get')]
         [Parameter(ParameterSetName='/users/queries/user-uuids-by-email/v1:get')]
@@ -279,7 +279,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [string]$UserId,
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:delete',Mandatory,ValueFromPipeline,
             Position=2)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -316,7 +316,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Parameter(ParameterSetName='/users/entities/users/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('user_uuid','uuid','ids')]
+        [Alias('user_uuid','uuid','Ids')]
         [string]$Id
     )
     begin {

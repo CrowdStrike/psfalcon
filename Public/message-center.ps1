@@ -136,7 +136,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activities/GET/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Mandatory,Position=1)]
         [Alias('case_id')]
@@ -214,7 +214,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
     param(
         [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]

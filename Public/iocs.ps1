@@ -80,7 +80,7 @@ Repeat requests until all available results are retrieved
     param(
         [Parameter(ParameterSetName='/processes/entities/processes/v1:get',ValueFromPipeline,Mandatory)]
         [ValidatePattern('^pid:\w{32}:\d+$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Mandatory,Position=1)]
         [ValidateSet('domain','ipv4','ipv6','md5','sha256',IgnoreCase=$false)]

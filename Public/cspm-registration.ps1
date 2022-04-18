@@ -183,7 +183,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=1)]
         [ValidatePattern('^o-[0-9a-z]{10,32}$')]
@@ -278,7 +278,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=1)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
@@ -718,7 +718,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/settings/entities/policy-details/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Mandatory)]
         [ValidatePattern('^\d+$')]
-        [Alias('ids','policy_id')]
+        [Alias('Ids','policy_id')]
         [int32[]]$Id,
         [Parameter(ParameterSetName='/settings/entities/policy/v1:get',Position=1)]
         [ValidatePattern('^\d+$')]
@@ -988,7 +988,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
 
         [Parameter(ParameterSetName='OrganizationIds',Mandatory)]
@@ -1035,7 +1035,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

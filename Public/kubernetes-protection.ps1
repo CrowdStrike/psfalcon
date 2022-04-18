@@ -18,7 +18,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -63,7 +63,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=2)]
         [ValidateSet('provisioned','operational',IgnoreCase=$false)]
@@ -165,7 +165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('account_ids','ids')]
+        [Alias('account_ids','Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=2)]
         [Alias('Locations')]
@@ -345,7 +345,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

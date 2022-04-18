@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
         [Parameter(ParameterSetName='/discover/entities/hosts/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w+$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]

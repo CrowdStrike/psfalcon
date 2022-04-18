@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
     param(
         [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [object[]]$Id
     )
     begin {
@@ -79,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
         [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Mandatory,Position=1)]
@@ -159,7 +159,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
     param(
         [Parameter(ParameterSetName='/spotlight/entities/evaluation-logic/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [Alias('ids','apps')]
+        [Alias('Ids','apps')]
         [object[]]$Id,
         [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Mandatory,Position=1)]

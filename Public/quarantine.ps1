@@ -30,7 +30,7 @@ Display total result count instead of results
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}_\w{64}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -117,7 +117,7 @@ Quarantined file identifier
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}_\w{64}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

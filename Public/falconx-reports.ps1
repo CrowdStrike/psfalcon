@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
     param(
         [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/reports/v1:get',Position=1)]
         [Parameter(ParameterSetName='/intel/combined/reports/v1:get',Position=1)]

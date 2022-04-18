@@ -252,7 +252,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/recon/queries/actions/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -339,7 +339,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/entities/notifications-detailed-translated/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{76}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/recon/queries/notifications/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -423,7 +423,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -699,7 +699,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/entities/notifications/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{76}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -734,7 +734,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

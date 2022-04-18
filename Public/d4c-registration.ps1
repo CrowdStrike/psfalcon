@@ -20,7 +20,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -61,7 +61,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\d{10,}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {

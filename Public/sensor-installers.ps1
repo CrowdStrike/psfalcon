@@ -43,7 +43,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
         [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{64}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/sensors/queries/installers/v1:get',Position=1)]
         [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Position=1)]

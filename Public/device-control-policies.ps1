@@ -117,7 +117,7 @@ Display total result count instead of results
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Position=1)]
         [Parameter(ParameterSetName='/policy/queries/device-control/v1:get',Position=1)]
@@ -391,7 +391,7 @@ Policy identifier
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
@@ -434,7 +434,7 @@ Policy identifiers in desired precedence order
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/device-control-precedence/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('ids')]
+        [Alias('Ids')]
         [string[]]$Id
     )
     begin {
