@@ -516,7 +516,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 # Issue command and capture result
                 $InvokeCmd = Get-RtrCommand $PSBoundParameters.Command
                 $Cmd = @{ Command = $PSBoundParameters.Command }
-                if ($PSBoundParameters.QueueOffline -eq $false) { $Cmd['Confirm'] = $true }
+                if ($PSBoundParameters.QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
                 @('Argument','Timeout').foreach{ if ($PSBoundParameters.$_) { $Cmd[$_] = $PSBoundParameters.$_ }}
                 $CmdReq = $InitReq | & $InvokeCmd @Cmd
                 foreach ($Result in @(Get-RtrResult $CmdReq $Output)) {
