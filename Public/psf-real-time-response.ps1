@@ -44,15 +44,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Filter = "(deleted_at:null+commands_queued:1),(created_at:>'last $Days days'+commands_queued:1)"
                 Detailed = $true
                 All = $true
-                Verbose = $true
             }
             $Sessions = Get-FalconSession @SessionParam | Select-Object id,device_id
             if (-not $Sessions) { throw "No queued Real-time Response sessions available." }
+            Write-Host "[Get-FalconQueue] Found $(($Sessions | Measure-Object).Count) queued sessions..."
             [array]$HostInfo = if ($PSBoundParameters.Include) {
                 # Capture host information for eventual output
                 $Sessions.device_id | Get-FalconHost | Select-Object @($PSBoundParameters.Include + 'device_id')
             }
-            foreach ($Session in ($Sessions.id | Get-FalconSession -Queue -Verbose)) {
+            foreach ($Session in ($Sessions.id | Get-FalconSession -Queue)) {
+                Write-Host "[Get-FalconQueue] Retrieved command detail for $($Session.id)..."
                 @($Session.Commands).foreach{
                     # Create output for each individual command in queued session
                     $Obj = [PSCustomObject]@{}
@@ -78,9 +79,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                     if ($Obj.command_status -eq 'FINISHED') {
                         # Update command properties with results
+                        Write-Host "[Get-FalconQueue] Retrieving command result for cloud_request_id '$(
+                            $Obj.cloud_request_id)'..."
                         $ConfirmCmd = Get-RtrCommand $Obj.base_command -ConfirmCommand
-                        @($Obj.cloud_request_id | & $ConfirmCmd -Verbose -EA 4 |
-                        Select-Object $Select.Command).foreach{
+                        @($Obj.cloud_request_id | & $ConfirmCmd -EA 4 | Select-Object $Select.Command).foreach{
                             @($_.PSObject.Properties).foreach{ Add-Property $Obj "command_$($_.Name)" $_.Value }
                         }
                     } else {
@@ -223,7 +225,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         }
         if ($HostArray) {
             try {
-                Write-Host "Checking cloud for existing file..."
+                Write-Host "[Invoke-FalconDeploy] Checking cloud for existing file..."
                 $CloudFile = @(Get-FalconPutFile -Filter "name:['$Filename']" -Detailed |
                 Select-Object $PutFields).foreach{
                     [PSCustomObject]@{
@@ -244,7 +246,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 }
                 if ($LocalFile -and $CloudFile) {
                     if ($LocalFile.sha256 -eq $CloudFile.sha256) {
-                        Write-Host "Matched hash values between local and cloud files..."
+                        Write-Host "[Invoke-FalconDeploy] Matched hash values between local and cloud files..."
                     } else {
                         Write-Host "[CloudFile]"
                         $CloudFile | Select-Object name,created_timestamp,modified_timestamp,sha256 |
@@ -256,11 +258,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             "'$Filename' exists in your 'Put' Files. Use existing version?",$null,
                             [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes","&No"),0)
                         if ($FileChoice -eq 0) {
-                            Write-Host "Proceeding with CloudFile: $($CloudFile.id)..."
+                            Write-Host "[Invoke-FalconDeploy] Proceeding with CloudFile: $($CloudFile.id)..."
                         } else {
                             $RemovePut = $CloudFile.id | Remove-FalconPutFile
                             if ($RemovePut.writes.resources_affected -eq 1) {
-                                Write-Host "Removed CloudFile: $($CloudFile.id)"
+                                Write-Host "[Invoke-FalconDeploy] Removed CloudFile: $($CloudFile.id)"
                             }
                         }
                     }
@@ -269,7 +271,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 throw $_
             }
             $AddPut = if ($RemovePut.writes.resources_affected -eq 1 -or !$CloudFile) {
-                Write-Host "Uploading $Filename..."
+                Write-Host "[Invoke-FalconDeploy] Uploading $Filename..."
                 $Param = @{
                     Path = $FilePath
                     Name = $Filename
@@ -294,7 +296,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                     if ($SessionHosts) {
                         # Change to a 'temp' directory for each device by platform
-                        Write-Host "Initiated session with $(($SessionHosts | Measure-Object).Count) host(s)..."
+                        Write-Host "[Invoke-FalconDeploy] Initiated session with $(
+                            ($SessionHosts | Measure-Object).Count) host(s)..."
                         foreach ($Pair in (@{
                             Windows = ($HostArray | Where-Object { $SessionHosts -contains $_.device_id -and
                                 $_.platform_name -eq 'Windows' }).device_id
@@ -324,8 +327,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             }
                             $PutHosts = if ($CdHosts) {
                                 # Invoke 'put' on successful hosts
-                                Write-Host ("Sending $Filename to $(($CdHosts | Measure-Object).Count)" +
-                                    " $($Pair.Key) host(s)...")
+                                Write-Host "[Invoke-FalconDeploy] Sending $Filename to $(($CdHosts |
+                                    Measure-Object).Count) $($Pair.Key) host(s)..."
                                 $Param = @{
                                     BatchId = $Session.batch_id
                                     Command = 'put'
@@ -345,8 +348,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             }
                             if ($PutHosts -and $Pair.Key -eq 'Linux') {
                                 # Modify 'put' file if running on Linux
-                                Write-Host ("Modifying $Filename on $(($PutHosts | Measure-Object).Count)" +
-                                    " $($Pair.Key) host(s)...")
+                                Write-Host "[Invoke-FalconDeploy] Modifying $Filename on $(($PutHosts |
+                                    Measure-Object).Count) $($Pair.Key) host(s)..."
                                 $ModParam = @{
                                     BatchId = $Session.batch_id
                                     Command = 'runscript'
@@ -363,8 +366,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             }
                             if ($PutHosts) {
                                 # Invoke 'run'
-                                Write-Host ("Starting $Filename on $(($PutHosts | Measure-Object).Count)" +
-                                    " $($Pair.Key) host(s)...")
+                                Write-Host "[Invoke-FalconDeploy] Starting $Filename on $(($PutHosts |
+                                    Measure-Object).Count) $($Pair.Key) host(s)..."
                                 $ArgString = if ($Pair.Key -eq 'Windows') {
                                     "$($TempDir)\$($Filename)"
                                 } else {
