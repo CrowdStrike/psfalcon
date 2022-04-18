@@ -37,17 +37,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     )
     begin {
         $Scripts = @{
-            Linux = 'IFS=,read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping ' +
-                'tags are not set//; s/^tags=//; s/.$//"),$1" && IFS=$"\n" uniq=($(printf "%s\n" ${tag[*]} | sor' +
-                't -u | xargs)) && uniq="$(echo ${uniq[*]} | tr " " ",")" && /opt/CrowdStrike/falconctl -d -f --' +
-                'tags && /opt/CrowdStrike/falconctl -s --tags="$uniq" && /opt/CrowdStrike/falconctl -g --tags | ' +
-                'sed "s/^Sensor grouping tags are not set//; s/^tags=//; s/.$//"'
-            Mac = 'IFS=,tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | se' +
-                'd "s/^No grouping tags set//; s/^Grouping tags: //")) tag+=($1) && uniq=$(echo "${tag[@]}" | tr' +
-                ' " " "\n" | sort -u | tr "\n" "," | sed "s/,$//") && /Applications/Falcon.app/Contents/Resource' +
-                's/falconctl grouping-tags clear &> /dev/null && /Applications/Falcon.app/Contents/Resources/fal' +
-                'conctl grouping-tags set "$uniq" &> /dev/null && /Applications/Falcon.app/Contents/Resources/fa' +
-                'lconctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
+            Linux = 'IFS=, read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping ta' +
+                'gs are not set//; s/^tags=//; s/.$//"),$1" && IFS=$"\n" uniq=($(printf "%s\n" ${tag[*]} | sort ' +
+                ' -u | xargs)) && uniq="$(echo ${uniq[*]} | tr " " ",")" && /opt/CrowdStrike/falconctl -d -f --t' +
+                'ags && /opt/CrowdStrike/falconctl -s --tags="$uniq" && /opt/CrowdStrike/falconctl -g --tags | s' +
+                'ed "s/^Sensor grouping tags are not set//; s/^tags=//; s/.$//"'
+            Mac = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s' +
+                '/^No grouping tags set//; s/^Grouping tags: //")) tag+=($1) && uniq=$(echo "${tag[@]}" | tr " "' +
+                ' "\n" | sort -u | tr "\n" "," | sed "s/,$//") && /Applications/Falcon.app/Contents/Resources/fa' +
+                'lconctl grouping-tags clear &> /dev/null && /Applications/Falcon.app/Contents/Resources/falconc' +
+                'tl grouping-tags set "$uniq" &> /dev/null && /Applications/Falcon.app/Contents/Resources/falcon' +
+                'ctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
             Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
                 '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags" | Where-Ob' +
                 'ject { $_ }; $V = if ($T) { (($T -split "REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Se' +
@@ -118,10 +118,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     )
     begin {
         $Scripts = @{
-            Linux = "/opt/CrowdStrike/falconctl -g --tags | sed 's/^Sensor grouping tags are not set.//; s/^tags" +
-                "=//; s/.$//'"
-            Mac = "/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed 's/^No grou" +
-                "ping tags set//; s/^Grouping tags: //'"
+            Linux = '/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are not set.//; s/^tags' +
+                '=//; s/.$//"'
+            Mac = '/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping' +
+                ' tags set//; s/^Grouping tags: //"'
             Windows = '$T = (reg query "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b' +
                 '88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($T) { "$(($T -' +
                 'split "REG_SZ")[-1].Trim())" }'
@@ -204,19 +204,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     )
     begin {
         $Scripts = @{
-            Linux = 'IFS=,&& read -ra del <<< "$1" && read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tag' +
-                's | sed "s/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//")"; if [[ ${tag[@]} ]]; the' +
-                'n /opt/CrowdStrike/falconctl -d -f --tags && for i in ${del[@]}; do tag=(${tag[@]/$i}); done &&' +
-                'IFS=$"\n" && val=($(printf "%s\n" ${tag[*]} | xargs)) && val="$(echo ${val[*]} | tr " " ",")" &' +
-                '& /opt/CrowdStrike/falconctl -s --tags="$val"; fi; /opt/CrowdStrike/falconctl -g --tags | sed "' +
-                's/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//"'
-            Mac = 'IFS=,tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | se' +
-                'd "s/^No grouping tags set//; s/^Grouping tags: //")) del=("${(@s/,/)1}") && for i in ${del[@]}' +
-                '; do tag=("${tag[@]/$i}"); done && tag=$(echo "${tag[@]}" | xargs | tr " " "," | sed "s/,$//") ' +
-                '&& /Applications/Falcon.app/Contents/Resources/falconctl grouping-tags clear &> /dev/null && /A' +
-                'pplications/Falcon.app/Contents/Resources/falconctl grouping-tags set "$tag" &> /dev/null && /A' +
-                'pplications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping tag' +
-                's set//; s/^Grouping tags: //"'
+            Linux = 'IFS=, && read -ra del <<< "$1" && read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tags ' +
+                '| sed "s/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//")"; if [[ ${tag[@]} ]]; then ' +
+                '/opt/CrowdStrike/falconctl -d -f --tags && for i in ${del[@]}; do tag=(${tag[@]/$i}); done && I' +
+                'FS=$"\n" && val=($(printf "%s\n" ${tag[*]} | xargs)) && val="$(echo ${val[*]} | tr " " ",")" &&' +
+                ' /opt/CrowdStrike/falconctl -s --tags="$val"; fi; /opt/CrowdStrike/falconctl -g --tags | sed "s' +
+                '/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//"'
+            Mac = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s' +
+                '/^No grouping tags set//; s/^Grouping tags: //")) del=("${(@s/,/)1}") && for i in ${del[@]}; do' +
+                ' tag=("${tag[@]/$i}"); done && tag=$(echo "${tag[@]}" | xargs | tr " " "," | sed "s/,$//") && /' +
+                'Applications/Falcon.app/Contents/Resources/falconctl grouping-tags clear &> /dev/null && /Appli' +
+                'cations/Falcon.app/Contents/Resources/falconctl grouping-tags set "$tag" &> /dev/null && /Appli' +
+                'cations/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping tags se' +
+                't//; s/^Grouping tags: //"'
             Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
                 '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags"; if ($T) {' +
                 ' $D = $args.Split(","); $V = ($T -split "REG_SZ")[-1].Trim().Split(",").Where({ $D -notcontains' +
@@ -291,22 +291,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     )
     begin {
         $Scripts = @{
-            Linux = 'manager=("$(if [[ $(command -v apt) ]]; then echo "apt-get purge falcon-sensor -y"; elif ' +
-                '[[ $(command -v yum) ]]; then echo "yum remove falcon-sensor -y"; elif [[ $(command -v zypper) ' +
-                ']]; then echo "zypper remove -y falcon-sensor"; fi)"); if [[ ${manager} ]]; then echo "Beginnin' +
-                'g removal of the Falcon sensor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or' +
-                ' zypper must be present to begin removal"; fi'
+            Linux = 'manager=("$(if [[ $(command -v apt) ]]; then echo "apt-get purge falcon-sensor -y"; elif [[' +
+                ' $(command -v yum) ]]; then echo "yum remove falcon-sensor -y"; elif [[ $(command -v zypper) ]]' +
+                '; then echo "zypper remove -y falcon-sensor"; fi)"); if [[ ${manager} ]]; then echo "Started Re' +
+                'moval of the Falcon sensor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or zyp' +
+                'per must be present to begin removal"; fi'
             Mac = $null
             Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
                 're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
                 'se { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $' +
                 'RegKey = Get-ChildItem $RegPath | Where-Object { $_.GetValue("DisplayName") -like "*CrowdStrike' +
                 ' Windows Sensor*" }; if ($RegKey) { $UninstallString = $RegKey.GetValue("QuietUninstallString")' +
-                '; $Arguments = @("/c",$UninstallString); if ($args) { $Arguments += "MAINTENANCE_TOKEN=$args" ' +
-                '}; $ArgumentList = $Arguments -join " "; Start-Process -FilePath cmd.exe -ArgumentList $Argumen' +
-                'tList -PassThru | Select-Object Id,ProcessName | ForEach-Object { Write-Output "[$($_.Id)]$($' +
-                '_.ProcessName) started removal of the Falcon sensor" }}} else { Write-Error "Unable to locate $' +
-                'RegPath" }'
+                '; $Arguments = @("/c",$UninstallString); if ($args) { $Arguments += "MAINTENANCE_TOKEN=$args" }' +
+                '; $ArgumentList = $Arguments -join " "; Start-Process -FilePath cmd.exe -ArgumentList $Argument' +
+                'List -PassThru | Select-Object Id,ProcessName | ForEach-Object { Write-Output "[$($_.Id)] $($_.' +
+                'ProcessName) started removal of the Falcon sensor" }}} else { Write-Error "Unable to locate $Re' +
+                'gPath" }'
         }
     }
     process {
@@ -335,7 +335,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             $Request = $HostInfo | Invoke-FalconRtr @Param
             if ($Request) {
                 @($HostInfo | Select-Object cid,device_id).foreach{
-                    $Status = if ($Request.stdout) { ($Request.stdout).Trim() } else { $Request.stderr }
+                    $Status = if ($Request.stdout) {
+                        ($Request.stdout).Trim()
+                    } elseif (!$Request.stdout -and $PSBoundParameters.QueueOffline -eq $true) {
+                        'Uninstall request queued'
+                    } else {
+                        $Request.stderr
+                    }
                     Add-Property $_ 'status' $Status
                     $_
                 }
