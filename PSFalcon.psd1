@@ -520,6 +520,11 @@
     * 'Find-FalconDuplicate'
       Updated to accommodate multiple 'Filter' values.
 
+    * 'Get-FalconFirewallPolicy'
+      Re-added the 'policy_id' in the 'settings' sub-object that is created when using '-Include settings'. This
+      was originally removed for being redundant, but needed to be restored to be utilized by the 
+      'Copy-FalconFirewallPolicy' command.
+
     * 'Get-FalconHorizonIoa', 'Get-FalconHorizonIoaEvent', 'Get-FalconHorizonIoaUser', 'Get-FalconHorizonIom'
       Removed 'Mandatory' status for '-CloudPlatform', instead populating it if 'AwsAccountId' (or 'AccountId',
       in the case of 'Get-FalconHorizonIom'), 'AzureSubscriptionId', or 'AzureTenantId' are provided. Without one
