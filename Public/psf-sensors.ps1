@@ -111,7 +111,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     param(
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
-        [Parameter(Mandatory,Position=2)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{32}$')]
         [Alias('ids','device_id','host_ids','aid')]
         [string[]]$Id
@@ -197,7 +197,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [string[]]$Tags,
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
-        [Parameter(Mandatory,Position=3)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^\w{32}$')]
         [Alias('ids','device_id','host_ids','aid')]
         [string[]]$Id
