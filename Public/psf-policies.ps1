@@ -58,61 +58,53 @@ Requires 'firewall-management:read','firewall-management:write'.
 
 The specified Falcon Firewall Management policy will be duplicated without assigned Host Groups. If a policy
 description is not supplied,the description from the existing policy will be used.
-.PARAMETER Id
-Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
 Policy description
+.PARAMETER Id
+Policy identifier
 .LINK
 
 #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
-        [string]$Id,
-        [Parameter(Mandatory,Position=2)]
+        [Parameter(Mandatory,Position=1)]
         [string]$Name,
-        [Parameter(Position=3)]
-        [string]$Description
+        [Parameter(Position=2)]
+        [string]$Description,
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [ValidatePattern('^\w{32}$')]
+        [string]$Id
     )
-    begin {
-        $Policy = Get-FalconFirewallPolicy -Id $Id -EA 0
-    }
     process {
-        if (!$Policy) { throw "Policy '$Id' not found." }
-        $Output = try {
-            $Param = @{
-                PlatformName = $Policy.platform_name
-                Name = $PSBoundParameters.Name
-                Description = if ($PSBoundParameters.Description) {
-                    $PSBoundParameters.Description
-                } else {
-                    $Policy.description
-                }
-            }
-            $Clone = New-FalconFirewallPolicy @Param
-            if ($Clone.id) {
-                Get-FalconFirewallSetting -Id $Policy.id | Edit-FalconFirewallSetting -PolicyId $Clone.id
-                if ($Policy.enabled -eq $true -and $Clone.enabled -eq $false) {
-                    Invoke-FalconFirewallPolicyAction -Name enable -Id $Clone.id
+        try {
+            $Policy = Get-FalconFirewallPolicy -Id $Id -Include settings
+            @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
+            if ($Policy) {
+                $Clone = $Policy | New-FalconFirewallPolicy
+                if ($Clone.id) {
+                    if ($Policy.settings) {
+                        $Policy.settings.policy_id = $Clone.id
+                        $Settings = $Policy.settings | Edit-FalconFirewallSetting
+                        if ($Settings) { $Settings = Get-FalconFirewallSetting -Id $Clone.id }
+                    }
+                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                        $Enable = $Clone.id | Invoke-FalconFirewallPolicyAction enable
+                        if ($Enable) {
+                            Add-Property $Enable settings $Settings
+                            $Enable
+                        } else {
+                            $Clone.enabled = $true
+                            Add-Property $Clone settings $Settings
+                            $Clone
+                        }
+                    }
                 }
             }
         } catch {
             throw $_
         }
-        <#
-        $Output = if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } else { $Output }
-        if ($Policy.settings -and !$Output.settings) {
-            Get-FalconFirewallPolicy -Id $Output.id -Include settings
-        } else {
-            $Output
-        }
-        #>
-    }
-    end {
-        $Output #if (($Output | Measure-Object).Count -gt 1) { $Output[-1] } elseif ($Output) { $Output }
     }
 }
 function Copy-FalconPreventionPolicy {
