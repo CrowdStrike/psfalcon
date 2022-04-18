@@ -546,6 +546,9 @@
 
       Added '-State' switch to be used with '-Id' to retrieve detail from the new 'online status' API.
 
+    * 'Get-FalconQueue'
+      Updated command to write progress to host stream instead of verbose stream.
+
     * 'Get-FalconVulnerability'
       Added 'evaluation_logic' to the 'Facet' parameter.
 
