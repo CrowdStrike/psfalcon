@@ -651,10 +651,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                     $AddParam = @{
                         Object = $Request | Where-Object { $_.id -eq $Item.policy_id }
                         Name = 'settings'
-                        Value = $Item | ForEach-Object {
-                            $_.PSObject.Properties.Remove('policy_id')
-                            $_
-                        }
+                        Value = $Item
                     }
                     Add-Property @AddParam
                 }
