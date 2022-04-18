@@ -682,10 +682,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
             Position=2)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('rule_group_id','rulegroup_id')]
+        [Alias('rule_group_id','rulegroup_id','ioa_rule_groups')]
         [string]$RuleGroupId,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidatePattern('^\d+$')]
         [Alias('Ids','rule_ids','instance_id')]
         [string[]]$Id
