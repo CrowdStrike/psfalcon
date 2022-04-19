@@ -531,13 +531,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Created })) {
             foreach ($i in $Pair.Value.Created) {
                 # Output created items to CSV
-                New-ResultObject $i $Pair.Key | Export-Csv $OutputFile -NoTypeInformation -Append
+                $Obj = New-ResultObject $i $Pair.Key
+                try { $Obj | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $Obj }
             }
         }
         foreach ($Pair in $Config.Excluded.GetEnumerator().Where({ $_.Value })) {
             foreach ($i in $Pair.Value) {
                 # Output excluded items to CSV
-                New-ResultObject $i $Pair.Key | Export-Csv $OutputFile -NoTypeInformation -Append
+                $Obj = New-ResultObject $i $Pair.Key
+                try { $Obj | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $Obj }
             }
         }
         if ($Config.Values.Created) {
