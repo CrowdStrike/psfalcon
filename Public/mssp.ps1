@@ -899,7 +899,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('user_uuids','uuid','UserId')]
+        [Alias('user_uuids','uuid','UserIds')]
         [string[]]$UserId
     )
     begin {
