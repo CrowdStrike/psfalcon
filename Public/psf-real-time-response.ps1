@@ -100,7 +100,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             }
                         }
                     }
-                    $Obj | Export-Csv $OutputFile -NoTypeInformation -Append
+                    try { $Obj | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $Obj }
                 }
             }
         } catch {
@@ -193,7 +193,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     stdout = $null
                 }
             }
-            Get-RtrResult $Object $Output | Export-Csv $OutputFile -Append -NoTypeInformation
+            $Result = Get-RtrResult $Object $Output
+            try { $Result | Export-Csv $OutputFile -Append -NoTypeInformation } catch { $Result }
         }
         # Set output file and executable details
         $OutputFile = Join-Path (Get-Location).Path "FalconDeploy_$(Get-Date -Format FileDateTime).csv"
