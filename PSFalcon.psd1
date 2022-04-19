@@ -421,12 +421,12 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = @"
-    New Commands
+  New Commands
 
     * spotlight-vulnerabilities.ps1
       'Get-FalconVulnerabilityLogic'
 
-    General Changes
+  General Changes
 
     * Re-added basic help information to each command. This will increase module size, but will eliminate the
     need to 'Update-Help' to get descriptions for each command, its parameters and the required API permission(s).
@@ -499,16 +499,16 @@
       'Receive-FalconScheduledReport'
       'Receive-FalconInstaller'
 
-    Command Changes
+    * Updated commands ('Import-FalconConfig', 'Export-FalconReport', 'Get-FalconQueue', 'Invoke-FalconDeploy')
+      that output to CSV to send their results to 'Write-Output' when unable to write to CSV.
+
+  Command Changes
 
     * 'ConvertTo-FalconMlExclusion', 'ConvertTo-FalconIoaExclusion'
       Commands have been corrected to properly produce individual exclusions for each relevant behavior within a
       detection (rather than one exclusion with values from multiple behaviors).
 
-    * 'Edit-FalconFirewallSetting'
-      Renamed '-PolicyId' to '-Id'.
-
-    * 'Edit-FalconHorizonPolicy'
+    * 'Edit-FalconFirewallSetting', 'Edit-FalconHorizonPolicy'
       Renamed '-PolicyId' to '-Id'.
 
     * 'Export-FalconConfig'
@@ -589,7 +589,7 @@
       the pipeline the command will default to a multi-host (batch) session. Additionally, this command now appends
       'batch_id' to each host that was successfully initiated within a multi-host session.
 
-    Resolved Issues
+  Resolved Issues
     *
 "@
         }
