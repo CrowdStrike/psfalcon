@@ -30,7 +30,7 @@ Overwrite an existing file when present
         [ValidatePattern('\.csv$')]
         [string]$Path,
         [Parameter(Mandatory,ValueFromPipeline,Position=2)]
-        [System.Object]$Object
+        [object[]]$Object
     )
     begin {
         function Get-Array ($Array,$Output,$Name) {
@@ -93,45 +93,44 @@ Overwrite an existing file when present
                 }
             }
         }
-        $Output = [PSCustomObject]@{}
+        if ($Path) { $Path = $Script:Falcon.Api.Path($Path) }
+        $ObjArray = [System.Collections.ArrayList]@()
     }
-    process {
-        $OutPath = Test-OutFile $PSBoundParameters.Path
+    process { if ($Object) { @($Object).foreach{ [void]$ObjArray.Add($_) }}}
+    end {
+        $OutPath = Test-OutFile $Path
         if ($OutPath.Category -eq 'WriteError' -and !$Force) {
             Write-Error @OutPath
-        } else {
-            foreach ($Item in $PSBoundParameters.Object) {
-                if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+        } elseif ($ObjArray) {
+            @($ObjArray).foreach{
+                $i = [PSCustomObject]@{}
+                if ($_.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
                     # Add sorted properties to output
-                    Get-PSObject -Object $Item -Output $Output
+                    Get-PSObject $_ $i
                 } else {
                     # Add strings to output as 'id'
-                    $AddParam = @{
-                        Object = $Output
-                        Name = 'id'
-                        Value = $Item
+                    Add-Property $i id $_
+                }
+                if ($i -and $Path) {
+                    try {
+                        # Output to CSV
+                        $ExportParam = @{
+                            InputObject = $i
+                            Path = $Path
+                            NoTypeInformation = $true
+                            Append = $true
+                        }
+                        Export-Csv @ExportParam
+                    } catch {
+                        $i
                     }
-                    Add-Property @AddParam
+                } elseif ($i) {
+                    $i
                 }
-            }
-            if ($PSBoundParameters.Path) {
-                # Output to CSV
-                $ExportParam = @{
-                    InputObject = $Output
-                    Path = $Script:Falcon.Api.Path($PSBoundParameters.Path)
-                    NoTypeInformation = $true
-                    Append = $true
-                }
-                Export-Csv @ExportParam
-            } else {
-                # Output to console
-                $Output
             }
         }
-    }
-    end {
-        if ($ExportParam -and (Test-Path $ExportParam.Path)) {
-            Get-ChildItem $ExportParam.Path | Select-Object FullName,Length,LastWriteTime
+        if ($Path -and (Test-Path $Path) -and $ExportParam) {
+            Get-ChildItem $Path | Select-Object FullName,Length,LastWriteTime
         }
     }
 }
