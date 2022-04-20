@@ -13,7 +13,7 @@ Humio ingestion token
 .PARAMETER Enable
 Define events to send to the collector
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
     param(
@@ -69,7 +69,7 @@ output provided by a PSFalcon command.
 .PARAMETER Object
 PSFalcon command output
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
     [OutputType([void])]
@@ -122,7 +122,7 @@ function Show-FalconEventCollector {
 .SYNOPSIS
 Display existing Humio ingestion endpoint and token
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
     param()
@@ -142,7 +142,7 @@ function Unregister-FalconEventCollector {
 .SYNOPSIS
 Remove an existing Humio ingestion endpoint and token
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
     param()
