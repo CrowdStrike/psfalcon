@@ -243,15 +243,13 @@ Indicator to display on the Indicator map
         [Alias('Indicators')]
         [string[]]$Indicator
     )
-    begin {
-        $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
+    begin { $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')" }
+    process {
         $Inputs = ($PSBoundParameters.Indicators).foreach{
             $Type = Test-RegexValue $_
             $Value = if ($Type -match '^(domain|md5|sha256)$') { $_.ToLower() } else { $_ }
-            if ($Type) { "$($Type):'$Value'" }
+            if ($Type -and $Value) { "$($Type):'$Value'" }
         }
-    }
-    process {
         Start-Process "$($FalconUI)/intelligence/graph?indicators=$($Inputs -join ',')"
     }
 }
@@ -280,7 +278,7 @@ problems with the PSFalcon module.
                 UserAgent = "crowdstrike-psfalcon/$($ModuleData.ModuleVersion)"
             }
         } else {
-            throw "Unable to locate '$ManifestPath'"
+            throw "Unable to locate '$ManifestPath'."
         }
     }
 }
