@@ -15,7 +15,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch')]
     param(
@@ -110,7 +110,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get')]
     param(
@@ -190,7 +190,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get')]
     param(
@@ -244,7 +244,7 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post')]
     param(
@@ -303,7 +303,7 @@ Policy description
 .PARAMETER Settings
 Hashtable of policy settings
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post')]
     param(
@@ -384,7 +384,7 @@ Requires 'Device Control Policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete')]
     param(
@@ -424,7 +424,7 @@ Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post')]
     param(
