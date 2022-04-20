@@ -22,7 +22,7 @@ Response object to format
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
 #>
     [CmdletBinding()]
     param(
@@ -149,7 +149,7 @@ Message label
 .PARAMETER Object
 Response object to format
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
     param(
