@@ -14,7 +14,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
     [CmdletBinding()]
     param(
@@ -65,7 +65,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Firewall-Management
 #>
     [CmdletBinding()]
     param(
@@ -123,7 +123,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
     [CmdletBinding()]
     param(
@@ -174,7 +174,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Real-time-Response-Policy
 #>
     [CmdletBinding()]
     param(
@@ -225,7 +225,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Sensor-Update-Policy
 #>
     [CmdletBinding()]
     param(
