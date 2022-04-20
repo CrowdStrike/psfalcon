@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '3.0.0'
+    ModuleVersion        = '2.2.0'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -588,9 +588,6 @@
       Now uses '-Id' to define both single-host and multi-host sessions. When host identifier values are passed in
       the pipeline the command will default to a multi-host (batch) session. Additionally, this command now appends
       'batch_id' to each host that was successfully initiated within a multi-host session.
-
-  Resolved Issues
-    *
 "@
         }
     }
