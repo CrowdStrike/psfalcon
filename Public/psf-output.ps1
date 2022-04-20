@@ -231,7 +231,7 @@ Display indicators on the Falcon X Indicator Map
 .DESCRIPTION
 Your default web browser will be used to view the Indicator Map.
 
-Invalid indicator values are ignored.
+Show-FalconMap will accept domains, SHA256 hashes, IP addresses and URLs. Invalid indicator values are ignored.
 .PARAMETER Indicator
 Indicator to display on the Indicator map
 .LINK
@@ -247,25 +247,37 @@ Indicator to display on the Indicator map
         $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
         $IocArray = [System.Collections.ArrayList]@()
     }
-    process { if ($Indicator) { @($Indicator).foreach{ [void]$IocArray.Add($_) }}}
-    end {
-        if ($IocArray) {
-            [string[]]$Inputs = @($IocArray).foreach{
-                if ($_ -match '_') {
-                    if ($_ -match '^hash_sha256') {
-                        ($_ -split '_')[-1]
-                    } elseif ($_ -match '^(domain|url|ip_address)_') {
-
+    process {
+        if ($Indicator) {
+            @($Indicator).foreach{
+                if ($_ -match '^(domain|hash|ip_address|url)_') {
+                    # Split indicators from 'Get-FalconIndicator'
+                    [string]$String = switch -Regex ($_) {
+                        '^domain_' { $_ -replace '_',':' }
+                        '^hash_sha256' { @('hash',($_ -split '_')[-1]) -join ':' }
+                        '^ip_address_' { $_ -replace '_address_',':' }
+                        '^url_' {
+                            $Value = ([System.Uri]($_ -replace 'url_',$null)).Host
+                            $Type = Test-RegexValue $Value
+                            if ($Type -match 'ipv(4|6)') { $Type = 'ip' }
+                            if ($Type -and $Value) { @($Type,$Value) -join ':' }
+                        }
                     }
+                    if ($String) { [void]$IocArray.Add($String) }
                 } else {
                     $Type = Test-RegexValue $_
-                    if ($Type -eq 'ipv4') { $Type = 'ip' }
+                    if ($Type -match 'ipv(4|6)') { $Type = 'ip' }
                     $Value = if ($Type -match '^(domain|md5|sha256)$') { $_.ToLower() } else { $_ }
+                    if ($Type -and $Value) { [void]$IocArray.Add("$($Type):'$Value'") }
                 }
-                if ($Type -and $Value) { "$($Type):'$Value'" }
             }
-            if (!$Inputs) { throw "No valid indicators found."}
-            Start-Process "$($FalconUI)/intelligence/graph?indicators=$($Inputs -join ',')"
+        }
+    }
+    end {
+        if ($IocArray) {
+            [string[]]$IocInput = @($IocArray | Select-Object -Unique) -join ','
+            if (!$IocInput) { throw "No valid indicators found." }
+            Start-Process "$($FalconUI)/intelligence/graph?indicators=$($IocInput -join ',')"
         }
     }
 }
