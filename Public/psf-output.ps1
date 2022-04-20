@@ -6,13 +6,13 @@ Format a response object and output to console or CSV
 Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with
 each column having an appended 'prefix'--and then exported to the console or designated file path.
 
-For instance, if the object contains a property called 'device_policies',and that contains other objects called
-'prevention' and 'sensor_update',the result will contain properties labelled 'device_policies.prevention' and
+For instance, if the object contains a property called 'device_policies', and that contains other objects called
+'prevention' and 'sensor_update', the result will contain properties labelled 'device_policies.prevention' and
 'device_policies.sensor_update' with additional '.<field_name>' values for any sub-properties of those objects.
 
 When the result contains an array with similarly named properties, it will attempt to add each sub-property with
 an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example,
-@{ hosts = @( @{ device_id = 123; hostname = 'abc' },@{ device_id = 456; hostname = 'def' })} will be displayed
+@{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed
 under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
 becomes a column.
 .PARAMETER Path
@@ -239,18 +239,34 @@ Indicator to display on the Indicator map
 #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory,Position=1)]
+        [Parameter(Mandatory,ValueFromPipeline,Position=1)]
         [Alias('Indicators')]
         [string[]]$Indicator
     )
-    begin { $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')" }
-    process {
-        $Inputs = ($PSBoundParameters.Indicators).foreach{
-            $Type = Test-RegexValue $_
-            $Value = if ($Type -match '^(domain|md5|sha256)$') { $_.ToLower() } else { $_ }
-            if ($Type -and $Value) { "$($Type):'$Value'" }
+    begin {
+        $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
+        $IocArray = [System.Collections.ArrayList]@()
+    }
+    process { if ($Indicator) { @($Indicator).foreach{ [void]$IocArray.Add($_) }}}
+    end {
+        if ($IocArray) {
+            [string[]]$Inputs = @($IocArray).foreach{
+                if ($_ -match '_') {
+                    if ($_ -match '^hash_sha256') {
+                        ($_ -split '_')[-1]
+                    } elseif ($_ -match '^(domain|url|ip_address)_') {
+
+                    }
+                } else {
+                    $Type = Test-RegexValue $_
+                    if ($Type -eq 'ipv4') { $Type = 'ip' }
+                    $Value = if ($Type -match '^(domain|md5|sha256)$') { $_.ToLower() } else { $_ }
+                }
+                if ($Type -and $Value) { "$($Type):'$Value'" }
+            }
+            if (!$Inputs) { throw "No valid indicators found."}
+            Start-Process "$($FalconUI)/intelligence/graph?indicators=$($Inputs -join ',')"
         }
-        Start-Process "$($FalconUI)/intelligence/graph?indicators=$($Inputs -join ',')"
     }
 }
 function Show-FalconModule {
@@ -258,10 +274,8 @@ function Show-FalconModule {
 .SYNOPSIS
 Display information about your PSFalcon module
 .DESCRIPTION
-Outputs an object containing module,user and system version information that is helpful for diagnosing
-problems with the PSFalcon module.
-.LINK
-
+Outputs an object containing module, user and system version information that is helpful for diagnosing problems
+with the PSFalcon module.
 #>
     [CmdletBinding()]
     param()
