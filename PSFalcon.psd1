@@ -573,6 +573,9 @@
 
       Each of the commands now appends 'batch_id' to the output of commands issued within a batch session.
 
+    * 'Invoke-FalconCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconRtr'
+      Split the 'eventlog' command into 'eventlog backup', 'eventlog export', 'eventlog list', and 'eventlog view'.
+
     * 'New-FalconDeviceControlPolicy', 'New-FalconFirewallPolicy', 'New-FalconPreventionPolicy'
       Removed the '-CloneId' parameter from the following commands due to inconsistencies in created policies. The
       'Copy-Falcon...Policy' commands continue to be available for use instead.
