@@ -477,7 +477,7 @@ function Invoke-Falcon {
                         if ($null -ne $Result) {
                             if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
                                 # Output 'Detailed'
-                                & $Command -Ids $Result
+                                & $Command -Id $Result
                             } else {
                                 # Output result
                                 $Result
