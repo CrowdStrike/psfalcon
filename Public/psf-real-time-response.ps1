@@ -429,11 +429,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     param(
         [Parameter(ParameterSetName='HostId',Mandatory,Position=1)]
         [Parameter(ParameterSetName='GroupId',Mandatory,Position=1)]
-        [ValidateSet('cat','cd','clear','cp','csrutil','cswindiag','encrypt','env','eventlog','filehash',
-            'get','getsid','history','ifconfig','ipconfig','kill','ls','map','memdump','mkdir','mount',
-            'mv','netstat','ps','put','put-and-run','reg delete','reg load','reg query','reg set',
-            'reg unload','restart','rm','run','runscript','shutdown','umount','unmap','update history',
-            'update install','update list','users','xmemdump','zip',IgnoreCase=$false)]
+        [ValidateSet('cat','cd','clear','cp','csrutil','cswindiag','encrypt','env','eventlog backup',
+            'eventlog export','eventlog list','eventlog view','filehash','get','getsid','history','ifconfig',
+            'ipconfig','kill','ls','map','memdump','mkdir','mount','mv','netstat','ps','put','put-and-run',
+            'reg delete','reg load','reg query','reg set','reg unload','restart','rm','run','runscript',
+            'shutdown','umount','unmap','update history','update install','update list','users','xmemdump','zip',
+            IgnoreCase=$false)]
         [string]$Command,
         [Parameter(ParameterSetName='HostId',Position=2)]
         [Parameter(ParameterSetName='GroupId',Position=2)]
