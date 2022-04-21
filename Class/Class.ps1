@@ -58,7 +58,9 @@ class ApiClient {
                     $Message.Content = if ($Param.Body -is [string] -and $Param.Headers.ContentType) {
                         [System.Net.Http.StringContent]::New($Param.Body,[System.Text.Encoding]::UTF8,
                             $Param.Headers.ContentType)
-                        Write-Verbose "[ApiClient.Invoke] $($Param.Body)"
+                        if ($Param.Path -notmatch '/oauth2/token$') {
+                            Write-Verbose "[ApiClient.Invoke] $($Param.Body)"
+                        }
                     } else {
                         $Param.Body
                     }
