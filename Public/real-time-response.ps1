@@ -351,8 +351,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-command/v1:post',Mandatory,Position=1)]
-        [ValidateSet('cat','cd','clear','csrutil','env','eventlog','filehash','getsid','help','history',
-            'ifconfig','ipconfig','ls','mount','netstat','ps','reg query','users',IgnoreCase=$false)]
+        [ValidateSet('cat','cd','clear','csrutil','env','eventlog backup','eventlog export','eventlog list',
+            'eventlog view','filehash','getsid','help','history','ifconfig','ipconfig','ls','mount','netstat',
+            'ps','reg query','users',IgnoreCase=$false)]
         [Alias('base_command')]
         [string]$Command,
         [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post',Position=2)]
@@ -461,11 +462,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             Position=1)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
             Mandatory,Position=1)]
-        [ValidateSet('cat','cd','clear','cp','csrutil','encrypt','env','eventlog','filehash','get','getsid',
-            'help','history','ifconfig','ipconfig','kill','ls','map','memdump','mkdir','mount','mv',
-            'netstat','ps','reg delete','reg load','reg query','reg set','reg unload','restart','rm',
-            'runscript','shutdown','umount','unmap','update history','update install','update list',
-            'update install','users','xmemdump','zip',IgnoreCase=$false)]
+        [ValidateSet('cat','cd','clear','cp','csrutil','encrypt','env','eventlog backup','eventlog export',
+            'eventlog list','eventlog view','filehash','get','getsid','help','history','ifconfig','ipconfig',
+            'kill','ls','map','memdump','mkdir','mount','mv','netstat','ps','reg delete','reg load','reg query',
+            'reg set','reg unload','restart','rm','runscript','shutdown','umount','unmap','update history',
+            'update install','update list','update install','users','xmemdump','zip',IgnoreCase=$false)]
         [Alias('base_command')]
         [string]$Command,
         [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post',Position=2)]
