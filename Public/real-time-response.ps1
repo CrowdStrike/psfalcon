@@ -582,9 +582,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get')]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get',
-            ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('name')]
+        [Parameter(ParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get',Position=1)]
         [string]$Path,
         [Parameter(ParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
@@ -610,18 +608,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         }
     }
     process {
-        if ($PSBoundParameters.Path -match '^\\Device\\HarddiskVolume') {
+        if (!$PSBoundParameters.Path -and $PSBoundParameters.Sha256) {
             # When 'Path' is not specified, use 'sha256' from a 'Confirm-FalconGetFile' result
-            $PSBoundParameters.Path = Join-Path -Path (Get-Location).Path -ChildPath $PSBoundParameters.Sha256
+            $PSBoundParameters['Path'] = Join-Path (Get-Location).Path $PSBoundParameters.Sha256
         }
         $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path '7z'
         $OutPath = Test-OutFile $PSBoundParameters.Path
-        if ($OutPath -and !$Force) {
-            Write-Error @RecPath
-        } elseif ($PSBoundParameters.SessionId -and $PSBoundParameters.Sha256) {
-            if ($OutPath -and !$Force) {
-                Write-Error @RecPath
-            } else {
+        if ($OutPath.Category -eq 'ObjectNotFound') {
+            Write-Error @OutPath
+        } elseif ($PSBoundParameters.Path) {
+            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+                Write-Error @OutPath
+            } elseif ($PSBoundParameters.SessionId -and $PSBoundParameters.Sha256) {
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
