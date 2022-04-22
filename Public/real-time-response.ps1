@@ -57,7 +57,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-get-command/v1:get')]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/file/v1:get',Mandatory,
+        [Parameter(ParameterSetName='/real-time-response/entities/file/v2:get',Mandatory,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('session_id')]
@@ -80,7 +80,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     process {
         # Verify 'Endpoint' using SessionId/BatchGetCmdReqId
         $Endpoint = if ($PSBoundParameters.SessionId) {
-            '/real-time-response/entities/file/v1:get'
+            '/real-time-response/entities/file/v2:get'
         } else {
             '/real-time-response/combined/batch-get-command/v1:get'
         }
@@ -677,14 +677,14 @@ Real-time Response 'get' file identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete')]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/file/v1:delete',Mandatory,
+        [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('session_id')]
         [string]$SessionId,
-        [Parameter(ParameterSetName='/real-time-response/entities/file/v1:delete',Mandatory,
+        [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{64}$')]
         [Alias('Ids','sha256')]
