@@ -357,38 +357,75 @@ function Get-RtrCommand {
 }
 function Get-RtrResult {
     [CmdletBinding()]
-    param([System.Object]$Object,[System.Object]$Output)
+    param([object[]]$Object,[object[]]$Output)
     begin {
         # Real-time Response fields to capture from results
-        $RtrFields = @('aid','batch_id','complete','errors','offline_queued','session_id','stderr','stdout',
-            'task_id','batch_get_cmd_req_id')
+        $RtrFields = @('aid','batch_get_cmd_req_id','batch_id','cloud_request_id','complete','errors',
+            'name','offline_queued','queued_command_offline','session_id','sha256','stderr','stdout','task_id')
     }
     process {
-        # Update $Output with results from $Object
-        foreach ($Result in ($Object | Select-Object $RtrFields)) {
-            @($Result.PSObject.Properties | Where-Object { $_.Value }).foreach{
-                $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
-                    # Convert array result into string
-                    $_.Value -join ', '
-                } elseif ($_.Value.code -and $_.Value.message) {
-                    # Convert error code and message into string
-                    (($_.Value).foreach{ "$($_.code): $($_.message)" }) -join ', '
-                } else {
-                    $_.Value
+        [boolean]$ConfirmGet = if ($Object) {
+            # Check if 'Object' is a 'get' confirmation request by comparing against known fields
+            [string[]]$Compare = @('id','created_at','updated_at','deleted_at','name','sha256','size','session_id',
+                'cloud_request_id')
+            [Collections.Generic.SortedSet[string]]::CreateSetComparer().Equals(
+                $Object[0].PSObject.Properties.Name,$Compare)
+        }
+        if ($ConfirmGet -eq $true) {
+            foreach ($Item in $Output) {
+                # Append most recent 'get' file result using 'session_id'
+                $Value = $Object | Where-Object { $_.session_id -eq $Item.session_id } | Select-Object -Last 1
+                if ($Value) {
+                    @('cloud_request_id','name','sha256').foreach{
+                        if (!$Item.$_) { Add-Property $Item $_ $Value.$_ } else { $Item.$_ = $Value.$_ }
+                    }
                 }
-                # Rename 'task_id' to 'cloud_request_id', and output using 'aid' or 'session_id'
-                $Name = if ($_.Name -eq 'task_id') { 'cloud_request_id' } else { $_.Name }
-                if ($Result.aid) {
-                    @($Output | Where-Object { $Result.aid -eq $_.aid }).foreach{ $_.$Name = $Value }
-                } else {
-                    @($Output | Where-Object { $Result.session_id -eq $_.session_id }).foreach{ $_.$Name = $Value }
+            }
+        } elseif ($Object.batch_get_cmd_req_id) {
+            foreach ($Item in $Output) {
+                # Append most recent 'get' file result using 'aid' in a batch 'get' request
+                $Value = $Object | Where-Object { $_.aid -eq $Item.aid } | Select-Object -Last 1
+                if ($Value) {
+                    @('batch_get_cmd_req_id','cloud_request_id','name','session_id','sha256').foreach{
+                        if (!$Item.$_) { Add-Property $Item $_ $Value.$_ } else { $Item.$_ = $Value.$_ }
+                    }
+                }
+            }
+        } else {
+            foreach ($Result in ($Object | Select-Object $RtrFields)) {
+                # Update $Output with results from $Object
+                @($Result.PSObject.Properties | Where-Object { $_.Value }).foreach{
+                    $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
+                        # Convert array result into string
+                        $_.Value -join ', '
+                    } elseif ($_.Value.code -and $_.Value.message) {
+                        # Convert error code and message into string
+                        (($_.Value).foreach{ "$($_.code): $($_.message)" }) -join ', '
+                    } else {
+                        $_.Value
+                    }
+                    $Name = if ($_.Name -eq 'task_id') {
+                        # Rename 'task_id' to 'cloud_request_id'
+                        'cloud_request_id'
+                    } elseif ($_.Name -eq 'queued_command_offline') {
+                        # Rename 'queued_command_offline' to 'offline_queued'
+                        'offline_queued'
+                    } else {
+                        $_.Name
+                    }
+                    if ($Result.aid) {
+                        # Output using 'aid' or 'session_id'
+                        @($Output | Where-Object { $Result.aid -eq $_.aid }).foreach{ $_.$Name = $Value }
+                    } else {
+                        @($Output | Where-Object { $Result.session_id -eq $_.session_id }).foreach{
+                            $_.$Name = $Value
+                        }
+                    }
                 }
             }
         }
     }
-    end {
-        return $Output
-    }
+    end { return $Output }
 }
 function Invoke-Falcon {
     [CmdletBinding()]
