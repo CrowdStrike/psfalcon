@@ -167,33 +167,33 @@ function Confirm-Parameter {
         [System.Collections.Hashtable]$Format
     )
     begin {
-        function Get-ValidPattern ($Command,$Endpoint,$Parameter) {
+        function Get-ValidPattern ([string]$Command,[string]$Endpoint,[string]$Parameter) {
             # Return 'ValidPattern' from parameter of a given command
             (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
-                $_.Name -eq $Parameter }).Attributes.RegexPattern
+                $_.Name -eq $Parameter -or $_.Aliases -contains $Parameter }).Attributes.RegexPattern
         }
-        function Get-ValidValues ($Command,$Endpoint,$Parameter) {
+        function Get-ValidValues ([string]$Command,[string]$Endpoint,[string]$Parameter) {
             # Return 'ValidValues' from parameter of a given command
             (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
-                $_.Name -eq $Parameter }).Attributes.ValidValues
+                $_.Name -eq $Parameter -or $_.Aliases -contains $Parameter }).Attributes.ValidValues
         }
         # Create object string
-        $ObjectString = ConvertTo-Json -InputObject $Object -Depth 32 -Compress
+        $ObjectString = ConvertTo-Json $Object -Depth 32 -Compress
     }
     process {
         if ($Object -is [System.Collections.Hashtable]) {
-            ($Required).foreach{
+            @($Required).foreach{
                 # Verify object contains required fields
                 if ($Object.Keys -notcontains $_) { throw "Missing '$_'. $ObjectString" } else { $true }
             }
             if ($Allowed) {
-                ($Object.Keys).foreach{
+                @($Object.Keys).foreach{
                     # Error if field is not in allowed list
                     if ($Allowed -notcontains $_) { throw "Unexpected '$_'. $ObjectString" } else { $true }
                 }
             }
         } elseif ($Object -is [PSCustomObject]) {
-            ($Required).foreach{
+            @($Required).foreach{
                 # Verify object contains required fields
                 if ($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name -notcontains $_) {
                     throw "Missing '$_'. $ObjectString"
@@ -202,35 +202,33 @@ function Confirm-Parameter {
                 }
             }
             if ($Allowed) {
-                ($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name).foreach{
+                @($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name).foreach{
                     # Error if field is not in allowed list
                     if ($Allowed -notcontains $_) { throw "Unexpected '$_'. $ObjectString" } else { $true }
                 }
             }
         }
-        ($Content).foreach{
+        @($Content).foreach{
             # Match property name with parameter name
-            $Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
+            [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
             if ($Object.$_) {
                 # Verify that 'ValidValues' contains provided value
-                $ValidValues = Get-ValidValues -Command $Command -Endpoint $Endpoint -Parameter $Parameter
-                if ($Object.$_ -is [array]) {
+                [string[]]$ValidValues = Get-ValidValues $Command $Endpoint $Parameter
+                if ($Object.$_ -is [string[]]) {
                     foreach ($Item in $Object.$_) {
-                        if ($ValidValues -notcontains $Item) {
-                            "'$($Item)' is not a valid '$_' value. $ObjectString"
-                        }
+                        if ($ValidValues -notcontains $Item) { "'$Item' is not a valid '$_' value. $ObjectString" }
                     }
                 } elseif ($ValidValues -notcontains $Object.$_) {
                     throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
                 }
             }
         }
-        ($Pattern).foreach{
+        @($Pattern).foreach{
             # Match property name with parameter name
-            $Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
+            [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
             if ($Object.$_) {
                 # Verify provided value matches 'ValidPattern'
-                $ValidPattern = Get-ValidPattern -Command $Command -Endpoint $Endpoint -Parameter $Parameter
+                $ValidPattern = Get-ValidPattern $Command $Endpoint $Parameter
                 if ($Object.$_ -notmatch $ValidPattern) {
                     throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
                 }
