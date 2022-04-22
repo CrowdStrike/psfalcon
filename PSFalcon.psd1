@@ -504,6 +504,9 @@
 
   Command Changes
 
+    * 'Confirm-FalconGetFile', 'Remove-FalconGetFile'
+      Updated to use v2 API endpoint that includes upload progress.
+
     * 'ConvertTo-FalconMlExclusion', 'ConvertTo-FalconIoaExclusion'
       Commands have been corrected to properly produce individual exclusions for each relevant behavior within a
       detection (rather than one exclusion with values from multiple behaviors).
