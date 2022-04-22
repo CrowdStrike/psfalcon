@@ -418,6 +418,8 @@ Arguments to include with the command
 Length of time to wait for a result, in seconds
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
+.PARAMETER Include
+Include additional properties
 .PARAMETER GroupId
 Host group identifier
 .PARAMETER HostId
@@ -444,9 +446,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='GroupId',Position=3)]
         [ValidateRange(30,600)]
         [int32]$Timeout,
-        [Parameter(ParameterSetName='HostId')]
-        [Parameter(ParameterSetName='GroupId')]
+        [Parameter(ParameterSetName='HostId',Position=4)]
+        [Parameter(ParameterSetName='GroupId',Position=4)]
         [boolean]$QueueOffline,
+        [Parameter(ParameterSetName='HostId',Position=5)]
+        [Parameter(ParameterSetName='GroupId',Position=5)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname',
+            'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
+            'product_type_desc','serial_number','system_manufacturer','system_product_name','tags',
+            IgnoreCase=$false)]
+        [string[]]$Include,
         [Parameter(ParameterSetName='GroupId',Mandatory)]
         [ValidatePattern('^\w{32}$')]
         [string]$GroupId,
@@ -456,7 +465,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [string[]]$HostId
     )
     begin {
-        function Initialize-Output ($Array) {
+        function Initialize-Output ([string[]]$Array) {
             # Create initial array of output for each host
             @($Array).foreach{
                 [PSCustomObject]@{
@@ -496,14 +505,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     end {
         if ($IdArray) {
             $Output = Initialize-Output @($IdArray | Select-Object -Unique)
-            if ($PSBoundParameters.GroupId) {
-                # Append 'group_id' field to results
-                @($Output).foreach{ Add-Property $_ 'group_id' $PSBoundParameters.GroupId }
-            }
-            if ($PSBoundParameters.Command -eq 'get' -and $IdArray.Count -gt 1) {
-                # Append 'batch_get_cmd_req_id' field to results
-                @($Output).foreach{ Add-Property $_ 'batch_get_cmd_req_id' $null }
-            }
             $Init = @{}
             @('QueueOffline').foreach{ if ($PSBoundParameters.$_) { $Init[$_] = $PSBoundParameters.$_ }}
             # Start session and capture result
@@ -518,12 +519,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Get-RtrResult $InitReq $Output
             }
             if ($InitReq.batch_id -or $InitReq.session_id) {
+                if ($PSBoundParameters.Command -eq 'get' -and $IdArray.Count -gt 1) {
+                    # Append 'batch_get_cmd_req_id' field to output
+                    @($Output).foreach{ Add-Property $_ 'batch_get_cmd_req_id' $null }
+                }
+                if ($PSBoundParameters.GroupId) {
+                    # Append 'group_id' field to output
+                    @($Output).foreach{ Add-Property $_ 'group_id' $PSBoundParameters.GroupId }
+                }
+                if ($PSBoundParameters.Include) {
+                    foreach ($Item in (Get-FalconHost -Id $Output.aid | Select-Object @(
+                    $PSBoundParameters.Include + 'device_id'))) {
+                        # Append 'Include' fields to output
+                        foreach ($Property in @($Item.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
+                            $Output | Where-Object { $_.aid -eq $Item.device_id } | ForEach-Object {
+                                Add-Property $_ $Property.Name $Property.Value
+                            }
+                        }
+                    }
+                }
                 # Issue command and capture result
-                $InvokeCmd = Get-RtrCommand $PSBoundParameters.Command
                 $Cmd = @{ Command = $PSBoundParameters.Command }
-                if ($PSBoundParameters.QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
                 @('Argument','Timeout').foreach{ if ($PSBoundParameters.$_) { $Cmd[$_] = $PSBoundParameters.$_ }}
-                $CmdReq = $InitReq | & $InvokeCmd @Cmd
+                if ($PSBoundParameters.QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
+                $CmdReq = $InitReq | & "$(Get-RtrCommand $PSBoundParameters.Command)" @Cmd
                 foreach ($Result in @(Get-RtrResult $CmdReq $Output)) {
                     # Clear 'stdout' for batch 'get' requests
                     if ($Result.stdout -and $Result.batch_get_cmd_req_id) { $Result.stdout = $null }
