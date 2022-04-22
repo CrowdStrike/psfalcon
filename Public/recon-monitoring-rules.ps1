@@ -68,18 +68,18 @@ Modify a Falcon X Recon notification
 Requires 'Monitoring Rules (Falcon X Recon): Write'.
 .PARAMETER Array
 An array of notifications to modify in a single request
+.PARAMETER Id
+Notification identifier
 .PARAMETER Status
 Notification status
 .PARAMETER AssignedToUuid
 User identifier
-.PARAMETER Id
-Notification identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:patch')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -94,45 +94,42 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             }
         })]
         [Alias('resources')]
-        [array]$Array,
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [object[]]$Array,
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=1)]
+        [ValidatePattern('^\w{76}$')]
+        [string]$Id,
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=2)]
         [string]$Status,
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=3)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('assigned_to_uuid')]
-        [string]$AssignedToUuid,
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{76}$')]
-        [string]$Id
+        [string]$AssignedToUuid
     )
     begin {
-        if ($PSBoundParameters.Array) {
-            if (!$Script:Falcon.Hostname) { Request-FalconToken }
-            $Param = @{
-                Path = "$($Script:Falcon.Hostname)/recon/entities/notifications/v1"
-                Method = 'patch'
-                Headers = @{
-                    Accept = 'application/json'
-                    ContentType = 'application/json'
-                }
-            }
-            for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
-                # Edit notifications in batches of 500
-                $Group = $PSBoundParameters.Array[$i..($i + 499)]
-                $Param['Body'] = ConvertTo-Json -InputObject @($Group) -Depth 8
-                $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = '/recon/entities/notifications/v1'
+            Format = @{ Body = @{ root = @('assigned_to_uuid','id','status','raw_array') }}
+        }
+        [System.Collections.ArrayList]$NotifyArray = @()
+    }
+    process {
+        if ($Array) {
+            @($Array).foreach{
+                # Select allowed fields, when populated
+                [string[]]$Select = @('id','assigned_to_uuid','status').foreach{ if ($i.$_) { $_ }}
+                [void]$NotifyArray.Add(($_ | Select-Object $Select))
             }
         } else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Endpoint = $PSCmdlet.ParameterSetName
-                Format = @{ Body = @{ root = @('assigned_to_uuid','id','status') }}
-            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($NotifyArray) {
+            for ($i = 0; $i -lt $NotifyArray.Count; $i += 100) {
+                $PSBoundParameters['raw_array'] = @($NotifyArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
         }
     }
 }
@@ -144,6 +141,8 @@ Modify a Falcon X Recon monitoring rule
 Requires 'Monitoring Rules (Falcon X Recon): Write'.
 .PARAMETER Array
 An array of monitoring rules to modify in a single request
+.PARAMETER Id
+Monitoring rule identifier
 .PARAMETER Name
 Monitoring rule name
 .PARAMETER Filter
@@ -152,14 +151,12 @@ Monitoring rule filter
 Monitoring rule priority
 .PARAMETER Permission
 Permission level [public: 'All Intel users', private: 'Recon Admins']
-.PARAMETER Id
-Monitoring rule identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:patch')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -174,49 +171,48 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             }
         })]
         [Alias('resources')]
-        [array]$Array,
+        [object[]]$Array,
         [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=1)]
-        [string]$Name,
+        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [string]$Id,
         [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=2)]
+        [string]$Name,
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=3)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=3)]
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=4)]
         [ValidateSet('high','medium','low',IgnoreCase=$false)]
         [string]$Priority,
-        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=4)]
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=5)]
         [ValidateSet('private','public',IgnoreCase=$false)]
         [Alias('permissions')]
-        [string]$Permission,
-        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=5)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [string]$Id
+        [string]$Permission
     )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = '/recon/entities/rules/v1:patch'
+            Format = @{ Body = @{ root = @('permissions','priority','name','id','filter','raw_array') }}
+        }
+        [System.Collections.ArrayList]$RuleArray = @()
+    }
     process {
-        if ($PSBoundParameters.Array) {
-            if (!$Script:Falcon.Hostname) { Request-FalconToken }
-            $Param = @{
-                Path = "$($Script:Falcon.Hostname)/recon/entities/rules/v1"
-                Method = 'patch'
-                Headers = @{
-                    Accept = 'application/json'
-                    ContentType = 'application/json'
-                }
-            }
-            for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
-                # Edit rules in batches of 500
-                $Group = $PSBoundParameters.Array[$i..($i + 499)]
-                $Param['Body'] = ConvertTo-Json -InputObject @($Group) -Depth 8
-                $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request
+        if ($Array) {
+            @($Array).foreach{
+                # Select allowed fields, when populated
+                [string[]]$Select = @('permissions','priority','name','id','filter').foreach{ if ($i.$_) { $_ }}
+                [void]$RuleArray.Add(($_ | Select-Object $Select))
             }
         } else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Endpoint = $PSCmdlet.ParameterSetName
-                Format = @{ Body = @{ root = @('permissions','priority','name','id','filter') }}
-            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($RuleArray) {
+            for ($i = 0; $i -lt $RuleArray.Count; $i += 100) {
+                $PSBoundParameters['raw_array'] = @($RuleArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
         }
     }
 }
@@ -518,22 +514,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:post')]
     param(
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('rule_id')]
         [string]$RuleId,
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=2)]
         [ValidateSet('email',IgnoreCase=$false)]
         [string]$Type,
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,Position=3)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidateSet('asap','daily','weekly',IgnoreCase=$false)]
         [string]$Frequency,
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            Position=4)]
         [ValidateScript({
             if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
-        [Alias('recipients','uid')]
+        [Alias('Recipients','uid')]
         [string[]]$Recipient
     )
     begin {
@@ -547,14 +546,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
                 }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.ArrayList]$EmailArray = @()
     }
     process {
-        if ($Recipient) { @($Recipient).foreach{ [void]$IdArray.Add($_) }}
+        if ($Recipient) { @($Recipient).foreach{ [void]$EmailArray.Add($_) }}
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Recipient'] = @($IdArray | Select-Object -Unique)
+        if ($EmailArray) {
+            $PSBoundParameters['Recipient'] = @($EmailArray | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -582,7 +581,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:post')]
     param(
-        [Parameter(ParameterSetName='array',Mandatory)]
+        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -591,11 +590,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
                     Endpoint = '/recon/entities/rules/v1:post'
                     Required = @('name','topic','filter','priority','permissions')
                     Content = @('permissions','priority','topic')
+                    Format = @{}
                 }
                 Confirm-Parameter @Param
             }
         })]
-        [array]$Array,
+        [object[]]$Array,
         [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Mandatory,Position=1)]
         [string]$Name,
         [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Mandatory,Position=2)]
@@ -613,46 +613,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Alias('permissions')]
         [string]$Permission
     )
-    <#
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/recon/entities/rules/v1:post'
-            Format = @{
-                Body = @{
-                    resources = @('name','id','description','settings')
-                    root = @('resources')
-                }
-            }
+            Format = @{ Body = @{ root = @('permissions','priority','name','filter','topic','raw_array') }}
         }
+        [System.Collections.ArrayList]$RuleArray = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
-    #>
     process {
-        if ($PSBoundParameters.Array) {
-            if (!$Script:Falcon.Hostname) { Request-FalconToken }
-            $Param = @{
-                Path = "$($Script:Falcon.Hostname)/recon/entities/rules/v1"
-                Method = 'post'
-                Headers = @{
-                    Accept = 'application/json'
-                    ContentType = 'application/json'
-                }
-            }
-            for ($i = 0; $i -lt ($PSBoundParameters.Array | Measure-Object).Count; $i += 500) {
-                # Create rules in batches of 500
-                $Group = $PSBoundParameters.Array[$i..($i + 499)]
-                $Param['Body'] = ConvertTo-Json -InputObject @($Group) -Depth 8
-                $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request
+        if ($Array) {
+            @($Array).foreach{
+                # Select allowed fields, when populated
+                [string[]]$Select = @('permissions','priority','name','filter','topic').foreach{ if ($i.$_) { $_ }}
+                [void]$RuleArray.Add(($_ | Select-Object $Select))
             }
         } else {
-            $Param = @{
-                Command = $MyInvocation.MyCommand.Name
-                Endpoint = $PSCmdlet.ParameterSetName
-                Format = @{ Body = @{ root = @('permissions','priority','name','filter','topic') }}
-            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($RuleArray) {
+            for ($i = 0; $i -lt $RuleArray.Count; $i += 100) {
+                $PSBoundParameters['raw_array'] = @($RuleArray[$i..($i + 99)])
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
         }
     }
 }
