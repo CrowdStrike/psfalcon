@@ -142,8 +142,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding()]
-    [CmdletBinding(DefaultParameterSetName='HostIds')]
+    [CmdletBinding(DefaultParameterSetName='HostId')]
     param(
         [Parameter(ParameterSetName='HostId',Mandatory,Position=1)]
         [Parameter(ParameterSetName='GroupId',Mandatory,Position=1)]
