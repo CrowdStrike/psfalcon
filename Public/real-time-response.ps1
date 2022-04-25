@@ -293,12 +293,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     batch_get_cmd_req_id = $_.batch_get_cmd_req_id
                     hosts = $_.combined.resources.PSObject.Properties.Value
                 }
-                $Request.hosts.Where({ $_.errors }).foreach{
+                @($Request.hosts).Where({ $_.errors }).foreach{
                     # Write warning for hosts in batch that produced errors
                     Write-Warning "[Invoke-FalconBatchGet] $(
                         @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]"
                 }
-                $Request.hosts.Where({ $_.stderr }).foreach{
+                @($Request.hosts).Where({ $_.stderr }).foreach{
                     # Write warning for hosts in batch that produced 'stderr'
                     Write-Warning "[Invoke-FalconBatchGet] $($_.stderr) [aid: $($_.aid)]"
                 }
