@@ -3,11 +3,11 @@ function Get-FalconQueue {
 .SYNOPSIS
 Create a report of Real-time Response commands in the offline queue
 .DESCRIPTION
-Requires 'real-time-response:read','real-time-response:write' and 'real-time-response-admin:write'.
+Requires 'Real Time Response: Read', 'Real Time Response: Write' and 'Real Time Response (Admin): Write'.
 
-Creates a CSV of pending Real-time Response commands and their related session information. Sessions within
-the offline queue expire 7 days after creation by default. Sessions can have additional commands appended to
-them to extend their expiration time.
+Creates a CSV of pending Real-time Response commands and their related session information. By default, sessions
+within the offline queue expire 7 days after creation. Sessions can have additional commands appended to them to
+extend their expiration time.
 
 Additional host information can be appended to the results using the 'Include' parameter.
 .PARAMETER Days
@@ -115,16 +115,16 @@ function Invoke-FalconDeploy {
 .SYNOPSIS
 Deploy and run an executable using Real-time Response
 .DESCRIPTION
-Requires 'devices:read','real-time-response-admin:write'.
+Requires 'Hosts: Read', 'Real Time Response (Admin): Write'.
 
-'Put' files will be checked for identical file names,and if any are found,the Sha256 hash values will be
-compared between your local and cloud files. If they are different,a prompt will appear asking which file to use.
+'Put' files will be checked for identical file names, and if any are found, the Sha256 hash values will be
+compared between your local and cloud files. If they are different, a prompt will appear asking which file to use.
 
-If the file is not present in 'Put' files,it will be uploaded.
+If the file is not present in 'Put' files, it will be uploaded.
 
-Once uploaded,a Real-time Response session will be started for the designated Host,'cd' will be used to
-navigate to a temporary folder (\Windows\Temp or /tmp),then the file will be 'put' into that folder,and 'run'
-if successfully transferred. If the file already exists,it will not be executed.
+Once uploaded, a Real-time Response session will be started for the designated Host, 'cd' will be used to
+navigate to a temporary folder (\Windows\Temp or /tmp), then the file will be 'put' into that folder, and 'run'
+if successfully transferred. If the file already exists, it will not be executed.
 
 Details of each step will be output to a CSV file in the current directory.
 .PARAMETER Path
@@ -407,7 +407,7 @@ function Invoke-FalconRtr {
 .SYNOPSIS
 Start Real-time Response session,execute a command and output the result
 .DESCRIPTION
-Requires 'real-time-response:read','real-time-response:write' or 'real-time-response-admin:write'
+Requires 'Real Time Response: Read', 'Real Time Response: Write' or 'Real Time Response (Admin): Write'
 depending on 'Command' provided.
 .PARAMETER Command
 Real-time Response command
