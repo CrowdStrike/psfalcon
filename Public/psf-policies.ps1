@@ -3,7 +3,7 @@ function Copy-FalconDeviceControlPolicy {
 .SYNOPSIS
 Duplicate a Falcon Device Control policy
 .DESCRIPTION
-Requires 'device-control-policies:read','device-control-policies:write'.
+Requires 'Device Control Policies: Read', 'Device Control Policies: Write'.
 
 The specified Falcon Device Control policy will be duplicated without assigned Host Groups. If a policy
 description is not supplied, the description from the existing policy will be used.
@@ -54,7 +54,7 @@ function Copy-FalconFirewallPolicy {
 .SYNOPSIS
 Duplicate a Falcon Firewall Management policy
 .DESCRIPTION
-Requires 'firewall-management:read','firewall-management:write'.
+Requires 'Firewall Management: Read', 'Firewall Management: Write'.
 
 The specified Falcon Firewall Management policy will be duplicated without assigned Host Groups. If a policy
 description is not supplied,the description from the existing policy will be used.
@@ -112,7 +112,7 @@ function Copy-FalconPreventionPolicy {
 .SYNOPSIS
 Duplicate a Prevention policy
 .DESCRIPTION
-Requires 'prevention-policies:read','prevention-policies:write'.
+Requires 'Prevention Policies: Read', 'Prevention Policies: Write'.
 
 The specified Prevention policy will be duplicated without assigned Host Groups. If a policy description is not
 supplied,the description from the existing policy will be used.
@@ -163,7 +163,7 @@ function Copy-FalconResponsePolicy {
 .SYNOPSIS
 Duplicate a Real-time Response policy
 .DESCRIPTION
-Requires 'response-policies:read','response-policies:write'.
+Requires 'Response Policies: Read', 'Response Policies: Write'.
 
 The specified Real-time Response policy will be duplicated without assigned Host Groups. If a policy description
 is not supplied,the description from the existing policy will be used.
@@ -214,7 +214,7 @@ function Copy-FalconSensorUpdatePolicy {
 .SYNOPSIS
 Duplicate a Sensor Update policy
 .DESCRIPTION
-Requires 'sensor-update-policies:read','sensor-update-policies:write'.
+Requires 'Sensor Update Policies: Read', 'Sensor Update Policies: Write'.
 
 The specified Sensor Update policy will be duplicated without assigned Host Groups. If a policy description is
 not supplied,the description from the existing policy will be used.
