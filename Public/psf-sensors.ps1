@@ -3,7 +3,7 @@ function Add-FalconSensorTag {
 .SYNOPSIS
 Use Real-time Response to add FalconSensorTags to hosts
 .DESCRIPTION
-Requires 'real-time-response-admin:write'.
+Requires 'Real Time Response (Admin): Write'.
 
 Provided FalconSensorTag values will be appended to any existing tags.
 .PARAMETER Tags
@@ -99,7 +99,7 @@ function Get-FalconSensorTag {
 .SYNOPSIS
 Use Real-time Response to display FalconSensorTags assigned to hosts
 .DESCRIPTION
-Requires 'real-time-response-admin:write'.
+Requires 'Real Time Response (Admin): Write'.
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .PARAMETER Id
@@ -171,8 +171,9 @@ function Remove-FalconSensorTag {
 .SYNOPSIS
 Use Real-time Response to remove FalconSensorTags from hosts
 .DESCRIPTION
-Requires 'real-time-response-admin:write'.
- Provided FalconSensorTag values will be removed from existing tags and others will be left unmodified.
+Requires 'Real Time Response (Admin): Write'.
+
+Provided FalconSensorTag values will be removed from existing tags and others will be left unmodified.
 .PARAMETER Tags
 FalconSensorTag value
 .PARAMETER Id
@@ -269,10 +270,10 @@ function Uninstall-FalconSensor {
 .SYNOPSIS
 Use Real-time Response to uninstall the Falcon sensor from a host
 .DESCRIPTION
-Requires 'devices:read','sensor-update-policies:write',and 'real-time-response-admin:write'.
+Requires 'Hosts: Read', 'Sensor Update Policies: Write', and 'Real Time Response (Admin): Write'.
 
 This command uses information from the registry of the target host to uninstall the Falcon sensor. If the sensor
-is damaged or malfunctioning,Real-time Response may not work properly and/or the uninstallation may not succeed.
+is damaged or malfunctioning, Real-time Response may not work properly and/or the uninstallation may not succeed.
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .PARAMETER Id
