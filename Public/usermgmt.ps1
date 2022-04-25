@@ -16,11 +16,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
-        [Alias('user_uuid')]
+        [Alias('user_uuid','uuid')]
         [string]$UserId,
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [Alias('roleIds','Ids')]
+        [Alias('roleIds','Ids','roles')]
         [string[]]$Id
     )
     begin {
@@ -278,8 +278,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Alias('user_uuid','uuid')]
         [string]$UserId,
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:delete',Mandatory,ValueFromPipeline,
-            Position=2)]
-        [Alias('Ids')]
+            ValueFromPipelineByPropertyName,Position=2)]
+        [Alias('Ids','roles')]
         [string[]]$Id
     )
     begin {
