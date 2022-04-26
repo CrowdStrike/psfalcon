@@ -200,11 +200,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
                 if ($_.version -and $null -eq $_.version) { $_.version = 0 }
@@ -213,8 +213,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
                 if ($_.version -and $null -eq $_.version) { $_.version = 0 }
                 $_
@@ -268,18 +268,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -356,18 +356,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 Query = @('limit','sort','q','offset','filter')
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -418,18 +418,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -480,18 +480,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -650,12 +650,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','comment') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -696,12 +696,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','rule_group_id','comment') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

@@ -44,18 +44,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('recipients','id','status','frequency') }}
         }
-        [System.Collections.ArrayList] $EmailArray = @()
+        [System.Collections.Generic.List[string]] $List = @()
     }
     process {
         if ($Recipient) {
-            @($Recipient).foreach{ [void] $EmailArray.Add($_) }
+            @($Recipient).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($EmailArray) {
-            $PSBoundParameters['Recipient'] = @($EmailArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Recipient'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -111,23 +111,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = '/recon/entities/notifications/v1'
             Format = @{ Body = @{ root = @('assigned_to_uuid','id','status','raw_array') }}
         }
-        [System.Collections.ArrayList]$NotifyArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
             @($Array).foreach{
                 # Select allowed fields, when populated
                 [string[]]$Select = @('id','assigned_to_uuid','status').foreach{ if ($i.$_) { $_ }}
-                [void]$NotifyArray.Add(($_ | Select-Object $Select))
+                $List.Add(($_ | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($NotifyArray) {
-            for ($i = 0; $i -lt $NotifyArray.Count; $i += 100) {
-                $PSBoundParameters['raw_array'] = @($NotifyArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -194,23 +194,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = '/recon/entities/rules/v1:patch'
             Format = @{ Body = @{ root = @('permissions','priority','name','id','filter','raw_array') }}
         }
-        [System.Collections.ArrayList]$RuleArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
             @($Array).foreach{
                 # Select allowed fields, when populated
                 [string[]]$Select = @('permissions','priority','name','id','filter').foreach{ if ($i.$_) { $_ }}
-                [void]$RuleArray.Add(($_ | Select-Object $Select))
+                $List.Add(($_ | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($RuleArray) {
-            for ($i = 0; $i -lt $RuleArray.Count; $i += 100) {
-                $PSBoundParameters['raw_array'] = @($RuleArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -275,18 +275,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -371,18 +371,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -449,18 +449,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','q','sort','offset','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -546,14 +546,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
                 }
             }
         }
-        [System.Collections.ArrayList]$EmailArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Recipient) { @($Recipient).foreach{ [void]$EmailArray.Add($_) }}
+        if ($Recipient) { @($Recipient).foreach{ $List.Add($_) }}
     }
     end {
-        if ($EmailArray) {
-            $PSBoundParameters['Recipient'] = @($EmailArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Recipient'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -619,23 +619,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = '/recon/entities/rules/v1:post'
             Format = @{ Body = @{ root = @('permissions','priority','name','filter','topic','raw_array') }}
         }
-        [System.Collections.ArrayList]$RuleArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
             @($Array).foreach{
                 # Select allowed fields, when populated
                 [string[]]$Select = @('permissions','priority','name','filter','topic').foreach{ if ($i.$_) { $_ }}
-                [void]$RuleArray.Add(($_ | Select-Object $Select))
+                $List.Add(($_ | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($RuleArray) {
-            for ($i = 0; $i -lt $RuleArray.Count; $i += 100) {
-                $PSBoundParameters['raw_array'] = @($RuleArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -693,12 +693,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -728,12 +728,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

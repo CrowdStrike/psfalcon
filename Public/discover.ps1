@@ -88,11 +88,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
             Format = @{ Query = @('filter','sort','limit','offset','ids') }
             Max = 100
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         $Request = if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } elseif ($Detailed -and ($Login -or $Account)) {
             [void]$PSBoundParameters.Remove('Detailed')
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -106,8 +106,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Request -and $PSBoundParameters.Include) {

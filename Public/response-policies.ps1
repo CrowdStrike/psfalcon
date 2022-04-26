@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
                 }
             }
         }
-        [System.Collections.ArrayList]$PolicyArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
@@ -70,16 +70,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
                 [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
                     if ($i.$_) { $_ }
                 }
-                [void]$PolicyArray.Add(($i | Select-Object $Select))
+                $List.Add(($i | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($PolicyArray) {
-            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
-                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -149,18 +149,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -343,7 +343,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
                 }
             }
         }
-        [System.Collections.ArrayList]$PolicyArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
@@ -355,16 +355,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
                 }
                 # Select allowed fields, when populated
                 [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
-                [void]$PolicyArray.Add(($i | Select-Object $Select))
+                $List.Add(($i | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($PolicyArray) {
-            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
-                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -395,12 +395,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

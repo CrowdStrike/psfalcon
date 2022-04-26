@@ -43,12 +43,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
                 Body = @{ root = @('label','revoked','expires_timestamp') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -85,7 +85,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [ValidatePattern('^\w{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
-        
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=2)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
@@ -109,18 +108,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','limit','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -164,7 +163,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [string]$Sort,
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=3)]
         [int32]$Limit,
-        
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=4)]
         [int32]$Offset,
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
@@ -180,18 +178,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','limit','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -268,12 +266,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

@@ -27,12 +27,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','region') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -83,18 +83,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit','status') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -124,14 +124,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('clouds') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Cloud) { @($Cloud).foreach{ [void]$IdArray.Add($_) }}
+        if ($Cloud) { @($Cloud).foreach{ $List.Add($_) }}
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Cloud'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Cloud'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -194,12 +194,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
                 Query = @('limit','cluster_names','account_ids','offset','cluster_service','locations')
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -354,12 +354,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

@@ -143,10 +143,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             }
             if ($Obj.reason) {
                 # Add excluded item to list for final output
-                [void]$Config.Excluded.$Type.Add($Obj)
+                $Config.Excluded.$Type.Add($Obj)
             } else {
                 # Capture item 'id' for assignment
-                [void]$Config.Ids.$Type.Add($Obj)
+                $Config.Ids.$Type.Add($Obj)
             }
         }
         function Compare-ImportData ([string]$Item) {
@@ -202,7 +202,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     $Filename.Open())).ReadToEnd())
                 $Import = $Import | Select-Object $ConfigFields.$Item.Import
                 $Output[$Item] = @{ Import = $Import }
-                @('Excluded','Ids').foreach{ $Output.$_[$Item] = [System.Collections.ArrayList]@() }
+                @('Excluded','Ids').foreach{ $Output.$_[$Item] = [System.Collections.Generic.List[object]]@() }
                 $Item
             }
             if ($FileStream) { $FileStream.Dispose() }

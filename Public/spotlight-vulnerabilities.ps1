@@ -22,27 +22,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
             @($Id).foreach{
                 if ($_.apps.remediation.ids) {
                     # Use 'apps.remediation.ids' when supplied with a detailed vulnerability object
-                    @($_.apps.remediation.ids).foreach{ [void]$IdArray.Add($_) }
+                    @($_.apps.remediation.ids).foreach{ $List.Add($_) }
                 } elseif ($_ -is [string]) {
                     if ($_ -notmatch '^\w{32}$') {
                         throw "'$_' is not a valid remediation identifier."
                     } else {
-                        [void]$IdArray.Add($_)
+                        $List.Add($_)
                     }
                 }
             }
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -114,18 +114,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('after','sort','ids','filter','limit','facet') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -187,19 +187,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('after','sort','ids','filter','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
             @($Id).foreach{
                 if ($_.apps.evaluation_logic.id) {
                     # Use 'apps.evaluation_logic.id' when supplied with a detailed vulnerability object
-                    [void]$IdArray.Add($_.apps.evaluation_logic.id)
+                    $List.Add($_.apps.evaluation_logic.id)
                 } elseif ($_ -is [string]) {
                     if ($_ -notmatch '^\w{32}$') {
                         throw "'$_' is not a valid vulnerability evaluation logic identifier."
                     } else {
-                        [void]$IdArray.Add($_)
+                        $List.Add($_)
                     }
                 }
             }
@@ -208,8 +208,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

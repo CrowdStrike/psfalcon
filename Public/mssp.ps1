@@ -30,14 +30,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','cids') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Cid) { @($Cid).foreach{ [void]$IdArray.Add($_) }}
+        if ($Cid) { @($Cid).foreach{ $List.Add($_) }}
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Cid'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -80,12 +80,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($RoleId) { @($RoleId).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($RoleId) { @($RoleId).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['RoleId'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -122,12 +122,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('user_uuids','user_group_id') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($UserId) { @($UserId).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['UserId'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -264,18 +264,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cid_group_ids','offset','limit','name','sort') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -339,18 +339,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cid_group_ids','offset','limit','sort','cid') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -422,11 +422,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','role_id','cid_group_id','sort','offset','user_group_id') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } elseif (!$Id -and !$CidGroupId -and !$UserGroupId) {
             throw "'CidGroupId' or 'UserGroupId' must be provided."
         } else {
@@ -434,8 +434,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -491,18 +491,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -563,18 +563,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','user_group_ids','limit','name') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -637,18 +637,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','user_group_ids','limit','user_uuid') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -736,12 +736,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cid_group_ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -778,12 +778,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','cids') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Cid) { @($Cid).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Cid'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -826,18 +826,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($RoleId) {
-            @($RoleId).foreach{ [void]$IdArray.Add($_) }
+            @($RoleId).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['RoleId'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -867,12 +867,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('user_group_ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -908,12 +908,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('user_uuids','user_group_id') }}
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($UserId) { @($UserId).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['UserId'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

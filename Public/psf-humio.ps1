@@ -80,14 +80,14 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
     begin {
         $OriginalProgress = $ProgressPreference
         $ProgressPreference = 'SilentlyContinue'
-        [System.Collections.ArrayList]$ObjArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
-    process { if ($Object) { @($Object).foreach{ [void]$ObjArray.Add($_) }}}
+    process { if ($Object) { @($Object).foreach{ $List.Add($_) }}}
     end {
         if (!$Script:Falcon.Api.Collector.Uri -or !$Script:Falcon.Api.Collector.Token) {
             throw "Humio destination has not been configured. Try 'Register-FalconEventCollector'."
-        } elseif ($ObjArray) {
-            [object[]]$Events = @($ObjArray).foreach{
+        } elseif ($List) {
+            [object[]]$Events = @($List).foreach{
                 $Item = @{ timestamp = Get-Date -Format o; attributes = @{}}
                 if ($_ -is [PSCustomObject]) {
                     @($_.PSObject.Properties | Where-Object { $_.Name -notmatch '\.' }).foreach{
@@ -112,7 +112,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
                     }
                 ) -Depth 8 -Compress
             }
-            [void] (Invoke-WebRequest @Param -UseBasicParsing)
+            [void](Invoke-WebRequest @Param -UseBasicParsing)
         }
         $ProgressPreference = $OriginalProgress
     }

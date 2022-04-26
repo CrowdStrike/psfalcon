@@ -51,14 +51,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
                 '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags" | Where-Ob' +
                 'ject { $_ }; $V = if ($T) { (($T -split "REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Se' +
-                'lect-Object -Unique) -join "," } else { $args }; [void] (reg add $K /v GroupingTags /d $V /f); ' +
-                '"$((((reg query $K) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
+                'lect-Object -Unique) -join "," } else { $args }; [void](reg add $K /v GroupingTags /d $V /f); "' +
+                '$((((reg query $K) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
         }
-        [System.Collections.Arraylist]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
+        if ($List) {
             try {
                 # Get device info to determine script and begin session
                 $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
@@ -126,11 +126,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 '88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($T) { "$(($T -' +
                 'split "REG_SZ")[-1].Trim())" }'
         }
-        [System.Collections.Arraylist]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
+        if ($List) {
             try {
                 # Get device info to determine script and begin session
                 $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name
@@ -221,15 +221,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
                 '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags"; if ($T) {' +
                 ' $D = $args.Split(","); $V = ($T -split "REG_SZ")[-1].Trim().Split(",").Where({ $D -notcontains' +
-                ' $_ }) -join ","; if ($V) { [void] (reg add $K /v GroupingTags /d $V /f) } else { [void] (reg d' +
-                'elete $K /v GroupingTags /f) }}; $T = (reg query $K) -match "GroupingTags"; if ($T) { ($T -spli' +
-                't "REG_SZ")[-1].Trim() }'
+                ' $_ }) -join ","; if ($V) { [void](reg add $K /v GroupingTags /d $V /f) } else { [void](reg del' +
+                'ete $K /v GroupingTags /f) }}; $T = (reg query $K) -match "GroupingTags"; if ($T) { ($T -split ' +
+                '"REG_SZ")[-1].Trim() }'
         }
-        [System.Collections.Arraylist]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
+        if ($List) {
             try {
                 # Get device info to determine script and begin session
                 $HostInfo = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,platform_name

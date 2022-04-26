@@ -218,18 +218,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
                 Query = @('limit','ids','organization-ids','scan-type','offset','group_by','status')
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -303,18 +303,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('scan-type','offset','ids','status','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -747,18 +747,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','service','policy-id','cloud-platform') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[int32]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -788,14 +788,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cloud-platform') }
         }
-        [System.Collections.ArrayList]$CloudArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($CloudPlatform) { @($CloudPlatform).foreach{ [void]$CloudArray.Add($_) }}
+        if ($CloudPlatform) { @($CloudPlatform).foreach{ $List.Add($_) }}
     }
     end {
-        if ($CloudArray) {
-            $PSBoundParameters['CloudPlatform'] = @($CloudArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['CloudPlatform'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -1002,19 +1002,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             Endpoint = '/cloud-connect-cspm-aws/entities/account/v1:delete'
             Format = @{ Query = @('ids','organization-ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
 
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -1044,12 +1044,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

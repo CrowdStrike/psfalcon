@@ -94,15 +94,15 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
             }
         }
         if ($Path) { $Path = $Script:Falcon.Api.Path($Path) }
-        $ObjArray = [System.Collections.ArrayList]@()
+        $List = [System.Collections.Generic.List[object]]@()
     }
-    process { if ($Object) { @($Object).foreach{ [void]$ObjArray.Add($_) }}}
+    process { if ($Object) { @($Object).foreach{ $List.Add($_) }}}
     end {
         $OutPath = Test-OutFile $Path
         if ($OutPath.Category -eq 'WriteError' -and !$Force) {
             Write-Error @OutPath
-        } elseif ($ObjArray) {
-            @($ObjArray).foreach{
+        } elseif ($List) {
+            @($List).foreach{
                 $i = [PSCustomObject]@{}
                 if ($_.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
                     # Add sorted properties to output
@@ -245,7 +245,7 @@ Indicator to display on the Indicator map
     )
     begin {
         $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
-        $IocArray = [System.Collections.ArrayList]@()
+        $List = [System.Collections.Generic.List[string]]@()
     }
     process {
         if ($Indicator) {
@@ -263,19 +263,19 @@ Indicator to display on the Indicator map
                             if ($Type -and $Value) { @($Type,$Value) -join ':' }
                         }
                     }
-                    if ($String) { [void]$IocArray.Add($String) }
+                    if ($String) { $List.Add($String) }
                 } else {
                     $Type = Test-RegexValue $_
                     if ($Type -match 'ipv(4|6)') { $Type = 'ip' }
                     $Value = if ($Type -match '^(domain|md5|sha256)$') { $_.ToLower() } else { $_ }
-                    if ($Type -and $Value) { [void]$IocArray.Add("$($Type):'$Value'") }
+                    if ($Type -and $Value) { $List.Add("$($Type):'$Value'") }
                 }
             }
         }
     }
     end {
-        if ($IocArray) {
-            [string[]]$IocInput = @($IocArray | Select-Object -Unique) -join ','
+        if ($List) {
+            [string[]]$IocInput = @($List | Select-Object -Unique) -join ','
             if (!$IocInput) { throw "No valid indicators found." }
             Start-Process "$($FalconUI)/intelligence/graph?indicators=$($IocInput -join ',')"
         }

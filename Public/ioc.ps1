@@ -68,7 +68,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=8)]
         [ValidatePattern('^\w{32}$')]
-        [Alias('host_groups', 'HostGroups')]
+        [Alias('host_groups','HostGroups')]
         [string[]]$HostGroup,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=9)]
@@ -104,24 +104,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                         'metadata.filename','source','host_groups','severity','action','platforms')
                 }
             }
-            [System.Collections.ArrayList]$IdArray = @()
-            [System.Collections.ArrayList]$PlatformArray = @()
-            [System.Collections.ArrayList]$TagArray = @()
         }
     }
     process {
-        if ($HostGroup -or $Platform -or $Tag) {
-            if ($HostGroup) { @($HostGroup).foreach{ [void]$IdArray.Add($_) }}
-            if ($Platform) { @($Platform).foreach{ [void]$PlatformArray.Add($_) }}
-            if ($Tag) { @($Tag).foreach{ [void]$TagArray.Add($_) }}
-        }
-    }
-    end {
-        if ($IdArray -or $PlatformArray -or $TagArray) {
-            if ($IdArray) { $PSBoundParameters['HostGroup'] = @($IdArray | Select-Object -Unique) }
-            if ($PlatformArray) { $PSBoundParameters['Platform'] = @($PlatformArray | Select-Object -Unique) }
-            if ($TagArray) { $PSBoundParameters['Tag'] = @($TagArray | Select-Object -Unique) }
-        }
         if (!$PSBoundParameters.HostGroup -and !$PSBoundParameters.AppliedGlobally) {
             throw "'HostGroup' or 'AppliedGlobally' must be provided."
         } else {
@@ -204,18 +189,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','filter','offset','limit','sort','after') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -342,11 +327,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 }
             }
         }
-        [System.Collections.ArrayList]$IocArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
-            @($Array).foreach{ [void]$IocArray.Add($_) }
+            @($Array).foreach{ $List.Add($_) }
         } elseif (!$PSBoundParameters.HostGroup -and !$PSBoundParameters.AppliedGlobally) {
             throw "'HostGroup' or 'AppliedGlobally' must be provided."
         } else {
@@ -354,9 +339,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
     }
     end {
-        if ($IocArray) {
-            for ($i = 0; $i -lt $IocArray.Count; $i += 100) {
-                $PSBoundParameters['Array'] = @($IocArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -397,11 +382,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = '/iocs/entities/indicators/v1:delete'
             Format = @{ Query = @('ids','filter','comment') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } elseif ($Filter) {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
@@ -409,8 +394,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     end {
         if (!$Id -and !$Filter) {
             throw "'Filter' or 'Id' must be provided."
-        } elseif ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        } elseif ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

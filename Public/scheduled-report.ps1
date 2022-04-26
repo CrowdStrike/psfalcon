@@ -76,11 +76,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','limit','ids','filter','offset','q') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } elseif ($Execution -and $Detailed) {
             [void]$PSBoundParameters.Remove('Detailed')
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -90,8 +90,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

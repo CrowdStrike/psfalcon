@@ -32,14 +32,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
                 Body = @{ root = @('roleIds') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}
+        if ($Id) { @($Id).foreach{ $List.Add($_) }}
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -119,7 +119,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','user_uuid') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
@@ -127,7 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
                 if ($_ -match '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$') {
                     Get-FalconRole -UserId $_
                 } else {
-                    [void]$IdArray.Add($_)
+                    $List.Add($_)
                 }
             }
         } else {
@@ -135,8 +135,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -189,18 +189,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','uid') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Request -and $PSBoundParameters.Include) {
@@ -288,14 +288,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('user_uuid','ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}
+        if ($Id) { @($Id).foreach{ $List.Add($_) }}
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

@@ -36,12 +36,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Format = @{ Body = @{ root = @('tags','device_ids','action') }}
         }
         $PSBoundParameters['action'] = 'add'
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -158,18 +158,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
             Max = 500
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Request -and $PSBoundParameters.Include) {
@@ -279,12 +279,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
             Max = if ($PSBoundParameters.Name -match '_host$') { 100 } else { 500 }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
             if ($PSBoundParameters.Include -and $Request) {
                 foreach ($Item in (Get-FalconHost -Id $Request.id | Select-Object @(
@@ -343,12 +343,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Format = @{ Body = @{ root = @('tags','device_ids','action') }}
         }
         $PSBoundParameters['action'] = 'remove'
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

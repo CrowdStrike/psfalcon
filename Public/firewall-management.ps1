@@ -157,23 +157,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 }
             }
         }
-        [System.Collections.ArrayList]$PolicyArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
             @($Array).foreach{
                 $i = $_
                 [string[]]$Select = @('id','name','description').foreach{ if ($i.$_) { $_ }}
-                [void]$PolicyArray.Add(($i | Select-Object $Select))
+                $List.Add(($i | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($PolicyArray) {
-            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
-                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -334,18 +334,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','after','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -401,18 +401,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit','platform_id') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -481,18 +481,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','after','filter') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -543,18 +543,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -630,18 +630,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($PSBoundParameters.Include -and $Request) {
@@ -801,11 +801,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','sort','q','offset','after','filter','id') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
                 if ($_.version -and $null -eq $_.version) { $_.version = 0 }
@@ -814,9 +814,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
     }
     end {
-        if ($IdArray) {
+        if ($List) {
             $Param['Format'] = @{ Query = @('ids') }
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
                 if ($_.version -and $null -eq $_.version) { $_.version = 0 }
                 $_
@@ -849,12 +849,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -1039,23 +1039,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 }
             }
         }
-        [System.Collections.ArrayList]$PolicyArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
             foreach ($i in $Array) {
                 # Select allowed fields, when populated
                 [string[]]$Select = @('name','description','platform_name').foreach{ if ($i.$_) { $_ }}
-                [void]$PolicyArray.Add(($i | Select-Object $Select))
+                $List.Add(($i | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($PolicyArray) {
-            for ($i = 0; $i -lt $PolicyArray.Count; $i += 100) {
-                $PSBoundParameters['Array'] = @($PolicyArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -1090,12 +1090,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','comment') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -1125,12 +1125,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

@@ -104,18 +104,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','filter','sort','limit','offset') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -225,17 +225,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 Body = @{ root = @('ids','action_parameters') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($HostId) { @($HostId).foreach{ [void]$IdArray.Add($_) }}
+        if ($HostId) { @($HostId).foreach{ $List.Add($_) }}
     }
     end {
-        if ($IdArray) {
+        if ($List) {
             $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
             [void]$PSBoundParameters.Remove('HostId')
-            for ($i = 0; $i -lt $IdArray.Count; $i += 500) {
-                $IdString = (@($IdArray[$i..($i + 499)]).foreach{ "'$_'" }) -join ','
+            for ($i = 0; $i -lt $List.Count; $i += 500) {
+                $IdString = (@($List[$i..($i + 499)]).foreach{ "'$_'" }) -join ','
                 $PSBoundParameters['action_parameters'] = @(
                     @{ name = 'filter'; value = "(device_id:[$IdString])" }
                 )
@@ -311,7 +311,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         }
-        [System.Collections.ArrayList]$GroupArray = @()
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
@@ -320,16 +320,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     # Remove 'assignment_rule' from non-dynamic groups
                     $_.PSObject.Properties.Remove('assignment_rule')
                 }
-                [void]$GroupArray.Add($_)
+                $List.Add($_)
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($GroupArray) {
-            for ($i = 0; $i -lt $GroupArray.Count; $i += 100) {
-                $PSBoundParameters['Array'] = @($GroupArray[$i..($i + 99)])
+        if ($List) {
+            for ($i = 0; $i -lt $List.Count; $i += 100) {
+                $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
         }
@@ -360,12 +360,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

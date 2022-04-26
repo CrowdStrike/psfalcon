@@ -25,12 +25,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [System.Object]$Detection
     )
     begin {
-        [System.Collections.ArrayList]$Output = @()
+        [System.Collections.Generic.List[object]]$Output = @()
     }
     process {
         if ($_.behaviors -and $_.device) {
             @($_.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
-                [void]$Output.Add(([PSCustomObject]@{
+                $Output.Add(([PSCustomObject]@{
                     value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
                     excluded_from = @('blocking')
                     groups = if ($Detection.device.groups) { $Detection.device.groups } else { 'all' }
@@ -161,18 +161,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -264,12 +264,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','comment') }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }

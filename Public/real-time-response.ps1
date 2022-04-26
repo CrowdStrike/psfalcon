@@ -211,18 +211,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Body = @{ root = @('ids') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ [void]$IdArray.Add($_) }
+            @($Id).foreach{ $List.Add($_) }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
-        if ($IdArray) {
-            $PSBoundParameters['Id'] = @($IdArray | Select-Object -Unique)
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -281,11 +281,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Body = @{ root = @('batch_id','file_path','optional_hosts') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($OptionalHostId) { @($OptionalHostId).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) { $PSBoundParameters['OptionalHostId'] = @($IdArray | Select-Object -Unique) }
+        if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
         @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
             if ($_.batch_get_cmd_req_id -and $_.combined.resources) {
                 # Output result with 'batch_get_cmd_req_id' and 'hosts' values
@@ -389,13 +389,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($OptionalHostId) { @($OptionalHostId).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
     end {
         # Verify 'Endpoint' using BatchId/SessionId
         $Endpoint = if ($PSBoundParameters.BatchId) {
-            if ($IdArray) { $PSBoundParameters['OptionalHostId'] = @($IdArray | Select-Object -Unique) }
+            if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
             '/real-time-response/combined/batch-command/v1:post'
         } else {
             '/real-time-response/entities/command/v1:post'
@@ -505,9 +505,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($OptionalHostId) { @($OptionalHostId).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
     end {
         if ($PSBoundParameters.BatchId -and $PSBoundParameters.Command -eq 'get') {
             # Redirect to 'Invoke-FalconBatchGet' for multi-host 'get' requests
@@ -517,12 +517,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Confirm = $PSBoundParameters.Confirm
             }
             if ($Timeout) { $GetParam['Timeout'] = $PSBoundParameters.Timeout }
-            if ($IdArray) { $GetParam['OptionalHostId'] = @($IdArray | Select-Object -Unique) }
+            if ($List) { $GetParam['OptionalHostId'] = @($List | Select-Object -Unique) }
             Invoke-FalconBatchGet @GetParam
         } else {
             # Verify 'Endpoint' using BatchId/SessionId
             $Endpoint = if ($PSBoundParameters.BatchId) {
-                if ($IdArray) { $PSBoundParameters['OptionalHostId'] = @($IdArray | Select-Object -Unique) }
+                if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
                 '/real-time-response/combined/batch-active-responder-command/v1:post'
             } elseif ($PSBoundParameters.SessionId) {
                 '/real-time-response/entities/active-responder-command/v1:post'
@@ -780,18 +780,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Body = @{ root = @('existing_batch_id','host_ids','queue_offline','device_id') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($IdArray) {
+        if ($List) {
             # Verify 'Endpoint' using BatchId/SessionId and select hosts
             [void]$PSBoundParameters.Remove('Id')
-            if ($IdArray.Count -eq 1 -and !$Timeout -and !$ExistingBatchId) {
-                $PSBoundParameters['device_id'] = $IdArray[0]
+            if ($List.Count -eq 1 -and !$Timeout -and !$ExistingBatchId) {
+                $PSBoundParameters['device_id'] = $List[0]
                 $Endpoint = '/real-time-response/entities/sessions/v1:post'
             } else {
-                $PSBoundParameters['host_ids'] = @($IdArray | Select-Object -Unique)
+                $PSBoundParameters['host_ids'] = @($List | Select-Object -Unique)
                 $Endpoint = '/real-time-response/combined/batch-init-session/v1:post'
             }
             @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
@@ -812,7 +812,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 } else {
                     # Append 'aid' to single host session result
-                    Add-Property $_ 'aid' $IdArray[0]
+                    Add-Property $_ 'aid' $List[0]
                     $_
                 }
             }
@@ -874,15 +874,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 Body = @{ root = @('queue_offline','device_id','batch_id','hosts_to_remove') }
             }
         }
-        [System.Collections.ArrayList]$IdArray = @()
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($HostsToRemove) { @($HostsToRemove).foreach{ [void]$IdArray.Add($_) }}}
+    process { if ($HostsToRemove) { @($HostsToRemove).foreach{ $List.Add($_) }}}
     end {
         # Verify 'Endpoint' using HostId/BatchId
         $Endpoint = if ($PSBoundParameters.HostId) {
             '/real-time-response/entities/refresh-session/v1:post'
         } elseif ($PSBoundParameters.BatchId) {
-            if ($IdArray) { $PSBoundParameters['HostsToRemove'] = @($IdArray | Select-Object -Unique) }
+            if ($List) { $PSBoundParameters['HostsToRemove'] = @($List | Select-Object -Unique) }
             '/real-time-response/combined/batch-refresh-session/v1:post'
         }
         if ($Endpoint) {

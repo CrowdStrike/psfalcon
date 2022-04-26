@@ -454,12 +454,12 @@ function Invoke-Falcon {
         }
         if ($Format) {
             # Determine expected field values using 'Format'
-            [System.Collections.ArrayList]$Expected = @()
+            [System.Collections.Generic.List[string]]$Expected = @()
             @($Format.Values).foreach{
                 if ($_ -is [array]) {
-                    @($_).foreach{ [void]$Expected.Add($_) }
+                    @($_).foreach{ $Expected.Add($_) }
                 } elseif ($_.Keys) {
-                    @($_.Values).foreach{ @($_).foreach{ [void]$Expected.Add($_) }}
+                    @($_.Values).foreach{ @($_).foreach{ $Expected.Add($_) }}
                 }
             }
             if ($Expected) {
