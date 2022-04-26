@@ -87,7 +87,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             ValueFromPipelineByPropertyName,Position=6)]
         [Alias('content','FullName')]
         [ValidateScript({
-            if (Test-Path -Path $_ -PathType Leaf) {
+            if (Test-Path $_ -PathType Leaf) {
                 $true
             } else {
                 throw "Cannot find path '$_' because it does not exist or is a directory."
@@ -470,7 +470,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
         [ValidateScript({
-            if (Test-Path -Path $_ -PathType Leaf) {
+            if (Test-Path $_ -PathType Leaf) {
                 $true
             } else {
                 throw "Cannot find path '$_' because it does not exist or is a directory."
