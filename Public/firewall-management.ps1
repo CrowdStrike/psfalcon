@@ -653,7 +653,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                         Name = 'settings'
                         Value = $Item
                     }
-                    Add-Property @AddParam
+                    Set-Property @AddParam
                 }
             }
         }

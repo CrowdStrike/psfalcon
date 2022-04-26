@@ -92,11 +92,11 @@ https://github.com/CrowdStrike/psfalcon/wiki/Firewall-Management
                     if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
                         $Enable = $Clone.id | Invoke-FalconFirewallPolicyAction enable
                         if ($Enable) {
-                            Add-Property $Enable settings $Settings
+                            Set-Property $Enable settings $Settings
                             $Enable
                         } else {
                             $Clone.enabled = $true
-                            Add-Property $Clone settings $Settings
+                            Set-Property $Clone settings $Settings
                             $Clone
                         }
                     }

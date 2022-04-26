@@ -107,12 +107,12 @@ function Import-FalconConfig {
 .SYNOPSIS
 Import configurations from a 'FalconConfig' archive into your Falcon environment
 .DESCRIPTION
-Creates groups,policies,exclusions and rules within a 'FalconConfig' archive within your authenticated
+Creates groups, policies, exclusions and rules within a 'FalconConfig' archive within your authenticated
 Falcon environment.
 
 Anything that already exists will be ignored and no existing items will be modified.
 
-The '-Force' parameter forces the script to assign exceptions,policies and rules to existing host groups
+The '-Force' parameter forces the script to assign exceptions, policies and rules to existing host groups
 with the same names as the ones provided in the configuration file.
 .PARAMETER Path
 'FalconConfig' archive path
@@ -139,7 +139,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 [PSCustomObject]@{ old_id = $Item.id; new_id = $null }
             }
             @('platform_name','platforms','platform','type','value','name').foreach{
-                if ($Item.$_) { Add-Property $Obj $_ $Item.$_ }
+                Set-Property $Obj $_ $Item.$_
             }
             if ($Obj.reason) {
                 # Add excluded item to list for final output
@@ -380,13 +380,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                         @($Rules).foreach{ if ($_.name.length -gt 64) { $_.name = ($_.name).SubString(0,63) }}
                         if ($Rules) {
                             # Add 'rules' and remove 'rule_ids' from object
-                            Add-Property $FwGroup rules $Rules
+                            Set-Property $FwGroup rules $Rules
                             $FwGroup.PSObject.Properties.Remove('rule_ids')
                         }
                     }
                     @($FwGroup | & "New-Falcon$($Pair.Key)").foreach{
                         # Append new 'id' to object, capture new 'id' and return result
-                        Add-Property $FwGroup id $_
+                        Set-Property $FwGroup id $_
                         $FwGroup
                     }
                 }
@@ -478,7 +478,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                         # Apply FirewallPolicy settings
                         $Settings = $Clone.settings | Edit-FalconFirewallSetting
                         if ($Settings) {
-                            Add-Property $Policy settings $Clone.settings
+                            Set-Property $Policy settings $Clone.settings
                             Write-Host "[Import-FalconConfig] Applied settings to $($Policy.platform_name) $(
                                 $Pair.Key) '$($Policy.name)'."
                         }

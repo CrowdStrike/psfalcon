@@ -343,7 +343,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     } else {
                         $Request.stderr
                     }
-                    Add-Property $_ 'status' $Status
+                    Set-Property $_ 'status' $Status
                     $_
                 }
             }

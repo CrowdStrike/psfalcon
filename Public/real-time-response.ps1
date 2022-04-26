@@ -411,7 +411,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
                 if ($BatchId) {
                     # Add 'batch_id' to each result and output
-                    Add-Property $_ 'batch_id' $BatchId
+                    Set-Property $_ batch_id $BatchId
                     $_
                 } elseif ($SessionId -and $Confirm) {
                     for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
@@ -538,7 +538,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
                     if ($BatchId) {
                         # Add 'batch_id' to each result and output
-                        Add-Property $_ 'batch_id' $BatchId
+                        Set-Property $_ batch_id $BatchId
                         $_
                     } elseif ($SessionId -and $Confirm) {
                         for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
@@ -804,7 +804,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                     @($_.resources.PSObject.Properties.Value).Where({ $_.session_id }).foreach{
                         # Append 'batch_id' for hosts with a 'session_id'
-                        Add-Property $_ batch_id $BatchId
+                        Set-Property $_ batch_id $BatchId
                     }
                     [PSCustomObject]@{
                         batch_id = $_.batch_id
@@ -812,7 +812,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 } else {
                     # Append 'aid' to single host session result
-                    Add-Property $_ 'aid' $List[0]
+                    Set-Property $_ aid $List[0]
                     $_
                 }
             }
@@ -900,7 +900,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 } else {
                     # Append 'aid' to single host session result
-                    Add-Property $_ 'aid' $HostId
+                    Set-Property $_ aid $HostId
                     $_
                 }
             }

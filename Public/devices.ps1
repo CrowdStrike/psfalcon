@@ -198,7 +198,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         Name = 'login_history'
                         Value = $Item.recent_logins
                     }
-                    Add-Property @AddParam
+                    Set-Property @AddParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'network_history') {
@@ -208,7 +208,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         Name = 'network_history'
                         Value = $Item.history
                     }
-                    Add-Property @AddParam
+                    Set-Property @AddParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'online_state') {
@@ -218,7 +218,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         Name = 'online_state'
                         Value = $Item
                     }
-                    Add-Property @AddParam
+                    Set-Property @AddParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'zero_trust_assessment') {
@@ -228,7 +228,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         Name = 'zero_trust_assessment'
                         Value = $Item | Select-Object modified_time,sensor_file_status,assessment,assessment_items
                     }
-                    Add-Property @AddParam
+                    Set-Property @AddParam
                 }
             }
         }
@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                             Name = $_.Name
                             Value = $_.Value
                         }
-                        Add-Property @AddParam
+                        Set-Property @AddParam
                     }
                 }
             }

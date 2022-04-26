@@ -60,7 +60,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                         Name = $Name
                         Value = $Array -join ','
                     }
-                    Add-Property @AddParam
+                    Set-Property @AddParam
                 }
             }
         }
@@ -89,7 +89,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                         Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
                         Value = $Item.Value
                     }
-                    Add-Property @AddParam
+                    Set-Property @AddParam
                 }
             }
         }
@@ -109,7 +109,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     Get-PSObject $_ $i
                 } else {
                     # Add strings to output as 'id'
-                    Add-Property $i id $_
+                    Set-Property $i id $_
                 }
                 if ($i -and $Path) {
                     try {

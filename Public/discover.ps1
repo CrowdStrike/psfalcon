@@ -145,7 +145,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
                                 Name = 'login_event'
                                 Value = $Item | Where-Object { $_.$Property -eq $r.id }
                             }
-                            if ($AddParam.Value) { Add-Property @AddParam }
+                            Set-Property @AddParam
                         }
                     }
                 }

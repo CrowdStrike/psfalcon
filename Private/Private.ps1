@@ -1,11 +1,3 @@
-function Add-Property {
-    [CmdletBinding()]
-    param([System.Object]$Object,[string]$Name,[System.Object]$Value)
-    process {
-        # Add property to [PSCustomObject]
-        $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
-    }
-}
 function Assert-Extension {
     [CmdletBinding()]
     [OutputType([string])]
@@ -359,65 +351,36 @@ function Get-RtrResult {
     begin {
         # Real-time Response fields to capture from results
         $RtrFields = @('aid','batch_get_cmd_req_id','batch_id','cloud_request_id','complete','errors',
-            'name','offline_queued','queued_command_offline','session_id','sha256','stderr','stdout','task_id')
+            'error_message','name','offline_queued','progress','queued_command_offline','session_id','sha256',
+            'size','status','stderr','stdout','task_id')
     }
     process {
-        [boolean]$ConfirmGet = if ($Object) {
-            # Check if 'Object' is a 'get' confirmation request by comparing against known fields
-            [string[]]$Compare = @('id','created_at','updated_at','deleted_at','name','sha256','size','session_id',
-                'cloud_request_id')
-            [Collections.Generic.SortedSet[string]]::CreateSetComparer().Equals(
-                $Object[0].PSObject.Properties.Name,$Compare)
-        }
-        if ($ConfirmGet -eq $true) {
-            foreach ($Item in $Output) {
-                # Append most recent 'get' file result using 'session_id'
-                $Value = $Object | Where-Object { $_.session_id -eq $Item.session_id } | Select-Object -Last 1
-                if ($Value) {
-                    @('cloud_request_id','name','sha256').foreach{
-                        if (!$Item.$_) { Add-Property $Item $_ $Value.$_ } else { $Item.$_ = $Value.$_ }
-                    }
+        foreach ($Result in ($Object | Select-Object $RtrFields)) {
+            # Update 'Output' with populated result(s) from 'Object'
+            @($Result.PSObject.Properties | Where-Object { $_.Value -or $_.Value -is [boolean] }).foreach{
+                $Name = if ($_.Name -eq 'task_id') {
+                    # Rename 'task_id' to 'cloud_request_id'
+                    'cloud_request_id'
+                } elseif ($_.Name -eq 'queued_command_offline') {
+                    # Rename 'queued_command_offline' to 'offline_queued'
+                    'offline_queued'
+                } else {
+                    $_.Name
                 }
-            }
-        } elseif ($Object.batch_get_cmd_req_id) {
-            foreach ($Item in $Output) {
-                # Append most recent 'get' file result using 'aid' in a batch 'get' request
-                $Value = $Object | Where-Object { $_.aid -eq $Item.aid } | Select-Object -Last 1
-                if ($Value) {
-                    @('batch_get_cmd_req_id','cloud_request_id','name','session_id','sha256').foreach{
-                        if (!$Item.$_) { Add-Property $Item $_ $Value.$_ } else { $Item.$_ = $Value.$_ }
-                    }
+                $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
+                    # Convert array result into string
+                    $_.Value -join ', '
+                } elseif ($_.Value.code -and $_.Value.message) {
+                    # Convert error code and message into string
+                    (($_.Value).foreach{ "$($_.code): $($_.message)" }) -join ', '
+                } else {
+                    $_.Value
                 }
-            }
-        } else {
-            foreach ($Result in ($Object | Select-Object $RtrFields)) {
-                # Update $Output with results from $Object
-                @($Result.PSObject.Properties | Where-Object { $_.Value }).foreach{
-                    $Value = if (($_.Value -is [object[]]) -and ($_.Value[0] -is [string])) {
-                        # Convert array result into string
-                        $_.Value -join ', '
-                    } elseif ($_.Value.code -and $_.Value.message) {
-                        # Convert error code and message into string
-                        (($_.Value).foreach{ "$($_.code): $($_.message)" }) -join ', '
-                    } else {
-                        $_.Value
-                    }
-                    $Name = if ($_.Name -eq 'task_id') {
-                        # Rename 'task_id' to 'cloud_request_id'
-                        'cloud_request_id'
-                    } elseif ($_.Name -eq 'queued_command_offline') {
-                        # Rename 'queued_command_offline' to 'offline_queued'
-                        'offline_queued'
-                    } else {
-                        $_.Name
-                    }
-                    if ($Result.aid) {
-                        # Output using 'aid' or 'session_id'
-                        @($Output | Where-Object { $Result.aid -eq $_.aid }).foreach{ $_.$Name = $Value }
-                    } else {
-                        @($Output | Where-Object { $Result.session_id -eq $_.session_id }).foreach{
-                            $_.$Name = $Value
-                        }
+                # Update 'Output' with result using 'aid' or 'session_id'
+                $Match = if ($Result.aid) { 'aid' } else { 'session_id' }
+                if ($Result.$Match) {
+                    @($Output | Where-Object { $Result.$Match -eq $_.$Match }).foreach{
+                        Set-Property $_ $Name $Value
                     }
                 }
             }
@@ -598,6 +561,20 @@ function Invoke-Loop {
                 $Pagination = (ConvertFrom-Json (
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
             }
+        }
+    }
+}
+function Set-Property {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param([System.Object]$Object,[string]$Name,[System.Object]$Value)
+    process {
+        if ($Object.$Name -and ($Value -or $Value -is [boolean])) {
+            # Update existing property
+            $Object.$Name = $Value
+        } elseif ($Value -or $Value -is [boolean]) {
+            # Add property to [PSCustomObject]
+            $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
         }
     }
 }
