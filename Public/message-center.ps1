@@ -419,7 +419,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]
         [ValidatePattern('\.(bmp|csv|doc|docx|gif|jpg|jpeg|pdf|png|pptx|txt|xls|xlsx)$')]
         [ValidateScript({
-            if (Test-Path -Path $_ -PathType Leaf) {
+            if (Test-Path $_ -PathType Leaf) {
                 $Leaf = Split-Path $_ -Leaf
                 if ($Leaf -match '\W') {
                     throw 'Filename contains invalid characters.'
