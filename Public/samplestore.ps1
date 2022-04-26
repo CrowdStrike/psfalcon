@@ -153,7 +153,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Mandatory,
             ValueFromPipelineByPropertyName)]
         [ValidateScript({
-            if (Test-Path -Path $_ -PathType Leaf) {
+            if (Test-Path $_ -PathType Leaf) {
                 $true
             } else {
                 throw "Cannot find path '$_' because it does not exist or is a directory."
