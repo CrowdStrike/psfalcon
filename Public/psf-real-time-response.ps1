@@ -130,11 +130,11 @@ Details of each step will be output to a CSV file in your current directory.
 .PARAMETER File
 Name of a 'CloudFile' or path to a local executable to upload
 .PARAMETER Archive
-Name of a 'CloudFile' or path to a local archive to upload
+Name of a 'CloudFile' or path to a local archive (zip, tar, or tar.gz) to upload
 .PARAMETER Run
 Name of the file to run once extracted from the target archive
 .PARAMETER Argument
-Arguments to include when running the executable
+Arguments to include when running the target executable
 .PARAMETER Timeout
 Length of time to wait for a result, in seconds
 .PARAMETER QueueOffline
@@ -361,7 +361,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                 'Mac' { "/tmp/$DeployName" }
                                 'Linux' { "/tmp/$DeployName" }
                             }
-                            # Script content for 'runscript'
+                            # Script content for 'runscript' by platform and 'Archive' or 'File'
                             $Runscript = @{
                                 Linux = @{
                                     Archive = if ($PutFile -match '\.tar(.gz)?$') {
