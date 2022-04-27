@@ -126,6 +126,9 @@ appropriate temporary folder (\Windows\Temp or /tmp), 'cd' will navigate to the 
 archive will be 'put' into that folder. If the target is an archive, it will be extracted, and the designated
 'Run' file will be executed. If the target is a file, it will be 'run'.
 
+If the 'File' or 'Run' parameter is a script (.ps1, .sh, .zsh), the Real-time Response command 'runscript' will
+be used in place of the final 'run' command.
+
 Details of each step will be output to a CSV file in your current directory.
 .PARAMETER File
 Name of a 'CloudFile' or path to a local executable to upload
@@ -390,13 +393,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                 # Define Real-time Response command parameters
                                 $Param = @{
                                     BatchId = $Session.batch_id
-                                    Command = $Cmd
+                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(ps1|sh)$') {
+                                        # Switch 'run' for 'runscript' if 'Run' is a script file
+                                        'runscript'
+                                    } else {
+                                        $Cmd
+                                    }
                                     Argument = switch ($Cmd) {
                                         'mkdir' { $TempDir }
                                         'cd' { $TempDir }
                                         'put' { $PutFile }
                                         'runscript' {
-                                            # Get 'Archive' or 'File' 
+                                            # Get 'Archive' or 'File' script by platform
                                             $Script = if ($Archive) {
                                                 $Runscript.($Pair.Key).Archive
                                             } else {
@@ -406,7 +414,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                         }
                                         'run' {
                                             [string]$Join = if ($Pair.Key -eq 'Windows') { '\' } else { '/' }
-                                            [string]$CmdFile = $TempDir,$RunFile -join $Join
+                                            [string]$CmdFile = if ($RunFile -match '\.(ps1|sh)$') {
+                                                '-HostPath="{0}"' -f ($TempDir,$RunFile -join $Join)
+                                            } else {
+                                                $TempDir,$RunFile -join $Join
+                                            }
                                             if ($Argument) {
                                                 $CmdLine = '-CommandLine="{0}"' -f $Argument
                                                 $CmdFile,$CmdLine -join ' '
@@ -424,7 +436,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                         Measure-Object).Count) $($Pair.Key) host(s)..."
                                     $Result = Invoke-FalconAdminCommand @Param
                                     [string[]]$Optional = if ($Result) {
-                                        Write-RtrResult $Result $Cmd $Session.batch_id
+                                        # Rename 'runscript' to 'extract' for output
+                                        [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
+                                        Write-RtrResult $Result $Step $Session.batch_id
                                     }
                                 }
                             }
