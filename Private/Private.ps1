@@ -5,7 +5,11 @@ function Assert-Extension {
     process {
         # Verify that 'Path' has a file extension matching 'Extension'
         if ($Path -and $Extension) {
-            if ([System.IO.Path]::GetExtension($Path) -eq ".$Extension") { $Path } else { "$Path.$Extension" }
+            if ([System.IO.Path]::GetExtension($Path) -eq ".$Extension") {
+                $Path
+            } else {
+                $Path,$Extension -join '.'
+            }
         }
     }
 }
@@ -250,8 +254,8 @@ function Get-ParamSet {
             }
         }
         $Base = @{
-            Path    = "$($Script:Falcon.Hostname)$($Endpoint.Split(':')[0])"
-            Method  = $Endpoint.Split(':')[1]
+            Path = $Script:Falcon.Hostname,$Endpoint.Split(':')[0] -join $null
+            Method = $Endpoint.Split(':')[1]
             Headers = $Headers
         }
         if (!$Max) {
@@ -319,31 +323,51 @@ function Get-ParamSet {
 }
 function Get-RtrCommand {
     [CmdletBinding()]
-    [OutputType([string])]
-    param([string]$Command,[switch]$ConfirmCommand)
-    process {
-        # Determine command to invoke using $Command and permission level
-        $Result = if ($Command -eq 'runscript') {
-            # Force 'Admin' for 'runscript' command
-            'Invoke-FalconAdminCommand'
-        } else {
-            # Create table of Real-time Response commands organized by permission level
-            $Commands = @{}
-            @($null,'Responder','Admin').foreach{
-                $Key = if ($_ -eq $null) { 'ReadOnly' } else { $_ }
-                $Commands[$Key] = (Get-Command "Invoke-Falcon$($_)Command").Parameters.GetEnumerator().Where({
-                    $_.Key -eq 'Command' }).Value.Attributes.ValidValues
-            }
-            # Filter 'Responder' and 'Admin' to unique command(s)
-            $Commands.Responder = $Commands.Responder | Where-Object { $Commands.ReadOnly -notcontains $_ }
-            $Commands.Admin = $Commands.Admin | Where-Object { $Commands.ReadOnly -notcontains $_ -and
-                $Commands.Responder -notcontains $_ }
-            $Commands.GetEnumerator().Where({ $_.Value -contains $Command }).foreach{
-                if ($_.Key -eq 'ReadOnly') { 'Invoke-FalconCommand' } else { "Invoke-Falcon$($_.Key)Command" }
-            }
+    param(
+        [string]$Command,
+        [switch]$ConfirmCommand,
+        [ValidateSet('ReadOnly','Responder','Admin')]
+        [string]$Permission
+    )
+    begin {
+        # Update 'Permission' to include lower level permission(s)
+        [string[]]$Permission = switch ($Permission) {
+            'ReadOnly' { 'ReadOnly' }
+            'Responder' { 'ReadOnly','Responder' }
+            'Admin' { 'ReadOnly','Responder','Admin' }
         }
     }
-    end { if ($PSBoundParameters.ConfirmCommand) { $Result -replace 'Invoke','Confirm' } else { $Result }}
+    process {
+        # Create table of Real-time Response commands organized by permission level
+        $Index = @{}
+        @($null,'Responder','Admin').foreach{
+            $Key = if ($_ -eq $null) { 'ReadOnly' } else { $_ }
+            $Index[$Key] = (Get-Command "Invoke-Falcon$($_)Command").Parameters.GetEnumerator().Where({
+                $_.Key -eq 'Command' }).Value.Attributes.ValidValues
+        }
+        # Filter 'Responder' and 'Admin' to unique command(s)
+        $Index.Responder = $Index.Responder | Where-Object { $Index.ReadOnly -notcontains $_ }
+        $Index.Admin = $Index.Admin | Where-Object { $Index.ReadOnly -notcontains $_ -and
+            $Index.Responder -notcontains $_ }
+        if ($Command) {
+            # Determine command to invoke using $Command and permission level
+            $Result = if ($Command -eq 'runscript') {
+                # Force 'Admin' for 'runscript' command
+                'Invoke-FalconAdminCommand'
+            } else {
+                $Index.GetEnumerator().Where({ $_.Value -contains $Command }).foreach{
+                    if ($_.Key -eq 'ReadOnly') { 'Invoke-FalconCommand' } else { "Invoke-Falcon$($_.Key)Command" }
+                }
+            }
+            if ($ConfirmCommand) { $Result -replace 'Invoke','Confirm' } else { $Result }
+        } elseif ($Permission) {
+            # Return available Real-time Response commands by permission
+            $Index.GetEnumerator().Where({ $Permission -contains $_.Key }).Value
+        } else {
+            # Return all available Real-time Response commands
+            @($Index.Values).foreach{ $_ }
+        }
+    }
 }
 function Get-RtrResult {
     [CmdletBinding()]
@@ -538,25 +562,24 @@ function Invoke-Loop {
                 $Clone.Endpoint.Path -replace $Current,($Page -join '=')
             } elseif ($Clone.Endpoint.Path -match "$Endpoint^") {
                 # Add pagination
-                "$($Clone.Endpoint.Path)?$($Page -join '=')"
+                $Clone.Endpoint.Path,($Page -join '=') -join '?'
             } else {
                 # Update pagination
-                "$($Clone.Endpoint.Path)&$($Page -join '=')"
+                $Clone.Endpoint.Path,($Page -join '=') -join '&'
             }
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
                 $Result = Write-Result -Request $Request
                 if ($null -ne $Result) {
                     if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
-                        & $Command -Ids $Result
+                        & $Command -Id $Result
                     } else {
                         $Result
                     }
                 } else {
-                    $ErrorMessage = ("[Invoke-Loop] Results limited by API " +
-                        "'$(($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname,$null)' " +
-                        "($i of $($Pagination.total)).")
-                    Write-Error $ErrorMessage
+                    $Message = "[Invoke-Loop] Results limited by API '$(($Clone.Endpoint.Path).Split(
+                        '?')[0] -replace $Script:Falcon.Hostname,$null)' ($i of $($Pagination.total))."
+                    Write-Error $Message
                 }
                 $Pagination = (ConvertFrom-Json (
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
