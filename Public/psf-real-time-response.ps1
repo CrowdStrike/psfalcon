@@ -284,7 +284,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 $Param = @{
                     Path = $FilePath
                     Name = $FileName
-                    #Description = $ProcessName
+                    Description = "Invoke-FalconDeploy [$((Show-FalconModule).UserAgent)]"
                     Comment = "Invoke-FalconDeploy [$((Show-FalconModule).UserAgent)]"
                 }
                 $AddPut = Send-FalconPutFile @Param
@@ -304,7 +304,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             ($Object | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
                 $_.offline_queued -eq $true }).aid
         }
-        #[string]$ProcessName = [System.IO.Path]::GetFileNameWithoutExtension($FilePath)
         [System.Collections.Generic.List[object]]$Hosts = @()
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -331,10 +330,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             }
         }
         if ($Hosts) {
-            if (Test-Path $FilePath -PathType Leaf) {
-                # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
-                Update-CloudFile $PutFile $FilePath
-            }
+            # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
+            if (Test-Path $FilePath -PathType Leaf) { Update-CloudFile $PutFile $FilePath }
             try {
                 for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 1000) {
                     # Start Real-time Response sessions in groups of 1,000
@@ -410,7 +407,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                     Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
                                         Measure-Object).Count) $($Pair.Key) host(s)..."
                                     $Result = Invoke-FalconAdminCommand @Param
-                                    $Optional = if ($Result) { Write-RtrResult $Result $Cmd $Session.batch_id }
+                                    [string[]]$Optional = if ($Result) {
+                                        Write-RtrResult $Result $Cmd $Session.batch_id
+                                    }
                                 }
                             }
                         }
