@@ -393,7 +393,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                 # Define Real-time Response command parameters
                                 $Param = @{
                                     BatchId = $Session.batch_id
-                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(ps1|sh)$') {
+                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(ps1|(z)?sh)$') {
                                         # Switch 'run' for 'runscript' if 'Run' is a script file
                                         'runscript'
                                     } else {
