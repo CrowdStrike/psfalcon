@@ -475,6 +475,9 @@
     * Renamed 'Add-Property' private function to 'Set-Property' and updated it to add a property when it doesn't
       exist, or update the value if it does exist.
 
+    * Updated 'Get-RtrCommand' private function to output available Real-time Response commands by permission,
+      or all available Real-time Response commands if permission is not defined.
+
     * Created 'Test-OutFile' private function to validate the presence of an existing file and generate error
       messages when using 'Receive' commands.
 
@@ -597,6 +600,10 @@
 
       Added 'mkdir' step to create a temporary folder in order to ensure that a unique file will be 'put' and 'run'
       each time, instead of failing when a previous 'put' occurred. CSV output was slightly modified as a result.
+
+    * 'Invoke-FalconRtr'
+      Updated to use 'Get-RtrCommand' private function to determine valid 'Command' values automatically from the
+      other Real-time Response commands.
 
     * 'New-FalconDeviceControlPolicy', 'New-FalconFirewallPolicy', 'New-FalconPreventionPolicy'
       Removed the '-CloneId' parameter from the following commands due to inconsistencies in created policies. The
