@@ -208,10 +208,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [ValidatePattern('^\w{32}$')]
         [Alias('id')]
         [string]$GroupId,
-        [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^\w{32}$')]
         [Alias('HostIds','device_id','host_ids','aid')]
         [string[]]$HostId
