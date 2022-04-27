@@ -506,8 +506,8 @@
       'Receive-FalconScheduledReport'
       'Receive-FalconInstaller'
 
-    * Updated commands ('Import-FalconConfig', 'Export-FalconReport', 'Get-FalconQueue', 'Invoke-FalconDeploy')
-      that output to CSV to send their results to 'Write-Output' when unable to write to CSV.
+    * Updated commands that output to CSV ('Import-FalconConfig', 'Export-FalconReport', 'Get-FalconQueue',
+    'Invoke-FalconDeploy') to send their results to 'Write-Output' when unable to write to CSV.
 
   Command Changes
 
@@ -593,10 +593,10 @@
       Split the 'eventlog' command into 'eventlog backup', 'eventlog export', 'eventlog list', and 'eventlog view'.
 
     * 'Invoke-FalconDeploy'
-      Contribution from @soggysec: Changed '-Path' to '-File' and added '-Archive' (with the corresponding '-Run'
-      parameter) to allow for a file or archive to be specified. If 'Archive' is used, Real-time Response will
-      'run' the file specified by '-Run', allowing the deployment of files that require additional files to be
-      present in order to execute.
+      Contribution from @soggysec: Changed '-Path' to '-File' (with a 'Path' alias) and added '-Archive' (with a
+      corresponding '-Run' parameter) to allow for a file or archive to be specified. If 'Archive' is used,
+      Real-time Response will be used to 'runscript' and extract the files, then 'run' the specified 'Run' file,
+      allowing the deployment of files that require additional files to be present in order to execute.
 
       Added 'mkdir' step to create a temporary folder in order to ensure that a unique file will be 'put' and 'run'
       each time, instead of failing when a previous 'put' occurred. CSV output was slightly modified as a result.
