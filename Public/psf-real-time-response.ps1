@@ -234,19 +234,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 $CloudFile = @(Get-FalconPutFile -Filter "name:['$FileName']" -Detailed |
                 Select-Object $Fields).foreach{
                     [PSCustomObject]@{
-                        id                 = $_.id
-                        name               = $_.name
-                        created_timestamp  = [datetime]$_.created_timestamp
+                        id = $_.id
+                        name = $_.name
+                        created_timestamp = [datetime]$_.created_timestamp
                         modified_timestamp = [datetime]$_.modified_timestamp
-                        sha256             = $_.sha256
+                        sha256 = $_.sha256
                     }
                 }
                 $LocalFile = @(Get-ChildItem $FilePath | Select-Object CreationTime,Name,LastWriteTime).foreach{
                     [PSCustomObject]@{
-                        name               = $_.Name
-                        created_timestamp  = $_.CreationTime
+                        name = $_.Name
+                        created_timestamp = $_.CreationTime
                         modified_timestamp = $_.LastWriteTime
-                        sha256             = ((Get-FileHash $FilePath).Hash).ToLower()
+                        sha256 = ((Get-FileHash $FilePath).Hash).ToLower()
                     }
                 }
                 if ($LocalFile -and $CloudFile) {
@@ -332,11 +332,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             if (Test-Path $FilePath -PathType Leaf) { Update-CloudFile $PutFile $FilePath }
             try {
                 for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 1000) {
-                    # Start Real-time Response sessions in groups of 1,000
-                    $Param = @{ Id = @($Hosts[$i..($i + 999)].device_id) }
-                    @('QueueOffline','Timeout').foreach{
-                        if ($PSBoundParameters.$_) { $Param[$_] = $PSBoundParameters.$_ }
+                    # Start Real-time Response sessions in groups of 1,000 with 'Timeout' to force batch
+                    $Param = @{
+                        Id = @($Hosts[$i..($i + 999)].device_id)
+                        Timeout = if ($Timeout) { $Timeout } else { 30 }
                     }
+                    if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
                     $Session = Start-FalconSession @Param
                     [string[]]$SessionIds = if ($Session.batch_id) {
                         # Output result to CSV and return list of successful 'init' hosts
@@ -363,10 +364,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             # Script content for 'runscript'
                             $Runscript = @{
                                 Linux = @{
-                                    Archive = $null
+                                    Archive = "if ! command -v unzip &> /dev/null; then echo 'unzip could not be" +
+                                        " found'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
+                                        '/'); exit"
                                     File = "chmod +x $($TempDir,$PutFile -join '/')"
                                 }
-                                Mac = @{ Archive = $null }
+                                Mac = @{
+                                    Archive = "if ! command -v unzip &> /dev/null; then echo 'unzip could not be" +
+                                        " found'; exit 1; fi; unzip $PutFile; exit"
+                                }
                                 Windows = @{ Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir" }
                             }
                             foreach ($Cmd in @('mkdir','cd','put','runscript','run')) {
