@@ -385,6 +385,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                         'cd' { $TempDir }
                                         'put' { $PutFile }
                                         'runscript' {
+                                            # Get 'Archive' or 'File' 
                                             $Script = if ($Archive) {
                                                 $Runscript.($Pair.Key).Archive
                                             } else {
@@ -491,31 +492,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [string[]]$HostId
     )
     begin {
-        if ($PSBoundParameters.Timeout -and $PSBoundParameters.Command -eq 'runscript' -and
-        $PSBoundParameters.Argument -notmatch '-Timeout=\d{2,3}') {
+        if ($Timeout -and $Command -eq 'runscript' -and $Argument -notmatch '-Timeout=\d{2,3}') {
             # Force 'Timeout' into 'Arguments' when using 'runscript'
-            $PSBoundParameters.Argument += " -Timeout=$($PSBoundParameters.Timeout)"
+            $Argument += " -Timeout=$($Timeout)"
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($PSBoundParameters.GroupId) {
-            if (($PSBoundParameters.GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
+        if ($GroupId) {
+            if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
                 # Stop if number of members exceeds API limit
                 throw "Group size exceeds maximum number of results. [10,000]"
             } else {
                 # Retrieve Host Group member device_id and platform_name
-                @($PSBoundParameters.GroupId | Get-FalconHostGroupMember -All).foreach{ $List.Add($_) }
+                @($GroupId | Get-FalconHostGroupMember -All).foreach{ $List.Add($_) }
             }
-        } elseif ($PSBoundParameters.HostId) {
+        } elseif ($HostId) {
             # Use provided Host identifiers
-            @($PSBoundParameters.HostId).foreach{ $List.Add($_) }
+            @($HostId).foreach{ $List.Add($_) }
         }
     }
     end {
         if ($List) {
-            # Start session using unique identifiers and capture result
+            # Gather list of unique host identifiers and append 'GroupId' when present
             $Output = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
+            if ($GroupId) { @($Output).foreach{ Set-Property $_ 'group_id' $GroupId }}
             if ($Include) {
                 foreach ($i in (Get-FalconHost -Id $Output.aid | Select-Object @($Include + 'device_id'))) {
                     # Append 'Include' fields to output
@@ -526,12 +527,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 }
             }
-            if ($GroupId) {
-                # Append 'group_id' field to output
-                @($Output).foreach{ Set-Property $_ 'group_id' $GroupId }
+            # Start batch Real-time Response session by forcing 'Timeout' value
+            $Init = @{
+                Id = $Output.aid
+                Timeout = if ($Timeout) { $Timeout } else { 30 }
             }
-            $Init = @{ Id = $Output.aid }
-            @('QueueOffline','Timeout').foreach{ if ($PSBoundParameters.$_) { $Init[$_] = $PSBoundParameters.$_ }}
+            if ($QueueOffline) { $Init['QueueOffline'] = $QueueOffline }
             $InitReq = Start-FalconSession @Init
             if ($InitReq.batch_id -or $InitReq.session_id) {
                 $Output = if ($InitReq.hosts) {
@@ -545,7 +546,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 }
                 # Issue command and capture result
                 $Cmd = @{ Command = $Command }
-                @('Argument','Timeout').foreach{ if ($PSBoundParameters.$_) { $Cmd[$_] = $PSBoundParameters.$_ }}
+                @('Argument','Timeout').foreach{
+                    if ((Get-Variable $_ -EA 0).Value) { $Cmd[$_] = (Get-Variable $_).Value }
+                }
                 if ($QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
                 $CmdReq = $InitReq | & "$(Get-RtrCommand $Command)" @Cmd
                 $Output = Get-RtrResult $CmdReq $Output
