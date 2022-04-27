@@ -306,8 +306,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     }
     process {
         try {
-            $Hosts = Get-FalconHost -Id $PSBoundParameters.Id | Select-Object cid,device_id,
-                platform_name,device_policies
+            $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,device_policies
             if ($Hosts.platform_name -eq 'Mac') {
                 throw 'Only Windows and Linux hosts are currently supported in PSFalcon.'
             }
