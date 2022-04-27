@@ -617,9 +617,12 @@
       Updated to allow 'Path' to contain string based script content or a path to a file.
 
     * 'Start-FalconSession'
-      Now uses '-Id' to define both single-host and multi-host sessions. When host identifier values are passed in
-      the pipeline the command will default to a multi-host (batch) session. Additionally, this command now appends
-      'batch_id' to each host that was successfully initiated within a multi-host session.
+      Now uses '-Id' to define both single-host and multi-host sessions. When a single host identifier is passed in
+      the pipeline, a single-host session will be created. A multi-host session can be forced by specifying the
+      'Timeout' or 'ExistingBatchId' parameter(s).
+
+      Additionally, this command now appends 'batch_id' to each host that was successfully initiated within a
+      multi-host session.
 "@
         }
     }
