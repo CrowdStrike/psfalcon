@@ -167,7 +167,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='HostId_Archive',Mandatory)]
         [Parameter(ParameterSetName='GroupId_Archive',Mandatory)]
         [ValidateScript({
-            if ($_ -match '\.zip$') {
+            if ($_ -match '\.(zip|tar(.gz)?)$') {
                 if (Test-Path $_ -PathType Leaf) {
                     $true
                 } else {
@@ -179,7 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 }
             } else {
-                throw "'$_' does not match expected file extension."
+                throw "'$_' does not match expected file extension: 'zip', 'tar', 'tar.gz'."
             }
         })]
         [string]$Archive,
@@ -364,14 +364,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             # Script content for 'runscript'
                             $Runscript = @{
                                 Linux = @{
-                                    Archive = "if ! command -v unzip &> /dev/null; then echo 'unzip could not be" +
-                                        " found'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
-                                        '/'); exit"
+                                    Archive = if ($PutFile -match '\.tar(.gz)?$') {
+                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
+                                            " exit 1; fi; tar -xvf $PutFile; chmod +x $($TempDir,
+                                            $RunFile -join '/'); exit"
+                                    } else {
+                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
+                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
+                                            $RunFile -join '/'); exit"
+                                    }
                                     File = "chmod +x $($TempDir,$PutFile -join '/')"
                                 }
                                 Mac = @{
-                                    Archive = "if ! command -v unzip &> /dev/null; then echo 'unzip could not be" +
-                                        " found'; exit 1; fi; unzip $PutFile; exit"
+                                    Archive = if ($PutFile -match '\.tar(.gz)?$') {
+                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
+                                            " exit 1; fi; tar -xvf $PutFile; exit"
+                                    } else {
+                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
+                                            "ip'; exit 1; fi; unzip $PutFile; exit"
+                                    }
                                 }
                                 Windows = @{ Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir" }
                             }
