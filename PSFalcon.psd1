@@ -601,6 +601,9 @@
       Added 'mkdir' step to create a temporary folder in order to ensure that a unique file will be 'put' and 'run'
       each time, instead of failing when a previous 'put' occurred. CSV output was slightly modified as a result.
 
+      If you specify a .ps1, .sh or .zsh file within the '-File' or '-Run' parameter, the command will use
+      'runscript' instead of 'run'.
+
     * 'Invoke-FalconRtr'
       Updated to use 'Get-RtrCommand' private function to determine valid 'Command' values automatically from the
       other Real-time Response commands.
