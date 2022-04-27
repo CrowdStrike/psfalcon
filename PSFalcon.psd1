@@ -429,58 +429,62 @@
   General Changes
 
     * Re-added basic help information to each command. This will increase module size, but will eliminate the
-    need to 'Update-Help' to get descriptions for each command, its parameters and the required API permission(s).
+      need to 'Update-Help' to get descriptions for each command, its parameters and the required API
+      permission(s).
 
     * Thanks to some knowledge shared by @kra-ts, PowerShell pipeline support is now cross-module and no longer
-    restricted to specific commands!
+      restricted to specific commands!
 
-    Before this release, PSFalcon supported pipeline input when a command accepted a single 'id'. With these
-    changes, PSFalcon collects multiple 'ids' passed through the pipeline, groups them and sends appropriately
-    sized API requests.
+      Before this release, PSFalcon supported pipeline input when a command accepted a single 'id'. With these
+      changes, PSFalcon collects multiple 'ids' passed through the pipeline, groups them and sends appropriately
+      sized API requests.
 
-    This change also required the re-positioning of many parameters, the addition of aliases, and the majority of
-    [array] parameters being converted into [string[]] or [int[]]. When it was logically possible, [array] values
-    were also converted into [object[]] to allow for the processing of both 'id' and 'detailed' values.
+      This change also required the re-positioning of many parameters, the addition of aliases, and the majority of
+      [array] parameters being converted into [string[]] or [int[]]. When it was logically possible, [array] values
+      were also converted into [object[]] to allow for the processing of both 'id' and 'detailed' values.
 
     * Warning messages have been added when hosts are not included in a batch Real-time Response session
-    ('Start-FalconSession') or when Real-time Response commands produce errors ('Invoke-FalconCommand',
-    'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconBatchGet') so it will be more
-    obvious what happened when hosts are missing from the final result that was passed through the pipeline.
+      ('Start-FalconSession') or when Real-time Response commands produce errors ('Invoke-FalconCommand',
+      'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconBatchGet') so it will be more
+      obvious what happened when hosts are missing from the final result that was passed through the pipeline.
 
     * Renamed plural parameters ('Ids') to singular ('Id') to follow PowerShell best practices. Each updated
-    parameter kept maintains the plural version as an alias (or the original parameter name when switching to the
-    singular was not possible due to incompatibilities with PowerShell) to prevent errors with existing scripts.
+      parameter kept maintains the plural version as an alias (or the original parameter name when switching to the
+      singular was not possible due to incompatibilities with PowerShell) to prevent errors with existing scripts.
 
     * Modified commands to use the alias values for parameters instead of the 'Fields' variable that was used to
-    to rename parameters to fit API submission structure. Removing 'Fields' also enabled the removal of the
-    private function 'Update-FieldName'.
+      to rename parameters to fit API submission structure. Removing 'Fields' also enabled the removal of the
+      private function 'Update-FieldName'.
 
     * When applicable, the 'Id' parameter attributes were modified to ensure that 'Get-Help' properly displayed
-    that the parameter name needs to be explicitly included.
+      that the parameter name needs to be explicitly included.
 
     * Added case enforcement to all 'ValidateSet' values. This ensures that proper case is used with parameters
-    that have a pre-defined list of accepted values and preventing errors from the resulting API.
+      that have a pre-defined list of accepted values and preventing errors from the resulting API.
 
     * Added 'raw_array' as a field to be used when defining the format of a 'body' submission inside of a PSFalcon
-    command. Using it will instruct the module to create a 'body' object that has a base [array] value containing
-    the object properties to be converted to Json.
+      command. Using it will instruct the module to create a 'body' object that has a base [array] value containing
+      the object properties to be converted to Json.
 
     * Updated 'Build-Formdata' private function to attempt to gather file content for the 'content' field, or
-    supply the original value if that fails. This change was made to allow 'Send-FalconScript' to use a file
-    path or string-based script content.
+      supply the original value if that fails. This change was made to allow 'Send-FalconScript' to use a file
+      path or string-based script content.
 
     * Created 'Assert-Extension' private function to validate a given file extension when using 'Receive' commands.
 
+    * Renamed 'Add-Property' private function to 'Set-Property' and updated it to add a property when it doesn't
+      exist, or update the value if it does exist.
+
     * Created 'Test-OutFile' private function to validate the presence of an existing file and generate error
-    messages when using 'Receive' commands.
+      messages when using 'Receive' commands.
 
     * Moved verbose output of 'body' and 'formdata' payloads from 'Build-Content' to ApiClient.Invoke() during a
-    request. This ensures that individual submissions are displayed, rather than the initial submission before it
-    has been broken up into groups.
+      request. This ensures that individual submissions are displayed, rather than the initial submission before it
+      has been broken up into groups.
 
     * Moved verbose output of Header keys and values within an API response from 'Write-Result' to
-    ApiClient.Invoke(). 'Write-Result' continues to display the 'meta' Json values due to the addition of an
-    internal function called 'Write-Meta'.
+      ApiClient.Invoke(). 'Write-Result' continues to display the 'meta' Json values due to the addition of an
+      internal function called 'Write-Meta'.
 
     * Added '-Force' function to the following commands to overwrite an existing file when present:
       'Export-FalconConfig'
@@ -584,6 +588,14 @@
 
     * 'Invoke-FalconCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconRtr'
       Split the 'eventlog' command into 'eventlog backup', 'eventlog export', 'eventlog list', and 'eventlog view'.
+
+    * 'Invoke-FalconDeploy'
+      Changed '-Path' to '-File' and added '-Archive' (with the corresponding '-Run' parameter) to allow for a
+      file or archive to be specified. If 'Archive' is used, Real-time Response will 'run' the file specified by
+      '-Run', allowing the deployment of files that require additional files to be present in order to execute.
+
+      Added 'mkdir' step to create a temporary folder in order to ensure that a unique file will be 'put' and 'run'
+      each time, instead of failing when a previous 'put' occurred. CSV output was slightly modified as a result.
 
     * 'New-FalconDeviceControlPolicy', 'New-FalconFirewallPolicy', 'New-FalconPreventionPolicy'
       Removed the '-CloneId' parameter from the following commands due to inconsistencies in created policies. The
