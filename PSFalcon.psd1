@@ -470,6 +470,8 @@
       supply the original value if that fails. This change was made to allow 'Send-FalconScript' to use a file
       path or string-based script content.
 
+    * Created 'Add-Include' private function to append 'Include' content to command results.
+
     * Created 'Assert-Extension' private function to validate a given file extension when using 'Receive' commands.
 
     * Renamed 'Add-Property' private function to 'Set-Property' and updated it to add a property when it doesn't
