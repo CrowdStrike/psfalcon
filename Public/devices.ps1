@@ -60,10 +60,10 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER Include
 Include additional properties
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Hidden
 Restrict search to 'hidden' hosts
 .PARAMETER Login
@@ -123,12 +123,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [int32]$Limit,
         [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=4)]
         [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=4)]
-        [string]$Offset,
-        [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=5)]
         [ValidateSet('group_names','login_history','network_history','online_state',
             'zero_trust_assessment',IgnoreCase=$false)]
         [string[]]$Include,
+        [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get')]
+        [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get')]
+        [string]$Offset,
         [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Mandatory)]
         [switch]$Hidden,
         [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory)]
@@ -193,42 +193,42 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
             if ($PSBoundParameters.Include -contains 'login_history') {
                 foreach ($Item in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Login -EA 0)) {
-                    $AddParam = @{
+                    $SetParam = @{
                         Object = $Request | Where-Object { $_.device_id -eq $Item.device_id }
                         Name = 'login_history'
                         Value = $Item.recent_logins
                     }
-                    Set-Property @AddParam
+                    Set-Property @SetParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'network_history') {
                 foreach ($Item in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Network -EA 0)) {
-                    $AddParam = @{
+                    $SetParam = @{
                         Object = $Request | Where-Object { $_.device_id -eq $Item.device_id }
                         Name = 'network_history'
                         Value = $Item.history
                     }
-                    Set-Property @AddParam
+                    Set-Property @SetParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'online_state') {
                 foreach ($Item in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -State -EA 0)) {
-                    $AddParam = @{
+                    $SetParam = @{
                         Object = $Request | Where-Object { $_.device_id -eq $Item.id }
                         Name = 'online_state'
                         Value = $Item
                     }
-                    Set-Property @AddParam
+                    Set-Property @SetParam
                 }
             }
             if ($PSBoundParameters.Include -contains 'zero_trust_assessment') {
                 foreach ($Item in (Get-FalconZta -Id $Request.device_id -EA 0)) {
-                    $AddParam = @{
+                    $SetParam = @{
                         Object = $Request | Where-Object { $_.device_id -eq $Item.aid }
                         Name = 'zero_trust_assessment'
                         Value = $Item | Select-Object modified_time,sensor_file_status,assessment,assessment_items
                     }
-                    Set-Property @AddParam
+                    Set-Property @SetParam
                 }
             }
         }
@@ -290,12 +290,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 foreach ($Item in (Get-FalconHost -Id $Request.id | Select-Object @(
                 $PSBoundParameters.Include + 'device_id'))) {
                     @($Item.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
-                        $AddParam = @{
+                        $SetParam = @{
                             Object = $Request | Where-Object { $_.id -eq $Item.device_id }
                             Name = $_.Name
                             Value = $_.Value
                         }
-                        Set-Property @AddParam
+                        Set-Property @SetParam
                     }
                 }
             }

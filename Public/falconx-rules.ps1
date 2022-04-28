@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
         [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Position=9)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Position=10)]
+        [Parameter(ParameterSetName='/intel/queries/rules/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/intel/queries/rules/v1:get')]
         [switch]$Detailed,

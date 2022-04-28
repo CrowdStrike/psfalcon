@@ -12,10 +12,10 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER Include
 Include additional properties
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -56,12 +56,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
         [int32]$Limit,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=4)]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=4)]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=5)]
         [ValidateSet('login_event',IgnoreCase=$false)]
         [string[]]$Include,
+        [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
+        [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
+        [int32]$Offset,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
@@ -140,12 +140,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
                     foreach ($Item in (& $MyInvocation.MyCommand.Name -Filter $Filter -Detailed -Login -EA 0)) {
                         # Append matched login events to 'id' using 'host_id' or 'account_id'
                         foreach ($r in $Match) {
-                            $AddParam = @{
+                            $SetParam = @{
                                 Object = $Request | Where-Object { $_.id -eq $r.id }
                                 Name = 'login_event'
                                 Value = $Item | Where-Object { $_.$Property -eq $r.id }
                             }
-                            Set-Property @AddParam
+                            Set-Property @SetParam
                         }
                     }
                 }

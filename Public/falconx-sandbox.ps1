@@ -42,7 +42,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/falconx/queries/reports/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falconx/queries/reports/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/falconx/queries/reports/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falconx/entities/report-summaries/v1:get',Mandatory)]
         [switch]$Summary,
@@ -115,7 +115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/falconx/queries/submissions/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falconx/queries/submissions/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/falconx/queries/submissions/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falconx/queries/submissions/v1:get')]
         [switch]$Detailed,

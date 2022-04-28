@@ -104,7 +104,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/detects/queries/detects/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/detects/queries/detects/v1:get')]
         [switch]$Detailed,

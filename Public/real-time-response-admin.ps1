@@ -152,7 +152,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=3)]
         [ValidateRange(1,100)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get')]
         [switch]$Detailed,
@@ -223,7 +223,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=3)]
         [ValidateRange(1,100)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get')]
         [switch]$Detailed,

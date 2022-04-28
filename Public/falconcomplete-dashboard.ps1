@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get')]
         [switch]$All,
@@ -76,7 +76,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get')]
         [switch]$All,
@@ -126,8 +126,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
            Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
-           Position=4)]
+        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
         [switch]$All,
@@ -174,7 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get')]
         [switch]$All,
@@ -221,7 +220,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get')]
         [switch]$All,
@@ -265,11 +264,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
         [string]$Filter,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get',Position=2)]
         [string]$Sort,
-        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get',Position=4)]
-        [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
+        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get')]
+        [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get')]
         [switch]$All,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get')]
@@ -315,7 +314,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get')]
         [switch]$All,

@@ -424,7 +424,7 @@
   New Commands
 
     * spotlight-vulnerabilities.ps1
-      'Get-FalconVulnerabilityLogic'
+      Get-FalconVulnerabilityLogic
 
   General Changes
 
@@ -490,71 +490,73 @@
       internal function called 'Write-Meta'.
 
     * Added '-Force' function to the following commands to overwrite an existing file when present:
-      'Export-FalconConfig'
-      'Receive-FalconHorizonAwsScript'
-      'Receive-FalconHorizonAzureScript'
-      'Receive-FalconDiscoverAzureScript'
-      'Receive-FalconDiscoverGcpScript'
-      'Receive-FalconIntel'
-      'Receive-FalconRule'
-      'Receive-FalconArtifact'
-      'Receive-FalconContainerYaml'
-      'Receive-FalconMalQuerySample'
-      'Receive-FalconCompleteAttachment'
-      'Receive-FalconGetFile'
-      'Receive-FalconSample'
-      'Receive-FalconScheduledReport'
-      'Receive-FalconInstaller'
+      Export-FalconConfig
+      Receive-FalconHorizonAwsScript
+      Receive-FalconHorizonAzureScript
+      Receive-FalconDiscoverAzureScript
+      Receive-FalconDiscoverGcpScript
+      Receive-FalconIntel
+      Receive-FalconRule
+      Receive-FalconArtifact
+      Receive-FalconContainerYaml
+      Receive-FalconMalQuerySample
+      Receive-FalconCompleteAttachment
+      Receive-FalconGetFile
+      Receive-FalconSample
+      Receive-FalconScheduledReport
+      Receive-FalconInstaller
 
     * Updated commands that output to CSV ('Import-FalconConfig', 'Export-FalconReport', 'Get-FalconQueue',
     'Invoke-FalconDeploy') to send their results to 'Write-Output' when unable to write to CSV.
 
+    * Removed position attribute from all pagination parameters ('After', 'Offset', 'NextToken').
+
   Command Changes
 
-    * 'Confirm-FalconGetFile', 'Remove-FalconGetFile'
+    * Confirm-FalconGetFile, Remove-FalconGetFile
       Updated to use v2 API endpoint that includes upload progress.
 
-    * 'ConvertTo-FalconMlExclusion', 'ConvertTo-FalconIoaExclusion'
+    * ConvertTo-FalconMlExclusion, ConvertTo-FalconIoaExclusion
       Commands have been corrected to properly produce individual exclusions for each relevant behavior within a
       detection (rather than one exclusion with values from multiple behaviors).
 
-    * 'Edit-FalconFirewallSetting', 'Edit-FalconHorizonPolicy'
+    * Edit-FalconFirewallSetting, Edit-FalconHorizonPolicy
       Renamed '-PolicyId' to '-Id'.
 
-    * 'Export-FalconConfig'
+    * Export-FalconConfig
       Now includes 'Script' (Real-time Response scripts) as an exportable item.
 
       Output filename now contains a 'FileDateTime' timestamp instead of simply 'FileDate'. This was done to
       match changes made to 'Import-FalconConfig'.
 
-    * 'Find-FalconDuplicate'
+    * Find-FalconDuplicate
       Updated to accommodate multiple 'Filter' values.
 
-    * 'Get-FalconAsset'
+    * Get-FalconAsset
       Added '-Account' and '-Login' switch parameters to toggle access of Falcon Discover user account assets
       and user login events.
 
       Added '-Include' to append login events both the default hardware asset and user account output.
 
-    * 'Get-FalconFirewallPolicy'
+    * Get-FalconFirewallPolicy
       Re-added the 'policy_id' in the 'settings' sub-object that is created when using '-Include settings'. This
       was originally removed for being redundant, but needed to be restored to be utilized by the 
       'Copy-FalconFirewallPolicy' command.
 
-    * 'Get-FalconHorizonIoa', 'Get-FalconHorizonIoaEvent', 'Get-FalconHorizonIoaUser', 'Get-FalconHorizonIom'
+    * Get-FalconHorizonIoa, Get-FalconHorizonIoaEvent, Get-FalconHorizonIoaUser, Get-FalconHorizonIom
       Removed 'Mandatory' status for '-CloudPlatform', instead populating it if 'AwsAccountId' (or 'AccountId',
       in the case of 'Get-FalconHorizonIom'), 'AzureSubscriptionId', or 'AzureTenantId' are provided. Without one
       of the four values, the command will produce an exception.
 
-    * 'Get-FalconHorizonIoaEvent', 'Get-FalconHorizonIoaUser'
+    * Get-FalconHorizonIoaEvent, Get-FalconHorizonIoaUser
       Replaced '-AccountId' with '-AwsAccountId' and added '-AzureSubscriptionId' and '-AzureTenantId' to match
       'Get-FalconHorizonIoa'.
 
-    * 'Get-FalconHorizonIom'
+    * Get-FalconHorizonIom
       Renamed parameter '-AwsAccountId' to '-AccountId', which accepts an AWS account ID or GCP Project Number
       value. Also corrected the accepted '-Status' value 'recurring' to 'reoccurring'.
 
-    * 'Get-FalconHost'
+    * Get-FalconHost
       '-Detailed' output will no longer be forced when using '-Include group_names', and instead will include
       'device_id' and 'groups'. Using '-Detailed' and '-Include group_names' maintains full output.
 
@@ -562,13 +564,16 @@
 
       Added '-State' switch to be used with '-Id' to retrieve detail from the new 'online status' API.
 
-    * 'Get-FalconQueue'
+    * Get-FalconHostGroup
+      Added 'Include' parameter with 'members' option.
+
+    * Get-FalconQueue
       Updated command to write progress to host stream instead of verbose stream.
 
-    * 'Get-FalconVulnerability'
+    * Get-FalconVulnerability
       Added 'evaluation_logic' to the 'Facet' parameter.
 
-    * 'Import-FalconConfig'
+    * Import-FalconConfig
       Completely re-written to utilize the pipeline and excluded items (with the reason they were excluded) are
       now included within the resulting CSV output.
 
@@ -580,7 +585,7 @@
       Removed warning message that was generated when no items were created because the CSV output now displays
       both excluded and created items.
 
-    * 'Invoke-FalconBatchGet', 'Invoke-FalconCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconResponderCommand'
+    * Invoke-FalconBatchGet, Invoke-FalconCommand, Invoke-FalconAdminCommand, Invoke-FalconResponderCommand
       Added a new '-Confirm' parameter to confirm and retrieve the output from both single-host commands and batch
       'get' commands.
 
@@ -589,10 +594,10 @@
 
       Each of the commands now appends 'batch_id' to the output of commands issued within a batch session.
 
-    * 'Invoke-FalconCommand', 'Invoke-FalconAdminCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconRtr'
+    * Invoke-FalconCommand, Invoke-FalconAdminCommand, Invoke-FalconResponderCommand, Invoke-FalconRtr
       Split the 'eventlog' command into 'eventlog backup', 'eventlog export', 'eventlog list', and 'eventlog view'.
 
-    * 'Invoke-FalconDeploy'
+    * Invoke-FalconDeploy
       Contribution from @soggysec: Changed '-Path' to '-File' (with a 'Path' alias) and added '-Archive' (with a
       corresponding '-Run' parameter) to allow for a file or archive to be specified. If 'Archive' is used,
       Real-time Response will be used to 'runscript' and extract the files, then 'run' the specified 'Run' file,
@@ -604,22 +609,22 @@
       If you specify a .ps1, .sh or .zsh file within the '-File' or '-Run' parameter, the command will use
       'runscript' instead of 'run'.
 
-    * 'Invoke-FalconRtr'
+    * Invoke-FalconRtr
       Updated to use 'Get-RtrCommand' private function to determine valid 'Command' values automatically from the
       other Real-time Response commands.
 
-    * 'New-FalconDeviceControlPolicy', 'New-FalconFirewallPolicy', 'New-FalconPreventionPolicy'
+    * New-FalconDeviceControlPolicy, New-FalconFirewallPolicy, New-FalconPreventionPolicy
       Removed the '-CloneId' parameter from the following commands due to inconsistencies in created policies. The
       'Copy-Falcon...Policy' commands continue to be available for use instead.
 
-    * 'Request-FalconToken'
+    * Request-FalconToken
       Contribution from @kra-ts: Added support for a CCID value in the '-MemberCid' parameter which leads to the
       checksum value being silently dropped but the CID itself being accepted.
 
-    * 'Send-FalconScript'
+    * Send-FalconScript
       Updated to allow 'Path' to contain string based script content or a path to a file.
 
-    * 'Start-FalconSession'
+    * Start-FalconSession
       Now uses '-Id' to define both single-host and multi-host sessions. When a single host identifier is passed in
       the pipeline, a single-host session will be created. A multi-host session can be forced by specifying the
       'Timeout' or 'ExistingBatchId' parameter(s).

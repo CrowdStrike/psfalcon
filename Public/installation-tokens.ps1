@@ -85,15 +85,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [ValidatePattern('^\w{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=2)]
         [string]$Sort,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=3)]
         [ValidateRange(1,1000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
         [switch]$Detailed,
@@ -163,7 +163,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [string]$Sort,
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=3)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
         [switch]$Detailed,

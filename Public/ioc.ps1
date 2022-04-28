@@ -169,11 +169,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Position=3)]
         [ValidateRange(1,2000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get')]
+        [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get')]
+        [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get')]
         [string]$After,
         [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Mandatory)]
         [switch]$Detailed,

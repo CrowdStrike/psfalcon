@@ -14,10 +14,10 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Fields
+Specific fields, or a predefined collection name surrounded by two underscores [default: _basic_]
 .PARAMETER Offset
 Position to begin retrieving results
-.PARAMETER Fields
-Specific fields,or a predefined collection name surrounded by two underscores [default: _basic_]
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -52,12 +52,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=2)]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=5)]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=6)]
-        [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=6)]
         [string[]]$Fields,
+        [Parameter(ParameterSetName='/intel/queries/actors/v1:get')]
+        [Parameter(ParameterSetName='/intel/combined/actors/v1:get')]
+        [int32]$Offset,
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Mandatory)]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get')]

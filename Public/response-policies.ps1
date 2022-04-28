@@ -99,6 +99,8 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Include
+Include additional properties
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -132,8 +134,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [Parameter(ParameterSetName='/policy/queries/response/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
+        [Parameter(ParameterSetName='/policy/entities/response/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/response/v1:get',Position=4)]
         [Parameter(ParameterSetName='/policy/queries/response/v1:get',Position=4)]
+        [ValidateSet('members',IgnoreCase=$false)]
+        [string[]]$Include,
+        [Parameter(ParameterSetName='/policy/combined/response/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/response/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/policy/combined/response/v1:get',Mandatory)]
         [switch]$Detailed,
@@ -155,14 +162,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         if ($Id) {
             @($Id).foreach{ $List.Add($_) }
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
+        if ($Request -and $Include) {
+            if (!$Request.id) { [object[]]$Request = @($Request).foreach{ [PSCustomObject]@{ id = $_ }}}
+            if ($Include -contains 'members') {
+                foreach ($i in $Request) {
+                    $SetParam = @{
+                        Object = $Request | Where-Object { $_.id -eq $i.id }
+                        Name = 'members'
+                        Value = if ($Detailed -or $Id) {
+                            Get-FalconResponsePolicyMember -Id $i.id -Detailed -All -EA 0
+                        } else {
+                            Get-FalconResponsePolicyMember -Id $i.id -All -EA 0
+                        }
+                    }
+                    Set-Property @SetParam
+                }
+            }
+        }
+        $Request
     }
 }
 function Get-FalconResponsePolicyMember {
@@ -209,8 +234,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [Parameter(ParameterSetName='/policy/combined/response-members/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/queries/response-members/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/policy/combined/response-members/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/policy/queries/response-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/combined/response-members/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/policy/combined/response-members/v1:get',Mandatory)]
         [switch]$Detailed,

@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/scanner/queries/scans/v1:get')]
         [switch]$Detailed,

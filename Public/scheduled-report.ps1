@@ -54,8 +54,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
         [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get')]
+        [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Mandatory)]
         [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory)]

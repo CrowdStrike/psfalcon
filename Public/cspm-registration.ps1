@@ -203,7 +203,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=5)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
         [switch]$All,
@@ -290,7 +290,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
         [switch]$All,
@@ -396,7 +396,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=10)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=11)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get')]
         [Alias('next_token')]
         [string]$NextToken,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get')]
@@ -487,7 +487,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=7)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=8)]
+        [Parameter(ParameterSetName='/ioa/entities/events/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get')]
         [switch]$All,
@@ -661,7 +661,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=9)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=10)]
+        [Parameter(ParameterSetName='/detects/entities/iom/v1:get')]
         [Alias('next_token')]
         [string]$NextToken,
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get')]

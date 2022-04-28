@@ -56,8 +56,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
         [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/sensors/queries/installers/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/sensors/queries/installers/v1:get')]
+        [Parameter(ParameterSetName='/sensors/combined/installers/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Mandatory)]
         [switch]$Detailed,

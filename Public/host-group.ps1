@@ -55,6 +55,8 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Include
+Include additional properties
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -87,6 +89,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(ParameterSetName='/devices/combined/host-groups/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
+        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/devices/queries/host-groups/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/devices/combined/host-groups/v1:get',Position=4)]
+        [ValidateSet('members',IgnoreCase=$false)]
+        [string[]]$Include,
         [Parameter(ParameterSetName='/devices/queries/host-groups/v1:get')]
         [Parameter(ParameterSetName='/devices/combined/host-groups/v1:get')]
         [int32]$Offset,
@@ -110,14 +117,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         if ($Id) {
             @($Id).foreach{ $List.Add($_) }
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
+        if ($Request -and $Include) {
+            if (!$Request.id) { [object[]]$Request = @($Request).foreach{ [PSCustomObject]@{ id = $_ }}}
+            if ($Include -contains 'members') {
+                foreach ($i in $Request) {
+                    $SetParam = @{
+                        Object = $Request | Where-Object { $_.id -eq $i.id }
+                        Name = 'members'
+                        Value = if ($Detailed -or $Id) {
+                            Get-FalconHostGroupMember -Id $i.id -Detailed -All -EA 0
+                        } else {
+                            Get-FalconHostGroupMember -Id $i.id -All -EA 0
+                        }
+                    }
+                    Set-Property @SetParam
+                }
+            }
+        }
+        $Request
     }
 }
 function Get-FalconHostGroupMember {
@@ -164,8 +189,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',Position=4)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get')]
+        [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',Mandatory)]
         [switch]$Detailed,

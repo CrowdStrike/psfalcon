@@ -151,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Position=4)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get')]
         [string]$Offset,
         [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get')]
         [switch]$Detailed,
@@ -227,7 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/message-center/queries/cases/v1:get')]
         [string]$Offset,
         [Parameter(ParameterSetName='/message-center/queries/cases/v1:get')]
         [switch]$Detailed,

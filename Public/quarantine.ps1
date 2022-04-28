@@ -46,7 +46,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get')]
         [switch]$Detailed,

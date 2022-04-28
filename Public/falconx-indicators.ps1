@@ -14,10 +14,10 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER IncludeDeleted
 Include previously deleted indicators
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -53,11 +53,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
         [int32]$Limit,
         [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=5)]
         [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=5)]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=6)]
-        [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=6)]
         [Alias('include_deleted')]
         [boolean]$IncludeDeleted,
+        [Parameter(ParameterSetName='/intel/queries/indicators/v1:get')]
+        [Parameter(ParameterSetName='/intel/combined/indicators/v1:get')]
+        [int32]$Offset,
         [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Mandatory)]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/intel/queries/indicators/v1:get')]

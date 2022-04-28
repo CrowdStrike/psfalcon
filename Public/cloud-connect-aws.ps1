@@ -144,8 +144,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Mandatory)]
         [switch]$Detailed,

@@ -190,7 +190,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=3)]
         [ValidateRange(1,100)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post',Mandatory)]
         [switch]$Queue,

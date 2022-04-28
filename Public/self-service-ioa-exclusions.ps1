@@ -172,7 +172,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
         [switch]$Detailed,

@@ -249,7 +249,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
         [switch]$Detailed,
@@ -323,8 +323,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
         [switch]$Detailed,
@@ -407,7 +406,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',Position=5)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
         [switch]$Detailed,
@@ -450,10 +449,10 @@ Requires 'Flight Control: Read'.
 Member CID identifier
 .PARAMETER Sort
 Property and direction to sort results
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -474,10 +473,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
         [string]$Sort,
         [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=2)]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
+        [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
+        [int32]$Offset,
         [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
@@ -548,7 +547,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
         [switch]$Detailed,
@@ -622,7 +621,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
         [switch]$Detailed,

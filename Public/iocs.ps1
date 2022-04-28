@@ -35,7 +35,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Position=3)]
         [ValidateRange(1,100)]
         [string]$Limit,
-        [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/indicators/queries/devices/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/indicators/queries/devices/v1:get')]
         [switch]$All,
@@ -65,10 +65,10 @@ Indicator type
 Indicator value
 .PARAMETER HostId
 Host identifier
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -93,10 +93,10 @@ https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('device_id')]
         [string]$HostId,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Position=4)]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Position=5)]
         [ValidateRange(1,100)]
         [string]$Limit,
+        [Parameter(ParameterSetName='/indicators/queries/processes/v1:get')]
+        [int32]$Offset,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get')]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get')]

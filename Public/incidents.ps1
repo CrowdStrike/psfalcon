@@ -39,7 +39,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get')]
         [switch]$Detailed,
@@ -117,7 +117,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get')]
         [switch]$Detailed,
@@ -183,7 +183,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=3)]
         [ValidateRange(1,2500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get')]
         [switch]$All,

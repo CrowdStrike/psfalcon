@@ -317,9 +317,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get')]
         [string]$After,
         [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get')]
         [switch]$Detailed,
@@ -386,7 +386,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get',Position=2)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
         [switch]$Detailed,
@@ -464,9 +464,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
         [string]$After,
         [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
         [switch]$Detailed,
@@ -528,7 +528,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get',Position=1)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get')]
         [switch]$Detailed,
@@ -573,10 +573,10 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER Include
 Include additional properties
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -608,14 +608,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=4)]
         [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=4)]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=5)]
-        [ValidateSet('settings',IgnoreCase=$false)]
+        [ValidateSet('members','settings',IgnoreCase=$false)]
         [string[]]$Include,
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get')]
+        [int32]$Offset,
         [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Mandatory)]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/policy/combined/firewall/v1:get')]
@@ -644,16 +644,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        if ($PSBoundParameters.Include -and $Request) {
-            if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}}
-            if ($PSBoundParameters.Include -contains 'settings') {
+        if ($Request -and $Include) {
+            if (!$Request.id) { [object[]]$Request = @($Request).foreach{ [PSCustomObject]@{ id = $_ }}}
+            if ($Include -contains 'settings') {
                 foreach ($Item in (Get-FalconFirewallSetting -Id $Request.id)) {
-                    $AddParam = @{
+                    $SetParam = @{
                         Object = $Request | Where-Object { $_.id -eq $Item.policy_id }
                         Name = 'settings'
                         Value = $Item
                     }
-                    Set-Property @AddParam
+                    Set-Property @SetParam
+                }
+            }
+            if ($Include -contains 'members') {
+                foreach ($i in $Request) {
+                    $SetParam = @{
+                        Object = $Request | Where-Object { $_.id -eq $i.id }
+                        Name = 'members'
+                        Value = if ($Detailed -or $Id) {
+                            Get-FalconFirewallPolicyMember -Id $i.id -Detailed -All -EA 0
+                        } else {
+                            Get-FalconFirewallPolicyMember -Id $i.id -All -EA 0
+                        }
+                    }
+                    Set-Property @SetParam
                 }
             }
         }
@@ -704,8 +718,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Mandatory)]
         [switch]$Detailed,
@@ -780,10 +794,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Position=6)]
-        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get')]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get')]
         [string]$After,
         [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get')]
         [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get')]

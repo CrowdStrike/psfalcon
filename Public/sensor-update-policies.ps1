@@ -151,8 +151,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get')]
@@ -188,6 +188,8 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Include
+Include additional properties
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -221,8 +223,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
+        [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=4)]
         [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=4)]
+        [ValidateSet('members',IgnoreCase=$false)]
+        [string[]]$Include,
+        [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get')]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Mandatory)]
         [switch]$Detailed,
@@ -244,14 +251,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         if ($Id) {
             @($Id).foreach{ $List.Add($_) }
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
+        if ($Request -and $Include) {
+            if (!$Request.id) { [object[]]$Request = @($Request).foreach{ [PSCustomObject]@{ id = $_ }}}
+            if ($Include -contains 'members') {
+                foreach ($i in $Request) {
+                    $SetParam = @{
+                        Object = $Request | Where-Object { $_.id -eq $i.id }
+                        Name = 'members'
+                        Value = if ($Detailed -or $Id) {
+                            Get-FalconSensorUpdatePolicyMember -Id $i.id -Detailed -All -EA 0
+                        } else {
+                            Get-FalconSensorUpdatePolicyMember -Id $i.id -All -EA 0
+                        }
+                    }
+                    Set-Property @SetParam
+                }
+            }
+        }
+        $Request
     }
 }
 function Get-FalconSensorUpdatePolicyMember {
@@ -298,8 +323,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Mandatory)]
         [switch]$Detailed,

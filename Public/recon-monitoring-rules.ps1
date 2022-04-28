@@ -260,7 +260,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [string]$Sort,
         [Parameter(ParameterSetName='/recon/queries/actions/v1:get',Position=4)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/recon/queries/actions/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/recon/queries/actions/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/recon/queries/actions/v1:get')]
         [switch]$Detailed,
@@ -350,7 +350,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/queries/notifications/v1:get',Position=4)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/recon/queries/notifications/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/recon/queries/notifications/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/recon/queries/notifications/v1:get')]
         [switch]$Detailed,
@@ -434,7 +434,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=4)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/recon/queries/rules/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/recon/queries/rules/v1:get')]
         [switch]$Detailed,

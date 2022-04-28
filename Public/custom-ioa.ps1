@@ -183,8 +183,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=4)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
+        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Mandatory)]
         [switch]$Detailed,
@@ -253,7 +253,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get',Position=1)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
         [switch]$Detailed,
@@ -338,7 +338,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=4)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
         [switch]$Detailed,
@@ -403,7 +403,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get',Position=1)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
         [switch]$Detailed,
@@ -465,7 +465,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get',Position=1)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
         [switch]$Detailed,

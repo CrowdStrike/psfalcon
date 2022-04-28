@@ -55,12 +55,12 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     }
                 } else {
                     # Add property to output as 'name'
-                    $AddParam = @{
+                    $SetParam = @{
                         Object = $Output
                         Name = $Name
                         Value = $Array -join ','
                     }
-                    Set-Property @AddParam
+                    Set-Property @SetParam
                 }
             }
         }
@@ -84,12 +84,12 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     Get-PSObject @ObjectParam
                 } else {
                     # Add property to output with 'prefix.name'
-                    $AddParam = @{
+                    $SetParam = @{
                         Object = $Output
                         Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
                         Value = $Item.Value
                     }
-                    Set-Property @AddParam
+                    Set-Property @SetParam
                 }
             }
         }

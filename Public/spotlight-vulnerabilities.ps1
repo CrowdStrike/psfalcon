@@ -97,8 +97,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
         [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=4)]
         [ValidateRange(1,400)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Position=5)]
-        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
+        [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get')]
         [string]$After,
         [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Mandatory)]
         [switch]$Detailed,
@@ -170,8 +170,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
         [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Position=3)]
         [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Position=3)]
         [int]$Limit,
-        [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get')]
+        [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get')]
         [string]$After,
         [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Mandatory)]
         [switch]$Detailed,

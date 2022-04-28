@@ -70,7 +70,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         [string]$Status,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=3)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
         [switch]$All,
@@ -179,7 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         [string]$ClusterService,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=5)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
         [switch]$All,
