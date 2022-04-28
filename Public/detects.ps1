@@ -100,6 +100,9 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [Alias('q')]
         [string]$Query,
         [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=3)]
+        [ValidateSet('adversary_id.asc','adversary_id.desc','devices.hostname.asc','devices.hostname.desc',
+            'first_behavior.asc','first_behavior.desc','last_behavior.asc','last_behavior.desc',
+            'max_confidence.asc','max_confidence.desc','max_severity.asc','max_severity.desc',IgnoreCase=$false)]
         [string]$Sort,
         [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=4)]
         [ValidateRange(1,5000)]
