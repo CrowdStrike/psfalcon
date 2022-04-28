@@ -126,21 +126,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Request -and $Include) {
-            if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}}
-            if ($Include -contains 'members') {
-                foreach ($i in $Request) {
-                    $SetParam = @{
-                        Object = $Request | Where-Object { $_.id -eq $i.id }
-                        Name = 'members'
-                        Value = if ($Detailed -or $Id) {
-                            Get-FalconHostGroupMember -Id $i.id -Detailed -All -EA 0
-                        } else {
-                            Get-FalconHostGroupMember -Id $i.id -All -EA 0
-                        }
-                    }
-                    Set-Property @SetParam
-                }
-            }
+            $Request = Add-Include $Request $PSBoundParameters @{ members = 'Get-FalconHostGroupMember' }
         }
         $Request
     }

@@ -1,3 +1,54 @@
+function Add-Include {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param(
+        [object[]]$Object,
+        [System.Object]$Inputs,
+        [System.Collections.Hashtable]$Index
+    )
+    if ($Inputs.Include) {
+        if (!$Object.id) {
+            # Create objects with 'id' property
+            $Object = @($Object).foreach{ ,[PSCustomObject]@{ id = $_ }}
+        } else {
+            $Detailed = $true
+        }
+        $Index.GetEnumerator().foreach{
+            # Use 'Index' for 'Include' value and command to gather data, then append to output
+            if ($Inputs.Include -contains $_.Key) {
+                if ($_.Key -eq 'members') {
+                    foreach ($i in $Object) {
+                        # Add 'members'
+                        $SetParam = @{
+                            Object = $i
+                            Name = $_.Key
+                            Value = if ($Detailed -eq $true) {
+                                & "$($_.Value)" -Id $i.id -Detailed -All -EA 0
+                            } else {
+                                & "$($_.Value)" -Id $i.id -All -EA 0
+                            }
+                        }
+                        Set-Property @SetParam
+                    }
+                } else {
+                    foreach ($i in (& "$($_.Value)" -Id $Object.id)) {
+                        $SetParam = @{
+                            Object = if ($i.policy_id) {
+                                $Object | Where-Object { $_.id -eq $i.policy_id }
+                            } else {
+                                $Object | Where-Object { $_.id -eq $i.id }
+                            }
+                            Name = $_.Key
+                            Value = $i
+                        }
+                        Set-Property @SetParam
+                    }
+                }
+            }
+        }
+    }
+    return $Object
+}
 function Assert-Extension {
     [CmdletBinding()]
     [OutputType([string])]
