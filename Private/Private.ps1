@@ -577,12 +577,7 @@ function Invoke-Falcon {
                             if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt
                             $Pagination.total) {
                                 # Repeat request(s)
-                                $Param = @{
-                                    ParamSet   = $ParamSet
-                                    Pagination = $Pagination
-                                    Result     = $Result
-                                }
-                                Invoke-Loop @Param
+                                Invoke-Loop $ParamSet $Pagination $Result
                             }
                         }
                     }
