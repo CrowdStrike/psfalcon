@@ -173,7 +173,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Request -and $Include) {
-            if (!$Request.id) { [object[]]$Request = @($Request).foreach{ [PSCustomObject]@{ id = $_ }}}
+            if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}}
             if ($Include -contains 'members') {
                 foreach ($i in $Request) {
                     $SetParam = @{
