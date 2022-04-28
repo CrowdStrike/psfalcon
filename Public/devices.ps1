@@ -172,59 +172,58 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        if ($Request -and $PSBoundParameters.Include) {
+        if ($Request -and $Include) {
             if (!$Request.device_id) {
-                $Request = if ($PSBoundParameters.Include -contains 'group_names') {
+                $Request = if ($Include -contains 'group_names') {
                     & $MyInvocation.MyCommand.Name -Id $Request | Select-Object device_id,groups
                 } else {
                     @($Request).foreach{ ,[PSCustomObject]@{ device_id = $_ }}
                 }
             }
-            if ($PSBoundParameters.Include -contains 'group_names') {
+            if ($Include -contains 'group_names') {
                 $Groups = Get-FalconHostGroup -Id $Request.groups -EA 0 | Select-Object id,name
                 if ($Groups) {
                     foreach ($i in $Request) {
-                        $GroupInfo = $Groups | Where-Object { $i.groups -contains $_.id }
-                        if ($GroupInfo) { $i.groups = $GroupInfo }
+                        $i.groups = @($Groups | Where-Object { $i.groups -contains $_.id })
                     }
                 }
             }
-            if ($PSBoundParameters.Include -contains 'login_history') {
-                foreach ($Item in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Login -EA 0)) {
+            if ($Include -contains 'login_history') {
+                foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Login -EA 0)) {
                     $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $Item.device_id }
+                        Object = $Request | Where-Object { $_.device_id -eq $i.device_id }
                         Name = 'login_history'
-                        Value = $Item.recent_logins
+                        Value = $i.recent_logins
                     }
                     Set-Property @SetParam
                 }
             }
-            if ($PSBoundParameters.Include -contains 'network_history') {
-                foreach ($Item in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Network -EA 0)) {
+            if ($Include -contains 'network_history') {
+                foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Network -EA 0)) {
                     $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $Item.device_id }
+                        Object = $Request | Where-Object { $_.device_id -eq $i.device_id }
                         Name = 'network_history'
-                        Value = $Item.history
+                        Value = $i.history
                     }
                     Set-Property @SetParam
                 }
             }
-            if ($PSBoundParameters.Include -contains 'online_state') {
-                foreach ($Item in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -State -EA 0)) {
+            if ($Include -contains 'online_state') {
+                foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -State -EA 0)) {
                     $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $Item.id }
+                        Object = $Request | Where-Object { $_.device_id -eq $i.id }
                         Name = 'online_state'
-                        Value = $Item
+                        Value = $i
                     }
                     Set-Property @SetParam
                 }
             }
-            if ($PSBoundParameters.Include -contains 'zero_trust_assessment') {
-                foreach ($Item in (Get-FalconZta -Id $Request.device_id -EA 0)) {
+            if ($Include -contains 'zero_trust_assessment') {
+                foreach ($i in (Get-FalconZta -Id $Request.device_id -EA 0)) {
                     $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $Item.aid }
+                        Object = $Request | Where-Object { $_.device_id -eq $i.aid }
                         Name = 'zero_trust_assessment'
-                        Value = $Item | Select-Object modified_time,sensor_file_status,assessment,assessment_items
+                        Value = $i | Select-Object modified_time,sensor_file_status,assessment,assessment_items
                     }
                     Set-Property @SetParam
                 }
