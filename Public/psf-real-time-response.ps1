@@ -48,9 +48,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             $Sessions = Get-FalconSession @SessionParam | Select-Object id,device_id
             if (-not $Sessions) { throw "No queued Real-time Response sessions available." }
             Write-Host "[Get-FalconQueue] Found $(($Sessions | Measure-Object).Count) queued sessions..."
-            [array]$HostInfo = if ($PSBoundParameters.Include) {
+            [array]$HostInfo = if ($Include) {
                 # Capture host information for eventual output
-                $Sessions.device_id | Get-FalconHost | Select-Object @($PSBoundParameters.Include + 'device_id')
+                $Sessions.device_id | Get-FalconHost | Select-Object @($Include + 'device_id')
             }
             foreach ($Session in ($Sessions.id | Get-FalconSession -Queue)) {
                 Write-Host "[Get-FalconQueue] Retrieved command detail for $($Session.id)..."
@@ -92,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             Set-Property $Obj $_ $Value
                         }
                     }
-                    if ($PSBoundParameters.Include -and $HostInfo) {
+                    if ($Include -and $HostInfo) {
                         @($HostInfo.Where({ $_.device_id -eq $Obj.aid })).foreach{
                             @($_.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
                                 # Add 'Include' properties
@@ -538,10 +538,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             if ($GroupId) { @($Output).foreach{ Set-Property $_ 'group_id' $GroupId }}
             if ($Include) {
                 foreach ($i in (Get-FalconHost -Id $Output.aid | Select-Object @($Include + 'device_id'))) {
-                    # Append 'Include' fields to output
-                    foreach ($Prop in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
+                    foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
+                        # Append 'Include' fields to output
                         $Output | Where-Object { $_.aid -eq $i.device_id } | ForEach-Object {
-                            Set-Property $_ $Prop.Name $Prop.Value
+                            Set-Property $_ $p.Name $p.Value
                         }
                     }
                 }
