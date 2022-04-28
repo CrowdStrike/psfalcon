@@ -20,7 +20,7 @@ function Add-Include {
                 if ($Inputs.Include -contains $_.Key) {
                     if ($_.Key -eq 'members') {
                         foreach ($i in $Object) {
-                            # Add 'members'
+                            # Add 'members' by object
                             $SetParam = @{
                                 Object = $i
                                 Name = $_.Key
