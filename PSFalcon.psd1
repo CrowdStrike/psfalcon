@@ -489,7 +489,7 @@
       ApiClient.Invoke(). 'Write-Result' continues to display the 'meta' Json values due to the addition of an
       internal function called 'Write-Meta'.
 
-    * Added '-Force' function to the following commands to overwrite an existing file when present:
+    * Added '-Force' parameter to the following commands to overwrite an existing file when present:
       Export-FalconConfig
       Receive-FalconHorizonAwsScript
       Receive-FalconHorizonAzureScript
@@ -505,6 +505,14 @@
       Receive-FalconSample
       Receive-FalconScheduledReport
       Receive-FalconInstaller
+
+    * Added '-Include' parameter to append 'members' to the following commands:
+      Get-FalconHostGroup
+      Get-FalconDeviceControlPolicy
+      Get-FalconFirewallPolicy
+      Get-FalconPreventionPolicy
+      Get-FalconResponsePolicy
+      Get-FalconSensorUpdatePolicy
 
     * Updated commands that output to CSV ('Import-FalconConfig', 'Export-FalconReport', 'Get-FalconQueue',
     'Invoke-FalconDeploy') to send their results to 'Write-Output' when unable to write to CSV.
@@ -563,9 +571,6 @@
       Added 'online_state' to '-Include' to retrieve detail from new 'online status' API.
 
       Added '-State' switch to be used with '-Id' to retrieve detail from the new 'online status' API.
-
-    * Get-FalconHostGroup
-      Added 'Include' parameter with 'members' option.
 
     * Get-FalconQueue
       Updated command to write progress to host stream instead of verbose stream.
