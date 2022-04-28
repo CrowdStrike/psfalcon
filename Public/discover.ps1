@@ -111,39 +111,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Request -and $Include) {
-            if (!$Request.id) {
-                $Request = if ($PSBoundParameters.Account) {
-                    # Create objects using 'id' values
-                    @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}
-                } else {
-                    # Request detailed results for regular assets
-                    & $MyInvocation.MyCommand.Name -Id $Request
-                }
-            }
-            if ($PSBoundParameters.Include -contains 'login_event') {
+            if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}}
+            if ($Include -contains 'login_event') {
                 # Define property to match 'login' results with 'id' value
-                [string]$Property = if ($PSBoundParameters.Account) { 'account_id' } else { 'host_id' }
-                [int]$Count = if ($PSBoundParameters.Account) {
-                    ($Request | Measure-Object).Count
-                } else {
-                    # Restrict to 'managed' assets as others won't have login events
-                    ($Request | Where-Object { $_.entity_type -eq 'managed' }).Count
-                }
+                [string]$p = if ($Account) { 'account_id' } else { 'host_id' }
+                [int]$Count = ($Request | Measure-Object).Count
                 for ($i = 0; $i -lt $Count; $i += 20) {
                     # In groups of 20, perform filtered search for login events
-                    [object[]]$Match = if ($PSBoundParameters.Account) {
-                        @($Request)[$i..($i + 19)]
-                    } else {
-                        @($Request | Where-Object { $_.entity_type -eq 'managed' })[$i..($i + 19)]
-                    }
-                    [string]$Filter = @($Match[$i..($i + 19)]).foreach{ "$($Property):'$($_.id)'" } -join ','
-                    foreach ($Item in (& $MyInvocation.MyCommand.Name -Filter $Filter -Detailed -Login -EA 0)) {
+                    [object[]]$Group = @($Request)[$i..($i + 19)]
+                    [string]$Filter = @($Group[$i..($i + 19)]).foreach{ "$($p):'$($_.id)'" } -join ','
+                    foreach ($e in (& $MyInvocation.MyCommand.Name -Filter $Filter -Detailed -Login -EA 0)) {
                         # Append matched login events to 'id' using 'host_id' or 'account_id'
-                        foreach ($r in $Match) {
+                        foreach ($a in $Group) {
                             $SetParam = @{
-                                Object = $Request | Where-Object { $_.id -eq $r.id }
+                                Object = $Request | Where-Object { $_.id -eq $a.id }
                                 Name = 'login_event'
-                                Value = $Item | Where-Object { $_.$Property -eq $r.id }
+                                Value = @($e | Where-Object { $_.$p -eq $a.id })
                             }
                             Set-Property @SetParam
                         }
