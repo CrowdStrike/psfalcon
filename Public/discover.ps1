@@ -110,7 +110,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        if ($Request -and $PSBoundParameters.Include) {
+        if ($Request -and $Include) {
             if (!$Request.id) {
                 $Request = if ($PSBoundParameters.Account) {
                     # Create objects using 'id' values
@@ -126,7 +126,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
                 [int]$Count = if ($PSBoundParameters.Account) {
                     ($Request | Measure-Object).Count
                 } else {
-                    # Retrict to 'managed' assets as others won't have login events
+                    # Restrict to 'managed' assets as others won't have login events
                     ($Request | Where-Object { $_.entity_type -eq 'managed' }).Count
                 }
                 for ($i = 0; $i -lt $Count; $i += 20) {
