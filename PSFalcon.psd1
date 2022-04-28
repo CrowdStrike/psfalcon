@@ -548,6 +548,9 @@
 
       Added '-Include' to append login events both the default hardware asset and user account output.
 
+    * Get-FalconDetection
+      Added valid 'Sort' values.
+
     * Get-FalconFirewallPolicy
       Re-added the 'policy_id' in the 'settings' sub-object that is created when using '-Include settings'. This
       was originally removed for being redundant, but needed to be restored to be utilized by the 
