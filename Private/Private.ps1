@@ -4,45 +4,64 @@ function Add-Include {
     param(
         [object[]]$Object,
         [System.Object]$Inputs,
-        [System.Collections.Hashtable]$Index
+        [System.Collections.Hashtable]$Index,
+        [string]$Command
     )
     if ($Inputs.Include) {
-        if (!$Object.id) {
-            # Create objects with 'id' property
+        if (!$Object.id -and $Object -isnot [PSCustomObject]) {
+            # Create array of [PSCustomObject] with 'id' property
             $Object = @($Object).foreach{ ,[PSCustomObject]@{ id = $_ }}
         } else {
             $Detailed = $true
         }
-        $Index.GetEnumerator().foreach{
-            # Use 'Index' for 'Include' value and command to gather data, then append to output
-            if ($Inputs.Include -contains $_.Key) {
-                if ($_.Key -eq 'members') {
-                    foreach ($i in $Object) {
-                        # Add 'members'
-                        $SetParam = @{
-                            Object = $i
-                            Name = $_.Key
-                            Value = if ($Detailed -eq $true) {
-                                & "$($_.Value)" -Id $i.id -Detailed -All -EA 0
-                            } else {
-                                & "$($_.Value)" -Id $i.id -All -EA 0
+        if ($Index) {
+            $Index.GetEnumerator().foreach{
+                # Use 'Index' for 'Include' name and command to gather value(s) and append to output
+                if ($Inputs.Include -contains $_.Key) {
+                    if ($_.Key -eq 'members') {
+                        foreach ($i in $Object) {
+                            # Add 'members'
+                            $SetParam = @{
+                                Object = $i
+                                Name = $_.Key
+                                Value = if ($Detailed -eq $true) {
+                                    & "$($_.Value)" -Id $i.id -Detailed -All -EA 0
+                                } else {
+                                    & "$($_.Value)" -Id $i.id -All -EA 0
+                                }
                             }
+                            Set-Property @SetParam
                         }
-                        Set-Property @SetParam
-                    }
-                } else {
-                    foreach ($i in (& "$($_.Value)" -Id $Object.id)) {
-                        $SetParam = @{
-                            Object = if ($i.policy_id) {
-                                $Object | Where-Object { $_.id -eq $i.policy_id }
-                            } else {
-                                $Object | Where-Object { $_.id -eq $i.id }
+                    } else {
+                        foreach ($i in (& "$($_.Value)" -Id $Object.id)) {
+                            $SetParam = @{
+                                Object = if ($i.policy_id) {
+                                    $Object | Where-Object { $_.id -eq $i.policy_id }
+                                } else {
+                                    $Object | Where-Object { $_.id -eq $i.id }
+                                }
+                                Name = $_.Key
+                                Value = $i
                             }
-                            Name = $_.Key
-                            Value = $i
+                            Set-Property @SetParam
                         }
-                        Set-Property @SetParam
                     }
+                }
+            }
+        } elseif ($Command) {
+            foreach ($i in (& $Command -Id $Object.id)) {
+                @($Inputs.Include).foreach{
+                    # Append all properties from 'Include'
+                    $SetParam = @{
+                        Object = if ($i.device_id) {
+                            $Object | Where-Object { $_.id -eq $i.device_id }
+                        } else {
+                            $Object | Where-Object { $_.id -eq $i.id }
+                        }
+                        Name = $_
+                        Value = $i.$_
+                    }
+                    Set-Property @SetParam
                 }
             }
         }
@@ -643,10 +662,11 @@ function Set-Property {
     [OutputType([void])]
     param([System.Object]$Object,[string]$Name,[System.Object]$Value)
     process {
-        if ($Object.$Name -and ($Value -or $Value -is [boolean])) {
+        if ($Object.$Name) { # -and ($Value -or $Value -is [boolean])) {
             # Update existing property
             $Object.$Name = $Value
-        } elseif ($Value -or $Value -is [boolean]) {
+        #} elseif ($Value -or $Value -is [boolean]) {
+        } else {
             # Add property to [PSCustomObject]
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
         }
