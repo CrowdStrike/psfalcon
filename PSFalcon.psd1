@@ -620,6 +620,8 @@
       Updated to use 'Get-RtrCommand' private function to determine valid 'Command' values automatically from the
       other Real-time Response commands.
 
+      Added 'Include' parameter to append device properties to output.
+
     * New-FalconDeviceControlPolicy, New-FalconFirewallPolicy, New-FalconPreventionPolicy
       Removed the '-CloneId' parameter from the following commands due to inconsistencies in created policies. The
       'Copy-Falcon...Policy' commands continue to be available for use instead.
