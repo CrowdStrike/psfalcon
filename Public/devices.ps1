@@ -183,12 +183,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             if ($PSBoundParameters.Include -contains 'group_names') {
                 $Groups = Get-FalconHostGroup -Id $Request.groups -EA 0 | Select-Object id,name
                 if ($Groups) {
-                    foreach ($Item in $Request) {
-                        $GroupInfo = $Groups | Where-Object { $Item.groups -contains $_.id }
-                        if ($GroupInfo) { $Item.groups = $GroupInfo }
+                    foreach ($i in $Request) {
+                        $GroupInfo = $Groups | Where-Object { $i.groups -contains $_.id }
+                        if ($GroupInfo) { $i.groups = $GroupInfo }
                     }
-                } else {
-                    Write-Warning "No results for 'Get-FalconHostGroup'."
                 }
             }
             if ($PSBoundParameters.Include -contains 'login_history') {
@@ -286,18 +284,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-            if ($PSBoundParameters.Include -and $Request) {
-                foreach ($Item in (Get-FalconHost -Id $Request.id | Select-Object @(
-                $PSBoundParameters.Include + 'device_id'))) {
-                    @($Item.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
-                        $SetParam = @{
-                            Object = $Request | Where-Object { $_.id -eq $Item.device_id }
-                            Name = $_.Name
-                            Value = $_.Value
-                        }
-                        Set-Property @SetParam
-                    }
-                }
+            if ($Request -and $Include) {
+                $Request = Add-Include $Request $PSBoundParameters -Command 'Get-FalconHost'
             }
             $Request
         }
