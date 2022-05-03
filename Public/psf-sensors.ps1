@@ -6,8 +6,8 @@ Use Real-time Response to add FalconSensorTags to hosts
 Requires 'Real Time Response (Admin): Write'.
 
 Provided FalconSensorTag values will be appended to any existing tags.
-.PARAMETER Tags
-FalconSensorTag value
+.PARAMETER Tag
+FalconSensorTag value ['FalconSensorTags/<string>']
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .PARAMETER Id
@@ -27,7 +27,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
@@ -67,7 +68,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     # Start sessions for each 'platform' type
                     $Param = @{
                         Command = 'runscript'
-                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tags -join ',')
+                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
                         HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
                     }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
@@ -170,8 +171,8 @@ Use Real-time Response to remove FalconSensorTags from hosts
 Requires 'Real Time Response (Admin): Write'.
 
 Provided FalconSensorTag values will be removed from existing tags and others will be left unmodified.
-.PARAMETER Tags
-FalconSensorTag value
+.PARAMETER Tag
+FalconSensorTag value ['FalconSensorTags/<string>']
 .PARAMETER Id
 Host identifier
 .PARAMETER QueueOffline
@@ -191,7 +192,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
@@ -234,7 +236,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     # Start sessions for each 'platform' type
                     $Param = @{
                         Command = 'runscript'
-                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tags -join ',')
+                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
                         HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
                     }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }

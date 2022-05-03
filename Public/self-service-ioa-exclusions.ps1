@@ -28,9 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
         [System.Object]$Detection
     )
-    begin {
-        [System.Collections.Generic.List[object]]$Output = @()
-    }
+    begin { [System.Collections.Generic.List[object]]$Output = @() }
     process {
         if ($_.behaviors -and $_.device) {
             @($_.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
@@ -51,9 +49,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             }
         }
     }
-    end {
-        if ($Output) { @($Output | Group-Object pattern_id).foreach{ $_.Group | Select-Object -First 1 }}
-    }
+    end { if ($Output) { @($Output | Group-Object pattern_id).foreach{ $_.Group | Select-Object -First 1 }}}
 }
 function Edit-FalconIoaExclusion {
 <#

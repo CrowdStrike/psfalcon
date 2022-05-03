@@ -4,7 +4,7 @@ function Add-FalconGroupingTag {
 Add FalconGroupingTags to Hosts
 .DESCRIPTION
 Requires 'Hosts: Write'.
-.PARAMETER Tags
+.PARAMETER Tag
 FalconGroupingTag value ['FalconGroupingTags/<string>']
 .PARAMETER Id
 Host identifier
@@ -22,7 +22,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{32}$')]
@@ -51,7 +52,7 @@ function Get-FalconHost {
 .SYNOPSIS
 Search for hosts
 .DESCRIPTION
-Requires 'Hosts: Read'.
+Requires 'Hosts: Read' plus related permission(s) for 'Include' selection(s).
 .PARAMETER Id
 Host identifier
 .PARAMETER Filter
@@ -237,7 +238,7 @@ function Invoke-FalconHostAction {
 .SYNOPSIS
 Perform actions on hosts
 .DESCRIPTION
-Requires 'Hosts: Write'.
+Requires 'Hosts: Write', plus related permission(s) for 'Include' selection(s).
 .PARAMETER Name
 Action to perform
 .PARAMETER Include
@@ -296,8 +297,8 @@ function Remove-FalconGroupingTag {
 Remove FalconGroupingTags from hosts
 .DESCRIPTION
 Requires 'Hosts: Write'.
-.PARAMETER Tags
-FalconGroupingTag value
+.PARAMETER Tag
+FalconGroupingTag value ['FalconGroupingTags/<string>']
 .PARAMETER Id
 Host identifier
 .LINK
@@ -316,7 +317,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{32}$')]

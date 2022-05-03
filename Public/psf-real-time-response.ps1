@@ -458,10 +458,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 function Invoke-FalconRtr {
 <#
 .SYNOPSIS
-Start Real-time Response session,execute a command and output the result
+Start a Real-time Response session, execute a command and output the result
 .DESCRIPTION
 Requires 'Real Time Response: Read', 'Real Time Response: Write' or 'Real Time Response (Admin): Write'
-depending on 'Command' provided.
+depending on 'Command' provided, plus related permission(s) for 'Include' selection(s).
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument

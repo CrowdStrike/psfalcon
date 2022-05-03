@@ -224,6 +224,8 @@ Username
 First name
 .PARAMETER Lastname
 Last name
+.PARAMETER Password
+Password. If left unspecified, the user will be emailed a link to set their password.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>

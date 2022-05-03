@@ -4,7 +4,7 @@ function ConvertTo-FalconMlExclusion {
 Output required fields to create a Machine Learning exclusion from a Falcon detection
 .DESCRIPTION
 Uses the 'behaviors' and 'device' properties of a detection to generate the necessary fields to create a new
-Machine Learning exclusion. Specfically,it maps the following properties these fields:
+Machine Learning exclusion. Specfically, it maps the following properties these fields:
 
 behaviors.filepath > value
 device.groups      > groups
@@ -15,7 +15,7 @@ If the detection involves a device that is not in any groups,it uses 'all' to ta
 
 The resulting output can be passed to 'New-FalconMlExclusion' to create an exclusion.
 .PARAMETER Detection
-Falcon detection content,including 'behaviors' and 'device'
+Falcon detection content, including 'behaviors' and 'device'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
@@ -24,9 +24,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
         [System.Object]$Detection
     )
-    begin {
-        [System.Collections.Generic.List[object]]$Output = @()
-    }
+    begin { [System.Collections.Generic.List[object]]$Output = @() }
     process {
         if ($_.behaviors -and $_.device) {
             @($_.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
@@ -45,9 +43,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             }
         }
     }
-    end {
-        if ($Output) {@($Output | Group-Object value).foreach{ $_.Group | Select-Object -First 1 }}
-    }
+    end { if ($Output) { @($Output | Group-Object value).foreach{ $_.Group | Select-Object -First 1 }}}
 }
 function Edit-FalconMlExclusion {
 <#

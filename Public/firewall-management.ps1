@@ -8,21 +8,21 @@ Requires 'Firewall Management: Write'.
 All fields (plus 'rulegroup_version') are required when making a rule group change. PSFalcon adds missing values
 automatically using data from your existing rule group.
 
-'DiffOperations' array objects must contain 'op','path' and 'value' properties. Accepted 'op' values are 'add',
+'DiffOperation' array objects must contain 'op', 'path' and 'value' properties. Accepted 'op' values are 'add',
 'remove' and 'replace'.
 
 When adding a rule to a rule group,the required rule fields must be included along with a 'temp_id' (in both the
 rule properties and in precedence order within 'rule_ids') to establish proper placement of the rule within the
 rule group. Simlarly,the value 'null' must be placed within 'rule_versions' in precedence order.
 
-PSFalcon will accept 'temp_id' values between 1 and 500,allowing batches of up to 500 rules per request.
+PSFalcon will accept 'temp_id' values between 1 and 500, allowing batches of up to 500 rules per request.
 .PARAMETER Id
 Rule group identifier
-.PARAMETER DiffOperations
+.PARAMETER DiffOperation
 An array of hashtables containing rule or rule group changes
-.PARAMETER RuleIds
+.PARAMETER RuleId
 Rule identifier within the existing rule group
-.PARAMETER RuleVersions
+.PARAMETER RuleVersion
 Rule version value ['null' for each new rule]
 .PARAMETER Comment
 Audit log comment

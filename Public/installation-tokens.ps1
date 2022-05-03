@@ -7,7 +7,7 @@ Requires 'Installation Tokens: Write'.
 .PARAMETER Label
 Installation token label
 .PARAMETER ExpiresTimestamp
-Installation token expiration time (RFC3339),or 'null'
+Installation token expiration time (RFC3339), or 'null'
 .PARAMETER Revoked
 Set revocation status
 .PARAMETER Id

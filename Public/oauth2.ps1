@@ -5,14 +5,14 @@ Request an OAuth2 access token
 .DESCRIPTION
 Requests an OAuth2 access token.
 
-If successful,your credentials ('ClientId','ClientSecret','MemberCid' and 'Cloud'/'Hostname') and token are
+If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and 'Cloud' or 'Hostname') and token are
 cached for re-use.
 
-If an active OAuth2 access token is due to expire in less than 60 seconds,a new token will automatically be
+If an active OAuth2 access token is due to expire in less than 60 seconds, a new token will automatically be
 requested using your cached credentials.
 
 The 'Collector' parameter allows for the submission of a [System.Collections.Hashtable] object containing the
-parameters included with a 'Register-FalconEventCollector' command ('Path','Token' and 'Enabled') in order to
+parameters included with a 'Register-FalconEventCollector' command ('Path', 'Token' and 'Enabled') in order to
 log an initial OAuth2 access token request.
 .PARAMETER ClientId
 OAuth2 client identifier
@@ -23,9 +23,9 @@ CrowdStrike cloud [default: 'us-1']
 .PARAMETER Hostname
 CrowdStrike API hostname
 .PARAMETER MemberCid
-Member CID,used when authenticating within a multi-CID environment ('Falcon Flight Control')
+Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control')
 .PARAMETER Collector
-A hashtable containing 'Path','Token' and 'Enabled' properties for 'Register-FalconEventCollector'
+A hashtable containing 'Path', 'Token' and 'Enabled' properties for 'Register-FalconEventCollector'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication
 #>
@@ -197,8 +197,8 @@ function Revoke-FalconToken {
 .SYNOPSIS
 Revoke your active OAuth2 access token
 .DESCRIPTION
-Revokes your active OAuth2 access token and clears cached credential information ('ClientId','ClientSecret',
-'MemberCid','Cloud'/'Hostname') from the module.
+Revokes your active OAuth2 access token and clears cached credential information ('ClientId', 'ClientSecret',
+'MemberCid', 'Cloud'/'Hostname') from the module.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication
 #>
@@ -232,7 +232,7 @@ function Test-FalconToken {
 .SYNOPSIS
 Display OAuth2 access token status
 .DESCRIPTION
-Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname','ClientId' and
+Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname', 'ClientId' and
 'MemberCid' values.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication

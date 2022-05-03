@@ -334,9 +334,11 @@ function Get-FalconUninstallToken {
 .SYNOPSIS
 Retrieve an uninstallation or maintenance token
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
+Requires 'Sensor Update Policies: Write', plus related permission(s) for 'Include' selection(s).
 .PARAMETER AuditMessage
 Audit log comment
+.PARAMETER Include
+Include additional properties
 .PARAMETER Id
 Host identifier
 .LINK
@@ -347,8 +349,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=1)]
         [Alias('audit_message')]
         [string]$AuditMessage,
+        [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=2)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname',
+            'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
+            'product_type_desc','reduced_functionality_mode','serial_number','system_manufacturer',
+            'system_product_name','tags',IgnoreCase=$false)]
+        [string[]]$Include,
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
         [Alias('device_id','DeviceId')]
         [ValidatePattern('^(\w{32}|MAINTENANCE)$')]
         [string]$Id
@@ -360,7 +368,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
             Format = @{ Body = @{ root = @('audit_message','device_id') }}
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        foreach ($r in (Invoke-Falcon @Param -Inputs $PSBoundParameters)) {
+            if ($Include) {
+                # Append properties from 'Include'
+                $i = Get-FalconHost -Id $r.device_id | Select-Object @($Include + 'device_id')
+                foreach ($p in $Include) { Set-Property $r $p $i.$p }
+            }
+            $r
+        }
+    }
 }
 function Invoke-FalconSensorUpdatePolicyAction {
 <#

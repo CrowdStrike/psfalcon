@@ -712,7 +712,7 @@ function Test-FalconIoaRule {
 Validate fields and patterns of a custom Indicator of Attack rule
 .DESCRIPTION
 Requires 'Custom IOA Rules: Write'.
-.PARAMETER Fields
+.PARAMETER Field
 An array of rule properties
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies

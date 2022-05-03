@@ -420,7 +420,19 @@
             LicenseUri   = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/LICENSE'
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
-            ReleaseNotes = 'https://github.com/CrowdStrike/psfalcon/releases/tag/2.2.0'
+            ReleaseNotes = "@
+General Changes
+
+* Various comment-based help text updates and typo corrections.
+
+Command Changes
+
+* Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
+  Renamed 'Tags' to 'Tag'.
+
+* Get-FalconUninstallToken
+  Added 'Include' parameter.
+@"
         }
     }
 }

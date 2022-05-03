@@ -234,7 +234,7 @@ Issue a Real-time Response batch 'get' command to an existing batch session
 .DESCRIPTION
 Requires 'Real Time Response: Write'.
 
-When a 'get' command has been issued,the 'batch_get_cmd_req_id' property will be returned. That value is used
+When a 'get' command has been issued, the 'batch_get_cmd_req_id' property will be returned. That value is used
 to verify the completion of the file transfer using 'Confirm-FalconBatchGet'.
 
 The 'Confirm' parameter will use 'Confirm-FalconGetFile' to check for command results every 5 seconds for a total
@@ -325,7 +325,7 @@ Issue a Real-time Response read-only command to an existing single-host or batch
 .DESCRIPTION
 Requires 'Real Time Response: Read'.
 
-Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id'
+Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
 The 'Confirm' parameter will use 'Confirm-FalconCommand' to check for command results every 5 seconds for a total
@@ -434,7 +434,7 @@ Issue a Real-time Response active-responder command to an existing single-host o
 .DESCRIPTION
 Requires 'Real Time Response: Write'.
 
-Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id'
+Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
 The 'Confirm' parameter will use 'Confirm-FalconResponderCommand' to check for command results every 5 seconds for
@@ -746,7 +746,7 @@ Add non-responsive hosts to the offline queue
 Length of time to wait for a result, in seconds [default: 30]
 .PARAMETER ExistingBatchId
 Add hosts to an existing batch session
-.PARAMETER HostId
+.PARAMETER Id
 Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response

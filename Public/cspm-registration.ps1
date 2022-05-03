@@ -159,7 +159,7 @@ Requires 'CSPM Registration: Read'.
 A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
 .PARAMETER Id
 AWS account identifier
-.PARAMETER OrganizationIds
+.PARAMETER OrganizationId
 AWS organization identifier
 .PARAMETER ScanType
 Scan type

@@ -15,7 +15,7 @@ Severity level
 .PARAMETER Description
 Indicator description
 .PARAMETER Filename
-Indicator filename,used with hash values
+Indicator filename, used with hash values
 .PARAMETER Tag
 Indicator tag
 .PARAMETER HostGroup

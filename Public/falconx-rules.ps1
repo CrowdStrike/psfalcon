@@ -108,11 +108,11 @@ Download the most recent ruleset,or a specific ruleset
 .DESCRIPTION
 Requires 'Rules (Falcon X): Read'.
 .PARAMETER Type
-Ruleset type,used to retrieve the latest ruleset
+Ruleset type, used to retrieve the latest ruleset
 .PARAMETER Path
 Destination path
 .PARAMETER Id
-Ruleset identifier,used for a specific ruleset
+Ruleset identifier, used for a specific ruleset
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
@@ -152,7 +152,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
         }
     }
     process {
-        #$PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path ''
         $OutPath = Test-OutFile $PSBoundParameters.Path
         if ($OutPath.Category -eq 'ObjectNotFound') {
             Write-Error @OutPath

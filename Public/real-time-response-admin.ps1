@@ -261,7 +261,7 @@ Issue a Real-time Response admin command to an existing single-host or batch ses
 .DESCRIPTION
 Requires 'Real Time Response (Admin): Write'.
 
-Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id'
+Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
 The 'Confirm' parameter will use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to check for command

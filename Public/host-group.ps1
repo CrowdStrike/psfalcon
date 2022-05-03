@@ -9,7 +9,7 @@ Host group name
 .PARAMETER Description
 Host group description
 .PARAMETER AssignmentRule
-FQL-based assignment rule,used with dynamic host groups
+FQL-based assignment rule, used with dynamic host groups
 .PARAMETER Id
 Host group identifier
 .LINK

@@ -57,7 +57,7 @@ Duplicate a Falcon Firewall Management policy
 Requires 'Firewall Management: Read', 'Firewall Management: Write'.
 
 The specified Falcon Firewall Management policy will be duplicated without assigned Host Groups. If a policy
-description is not supplied,the description from the existing policy will be used.
+description is not supplied, the description from the existing policy will be used.
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -115,7 +115,7 @@ Duplicate a Prevention policy
 Requires 'Prevention Policies: Read', 'Prevention Policies: Write'.
 
 The specified Prevention policy will be duplicated without assigned Host Groups. If a policy description is not
-supplied,the description from the existing policy will be used.
+supplied, the description from the existing policy will be used.
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -166,7 +166,7 @@ Duplicate a Real-time Response policy
 Requires 'Response Policies: Read', 'Response Policies: Write'.
 
 The specified Real-time Response policy will be duplicated without assigned Host Groups. If a policy description
-is not supplied,the description from the existing policy will be used.
+is not supplied, the description from the existing policy will be used.
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -217,7 +217,7 @@ Duplicate a Sensor Update policy
 Requires 'Sensor Update Policies: Read', 'Sensor Update Policies: Write'.
 
 The specified Sensor Update policy will be duplicated without assigned Host Groups. If a policy description is
-not supplied,the description from the existing policy will be used.
+not supplied, the description from the existing policy will be used.
 .PARAMETER Name
 Policy name
 .PARAMETER Description

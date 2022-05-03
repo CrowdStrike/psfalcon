@@ -15,6 +15,9 @@ an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' 
 @{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed
 under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
 becomes a column.
+
+There is potential for data loss due to object manipulation. Use 'ConvertTo-Json' to ensure all object properties
+are retained when integrity is a concern.
 .PARAMETER Path
 Destination path
 .PARAMETER Object

@@ -1,7 +1,7 @@
 function Get-FalconMalQuery {
 <#
 .SYNOPSIS
-Verify the status and results of an asynchronous Falcon MalQuery request,such as a hunt or exact-search
+Verify the status and results of an asynchronous Falcon MalQuery request, such as a hunt or exact-search
 .DESCRIPTION
 Requires 'MalQuery: Read'.
 .PARAMETER Id
@@ -119,7 +119,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 function Invoke-FalconMalQuery {
 <#
 .SYNOPSIS
-Initiate a Falcon MalQuery YARA hunt,exact search or fuzzy search
+Initiate a Falcon MalQuery YARA hunt, exact search or fuzzy search
 .DESCRIPTION
 Requires 'MalQuery: Write'.
 .PARAMETER YaraRule
@@ -289,7 +289,7 @@ Perform a simple Falcon MalQuery YARA Hunt for a Sha256 hash
 .DESCRIPTION
 Requires 'MalQuery: Write'.
 
-Performs a YARA Hunt for the given hash,then checks every 5 seconds--for up to 30 seconds--for a result.
+Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 30 seconds--for a result.
 .PARAMETER Sha256
 Sha256 hash value
 .LINK
