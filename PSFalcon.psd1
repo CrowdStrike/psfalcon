@@ -432,6 +432,9 @@ Command Changes
 
 * Get-FalconUninstallToken
   Added 'Include' parameter.
+
+* Invoke-FalconDeploy
+  Added 'tgz' as a supported 'Archive' format.
 @"
         }
     }

@@ -133,7 +133,7 @@ Details of each step will be output to a CSV file in your current directory.
 .PARAMETER File
 Name of a 'CloudFile' or path to a local executable to upload
 .PARAMETER Archive
-Name of a 'CloudFile' or path to a local archive (zip, tar, or tar.gz) to upload
+Name of a 'CloudFile' or path to a local archive (zip, tar, tar.gz, tgz) to upload
 .PARAMETER Run
 Name of the file to run once extracted from the target archive
 .PARAMETER Argument
@@ -170,7 +170,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='HostId_Archive',Mandatory)]
         [Parameter(ParameterSetName='GroupId_Archive',Mandatory)]
         [ValidateScript({
-            if ($_ -match '\.(zip|tar(.gz)?)$') {
+            if ($_ -match '\.(zip|tar(.gz)?|tgz)$') {
                 if (Test-Path $_ -PathType Leaf) {
                     $true
                 } else {
@@ -182,7 +182,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 }
             } else {
-                throw "'$_' does not match expected file extension: 'zip', 'tar', 'tar.gz'."
+                throw "'$_' does not match expected file extension: 'zip', 'tar', 'tar.gz', or 'tgz'."
             }
         })]
         [string]$Archive,
@@ -367,7 +367,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             # Script content for 'runscript' by platform and 'Archive' or 'File'
                             $Runscript = @{
                                 Linux = @{
-                                    Archive = if ($PutFile -match '\.tar(.gz)?$') {
+                                    Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
                                         "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
                                             " exit 1; fi; tar -xvf $PutFile; chmod +x $($TempDir,
                                             $RunFile -join '/'); exit"
@@ -379,7 +379,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                     File = "chmod +x $($TempDir,$PutFile -join '/')"
                                 }
                                 Mac = @{
-                                    Archive = if ($PutFile -match '\.tar(.gz)?$') {
+                                    Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
                                         "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
                                             " exit 1; fi; tar -xvf $PutFile; exit"
                                     } else {
