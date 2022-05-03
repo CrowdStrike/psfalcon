@@ -314,7 +314,7 @@ Policy name
 Operating system platform
 .PARAMETER Description
 Policy description
-.PARAMETER Settings
+.PARAMETER Setting
 An array of policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies

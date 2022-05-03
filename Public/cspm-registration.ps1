@@ -601,16 +601,14 @@ AWS account or GCP Project identifier
 Azure subscription identifier
 .PARAMETER AzureTenantId
 Azure tenant identifier
-.PARAMETER Severity
-Indicator of Attack severity
+.PARAMETER Status
+Indicator of Misconfiguration status
 .PARAMETER Region
 Cloud platform region
+.PARAMETER Severity
+Indicator of Misconfiguration severity
 .PARAMETER Service
 Cloud service
-.PARAMETER State
-Indicator of Attack state
-.PARAMETER DateTimeSince
-Include results that occur after a specific date and time (RFC3339)
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER NextToken
@@ -927,6 +925,8 @@ Download a Bash script which grants Falcon Horizon access using Azure Cloud Shel
 Requires 'CSPM Registration: Read'.
 .PARAMETER Path
 Destination path
+.PARAMETER TenantId
+Azure tenant identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK

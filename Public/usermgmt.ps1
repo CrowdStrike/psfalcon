@@ -153,7 +153,7 @@ User roles can be appended to the results using the 'Include' parameter.
 Include additional properties
 .PARAMETER Id
 User identifier
-.PARAMETER Usernames
+.PARAMETER Username
 Username
 .PARAMETER Detailed
 Retrieve detailed information
