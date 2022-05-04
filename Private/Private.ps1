@@ -565,7 +565,7 @@ function Invoke-Falcon {
                         # Output 'Total'
                         $Pagination.total
                     } else {
-                        $Result = Write-Result -Request $Request
+                        $Result = Write-Result $Request
                         if ($null -ne $Result) {
                             if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
                                 # Output 'Detailed'
@@ -634,7 +634,7 @@ function Invoke-Loop {
             }
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
-                $Result = Write-Result -Request $Request
+                $Result = Write-Result $Request
                 if ($null -ne $Result) {
                     if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                         & $Command -Id $Result
