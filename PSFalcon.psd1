@@ -435,6 +435,12 @@ Command Changes
 
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
+
+Resolved Issues
+
+* Issue #211: Added try/catch to 'Get-FalconHost' when using '-Include group_names' to suppress errors when
+  hosts have no groups.
+
 @"
         }
     }
