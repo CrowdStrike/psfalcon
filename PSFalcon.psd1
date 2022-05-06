@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.2.0'
+    ModuleVersion        = '2.2.1'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -435,6 +435,9 @@ Command Changes
 
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
+
+* Invoke-FalconRtr
+  Updated to create Real-time Response sessions in groups of 10,000.
 
 Resolved Issues
 

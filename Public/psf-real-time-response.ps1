@@ -534,56 +534,59 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     end {
         if ($List) {
             # Gather list of unique host identifiers and append 'GroupId' when present
-            $Output = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
-            if ($GroupId) { @($Output).foreach{ Set-Property $_ 'group_id' $GroupId }}
+            [object[]]$Hosts = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
+            if ($GroupId) { @($Hosts).foreach{ Set-Property $_ 'group_id' $GroupId }}
             if ($Include) {
-                foreach ($i in (Get-FalconHost -Id $Output.aid | Select-Object @($Include + 'device_id'))) {
+                foreach ($i in (Get-FalconHost -Id $Hosts.aid | Select-Object @($Include + 'device_id'))) {
                     foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
                         # Append 'Include' fields to output
-                        $Output | Where-Object { $_.aid -eq $i.device_id } | ForEach-Object {
+                        $Hosts | Where-Object { $_.aid -eq $i.device_id } | ForEach-Object {
                             Set-Property $_ $p.Name $p.Value
                         }
                     }
                 }
             }
-            # Start batch Real-time Response session by forcing 'Timeout' value
-            $Init = @{
-                Id = $Output.aid
-                Timeout = if ($Timeout) { $Timeout } else { 30 }
-            }
-            if ($QueueOffline) { $Init['QueueOffline'] = $QueueOffline }
-            $InitReq = Start-FalconSession @Init
-            if ($InitReq.batch_id -or $InitReq.session_id) {
-                $Output = if ($InitReq.hosts) {
-                    @(Get-RtrResult $InitReq.hosts $Output).foreach{
-                        # Clear 'stdout' from batch initialization
-                        if ($_.stdout) { $_.stdout = $null }
-                        $_
-                    }
-                } else {
-                    Get-RtrResult $InitReq $Output
+            for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 10000) {
+                # Start batch Real-time Response session in groups of 10,000
+                $Output = $Hosts[$i..($i + 9999)]
+                $Init = @{
+                    Id = $Output.aid
+                    Timeout = if ($Timeout) { $Timeout } else { 30 }
                 }
-                # Issue command and capture result
-                $Cmd = @{ Command = $Command }
-                @('Argument','Timeout').foreach{
-                    if ((Get-Variable $_ -EA 0).Value) { $Cmd[$_] = (Get-Variable $_).Value }
-                }
-                if ($QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
-                $CmdReq = $InitReq | & "$(Get-RtrCommand $Command)" @Cmd
-                $Output = Get-RtrResult $CmdReq $Output
-                [string[]]$Select = @($Output).foreach{
-                    # Clear 'stdout' for batch 'get' requests
-                    if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
-                    if ($_.stdout -and $Cmd.Command -eq 'runscript') {
-                        # Attempt to convert 'stdout' from Json for 'runscript'
-                        $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
-                        if ($StdOut) { $_.stdout = $StdOut }
+                if ($QueueOffline) { $Init['QueueOffline'] = $QueueOffline }
+                $InitReq = Start-FalconSession @Init
+                if ($InitReq.batch_id -or $InitReq.session_id) {
+                    $Output = if ($InitReq.hosts) {
+                        @(Get-RtrResult $InitReq.hosts $Output).foreach{
+                            # Clear 'stdout' from batch initialization
+                            if ($_.stdout) { $_.stdout = $null }
+                            $_
+                        }
+                    } else {
+                        Get-RtrResult $InitReq $Output
                     }
-                    # Output list of fields for each object
-                    $_.PSObject.Properties.Name
-                } | Sort-Object -Unique
-                # Force output of all unique fields
-                $Output | Select-Object $Select
+                    # Issue command and capture result
+                    $Cmd = @{ Command = $Command }
+                    @('Argument','Timeout').foreach{
+                        if ((Get-Variable $_ -EA 0).Value) { $Cmd[$_] = (Get-Variable $_).Value }
+                    }
+                    if ($QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
+                    $CmdReq = $InitReq | & "$(Get-RtrCommand $Command)" @Cmd
+                    $Output = Get-RtrResult $CmdReq $Output
+                    [string[]]$Select = @($Output).foreach{
+                        # Clear 'stdout' for batch 'get' requests
+                        if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
+                        if ($_.stdout -and $Cmd.Command -eq 'runscript') {
+                            # Attempt to convert 'stdout' from Json for 'runscript'
+                            $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
+                            if ($StdOut) { $_.stdout = $StdOut }
+                        }
+                        # Output list of fields for each object
+                        $_.PSObject.Properties.Name
+                    } | Sort-Object -Unique
+                    # Force output of all unique fields
+                    $Output | Select-Object $Select
+                }
             }
         }
     }
