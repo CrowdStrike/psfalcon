@@ -414,16 +414,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                         }
                                         'run' {
                                             [string]$Join = if ($Pair.Key -eq 'Windows') { '\' } else { '/' }
-                                            [string]$CmdFile = if ($RunFile -match '\.(ps1|sh)$') {
-                                                '-HostPath="{0}"' -f ($TempDir,$RunFile -join $Join)
-                                            } else {
-                                                $TempDir,$RunFile -join $Join
-                                            }
-                                            if ($Argument) {
-                                                $CmdLine = '-CommandLine="{0}"' -f $Argument
+                                            [string]$CmdFile = '-HostPath="{0}"' -f ($TempDir,$RunFile -join $Join)
+                                            [string]$CmdLine = if ($Argument) { '-CommandLine="{0}"' -f $Argument }
+                                            if ($Param.Command -eq 'run') {
                                                 $CmdFile,$CmdLine -join ' '
+                                            } elseif ($Pair.Key -eq 'Windows') {
+                                                [string]$String = if ($Argument) {
+                                                    ($TempDir,$RunFile -join $Join),$Argument -join ' '
+                                                } else {
+                                                    $TempDir,$RunFile -join $Join
+                                                }
+                                                '-Raw=```Start-Process powershell.exe',"'&{$String}'",
+                                                "-RedirectStandardOutput '$($TempDir,'stdout.log' -join $Join)'",
+                                                "-RedirectStandardError '$($TempDir,'stderr.log' -join $Join)'",
+                                                '-PassThru | ForEach-Object { Write-Output "OK [PID: $($_.Id)]"',
+                                                '}```' -join ' '
                                             } else {
-                                                $CmdFile
+                                                # Insert start-process type stuff for linux/mac
                                             }
                                         }
                                     }
