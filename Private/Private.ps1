@@ -657,10 +657,9 @@ function Set-Property {
     [OutputType([void])]
     param([System.Object]$Object,[string]$Name,[System.Object]$Value)
     process {
-        if ($Object.$Name) { # -and ($Value -or $Value -is [boolean])) {
+        if ($Object.$Name) {
             # Update existing property
             $Object.$Name = $Value
-        #} elseif ($Value -or $Value -is [boolean]) {
         } else {
             # Add property to [PSCustomObject]
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
