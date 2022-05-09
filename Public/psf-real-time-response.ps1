@@ -428,9 +428,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                                     $TempDir,$RunFile -join $Join
                                                 }
                                                 $Executable = if ($RunFile -match '.cmd$') {
-                                                    'cmd.exe'
+                                                    'cmd.exe /c'
                                                 } else {
-                                                    'powershell.exe'
+                                                    'powershell.exe -c'
                                                 }
                                                 '-Raw=```Start-Process',$Executable,"'&{$String}'",
                                                 "-RedirectStandardOutput '$($TempDir,'stdout.log' -join $Join)'",
