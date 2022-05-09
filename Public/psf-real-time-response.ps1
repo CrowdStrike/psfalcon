@@ -428,7 +428,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                                     $TempDir,$RunFile -join $Join
                                                 }
                                                 [string]$Executable = if ($RunFile -match '\.cmd$') {
-                                                    'cmd.exe',"'/c $String'" -join ' '
+                                                    'cmd',"'/c $String'" -join ' '
                                                 } else {
                                                     'powershell.exe',"'-c &{$String}'" -join ' '
                                                 }
