@@ -439,6 +439,10 @@ Command Changes
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
 
+  Modified 'Run' to execute a custom script that launches 'Start-Process' through powershell.exe when provided
+  with a '.ps1' file. This ensures that the process will execute and not wait for completion (similar to a
+  regular executable when being used with the 'run' Real-time Response command).
+
 * Invoke-FalconRtr
   Updated to create Real-time Response sessions in groups of 10,000.
 
