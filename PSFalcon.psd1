@@ -430,6 +430,9 @@ Command Changes
 * Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
   Renamed 'Tags' to 'Tag'.
 
+* Export-FalconReport
+  Updated to force the creation of the same columns for every result.
+
 * Get-FalconUninstallToken
   Added 'Include' parameter.
 
