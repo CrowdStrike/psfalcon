@@ -45,7 +45,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                         $ObjectParam = @{
                             Object = $Item | Select-Object -ExcludeProperty $IdField
                             Output = $Output
-                            Prefix = "$($Name).$($Item.$IdField)"
+                            Prefix = $Name,$Item.$IdField -join '.'
                         }
                         Get-PSObject @ObjectParam
                     } else {
@@ -74,7 +74,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     $ArrayParam = @{
                         Array = $Item.Value
                         Output = $Output
-                        Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Name = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
                     }
                     Get-Array @ArrayParam
                 } elseif ($Item.Value.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
@@ -82,14 +82,14 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     $ObjectParam = @{
                         Object = $Item.Value
                         Output = $Output
-                        Prefix = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Prefix = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
                     }
                     Get-PSObject @ObjectParam
                 } else {
                     # Add property to output with 'prefix.name'
                     $SetParam = @{
                         Object = $Output
-                        Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Name = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
                         Value = $Item.Value
                     }
                     Set-Property @SetParam
@@ -105,7 +105,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
         if ($OutPath.Category -eq 'WriteError' -and !$Force) {
             Write-Error @OutPath
         } elseif ($List) {
-            @($List).foreach{
+            [object[]]$Output = @($List).foreach{
                 $i = [PSCustomObject]@{}
                 if ($_.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
                     # Add sorted properties to output
@@ -114,21 +114,23 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     # Add strings to output as 'id'
                     Set-Property $i id $_
                 }
-                if ($i -and $Path) {
-                    try {
-                        # Output to CSV
-                        $ExportParam = @{
-                            InputObject = $i
-                            Path = $Path
-                            NoTypeInformation = $true
-                            Append = $true
-                        }
-                        Export-Csv @ExportParam
-                    } catch {
-                        $i
+                $i
+            }
+            if ($Output) {
+                # Select all available property names
+                [string[]]$Select = @($Output).foreach{ $_.PSObject.Properties.Name } | Select-Object -Unique
+                if ($Path) {
+                    # Export to CSV, forcing all properties
+                    $ExportParam = @{
+                        InputObject = $Output | Select-Object $Select
+                        Path = $Path
+                        NoTypeInformation = $true
+                        Append = $true
                     }
-                } elseif ($i) {
-                    $i
+                    Export-Csv @ExportParam
+                } else {
+                    # Export to console, forcing all properties
+                    $Output | Select-Object $Select
                 }
             }
         }
@@ -142,7 +144,7 @@ function Send-FalconWebhook {
 .SYNOPSIS
 Send a PSFalcon object to a supported Webhook
 .DESCRIPTION
-Sends an object to a Webhook,converting the object to an acceptable format when required.
+Sends an object to a Webhook, converting the object to an acceptable format when required.
 .PARAMETER Type
 Webhook type
 .PARAMETER Path
