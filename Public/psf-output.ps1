@@ -121,13 +121,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                 [string[]]$Select = @($Output).foreach{ $_.PSObject.Properties.Name } | Select-Object -Unique
                 if ($Path) {
                     # Export to CSV, forcing all properties
-                    $ExportParam = @{
-                        InputObject = $Output | Select-Object $Select
-                        Path = $Path
-                        NoTypeInformation = $true
-                        Append = $true
-                    }
-                    Export-Csv @ExportParam
+                    $Output | Select-Object $Select | Export-Csv $Path -NoTypeInformation -Append
                 } else {
                     # Export to console, forcing all properties
                     $Output | Select-Object $Select
