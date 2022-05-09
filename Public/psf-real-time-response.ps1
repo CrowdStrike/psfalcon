@@ -126,8 +126,8 @@ appropriate temporary folder (\Windows\Temp or /tmp), 'cd' will navigate to the 
 archive will be 'put' into that folder. If the target is an archive, it will be extracted, and the designated
 'Run' file will be executed. If the target is a file, it will be 'run'.
 
-If the 'File' or 'Run' parameter is a script (.ps1, .sh, .zsh), the Real-time Response command 'runscript' will
-be used in place of the final 'run' command.
+If the 'File' or 'Run' parameter is a script (.cmd, .ps1, .sh, .zsh), the Real-time Response command 'runscript'
+will be used in place of the final 'run' command.
 
 Details of each step will be output to a CSV file in your current directory.
 .PARAMETER File
@@ -395,7 +395,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                 # Define Real-time Response command parameters
                                 $Param = @{
                                     BatchId = $Session.batch_id
-                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(ps1|(z)?sh)$') {
+                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(cmd|ps1|(z)?sh)$') {
                                         # Switch 'run' for 'runscript' if 'Run' is a script file
                                         'runscript'
                                     } else {
@@ -427,7 +427,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                                 } else {
                                                     $TempDir,$RunFile -join $Join
                                                 }
-                                                '-Raw=```Start-Process powershell.exe',"'&{$String}'",
+                                                $Executable = if ($RunFile -match '.cmd$') {
+                                                    'cmd.exe'
+                                                } else {
+                                                    'powershell.exe'
+                                                }
+                                                '-Raw=```Start-Process',$Executable,"'&{$String}'",
                                                 "-RedirectStandardOutput '$($TempDir,'stdout.log' -join $Join)'",
                                                 "-RedirectStandardError '$($TempDir,'stderr.log' -join $Join)'",
                                                 ('-PassThru | ForEach-Object { "The process was successfully sta' +
