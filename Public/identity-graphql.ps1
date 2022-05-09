@@ -9,8 +9,8 @@ GraphQL query statement
 #>
     [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post')]
     param(
-        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=1)]
         [string]$Query
     )
     begin {
@@ -20,20 +20,5 @@ GraphQL query statement
             Format = @{ Body = @{ root = @('query') }}
         }
     }
-    process {
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-        <#
-        $Param = @{
-            Path = "$($Script:Falcon.Hostname)/identity-protection/combined/graphql/v1"
-            Method = 'post'
-            Headers = @{
-                Accept = 'application/json'
-                ContentType = 'application/json'
-            }
-            Body = ConvertTo-Json -InputObject @{ query = "{$($PSBoundParameters.Query)}" } -Compress
-        }
-        $Request = $Script:Falcon.Api.Invoke($Param)
-        Write-Result -Request $Request
-        #>
-    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }

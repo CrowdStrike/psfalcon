@@ -650,18 +650,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 settings = 'Get-FalconFirewallSetting'
             }
         }
-        <#
-        if ($Include -contains 'settings') {
-            foreach ($Item in (Get-FalconFirewallSetting -Id $Request.id)) {
-                $SetParam = @{
-                    Object = $Request | Where-Object { $_.id -eq $Item.policy_id }
-                    Name = 'settings'
-                    Value = $Item
-                }
-                Set-Property @SetParam
-            }
-        }
-        #>
         $Request
     }
 }
@@ -879,7 +867,7 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
@@ -902,20 +890,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 Body = @{ root = @('ids','action_parameters') }
             }
         }
+        $Message = $Param.Command,("$(if ($GroupId) {
+            $Name,$GroupId -join ' ' } else { $Name })") -join ': '
     }
     process {
-        $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
-        [void]$PSBoundParameters.Remove('Id')
-        if ($PSBoundParameters.GroupId) {
-            $PSBoundParameters['action_parameters'] = @(
-                @{
-                    name = 'group_id'
-                    value = $PSBoundParameters.GroupId
-                }
-            )
-            [void]$PSBoundParameters.Remove('GroupId')
+        if ($PSCmdlet.ShouldProcess($Id,$Message)) {
+            $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+            [void]$PSBoundParameters.Remove('Id')
+            if ($PSBoundParameters.GroupId) {
+                $PSBoundParameters['action_parameters'] = @(
+                    @{
+                        name = 'group_id'
+                        value = $PSBoundParameters.GroupId
+                    }
+                )
+                [void]$PSBoundParameters.Remove('GroupId')
+            }
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconFirewallGroup {
@@ -1079,7 +1071,7 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:delete',Position=1)]
         [string]$Comment,
@@ -1097,7 +1089,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -1116,7 +1108,7 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -1132,7 +1124,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

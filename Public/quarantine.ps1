@@ -99,7 +99,8 @@ Quarantined file identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
 #>
-    [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory,Position=1)]
@@ -127,13 +128,14 @@ https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
             Format = @{ Body = @{ root = @('action','filter','ids','comment','q') }}
             Max = 500
         }
+        $Message = $Param.Command,$Action -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
+            @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($PSCmdlet.ShouldProcess($Filter,$Message)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }
         }
     }
     end {

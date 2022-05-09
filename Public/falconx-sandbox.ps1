@@ -336,7 +336,7 @@ Report identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -350,5 +350,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             Format = @{ Query = @('ids') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }

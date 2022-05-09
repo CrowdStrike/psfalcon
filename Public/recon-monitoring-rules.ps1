@@ -652,7 +652,7 @@ Action identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -666,7 +666,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
             Format = @{ Query = @('id') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }
 function Remove-FalconReconNotification {
 <#
@@ -679,7 +679,7 @@ Notification identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/notifications/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -695,7 +695,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -714,7 +714,7 @@ Monitoring rule identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -730,7 +730,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

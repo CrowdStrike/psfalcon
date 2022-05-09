@@ -212,7 +212,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-group-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-group-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-hosts','remove-hosts',IgnoreCase=$false)]
@@ -239,7 +239,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($HostId) { @($HostId).foreach{ $List.Add($_) }}
+        if ($HostId) {
+            @($HostId).foreach{
+                $Message = $Param.Command,($Name,$_ -join ' ') -join ': '
+                if ($PSCmdlet.ShouldProcess($Id,$Message)) { $List.Add($_) }
+            }
+        }
     }
     end {
         if ($List) {
@@ -357,7 +362,7 @@ Host group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -373,7 +378,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

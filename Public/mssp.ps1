@@ -721,7 +721,7 @@ CID group
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -737,7 +737,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -758,7 +758,7 @@ CID
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -779,7 +779,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
+    process {
+        if ($Cid) {
+            @($Cid).foreach{
+                $Message = $Param.Command,$_ -join ': '
+                if ($PSCmdlet.ShouldProcess($Id,$Message)) { $List.Add($_) }
+            }
+        }
+    }
     end {
         if ($List) {
             $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
@@ -802,7 +809,7 @@ Role identifier, or leave blank to remove user group/CID group association
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -825,12 +832,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
         }
+        $CombinedId = $CidGroupId,$UserGroupId -join ':'
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($RoleId) {
-            @($RoleId).foreach{ $List.Add($_) }
-        } else {
+            @($RoleId).foreach{
+                $Message = $Param.Command,$_ -join ': '
+                if ($PSCmdlet.ShouldProcess($CombinedId,$Message)) { $List.Add($_) }
+            }
+        } elseif ($PSCmdlet.ShouldProcess($CombinedId)) {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -852,7 +863,7 @@ User group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -868,7 +879,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -889,7 +900,7 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
@@ -909,7 +920,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
+    process {
+        if ($UserId) {
+            @($UserId).foreach{
+                $Message = $Param.Command,$_ -join ': '
+                if ($PSCmdlet.ShouldProcess($Id,$Message)) { $List.Add($_) }
+            }
+        }
+    }
     end {
         if ($List) {
             $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)

@@ -100,7 +100,7 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete')]
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -115,7 +115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             Format = @{ Query = @('ids') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }
 function Send-FalconSample {
 <#

@@ -218,7 +218,7 @@ Incident identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add_tag','delete_tag','update_description','update_name','update_status',
@@ -251,9 +251,10 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
             }
             Max = 1000
         }
+        $Message = $Param.Command,($Name,$Value -join ' ') -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

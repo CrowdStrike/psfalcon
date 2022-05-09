@@ -11,7 +11,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^FalconGroupingTags/.+$')]
@@ -37,9 +37,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Format = @{ Body = @{ root = @('tags','device_ids','action') }}
         }
         $PSBoundParameters['action'] = 'add'
+        $Message = $Param.Command,($Tag -join ',') -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -248,7 +249,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices-actions/v2:post')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices-actions/v2:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,Position=1)]
         [ValidateSet('contain','lift_containment','hide_host','unhide_host','detection_suppress',
@@ -277,9 +278,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
             Max = if ($PSBoundParameters.Name -match '_host$') { 100 } else { 500 }
         }
+        $Message = $Param.Command,$Name -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process {
+        if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}
+    }
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -304,7 +308,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^FalconGroupingTags/.+$')]
@@ -332,9 +336,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Format = @{ Body = @{ root = @('tags','device_ids','action') }}
         }
         $PSBoundParameters['action'] = 'remove'
+        $Message = $Param.Command,($Tag -join ',') -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

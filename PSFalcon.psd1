@@ -425,6 +425,42 @@ General Changes
 
 * Various comment-based help text updates and typo corrections.
 
+* Added 'ShouldProcess' support (enabling the use of '-WhatIf' and '-Confirm') for the following commands:
+  Add-FalconGroupingTag
+  Invoke-FalconDeviceControlPolicyAction
+  Invoke-FalconFirewallPolicyAction
+  Invoke-FalconHostAction
+  Invoke-FalconHostGroupAction
+  Invoke-FalconIncidentAction
+  Invoke-FalconPreventionPolicyAction
+  Invoke-FalconQuarantineAction
+  Invoke-FalconResponsePolicyAction
+  Remove-FalconCidGroup
+  Remove-FalconCidGroupMember
+  Remove-FalconContainerAwsAccount
+  Remove-FalconDeviceControlPolicy
+  Remove-FalconDiscoverAwsAccount
+  Remove-FalconFirewallGroup
+  Remove-FalconFirewallPolicy
+  Remove-FalconGroupingTag
+  Remove-FalconGroupRole
+  Remove-FalconHorizonAwsAccount
+  Remove-FalconHorizonAzureAccount
+  Remove-FalconHostGroup
+  Remove-FalconInstallToken
+  Remove-FalconIoaExclusion
+  Remove-FalconIoc
+  Remove-FalconMlExclusion
+  Remove-FalconPreventionPolicy
+  Remove-FalconReconAction
+  Remove-FalconReconNotification
+  Remove-FalconReconRule
+  Remove-FalconReport
+  Remove-FalconResponsePolicy
+  Remove-FalconSample
+  Remove-FalconUserGroup
+  Remove-FalconUserGroupMember
+
 Command Changes
 
 * Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
@@ -439,10 +475,12 @@ Command Changes
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
 
-  Modified 'Run' to execute a custom script that launches 'Start-Process' through powershell.exe when provided
-  with a '.ps1' file. This ensures that the process will execute and not wait for completion (similar to a
-  regular executable when being used with the 'run' Real-time Response command). Standard output and error streams
-  are redirected to 'stdout.log' and 'stderr.log' within the temporary 'FalconDeploy' directory.
+  Added 'cmd' as a supported 'File' and 'Run' format using 'cmd.exe' in place of 'powershell.exe'.
+
+  Modified 'Run' to execute a custom script that launches a secondary process when provided with a script file.
+  This ensures that the process will execute and not wait for completion (similar to a regular executable when
+  being used with the 'run' Real-time Response command). Standard output and error streams are redirected to
+  'stdout.log' and 'stderr.log' within the temporary 'FalconDeploy' directory.
 
 * Invoke-FalconRtr
   Updated to create Real-time Response sessions in groups of 10,000.

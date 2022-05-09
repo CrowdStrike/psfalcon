@@ -275,7 +275,7 @@ AWS account identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -291,7 +291,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

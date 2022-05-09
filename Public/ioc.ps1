@@ -362,7 +362,7 @@ Indicator identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='Filter',Mandatory)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -386,9 +386,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     }
     process {
         if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
+            @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}
         } elseif ($Filter) {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($PSCmdlet.ShouldProcess($Filter)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }
         }
     }
     end {

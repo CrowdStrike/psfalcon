@@ -244,7 +244,7 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Position=1)]
         [string]$Comment,
@@ -262,7 +262,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

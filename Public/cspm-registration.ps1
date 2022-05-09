@@ -983,7 +983,8 @@ AWS organization identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -1007,9 +1008,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
     }
     process {
         if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
+            @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($PSCmdlet.ShouldProcess("$(@($OrganizationId).foreach{ "$_" } -join ',')")) {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
         }
     }
     end {
@@ -1030,7 +1033,8 @@ Azure account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -1046,7 +1050,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
