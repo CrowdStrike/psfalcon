@@ -431,6 +431,7 @@ General Changes
   Add-FalconGroupingTag
   Add-FalconSensorTag
   Import-FalconConfig
+  Invoke-FalconDeploy
   Invoke-FalconDeviceControlPolicyAction
   Invoke-FalconFirewallPolicyAction
   Invoke-FalconHostAction
