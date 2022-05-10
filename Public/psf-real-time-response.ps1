@@ -48,7 +48,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             $Sessions = Get-FalconSession @SessionParam | Select-Object id,device_id
             if (-not $Sessions) { throw "No queued Real-time Response sessions available." }
             Write-Host "[Get-FalconQueue] Found $(($Sessions | Measure-Object).Count) queued sessions..."
-            [array]$HostInfo = if ($Include) {
+            [object[]]$HostInfo = if ($Include) {
                 # Capture host information for eventual output
                 $Sessions.device_id | Get-FalconHost | Select-Object @($Include + 'device_id')
             }
