@@ -267,11 +267,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             "[Invoke-FalconDeploy] '$FileName' exists in your 'Put' Files. Use existing version?",
                             $null,[System.Management.Automation.Host.ChoiceDescription[]]@("&Yes","&No"),0)
                         if ($FileChoice -eq 0) {
-                            Write-Host "[Invoke-FalconDeploy] Proceeding with CloudFile: $($CloudFile.id)..."
+                            Write-Host "[Invoke-FalconDeploy] Proceeding with CloudFile '$($CloudFile.id)'..."
                         } else {
-                            [System.Object]$RemovePut = $CloudFile.id | Remove-FalconPutFile
-                            if ($RemovePut.writes.resources_affected -eq 1) {
-                                Write-Host "[Invoke-FalconDeploy] Removed CloudFile: $($CloudFile.id)."
+                            if ($PSCmdlet.ShouldProcess($CloudFile.id,'Remove-FalconPutFile')) {
+                                [System.Object]$RemovePut = $CloudFile.id | Remove-FalconPutFile
+                                if ($RemovePut.writes.resources_affected -eq 1) {
+                                    Write-Host "[Invoke-FalconDeploy] Removed CloudFile '$($CloudFile.id)'."
+                                }
                             }
                         }
                     }
@@ -280,19 +282,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 throw $_
             }
             if ($RemovePut.writes.resources_affected -eq 1 -or !$CloudFile) {
-                # Upload 'LocalFile' and output result
-                Write-Host "[Invoke-FalconDeploy] Uploading $FileName..."
-                $Param = @{
-                    Path = $FilePath
-                    Name = $FileName
-                    Description = "Invoke-FalconDeploy [$((Show-FalconModule).UserAgent)]"
-                    Comment = "Invoke-FalconDeploy [$((Show-FalconModule).UserAgent)]"
-                }
-                $AddPut = Send-FalconPutFile @Param
-                if (!$AddPut) {
-                    throw "Upload failed."
-                } elseif ($AddPut -and $AddPut.writes.resources_affected -eq 1) {
-                    Write-Host "[Invoke-FalconDeploy] Upload complete."
+                if ($PSCmdlet.ShouldProcess($FileName,'Send-FalconPutFile')) {
+                    # Upload 'LocalFile' and output result
+                    Write-Host "[Invoke-FalconDeploy] Uploading '$FileName'..."
+                    $Param = @{
+                        Path = $FilePath
+                        Name = $FileName
+                        Description = "Invoke-FalconDeploy [$((Show-FalconModule).UserAgent)]"
+                        Comment = "Invoke-FalconDeploy [$((Show-FalconModule).UserAgent)]"
+                    }
+                    $AddPut = Send-FalconPutFile @Param
+                    if (!$AddPut) {
+                        throw "Upload failed."
+                    } elseif ($AddPut -and $AddPut.writes.resources_affected -eq 1) {
+                        Write-Host "[Invoke-FalconDeploy] Upload complete."
+                    }
                 }
             }
         }
@@ -310,13 +314,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     }
     process {
         if ($GroupId) {
-            if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
-                # Stop if number of members exceeds API limit
-                throw "Group size exceeds maximum number of results. [10,000]"
-            } else {
-                # Retrieve Host Group member device_id and platform_name
-                @($GroupId | Get-FalconHostGroupMember -Detailed -All |
-                    Select-Object device_id,platform_name).foreach{ $Hosts.Add($_) }
+            if ($PSCmdlet.ShouldProcess($GroupId,'Get-FalconHostGroupMember')) {
+                if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
+                    # Stop if number of members exceeds API limit
+                    throw "Group size exceeds maximum number of results. [10,000]"
+                } else {
+                    # Retrieve Host Group member device_id and platform_name
+                    @($GroupId | Get-FalconHostGroupMember -Detailed -All |
+                        Select-Object device_id,platform_name).foreach{ $Hosts.Add($_) }
+                }
             }
         } elseif ($HostId) {
             # Use provided Host identifiers
@@ -334,140 +340,157 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
             if (Test-Path $FilePath -PathType Leaf) { Update-CloudFile $PutFile $FilePath }
             try {
+                # Force a base timeout of 30 to ensure a batch session
+                if (!$Timeout) { $Timeout = 30 }
                 for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 1000) {
                     # Start Real-time Response sessions in groups of 1,000 with 'Timeout' to force batch
-                    $Param = @{
-                        Id = @($Hosts[$i..($i + 999)].device_id)
-                        Timeout = if ($Timeout) { $Timeout } else { 30 }
-                    }
+                    $Param = @{ Id = @($Hosts[$i..($i + 999)].device_id); Timeout = $Timeout }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
-                    $Session = Start-FalconSession @Param
-                    [string[]]$SessionIds = if ($Session.batch_id) {
-                        # Output result to CSV and return list of successful 'init' hosts
-                        Write-RtrResult $Session.hosts init $Session.batch_id
-                    }
-                    if ($SessionIds) {
-                        # Change to a 'temp' directory for each device by platform
-                        Write-Host "[Invoke-FalconDeploy] Initiated session with $(($SessionIds |
-                            Measure-Object).Count) host(s)..."
-                        foreach ($Pair in (@{
-                            Windows = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
-                                $_.platform_name -eq 'Windows' }).device_id
-                            Mac = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
-                                $_.platform_name -eq 'Mac' }).device_id
-                            Linux = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
-                                $_.platform_name -eq 'Linux' }).device_id
-                        }).GetEnumerator().Where({ $_.Value })) {
-                            # Define target temporary folder
-                            [string]$TempDir = switch ($Pair.Key) {
-                                'Windows' { "\Windows\Temp\$DeployName" }
-                                'Mac' { "/tmp/$DeployName" }
-                                'Linux' { "/tmp/$DeployName" }
-                            }
-                            # Script content for 'runscript' by platform and 'Archive' or 'File'
-                            $Runscript = @{
-                                Linux = @{
-                                    Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
-                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
-                                            " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
-                                    } else {
-                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
-                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
-                                    }
-                                    File = "chmod +x $($TempDir,$PutFile -join '/')"
+                    if ($PSCmdlet.ShouldProcess(($Param.Id -join ','),'Start-FalconSession')) {
+                        $Session = Start-FalconSession @Param
+                        [string[]]$SessionIds = if ($Session.batch_id) {
+                            # Output result to CSV and return list of successful 'init' hosts
+                            Write-RtrResult $Session.hosts init $Session.batch_id
+                        }
+                        if ($SessionIds) {
+                            # Change to a 'temp' directory for each device by platform
+                            Write-Host "[Invoke-FalconDeploy] Initiated session with $(($SessionIds |
+                                Measure-Object).Count) host(s)..."
+                            foreach ($Pair in (@{
+                                Windows = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
+                                    $_.platform_name -eq 'Windows' }).device_id
+                                Mac = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
+                                    $_.platform_name -eq 'Mac' }).device_id
+                                Linux = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
+                                    $_.platform_name -eq 'Linux' }).device_id
+                            }).GetEnumerator().Where({ $_.Value })) {
+                                # Define target temporary folder
+                                [string]$TempDir = switch ($Pair.Key) {
+                                    'Windows' { "\Windows\Temp\$DeployName" }
+                                    'Mac' { "/tmp/$DeployName" }
+                                    'Linux' { "/tmp/$DeployName" }
                                 }
-                                Mac = @{
-                                    Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
-                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
-                                            " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
-                                    } else {
-                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
-                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
-                                    }
-                                }
-                                Windows = @{ Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir" }
-                            }
-                            foreach ($Cmd in @('mkdir','cd','put','runscript','run')) {
-                                # Define Real-time Response command parameters
-                                $Param = @{
-                                    BatchId = $Session.batch_id
-                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(cmd|ps1|(z)?sh)$') {
-                                        # Switch 'run' for 'runscript' if 'Run' is a script file
-                                        'runscript'
-                                    } else {
-                                        $Cmd
-                                    }
-                                    Argument = switch ($Cmd) {
-                                        'mkdir' { $TempDir }
-                                        'cd' { $TempDir }
-                                        'put' { $PutFile }
-                                        'runscript' {
-                                            # Get 'Archive' or 'File' script by platform
-                                            $Script = if ($Archive) {
-                                                $Runscript.($Pair.Key).Archive
-                                            } else {
-                                                $Runscript.($Pair.Key).File
-                                            }
-                                            if ($Script) { '-Raw=```{0}```' -f $Script }
+                                # Script content for 'runscript' by platform and 'Archive' or 'File'
+                                $Runscript = @{
+                                    Linux = @{
+                                        Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
+                                            "if ! command -v tar &> /dev/null; then echo 'Missing application: t" +
+                                                "ar'; exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,
+                                                $RunFile -join '/'); exit 0"
+                                        } else {
+                                            "if ! command -v unzip &> /dev/null; then echo 'Missing application:" +
+                                                " unzip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
+                                                $RunFile -join '/'); exit 0"
                                         }
-                                        'run' {
-                                            [string]$Join = if ($Pair.Key -eq 'Windows') { '\' } else { '/' }
-                                            [string]$CmdFile = $TempDir,$RunFile -join $Join
-                                            [string]$CmdLine = if ($Argument) { '-CommandLine="{0}"' -f $Argument }
-                                            if ($Param.Command -eq 'run') {
-                                                $CmdFile,$CmdLine -join ' '
-                                            } elseif ($Pair.Key -eq 'Windows') {
-                                                # Use 'runscript' to start process and avoid timeout
-                                                [string]$String = if ($Argument) {
-                                                    ($TempDir,$RunFile -join $Join),$Argument -join ' '
-                                                } else {
-                                                    $TempDir,$RunFile -join $Join
-                                                }
-                                                [string]$Executable = if ($RunFile -match '\.cmd$') {
-                                                    'cmd',"'/c $String'" -join ' '
-                                                } else {
-                                                    'powershell.exe',"'-c &{$String}'" -join ' '
-                                                }
-                                                '-Raw=```Start-Process',$Executable,
-                                                "-RedirectStandardOutput '$($TempDir,'stdout.log' -join $Join)'",
-                                                "-RedirectStandardError '$($TempDir,'stderr.log' -join $Join)'",
-                                                ('-PassThru | ForEach-Object { "The process was successfully sta' +
-                                                'rted"'),'}```' -join ' '
-                                            } elseif ($Pair.Key -match '(Linux|Mac)') {
-                                                # Use 'runscript' to start background process and avoid timeout
-                                                [string]$String = if ($Argument) {
-                                                    ($TempDir,$RunFile -join $Join),$Argument -join ' '
-                                                } else {
-                                                    $TempDir,$RunFile -join $Join
-                                                }
-                                                $String = "'$String > $($TempDir,'stdout.log' -join $Join) 2> $(
-                                                    $TempDir,'stderr.log' -join $Join) &'"
-                                                if ($Pair.Key -eq 'Linux') {
-                                                    ('-Raw=```(bash -c {0}); if [[ $? -eq 0 ]]; then echo "The p' +
-                                                    'rocess was successfully started"; fi```') -f $String
-                                                } else {
-                                                    ('-Raw=```(zsh -c {0}); if [[ $? -eq 0 ]]; then echo "The pr' +
-                                                    'ocess was successfully started"; fi```') -f $String
-                                                }
-                                            }
+                                        File = "chmod +x $($TempDir,$PutFile -join '/')"
+                                    }
+                                    Mac = @{
+                                        Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
+                                            "if ! command -v tar &> /dev/null; then echo 'Missing application: t" +
+                                                "ar'; exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,
+                                                $RunFile -join '/'); exit 0"
+                                        } else {
+                                            "if ! command -v unzip &> /dev/null; then echo 'Missing application:" +
+                                                " unzip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
+                                                $RunFile -join '/'); exit 0"
                                         }
                                     }
-                                    OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
+                                    Windows = @{
+                                        Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir"
+                                    }
                                 }
-                                if ($Timeout) { $Param['Timeout'] = $Timeout }
-                                if ($Param.OptionalHostId -and $Param.Argument) {
-                                    # Issue command, output result to CSV and capture successful 'aid' values
-                                    Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
-                                        Measure-Object).Count) $($Pair.Key) host(s)..."
-                                    $Result = Invoke-FalconAdminCommand @Param
-                                    [string[]]$Optional = if ($Result) {
-                                        # Rename 'runscript' to 'extract' for output
-                                        [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
-                                        Write-RtrResult $Result $Step $Session.batch_id
+                                foreach ($Cmd in @('mkdir','cd','put','runscript','run')) {
+                                    # Define Real-time Response command parameters
+                                    $Param = @{
+                                        BatchId = $Session.batch_id
+                                        Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(cmd|ps1|(z)?sh)$') {
+                                            # Switch 'run' for 'runscript' if 'Run' is a script file
+                                            'runscript'
+                                        } else {
+                                            $Cmd
+                                        }
+                                        Argument = switch ($Cmd) {
+                                            'mkdir' { $TempDir }
+                                            'cd' { $TempDir }
+                                            'put' { $PutFile }
+                                            'runscript' {
+                                                # Get 'Archive' or 'File' script by platform
+                                                $Script = if ($Archive) {
+                                                    $Runscript.($Pair.Key).Archive
+                                                } else {
+                                                    $Runscript.($Pair.Key).File
+                                                }
+                                                if ($Script) { '-Raw=```{0}```' -f $Script }
+                                            }
+                                            'run' {
+                                                [string]$Join = if ($Pair.Key -eq 'Windows') { '\' } else { '/' }
+                                                [string]$CmdFile = $TempDir,$RunFile -join $Join
+                                                [string]$CmdLine = if ($Argument) {
+                                                    '-CommandLine="{0}"' -f $Argument
+                                                }
+                                                if ($Param.Command -eq 'run') {
+                                                    $CmdFile,$CmdLine -join ' '
+                                                } elseif ($Pair.Key -eq 'Windows') {
+                                                    # Use 'runscript' to start process and avoid timeout
+                                                    [string]$String = if ($Argument) {
+                                                        ($TempDir,$RunFile -join $Join),$Argument -join ' '
+                                                    } else {
+                                                        $TempDir,$RunFile -join $Join
+                                                    }
+                                                    [string]$Executable = if ($RunFile -match '\.cmd$') {
+                                                        'cmd',"'/c $String'" -join ' '
+                                                    } else {
+                                                        'powershell.exe',"'-c &{$String}'" -join ' '
+                                                    }
+                                                    '-Raw=```Start-Process',$Executable,
+                                                    "-RedirectStandardOutput '$($TempDir,'stdout.log' -join
+                                                        $Join)'",
+                                                    "-RedirectStandardError '$($TempDir,'stderr.log' -join
+                                                        $Join)'",
+                                                    ('-PassThru | ForEach-Object { "The process was successfully' +
+                                                        ' started"'),
+                                                    '}```' -join ' '
+                                                } elseif ($Pair.Key -match '(Linux|Mac)') {
+                                                    # Use 'runscript' to start background process and avoid timeout
+                                                    [string]$String = if ($Argument) {
+                                                        ($TempDir,$RunFile -join $Join),$Argument -join ' '
+                                                    } else {
+                                                        $TempDir,$RunFile -join $Join
+                                                    }
+                                                    $String = "'$String > $($TempDir,'stdout.log' -join
+                                                        $Join) 2> $($TempDir,'stderr.log' -join $Join) &'"
+                                                    if ($Pair.Key -eq 'Linux') {
+                                                        ('-Raw=```(bash -c {0}); if [[ $? -eq 0 ]]; then echo "T' +
+                                                            'he process was successfully started"; fi```') -f
+                                                            $String
+                                                    } else {
+                                                        ('-Raw=```(zsh -c {0}); if [[ $? -eq 0 ]]; then echo "Th' +
+                                                        'e process was successfully started"; fi```') -f $String
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
+                                        Timeout = $Timeout
+                                    }
+                                    if ($Param.OptionalHostId -and $Param.Argument) {
+                                        if ($PSCmdlet.ShouldProcess(($Param.OptionalHostId -join ','),
+                                        ('Invoke-FalconAdminCommand',$Param.Command -join ': '))) {
+                                            # Issue command, output result to CSV and capture successful values
+                                            Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(
+                                                ($Param.OptionalHostId | Measure-Object).Count) $(
+                                                $Pair.Key) host(s)..."
+                                            $Result = Invoke-FalconAdminCommand @Param
+                                            [string[]]$Optional = if ($Result) {
+                                                # Rename 'runscript' to 'extract' for output
+                                                [string]$Step = if ($Cmd -eq 'runscript') {
+                                                    'extract'
+                                                } else {
+                                                    $Cmd
+                                                }
+                                                Write-RtrResult $Result $Step $Session.batch_id
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -477,9 +500,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             } catch {
                 throw $_
             } finally {
-                if (Test-Path $Csv) {
-                    Get-ChildItem $Csv | Select-Object FullName,Length,LastWriteTime
-                }
+                if (Test-Path $Csv) { Get-ChildItem $Csv | Select-Object FullName,Length,LastWriteTime }
             }
         }
     }
