@@ -167,7 +167,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
                     Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result -Request $Request
+                $Result = Write-Result $Request
                 if ($Result.access_token) {
                     # Cache access token in ApiClient
                     $Token = "$($Result.token_type) $($Result.access_token)"
@@ -221,7 +221,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
                 Body = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
             $Request = $Script:Falcon.Api.Invoke($Param)
-            Write-Result -Request $Request
+            Write-Result $Request
             [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
         @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove("$_") }
