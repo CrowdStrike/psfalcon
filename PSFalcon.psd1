@@ -439,6 +439,7 @@ General Changes
   Invoke-FalconPreventionPolicyAction
   Invoke-FalconQuarantineAction
   Invoke-FalconResponsePolicyAction
+  Invoke-FalconSensorUpdatePolicyAction
   Remove-FalconCidGroup
   Remove-FalconCidGroupMember
   Remove-FalconContainerAwsAccount
@@ -461,13 +462,20 @@ General Changes
   Remove-FalconReconRule
   Remove-FalconReport
   Remove-FalconResponsePolicy
+  Remove-FalconRole
   Remove-FalconSample
   Remove-FalconSensorTag
+  Remove-FalconSensorUpdatePolicy
+  Remove-FalconSvExclusion
+  Remove-FalconUser
   Remove-FalconUserGroup
   Remove-FalconUserGroupMember
   Uninstall-FalconSensor
 
 Command Changes
+
+* Add-FalconRole, Remove-FalconRole
+  Updated to use 'Get-FalconRole' to determine valid 'Id' values for auto-completion.
 
 * Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
   Renamed 'Tags' to 'Tag'. Retained 'Tags' as an alias.
