@@ -394,7 +394,8 @@ Real-time Response 'put' file identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -409,7 +410,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             Format = @{ Query = @('ids') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }
 function Remove-FalconScript {
 <#
@@ -422,7 +423,7 @@ Script identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -437,7 +438,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             Format = @{ Query = @('ids') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }
 function Send-FalconPutFile {
 <#
