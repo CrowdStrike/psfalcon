@@ -638,7 +638,8 @@ Cloud request identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -658,7 +659,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             Format = @{ Query = @('session_id','cloud_request_id') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($CloudRequestId)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }
 function Remove-FalconGetFile {
 <#
@@ -677,7 +678,7 @@ Real-time Response 'get' file identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -697,7 +698,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             Format = @{ Query = @('session_id','ids') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }
 function Remove-FalconSession {
 <#
@@ -710,7 +711,8 @@ Session identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/sessions/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/sessions/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -725,7 +727,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             Format = @{ Query = @('session_id') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
 }
 function Start-FalconSession {
 <#
