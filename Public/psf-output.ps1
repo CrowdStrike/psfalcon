@@ -174,7 +174,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
             'Slack' {
                 # Create 'attachment' for each object in submission
                 @($Object | Export-FalconReport).foreach{
-                    [array]$Fields = @($_.PSObject.Properties).foreach{
+                    [object[]]$Fields = @($_.PSObject.Properties).foreach{
                         ,@{
                             title = $_.Name
                             value = if ($_.Value -is [boolean]) {
