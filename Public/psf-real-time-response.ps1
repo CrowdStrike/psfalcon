@@ -574,7 +574,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                         foreach ($i in (Get-FalconHost -Id $Hosts.aid | Select-Object @($Include + 'device_id'))) {
                             foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
                                 # Append 'Include' fields to output
-                                $Hosts | Where-Object { $_.aid -eq $i.device_id } | ForEach-Object {
+                                @($Hosts | Where-Object { $_.aid -eq $i.device_id }).foreach{
                                     Set-Property $_ $p.Name $p.Value
                                 }
                             }
@@ -582,14 +582,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 }
             }
+            # Force a base timeout of 30 to ensure a batch session
+            if (!$Timeout) { $Timeout = 30 }
             for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 10000) {
                 # Start batch Real-time Response session in groups of 10,000
                 $Output = $Hosts[$i..($i + 9999)]
                 if ($PSCmdlet.ShouldProcess(($Output.aid -join ','),'Start-FalconSession')) {
-                    $Init = @{
-                        Id = $Output.aid
-                        Timeout = if ($Timeout) { $Timeout } else { 30 }
-                    }
+                    $Init = @{ Id = $Output.aid; Timeout = $Timeout }
                     if ($QueueOffline) { $Init['QueueOffline'] = $QueueOffline }
                     $InitReq = Start-FalconSession @Init
                     if ($InitReq.batch_id -or $InitReq.session_id) {
@@ -604,10 +603,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                         }
                         # Determine PSFalcon command, execute and capture result
                         $Invoke = Get-RtrCommand $Command
-                        $Cmd = @{ Command = $Command }
-                        @('Argument','Timeout').foreach{
-                            if ((Get-Variable $_ -EA 0).Value) { $Cmd[$_] = (Get-Variable $_).Value }
-                        }
+                        $Cmd = @{ Command = $Command; Timeout = $Timeout }
+                        if ($Argument) { $Cmd['Argument'] = $Argument }
                         if ($QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
                         [string]$Id = if ($InitReq.batch_id) { 'batch_id' } else { 'session_id' }
                         [string]$Message = $Id,$InitReq.$Id -join ' '
