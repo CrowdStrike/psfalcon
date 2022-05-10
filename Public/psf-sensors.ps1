@@ -63,7 +63,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
             
-            if ($PSCmdlet.ShouldProcess(($Id -join ', '),$Message)) {
+            if ($PSCmdlet.ShouldProcess(($Id -join ','),$Message)) {
                 try {
                     # Get device info to determine script and begin session
                     $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name
@@ -234,7 +234,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
-            if ($PSCmdlet.ShouldProcess(($Id -join ', '),$Message)) {
+            if ($PSCmdlet.ShouldProcess(($Id -join ','),$Message)) {
                 try {
                     # Get device info to determine script and begin session
                     $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name
