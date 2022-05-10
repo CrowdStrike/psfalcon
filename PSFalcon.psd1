@@ -429,6 +429,7 @@ General Changes
 
 * Added 'ShouldProcess' support (enabling the use of '-WhatIf' and '-Confirm') for the following commands:
   Add-FalconGroupingTag
+  Add-FalconSensorTag
   Import-FalconConfig
   Invoke-FalconDeviceControlPolicyAction
   Invoke-FalconFirewallPolicyAction
@@ -461,8 +462,10 @@ General Changes
   Remove-FalconReport
   Remove-FalconResponsePolicy
   Remove-FalconSample
+  Remove-FalconSensorTag
   Remove-FalconUserGroup
   Remove-FalconUserGroupMember
+  Uninstall-FalconSensor
 
 Command Changes
 
