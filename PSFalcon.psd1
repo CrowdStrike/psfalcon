@@ -444,11 +444,13 @@ General Changes
   Invoke-FalconSensorUpdatePolicyAction
   Remove-FalconCidGroup
   Remove-FalconCidGroupMember
+  Remove-FalconCommand
   Remove-FalconContainerAwsAccount
   Remove-FalconDeviceControlPolicy
   Remove-FalconDiscoverAwsAccount
   Remove-FalconFirewallGroup
   Remove-FalconFirewallPolicy
+  Remove-FalconGetFile
   Remove-FalconGroupingTag
   Remove-FalconGroupRole
   Remove-FalconHorizonAwsAccount
@@ -470,6 +472,7 @@ General Changes
   Remove-FalconScript
   Remove-FalconSensorTag
   Remove-FalconSensorUpdatePolicy
+  Remove-FalconSession
   Remove-FalconSvExclusion
   Remove-FalconUser
   Remove-FalconUserGroup
