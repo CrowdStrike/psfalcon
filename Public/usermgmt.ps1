@@ -270,7 +270,7 @@ User role
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -291,7 +291,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Id) { @($Id).foreach{ $List.Add($_) }}
+        if ($Id) {
+            @($Id).foreach{
+                $Message = $Param.Command,$_ -join ': '
+                if ($PSCmdlet.ShouldProcess($UserId,$Message)) { $List.Add($_) }
+            }
+        }
     }
     end {
         if ($List) {
@@ -311,7 +316,7 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/users/entities/users/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -326,7 +331,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             Format = @{ Query = @('user_uuid') }
         }
     }
-    process {
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    process { if ($PSCmdlet.ShouldProcess($_)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
+}
+@('Add-FalconRole','Remove-FalconRole').foreach{
+    $Register = @{
+        CommandName = $_
+        ParameterName = 'Id'
+        ScriptBlock = { Get-FalconRole -EA 0 }
     }
+    Register-ArgumentCompleter @Register
 }
