@@ -137,7 +137,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             }
         })]
         [Alias('resources')]
-        [array]$Array,
+        [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^\w{32}$')]
         [string]$Id,
