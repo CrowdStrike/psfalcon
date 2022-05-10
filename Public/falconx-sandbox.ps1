@@ -205,7 +205,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post')]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Mandatory,Position=1)]
-        [ValidateSet('android','ubuntu16_x64','win7_x64','win7_x86','win10_x64',IgnoreCase=$false)]
+        [ValidateSet('android','macOS_10.15','ubuntu16_x64','win7_x64','win7_x86','win10_x64',IgnoreCase=$false)]
         [Alias('environment_id')]
         [string]$EnvironmentId,
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=2)]
@@ -266,6 +266,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         } else {
             $PSBoundParameters.EnvironmentId = switch ($PSBoundParameters.EnvironmentId) {
                 'android'      { 200 }
+                'macOS_10.15'  { 400 }
                 'ubuntu16_x64' { 300 }
                 'win7_x64'     { 110 }
                 'win7_x86'     { 100 }
