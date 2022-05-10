@@ -439,6 +439,7 @@ General Changes
   Invoke-FalconPreventionPolicyAction
   Invoke-FalconQuarantineAction
   Invoke-FalconResponsePolicyAction
+  Invoke-FalconRtr
   Invoke-FalconSensorUpdatePolicyAction
   Remove-FalconCidGroup
   Remove-FalconCidGroupMember
