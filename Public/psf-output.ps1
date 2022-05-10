@@ -170,7 +170,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         }
     }
     process {
-        [array]$Content = switch ($PSBoundParameters.Type) {
+        [object[]]$Content = switch ($PSBoundParameters.Type) {
             'Slack' {
                 # Create 'attachment' for each object in submission
                 @($Object | Export-FalconReport).foreach{
@@ -210,7 +210,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
                     Body = ConvertTo-Json -InputObject $Item -Depth 32
                 }
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request
+                Write-Result $Request
             } catch {
                 throw $_
             }
