@@ -291,7 +291,7 @@ with the PSFalcon module.
     [CmdletBinding()]
     param()
     process {
-        $ManifestPath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'PSFalcon.psd1'
+        $ManifestPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'PSFalcon.psd1'
         if (Test-Path $ManifestPath) {
             $ModuleData = Import-PowerShellDataFile -Path $ManifestPath
             [PSCustomObject]@{
