@@ -459,6 +459,7 @@ General Changes
   Remove-FalconIoc
   Remove-FalconMlExclusion
   Remove-FalconPreventionPolicy
+  Remove-FalconPutFile
   Remove-FalconReconAction
   Remove-FalconReconNotification
   Remove-FalconReconRule
@@ -466,6 +467,7 @@ General Changes
   Remove-FalconResponsePolicy
   Remove-FalconRole
   Remove-FalconSample
+  Remove-FalconScript
   Remove-FalconSensorTag
   Remove-FalconSensorUpdatePolicy
   Remove-FalconSvExclusion
