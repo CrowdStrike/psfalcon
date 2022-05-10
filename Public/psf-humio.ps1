@@ -27,9 +27,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         [string[]]$Enable
     )
     process {
-        if (!$Script:Falcon.Api) {
-            throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
-        }
+        if (!$Script:Falcon.Api) { throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'." }
         $Script:Falcon.Api.Collector = @{
             Uri = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
             Token = $PSBoundParameters.Token
@@ -42,23 +40,6 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         Write-Verbose "$Message."
     }
 }
-$Register = @{
-    CommandName = 'Register-FalconEventCollector'
-    ParameterName = 'Uri'
-    ScriptBlock = {
-        param($CommandName,$ParameterName,$WordToComplete,$CommandAst,$FakeBoundParameters)
-        $PublicClouds = @('https://cloud.community.humio.com/','https://cloud.humio.com/',
-            'https://cloud.us.humio.com/')
-        $Match = $PublicClouds | Where-Object { $_ -like "$WordToComplete*" }
-        $Match | ForEach-Object {
-            New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
-            $_,
-            'ParameterValue',
-            $_
-        }
-    }
-}
-Register-ArgumentCompleter @Register
 function Send-FalconEvent {
 <#
 .SYNOPSIS
@@ -153,3 +134,20 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         }
     }
 }
+$Register = @{
+    CommandName = 'Register-FalconEventCollector'
+    ParameterName = 'Uri'
+    ScriptBlock = {
+        param($CommandName,$ParameterName,$WordToComplete,$CommandAst,$FakeBoundParameters)
+        $PublicClouds = @('https://cloud.community.humio.com/','https://cloud.humio.com/',
+            'https://cloud.us.humio.com/')
+        $Match = $PublicClouds | Where-Object { $_ -like "$WordToComplete*" }
+        $Match | ForEach-Object {
+            New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
+            $_,
+            'ParameterValue',
+            $_
+        }
+    }
+}
+Register-ArgumentCompleter @Register
