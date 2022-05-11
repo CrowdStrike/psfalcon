@@ -314,15 +314,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     }
     process {
         if ($GroupId) {
-            if ($PSCmdlet.ShouldProcess($GroupId,'Get-FalconHostGroupMember')) {
-                if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
-                    # Stop if number of members exceeds API limit
-                    throw "Group size exceeds maximum number of results. [10,000]"
-                } else {
-                    # Retrieve Host Group member device_id and platform_name
-                    @($GroupId | Get-FalconHostGroupMember -Detailed -All |
-                        Select-Object device_id,platform_name).foreach{ $Hosts.Add($_) }
-                }
+            if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
+                # Stop if number of members exceeds API limit
+                throw "Group size exceeds maximum number of results. [10,000]"
+            } else {
+                # Retrieve Host Group member device_id and platform_name
+                @($GroupId | Get-FalconHostGroupMember -Detailed -All |
+                    Select-Object device_id,platform_name).foreach{ $Hosts.Add($_) }
             }
         } elseif ($HostId) {
             # Use provided Host identifiers
