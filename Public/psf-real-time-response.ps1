@@ -569,14 +569,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     }
     process {
         if ($GroupId) {
-            if ($PSCmdlet.ShouldProcess($GroupId,'Get-FalconHostGroupMember')) {
-                if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
-                    # Stop if number of members exceeds API limit
-                    throw "Group size exceeds maximum number of results. [10,000]"
-                } else {
-                    # Retrieve Host Group member device_id and platform_name
-                    @($GroupId | Get-FalconHostGroupMember -All).foreach{ $List.Add($_) }
-                }
+            if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
+                # Stop if number of members exceeds API limit
+                throw "Group size exceeds maximum number of results. [10,000]"
+            } else {
+                # Retrieve Host Group member device_id and platform_name
+                @($GroupId | Get-FalconHostGroupMember -All).foreach{ $List.Add($_) }
             }
         } elseif ($HostId) {
             # Use provided Host identifiers
@@ -589,16 +587,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             [object[]]$Hosts = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
             if ($GroupId) { @($Hosts).foreach{ Set-Property $_ 'group_id' $GroupId }}
             if ($Include) {
-                if ($PSCmdlet.ShouldProcess(($Hosts.aid -join ','),'Get-FalconHost')) {
-                    [string]$Message = 'Append',(@($Include).foreach{ "'$_'" } -join ',') -join ' '
-                    if ($PSCmdlet.ShouldProcess(($Hosts.aid -join ','),$Message)) {
-                        foreach ($i in (Get-FalconHost -Id $Hosts.aid | Select-Object @($Include + 'device_id'))) {
-                            foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
-                                # Append 'Include' fields to output
-                                @($Hosts | Where-Object { $_.aid -eq $i.device_id }).foreach{
-                                    Set-Property $_ $p.Name $p.Value
-                                }
-                            }
+                foreach ($i in (Get-FalconHost -Id $Hosts.aid | Select-Object @($Include + 'device_id'))) {
+                    foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
+                        # Append 'Include' fields to output
+                        @($Hosts | Where-Object { $_.aid -eq $i.device_id }).foreach{
+                            Set-Property $_ $p.Name $p.Value
                         }
                     }
                 }
