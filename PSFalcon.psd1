@@ -427,6 +427,11 @@ General Changes
 
 * Updated 'Test-FqlStatement' private function to allow for the use of either single or double quotation marks.
 
+* The online help files (accessed using 'Update-Help') for PSFalcon are no longer valid for this and future
+  releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online' for
+  any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
+  previously provided through the online help.
+
 * Added 'ShouldProcess' support (enabling the use of '-WhatIf' and '-Confirm') for the following commands:
   Add-FalconGroupingTag
   Add-FalconSensorTag
