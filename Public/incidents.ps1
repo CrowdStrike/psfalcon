@@ -27,7 +27,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
     param(
         [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^ind:\w{32}:(\d|\-)+$')]
+        [ValidatePattern('^ind:[a-fA-F0-9]{32}:(\d|\-)+$')]
         [Alias('Ids','behavior_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=1)]
@@ -102,7 +102,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
     param(
         [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('Ids','incident_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=1)]
@@ -234,7 +234,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [boolean]$OverwriteDetects,
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=5)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('Ids','incident_id')]
         [string[]]$Id
     )

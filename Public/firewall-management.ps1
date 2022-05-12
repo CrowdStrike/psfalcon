@@ -32,7 +32,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,Position=2)]
         [ValidateScript({
@@ -53,7 +53,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Alias('diff_operations','DiffOperations')]
         [object[]]$DiffOperation,
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=3)]
-        [ValidatePattern('^(([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)|\w{32})$')]
+        [ValidatePattern('^(([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)|[a-fA-F0-9]{32})$')]
         [Alias('rule_ids','RuleIds')]
         [string[]]$RuleId,
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=4)]
@@ -139,7 +139,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Position=2)]
         [string]$Name,
@@ -221,7 +221,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [boolean]$Enforce,
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
            Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('rule_group_ids','RuleGroupIds')]
         [string[]]$RuleGroupId,
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
@@ -244,7 +244,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [boolean]$LocalLogging,
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',Mandatory,ValueFromPipelineByPropertyName,
             Position=8)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('policy_id','PolicyId')]
         [string]$Id
     )
@@ -450,7 +450,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=1)]
@@ -590,7 +590,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=1)]
@@ -684,7 +684,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=2)]
@@ -756,7 +756,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$PolicyId,
         [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Position=2)]
         [Parameter(ParameterSetName='/fwmgr/queries/rules/v1:get',Position=1)]
@@ -832,7 +832,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -874,11 +874,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -954,7 +954,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=6)]
         [string]$Library,
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Position=7)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('clone_id','id')]
         [string]$CloneId
     )
@@ -1077,7 +1077,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [string]$Comment,
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -1112,7 +1112,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -1155,7 +1155,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         [Alias('platform_name')]
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/firewall-precedence/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

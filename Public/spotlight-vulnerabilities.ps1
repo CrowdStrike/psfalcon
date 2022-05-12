@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
                     # Use 'apps.remediation.ids' when supplied with a detailed vulnerability object
                     @($_.apps.remediation.ids).foreach{ $List.Add($_) }
                 } elseif ($_ -is [string]) {
-                    if ($_ -notmatch '^\w{32}$') {
+                    if ($_ -notmatch '^[a-fA-F0-9]{32}$') {
                         throw "'$_' is not a valid remediation identifier."
                     } else {
                         $List.Add($_)
@@ -78,7 +78,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
     param(
         [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Mandatory,Position=1)]
@@ -196,7 +196,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Spotlight
                     # Use 'apps.evaluation_logic.id' when supplied with a detailed vulnerability object
                     $List.Add($_.apps.evaluation_logic.id)
                 } elseif ($_ -is [string]) {
-                    if ($_ -notmatch '^\w{32}$') {
+                    if ($_ -notmatch '^[a-fA-F0-9]{32}$') {
                         throw "'$_' is not a valid vulnerability evaluation logic identifier."
                     } else {
                         $List.Add($_)

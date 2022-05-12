@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string[]]$Tag,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=8)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('host_groups','HostGroups')]
         [string[]]$HostGroup,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
@@ -89,7 +89,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [boolean]$IgnoreWarning,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=14)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Id
     )
     begin {
@@ -145,7 +145,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=1)]
@@ -287,7 +287,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('tags')]
         [string[]]$Tag,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=8)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('host_groups','HostGroups')]
         [string[]]$HostGroup,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=9)]
@@ -372,7 +372,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:delete',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

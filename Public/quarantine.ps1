@@ -29,7 +29,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{64}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=1)]
@@ -117,7 +117,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
         [string]$Comment,
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}_\w{64}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

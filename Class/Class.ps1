@@ -20,9 +20,8 @@ class ApiClient {
     [System.Object] Invoke([System.Object]$Param) {
         Write-Verbose "[ApiClient.Invoke] $($Param.Method.ToUpper()) $($Param.Path)"
         if ($Param.Headers) {
-            Write-Verbose "[ApiClient.Invoke] $(($Param.Headers.GetEnumerator().foreach{
-                "$($_.Key)=$($_.Value)"
-            }) -join ',')"
+            [string]$Verbose = $Param.Headers.GetEnumerator().foreach{ "$($_.Key)=$($_.Value)" } -join ','
+            if ($Verbose) { Write-Verbose "[ApiClient.Invoke] $Verbose" }
         }
         try {
             $Output = if ($Param.Outfile) {

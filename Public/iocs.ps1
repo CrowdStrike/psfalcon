@@ -79,7 +79,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/processes/v1:get')]
     param(
         [Parameter(ParameterSetName='/processes/entities/processes/v1:get',ValueFromPipeline,Mandatory)]
-        [ValidatePattern('^pid:\w{32}:\d+$')]
+        [ValidatePattern('^pid:[a-fA-F0-9]{32}:\d+$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Mandatory,Position=1)]
@@ -89,7 +89,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Value,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Mandatory,ValueFromPipeline,
            Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_id')]
         [string]$HostId,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Position=4)]

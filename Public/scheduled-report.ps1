@@ -33,7 +33,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
             ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=1)]
@@ -111,7 +111,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
     param(
         [Parameter(ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -150,7 +150,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
         [object]$Path,
         [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string]$Id,
         [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get')]
@@ -210,7 +210,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
     param(
         [Parameter(ParameterSetName='/reports/entities/report-executions-retry/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {

@@ -21,6 +21,10 @@
       'Remove-FalconDiscoverAwsAccount',
       'Update-FalconDiscoverAwsSetting',
 
+      # container-upload.ps1
+      'Get-FalconContainerAssessment',
+      'Remove-FalconContainerImage',
+
       # cspm-registration.ps1
       'Edit-FalconHorizonAwsAccount',
       'Edit-FalconHorizonAzureAccount',
@@ -421,16 +425,26 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = "@
+New Commands
+
+* container-upload.ps1
+  Get-FalconContainerAssessment
+  Remove-FalconContainerImage
+
 General Changes
 
-* Various comment-based help text updates and typo corrections.
+* Updated ApiClient.Invoke() to remove blank verbose output when 'Headers' are not specified during a request.
+
+* Created 'Get-ContainerUrl' to convert cached Hostname value into a valid 'container-upload' URL value when using
+  'container-upload' commands.
+
+* Added 'HostUrl' parameter to 'Invoke-Falcon' to force the use of 'container-upload' base URL instead of the
+  cached Falcon API hostname.
 
 * Updated 'Test-FqlStatement' private function to allow for the use of either single or double quotation marks.
 
-* The online help files (accessed using 'Update-Help') for PSFalcon are no longer valid for this and future
-  releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online' for
-  any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
-  previously provided through the online help.
+* Updated RegEx patterns when validating input to look for a more restrictive list of characters to better match
+  expected values.
 
 * Added 'ShouldProcess' support (enabling the use of '-WhatIf' and '-Confirm') for the following commands:
   Add-FalconGroupingTag
@@ -484,13 +498,20 @@ General Changes
   Remove-FalconUserGroupMember
   Uninstall-FalconSensor
 
+  * Various comment-based help text updates and typo corrections.
+
+  * The online help files (accessed using 'Update-Help') for PSFalcon are no longer valid for this and future
+    releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online'
+    for any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
+    previously provided through the online help.
+
 Command Changes
 
 * Add-FalconRole, Remove-FalconRole
   Updated to use 'Get-FalconRole' to determine valid 'Id' values for auto-completion.
 
 * Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
-  Renamed 'Tags' to 'Tag'. Retained 'Tags' as an alias.
+  Renamed 'Tags' to 'Tag'. Retained 'Tags' as an alias. This was missed in the v2.2.0 release.
 
 * Export-FalconConfig
   Updated to include the export of 'platform_default' policies.
@@ -528,7 +549,6 @@ Resolved Issues
 
 * Issue #211: Added try/catch to 'Get-FalconHost' when using '-Include group_names' to suppress errors when
   hosts have no groups.
-
 @"
         }
     }

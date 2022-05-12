@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
             ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w+$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_\w+$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=1)]

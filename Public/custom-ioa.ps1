@@ -36,7 +36,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=5)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('RulegroupId')]
         [string]$Id
     )
@@ -95,7 +95,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [object[]]$RuleUpdate,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('rulegroup_id','id')]
         [string]$RulegroupId
     )
@@ -162,7 +162,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=1)]
@@ -597,7 +597,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=8)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('rulegroup_id','id')]
         [string]$RulegroupId
     )
@@ -640,7 +640,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -681,7 +681,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
             Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('rule_group_id','rulegroup_id','ioa_rule_groups')]
         [string]$RuleGroupId,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,

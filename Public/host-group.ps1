@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [string]$AssignmentRule,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -72,7 +72,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/devices/queries/host-groups/v1:get',Position=1)]
@@ -162,7 +162,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',Position=2)]
@@ -219,11 +219,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','HostIds')]
         [string[]]$HostId
     )
@@ -366,7 +366,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

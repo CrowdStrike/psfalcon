@@ -32,7 +32,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
     )
@@ -115,7 +115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
     )
@@ -201,7 +201,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
     )
@@ -290,7 +290,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('HostId','device_id','host_ids','aid')]
         [string]$Id
     )

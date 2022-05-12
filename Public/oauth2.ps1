@@ -34,7 +34,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=1)]
         [Alias('client_id')]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$ClientId,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=2)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=2)]
@@ -51,7 +51,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=4)]
         [Alias('cid','member_cid')]
-        [ValidatePattern('^\w{32}(-\w{2})?$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
         [string]$MemberCid,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=5)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=5)]
@@ -66,7 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         [System.Collections.Hashtable]$Collector
     )
     begin {
-        if ($PSBoundParameters.MemberCid -match '^\w{32}-\w{2}$'){
+        if ($PSBoundParameters.MemberCid -match '^[a-fA-F0-9]{32}-\w{2}$'){
             $PSBoundParameters.MemberCid = $PSBoundParameters.MemberCid.Split('-')[0]
         }
         function Get-ApiCredential ($Inputs) {
@@ -79,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
                     $Value = Read-Host $_
                     $BaseError = 'Cannot validate argument on parameter "{0}". The argument "{1}" does not ' +
                         'match the "{2}" pattern. Supply an argument that matches "{2}" and try the command again.'
-                    $ValidPattern = if ($_ -eq 'ClientId') { '^\w{32}$' } else { '^\w{40}$' }
+                    $ValidPattern = if ($_ -eq 'ClientId') { '^[a-fA-F0-9]{32}$' } else { '^\w{40}$' }
                     if ($Value -notmatch $ValidPattern) {
                         $InvalidValue = $BaseError -f $_,$Value,$ValidPattern
                         throw $InvalidValue

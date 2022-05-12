@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Zero-Trust-Assessment
     param(
         [Parameter(ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
     )

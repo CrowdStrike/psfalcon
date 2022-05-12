@@ -96,7 +96,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [string]$Path,
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=7)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -141,7 +141,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=1)]
@@ -212,7 +212,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=1)]
@@ -304,7 +304,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [ValidateRange(30,600)]
         [int32]$Timeout,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('optional_hosts','OptionalHostIds')]
         [string[]]$OptionalHostId,
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,
@@ -399,7 +399,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string]$Id
     )
@@ -427,7 +427,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string]$Id
     )

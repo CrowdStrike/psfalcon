@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
     param(
         [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('sha256s','sha256','Ids')]
         [string[]]$Id
     )
@@ -59,7 +59,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [boolean]$PasswordProtected,
         [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string]$Id,
         [Parameter(ParameterSetName='/samples/entities/samples/v3:get')]
@@ -104,7 +104,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string]$Id
     )

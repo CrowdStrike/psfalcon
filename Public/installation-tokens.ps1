@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [boolean]$Revoked,
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -82,7 +82,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=1)]
@@ -153,7 +153,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/audit-events/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=1)]
@@ -256,7 +256,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

@@ -23,7 +23,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         [Parameter(Position=2)]
         [string]$Description,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
@@ -74,7 +74,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Firewall-Management
         [Parameter(Position=2)]
         [string]$Description,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
@@ -132,7 +132,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(Position=2)]
         [string]$Description,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
@@ -183,7 +183,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Real-time-Response-Policy
         [Parameter(Position=2)]
         [string]$Description,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
@@ -234,7 +234,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Sensor-Update-Policy
         [Parameter(Position=2)]
         [string]$Description,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {

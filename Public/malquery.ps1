@@ -61,7 +61,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
     param(
         [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -96,7 +96,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
     param(
         [Parameter(ParameterSetName='/malquery/entities/samples-multidownload/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('samples','sample','ids')]
         [string[]]$Id
     )
@@ -244,7 +244,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
         [string]$Path,
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^(\w{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
+        [ValidatePattern('^([A-Fa-f0-9]{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
         [Alias('Ids')]
         [string]$Id,
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get')]
@@ -253,12 +253,12 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = if ($PSBoundParameters.Id -match '^\w{64}$') {
+            Endpoint = if ($PSBoundParameters.Id -match '^[A-Fa-f0-9]{64}$') {
                 '/malquery/entities/download-files/v1:get'
             } else {
                 '/malquery/entities/samples-fetch/v1:get'
             }
-            Headers = if ($PSBoundParameters.Id -match '^\w{64}$') {
+            Headers = if ($PSBoundParameters.Id -match '^[A-Fa-f0-9]{64}$') {
                 @{ Accept = 'application/octet-stream' }
             } else {
                 @{ Accept = 'application/zip' }
@@ -299,7 +299,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
     param(
         [Parameter(ParameterSetName='/malquery/queries/hunt/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Sha256
     )
     process {

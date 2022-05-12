@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -46,7 +46,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -81,7 +81,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=1)]
@@ -168,7 +168,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters

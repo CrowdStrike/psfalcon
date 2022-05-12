@@ -15,12 +15,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_id')]
         [string]$Id,
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cids','child_cid')]
         [string[]]$Cid
     )
@@ -61,12 +61,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_id')]
         [string]$CidGroupId,
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_id')]
         [string]$UserGroupId,
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
@@ -107,7 +107,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_id')]
         [string]$Id,
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
@@ -157,7 +157,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [string]$Description,
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_id')]
         [string]$Id
     )
@@ -195,7 +195,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [string]$Description,
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_id')]
         [string]$Id
     )
@@ -237,7 +237,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_ids','Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=1)]
@@ -309,12 +309,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_ids','Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('child_cid')]
         [string]$Cid,
         [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=2)]
@@ -386,15 +386,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/mssp-roles/v1:get')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:get',Mandatory,ValueFromPipeline)]
-        [ValidatePattern('^\w{32}:\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_id')]
         [string]$CidGroupId,
         [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_id')]
         [string]$UserGroupId,
         [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=3)]
@@ -466,7 +466,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/children/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','child_cid')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=1)]
@@ -535,7 +535,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_ids','user_group_id','Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=1)]
@@ -607,7 +607,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_ids','user_group_id','Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Mandatory,
@@ -725,7 +725,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_ids','cid_group_id','Ids')]
         [string[]]$Id
     )
@@ -762,12 +762,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_id')]
         [string]$Id,
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cids','child_cid')]
         [string[]]$Cid
     )
@@ -813,12 +813,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_id')]
         [string]$CidGroupId,
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_id')]
         [string]$UserGroupId,
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',ValueFromPipelineByPropertyName,
@@ -867,7 +867,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_ids','user_group_id','Ids')]
         [string[]]$Id
     )
@@ -903,7 +903,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_id')]
         [string]$Id,
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,ValueFromPipeline,

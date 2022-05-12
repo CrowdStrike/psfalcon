@@ -68,12 +68,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string]$Content,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
             Position=2)]
-        [ValidatePattern('^ldt:\w{32}:\d+$')]
+        [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [Alias('detections','detection_id','DetectionIds')]
         [string[]]$DetectionId,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
             Position=3)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('incidents','incident_id','IncidentIds')]
         [string[]]$IncidentId,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Mandatory,
@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string]$Content,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
             Position=4)]
-        [ValidatePattern('^ldt:\w{32}:\d+$')]
+        [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [ValidateScript({
             if ($PSBoundParameters.Type -eq 'fc:detection-support') {
                 $true
@@ -307,7 +307,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string[]]$DetectionId,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
             Position=5)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [ValidateScript({
             if ($PSBoundParameters.Type -eq 'fc:incident-support') {
                 $true

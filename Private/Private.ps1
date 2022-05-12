@@ -312,9 +312,29 @@ function Convert-Rfc3339 {
             (Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc) -replace '\.\d+Z$','Z')"
     }
 }
+function Get-ContainerUrl {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param()
+    process {
+        # Output 'container-upload' URL using cached 'Hostname' value
+        if ($Script:Falcon.Hostname -match 'api\.crowdstrike') {
+            $Script:Falcon.Hostname -replace 'api','container-upload.us-1'
+        } else {
+            $Script:Falcon.Hostname -replace 'api','container-upload'
+        }
+    }
+}
 function Get-ParamSet {
     [CmdletBinding()]
-    param([string]$Endpoint,[System.Object]$Headers,[System.Object]$Inputs,[System.Object]$Format,[int32]$Max)
+    param(
+        [string]$Endpoint,
+        [System.Object]$Headers,
+        [System.Object]$Inputs,
+        [System.Object]$Format,
+        [int32]$Max,
+        [string]$HostUrl
+    )
     begin {
         # Get baseline switch and endpoint parameters
         $Switches = @{}
@@ -324,7 +344,11 @@ function Get-ParamSet {
             }
         }
         $Base = @{
-            Path = $Script:Falcon.Hostname,$Endpoint.Split(':')[0] -join $null
+            Path = if ($HostUrl) {
+                $HostUrl,$Endpoint.Split(':')[0] -join $null
+            } else {
+                $Script:Falcon.Hostname,$Endpoint.Split(':')[0] -join $null
+            }
             Method = $Endpoint.Split(':')[1]
             Headers = $Headers
         }
@@ -491,7 +515,9 @@ function Invoke-Falcon {
         [System.Object]$Inputs,
         [System.Object]$Format,
         [switch]$RawOutput,
-        [int32]$Max)
+        [int32]$Max,
+        [string]$HostUrl
+    )
     begin {
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
             # Request initial authorization token
@@ -504,7 +530,7 @@ function Invoke-Falcon {
         }
         # Add 'Accept: application/json' when undefined
         if (!$GetParam.Headers) { $GetParam.Add('Headers',@{}) }
-        if (!$GetParam.Headers.Accept) { $GetParam.Headers.Add('Accept','application/json') }
+        if (!$HostUrl -and !$GetParam.Headers.Accept) { $GetParam.Headers.Add('Accept','application/json') }
         if ($Format.Body -and !$GetParam.Headers.ContentType) {
             # Add 'ContentType: application/json' when undefined and 'Body' is present
             $GetParam.Headers.Add('ContentType','application/json')

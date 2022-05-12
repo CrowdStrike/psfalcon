@@ -35,7 +35,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=2)]
         [string]$Name,
@@ -117,7 +117,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/prevention/v1:get',Position=1)]
@@ -208,7 +208,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/policy/combined/prevention-members/v1:get',
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/prevention-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/prevention-members/v1:get',Position=2)]
@@ -264,11 +264,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -408,7 +408,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -451,7 +451,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('platform_name')]
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/prevention-precedence/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

@@ -42,7 +42,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
     param(
         [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/sensors/queries/installers/v1:get',Position=1)]
@@ -112,7 +112,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
         [string]$Path,
         [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('sha256')]
         [string]$Id,
         [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get')]

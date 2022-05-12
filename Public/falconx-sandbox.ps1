@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/falconx/entities/report-summaries/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/falconx/queries/reports/v1:get',Position=1)]
@@ -104,7 +104,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/falconx/queries/submissions/v1:get',Position=1)]
@@ -209,7 +209,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [Alias('environment_id')]
         [string]$EnvironmentId,
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Sha256,
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=3)]
         [string]$Url,
@@ -299,7 +299,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [string]$Path,
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get')]
         [switch]$Force

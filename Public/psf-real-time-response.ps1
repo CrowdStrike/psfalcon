@@ -208,12 +208,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [boolean]$QueueOffline,
         [Parameter(ParameterSetName='GroupId_File',Mandatory,ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='GroupId_Archive',Mandatory,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('id')]
         [string]$GroupId,
         [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('HostIds','device_id','host_ids','aid')]
         [string[]]$HostId
     )
@@ -551,10 +551,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             IgnoreCase=$false)]
         [string[]]$Include,
         [Parameter(ParameterSetName='GroupId',Mandatory)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_id','host_ids','aid','HostIds')]
         [string[]]$HostId
     )

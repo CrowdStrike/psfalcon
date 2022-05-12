@@ -35,7 +35,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=2)]
         [string]$Name,
@@ -205,7 +205,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
     param(
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=1)]
@@ -296,7 +296,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=2)]
@@ -358,7 +358,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
         [Alias('device_id','DeviceId')]
-        [ValidatePattern('^(\w{32}|MAINTENANCE)$')]
+        [ValidatePattern('^([a-fA-F0-9]{32}|MAINTENANCE)$')]
         [string]$Id
     )
     begin {
@@ -401,11 +401,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -534,7 +534,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
     param(
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -577,7 +577,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Alias('platform_name')]
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/sensor-update-precedence/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
