@@ -545,6 +545,11 @@ Command Changes
 * New-FalconSubmission
   Added 'macOS_10.15' for parameter 'EnvironmentId'.
 
+* Uninstall-FalconSensor
+  Added maximum timeout value (600 seconds) to reduce the change of no 'status' value being returned.
+
+  Added 'Include' parameter to include additional properties.
+
 Resolved Issues
 
 * Issue #211: Added try/catch to 'Get-FalconHost' when using '-Include group_names' to suppress errors when
