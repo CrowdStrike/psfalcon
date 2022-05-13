@@ -546,7 +546,7 @@ Command Changes
   Added 'macOS_10.15' for parameter 'EnvironmentId'.
 
 * Uninstall-FalconSensor
-  Added maximum timeout value (600 seconds) to reduce the change of no 'status' value being returned.
+  Added timeout value (300 seconds) to reduce the chance of no 'status' value being returned.
 
   Added 'Include' parameter to include additional properties.
 
