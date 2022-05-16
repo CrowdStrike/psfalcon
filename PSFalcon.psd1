@@ -498,12 +498,12 @@ General Changes
   Remove-FalconUserGroupMember
   Uninstall-FalconSensor
 
-  * Various comment-based help text updates and typo corrections.
+* Various comment-based help text updates and typo corrections.
 
-  * The online help files (accessed using 'Update-Help') for PSFalcon are no longer valid for this and future
-    releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online'
-    for any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
-    previously provided through the online help.
+* The online help files (accessed using 'Update-Help') for PSFalcon are no longer valid for this and future
+  releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online' for
+  any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
+  previously provided through the online help.
 
 Command Changes
 
