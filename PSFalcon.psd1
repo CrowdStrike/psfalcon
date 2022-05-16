@@ -519,6 +519,11 @@ Command Changes
 * Export-FalconReport
   Updated to force the creation of the same columns for every result.
 
+* Get-FalconFirewallRule
+  Updated to output rules in order of specified 'Id' values when using the 'Id' parameter. This solves an issue
+  where rules are provided in order of the 'id' property when they were retrieved using the 'family' property and
+  are returned out of order (in respect to the 'family' values).
+
 * Get-FalconUninstallToken
   Added 'Include' parameter.
 

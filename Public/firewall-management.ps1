@@ -5,63 +5,62 @@ Modify Falcon Firewall Management rule groups
 .DESCRIPTION
 Requires 'Firewall Management: Write'.
 
-All fields (plus 'rulegroup_version') are required when making a rule group change. PSFalcon adds missing values
-automatically using data from your existing rule group.
+All fields (plus 'rulegroup_version' and 'tracking') are required when making a rule group change. PSFalcon adds
+missing values automatically using data from your existing rule group.
 
 'DiffOperation' array objects must contain 'op', 'path' and 'value' properties. Accepted 'op' values are 'add',
 'remove' and 'replace'.
 
 When adding a rule to a rule group,the required rule fields must be included along with a 'temp_id' (in both the
 rule properties and in precedence order within 'rule_ids') to establish proper placement of the rule within the
-rule group. Simlarly,the value 'null' must be placed within 'rule_versions' in precedence order.
-
-PSFalcon will accept 'temp_id' values between 1 and 500, allowing batches of up to 500 rules per request.
-.PARAMETER Id
-Rule group identifier
+rule group. Simlarly, the value 'null' must be placed within 'rule_versions' in precedence order.
 .PARAMETER DiffOperation
 An array of hashtables containing rule or rule group changes
-.PARAMETER RuleId
-Rule identifier within the existing rule group
-.PARAMETER RuleVersion
-Rule version value ['null' for each new rule]
 .PARAMETER Comment
 Audit log comment
+.PARAMETER RuleId
+Firewall rule 'family' value(s) from the existing rule group [or 'temp_id' for each new rule]
+.PARAMETER RuleVersion
+Firewall rule version value(s) from the existing rule group [or 'null' for each new rule]
+.PARAMETER Id
+Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [string]$Id,
-        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,Position=2)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
                     Object = $Object
                     Command = 'Edit-FalconFirewallGroup'
                     Endpoint = '/fwmgr/entities/rule-groups/v1:patch'
-                    Required = @('op','path','value')
+                    Required = @('op','path')
                 }
                 Confirm-Parameter @Param
                 if ($Object.op -notmatch '^(add|remove|replace)$') {
-                    $ObjectString = ConvertTo-Json -InputObject $Object -Compress
+                    $ObjectString = ConvertTo-Json $Object -Compress
                     throw "'$($Object.op)' is not a valid 'op' value. $ObjectString"
                 }
             }
         })]
         [Alias('diff_operations','DiffOperations')]
         [object[]]$DiffOperation,
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=2)]
+        [string]$Comment,
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=3)]
-        [ValidatePattern('^(([0-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)|[a-fA-F0-9]{32})$')]
+        [ValidatePattern('^(\d+|[a-fA-F0-9]{32})$')]
         [Alias('rule_ids','RuleIds')]
         [string[]]$RuleId,
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=4)]
         [ValidatePattern('^(null|\d+)$')]
         [Alias('rule_versions','RuleVersions')]
-        [string[]]$RuleVersion,
-        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Position=6)]
-        [string]$Comment
+        [int[]]$RuleVersion,
+        [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=6)]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
+        [string]$Id
     )
     begin {
         $Param = @{
@@ -75,32 +74,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 }
             }
         }
-        $PSBoundParameters['diff_type'] = 'application/json-patch+json'
+    }
+    process {
         ($Param.Format.Body.root | Where-Object { $_ -notmatch '^(diff_operations|id)$' }).foreach{
-            # When not provided, add required fields using existing rule group
-            if (!$Param.Inputs.$_) {
-                if (!$Group) {
-                    $Group = Get-FalconFirewallGroup -Id $Param.Inputs.id -EA 0
-                    $RuleVersions = (Get-FalconFirewallRule -Id $Group.rule_ids).version
-                }
-                if ($Group) {
-                    $Value = if ($_ -eq 'rulegroup_version') {
-                        if ($Group.version) { $Group.version } else { 0 }
-                    } elseif ($_ -eq 'rule_versions') {
-                        $RuleVersions
+            if (!$PSBoundParameters.$_) {
+                # When not provided, add required fields using existing rule group
+                if (!$Group) { $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters$Id -EA 0 } catch {}}
+                $PSBoundParameters[$_] = if ($_ -eq 'rulegroup_version') {
+                    if ($Group.version) { $Group.version } else { 0 }
+                } elseif ($_ -eq 'rule_versions') {
+                    if ($PSBoundParameters.RuleId) {
+                        (Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version
                     } else {
-                        $Group.$_
+                        (Get-FalconFirewallRule -Id $Group.rule_ids).version
                     }
-                    $PSBoundParameters[$_] = $Value
+                } else {
+                    $Group.$_
                 }
             }
         }
-    }
-    process {
-        if ($PSBoundParameters.Tracking) {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        } else {
+        if (!$PSBoundParameters.Tracking) {
             throw "Unable to obtain 'tracking' value from rule group '$($PSBoundParameters.Id)'."
+        } else {
+            $PSBoundParameters['diff_type'] = 'application/json-patch+json'
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
 }
@@ -810,9 +807,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         if ($List) {
             $Param['Format'] = @{ Query = @('ids') }
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
+            [object[]]$Request = @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
                 if ($_.version -and $null -eq $_.version) { $_.version = 0 }
                 $_
+            }
+            foreach ($i in $List) {
+                # Return rules in order of provided 'Id' value(s)
+                [string]$IdField = if ($i -match '^\d+$') { 'id' } else { 'family' }
+                $Request | Where-Object { $_.$IdField -eq $i }
             }
         }
     }
