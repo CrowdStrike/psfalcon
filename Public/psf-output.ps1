@@ -207,7 +207,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
                     Path = $PSBoundParameters.Path
                     Method = 'post'
                     Headers = @{ ContentType = 'application/json' }
-                    Body = ConvertTo-Json -InputObject $Item -Depth 32
+                    Body = ConvertTo-Json $Item -Depth 32
                 }
                 $Request = $Script:Falcon.Api.Invoke($Param)
                 Write-Result $Request
