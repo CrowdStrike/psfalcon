@@ -86,7 +86,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
                     Authorization = @('Bearer',$Script:Falcon.Api.Collector.Token) -join ' '
                     ContentType = 'application/json'
                 }
-                Body = ConvertTo-Json -InputObject @(
+                Body = ConvertTo-Json @(
                     @{
                         tags = @{ host = [System.Net.Dns]::GetHostname(); source = (Show-FalconModule).UserAgent }
                         events = $Events
