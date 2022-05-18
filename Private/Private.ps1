@@ -507,7 +507,7 @@ function Get-RtrResult {
     end { return $Output }
 }
 function Invoke-Falcon {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [string]$Command,
         [string]$Endpoint,
@@ -568,42 +568,46 @@ function Invoke-Falcon {
         [regex]$NoDetail = '(/combined/|/rule-groups-full/)'
     }
     process {
-        foreach ($ParamSet in (Get-ParamSet @GetParam)) {
+        foreach ($Set in (Get-ParamSet @GetParam)) {
+            [string]$Operation = $Set.Endpoint.Method.ToUpper()
+            [string]$Target = New-ShouldMessage $Set.Endpoint
             try {
                 # Refresh authorization token during loop
                 if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
-                if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
-                    # Convert body to Json and output verbose
-                    $ParamSet.Endpoint.Body = ConvertTo-Json $ParamSet.Endpoint.Body -Depth 32 -Compress
+                if ($Set.Endpoint.Headers.ContentType -eq 'application/json' -and $Set.Endpoint.Body) {
+                    # Convert body to Json
+                    $Set.Endpoint.Body = ConvertTo-Json $Set.Endpoint.Body -Depth 32 -Compress
                 }
-                $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
+                $Request = if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
+                    $Script:Falcon.Api.Invoke($Set.Endpoint)
+                }
                 if ($RawOutput) {
                     # Return result if 'RawOutput' is defined
                     $Request
-                } elseif ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
+                } elseif ($Set.Endpoint.Outfile -and (Test-Path $Set.Endpoint.Outfile)) {
                     # Display 'Outfile'
-                    Get-ChildItem $ParamSet.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
+                    Get-ChildItem $Set.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
                 } elseif ($Request.Result.Content) {
                     # Capture pagination for 'Total' and 'All'
                     $Pagination = (ConvertFrom-Json (
                         $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                    if ($ParamSet.Total -eq $true -and $Pagination) {
+                    if ($Set.Total -eq $true -and $Pagination) {
                         # Output 'Total'
                         $Pagination.total
                     } else {
                         $Result = Write-Result $Request
                         if ($null -ne $Result) {
-                            if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
+                            if ($Set.Detailed -eq $true -and $Set.Endpoint.Path -notmatch $NoDetail) {
                                 # Output 'Detailed'
                                 & $Command -Id $Result
                             } else {
                                 # Output result
                                 $Result
                             }
-                            if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt
+                            if ($Set.All -eq $true -and ($Result | Measure-Object).Count -lt
                             $Pagination.total) {
                                 # Repeat request(s)
-                                Invoke-Loop $ParamSet $Pagination $Result
+                                Invoke-Loop $Set $Pagination $Result
                             }
                         }
                     }
@@ -668,7 +672,7 @@ function Invoke-Loop {
                         $Result
                     }
                 } else {
-                    $Message = "[Invoke-Loop] Results limited by API '$(($Clone.Endpoint.Path).Split(
+                    [string]$Message = "[Invoke-Loop] Results limited by API '$(($Clone.Endpoint.Path).Split(
                         '?')[0] -replace $Script:Falcon.Hostname,$null)' ($i of $($Pagination.total))."
                     Write-Error $Message
                 }
@@ -676,6 +680,51 @@ function Invoke-Loop {
                     $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
             }
         }
+    }
+}
+function New-ShouldMessage {
+    [CmdletBinding()]
+    [OutputType([string[]])]
+    param ([System.Collections.Hashtable]$Object)
+    process {
+        try {
+            $Output = [PSCustomObject]@{}
+            if ($Object.Path) {
+                [string]$Path = $Object.Path
+                if ($Path -match $Script:Falcon.Hostname) {
+                    # Add 'Hostname' when using cached hostname value
+                    Set-Property $Output Hostname $Script:Falcon.Hostname
+                    $Path = $Path -replace $Script:Falcon.Hostname,$null
+                }
+                if ($Path -match '\?') {
+                    # Add 'Path' without query values
+                    [string[]]$Array = $Path -split '\?'
+                    [string[]]$Query = $Array[-1] -split '&'
+                    Set-Property $Output Path $Array[0]
+                } else {
+                    Set-Property $Output Path $Path
+                }
+            }
+            if ($Object.Headers) {
+                # Add 'Headers' value
+                Set-Property $Output Headers ($Object.Headers.GetEnumerator().foreach{
+                    $_.Key,$_.Value -join '=' } -join ', ')
+            }
+            if ($Query) {
+                # Add 'Query' value as an array
+                Set-Property $Output Query $Query
+            }
+            foreach ($Pair in $Object.GetEnumerator().Where({ $_.Key -ne '^(Headers|Method|Path)$' })) {
+                [string]$Value = switch ($Pair.Key) {
+                    'Body' {
+                        # Convert 'Body' to Json
+                        $Pair.Value | ConvertTo-Json -Depth 8
+                    }
+                }
+                if ($Value) { Set-Property $Output $Pair.Key $Value }
+            }
+            "`r`n",($Output | Format-List | Out-String).Trim(),"`r`n" -join "`r`n"
+        } catch {}
     }
 }
 function Set-Property {

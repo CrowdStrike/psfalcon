@@ -23,7 +23,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/FileVantage
 #>
-    [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v2:get')]
+    [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v2:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]

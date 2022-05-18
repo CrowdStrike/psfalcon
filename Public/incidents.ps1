@@ -23,7 +23,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -98,7 +98,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -172,7 +172,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -251,10 +251,9 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
             }
             Max = 1000
         }
-        $Message = $Param.Command,($Name,$Value -join ' ') -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

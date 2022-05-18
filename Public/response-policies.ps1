@@ -17,7 +17,7 @@ Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -112,7 +112,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/response/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/response/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/response/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -201,7 +201,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/response-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/response-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/response-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -278,23 +278,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
                 Body = @{ root = @('ids','action_parameters') }
             }
         }
-        $Message = $Param.Command,("$(if ($GroupId) { $Name,$GroupId -join ' ' } else { $Name })") -join ': '
     }
     process {
-        if ($PSCmdlet.ShouldProcess($Id,$Message)) {
-            $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
-            [void]$PSBoundParameters.Remove('Id')
-            if ($PSBoundParameters.GroupId) {
-                $PSBoundParameters['action_parameters'] = @(
-                    @{
-                        name = 'group_id'
-                        value = $PSBoundParameters.GroupId
-                    }
-                )
-                [void]$PSBoundParameters.Remove('GroupId')
-            }
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+        [void]$PSBoundParameters.Remove('Id')
+        if ($PSBoundParameters.GroupId) {
+            $PSBoundParameters['action_parameters'] = @(
+                @{
+                    name = 'group_id'
+                    value = $PSBoundParameters.GroupId
+                }
+            )
+            [void]$PSBoundParameters.Remove('GroupId')
         }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconResponsePolicy {
@@ -316,7 +313,7 @@ Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -411,7 +408,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -435,7 +432,7 @@ Policy identifiers in desired precedence order
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response-precedence/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response-precedence/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/response-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]

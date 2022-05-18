@@ -25,7 +25,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
 #>
-    [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
@@ -128,14 +128,13 @@ https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
             Format = @{ Body = @{ root = @('action','filter','ids','comment','q') }}
             Max = 500
         }
-        $Message = $Param.Command,$Action -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($Id) {
-            @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}
+            @($Id).foreach{ $List.Add($_) }
         } else {
-            if ($PSCmdlet.ShouldProcess($Filter,$Message)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
@@ -156,7 +155,8 @@ Falcon Query Language statement
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
 #>
-    [CmdletBinding(DefaultParameterSetName='/quarantine/aggregates/action-update-count/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/quarantine/aggregates/action-update-count/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/aggregates/action-update-count/v1:get',Mandatory,Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]

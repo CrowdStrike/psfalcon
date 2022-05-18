@@ -27,7 +27,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Intel
 #>
-    [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]

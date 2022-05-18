@@ -35,7 +35,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Intel
 #>
-    [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -118,7 +118,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Intel
 #>
-    [CmdletBinding(DefaultParameterSetName='/intel/entities/rules-files/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/intel/entities/rules-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=1)]
         [ValidateSet('snort-suricata-master','snort-suricata-update','snort-suricata-changelog','yara-master',

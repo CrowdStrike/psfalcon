@@ -15,7 +15,7 @@ Installation token identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -78,7 +78,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -149,7 +149,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/audit-events/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
@@ -206,7 +207,8 @@ installation of the Falcon sensor.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
+        SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -223,7 +225,7 @@ Installation token expiration time (RFC3339),or 'null'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=1)]
         [string]$Label,
@@ -268,7 +270,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

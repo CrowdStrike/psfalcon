@@ -234,16 +234,16 @@ Show-FalconMap will accept domains, SHA256 hashes, IP addresses and URLs. Invali
 .PARAMETER Indicator
 Indicator to display on the Indicator map
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
         [Alias('Indicators')]
         [string[]]$Indicator
     )
     begin {
-        $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
+        [string]$FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
         $List = [System.Collections.Generic.List[string]]@()
     }
     process {
@@ -276,7 +276,8 @@ Indicator to display on the Indicator map
         if ($List) {
             [string[]]$IocInput = @($List | Select-Object -Unique) -join ','
             if (!$IocInput) { throw "No valid indicators found." }
-            Start-Process "$($FalconUI)/intelligence/graph?indicators=$($IocInput -join ',')"
+            [string]$Target = "$($FalconUI)/intelligence/graph?indicators=$($IocInput -join ',')"
+            if ($PSCmdlet.ShouldProcess($Target)) { Start-Process $Target }
         }
     }
 }
@@ -297,10 +298,10 @@ with the PSFalcon module.
             [PSCustomObject]@{
                 PSVersion = "$($PSVersionTable.PSEdition) [$($PSVersionTable.PSVersion)]"
                 ModuleVersion = "v$($ModuleData.ModuleVersion) {$($ModuleData.GUID)}"
-                ModulePath = Split-Path -Path $ManifestPath -Parent
+                ModulePath = Split-Path $ManifestPath -Parent
                 UserModulePath = $env:PSModulePath
                 UserHome = $HOME
-                UserAgent = "crowdstrike-psfalcon/$($ModuleData.ModuleVersion)"
+                UserAgent = 'crowdstrike-psfalcon',$ModuleData.ModuleVersion -join '/'
             }
         } else {
             throw "Unable to locate '$ManifestPath'."

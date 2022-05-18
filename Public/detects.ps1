@@ -17,7 +17,7 @@ Detection identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch')]
+    [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=1)]
         [ValidateSet('new','in_progress','true_positive','false_positive','ignored','closed','reopened',
@@ -86,7 +86,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]

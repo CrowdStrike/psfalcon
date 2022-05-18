@@ -29,7 +29,7 @@ Search for login events
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover
 #>
-    [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/discover/entities/hosts/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]

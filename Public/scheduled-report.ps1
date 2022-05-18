@@ -27,7 +27,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
 #>
-    [CmdletBinding(DefaultParameterSetName='/reports/queries/scheduled-reports/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/reports/queries/scheduled-reports/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/reports/entities/scheduled-reports/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -107,7 +107,8 @@ Report identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
 #>
-    [CmdletBinding(DefaultParameterSetName='/reports/entities/scheduled-reports/execution/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -142,7 +143,8 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
 #>
-    [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-download/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-download/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -206,7 +208,8 @@ Report identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
 #>
-    [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-retry/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-retry/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/reports/entities/report-executions-retry/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]

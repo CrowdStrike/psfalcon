@@ -62,7 +62,7 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -124,7 +124,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Mandatory)]
@@ -193,7 +193,7 @@ Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -262,7 +262,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

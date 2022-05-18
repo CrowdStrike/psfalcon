@@ -11,7 +11,8 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Position=1)]
         [string]$Region,
@@ -58,7 +59,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -110,7 +112,8 @@ Cloud provider
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -161,7 +164,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -215,7 +219,8 @@ Scan type
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',Mandatory,
            Position=1)]
@@ -245,7 +250,8 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
            Position=1)]
@@ -274,7 +280,8 @@ Requires 'Kubernetes Protection: Write'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/api-key/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/api-key/v1:post',
+        SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -293,7 +300,8 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,
            Position=1)]
@@ -357,7 +365,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

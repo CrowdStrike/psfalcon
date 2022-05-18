@@ -9,7 +9,7 @@ Returns your Customer Checksum Identifier which is requested during the installa
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/ccid/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/ccid/v1:get',SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -38,7 +38,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -104,7 +104,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]

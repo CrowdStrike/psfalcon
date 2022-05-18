@@ -35,7 +35,7 @@ Indicator identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -141,7 +141,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/queries/indicators/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/queries/indicators/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -246,7 +246,7 @@ Ignore warnings and create all indicators
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -386,9 +386,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
     }
     process {
         if ($Id) {
-            @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}
+            @($Id).foreach{ $List.Add($_) }
         } elseif ($Filter) {
-            if ($PSCmdlet.ShouldProcess($Filter)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {

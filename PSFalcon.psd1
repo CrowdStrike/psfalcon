@@ -433,10 +433,15 @@ New Commands
 
 General Changes
 
+* Enabled the use of '-WhatIf' and '-Confirm' by adding 'ShouldProcess' support across the module.
+
 * Updated ApiClient.Invoke() to remove blank verbose output when 'Headers' are not specified during a request.
 
 * Created 'Get-ContainerUrl' to convert cached Hostname value into a valid 'container-upload' URL value when using
   'container-upload' commands.
+
+* Created 'New-ShouldMessage' function to generate the output message when '-Confirm' or '-WhatIf' is used with
+  a command.
 
 * Added 'HostUrl' parameter to 'Invoke-Falcon' to force the use of 'container-upload' base URL instead of the
   cached Falcon API hostname.
@@ -446,63 +451,11 @@ General Changes
 * Updated RegEx patterns when validating input to look for a more restrictive list of characters to better match
   expected values.
 
-* Added 'ShouldProcess' support (enabling the use of '-WhatIf' and '-Confirm') for the following commands:
-  Add-FalconGroupingTag
-  Add-FalconSensorTag
-  Import-FalconConfig
-  Invoke-FalconDeploy
-  Invoke-FalconDeviceControlPolicyAction
-  Invoke-FalconFirewallPolicyAction
-  Invoke-FalconHostAction
-  Invoke-FalconHostGroupAction
-  Invoke-FalconIncidentAction
-  Invoke-FalconPreventionPolicyAction
-  Invoke-FalconQuarantineAction
-  Invoke-FalconResponsePolicyAction
-  Invoke-FalconRtr
-  Invoke-FalconSensorUpdatePolicyAction
-  Remove-FalconCidGroup
-  Remove-FalconCidGroupMember
-  Remove-FalconCommand
-  Remove-FalconContainerAwsAccount
-  Remove-FalconDeviceControlPolicy
-  Remove-FalconDiscoverAwsAccount
-  Remove-FalconFirewallGroup
-  Remove-FalconFirewallPolicy
-  Remove-FalconGetFile
-  Remove-FalconGroupingTag
-  Remove-FalconGroupRole
-  Remove-FalconHorizonAwsAccount
-  Remove-FalconHorizonAzureAccount
-  Remove-FalconHostGroup
-  Remove-FalconInstallToken
-  Remove-FalconIoaExclusion
-  Remove-FalconIoc
-  Remove-FalconMlExclusion
-  Remove-FalconPreventionPolicy
-  Remove-FalconPutFile
-  Remove-FalconReconAction
-  Remove-FalconReconNotification
-  Remove-FalconReconRule
-  Remove-FalconReport
-  Remove-FalconResponsePolicy
-  Remove-FalconRole
-  Remove-FalconSample
-  Remove-FalconScript
-  Remove-FalconSensorTag
-  Remove-FalconSensorUpdatePolicy
-  Remove-FalconSession
-  Remove-FalconSvExclusion
-  Remove-FalconUser
-  Remove-FalconUserGroup
-  Remove-FalconUserGroupMember
-  Uninstall-FalconSensor
-
 * Various comment-based help text updates and typo corrections.
 
 * The online help files (accessed using 'Update-Help') for PSFalcon are no longer valid for this and future
-  releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online' for
-  any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
+  releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online'
+  for any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
   previously provided through the online help.
 
 Command Changes

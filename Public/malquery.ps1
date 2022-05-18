@@ -9,7 +9,7 @@ Request identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/requests/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/requests/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -35,7 +35,7 @@ Requires 'MalQuery: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/aggregates/quotas/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/aggregates/quotas/v1:get',SupportsShouldProcess)]
     param()
     process {
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
@@ -57,7 +57,7 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/metadata/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/metadata/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -92,7 +92,8 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/samples-multidownload/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/samples-multidownload/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/samples-multidownload/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -147,7 +148,7 @@ Search MalQuery quickly but with more potential for false positives
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/queries/exact-search/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/queries/exact-search/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/queries/hunt/v1:post',Mandatory,Position=1)]
         [Alias('yara_rule')]
@@ -238,7 +239,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/download-files/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/download-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,Position=1)]
         [string]$Path,
@@ -295,7 +296,7 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/queries/hunt/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/queries/hunt/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/queries/hunt/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]

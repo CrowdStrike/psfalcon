@@ -29,7 +29,7 @@ A hashtable containing 'Path', 'Token' and 'Enabled' properties for 'Register-Fa
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication
 #>
-    [CmdletBinding(DefaultParameterSetName='Hostname')]
+    [CmdletBinding(DefaultParameterSetName='Hostname',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=1)]
@@ -202,7 +202,7 @@ Revokes your active OAuth2 access token and clears cached credential information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication
 #>
-    [CmdletBinding(DefaultParameterSetName='/oauth2/revoke:post')]
+    [CmdletBinding(DefaultParameterSetName='/oauth2/revoke:post',SupportsShouldProcess)]
     param()
     process {
         if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter -and

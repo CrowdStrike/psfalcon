@@ -16,6 +16,7 @@ Define events to send to the collector
 https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
+    [OutputType([void])]
     param(
         [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=1)]
         [System.Uri]$Uri,
@@ -32,12 +33,12 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
             Uri = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
             Token = $PSBoundParameters.Token
         }
-        $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Uri)'"
+        [string]$Message = "Added '$($Script:Falcon.Api.Collector.Uri)'"
         if ($PSBoundParameters.Enable) {
             $Script:Falcon.Api.Collector['Enable'] = $PSBoundParameters.Enable
             $Message += " for $(@($PSBoundParameters.Enable).foreach{ "'$_'" } -join ',')"
         }
-        Write-Verbose "$Message."
+        Write-Verbose "[Register-FalconEventCollector] $Message."
     }
 }
 function Send-FalconEvent {
@@ -106,16 +107,10 @@ Display existing Humio ingestion endpoint and token
 https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     param()
     process {
-        if (!$Script:Falcon.Api.Collector) {
-            throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
-        }
-        [PSCustomObject]@{
-            Uri = $Script:Falcon.Api.Collector.Uri
-            Token = $Script:Falcon.Api.Collector.Token
-            Enabled = $Script:Falcon.Api.Collector.Enable
-        }
+        if ($Script:Falcon.Api.Collector) { [PSCustomObject]$Script:Falcon.Api.Collector }
     }
 }
 function Unregister-FalconEventCollector {

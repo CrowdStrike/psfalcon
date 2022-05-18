@@ -27,7 +27,7 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:patch',Mandatory,Position=1)]
         [ValidateScript({
@@ -118,7 +118,7 @@ Policy description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -206,7 +206,7 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:put')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:put',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:put',ValueFromPipelineByPropertyName,
            Position=1)]
@@ -297,7 +297,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/events/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/events/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/events/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -370,7 +370,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/firewall-fields/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/firewall-fields/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -443,7 +443,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rule-groups/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -515,7 +515,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/platforms/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/platforms/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/platforms/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -583,7 +583,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -675,7 +675,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -746,7 +746,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rules/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rules/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rules/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -830,7 +830,7 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -892,24 +892,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
                 Body = @{ root = @('ids','action_parameters') }
             }
         }
-        $Message = $Param.Command,("$(if ($GroupId) {
-            $Name,$GroupId -join ' ' } else { $Name })") -join ': '
     }
     process {
-        if ($PSCmdlet.ShouldProcess($Id,$Message)) {
-            $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
-            [void]$PSBoundParameters.Remove('Id')
-            if ($PSBoundParameters.GroupId) {
-                $PSBoundParameters['action_parameters'] = @(
-                    @{
-                        name = 'group_id'
-                        value = $PSBoundParameters.GroupId
-                    }
-                )
-                [void]$PSBoundParameters.Remove('GroupId')
-            }
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+        [void]$PSBoundParameters.Remove('Id')
+        if ($PSBoundParameters.GroupId) {
+            $PSBoundParameters['action_parameters'] = @(
+                @{
+                    name = 'group_id'
+                    value = $PSBoundParameters.GroupId
+                }
+            )
+            [void]$PSBoundParameters.Remove('GroupId')
         }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconFirewallGroup {
@@ -935,7 +931,7 @@ Clone an existing rule group
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -1000,7 +996,7 @@ Policy description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -1091,7 +1087,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -1126,7 +1122,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -1150,7 +1146,7 @@ Policy identifiers in desired precedence order
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-precedence/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-precedence/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]

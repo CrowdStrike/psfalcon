@@ -9,7 +9,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Zero-Trust-Assessment
 #>
-    [CmdletBinding(DefaultParameterSetName='/zero-trust-assessment/entities/audit/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/zero-trust-assessment/entities/audit/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]

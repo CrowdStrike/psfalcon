@@ -23,7 +23,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/scanner/entities/scans/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -78,7 +78,7 @@ Requires 'Quick Scan (Falcon X): Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
     param()
     process {
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
@@ -105,7 +105,7 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/scanner/entities/scans/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/scanner/entities/scans/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/scanner/entities/scans/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]

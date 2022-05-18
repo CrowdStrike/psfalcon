@@ -15,7 +15,7 @@ Host group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -68,7 +68,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-groups/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-groups/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -156,7 +156,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-group-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-group-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -238,14 +238,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($HostId) {
-            @($HostId).foreach{
-                $Message = $Param.Command,($Name,$_ -join ' ') -join ': '
-                if ($PSCmdlet.ShouldProcess($Id,$Message)) { $List.Add($_) }
-            }
-        }
-    }
+    process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
@@ -279,7 +272,7 @@ Assignment rule for 'dynamic' host groups
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -378,7 +371,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

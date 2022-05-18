@@ -7,7 +7,7 @@ Requires 'Identity Protection GraphQL: Write'.
 .PARAMETER Query
 GraphQL query statement
 #>
-    [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]

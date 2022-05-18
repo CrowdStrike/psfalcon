@@ -9,7 +9,8 @@ AWS account identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -56,7 +57,7 @@ AWS account identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -126,7 +127,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/queries/accounts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -185,7 +186,7 @@ Requires 'AWS Accounts: Read'.
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get',SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -214,7 +215,7 @@ AWS account identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -291,7 +292,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_)}}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -312,7 +313,7 @@ Default external identifier to apply to AWS accounts
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/settings/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]

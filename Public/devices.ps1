@@ -37,10 +37,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Format = @{ Body = @{ root = @('tags','device_ids','action') }}
         }
         $PSBoundParameters['action'] = 'add'
-        $Message = $Param.Command,($Tag -join ',') -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -83,7 +82,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -278,12 +277,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
             Max = if ($PSBoundParameters.Name -match '_host$') { 100 } else { 500 }
         }
-        $Message = $Param.Command,$Name -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -336,10 +332,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             Format = @{ Body = @{ root = @('tags','device_ids','action') }}
         }
         $PSBoundParameters['action'] = 'remove'
-        $Message = $Param.Command,($Tag -join ',') -join ': '
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_,$Message)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

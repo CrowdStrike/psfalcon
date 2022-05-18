@@ -9,7 +9,7 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -50,7 +50,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get')]
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,Position=1)]
         [string]$Path,
@@ -115,7 +115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             Format = @{ Query = @('ids') }
         }
     }
-    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Send-FalconSample {
 <#
@@ -139,7 +139,7 @@ Path to local file
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post')]
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
         [Alias('is_confidential')]

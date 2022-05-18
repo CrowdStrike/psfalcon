@@ -13,7 +13,7 @@ Container tag
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Container-Upload
 #>
-    [CmdletBinding(DefaultParameterSetName='/reports:get')]
+    [CmdletBinding(DefaultParameterSetName='/reports:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/reports:get',Mandatory,Position=1)]
         [string]$Registry,
@@ -66,7 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Container-Upload
         }
         if ($PSBoundParameters.Id -notmatch '^[A-Fa-f0-9]{64}$') {
             throw "'$($PSBoundParameters.Id)' is not a valid image identifier."
-        } elseif ($PSCmdlet.ShouldProcess($PSBoundParameters.Id)) {
+        } else {
             $Endpoint = $PSCmdlet.ParameterSetName -replace '{id}',$PSBoundParameters.Id
             [void]$PSBoundParameters.Remove('Id')
             Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters

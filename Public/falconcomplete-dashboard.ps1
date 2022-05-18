@@ -19,7 +19,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -66,7 +67,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -113,7 +115,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
            Position=1)]
@@ -163,7 +166,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -210,7 +214,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -257,7 +262,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -304,7 +310,8 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]

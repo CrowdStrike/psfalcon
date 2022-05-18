@@ -25,7 +25,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/reports/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -100,7 +100,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -155,7 +155,7 @@ Requires 'Sandbox (Falcon X): Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param()
     process {
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
@@ -202,7 +202,7 @@ Tags to categorize the submission
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Mandatory,Position=1)]
         [ValidateSet('android','macOS_10.15','ubuntu16_x64','win7_x64','win7_x86','win10_x64',IgnoreCase=$false)]
@@ -293,7 +293,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/entities/artifacts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/entities/artifacts/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get',Mandatory,Position=1)]
         [string]$Path,
@@ -351,5 +351,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             Format = @{ Query = @('ids') }
         }
     }
-    process { if ($PSCmdlet.ShouldProcess($Id)) { Invoke-Falcon @Param -Inputs $PSBoundParameters }}
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }

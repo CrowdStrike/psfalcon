@@ -11,7 +11,7 @@ CID
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -57,7 +57,7 @@ Role identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -103,7 +103,7 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -147,7 +147,7 @@ CID group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -185,7 +185,7 @@ User group description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -233,7 +233,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -305,7 +305,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -383,7 +383,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/mssp-roles/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/queries/mssp-roles/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:get',Mandatory,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
@@ -462,7 +462,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/children/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -531,7 +531,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -603,7 +603,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -665,7 +665,7 @@ CID group description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:post',Mandatory,Position=1)]
         [string]$Name,
@@ -694,7 +694,7 @@ User group description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:post',Mandatory,Position=1)]
         [string]$Name,
@@ -737,7 +737,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -779,14 +779,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Cid) {
-            @($Cid).foreach{
-                $Message = $Param.Command,$_ -join ': '
-                if ($PSCmdlet.ShouldProcess($Id,$Message)) { $List.Add($_) }
-            }
-        }
-    }
+    process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
@@ -832,16 +825,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
         }
-        $CombinedId = $CidGroupId,$UserGroupId -join ':'
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($RoleId) {
-            @($RoleId).foreach{
-                $Message = $Param.Command,$_ -join ': '
-                if ($PSCmdlet.ShouldProcess($CombinedId,$Message)) { $List.Add($_) }
-            }
-        } elseif ($PSCmdlet.ShouldProcess($CombinedId)) {
+            @($RoleId).foreach{ $List.Add($_) }
+        } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -879,7 +868,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -920,14 +909,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($UserId) {
-            @($UserId).foreach{
-                $Message = $Param.Command,$_ -join ': '
-                if ($PSCmdlet.ShouldProcess($Id,$Message)) { $List.Add($_) }
-            }
-        }
-    }
+    process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)

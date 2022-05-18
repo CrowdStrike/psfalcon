@@ -7,7 +7,8 @@ Requires 'Falcon Container Image: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
-    [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-registry-credentials/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-registry-credentials/v1:get',
+        SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }

@@ -17,7 +17,7 @@ Policy settings
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -114,7 +114,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -203,7 +203,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -282,23 +282,20 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
                 Body = @{ root = @('ids','action_parameters') }
             }
         }
-        $Message = $Param.Command,("$(if ($GroupId) { $Name,$GroupId -join ' ' } else { $Name })") -join ': '
     }
     process {
-        if ($PSCmdlet.ShouldProcess($Id,$Message)) {
-            $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
-            [void]$PSBoundParameters.Remove('Id')
-            if ($PSBoundParameters.GroupId) {
-                $PSBoundParameters['action_parameters'] = @(
-                    @{
-                        name = 'group_id'
-                        value = $PSBoundParameters.GroupId
-                    }
-                )
-                [void]$PSBoundParameters.Remove('GroupId')
-            }
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+        [void]$PSBoundParameters.Remove('Id')
+        if ($PSBoundParameters.GroupId) {
+            $PSBoundParameters['action_parameters'] = @(
+                @{
+                    name = 'group_id'
+                    value = $PSBoundParameters.GroupId
+                }
+            )
+            [void]$PSBoundParameters.Remove('GroupId')
         }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconDeviceControlPolicy {
@@ -320,7 +317,7 @@ Hashtable of policy settings
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -417,7 +414,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ if ($PSCmdlet.ShouldProcess($_)) { $List.Add($_) }}}}
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -441,7 +438,8 @@ Policy identifiers in desired precedence order
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]

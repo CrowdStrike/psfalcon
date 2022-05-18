@@ -9,7 +9,8 @@ Falcon Query Language expression to limit results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-OverWatch-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/ow-events-global-counts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/ow-events-global-counts/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/overwatch-dashboards/aggregates/ow-events-global-counts/v1:get',
            Mandatory,Position=1)]
@@ -36,7 +37,8 @@ Falcon Query Language expression to limit results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-OverWatch-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/detections-global-counts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/detections-global-counts/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/overwatch-dashboards/aggregates/detections-global-counts/v1:get',
            Mandatory,Position=1)]
@@ -63,7 +65,8 @@ Falcon Query Language expression to limit results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-OverWatch-Dashboards
 #>
-    [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/incidents-global-counts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/incidents-global-counts/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/overwatch-dashboards/aggregates/incidents-global-counts/v1:get',
            Mandatory,Position=1)]
