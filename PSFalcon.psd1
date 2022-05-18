@@ -487,6 +487,9 @@ Command Changes
 
   Added 'ModifyExisting' to modify existing items to match settings from import.
 
+* Invoke-FalconAdminCommand, Invoke-FalconBatchGet, Invoke-FalconCommand, Invoke-FalconResponderCommand
+  Renamed the 'Confirm' parameter to 'Wait' because of the 'ShouldProcess' capability being added.
+
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
 
