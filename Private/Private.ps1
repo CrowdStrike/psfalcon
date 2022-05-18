@@ -851,25 +851,25 @@ function Write-Result {
             @($Object).Where({ $_.GetType().Name -eq 'PSCustomObject' }).foreach{ obj $_ $Output }
             if ($Output) {
                 Write-Verbose "[Write-Result] $($Output.GetEnumerator().foreach{ @((@('meta',$_.Key) -join '.'),
-                    $_.Value) -join '=' } -join ',')"
+                    $_.Value) -join '=' } -join ', ')"
             }
         }
     }
     process {
         # Capture result content
         $Result = if ($Request.Result.Content) { ($Request.Result.Content).ReadAsStringAsync().Result }
-        # Capture trace_id for error messages
-        $TraceId = if ($Request.Result.Headers) {
+        [string]$TraceId = if ($Request.Result.Headers) {
+            # Capture trace_id for error messages
             $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
         }
         # Convert content to Json
         $Json = if ($Result -and $Request.Result.Content.Headers.ContentType -eq 'application/json' -or
         $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
-            ConvertFrom-Json -InputObject $Result
+            ConvertFrom-Json $Result
         }
         if ($Json) {
             # Gather field names from result, excluding 'errors', 'extensions', and 'meta'
-            $ResponseFields = @($Json.PSObject.Properties).Where({ $_.Name -notmatch
+            [string[]]$ResponseFields = @($Json.PSObject.Properties).Where({ $_.Name -notmatch
                 '^(errors|extensions|meta)$' -and $_.Value }).foreach{ $_.Name }
             # Write verbose 'meta' output
             if ($Json.meta) { Write-Meta $Json.meta }
@@ -891,13 +891,13 @@ function Write-Result {
                 }
             } elseif ($Json.meta) {
                 # Output 'meta' fields when nothing else is available
-                $MetaFields = @($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
+                [string[]]$MetaFields = @($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
                     '^(entity|pagination|powered_by|query_time|trace_id)$' }).foreach{ $_.Name }
                 if ($MetaFields) { $Json.meta | Select-Object $MetaFields }
             }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
                 # Output error
-                $Message = ConvertTo-Json -InputObject $_.Value -Compress
+                $Message = ConvertTo-Json $_.Value -Compress
                 $PSCmdlet.WriteError(
                     [System.Management.Automation.ErrorRecord]::New(
                         [Exception]::New($Message),
