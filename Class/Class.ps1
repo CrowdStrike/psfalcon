@@ -20,7 +20,7 @@ class ApiClient {
     [System.Object] Invoke([System.Object]$Param) {
         Write-Verbose "[ApiClient.Invoke] $($Param.Method.ToUpper()) $($Param.Path)"
         if ($Param.Headers) {
-            [string]$Verbose = $Param.Headers.GetEnumerator().foreach{ "$($_.Key)=$($_.Value)" } -join ','
+            [string]$Verbose = $Param.Headers.GetEnumerator().foreach{ "$($_.Key)=$($_.Value)" } -join ', '
             if ($Verbose) { Write-Verbose "[ApiClient.Invoke] $Verbose" }
         }
         try {
@@ -29,7 +29,7 @@ class ApiClient {
                 $Request = $this.Client.GetByteArrayAsync($Param.Path)
                 if ($Request.Result) {
                     [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
-                    Write-Verbose "[ApiClient.Invoke] Output directed to $($Param.Outfile)"
+                    Write-Verbose "[ApiClient.Invoke] Output directed to '$($Param.Outfile)'."
                 }
                 @($Param.Headers.Keys).foreach{
                     if ($this.Client.DefaultRequestHeaders.$_) { $this.Client.DefaultRequestHeaders.Remove($_) }
@@ -51,7 +51,7 @@ class ApiClient {
                             $Message.Content.Add([System.Net.Http.StringContent]::New($_.Value),$_.Key)
                             @($_.Key,$_.Value) -join '='
                         }
-                        Write-Verbose "[ApiClient.Invoke] $($Verbose -join ',')"
+                        Write-Verbose "[ApiClient.Invoke] $($Verbose -join ', ')"
                     }
                 } elseif ($Param.Body) {
                     $Message.Content = if ($Param.Body -is [string] -and $Param.Headers.ContentType) {
@@ -73,7 +73,7 @@ class ApiClient {
             }
             if ($Output.Result.Headers) {
                 Write-Verbose "[ApiClient.Invoke] $($Output.Result.Headers.GetEnumerator().foreach{
-                    @($_.Key,(@($_.Value) -join ',')) -join '=' } -join ',')"
+                    @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')"
             }
             if ($Output.Result -and $this.Collector.Enable -contains 'responses') { $this.Log($Output.Result) }
         } catch {
@@ -108,16 +108,16 @@ class ApiClient {
             }
         }
         $Job = @{
-            Name = "ApiClient_Log.$($Item.timestamp)"
+            Name = 'ApiClient_Log',$Item.timestamp -join '.'
             ScriptBlock = { $Param = $args[0]; Invoke-RestMethod @Param }
             ArgumentList = @{
                 Uri = $this.Collector.Uri
                 Method = 'post'
                 Headers = @{
-                    Authorization = @('Bearer',$this.Collector.Token) -join ' '
+                    Authorization = 'Bearer',$this.Collector.Token -join ' '
                     ContentType = 'application/json'
                 }
-                Body = ConvertTo-Json -InputObject @(
+                Body = ConvertTo-Json @(
                     @{
                         tags = @{
                             host = [System.Net.Dns]::GetHostName()
@@ -128,11 +128,10 @@ class ApiClient {
                 ) -Depth 8 -Compress
             }
         }
-        [void] (Start-Job @Job)
+        [void](Start-Job @Job)
         Write-Verbose "[ApiClient.Log] Submitted job '$($Job.Name)'."
-        Get-Job | Where-Object { $_.Name -match '^ApiClient_Log' -and $_.State -eq 'Completed' } |
-        ForEach-Object {
-            Write-Verbose "[ApiClient.Log] Removed job '$($_.Name)'"
+        @(Get-Job | Where-Object { $_.Name -match '^ApiClient_Log' -and $_.State -eq 'Completed' }).foreach{
+            Write-Verbose "[ApiClient.Log] Removed job '$($_.Name)'."
             Remove-Job -Id $_.Id
         }
     }
