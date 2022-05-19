@@ -327,7 +327,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             $Param = @{
                 Command = 'runscript'
                 Argument = '-Raw=```{0}```' -f $Scripts.($Hosts.platform_name)
-                Timeout = 300
+                Timeout = 120
             }
             if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
             [string]$IdValue = switch ($Hosts.device_policies.sensor_update.uninstall_protection) {
