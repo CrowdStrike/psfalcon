@@ -367,25 +367,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             $Runscript = @{
                                 Linux = @{
                                     Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
-                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: t" +
-                                            "ar'; exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
+                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
+                                            " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     } else {
-                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application:" +
-                                            " unzip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
+                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
+                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     }
                                     File = "chmod +x $($TempDir,$PutFile -join '/')"
                                 }
                                 Mac = @{
                                     Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
-                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: t" +
-                                            "ar'; exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
+                                        "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
+                                            " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     } else {
-                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application:" +
-                                            " unzip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit 0"
+                                        "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
+                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     }
                                 }
                                 Windows = @{
@@ -440,8 +440,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                                     $Join)'",
                                                 "-RedirectStandardError '$($TempDir,'stderr.log' -join
                                                     $Join)'",
-                                                ('-PassThru | ForEach-Object { "The process was successfully' +
-                                                    ' started"'),
+                                                ('-PassThru | ForEach-Object { "The process was successfully sta' +
+                                                    'rted"'),
                                                 '}```' -join ' '
                                             } elseif ($Pair.Key -match '(Linux|Mac)') {
                                                 # Use 'runscript' to start background process and avoid timeout
@@ -453,12 +453,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                                 $String = "'$String > $($TempDir,'stdout.log' -join
                                                     $Join) 2> $($TempDir,'stderr.log' -join $Join) &'"
                                                 if ($Pair.Key -eq 'Linux') {
-                                                    ('-Raw=```(bash -c {0}); if [[ $? -eq 0 ]]; then echo "T' +
-                                                        'he process was successfully started"; fi```') -f
-                                                        $String
+                                                    ('-Raw=```(bash -c {0}); if [[ $? -eq 0 ]]; then echo "The p' +
+                                                        'rocess was successfully started"; fi```') -f $String
                                                 } else {
-                                                    ('-Raw=```(zsh -c {0}); if [[ $? -eq 0 ]]; then echo "Th' +
-                                                    'e process was successfully started"; fi```') -f $String
+                                                    ('-Raw=```(zsh -c {0}); if [[ $? -eq 0 ]]; then echo "The pr' +
+                                                    'ocess was successfully started"; fi```') -f $String
                                                 }
                                             }
                                         }
