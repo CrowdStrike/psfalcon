@@ -280,7 +280,7 @@ function Confirm-Parameter {
             if ($Object.$_) {
                 # Verify that 'ValidValues' contains provided value
                 [string[]]$ValidValues = Get-ValidValues $Command $Endpoint $Parameter
-                if ($Object.$_ -is [string[]]) {
+                if ($Object.$_ -is [array]) {
                     foreach ($Item in $Object.$_) {
                         if ($ValidValues -notcontains $Item) { "'$Item' is not a valid '$_' value. $ObjectString" }
                     }
