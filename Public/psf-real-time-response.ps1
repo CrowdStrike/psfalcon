@@ -467,19 +467,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                 }
                                 if ($Param.OptionalHostId -and $Param.Argument) {
                                     # Issue command, output result to CSV and capture successful values
-                                    Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(
-                                        ($Param.OptionalHostId | Measure-Object).Count) $(
-                                        $Pair.Key) host(s)..."
-                                    $Result = Invoke-FalconAdminCommand @Param
-                                    [string[]]$Optional = if ($Result) {
-                                        # Rename 'runscript' to 'extract' for output
-                                        [string]$Step = if ($Cmd -eq 'runscript') {
-                                            'extract'
-                                        } else {
-                                            $Cmd
-                                        }
-                                        Write-RtrResult $Result $Step $Session.batch_id
-                                    }
+                                    Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
+                                        Measure-Object).Count) $($Pair.Key) host(s)..."
+                                    [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
+                                    [string[]]$Optional = Write-RtrResult (
+                                        Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
                                 }
                             }
                         }
@@ -606,7 +598,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     [string]$Invoke = Get-RtrCommand $Command
                     $Cmd = @{ Command = $Command; Timeout = $Timeout }
                     if ($Argument) { $Cmd['Argument'] = $Argument }
-                    if ($QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
+                    if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
                     $CmdReq = $InitReq | & $Invoke @Cmd
                     $Output = Get-RtrResult $CmdReq $Output
                     [string[]]$Select = @($Output).foreach{
