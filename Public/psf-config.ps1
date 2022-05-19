@@ -111,15 +111,15 @@ Creates groups, policies, exclusions, rules and scripts within a 'FalconConfig' 
 Falcon environment.
 
 Anything that already exists will be ignored and no existing items will be modified unless the relevant switch
-parameters are specified.
+parameters are included.
 .PARAMETER Path
 FalconConfig archive path
 .PARAMETER AssignExisting
-Assign existing host groups (with identical names) to imported items
+Assign existing host groups with identical names to imported items
 .PARAMETER ModifyExisting
-Modify existing items to match settings from target FalconConfig archive
+Modify existing items to match import
 .PARAMETER ModifyDefault
-Modify 'platform_default' policies to match settings from target FalconConfig archive
+Modify 'platform_default' policies to match import
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
 #>
@@ -162,6 +162,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 $FilterScript = [scriptblock]::Create((@($Compare).foreach{
                     "`$Config.$($Item).Cid.$($_) -notcontains `$_.$($_)" }) -join ' -and ')
                 Get-ConfigItem $Item Import $FilterScript
+                if ($ModifyExisting) {
+                    # Capture (non-policy) items to modify
+                    $FilterScript = [scriptblock]::Create((@($Compare).foreach{
+                        "`$Config.$($Item).Cid.$($_) -contains `$_.$($_)" }) -join ' -and ')
+                    @(Get-ConfigItem $Item Import $FilterScript).foreach{ $Config.$Item.Modify.Add($_) }
+                }
             } elseif ($Config.$Item.Import) {
                 # Output all items
                 @($Config.$Item.Import).foreach{
@@ -172,10 +178,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         }
         function Get-CidValue ([string]$Item) {
             try {
-                # Retrieve existing configurations from CID ### excluding 'platform_default'
+                # Retrieve existing items from CID
                 Write-Host "[Import-FalconConfig] Retrieving '$Item'..."
-                $Param = @{ Detailed = $true; All = $true }
-                & "Get-Falcon$Item" @Param
+                & "Get-Falcon$Item" -Detailed -All
             } catch {
                 throw $_
             }
@@ -202,9 +207,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 # Import Json, filter to required properties, add to output, then output name for notification
                 $Filename = $ConfigArchive.GetEntry($FullName)
                 $Item = ($FullName | Split-Path -Leaf).Split('.')[0]
-                $Import = ConvertFrom-Json ((New-Object System.IO.StreamReader($Filename.Open())).ReadToEnd())
+                $Import = ConvertFrom-Json (New-Object System.IO.StreamReader($Filename.Open())).ReadToEnd()
                 $Import = $Import | Select-Object $ConfigFields.$Item.Import
-                $Output[$Item] = @{ Import = $Import }
+                $Output[$Item] = if ($ModifyExisting -or $ModifyDefault) {
+                    @{ Import = $Import; Modify = [System.Collections.Generic.List[object]]@() }
+                } else {
+                    @{ Import = $Import }
+                }
                 @('Excluded','Ids').foreach{ $Output.$_[$Item] = [System.Collections.Generic.List[object]]@() }
                 $Item
             }
@@ -265,7 +274,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
     }
     process {
         # Create 'ConfigData', import configuration files and create object to contain 'id' values for comparison
-        $Config = Import-ConfigData -FilePath $ArchivePath
+        $Config = Import-ConfigData $ArchivePath
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import })) {
             foreach ($i in $Pair.Value.Import) {
                 # Capture relevant assignment detail for imported items
@@ -274,26 +283,33 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     # Set 'groups' to 'all' for global exclusion
                     [string[]]$i.groups = 'all'
                 }
-                # Filter 'groups' to 'id' values
+                # Filter 'groups', 'rule_group' and 'ioa_rule_groups' to 'id' values
                 if ($i.groups.id) { [string[]]$i.groups = $i.groups.id }
-                # Filter 'rule_group' to 'id' values
                 if ($i.rule_group.id) { [string[]]$i.rule_group = $i.rule_group.id }
-                # Filter 'ioa_rule_groups' to 'id' values
                 if ($i.ioa_rule_groups.id) { [string[]]$i.ioa_rule_groups = $i.ioa_rule_groups.id }
             }
         }
-        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(Ids|Excluded)$' })) {
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(Ids|Excluded|Modify)$' })) {
             # Retrieve existing items from CID
             $Pair.Value['Cid'] = [object[]](Get-CidValue $Pair.Key)
-            if ($Pair.Value.Cid -and $AssignExisting -eq $true) {
-                # Add existing item 'ids' for assignment when '-AssignExisting' is enabled
+            if ($Pair.Value.Cid) {
+                # Add existing item 'ids' for assignment/modification
                 foreach ($i in $Pair.Value.Cid) { Update-ListId $i $Pair.Key }
             }
             if ($Pair.Key -match 'Policy$') {
                 $Pair.Value.Import = foreach ($i in $Pair.Value.Import) {
-                    # Keep only non-existing policy items for each OS under 'Import'
-                    if (!($Config.($Pair.Key).Cid.Where({ $_.platform_name -eq $i.platform_name -and
-                        $_.name -eq $i.name }))) { $i } else { Add-ListId $i $Pair.Key Exists }
+                    if (!($Config.($Pair.Key).Cid.Where({ $_.platform_name -eq $i.platform_name -and $_.name -eq
+                    $i.name }))) {
+                        # Keep only non-existing policy items for each OS under 'Import'
+                        $i
+                    } else {
+                        # Add to relevant 'Modify' or 'Excluded' list
+                        if ($ModifyDefault -and $i.name -eq 'platform_default') { $Pair.Value.Modify.Add($i) }
+                        if ($ModifyExisting -and $i.name -ne 'platform_default') { $Pair.Value.Modify.Add($i) }
+                        if ($Pair.Value.Modify -notcontains $i -and $i.name -ne 'platform_default') {
+                            Add-ListId $i $Pair.Key Exists
+                        }
+                    }
                 }
             } else {
                 if ($Pair.Key -ne 'FirewallRule') {
@@ -313,9 +329,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     }
                     # Remove excluded items from 'Import'
                     $Pair.Value.Import = Compare-ImportData $Pair.Key
+                    if ($ModifyExisting) {
+                        # Filter 'Excluded' to items not on 'Modify' list
+                        $Config.Excluded.($Pair.Key) = $Config.Excluded.($Pair.Key) | Where-Object {
+                            $Pair.Value.Modify.id -notcontains $_.id }
+                    }
                 }
             }
-            if ($Pair.Key -eq 'SensorUpdatePolicy' -and $Pair.Value.Import) {
+            if ($Pair.Key -eq 'SensorUpdatePolicy' -and ($Pair.Value.Import -or $Pair.Value.Modify)) {
                 # Retrieve available sensor build versions to update 'tags'
                 [object[]]$Builds = try {
                     Write-Host "[Import-FalconConfig] Retrieving available sensor builds..."
@@ -324,7 +345,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     throw "Failed to retrieve available sensor builds for '$(
                         $Pair.Key)' import. Verify 'Sensor Update Policies: Write' permission."
                 }
-                foreach ($i in $Pair.Value.Import) {
+                foreach ($i in @($Pair.Value.Import + $Pair.Value.Modify)) {
                     # Update tagged builds with current tagged build versions
                     if ($i.settings.build -match '^\d+\|') {
                         $Tag = ($i.settings.build -split '\|',2)[-1]
@@ -446,7 +467,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             foreach ($i in $Pair.Value.Created) {
                 # Output notification of created item(s)
                 [string]$Name = if ($i.type -and $i.value) {
-                    @($i.type,$i.value) -join ':'
+                    $i.type,$i.value -join ':'
                 } elseif ($i.value) {
                     $i.value
                 } else {
@@ -557,6 +578,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 }
             }
         }
-        if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
+       if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
 }
