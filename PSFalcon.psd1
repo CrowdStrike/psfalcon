@@ -485,9 +485,9 @@ Command Changes
 * Import-FalconConfig
   Renamed 'Force' parameter to 'AssignExisting'. Retained 'Force' as an alias.
 
-  Added 'ModifyDefault' to modify 'platform_default' policies to match settings from import.
+  Added 'ModifyDefault' to modify 'platform_default' policies to match settings from import for specified values.
 
-  Added 'ModifyExisting' to modify existing items to match settings from import.
+  Added 'ModifyExisting' to modify existing items to match settings from import for specified values.
 
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
