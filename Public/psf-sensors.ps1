@@ -286,10 +286,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=2)]
-        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname',
-            'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
-            'product_type_desc','reduced_functionality_mode','serial_number','system_manufacturer',
-            'system_product_name','tags',IgnoreCase=$false)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
