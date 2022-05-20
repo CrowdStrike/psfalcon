@@ -142,6 +142,8 @@ Arguments to include when running the target executable
 Length of time to wait for a result, in seconds
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
+.PARAMETER Include
+Include additional properties
 .PARAMETER GroupId
 Host group identifier
 .PARAMETER HostId
@@ -206,6 +208,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='HostId_Archive',Position=5)]
         [Parameter(ParameterSetName='GroupId_Archive',Position=5)]
         [boolean]$QueueOffline,
+        [Parameter(ParameterSetName='HostId_File',Position=5)]
+        [Parameter(ParameterSetName='GroupId_File',Position=5)]
+        [Parameter(ParameterSetName='HostId_Archive',Position=6)]
+        [Parameter(ParameterSetName='GroupId_Archive',Position=6)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
+        [string[]]$Include,
         [Parameter(ParameterSetName='GroupId_File',Mandatory,ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='GroupId_Archive',Mandatory,ValueFromPipelineByPropertyName)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -259,10 +269,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                         # Prompt for file choice and remove 'CloudFile' if 'LocalFile' is chosen
                         Write-Host "[CloudFile]"
                         $CloudFile | Select-Object name,created_timestamp,modified_timestamp,sha256 |
-                        Format-List | Out-Host
+                            Format-List | Out-Host
                         Write-Host "[LocalFile]"
                         $LocalFile | Select-Object name,created_timestamp,modified_timestamp,sha256 |
-                        Format-List | Out-Host
+                            Format-List | Out-Host
                         $FileChoice = $host.UI.PromptForChoice(
                             "[Invoke-FalconDeploy] '$FileName' exists in your 'Put' Files. Use existing version?",
                             $null,[System.Management.Automation.Host.ChoiceDescription[]]@("&Yes","&No"),0)
@@ -297,10 +307,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             }
         }
         function Write-RtrResult ([object[]]$Object,[string]$Step) {
-            # Create output, append results and output specified fields to CSV
+            # Create output, append results and output specified fields to CSV, and return successful hosts
             $Fields = @('aid','batch_id','cloud_request_id','complete','deployment_step','errors',
                 'offline_queued','session_id','stderr','stdout')
-            $Output = @($Object).foreach{ [PSCustomObject]@{ aid = $_.aid; deployment_step = $Step }}
+            if ($Include) { $Fields += $Include }
+            $Output = @($Object).foreach{
+                $i = [PSCustomObject]@{ aid = $_.aid; deployment_step = $Step }
+                if ($Include) {
+                    # Append 'Include' fields to output
+                    @($Hosts).Where({ $_.device_id -eq $i.aid }).foreach{
+                        @($_.PSObject.Properties).Where({ $Include -contains $_.Name }).foreach{
+                            Set-Property $i $_.Name $_.Value
+                        }
+                    }
+                }
+                $i
+            }
             Get-RtrResult $Object $Output | Select-Object $Fields | Export-Csv $Csv -Append -NoTypeInformation
             ($Object | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
                 $_.offline_queued -eq $true }).aid
@@ -315,8 +337,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 throw "Group size exceeds maximum number of results. [10,000]"
             } else {
                 # Retrieve Host Group member device_id and platform_name
-                @($GroupId | Get-FalconHostGroupMember -Detailed -All |
-                    Select-Object device_id,platform_name).foreach{ $Hosts.Add($_) }
+                $Select = @('device_id','platform_name')
+                if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
+                @($GroupId | Get-FalconHostGroupMember -Detailed -All | Select-Object $Select).foreach{
+                    $Hosts.Add($_)
+                }
             }
         } elseif ($HostId) {
             # Use provided Host identifiers
@@ -325,8 +350,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     }
     end {
         if ($List) {
-            # Use Host identifiers to also retrieve 'platform_name'
-            @($List | Select-Object -Unique | Get-FalconHost | Select-Object device_id,platform_name).foreach{
+            # Use Host identifiers to also retrieve 'platform_name' and 'Include' fields
+            $Select = @('device_id','platform_name')
+            if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
+            @($List | Select-Object -Unique | Get-FalconHost | Select-Object $Select).foreach{
                 $Hosts.Add($_)
             }
         }
@@ -527,10 +554,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [boolean]$QueueOffline,
         [Parameter(ParameterSetName='HostId',Position=5)]
         [Parameter(ParameterSetName='GroupId',Position=5)]
-        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname',
-            'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
-            'product_type_desc','serial_number','system_manufacturer','system_product_name','tags',
-            IgnoreCase=$false)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
         [Parameter(ParameterSetName='GroupId',Mandatory)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
