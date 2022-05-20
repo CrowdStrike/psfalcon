@@ -351,10 +351,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Alias('audit_message')]
         [string]$AuditMessage,
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=2)]
-        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname',
-            'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
-            'product_type_desc','reduced_functionality_mode','serial_number','system_manufacturer',
-            'system_product_name','tags',IgnoreCase=$false)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
