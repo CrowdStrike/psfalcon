@@ -433,7 +433,9 @@ New Commands
 
 General Changes
 
-* Enabled the use of '-WhatIf' and '-Confirm' by adding 'ShouldProcess' support across the module.
+* Enabled the use of '-WhatIf' and '-Confirm' by adding 'ShouldProcess' support across the module. This also
+  required the renaming of the existing '-Confirm' parameter to '-Wait' for 'Invoke-FalconAdminCommand',
+  'Invoke-FalconBatchGet', 'Invoke-FalconCommand' and 'Invoke-FalconResponderCommand'.
 
 * Updated ApiClient.Invoke() to remove blank verbose output when 'Headers' are not specified during a request.
 
@@ -487,9 +489,6 @@ Command Changes
 
   Added 'ModifyExisting' to modify existing items to match settings from import.
 
-* Invoke-FalconAdminCommand, Invoke-FalconBatchGet, Invoke-FalconCommand, Invoke-FalconResponderCommand
-  Renamed the 'Confirm' parameter to 'Wait' because of the 'ShouldProcess' capability being added.
-
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
 
@@ -500,6 +499,8 @@ Command Changes
   being used with the 'run' Real-time Response command). Standard output and error streams are redirected to
   'stdout.log' and 'stderr.log' within the temporary 'FalconDeploy' directory.
 
+  Added 'Include' parameter.
+
 * Invoke-FalconRtr
   Updated to create Real-time Response sessions in groups of 10,000.
 
@@ -507,9 +508,9 @@ Command Changes
   Added 'macOS_10.15' for parameter 'EnvironmentId'.
 
 * Uninstall-FalconSensor
-  Added timeout value (300 seconds) to reduce the chance of no 'status' value being returned.
+  Added timeout value (120 seconds) to reduce the chance of no 'status' value being returned.
 
-  Added 'Include' parameter to include additional properties.
+  Added 'Include' parameter.
 
 Resolved Issues
 
