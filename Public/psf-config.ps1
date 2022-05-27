@@ -224,19 +224,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 foreach ($Item in $NewArr) {
                     if ($Item.value.PSObject.Properties.Name -eq 'enabled') {
                         if ($OldArr.Where({ $_.id -eq $Item.id }).value.enabled -ne $Item.value.enabled) {
-                            if ($Full) {
+                            if ($Result) {
                                 # Capture modified setting result
                                 Add-Result Modified $New $Type $Item.id ($OldArr.Where({ $_.id -eq
                                     $Item.id }).value.enabled) $Item.value.enabled
                             } else {
                                 # Output setting to be modified
-                                $Item
+                                $Item | Select-Object id,value
                             }
                         }
                     } else {
                         foreach ($Name in $Item.value.PSObject.Properties.Name) {
                             if ($OldArr.Where({ $_.id -eq $Item.id }).value.$Name -ne $Item.value.$Name) {
-                                if ($Full) {
+                                if ($Result) {
                                     # Capture modified setting result
                                     Add-Result Modified $New $Type $Item.id (@(($OldArr | Where-Object { $_.id -eq
                                         $Item.id }).value.PSObject.Properties).foreach{ $_.Name,$_.Value -join
@@ -308,18 +308,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 Write-Error $_
             }
         }
-        function Submit-Group ([string]$Policy,[string]$Property,[object]$Obj) {
+        function Submit-Group ([string]$Policy,[string]$Property,[object]$Obj,[object]$Cid) {
             $Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
             $Group = if ($Property -eq 'ioa_rule_groups') { 'IoaGroup' } else { 'HostGroup' }
+            $Target = if ($Cid) { $Cid } else { $Obj }
             $Req = foreach ($Id in $Obj.$Property) {
                 $Match = $Config.Ids.$Group | Where-Object { $_.old_id -eq $Id }
-                if ($Match -and $Obj.$Property -notcontains $Match.new_id) {
-                    @(Invoke-PolicyAction $Policy $Invoke $Obj.id $Match.new_id).foreach{ $_ }
+                if ($Match -and $Target.$Property -notcontains $Match.new_id) {
+                    @(Invoke-PolicyAction $Policy $Invoke $Target.id $Match.new_id).foreach{ $_ }
                 }
             }
             if ($Req) {
-                Add-Result Modified $Req[-1] $Policy $Property ($Obj.$Property -join ',') (
-                    $Req[-1].$Property -join ',')
+                Add-Result Modified $Req[-1] $Policy $Property ($Target.$Property -join ',') (
+                    $Req[-1].$Property.id -join ',')
             }
         }
         function Update-Id ([object]$Item,[string]$Type) {
@@ -377,25 +378,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                         }
                     }
                 }
-            } else {
-                if ($Pair.Key -ne 'FirewallRule') {
-                    # Track excluded items for final output, excluding 'FirewallRule' which can be duplicated
-                    foreach ($i in $Pair.Value.Import) {
-                        [string]$Comment = if ($i.deleted -eq $true) {
-                            'Deleted'
-                        } elseif ($i.type -and $i.value -and ($Pair.Value.Cid | Where-Object { $_.type -eq
-                        $i.type -and $_.value -eq $i.value })) {
-                            'Exists'
-                        } elseif ($i.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $i.value })) {
-                            'Exists'
-                        } elseif ($Pair.Value.Cid | Where-Object { $_.name -eq $i.name }) {
-                            'Exists'
-                        }
-                        if ($Comment) { Add-Result Ignored $i $Pair.Key -Comment $Comment }
+            } elseif ($Pair.Key -ne 'FirewallRule') {
+                # Track excluded items for final output, excluding 'FirewallRule' which can be duplicated
+                foreach ($i in $Pair.Value.Import) {
+                    [string]$Comment = if ($i.deleted -eq $true) {
+                        'Deleted'
+                    } elseif ($i.type -and $i.value -and ($Pair.Value.Cid | Where-Object { $_.type -eq
+                    $i.type -and $_.value -eq $i.value })) {
+                        'Exists'
+                    } elseif ($i.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $i.value })) {
+                        'Exists'
+                    } elseif ($Pair.Value.Cid | Where-Object { $_.name -eq $i.name }) {
+                        'Exists'
                     }
-                    # Remove excluded items from 'Import'
-                    $Pair.Value.Import = Compare-ImportData $Pair.Key
+                    if ($Comment) { Add-Result Ignored $i $Pair.Key -Comment $Comment }
                 }
+                # Remove excluded items from 'Import'
+                $Pair.Value.Import = Compare-ImportData $Pair.Key
             }
             if ($Pair.Key -eq 'SensorUpdatePolicy' -and ($Pair.Value.Import -or $Pair.Value.Modify)) {
                 # Retrieve available sensor build versions to update 'tags'
@@ -439,7 +438,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 Update-Id $i $Pair.Key
                 Add-Result Created $i $Pair.Key
                 @($Pair.Value.Import | Where-Object { $_.name -eq $i.name -and $_.platform_name -eq
-                    $i.platform_name }).foreach{ $Config.($Pair.Key).Modify.Add($i) }
+                $i.platform_name }).foreach{
+                    $Config.($Pair.Key).Modify.Add($i)
+                }
             }
             $Pair.Value.Remove('Import')
         }
@@ -597,11 +598,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     }
                 }
             }
-            @($Config.Result).foreach{
-                try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }
-            }
-        } else {
-            Write-Warning "No changes performed."
+        }
+        @($Config.Result).foreach{
+            try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }
         }
         if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
