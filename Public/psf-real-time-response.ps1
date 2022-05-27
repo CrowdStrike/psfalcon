@@ -423,12 +423,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                 # Define Real-time Response command parameters
                                 $Param = @{
                                     BatchId = $Session.batch_id
-                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(cmd|ps1|(z)?sh)$') {
-                                        # Switch 'run' for 'runscript' if 'Run' is a script file
-                                        'runscript'
-                                    } else {
-                                        $Cmd
-                                    }
+                                    Command = if ($Cmd -eq 'run') { 'runscript' } else { $Cmd }
                                     Argument = switch ($Cmd) {
                                         'mkdir' { $TempDir }
                                         'cd' { $TempDir }
@@ -444,13 +439,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                         }
                                         'run' {
                                             [string]$Join = if ($Pair.Key -eq 'Windows') { '\' } else { '/' }
-                                            [string]$CmdFile = $TempDir,$RunFile -join $Join
-                                            [string]$CmdLine = if ($Argument) {
-                                                '-CommandLine="{0}"' -f $Argument
-                                            }
-                                            if ($Param.Command -eq 'run') {
-                                                $CmdFile,$CmdLine -join ' '
-                                            } elseif ($Pair.Key -eq 'Windows') {
+                                            if ($Pair.Key -eq 'Windows') {
                                                 # Use 'runscript' to start process and avoid timeout
                                                 [string]$String = if ($Argument) {
                                                     ($TempDir,$RunFile -join $Join),$Argument -join ' '
@@ -470,7 +459,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                                 ('-PassThru | ForEach-Object { "The process was successfully sta' +
                                                     'rted"'),
                                                 '}```' -join ' '
-                                            } elseif ($Pair.Key -match '(Linux|Mac)') {
+                                            } elseif ($Pair.Key -match '^(Linux|Mac)$') {
                                                 # Use 'runscript' to start background process and avoid timeout
                                                 [string]$String = if ($Argument) {
                                                     ($TempDir,$RunFile -join $Join),$Argument -join ' '
