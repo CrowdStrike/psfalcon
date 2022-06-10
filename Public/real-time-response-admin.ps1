@@ -140,7 +140,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/put-files/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:get',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
@@ -207,7 +207,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/scripts/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:get',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
