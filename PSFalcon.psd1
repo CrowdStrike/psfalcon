@@ -492,6 +492,9 @@ Command Changes
 
   Added 'ModifyExisting' to modify existing items to match settings from import for specified values.
 
+* Invoke-FalconBatchGet
+  Added 'batch_get_cmd_req_id' to each individual host result.
+
 * Invoke-FalconDeploy
   Added 'tgz' as a supported 'Archive' format.
 

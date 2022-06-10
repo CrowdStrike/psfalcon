@@ -84,12 +84,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             '/real-time-response/combined/batch-get-command/v1:get'
         }
         @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
-            if ($Endpoint -eq '/real-time-response/combined/batch-get-command/v1:get') {
-                @($_.PSObject.Properties).foreach{
+            if ($BatchGetCmdReqId) {
+                $_.PSObject.Properties | ForEach-Object {
                     # Append 'aid' and 'batch_get_cmd_req_id' to each host result and output
-                    ($_.Value).PSObject.Properties.Add((New-Object PSNoteProperty('aid',$_.Name)))
-                    ($_.Value).PSObject.Properties.Add((New-Object PSNoteProperty(
-                        'batch_get_cmd_req_id',$BatchGetCmdReqId)))
+                    Set-Property $_.Value aid $_.Name
+                    Set-Property $_.Value batch_get_cmd_req_id $BatchGetCmdReqId
                     $_.Value
                 }
             } else {
@@ -288,14 +287,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
             if ($_.batch_get_cmd_req_id -and $_.combined.resources) {
                 # Output result with 'batch_get_cmd_req_id' and 'hosts' values
+                $BatchGetCmdReqId = $_.batch_get_cmd_req_id
                 $Request = [PSCustomObject]@{
-                    batch_get_cmd_req_id = $_.batch_get_cmd_req_id
-                    hosts = $_.combined.resources.PSObject.Properties.Value
+                    batch_get_cmd_req_id = $BatchGetCmdReqId
+                    hosts = @($_.combined.resources.PSObject.Properties.Value).foreach{
+                        # Append 'batch_get_cmd_req_id'
+                        Set-Property $_ batch_get_cmd_req_id $BatchGetCmdReqId
+                        $_
+                    }
                 }
                 @($Request.hosts).Where({ $_.errors }).foreach{
                     # Write warning for hosts in batch that produced errors
-                    Write-Warning "[Invoke-FalconBatchGet] $(
-                        @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]"
+                    Write-Warning "[Invoke-FalconBatchGet] $(@($_.errors.code,
+                        $_.errors.message) -join ': ') [aid: $($_.aid)]"
                 }
                 @($Request.hosts).Where({ $_.stderr }).foreach{
                     # Write warning for hosts in batch that produced 'stderr'
