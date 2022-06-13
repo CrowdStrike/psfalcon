@@ -507,6 +507,9 @@ Command Changes
 
   Added 'Include' parameter.
 
+* Invoke-FalconIncidentAction
+  Added 'unassign' and 'update_assigned_to_v2' actions.
+
 * Invoke-FalconRtr
   Updated to create Real-time Response sessions in groups of 10,000.
 
@@ -522,6 +525,8 @@ Resolved Issues
 
 * Issue #211: Added try/catch to 'Get-FalconHost' when using '-Include group_names' to suppress errors when
   hosts have no groups.
+
+* Issue #212: Added actions to 'Invoke-FalconIncidentAction'.
 @"
         }
     }

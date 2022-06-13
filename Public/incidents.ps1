@@ -221,8 +221,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
     [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=1)]
-        [ValidateSet('add_tag','delete_tag','update_description','update_name','update_status',
-            IgnoreCase=$false)]
+        [ValidateSet('add_tag','delete_tag','unassign','update_description','update_name','update_status',
+            'update_assigned_to_v2',IgnoreCase=$false)]
         [string]$Name,
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=2)]
         [string]$Value,
