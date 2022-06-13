@@ -468,6 +468,9 @@ Command Changes
 * Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
   Renamed 'Tags' to 'Tag'. Retained 'Tags' as an alias. This was missed in the v2.2.0 release.
 
+* Edit-FalconIoc, New-FalconIoc
+  Added 'android' and 'ios' as valid 'Platform' values and 'MobileAction' parameter.
+
 * Export-FalconConfig
   Updated to include the export of 'platform_default' policies.
 
