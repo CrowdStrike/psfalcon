@@ -3,8 +3,6 @@ function Request-FalconToken {
 .SYNOPSIS
 Request an OAuth2 access token
 .DESCRIPTION
-Requests an OAuth2 access token.
-
 If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and 'Cloud' or 'Hostname') and token are
 cached for re-use.
 
@@ -170,7 +168,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
                 $Result = Write-Result $Request
                 if ($Result.access_token) {
                     # Cache access token in ApiClient
-                    $Token = "$($Result.token_type) $($Result.access_token)"
+                    [string]$Token = $Result.token_type,$Result.access_token -join ' '
                     if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
                         $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization',$Token)
                     } else {

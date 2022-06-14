@@ -21,6 +21,10 @@
       'Remove-FalconDiscoverAwsAccount',
       'Update-FalconDiscoverAwsSetting',
 
+      # container-security.ps1
+      'Request-FalconRegistryToken',
+      'Test-FalconRegistryToken',
+
       # container-upload.ps1
       'Get-FalconContainerAssessment',
       'Remove-FalconContainerImage',
@@ -90,9 +94,6 @@
 
       # discover.ps1
       'Get-FalconAsset',
-
-      # falcon-container.ps1
-      'Get-FalconContainerToken',
 
       # falconcomplete-dashboard.ps1
       'Get-FalconCompleteAllowlist',
@@ -431,6 +432,10 @@ New Commands
   Get-FalconContainerAssessment
   Remove-FalconContainerImage
 
+* container-security.ps1
+  Request-FalconRegistryToken
+  Test-FalconRegistryToken
+
 General Changes
 
 * Enabled the use of '-WhatIf' and '-Confirm' by adding 'ShouldProcess' support across the module. This also
@@ -460,6 +465,8 @@ General Changes
   for any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
   previously provided through the online help.
 
+* Renamed 'falcon-container.ps1' to 'container-security.ps1'.
+
 Command Changes
 
 * Add-FalconRole, Remove-FalconRole
@@ -476,6 +483,11 @@ Command Changes
 
 * Export-FalconReport
   Updated to force the creation of the same columns for every result.
+
+* Get-FalconContainerToken
+  Command has been removed and replaced with 'Request-FalconRegistryToken' which combines the token request
+  with retrieval of your CCID value (used to create your registry username) and caches it within the module,
+  similar to 'Request-FalconToken'.
 
 * Get-FalconFirewallRule
   Updated to output rules in order of specified 'Id' values when using the 'Id' parameter. This solves an issue
