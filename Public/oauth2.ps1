@@ -207,16 +207,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         $Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             # Revoke OAuth2 access token
             $Param = @{
-                Path = $Script:Falcon.Hostname,'oauth2','revoke' -join '/'
+                Path = "$($Script:Falcon.Hostname)/oauth2/revoke"
                 Method = 'post'
                 Headers = @{
                     Accept = 'application/json'
                     ContentType = 'application/x-www-form-urlencoded'
-                    Authorization = 'basic',([System.Convert]::ToBase64String(
-                        [System.Text.Encoding]::ASCII.GetBytes(($Script:Falcon.ClientId,
-                        $Script:Falcon.ClientSecret -join ':')))) -join ' '
+                    Authorization = "basic $([System.Convert]::ToBase64String(
+                        [System.Text.Encoding]::ASCII.GetBytes("$($Script:Falcon.ClientId):$(
+                        $Script:Falcon.ClientSecret)")))"
                 }
-                Body = 'token',$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter -join '='
+                Body = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
             $Request = $Script:Falcon.Api.Invoke($Param)
             Write-Result $Request
