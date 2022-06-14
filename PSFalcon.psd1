@@ -22,12 +22,10 @@
       'Update-FalconDiscoverAwsSetting',
 
       # container-security.ps1
-      'Request-FalconRegistryToken',
-      'Test-FalconRegistryToken',
-
-      # container-upload.ps1
       'Get-FalconContainerAssessment',
+      'Request-FalconRegistryToken',
       'Remove-FalconContainerImage',
+      'Test-FalconRegistryToken',
 
       # cspm-registration.ps1
       'Edit-FalconHorizonAwsAccount',
@@ -465,7 +463,8 @@ General Changes
   for any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
   previously provided through the online help.
 
-* Renamed 'falcon-container.ps1' to 'container-security.ps1'.
+* Renamed 'falcon-container.ps1' to 'container-security.ps1'. Removed 'container-upload.ps1' and moved commands
+  into 'container-security.ps1'.
 
 Command Changes
 
