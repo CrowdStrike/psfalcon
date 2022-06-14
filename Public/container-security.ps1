@@ -35,6 +35,51 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         try { $Request | ConvertFrom-Json } catch { $Request }
     }
 }
+function Get-FalconContainerSensor {
+<#
+.SYNOPSIS
+
+.DESCRIPTION
+
+.PARAMETER SensorType
+
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+#>
+    [CmdletBinding(DefaultParameterSetName='/v2/{token}:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/v2/{token}:get',Mandatory,Position=1)]
+        [ValidateSet('falcon-sensor','falcon-container',IgnoreCase=$false)]
+        [string]$SensorType
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Format = @{ Query = @('scope','service') }
+            HostUrl = Get-ContainerUrl -Registry
+        }
+    }
+    process {
+        Request-FalconRegistryCredential
+        $Endpoint = $PSCmdlet.ParameterSetName -replace '{token}',"token?=$($Script:Falcon.Registry.Username)"
+        $Param['Header'] = @{
+            authorization = "basic $([System.Convert]::ToBase64String(
+                [System.Text.Encoding]::ASCII.GetBytes("$($Script:Falcon.Registry.Username):$(
+                $Script:Falcon.Registry.Token)")))"
+        }
+        [string]$CloudRegion = switch -Regex ($Script:Falcon.Hostname) {
+            'eu-1'        { 'eu-1' }
+            'laggar\.gcw' { 'us-gov-1' }
+            'us-2'        { 'us-2' }
+            default       { 'us-1' }
+        }
+        $PSBoundParameters['scope'] = 'repository:',"/$CloudRegion/release/",':pull' -join
+            $PSBoundParameters.SensorType
+        $PSBoundParameters['service'] = 'registry.crowdstrike.com'
+        [void]$PSBoundParameters.Remove('SensorType')
+        Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters
+    }
+}
 function Remove-FalconContainerImage {
 <#
 .SYNOPSIS
