@@ -119,7 +119,7 @@ Assign existing host groups with identical names to imported items
 .PARAMETER ModifyDefault
 Modify specified 'platform_default' policies to match import
 .PARAMETER ModifyExisting
-Modify specified items to match import when present
+Modify specified items to match import
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
 #>
@@ -136,7 +136,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         [ValidateSet('DeviceControlPolicy','FirewallPolicy','ResponsePolicy','PreventionPolicy',
             'SensorUpdatePolicy')]
         [string[]]$ModifyDefault,
-        [ValidateSet('DeviceControlPolicy','FirewallPolicy','ResponsePolicy','PreventionPolicy',
+        [ValidateSet('DeviceControlPolicy','FirewallPolicy','Ioc','ResponsePolicy','PreventionPolicy',
             'SensorUpdatePolicy')]
         [string[]]$ModifyExisting
     )
@@ -184,16 +184,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             }
             $Config.Result.Add($Obj)
             if ($Action -eq 'Created') {
+                # Notify when items are created
                 if ($Obj.platform -match ',') {
-                    # Notify when items are created
                     Write-Host "[Import-FalconConfig] $Action $Type '$($Obj.name)'."
                 } else {
-                    # Specify single platform values
                     Write-Host "[Import-FalconConfig] $Action $($Obj.platform) $Type '$($Obj.name)'."
                 }
-            } elseif ($Action -eq 'Modified' -and $Type -match 'Policy$') {
-                # Notify when policies are modified
-                Write-Host "[Import-FalconConfig] $Action '$Property' for $($Obj.platform) $Type '$($Obj.name)'."
+            } elseif ($Action -eq 'Modified') {
+                # Notify when items are modified
+                if ($Obj.platform -match ',') {
+                    Write-Host "[Import-FalconConfig] $Action '$Property' for $Type '$($Obj.name)'."
+                } else {
+                    Write-Host "[Import-FalconConfig] $Action '$Property' for $($Obj.platform) $Type '$(
+                        $Obj.name)'."
+                }
             }
         }
         function Compare-ImportData ([string]$Item) {
@@ -217,42 +221,59 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 @($Config.$Item.Import).foreach{ $_ }
             }
         }
-        function Compare-Setting ([object]$New,[object]$Old,[string]$Type,[switch]$Result) {
-            [object[]]$NewArr = if ($New.prevention_settings) { $New.prevention_settings } else { $New.settings }
-            [object[]]$OldArr = if ($Old.prevention_settings) { $Old.prevention_settings } else { $Old.settings }
-            if ($OldArr) {
-                foreach ($Item in $NewArr) {
-                    if ($Item.value.PSObject.Properties.Name -eq 'enabled') {
-                        if ($OldArr.Where({ $_.id -eq $Item.id }).value.enabled -ne $Item.value.enabled) {
-                            if ($Result) {
-                                # Capture modified setting result
-                                Add-Result Modified $New $Type $Item.id ($OldArr.Where({ $_.id -eq
-                                    $Item.id }).value.enabled) $Item.value.enabled
-                            } else {
-                                # Output setting to be modified
-                                $Item | Select-Object id,value
-                            }
-                        }
-                    } else {
-                        foreach ($Name in $Item.value.PSObject.Properties.Name) {
-                            if ($OldArr.Where({ $_.id -eq $Item.id }).value.$Name -ne $Item.value.$Name) {
+        function Compare-Setting ([object]$New,[object]$Old,[string]$Type,[string]$Property,[switch]$Result) {
+            if ($Type -match 'Policy$') {
+                # Compare modified policy settings
+                [object[]]$NewArr = if ($New.prevention_settings) {
+                    $New.prevention_settings
+                } else {
+                    $New.settings
+                }
+                [object[]]$OldArr = if ($Old.prevention_settings) {
+                    $Old.prevention_settings
+                } else {
+                    $Old.settings
+                }
+                if ($OldArr) {
+                    foreach ($Item in $NewArr) {
+                        if ($Item.value.PSObject.Properties.Name -eq 'enabled') {
+                            if ($OldArr.Where({ $_.id -eq $Item.id }).value.enabled -ne $Item.value.enabled) {
                                 if ($Result) {
                                     # Capture modified setting result
-                                    Add-Result Modified $New $Type $Item.id (@(($OldArr | Where-Object { $_.id -eq
-                                        $Item.id }).value.PSObject.Properties).foreach{ $_.Name,$_.Value -join
-                                        ':' } -join ',') (@($Item.value.PSObject.Properties).foreach{
-                                        $_.Name,$_.Value -join ':' } -join ',')
+                                    Add-Result Modified $New $Type $Item.id ($OldArr.Where({ $_.id -eq
+                                        $Item.id }).value.enabled) $Item.value.enabled
                                 } else {
                                     # Output setting to be modified
                                     $Item | Select-Object id,value
                                 }
                             }
+                        } else {
+                            foreach ($Name in $Item.value.PSObject.Properties.Name) {
+                                if ($OldArr.Where({ $_.id -eq $Item.id }).value.$Name -ne $Item.value.$Name) {
+                                    if ($Result) {
+                                        # Capture modified setting result
+                                        $OldValue = @(($OldArr | Where-Object {
+                                            $_.id -eq $Item.id }).value.PSObject.Properties).foreach{
+                                            $_.Name,$_.Value -join ':' } -join ','
+                                        $NewValue =  @($Item.value.PSObject.Properties).foreach{
+                                            $_.Name,$_.Value -join ':' } -join ','
+                                        Add-Result Modified $New $Type $Item.id $OldValue $NewValue
+                                    } else {
+                                        # Output setting to be modified
+                                        $Item | Select-Object id,value
+                                    }
+                                }
+                            }
                         }
                     }
+                } else {
+                    # Output all new settings
+                    $NewArr | Select-Object id,value
                 }
-            } else {
-                # Output all new settings
-                $NewArr | Select-Object id,value
+            } elseif ($Property -and $Result) {
+                # Compare other modified item properties
+                $OldValue = ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq $New.id }).$Property
+                Add-Result Modified $New $Type $Property $OldValue $New.$Property
             }
         }
         function Compress-Property ([object]$Object) {
@@ -379,19 +400,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     }
                 }
             } elseif ($Pair.Key -ne 'FirewallRule') {
-                # Track excluded items for final output, excluding 'FirewallRule' which can be duplicated
-                foreach ($i in $Pair.Value.Import) {
-                    [string]$Comment = if ($i.deleted -eq $true) {
-                        'Deleted'
-                    } elseif ($i.type -and $i.value -and ($Pair.Value.Cid | Where-Object { $_.type -eq
-                    $i.type -and $_.value -eq $i.value })) {
-                        'Exists'
-                    } elseif ($i.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $i.value })) {
-                        'Exists'
-                    } elseif ($Pair.Value.Cid | Where-Object { $_.name -eq $i.name }) {
-                        'Exists'
+                if (!$Pair.Value.Modify) {
+                    foreach ($i in $Pair.Value.Import) {
+                        # Track excluded items for final output
+                        [string]$Comment = if ($i.deleted -eq $true) {
+                            'Deleted'
+                        } elseif ($i.type -and $i.value -and ($Pair.Value.Cid | Where-Object { $_.type -eq
+                        $i.type -and $_.value -eq $i.value })) {
+                            'Exists'
+                        } elseif ($i.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $i.value })) {
+                            'Exists'
+                        } elseif ($Pair.Value.Cid | Where-Object { $_.name -eq $i.name }) {
+                            'Exists'
+                        }
+                        if ($Comment) { Add-Result Ignored $i $Pair.Key -Comment $Comment }
                     }
-                    if ($Comment) { Add-Result Ignored $i $Pair.Key -Comment $Comment }
                 }
                 # Remove excluded items from 'Import'
                 $Pair.Value.Import = Compare-ImportData $Pair.Key
@@ -431,7 +454,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 Update-Id $i $Pair.Key
                 Add-Result Created $i $Pair.Key
             }
-            $Pair.Value.Remove('Import')
+            [void]$Pair.Value.Remove('Import')
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Import })) {
             foreach ($i in ($Pair.Value.Import | & "New-Falcon$($Pair.Key)")) {
@@ -442,7 +465,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     $Config.($Pair.Key).Modify.Add($i)
                 }
             }
-            $Pair.Value.Remove('Import')
+            [void]$Pair.Value.Remove('Import')
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import })) {
             if ($Pair.Key -eq 'Ioc') {
@@ -475,7 +498,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                                 }
                                 if ($Rules) {
                                     Set-Property $FwGroup rules $Rules
-                                    $Group.PSObject.Properties.Remove('rule_ids')
+                                    [void]$Group.PSObject.Properties.Remove('rule_ids')
                                 }
                             }
                             @($FwGroup | & "New-Falcon$($Pair.Key)").foreach{
@@ -538,7 +561,59 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     }
                 }
             }
-            $Pair.Value.Remove('Import')
+            [void]$Pair.Value.Remove('Import')
+        }
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch 'Policy$' -and $_.Value.Modify })) {
+            if ($Pair.Key -eq 'Ioc') {
+                # Select required properties
+                [string[]]$Select = 'applied_globally','action','deleted','expiration','groups','mobile_action',
+                    'platforms','severity','tags','type','value'
+                [object[]]$Edit = foreach ($i in ($Pair.Value.Modify | Select-Object @($Select + 'id'))) {
+                    # Compare each 'Modify' item against CID
+                    [object]$Cid = $Config.($Pair.Key).Cid | Select-Object $Select | Where-Object {
+                        $_.type -eq $i.type -and $_.value -eq $i.value }
+                    [System.Collections.Generic.List[string]]$Modify = @('id')
+                    if ($Cid) {
+                        @($i.PSObject.Properties.Name.Where({ $Select -contains $_ })).foreach{
+                            [object]$Diff = if (($i.$_ -or $i.$_ -is [boolean]) -and ($Cid.$_ -or
+                            $Cid.$_ -is [boolean])) {
+                                # Compare properties that exist in both 'Modify' and CID
+                                Compare-Object $i.$_ $Cid.$_
+                            }
+                            if ($Diff -or (($i.$_ -or $i.$_ -is [boolean]) -and (!$Cid.$_ -and
+                            $Cid.$_ -isnot [boolean]))) {
+                                # Output properties that differ, or are not present in CID
+                                $Modify.Add($_)
+                            }
+                        }
+                        # Output items with properties to be modified and remove from 'Modify' list
+                        if ($Modify.Count -gt 1) { $i | Select-Object $Modify }
+                    }
+                }
+                @($Pair.Value.Modify).foreach{
+                    if (($Edit -and $Edit.id -notcontains $_.id) -or !$Edit) {
+                        # Record result for items that don't need modification
+                        Add-Result Ignored $_ $Pair.Key -Comment Identical
+                    }
+                }
+                if ($Edit) {
+                    # Update item with id from CID, modify and capture result
+                    foreach ($i in $Edit) {
+                        Set-Property $i id ($Config.Ids.($Pair.Key) | Where-Object { $_.old_id -eq $i.id }).new_id
+                    }
+                    foreach ($i in ($Edit | & "Edit-Falcon$($Pair.Key)")) {
+                        foreach ($Result in ($Edit | Where-Object { $_.id -eq $i.id })) {
+                            @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' }).foreach{
+                                Compare-Setting $i ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
+                                    $i.id }) $Pair.Key $_ -Result
+                            }
+                        }
+                    }
+                }
+            } else {
+
+            }
+            [void]$Pair.Value.Remove('Modify')
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Modify })) {
             foreach ($i in $Pair.Value.Modify) {
@@ -594,14 +669,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     if ($Config.($_.type).Cid | Where-Object { $_.platform_name -eq $Platform -and $_.name -ne
                     'platform_default' }) {
                         # Output warning for existing policy precedence
-                        Write-Warning "Existing $Platform policies were found. Verify precedence!"
+                        Write-Warning "Existing $Platform $($_.type) items were found. Verify precedence!"
                     }
                 }
             }
         }
-        @($Config.Result).foreach{
-            try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }
-        }
+        @($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
         if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
 }
