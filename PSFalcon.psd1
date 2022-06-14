@@ -23,6 +23,7 @@
 
       # container-security.ps1
       'Get-FalconContainerAssessment',
+      'Get-FalconContainerSensor',
       'Request-FalconRegistryCredential',
       'Remove-FalconContainerImage',
       'Test-FalconRegistryCredential',
