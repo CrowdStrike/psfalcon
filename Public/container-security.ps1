@@ -1,42 +1,3 @@
-function Request-FalconRegistryToken {
-<#
-.SYNOPSIS
-Request your Falcon Container Security image registry username and token
-.DESCRIPTION
-Requires 'Falcon Container Image: Read' and 'Sensor Update Policies: Read'.
-
-If successful, you token and username are cached for re-use as you use Falcon Container Security related commands.
-
-If an active access token is due to expire in less than 15 seconds, a new token will automatically be requested.
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
-#>
-    [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-registry-credentials/v1:get',
-        SupportsShouldProcess)]
-    param()
-    process {
-        if (!$Script:Falcon.Registry.Token -or !$Script:Falcon.Registry.Expiration -lt (Get-Date).AddSeconds(15)) {
-            [string]$Token = try {
-                (Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName).Token
-            } catch {
-                throw "Failed to retrieve token. Verify 'Falcon Container Image: Read' permission."
-            }
-            if ($Token) {
-                if (!$Script:Falcon.Registry) { $Script:Falcon['Registry'] = @{} }
-                $Script:Falcon.Registry['Token'] = $Token
-                $Script:Falcon.Registry['Expiration'] = (Get-Date).AddMinutes(30)
-                if (!$Script:Falcon.Registry.Username) {
-                    try {
-                        $Script:Falcon.Registry['Username'] = 'fc',
-                            (Get-FalconCcid -EA 0).Split('-')[0].ToLower() -join '-'
-                    } catch {
-                        throw "Failed to retrieve username. Verify 'Sensor Update Policies: Read' permission."
-                    }
-                }
-            }
-        }
-    }
-}
 function Get-FalconContainerAssessment {
 <#
 .SYNOPSIS
@@ -50,7 +11,7 @@ Container repository
 .PARAMETER Tag
 Container tag
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Container-Upload
+https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
     [CmdletBinding(DefaultParameterSetName='/reports:get',SupportsShouldProcess)]
     param(
@@ -83,7 +44,7 @@ Requires 'Falcon Container Image: Write'.
 .PARAMETER Id
 Container image identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Container-Upload
+https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
     [CmdletBinding(DefaultParameterSetName='/images/{id}:delete',SupportsShouldProcess)]
     param(
@@ -91,12 +52,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Container-Upload
             ValueFromPipelineByPropertyName,Position=1)]
         [object]$Id
     )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            HostUrl = Get-ContainerUrl
-        }
-    }
+    begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; HostUrl = Get-ContainerUrl }}
     process {
         $PSBoundParameters.Id = switch ($PSBoundParameters.Id) {
             { $_.ImageInfo.id } { $_.ImageInfo.id }
@@ -111,10 +67,49 @@ https://github.com/crowdstrike/psfalcon/wiki/Container-Upload
         }
     }
 }
-function Test-FalconRegistryToken {
+function Request-FalconRegistryCredential {
 <#
 .SYNOPSIS
-Display Falcon Container Security image registry token status
+Request your Falcon container security image registry username and token
+.DESCRIPTION
+Requires 'Falcon Container Image: Read' and 'Sensor Download: Read'.
+
+If successful, you token and username are cached for re-use as you use Falcon container security related commands.
+
+If an active access token is due to expire in less than 15 seconds, a new token will automatically be requested.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+#>
+    [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-registry-credentials/v1:get',
+        SupportsShouldProcess)]
+    param()
+    process {
+        if (!$Script:Falcon.Registry.Token -or !$Script:Falcon.Registry.Expiration -lt (Get-Date).AddSeconds(15)) {
+            [string]$Token = try {
+                (Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName).Token
+            } catch {
+                throw "Failed to retrieve token. Verify 'Falcon Container Image: Read' permission."
+            }
+            if ($Token) {
+                if (!$Script:Falcon.Registry) { $Script:Falcon['Registry'] = @{} }
+                $Script:Falcon.Registry['Token'] = $Token
+                $Script:Falcon.Registry['Expiration'] = (Get-Date).AddMinutes(30)
+                if (!$Script:Falcon.Registry.Username) {
+                    try {
+                        $Script:Falcon.Registry['Username'] = 'fc',
+                            (Get-FalconCcid -EA 0).Split('-')[0].ToLower() -join '-'
+                    } catch {
+                        throw "Failed to retrieve username. Verify 'Sensor Update Policies: Read' permission."
+                    }
+                }
+            }
+        }
+    }
+}
+function Test-FalconRegistryCredential {
+<#
+.SYNOPSIS
+Display Falcon container security image registry token and username
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
@@ -127,7 +122,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
                 Username = $Script:Falcon.Registry.Username
             }
         } else {
-            Write-Error "No container registry token available. Try 'Request-FalconRegistryToken'."
+            Write-Error "No registry credential available. Try 'Request-FalconRegistryToken'."
         }
     }
 }

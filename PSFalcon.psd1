@@ -23,9 +23,9 @@
 
       # container-security.ps1
       'Get-FalconContainerAssessment',
-      'Request-FalconRegistryToken',
+      'Request-FalconRegistryCredential',
       'Remove-FalconContainerImage',
-      'Test-FalconRegistryToken',
+      'Test-FalconRegistryCredential',
 
       # cspm-registration.ps1
       'Edit-FalconHorizonAwsAccount',
@@ -431,8 +431,8 @@ New Commands
   Remove-FalconContainerImage
 
 * container-security.ps1
-  Request-FalconRegistryToken
-  Test-FalconRegistryToken
+  Request-FalconRegistryCredential
+  Test-FalconRegistryCredential
 
 General Changes
 
@@ -466,6 +466,9 @@ General Changes
 * Renamed 'falcon-container.ps1' to 'container-security.ps1'. Removed 'container-upload.ps1' and moved commands
   into 'container-security.ps1'.
 
+* Modified private 'Get-ContainerUrl' function to include a 'Registry' switch to output the Falcon Container
+  Registry URL for related commands.
+
 Command Changes
 
 * Add-FalconRole, Remove-FalconRole
@@ -484,7 +487,7 @@ Command Changes
   Updated to force the creation of the same columns for every result.
 
 * Get-FalconContainerToken
-  Command has been removed and replaced with 'Request-FalconRegistryToken' which combines the token request
+  Command has been removed and replaced with 'Request-FalconRegistryCredential' which combines the token request
   with retrieval of your CCID value (used to create your registry username) and caches it within the module,
   similar to 'Request-FalconToken'.
 

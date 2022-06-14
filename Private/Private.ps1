@@ -315,13 +315,18 @@ function Convert-Rfc3339 {
 function Get-ContainerUrl {
     [CmdletBinding()]
     [OutputType([string])]
-    param()
+    param([switch]$Registry)
     process {
-        # Output 'container-upload' URL using cached 'Hostname' value
-        if ($Script:Falcon.Hostname -match 'api\.crowdstrike') {
-            $Script:Falcon.Hostname -replace 'api','container-upload.us-1'
+        if ($Registry) {
+            # Output 'registry' URL using cached 'Hostname' value
+            $Script:Falcon.Hostname -replace 'api(\.us-2|\.eu-1|laggar\.gcw)?','registry'
         } else {
-            $Script:Falcon.Hostname -replace 'api','container-upload'
+            # Output 'container-upload' URL using cached 'Hostname' value
+            if ($Script:Falcon.Hostname -match 'api\.crowdstrike') {
+                $Script:Falcon.Hostname -replace 'api','container-upload.us-1'
+            } else {
+                $Script:Falcon.Hostname -replace 'api','container-upload'
+            }
         }
     }
 }
