@@ -207,22 +207,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         $Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             # Revoke OAuth2 access token
             $Param = @{
-                Path = "$($Script:Falcon.Hostname)/oauth2/revoke"
+                Path = $Script:Falcon.Hostname,'oauth2','revoke' -join '/'
                 Method = 'post'
                 Headers = @{
                     Accept = 'application/json'
                     ContentType = 'application/x-www-form-urlencoded'
-                    Authorization = "basic $([System.Convert]::ToBase64String(
-                        [System.Text.Encoding]::ASCII.GetBytes(
-                        "$($Script:Falcon.ClientId):$($Script:Falcon.ClientSecret)")))"
+                    Authorization = 'basic',([System.Convert]::ToBase64String(
+                        [System.Text.Encoding]::ASCII.GetBytes(($Script:Falcon.ClientId,
+                        $Script:Falcon.ClientSecret -join ':')))) -join ' '
                 }
-                Body = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
+                Body = 'token',$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter -join '='
             }
             $Request = $Script:Falcon.Api.Invoke($Param)
             Write-Result $Request
             [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
-        @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove("$_") }
+        @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove($_) }
     }
 }
 function Test-FalconToken {
