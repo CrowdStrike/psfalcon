@@ -24,6 +24,7 @@
       # container-security.ps1
       'Get-FalconContainerAssessment',
       'Get-FalconContainerSensor',
+      'Remove-FalconRegistryCredential',
       'Request-FalconRegistryCredential',
       'Remove-FalconContainerImage',
       'Test-FalconRegistryCredential',
@@ -432,6 +433,8 @@ New Commands
   Remove-FalconContainerImage
 
 * container-security.ps1
+  Get-FalconContainerSensor
+  Remove-FalconRegistryCredential
   Request-FalconRegistryCredential
   Test-FalconRegistryCredential
 
@@ -467,8 +470,8 @@ General Changes
 * Renamed 'falcon-container.ps1' to 'container-security.ps1'. Removed 'container-upload.ps1' and moved commands
   into 'container-security.ps1'.
 
-* Modified private 'Get-ContainerUrl' function to include a 'Registry' switch to output the Falcon Container
-  Registry URL for related commands.
+* Modified private 'Get-ContainerUrl' function to include a 'Registry' switch to output the Falcon container
+  registry URL for related commands.
 
 Command Changes
 
@@ -488,9 +491,9 @@ Command Changes
   Updated to force the creation of the same columns for every result.
 
 * Get-FalconContainerToken
-  Command has been removed and replaced with 'Request-FalconRegistryCredential' which combines the token request
-  with retrieval of your CCID value (used to create your registry username) and caches it within the module,
-  similar to 'Request-FalconToken'.
+  Command has been removed and replaced with 'Request-FalconRegistryCredential' which combines requests for your
+  Falcon container registry password, username (modified CID value) and authorization token, which are cached
+  within the PSFalcon module, similar to 'Request-FalconToken'.
 
 * Get-FalconFirewallRule
   Updated to output rules in order of specified 'Id' values when using the 'Id' parameter. This solves an issue

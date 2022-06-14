@@ -350,9 +350,9 @@ function Get-ParamSet {
         }
         $Base = @{
             Path = if ($HostUrl) {
-                $HostUrl,$Endpoint.Split(':')[0] -join $null
+                $HostUrl,$Endpoint.Split(':',2)[0] -join $null
             } else {
-                $Script:Falcon.Hostname,$Endpoint.Split(':')[0] -join $null
+                $Script:Falcon.Hostname,$Endpoint.Split(':',2)[0] -join $null
             }
             Method = $Endpoint.Split(':')[1]
             Headers = $Headers
@@ -376,7 +376,11 @@ function Get-ParamSet {
                 # Split 'Query' values into groups
                 $Split = $Switches.Clone()
                 $Split.Add('Endpoint',$Base.Clone())
-                $Split.Endpoint.Path += "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                $Split.Endpoint.Path += if ($Split.Endpoint.Path -match '\?') {
+                    "&$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                } else {
+                    "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                }
                 $Content.GetEnumerator().Where({ $_.Key -ne 'Query' -and $_.Value }).foreach{
                     # Add values other than 'Query'
                     $Split.Endpoint.Add($_.Key,$_.Value)
@@ -393,7 +397,11 @@ function Get-ParamSet {
                 $Content.GetEnumerator().Where({ $_.Value }).foreach{
                     # Add values other than 'Body.ids'
                     if ($_.Key -eq 'Query') {
-                        $Split.Endpoint.Path += "?$($_.Value -join '&')"
+                        $Split.Endpoint.Path += if ($Split.Endpoint.Path -match '\?') {
+                            "&$($_.Value -join '&')"
+                        } else {
+                            "?$($_.Value -join '&')"
+                        }
                     } elseif ($_.Key -eq 'Body') {
                         ($_.Value).GetEnumerator().Where({ $_.Key -ne 'ids' }).foreach{
                             $Split.Endpoint.Body.Add($_.Key,$_.Value)
@@ -410,7 +418,11 @@ function Get-ParamSet {
             if ($Content) {
                 $Content.GetEnumerator().foreach{
                     if ($_.Key -eq 'Query') {
-                        $Switches.Endpoint.Path += "?$($_.Value -join '&')"
+                        $Switches.Endpoint.Path += if ($Switches.Endpoint.Path -match '\?') {
+                            "&$($_.Value -join '&')"
+                        } else {
+                            "?$($_.Value -join '&')"
+                        }
                     } else {
                         $Switches.Endpoint.Add($_.Key,$_.Value)
                     }
@@ -660,7 +672,7 @@ function Invoke-Loop {
                 $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
                 $Page[1] += [int]$Current.Split('=')[-1]
                 $Clone.Endpoint.Path -replace $Current,($Page -join '=')
-            } elseif ($Clone.Endpoint.Path -match "$Endpoint^") {
+            } elseif ($Clone.Endpoint.Path -match "$Endpoint^" -and $Clone.Endpoint.Path -notmatch '\?') {
                 # Add pagination
                 $Clone.Endpoint.Path,($Page -join '=') -join '?'
             } else {
