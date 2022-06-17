@@ -38,15 +38,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 function Get-FalconContainerSensor {
 <#
 .SYNOPSIS
-
+Retrieve the most recent Falcon container sensor build tags
 .DESCRIPTION
 Requires 'Falcon Container Image: Read'.
+.PARAMETER LatestUrl
+Create a URL using the most recent build tag
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
     [CmdletBinding(DefaultParameterSetName='/v2/{sensortype}/{region}/release/falcon-sensor/tags/list:get',
         SupportsShouldProcess)]
-    param()
+    param(
+        [switch]$LatestUrl
+    )
     process {
         if (!$Script:Falcon.Registry -or $Script:Falcon.Registry.Expiration -lt (Get-Date).AddSeconds(60)) {
             Request-FalconRegistryCredential
@@ -58,7 +62,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
             HostUrl = Get-ContainerUrl -Registry
         }
         $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        try { $Request | ConvertFrom-Json } catch { $Request }
+        $Result = try { $Request | ConvertFrom-Json } catch { $Request }
+        if ($LatestUrl) {
+            ($Param.HostUrl -replace 'https://',$null),$Script:Falcon.Registry.SensorType,
+                $Script:Falcon.Registry.Region,'release',"falcon-sensor:$($Result.tags[-1])" -join '/'
+        } else {
+            $Result
+        }
     }
 }
 function Remove-FalconContainerImage {
