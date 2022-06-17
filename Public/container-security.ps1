@@ -220,7 +220,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
                 Region = $Script:Falcon.Registry.Region
                 SensorType = $Script:Falcon.Registry.SensorType
                 PullToken = $PullToken
-                Expiration = $Script:Falcon.Expiration
             }
         } else {
             Write-Error "No registry credential available. Try 'Request-FalconRegistryCredential'."
