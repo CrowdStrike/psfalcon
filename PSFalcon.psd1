@@ -27,7 +27,7 @@
       'Remove-FalconRegistryCredential',
       'Request-FalconRegistryCredential',
       'Remove-FalconContainerImage',
-      'Test-FalconRegistryCredential',
+      'Show-FalconRegistryCredential',
 
       # cspm-registration.ps1
       'Edit-FalconHorizonAwsAccount',
@@ -436,7 +436,7 @@ New Commands
   Get-FalconContainerSensor
   Remove-FalconRegistryCredential
   Request-FalconRegistryCredential
-  Test-FalconRegistryCredential
+  Show-FalconRegistryCredential
 
 General Changes
 

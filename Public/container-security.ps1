@@ -106,7 +106,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 function Remove-FalconRegistryCredential {
 <#
 .SYNOPSIS
-Remove your cached Falcon container registry access token and credential information from the module.
+Remove your cached Falcon container registry access token and credential information from the module
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
@@ -191,10 +191,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
         }
     }
 }
-function Test-FalconRegistryCredential {
+function Show-FalconRegistryCredential {
 <#
 .SYNOPSIS
-Display Falcon container registry credential information.
+Display Falcon container registry credential information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
 #>
@@ -202,6 +202,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
     param()
     process {
         if ($Script:Falcon.Registry) {
+            [string]$PullToken = if ($Script:Falcon.Registry.Username -and $Script:Falcon.Registry.Password) {
+                [string]$BaseAuth = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("$(
+                    $Script:Falcon.Registry.Username):$($Script:Falcon.Registry.Password)"))
+                [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("$([PSCustomObject]@{
+                    auths = @{ 'registry.crowdstrike.com' = @{ auth = $BaseAuth }}} | ConvertTo-Json)"))
+            }
             [PSCustomObject]@{
                 Token = if ($Script:Falcon.Registry.Token -and $Script:Falcon.Registry.Expiration -gt
                 (Get-Date).AddSeconds(60)) {
@@ -210,8 +216,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
                     $false
                 }
                 Username = $Script:Falcon.Registry.Username
+                Password = $Script:Falcon.Registry.Password
                 Region = $Script:Falcon.Registry.Region
                 SensorType = $Script:Falcon.Registry.SensorType
+                PullToken = $PullToken
                 Expiration = $Script:Falcon.Expiration
             }
         } else {
