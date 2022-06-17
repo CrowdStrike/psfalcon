@@ -206,7 +206,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
                 [string]$BaseAuth = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("$(
                     $Script:Falcon.Registry.Username):$($Script:Falcon.Registry.Password)"))
                 [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes("$([PSCustomObject]@{
-                    auths = @{ 'registry.crowdstrike.com' = @{ auth = $BaseAuth }}} | ConvertTo-Json)"))
+                    auths = @{ 'registry.crowdstrike.com' = @{ auth = $BaseAuth }}} | ConvertTo-Json -Depth 4)"))
             }
             [PSCustomObject]@{
                 Token = if ($Script:Falcon.Registry.Token -and $Script:Falcon.Registry.Expiration -gt
