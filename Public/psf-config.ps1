@@ -179,7 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 action = $Action
                 property = $Property
                 old_value = $Old
-                new_value = if ($New -is [array]) { $New -join ',' } else { $New }
+                new_value = $New
                 comment = $Comment
             }
             $Config.Result.Add($Obj)
@@ -192,7 +192,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 }
             } elseif ($Action -eq 'Modified') {
                 # Notify when items are modified
-                if ($Obj.platform -match ',') {
+                if (!$Obj.platform -or $Obj.platform -match ',') {
                     Write-Host "[Import-FalconConfig] $Action '$Property' for $Type '$($Obj.name)'."
                 } else {
                     Write-Host "[Import-FalconConfig] $Action '$Property' for $($Obj.platform) $Type '$(
