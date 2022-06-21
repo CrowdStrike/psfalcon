@@ -693,8 +693,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 }
             }
         }
-        $Config
-        #@($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
+        @($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
         if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
 }
