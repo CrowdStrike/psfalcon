@@ -291,7 +291,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Mandatory,Position=1)]
-        [ValidateSet('static','dynamic',IgnoreCase=$false)]
+        [ValidateSet('dynamic','static','staticByID',IgnoreCase=$false)]
         [Alias('group_type')]
         [string]$GroupType,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Mandatory,Position=2)]
@@ -300,7 +300,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [string]$Description,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Position=4)]
         [ValidateScript({
-            if ($PSBoundParameters.GroupType -eq 'static') {
+            if ($PSBoundParameters.GroupType -ne 'dynamic') {
                 throw "'AssignmentRule' can only be used with GroupType 'dynamic'."
             } else {
                 $true
