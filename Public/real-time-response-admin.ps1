@@ -87,13 +87,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=6)]
         [Alias('content','FullName')]
-        [ValidateScript({
-            if (Test-Path $_ -PathType Leaf) {
-                $true
-            } else {
-                throw "Cannot find path '$_' because it does not exist or is a directory."
-            }
-        })]
         [string]$Path,
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=7)]
