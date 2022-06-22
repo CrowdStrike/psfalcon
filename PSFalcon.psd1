@@ -13,8 +13,8 @@
     ScriptsToProcess     = @('Class/Class.ps1')
     FunctionsToExport    = @(
       # alerts.ps1
-      'Get-FalconAlert',
-      'Invoke-FalconAlertAction',
+      # 'Get-FalconAlert',
+      # 'Invoke-FalconAlertAction',
 
       # cloud-connect-aws.ps1
       'Confirm-FalconDiscoverAwsAccess',
@@ -431,10 +431,6 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = "@
 New Commands
-
-* alerts.ps1
-  Get-FalconAlert
-  Invoke-FalconAlertAction
 
 * container-upload.ps1
   Get-FalconContainerAssessment
