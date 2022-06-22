@@ -483,7 +483,7 @@ Command Changes
   Updated to use 'Get-FalconRole' to determine valid 'Id' values for auto-completion.
 
 * Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
-  Renamed 'Tags' to 'Tag'. Retained 'Tags' as an alias. This was missed in the v2.2.0 release.
+  Renamed 'Tags' to 'Tag' while retaining 'Tags' as an alias.
 
 * Edit-FalconIoc, New-FalconIoc
   Added 'android' and 'ios' as valid 'Platform' values and 'MobileAction' parameter.
