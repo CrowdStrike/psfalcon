@@ -128,7 +128,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         [Parameter(Mandatory,Position=1)]
         [ValidatePattern('\.zip$')]
         [ValidateScript({
-            if (Test-Path $_) { $true } else { throw "Cannot find path '$_' because it does not exist" }
+            if (Test-Path $_ -PathType Leaf) {
+                $true
+            } else {
+                throw "Cannot find path '$_' because it does not exist or is not a file."
+            }
         })]
         [string]$Path,
         [Alias('Force')]
@@ -136,8 +140,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         [ValidateSet('DeviceControlPolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy',
             'SensorUpdatePolicy')]
         [string[]]$ModifyDefault,
-        [ValidateSet('DeviceControlPolicy','FirewallPolicy','IoaExclusion','Ioc','MlExclusion','PreventionPolicy',
-            'ResponsePolicy','SensorUpdatePolicy','SvExclusion')]
+        [ValidateSet('DeviceControlPolicy','FirewallGroup','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup',
+            'Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
         [string[]]$ModifyExisting
     )
     begin {
@@ -359,6 +363,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         # Convert 'Path' to absolute and set 'OutputFile'
         [string]$ArchivePath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
         [string]$OutputFile = Join-Path (Get-Location).Path "FalconConfig_$(Get-Date -Format FileDateTime).csv"
+        [string]$UserAgent = (Show-FalconModule).UserAgent
     }
     process {
         # Import configuration files and capture id values for comparison
@@ -571,6 +576,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch 'Policy$' -and $_.Value.Modify })) {
             [string[]]$Select = switch ($Pair.Key) {
                 # Select required properties for comparison
+                'FirewallGroup' {}
+                'HostGroup' { 'group_type','name','assignment_rule' }
+                'IoaGroup' { 'enabled','name','platform','rules' }
                 'IoaExclusion' {
                     'name','description','pattern_id','pattern_name','cl_regex','ifn_regex','groups',
                         'applied_globally'
@@ -579,59 +587,75 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     'applied_globally','action','deleted','expiration','host_groups','mobile_action',
                         'platforms','severity','tags','type','value'
                 }
-                'MlExclusion' {
-                    'value','excluded_from','groups','applied_globally'
-                }
-                'SvExclusion' {
-                    'value','groups','applied_globally'
-                }
+                'MlExclusion' { 'value','excluded_from','groups','applied_globally' }
+                'Script' { 'platform','permission_type','name','content' }
+                'SvExclusion' { 'value','groups','applied_globally' }
             }
-            [object[]]$Edit = foreach ($i in ($Pair.Value.Modify | Select-Object @($Select + 'id'))) {
-                # Compare each 'Modify' item against CID
-                [string[]]$Compare = @('name','type','value').foreach{ if ($Select -contains $_) { $_ }}
-                $FilterScript = [scriptblock]::Create((@($Compare).foreach{
-                    "`$_.$($_) -eq `$i.$($_)" }) -join ' -and ')
-                [object]$Cid = $Config.($Pair.Key).Cid | Select-Object $Select |
-                    Where-Object -FilterScript $FilterScript
-                if ($Cid) {
-                    [System.Collections.Generic.List[string]]$Modify = @('id')
-                    @($i.PSObject.Properties.Name.Where({ $Select -contains $_ })).foreach{
-                        [object]$Diff = if (($i.$_ -or $i.$_ -is [boolean]) -and ($Cid.$_ -or
-                        $Cid.$_ -is [boolean])) {
-                            # Compare properties that exist in both 'Modify' and CID
-                            Compare-Object $i.$_ $Cid.$_
-                        }
-                        if ($Diff -or (($i.$_ -or $i.$_ -is [boolean]) -and (!$Cid.$_ -and
-                        $Cid.$_ -isnot [boolean]))) {
-                            # Output properties that differ, or are not present in CID
-                            $Modify.Add($_)
-                        }
+            if ($Select) {
+                [object[]]$Edit = foreach ($i in ($Pair.Value.Modify | Select-Object @($Select + 'id'))) {
+                    # Compare each 'Modify' item against CID
+                    [string[]]$Compare = @('name','type','value').foreach{ if ($Select -contains $_) { $_ }}
+                    [string]$Filter = (@($Compare).foreach{ "`$_.$($_) -eq `$i.$($_)" }) -join ' -and '
+                    [object]$Cid = if ($Pair.Key -ne 'HostGroup' -or ($Pair.Key -eq 'HostGroup' -and
+                    $i.group_type -eq 'dynamic')) {
+                        $Config.($Pair.Key).Cid | Select-Object $Select | Where-Object -FilterScript (
+                            [scriptblock]::Create($Filter))
                     }
-                    # Output items with properties to be modified and remove from 'Modify' list
-                    if ($Modify.Count -gt 1) { $i | Select-Object $Modify }
-                }
-            }
-            @($Pair.Value.Modify).foreach{
-                if (($Edit -and $Edit.id -notcontains $_.id) -or !$Edit) {
-                    # Record result for items that don't need modification
-                    Add-Result Ignored $_ $Pair.Key -Comment Identical
-                }
-            }
-            if ($Edit) {
-                # Update with id from CID, modify item and capture result
-                foreach ($i in $Edit) {
-                    Set-Property $i id ($Config.Ids.($Pair.Key) | Where-Object { $_.old_id -eq $i.id }).new_id
-                }
-                foreach ($i in ($Edit | & "Edit-Falcon$($Pair.Key)")) {
-                    foreach ($Result in ($Edit | Where-Object { $_.id -eq $i.id })) {
-                        @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' }).foreach{
-                            Compare-Setting $i ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
-                                $i.id }) $Pair.Key $_ -Result
+                    if ($Cid) {
+                        [System.Collections.Generic.List[string]]$Modify = @('id')
+                        @($Select).Where({ $_ -ne 'id' }).foreach{
+                            if ($_ -eq 'rules') {
+                                # Modify individual rules
+
+                            } else {
+                                [object]$Diff = if (($i.$_ -or $i.$_ -is [boolean]) -and ($Cid.$_ -or
+                                $Cid.$_ -is [boolean])) {
+                                    # Compare properties that exist in both 'Modify' and CID
+                                    Compare-Object $i.$_ $Cid.$_
+                                }
+                                if ($Diff -or (($i.$_ -or $i.$_ -is [boolean]) -and (!$Cid.$_ -and
+                                $Cid.$_ -isnot [boolean]))) {
+                                    # Output properties that differ, or are not present in CID
+                                    $Modify.Add($_)
+                                }
+                            }
                         }
+                        # Output items with properties to be modified and remove from 'Modify' list
+                        if ($Modify.Count -gt 1) { $i | Select-Object $Modify }
                     }
                 }
+                if ($Edit) {
+                    foreach ($i in $Edit) {
+                        # Update with current 'id' and 'comment' when appropriate
+                        Set-Property $i id ($Config.Ids.($Pair.Key) | Where-Object { $_.old_id -eq $i.id }).new_id
+                        if ($Pair.Key -ne 'HostGroup') {
+                            Set-Property $i comment ($UserAgent,"Import-FalconConfig" -join ': ')
+                        }
+                    }
+                    foreach ($i in ($Edit | & "Edit-Falcon$($Pair.Key)")) {
+                        foreach ($Result in ($Edit | Where-Object { $_.id -eq $i.id })) {
+                            @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne
+                            'comment' }).foreach{
+                                # Capture change result (excluding 'id' and 'comment')
+                                Compare-Setting $i ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
+                                    $i.id }) $Pair.Key $_ -Result
+                            }
+                        }
+                    }
+                }
+                foreach ($i in $Pair.Value.Modify) {
+                    if (($Edit -and $Edit.id -notcontains $i.id) -or !$Edit) {
+                        # Record result for items that don't need modification
+                        [string]$Comment = if ($Pair.Key -eq 'HostGroup' -and $i.group_type -ne 'dynamic') {
+                            'Static'
+                        } else {
+                            'Identical'
+                        }
+                        Add-Result Ignored $i $Pair.Key -Comment $Comment
+                    }
+                }
+                [void]$Pair.Value.Remove('Modify')
             }
-            [void]$Pair.Value.Remove('Modify')
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Modify })) {
             foreach ($i in $Pair.Value.Modify) {
