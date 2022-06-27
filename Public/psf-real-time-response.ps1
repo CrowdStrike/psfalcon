@@ -126,10 +126,7 @@ appropriate temporary folder (\Windows\Temp or /tmp), 'cd' will navigate to the 
 archive will be 'put' into that folder. If the target is an archive, it will be extracted, and the designated
 'Run' file will be executed. If the target is a file, it will be 'run'.
 
-If the 'File' or 'Run' parameter is a script (.cmd, .ps1, .sh, .zsh), the Real-time Response command 'runscript'
-will be used in place of the final 'run' command.
-
-Details of each step will be output to a CSV file in your current directory.
+Details of each step will be output to a CSV file in your current directory. 
 .PARAMETER File
 Name of a 'CloudFile' or path to a local executable to upload
 .PARAMETER Archive
