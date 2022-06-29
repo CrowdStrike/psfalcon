@@ -276,8 +276,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 }
             } elseif ($Property -and $Result) {
                 # Compare other modified item properties
-                $OldValue = ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq $New.id }).$Property
-                Add-Result Modified $New $Type $Property $OldValue $New.$Property
+                if ($Property -eq 'field_values') {
+                    foreach ($Name in $New.$Property.name) {
+                        # Track 'field_values' for IoaRule for each modified value
+                        $OldValue = ($Old.$Property | Where-Object { $_.name -eq $Name }).values |
+                            ConvertTo-Json -Compress
+                        $NewValue = ($New.$Property | Where-Object { $_.name -eq $Name }).values |
+                            ConvertTo-Json -Compress
+                        if ($NewValue -ne $OldValue) { Add-Result Modified $New $Type $Name $OldValue $NewValue }
+                    }
+                } else {
+                    Add-Result Modified $New $Type $Property $Old.$Property $New.$Property
+                }
             }
         }
         function Compress-Property ([object]$Object) {
@@ -593,7 +603,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             }
             if ($Select) {
                 [object[]]$Edit = foreach ($i in ($Pair.Value.Modify | Select-Object @($Select + 'id'))) {
-                    # Compare each 'Modify' item against CID
+                    # Compare each 'Modify' item against CID (excluding non-dynamic HostGroup)
                     [string[]]$Compare = @('name','type','value').foreach{ if ($Select -contains $_) { $_ }}
                     [string]$Filter = (@($Compare).foreach{ "`$_.$($_) -eq `$i.$($_)" }) -join ' -and '
                     [object]$Cid = if ($Pair.Key -ne 'HostGroup' -or ($Pair.Key -eq 'HostGroup' -and
@@ -604,20 +614,50 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     if ($Cid) {
                         [System.Collections.Generic.List[string]]$Modify = @('id')
                         @($Select).Where({ $_ -ne 'id' }).foreach{
-                            if ($_ -eq 'rules') {
-                                # Modify individual rules
-
-                            } else {
-                                [object]$Diff = if (($i.$_ -or $i.$_ -is [boolean]) -and ($Cid.$_ -or
-                                $Cid.$_ -is [boolean])) {
-                                    # Compare properties that exist in both 'Modify' and CID
+                            [object]$Diff = if (($i.$_ -or $i.$_ -is [boolean]) -and ($Cid.$_ -or
+                            $Cid.$_ -is [boolean])) {
+                                # Compare properties that exist in both 'Modify' and CID
+                                if ($Pair.Key -eq 'IoaGroup' -and $_ -eq 'rules') {
+                                    foreach ($r in $i.$_) {
+                                        # Evaluate each IoaRule
+                                        [object]$CidRule = $Cid.$_ | Where-Object { $_.ruletype_id -eq
+                                            $r.ruletype_id -and $_.name -eq $r.name -and $r.deleted -ne $true }
+                                        [string[]]$RuleDiff = if ($CidRule) {
+                                            @('enabled','pattern_severity','action_label').foreach{
+                                                if (Compare-Object $r.$_ $CidRule.$_) { $_ }
+                                            }
+                                            foreach ($fv in $r.field_values) {
+                                                # Evaluate 'field_value' as a Json string for each IoaRule
+                                                [object]$CidFv = $CidRule.field_values | Where-Object {
+                                                    $_.name -eq $fv.name -and $_.type -eq $fv.type }
+                                                if ($CidFv) {
+                                                    if (Compare-Object ($fv.values | ConvertTo-Json) (
+                                                    $CidFv.values | ConvertTo-Json)) {
+                                                        'field_values'
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if ($RuleDiff) {
+                                            # Copy existing rule and modify properties
+                                            [object]$RuleEdit = $CidRule.PSObject.Copy()
+                                            @($RuleDiff).foreach{ $RuleEdit.$_ = $r.$_ }
+                                            @(Edit-FalconIoaRule -RuleUpdate $RuleEdit -RuleGroupId $i.id).foreach{
+                                                @($RuleDiff).foreach{
+                                                    # Capture result for each updated setting against original
+                                                    Compare-Setting $RuleEdit $CidRule IoaRule $_ -Result
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
                                     Compare-Object $i.$_ $Cid.$_
                                 }
-                                if ($Diff -or (($i.$_ -or $i.$_ -is [boolean]) -and (!$Cid.$_ -and
-                                $Cid.$_ -isnot [boolean]))) {
-                                    # Output properties that differ, or are not present in CID
-                                    $Modify.Add($_)
-                                }
+                            }
+                            if ($Diff -or (($i.$_ -or $i.$_ -is [boolean]) -and (!$Cid.$_ -and $Cid.$_ -isnot
+                            [boolean]))) {
+                                # Output properties that differ, or are not present in CID
+                                $Modify.Add($_)
                             }
                         }
                         # Output items with properties to be modified and remove from 'Modify' list
