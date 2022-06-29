@@ -79,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         ($Param.Format.Body.root | Where-Object { $_ -notmatch '^(diff_operations|id)$' }).foreach{
             if (!$PSBoundParameters.$_) {
                 # When not provided, add required fields using existing rule group
-                if (!$Group) { $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters$Id -EA 0 } catch {}}
+                if (!$Group) { $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {}}
                 $PSBoundParameters[$_] = if ($_ -eq 'rulegroup_version') {
                     if ($Group.version) { $Group.version } else { 0 }
                 } elseif ($_ -eq 'rule_versions') {
