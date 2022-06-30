@@ -149,7 +149,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [string]$Sort,
         [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=3)]
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=4)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,500)]
         [int32]$Limit,
         [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get')]
