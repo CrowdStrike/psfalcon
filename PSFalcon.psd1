@@ -504,6 +504,9 @@ Command Changes
   where rules are provided in order of the 'id' property when they were retrieved using the 'family' property and
   are returned out of order (in respect to the 'family' values).
 
+* Get-FalconKernel
+  Corrected maximum number for 'Limit' parameter (500).
+
 * Get-FalconScript, Get-FalconPutFile
   Updated to use new v2 endpoints which include workflow-related schema and information.
 
