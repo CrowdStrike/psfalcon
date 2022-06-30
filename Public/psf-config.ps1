@@ -367,7 +367,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 }
                 [string]$Filter = (@($Compare).foreach{"`$_.$($_) -eq '$($Item.$_)'" }) -join ' -and '
                 $FilterScript = [scriptblock]::Create($Filter)
-                @($Config.Ids.$Type | Where-Object -FilterScript $FilterScript).foreach{ $_.new_id = $Item.id }
+                @($Config.Ids.$Type | Where-Object -FilterScript $FilterScript).foreach{
+                    $_.new_id = if ($Item.family) { $Item.family } else { $Item.id }
+                }
             }
         }
         # Convert 'Path' to absolute and set 'OutputFile'
@@ -382,7 +384,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             foreach ($i in $Pair.Value.Import) {
                 $i = Compress-Property $i
                 @($i | Select-Object name,platform,platforms,platform_name,type,value).foreach{
-                    Set-Property $_ old_id $i.id
+                    $Id = if ($i.family) { $i.family } else { $i.id }
+                    Set-Property $_ old_id $Id
                     Set-Property $_ new_id $null
                     $Config.Ids.($Pair.Key).Add($_)
                 }
@@ -498,7 +501,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 }
             }
         }
-        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import })) {
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -ne 'FirewallRule' -and $_.Value.Import })) {
             if ($Pair.Key -eq 'Ioc') {
                 @($Pair.Value.Import | & "New-Falcon$($Pair.Key)").foreach{
                     # Create Ioc
@@ -586,16 +589,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch 'Policy$' -and $_.Value.Modify })) {
             [string[]]$Select = switch ($Pair.Key) {
                 # Select required properties for comparison
-                'FirewallGroup' {}
-                'HostGroup' { 'group_type','name','assignment_rule' }
-                'IoaGroup' { 'enabled','name','platform','rules' }
+                'FirewallGroup' { 'name','enabled','description','rule_ids' }
+                'HostGroup' { 'group_type','name','assignment_rule','description' }
+                'IoaGroup' { 'enabled','name','platform','rules','description' }
                 'IoaExclusion' {
                     'name','description','pattern_id','pattern_name','cl_regex','ifn_regex','groups',
                         'applied_globally'
                 }
                 'Ioc' {
                     'applied_globally','action','deleted','expiration','host_groups','mobile_action',
-                        'platforms','severity','tags','type','value'
+                        'platforms','severity','tags','type','value','description'
                 }
                 'MlExclusion' { 'value','excluded_from','groups','applied_globally' }
                 'Script' { 'platform','permission_type','name','content' }
@@ -606,11 +609,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     # Compare each 'Modify' item against CID (excluding non-dynamic HostGroup)
                     [string[]]$Compare = @('name','type','value').foreach{ if ($Select -contains $_) { $_ }}
                     [string]$Filter = (@($Compare).foreach{ "`$_.$($_) -eq `$i.$($_)" }) -join ' -and '
-                    [object]$Cid = if ($Pair.Key -ne 'HostGroup' -or ($Pair.Key -eq 'HostGroup' -and
-                    $i.group_type -eq 'dynamic')) {
-                        $Config.($Pair.Key).Cid | Select-Object $Select | Where-Object -FilterScript (
-                            [scriptblock]::Create($Filter))
-                    }
+                    [object]$Cid = $Config.($Pair.Key).Cid | Select-Object $Select | Where-Object -FilterScript (
+                        [scriptblock]::Create($Filter))
                     if ($Cid) {
                         [System.Collections.Generic.List[string]]$Modify = @('id')
                         @($Select).Where({ $_ -ne 'id' }).foreach{
@@ -650,6 +650,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                                             }
                                         }
                                     }
+                                } elseif ($Pair.Key -eq 'FirewallGroup' -and $_ -eq 'rule_ids') {
+                                    if ($i.rule_ids) {
+                                        # Select FirewallRule from import using 'family' as 'id' value
+                                        [object[]]$FwRule = foreach ($r in $i.rule_ids) {
+                                            $Config.FirewallRule.Import | Where-Object {
+                                                $_.family -eq $r -and $_.deleted -eq $false }
+                                        }
+                                        if ($FwRule) {
+                                            ### evaluate rules
+                                        }
+                                    }
                                 } else {
                                     Compare-Object $i.$_ $Cid.$_
                                 }
@@ -672,13 +683,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                             Set-Property $i comment ($UserAgent,"Import-FalconConfig" -join ': ')
                         }
                     }
-                    foreach ($i in ($Edit | & "Edit-Falcon$($Pair.Key)")) {
-                        foreach ($Result in ($Edit | Where-Object { $_.id -eq $i.id })) {
-                            @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne
-                            'comment' }).foreach{
-                                # Capture change result (excluding 'id' and 'comment')
-                                Compare-Setting $i ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
-                                    $i.id }) $Pair.Key $_ -Result
+                    if ($Pair.Key -eq 'FirewallGroup') {
+                        [hashtable[]]$DiffOp = @($Edit).foreach{
+                            @('description','enabled').foreach{
+                                if ($null -ne $Edit.$_) { @{ op = 'replace'; path = "/$_"; value = $Edit.$_ }}
+                            }
+                        }
+                        if ($DiffOp) {
+                            $Req = $Edit | Edit-FalconFirewallGroup -DiffOperation $DiffOp
+                            if ($Req) {
+                                ### Compare updated settings
+                            }
+                        }
+                    } else {
+                        foreach ($i in ($Edit | & "Edit-Falcon$($Pair.Key)")) {
+                            foreach ($Result in ($Edit | Where-Object { $_.id -eq $i.id })) {
+                                @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne
+                                'comment' }).foreach{
+                                    # Capture change result (excluding 'id' and 'comment')
+                                    Compare-Setting $i ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
+                                        $i.id }) $Pair.Key $_ -Result
+                                }
                             }
                         }
                     }
@@ -718,7 +743,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     }
                 } elseif ($i.prevention_settings -or $i.settings) {
                     # Compare Policy settings
-                    [object[]]$Setting = Compare-Setting $i $Policy
+                    [object[]]$Setting = Compare-Setting $i $Policy $Pair.Key
                     if ($Setting) {
                         try {
                             # Modify Policy
