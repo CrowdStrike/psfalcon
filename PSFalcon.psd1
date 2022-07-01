@@ -562,6 +562,8 @@ Resolved Issues
   hosts have no groups.
 
 * Issue #212: Added actions to 'Invoke-FalconIncidentAction'.
+
+* Issue #219: Indirectly fixed issue with changes that were already made to 'Invoke-FalconDeploy'.
 @"
         }
     }
