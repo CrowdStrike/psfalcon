@@ -504,6 +504,10 @@ Command Changes
   where rules are provided in order of the 'id' property when they were retrieved using the 'family' property and
   are returned out of order (in respect to the 'family' values).
 
+* Get-FalconHost
+  Updated to use new 'POST /devices/entities/devices/v2' endpoint when requesting host details, which greatly
+  improves performance when using 'Get-FalconHost -Detailed'.
+
 * Get-FalconKernel
   Corrected maximum number for 'Limit' parameter (500).
 
