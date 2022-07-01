@@ -84,7 +84,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/devices/entities/devices/v1:get',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -157,7 +157,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             } else {
                 @{ Query = @('ids','filter','sort','limit','offset') }
             }
-            Max = 500
+            Max = if ($PSCmdlet.ParameterSetName -eq '/devices/entities/devices/v2:post') {
+                5000
+            } else {
+                500
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
