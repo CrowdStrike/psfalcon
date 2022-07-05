@@ -13,8 +13,8 @@
     ScriptsToProcess     = @('Class/Class.ps1')
     FunctionsToExport    = @(
       # alerts.ps1
-      # 'Get-FalconAlert',
-      # 'Invoke-FalconAlertAction',
+      'Get-FalconAlert',
+      'Invoke-FalconAlertAction',
 
       # cloud-connect-aws.ps1
       'Confirm-FalconDiscoverAwsAccess',
@@ -432,6 +432,10 @@
             ReleaseNotes = "@
 New Commands
 
+* alerts.ps1
+  Get-FalconAlert
+  Invoke-FalconAlertAction
+
 * container-upload.ps1
   Get-FalconContainerAssessment
   Remove-FalconContainerImage
@@ -522,7 +526,9 @@ Command Changes
 
   Added 'ModifyDefault' to modify 'platform_default' policies to match settings from import for specified values.
 
-  Added 'ModifyExisting' to modify existing items to match settings from import for specified values.
+  Added 'ModifyExisting' to modify existing items to match settings from import for specified values. Although
+  'FirewallGroup' is included, rules are not currently being modified. They will be included as part of a future
+  PSFalcon update.
 
 * Invoke-FalconBatchGet
   Added 'batch_get_cmd_req_id' to each individual host result.
