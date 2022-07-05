@@ -660,6 +660,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                                         }
                                     }
                                 } elseif ($Pair.Key -eq 'FirewallGroup' -and $_ -eq 'rule_ids') {
+                                    <#
                                     if ($Item.rule_ids) {
                                         # Select FirewallRule from import using 'family' as 'id' value
                                         [object[]]$FwRule = foreach ($Rule in $Item.rule_ids) {
@@ -667,9 +668,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                                                 $_.deleted -eq $false }
                                         }
                                         if ($FwRule) {
-                                            ### evaluate rules
+                                            # Evaluate rules for modification
                                         }
                                     }
+                                    #>
                                 } else {
                                     Compare-Object $Item.$_ $Cid.$_
                                 }
@@ -696,10 +698,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     if ($Pair.Key -eq 'FirewallGroup') {
                         [hashtable[]]$DiffOp = @($EditList).foreach{
                             if ($null -ne $_.enabled) {
+                                # Create 'DiffOperations' for FirewallGroup changes
                                 @{ op = 'replace'; path = "/enabled"; value = $_.enabled }
                             }
                         }
                         if ($DiffOp) {
+                            # Modify FirewallGroup
                             $Req = $EditList | Edit-FalconFirewallGroup -DiffOperation $DiffOp
                             if ($Req) {
                                 Compare-Setting $Item ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
@@ -711,6 +715,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                             foreach ($Result in ($EditList | Where-Object { $_.id -eq $Item.id })) {
                                 @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne
                                 'comment' }).foreach{
+                                    # Modify item and capture result
                                     Compare-Setting $Item ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
                                         $Item.id }) $Pair.Key $_ -Result
                                 }
