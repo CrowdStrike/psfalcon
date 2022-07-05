@@ -159,6 +159,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
             Max = if ($PSCmdlet.ParameterSetName -eq '/devices/entities/devices/v2:post') {
                 5000
+            } elseif ($PSCmdlet.ParameterSetName -eq '/devices/entities/online-state/v1:get') {
+                100
             } else {
                 500
             }
