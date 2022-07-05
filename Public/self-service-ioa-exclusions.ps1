@@ -28,9 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
         [System.Object]$Detection
     )
-    begin {
-        [System.Collections.Generic.List[object]]$Output = @()
-    }
+    begin { [System.Collections.Generic.List[object]]$Output = @() }
     process {
         if ($_.behaviors -and $_.device) {
             @($_.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
@@ -51,9 +49,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
             }
         }
     }
-    end {
-        if ($Output) { @($Output | Group-Object pattern_id).foreach{ $_.Group | Select-Object -First 1 }}
-    }
+    end { if ($Output) { @($Output | Group-Object pattern_id).foreach{ $_.Group | Select-Object -First 1 }}}
 }
 function Edit-FalconIoaExclusion {
 <#
@@ -78,7 +74,7 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -103,7 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=7)]
-        [ValidatePattern('^(\w{32}|all)$')]
+        [ValidatePattern('^([a-fA-F0-9]{32}|all)$')]
         [string]$Id
     )
     begin {
@@ -122,7 +118,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -153,11 +149,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/ioa-exclusions/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=1)]
@@ -231,7 +227,7 @@ Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -283,7 +279,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^\w{32}$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^[a-fA-F0-9]{32}$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -302,13 +298,13 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Position=1)]
         [string]$Comment,
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -320,13 +316,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)

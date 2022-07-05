@@ -19,7 +19,7 @@ Display the total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/indicators/queries/devices/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/indicators/queries/devices/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -76,10 +76,10 @@ Repeat requests until all available results are retrieved
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/indicators/queries/processes/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/indicators/queries/processes/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/processes/entities/processes/v1:get',ValueFromPipeline,Mandatory)]
-        [ValidatePattern('^pid:\w{32}:\d+$')]
+        [ValidatePattern('^pid:[a-fA-F0-9]{32}:\d+$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Mandatory,Position=1)]
@@ -89,7 +89,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Value,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Mandatory,ValueFromPipeline,
            Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_id')]
         [string]$HostId,
         [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Position=4)]

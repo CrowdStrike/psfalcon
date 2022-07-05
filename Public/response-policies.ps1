@@ -17,7 +17,7 @@ Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -35,7 +35,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Position=2)]
         [string]$Name,
@@ -112,11 +112,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/response/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/response/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/response/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/response/v1:get',Position=1)]
@@ -201,13 +201,13 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/response-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/response-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/response-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/policy/combined/response-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/response-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/response-members/v1:get',Position=2)]
@@ -255,18 +255,18 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -313,7 +313,7 @@ Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -392,11 +392,11 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/response/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -432,14 +432,14 @@ Policy identifiers in desired precedence order
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/response-precedence/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/response-precedence/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/response-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/response-precedence/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

@@ -9,7 +9,7 @@ Returns your Customer Checksum Identifier which is requested during the installa
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/ccid/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/ccid/v1:get',SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -38,11 +38,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/sensors/queries/installers/v1:get',Position=1)]
@@ -104,7 +104,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -112,7 +112,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
         [string]$Path,
         [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('sha256')]
         [string]$Id,
         [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get')]

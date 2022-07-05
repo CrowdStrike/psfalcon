@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.2.0'
+    ModuleVersion        = '2.2.1'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -12,6 +12,10 @@
     RequiredAssemblies   = @('System.Net.Http')
     ScriptsToProcess     = @('Class/Class.ps1')
     FunctionsToExport    = @(
+      # alerts.ps1
+      'Get-FalconAlert',
+      'Invoke-FalconAlertAction',
+
       # cloud-connect-aws.ps1
       'Confirm-FalconDiscoverAwsAccess',
       'Edit-FalconDiscoverAwsAccount',
@@ -20,6 +24,14 @@
       'New-FalconDiscoverAwsAccount',
       'Remove-FalconDiscoverAwsAccount',
       'Update-FalconDiscoverAwsSetting',
+
+      # container-security.ps1
+      'Get-FalconContainerAssessment',
+      'Get-FalconContainerSensor',
+      'Remove-FalconRegistryCredential',
+      'Request-FalconRegistryCredential',
+      'Remove-FalconContainerImage',
+      'Show-FalconRegistryCredential',
 
       # cspm-registration.ps1
       'Edit-FalconHorizonAwsAccount',
@@ -86,9 +98,6 @@
 
       # discover.ps1
       'Get-FalconAsset',
-
-      # falcon-container.ps1
-      'Get-FalconContainerToken',
 
       # falconcomplete-dashboard.ps1
       'Get-FalconCompleteAllowlist',
@@ -420,7 +429,148 @@
             LicenseUri   = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/LICENSE'
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
-            ReleaseNotes = 'https://github.com/CrowdStrike/psfalcon/releases/tag/2.2.0'
+            ReleaseNotes = "@
+New Commands
+
+* alerts.ps1
+  Get-FalconAlert
+  Invoke-FalconAlertAction
+
+* container-upload.ps1
+  Get-FalconContainerAssessment
+  Remove-FalconContainerImage
+
+* container-security.ps1
+  Get-FalconContainerSensor
+  Remove-FalconRegistryCredential
+  Request-FalconRegistryCredential
+  Show-FalconRegistryCredential
+
+General Changes
+
+* Enabled the use of '-WhatIf' and '-Confirm' by adding 'ShouldProcess' support across the module. This also
+  required the renaming of the existing '-Confirm' parameter to '-Wait' for 'Invoke-FalconAdminCommand',
+  'Invoke-FalconBatchGet', 'Invoke-FalconCommand' and 'Invoke-FalconResponderCommand'.
+
+* Updated ApiClient.Invoke() to remove blank verbose output when 'Headers' are not specified during a request.
+
+* Created 'Get-ContainerUrl' to convert cached Hostname value into a valid 'container-upload' URL value when using
+  'container-upload' commands.
+
+* Created 'New-ShouldMessage' function to generate the output message when '-Confirm' or '-WhatIf' is used with
+  a command.
+
+* Added 'HostUrl' parameter to 'Invoke-Falcon' to force the use of 'container-upload' base URL instead of the
+  cached Falcon API hostname.
+
+* Updated 'Test-FqlStatement' private function to allow for the use of either single or double quotation marks.
+
+* Updated RegEx patterns when validating input to look for a more restrictive list of characters to better match
+  expected values.
+
+* Various comment-based help text updates and typo corrections.
+
+* The online help files (accessed using 'Update-Help') for PSFalcon are no longer valid for this and future
+  releases as comment-based help has been included for individual commands. Using 'Get-Help <command> -Online'
+  for any PSFalcon command will link you directly to the PSFalcon Wiki which includes command examples that were
+  previously provided through the online help.
+
+* Renamed 'falcon-container.ps1' to 'container-security.ps1'. Removed 'container-upload.ps1' and moved commands
+  into 'container-security.ps1'.
+
+* Modified private 'Get-ContainerUrl' function to include a 'Registry' switch to output the Falcon container
+  registry URL for related commands.
+
+Command Changes
+
+* Add-FalconRole, Remove-FalconRole
+  Updated to use 'Get-FalconRole' to determine valid 'Id' values for auto-completion.
+
+* Add-FalconGroupingTag, Add-FalconSensorTag, Remove-FalconGroupingTag, Remove-FalconSensorTag
+  Renamed 'Tags' to 'Tag' while retaining 'Tags' as an alias.
+
+* Edit-FalconIoc, New-FalconIoc
+  Added 'android' and 'ios' as valid 'Platform' values and 'MobileAction' parameter.
+
+* Export-FalconConfig
+  Updated to include the export of 'platform_default' policies.
+
+* Export-FalconReport
+  Updated to force the creation of the same columns for every result.
+
+* Get-FalconContainerToken
+  Command has been removed and replaced with 'Request-FalconRegistryCredential' which combines requests for your
+  Falcon container registry password, username (modified CID value) and authorization token, which are cached
+  within the PSFalcon module, similar to 'Request-FalconToken'.
+
+* Get-FalconFirewallRule
+  Updated to output rules in order of specified 'Id' values when using the 'Id' parameter. This solves an issue
+  where rules are provided in order of the 'id' property when they were retrieved using the 'family' property and
+  are returned out of order (in respect to the 'family' values).
+
+* Get-FalconHost
+  Updated to use new 'POST /devices/entities/devices/v2' endpoint when requesting host details, which greatly
+  improves performance when using 'Get-FalconHost -Detailed'.
+
+* Get-FalconKernel
+  Corrected maximum number for 'Limit' parameter (500).
+
+* Get-FalconScript, Get-FalconPutFile
+  Updated to use new v2 endpoints which include workflow-related schema and information.
+
+* Get-FalconUninstallToken
+  Added 'Include' parameter.
+
+* Import-FalconConfig
+  Renamed 'Force' parameter to 'AssignExisting'. Retained 'Force' as an alias.
+
+  Added 'ModifyDefault' to modify 'platform_default' policies to match settings from import for specified values.
+
+  Added 'ModifyExisting' to modify existing items to match settings from import for specified values. Although
+  'FirewallGroup' is included, rules are not currently being modified. They will be included as part of a future
+  PSFalcon update.
+
+* Invoke-FalconBatchGet
+  Added 'batch_get_cmd_req_id' to each individual host result.
+
+* Invoke-FalconDeploy
+  Added 'tgz' as a supported 'Archive' format.
+
+  Added 'cmd' as a supported 'File' and 'Run' format using 'cmd.exe' in place of 'powershell.exe'.
+
+  Modified 'Run' to execute a custom script that launches a secondary process when provided with a script file.
+  This ensures that the process will execute and not wait for completion (similar to a regular executable when
+  being used with the 'run' Real-time Response command). Standard output and error streams are redirected to
+  'stdout.log' and 'stderr.log' within the temporary 'FalconDeploy' directory.
+
+  Added 'Include' parameter.
+
+* Invoke-FalconIncidentAction
+  Added 'unassign' and 'update_assigned_to_v2' actions.
+
+* Invoke-FalconRtr
+  Updated to create Real-time Response sessions in groups of 10,000.
+
+* New-FalconHostGroup
+  Added type 'staticByID'.
+
+* New-FalconSubmission
+  Added 'macOS_10.15' for parameter 'EnvironmentId'.
+
+* Uninstall-FalconSensor
+  Added timeout value (120 seconds) to reduce the chance of no 'status' value being returned.
+
+  Added 'Include' parameter.
+
+Resolved Issues
+
+* Issue #211: Added try/catch to 'Get-FalconHost' when using '-Include group_names' to suppress errors when
+  hosts have no groups.
+
+* Issue #212: Added actions to 'Invoke-FalconIncidentAction'.
+
+* Issue #219: Indirectly fixed issue with changes that were already made to 'Invoke-FalconDeploy'.
+@"
         }
     }
 }

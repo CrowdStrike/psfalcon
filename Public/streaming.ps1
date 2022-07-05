@@ -11,7 +11,7 @@ Format for streaming events [default: json]
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Event-Streams
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed/v2:get')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed/v2:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed/v2:get',Mandatory,Position=1)]
         [string]$AppId,
@@ -41,7 +41,8 @@ Partition number
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Event-Streams
 #>
-    [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post')]
+    [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',Mandatory,
             Position=1)]

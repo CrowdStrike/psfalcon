@@ -7,13 +7,13 @@ Uses various PSFalcon commands to gather and export groups, policies and exclusi
 of Json files within a zip archive. The exported files can be used with 'Import-FalconConfig' to restore
 configurations to your existing CID or create them in another CID.
 .PARAMETER Select
-Selected items to export from your current CID, or leave blank to export all available items
+Selected items to export from your current CID, or leave unspecified to export all available items
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
 #>
-    [CmdletBinding(DefaultParameterSetName='ExportItem')]
+    [CmdletBinding(DefaultParameterSetName='ExportItem',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='ExportItem',Position=1)]
         [ValidateSet('HostGroup','IoaGroup','FirewallGroup','DeviceControlPolicy','FirewallPolicy',
@@ -28,12 +28,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         function Get-ItemContent ([string]$String) {
             # Request content for provided 'Item'
             Write-Host "[Export-FalconConfig] Exporting '$String'..."
-            $ConfigFile = Join-Path -Path $Location -ChildPath "$String.json"
+            $ConfigFile = Join-Path $Location "$String.json"
             $Param = @{ Detailed = $true; All = $true}
             $Config = if ($String -match '^(DeviceControl|Firewall|Prevention|Response|SensorUpdate)Policy$') {
                 # Create policy exports in 'platform_name' order to retain precedence
                 @('Windows','Mac','Linux').foreach{
-                    & "Get-Falcon$String" @Param -Filter "platform_name:'$_'+name:!'platform_default'" 2>$null
+                    & "Get-Falcon$String" @Param -Filter "platform_name:'$_'" 2>$null
                 }
             } else {
                 & "Get-Falcon$String" @Param 2>$null
@@ -64,24 +64,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         if ($OutPath.Category -eq 'WriteError' -and !$Force) {
             Write-Error @OutPath
         } else {
-            if (!$PSBoundParameters.Select) {
+            if (!$Select) {
                 # Use items in 'ValidateSet' when not provided
-                $PSBoundParameters.Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({
-                    $_.Name -eq 'ExportItem' }).Parameters.Where({ $_.Name -eq
-                    'Select' }).Attributes.ValidValues).foreach{ $_ }
+                [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({ $_.Name -eq
+                'ExportItem' }).Parameters.Where({ $_.Name -eq 'Select' }).Attributes.ValidValues).foreach{
+                    $_
+                }
             }
-            if ($PSBoundParameters.Select -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and
-            $PSBoundParameters.Select -notcontains 'HostGroup') {
+            if ($Select -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and $Select -notcontains 'HostGroup') {
                 # Force 'HostGroup' when exporting Exclusions or IOCs
-                $PSBoundParameters.Select += ,'HostGroup'
+                $Select += ,'HostGroup'
             }
-            if ($PSBoundParameters.Select -contains 'FirewallGroup') {
-                # Force 'FirewallRule' when exporting 'FirewallGroup'
-                $PSBoundParameters.Select += ,'FirewallRule'
+            # Force 'FirewallRule' when exporting 'FirewallGroup'
+            if ($Select -contains 'FirewallGroup') { $Select += ,'FirewallRule' }
+            [string[]]$JsonFiles = foreach ($String in $Select) {
+                # Retrieve results, export to Json and capture file name
+                ,(Get-ItemContent $String)
             }
-            # Retrieve results, export to Json and capture file name
-            $JsonFiles = foreach ($String in $PSBoundParameters.Select) { ,(Get-ItemContent $String) }
-            if ($JsonFiles) {
+            if ($JsonFiles -and $PSCmdlet.ShouldProcess($ExportFile,'Compress-Archive')) {
                 # Archive Json exports with content and remove them when complete
                 $Param = @{
                     Path = (Get-ChildItem | Where-Object { $JsonFiles -contains $_.FullName -and
@@ -92,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 Compress-Archive @Param
                 @($JsonFiles).foreach{
                     if (Test-Path $_) {
-                        Write-Verbose "Deleting '$_'."
+                        Write-Verbose "[Export-FalconConfig] Removing '$_'."
                         Remove-Item $_ -Force
                     }
                 }
@@ -105,48 +105,103 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
 function Import-FalconConfig {
 <#
 .SYNOPSIS
-Import configurations from a 'FalconConfig' archive into your Falcon environment
+Import items from a 'FalconConfig' archive into your Falcon environment
 .DESCRIPTION
-Creates groups, policies, exclusions and rules within a 'FalconConfig' archive within your authenticated
+Creates groups, policies, exclusions, rules and scripts within a 'FalconConfig' archive within your authenticated
 Falcon environment.
 
-Anything that already exists will be ignored and no existing items will be modified.
-
-The '-Force' parameter forces the script to assign exceptions, policies and rules to existing host groups
-with the same names as the ones provided in the configuration file.
+Anything that already exists will be ignored and no existing items will be modified unless the relevant switch
+parameters are included.
 .PARAMETER Path
-'FalconConfig' archive path
-.PARAMETER Force
-Assign imported items to existing host groups
+FalconConfig archive path
+.PARAMETER AssignExisting
+Assign existing host groups with identical names to imported items
+.PARAMETER ModifyDefault
+Modify specified 'platform_default' policies to match import
+.PARAMETER ModifyExisting
+Modify existing specified items to match import
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory,Position=1)]
         [ValidatePattern('\.zip$')]
         [ValidateScript({
-            if (Test-Path $_) { $true } else { throw "Cannot find path '$_' because it does not exist." }
+            if (Test-Path $_ -PathType Leaf) {
+                $true
+            } else {
+                throw "Cannot find path '$_' because it does not exist or is not a file."
+            }
         })]
         [string]$Path,
-        [switch]$Force
+        [Alias('Force')]
+        [switch]$AssignExisting,
+        [ValidateSet('DeviceControlPolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy',
+            'SensorUpdatePolicy')]
+        [string[]]$ModifyDefault,
+        [ValidateSet('DeviceControlPolicy','FirewallGroup','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup',
+            'Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
+        [string[]]$ModifyExisting
     )
     begin {
-        function Add-ListId ([object]$Item,[string]$Type,[string]$Reason) {
-            $Obj = if ($Reason) {
-                [PSCustomObject]@{ id = $Item.id; reason = $Reason }
-            } else {
-                [PSCustomObject]@{ old_id = $Item.id; new_id = $null }
+        function Add-Result {
+            # Create result object for CSV output
+            param(
+                [ValidateSet('Created','Modified','Ignored')]
+                [string]$Action,
+                [object]$Item,
+                [string]$Type,
+                [string]$Property,
+                [string]$Old,
+                [string]$New,
+                [string]$Comment
+            )
+            $Obj = [PSCustomObject]@{
+                time = Get-Date -Format o
+                api_client_id = $Script:Falcon.ClientId
+                type = $Type
+                id = if ($Action -eq 'Ignored') {
+                    $null
+                } else {
+                    if ($Item.instance_id) { $Item.instance_id } else { $Item.id }
+                }
+                name = if ($Item.value) {
+                    if ($Item.type) { $Item.type,$Item.value -join ':' } else { $Item.value }
+                } else {
+                    $Item.name
+                }
+                platform = if ($Item.platform) {
+                    if ($Item.platform -is [string[]]) { $Item.platform -join ',' } else { $Item.platform }
+                } elseif ($Item.platforms) {
+                    $Item.platforms -join ','
+                } elseif ($Item.platform_name) {
+                    $Item.platform_name
+                } else {
+                    $null
+                }
+                action = $Action
+                property = $Property
+                old_value = $Old
+                new_value = $New
+                comment = $Comment
             }
-            @('platform_name','platforms','platform','type','value','name').foreach{
-                Set-Property $Obj $_ $Item.$_
-            }
-            if ($Obj.reason) {
-                # Add excluded item to list for final output
-                $Config.Excluded.$Type.Add($Obj)
-            } else {
-                # Capture item 'id' for assignment
-                $Config.Ids.$Type.Add($Obj)
+            $Config.Result.Add($Obj)
+            if ($Action -eq 'Created') {
+                # Notify when items are created
+                if ($Obj.platform -match ',') {
+                    Write-Host "[Import-FalconConfig] $Action $Type '$($Obj.name)'."
+                } else {
+                    Write-Host "[Import-FalconConfig] $Action $($Obj.platform) $Type '$($Obj.name)'."
+                }
+            } elseif ($Action -eq 'Modified') {
+                # Notify when items are modified
+                if (!$Obj.platform -or $Obj.platform -match ',') {
+                    Write-Host "[Import-FalconConfig] $Action '$Property' for $Type '$($Obj.name)'."
+                } else {
+                    Write-Host "[Import-FalconConfig] $Action '$Property' for $($Obj.platform) $Type '$(
+                        $Obj.name)'."
+                }
             }
         }
         function Compare-ImportData ([string]$Item) {
@@ -156,186 +211,262 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 [string[]]$Compare = @('name','type','value').foreach{ if ($Properties -contains $_) { $_ }}
                 $FilterScript = [scriptblock]::Create((@($Compare).foreach{
                     "`$Config.$($Item).Cid.$($_) -notcontains `$_.$($_)" }) -join ' -and ')
-                Get-ConfigItem $Item Import $FilterScript
+                @($Config.$Item.Import | Where-Object -FilterScript $FilterScript).foreach{ $_ }
+                if ($ModifyExisting -contains $Item) {
+                    # Capture (non-policy) items to modify
+                    $FilterScript = [scriptblock]::Create((@($Compare).foreach{
+                        "`$Config.$($Item).Cid.$($_) -contains `$_.$($_)" }) -join ' -and ')
+                    @($Config.$Item.Import | Where-Object -FilterScript $FilterScript).foreach{
+                        $Config.$Item.Modify.Add($_)
+                    }
+                }
             } elseif ($Config.$Item.Import) {
                 # Output all items
-                @($Config.$Item.Import).foreach{
-                    Write-Verbose "[Compare-ImportData] $($Item).Import: $($_.id)"
-                    $_
+                @($Config.$Item.Import).foreach{ $_ }
+            }
+        }
+        function Compare-Setting ([object]$New,[object]$Old,[string]$Type,[string]$Property,[switch]$Result) {
+            if ($Type -match 'Policy$') {
+                # Compare modified policy settings
+                [object[]]$NewArr = if ($New.prevention_settings) {
+                    $New.prevention_settings
+                } else {
+                    $New.settings
+                }
+                [object[]]$OldArr = if ($Old.prevention_settings) {
+                    $Old.prevention_settings
+                } else {
+                    $Old.settings
+                }
+                if ($OldArr) {
+                    foreach ($Item in $NewArr) {
+                        if ($Item.value.PSObject.Properties.Name -eq 'enabled') {
+                            if ($OldArr.Where({ $_.id -eq $Item.id }).value.enabled -ne $Item.value.enabled) {
+                                if ($Result) {
+                                    # Capture modified setting result
+                                    Add-Result Modified $New $Type $Item.id ($OldArr.Where({ $_.id -eq
+                                        $Item.id }).value.enabled) $Item.value.enabled
+                                } else {
+                                    # Output setting to be modified
+                                    $Item | Select-Object id,value
+                                }
+                            }
+                        } else {
+                            foreach ($Name in $Item.value.PSObject.Properties.Name) {
+                                if ($OldArr.Where({ $_.id -eq $Item.id }).value.$Name -ne $Item.value.$Name) {
+                                    if ($Result) {
+                                        # Capture modified setting result
+                                        $OldValue = @(($OldArr | Where-Object {
+                                            $_.id -eq $Item.id }).value.PSObject.Properties).foreach{
+                                            $_.Name,$_.Value -join ':' } -join ','
+                                        $NewValue =  @($Item.value.PSObject.Properties).foreach{
+                                            $_.Name,$_.Value -join ':' } -join ','
+                                        Add-Result Modified $New $Type $Item.id $OldValue $NewValue
+                                    } else {
+                                        # Output setting to be modified
+                                        $Item | Select-Object id,value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    # Output all new settings
+                    $NewArr | Select-Object id,value
+                }
+            } elseif ($Result) {
+                # Compare other modified item properties
+                if ($Property -eq 'field_values') {
+                    foreach ($Name in $New.$Property.name) {
+                        # Track 'field_values' for IoaRule for each modified value
+                        $OldValue = ($Old.$Property | Where-Object { $_.name -eq $Name }).values |
+                            ConvertTo-Json -Compress
+                        $NewValue = ($New.$Property | Where-Object { $_.name -eq $Name }).values |
+                            ConvertTo-Json -Compress
+                        if ($NewValue -ne $OldValue) { Add-Result Modified $New $Type $Name $OldValue $NewValue }
+                    }
+                } elseif ($Property) {
+                    if ($New.$Property -ne $Old.$Property) {
+                        Add-Result Modified $New $Type $Property $Old.$Property $New.$Property
+                    }
+                } else {
+                    @($New.PSObject.Properties.Name).Where({ $_ -notmatch '^(id|comment)$' }).foreach{
+                        if ($New.$_ -ne $Old.$_) { Add-Result Modified $New $Type $_ $Old.$_ $New.$_ }
+                    }
                 }
             }
         }
-        function Get-CidValue ([string]$Item) {
-            try {
-                # Retrieve existing configurations from CID, excluding 'platform_default'
-                Write-Host "[Import-FalconConfig] Retrieving '$Item'..."
-                $Param = @{ Detailed = $true; All = $true }
-                if ($Item -match 'Policy$') { $Param['Filter'] = "name:!'platform_default'" }
-                & "Get-Falcon$($Item)" @Param
-            } catch {
-                throw $_
+        function Compress-Property ([object]$Object) {
+            # Remove unnecessary properties and values
+            if ($Object.applied_globally -eq $true -and $Object.PSObject.Properties.Name -contains 'groups') {
+                Set-Property $Object groups @('all')
             }
-        }
-        function Get-ConfigItem ([string]$Item,[string]$Type,[scriptblock]$FilterScript) {
-            @($Config.$Item.$Type | Where-Object -FilterScript $FilterScript).foreach{
-                Write-Verbose "[Get-ConfigItem] $($Item).$($Type): $($_.id)"
-                $_
+            if ($Object.prevention_settings.settings) {
+                [object[]]$Object.prevention_settings = $Object.prevention_settings.settings |
+                    Select-Object id,value
             }
+            if ($Object.settings.settings) {
+                [object[]]$Object.settings = $Object.settings.settings | Select-Object id,value
+            }
+            if ($Object.groups.id) { [string[]]$Object.groups = $Object.groups.id }
+            if ($Object.rule_group.id) { [string[]]$Object.rule_group = $Object.rule_group.id }
+            if ($Object.ioa_rule_groups.id) { [string[]]$Object.ioa_rule_groups = $Object.ioa_rule_groups.id }
+            return $Object
         }
-        function Import-ConfigData ($FilePath) {
+        function Import-ConfigData ([string]$FilePath) {
             # Load 'FalconConfig' archive into memory
-            $Output = @{ Excluded = @{}; Ids = @{}}
+            [hashtable]$Output = @{ Ids = @{}; Result = [System.Collections.Generic.List[object]]@() }
             $ByteStream = if ($PSVersionTable.PSVersion.Major -ge 6) {
-                Get-Content -Path $FilePath -AsByteStream
+                Get-Content $FilePath -AsByteStream
             } else {
-                Get-Content -Path $FilePath -Encoding Byte -Raw
+                Get-Content $FilePath -Encoding Byte -Raw
             }
             [System.Reflection.Assembly]::LoadWithPartialName('System.IO.Compression') | Out-Null
             $FileStream = New-Object System.IO.MemoryStream
             $FileStream.Write($ByteStream,0,$ByteStream.Length)
             $ConfigArchive = New-Object System.IO.Compression.ZipArchive($FileStream)
             [string[]]$Msg = foreach ($FullName in $ConfigArchive.Entries.FullName) {
-                # Import Json, filter to required properties, add to output, then output name for notification
+                # Import Json, filter to required properties, add to output and notify
                 $Filename = $ConfigArchive.GetEntry($FullName)
                 $Item = ($FullName | Split-Path -Leaf).Split('.')[0]
-                $Import = ConvertFrom-Json -InputObject ((New-Object System.IO.StreamReader(
-                    $Filename.Open())).ReadToEnd())
-                $Import = $Import | Select-Object $ConfigFields.$Item.Import
-                $Output[$Item] = @{ Import = $Import }
-                @('Excluded','Ids').foreach{ $Output.$_[$Item] = [System.Collections.Generic.List[object]]@() }
+                $Import = ConvertFrom-Json (New-Object System.IO.StreamReader($Filename.Open())).ReadToEnd()
+                $Output[$Item] =  @{ Import = $Import; Modify = [System.Collections.Generic.List[object]]@() }
+                $Output.Ids[$Item] = [System.Collections.Generic.List[object]]@()
                 $Item
             }
             if ($FileStream) { $FileStream.Dispose() }
             if ($Msg) { Write-Host "[Import-FalconConfig] Imported from $($FilePath): $($Msg -join ', ')." }
             $Output
         }
-        function New-ResultObject ([object]$Item,[string]$Type) {
-            if ($Item -and $Type) {
-                # Create object for CSV output
-                [PSCustomObject]@{
-                    status = if ($Item.reason) { 'Excluded' } else { 'Created' }
-                    type = $Type
-                    id = if ($Item.reason -eq 'Excluded') {
-                        # Exclude 'id' when item has been excluded
-                        $null
-                    } elseif ($Item.instance_id) {
-                        $Item.instance_id
-                    } else {
-                        $Item.id
-                    }
-                    platform = if ($Item.platform_name) {
-                        $Item.platform_name
-                    } elseif ($Item.platforms) {
-                        $Item.platforms -join ','
-                    } elseif ($Item.platform) {
-                        if ($Item.platform -is [array]) { $Item.platform -join ',' } else { $Item.platform }
-                    } else {
-                        $null
-                    }
-                    name = if ($Item.type -and $Item.value) {
-                        "$($Item.type):$($Item.value)"
-                    } elseif ($Item.value) {
-                        $Item.value
-                    } else {
-                        $Item.name
-                    }
-                    reason = if ($Item.reason) { $Item.reason } else { $null }
+        function Invoke-PolicyAction ([string]$Type,[string]$Action,[string]$PolicyId,[string]$GroupId) {
+            try {
+                # Perform an action on a policy and output result
+                if ($GroupId) {
+                    $PolicyId | & "Invoke-Falcon$($Type)Action" -Name $Action -GroupId $GroupId
+                } else {
+                    $PolicyId | & "Invoke-Falcon$($Type)Action" -Name $Action
                 }
+            } catch {
+                Write-Error $_
             }
         }
-        function Update-ListId ([object]$Item,[string]$Type) {
+        function Submit-Group ([string]$Policy,[string]$Property,[object]$Obj,[object]$Cid) {
+            [string]$Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
+            [string]$Group = if ($Property -eq 'ioa_rule_groups') { 'IoaGroup' } else { 'HostGroup' }
+            $Target = if ($Cid) { $Cid } else { $Obj }
+            $Req = foreach ($Id in $Obj.$Property) {
+                [object]$Match = $Config.Ids.$Group | Where-Object { $_.old_id -eq $Id }
+                if ($Match -and $Target.$Property -notcontains $Match.new_id) {
+                    @(Invoke-PolicyAction $Policy $Invoke $Target.id $Match.new_id).foreach{ $_ }
+                }
+            }
+            if ($Req) {
+                Add-Result Modified $Req[-1] $Policy $Property ($Target.$Property -join ',') (
+                    $Req[-1].$Property.id -join ',')
+            }
+        }
+        function Update-Id ([object]$Item,[string]$Type) {
             if ($Config.Ids.$Type) {
-                # Update 'Ids' with 'new_id'
+                # Add 'new_id' to 'Ids'
                 [string[]]$Compare = @('platform_name','platform','type','value','name').foreach{
                     if ($Item.$_) { $_ }
                 }
                 [string]$Filter = (@($Compare).foreach{"`$_.$($_) -eq '$($Item.$_)'" }) -join ' -and '
                 $FilterScript = [scriptblock]::Create($Filter)
-                $Config.Ids.$Type | Where-Object -FilterScript $FilterScript | ForEach-Object {
-                    $_.new_id = $Item.id
+                @($Config.Ids.$Type | Where-Object -FilterScript $FilterScript).foreach{
+                    $_.new_id = if ($Item.family) { $Item.family } else { $Item.id }
                 }
             }
         }
         # Convert 'Path' to absolute and set 'OutputFile'
-        $ArchivePath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
-        $ForceEnabled = if ($PSBoundParameters.Force) { $true } else { $false }
-        $OutputFile = Join-Path (Get-Location).Path "FalconConfig_$(Get-Date -Format FileDateTime).csv"
+        [string]$ArchivePath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
+        [string]$OutputFile = Join-Path (Get-Location).Path "FalconConfig_$(Get-Date -Format FileDateTime).csv"
+        [string]$UserAgent = (Show-FalconModule).UserAgent
     }
     process {
-        # Create 'ConfigData', import configuration files and create object to contain 'id' values for comparison
-        $Config = Import-ConfigData -FilePath $ArchivePath
+        # Import configuration files and capture id values for comparison
+        $Config = Import-ConfigData $ArchivePath
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import })) {
-            foreach ($i in $Pair.Value.Import) {
-                # Capture relevant assignment detail for imported items
-                Add-ListId $i $Pair.Key
-                if ($Pair.Key -match '^(Ml|Sv)Exclusion$' -and $i.applied_globally -eq $true) {
-                    # Set 'groups' to 'all' for global exclusion
-                    [string[]]$i.groups = 'all'
+            foreach ($Import in $Pair.Value.Import) {
+                $Import = Compress-Property $Import
+                @($Import | Select-Object name,platform,platforms,platform_name,type,value).foreach{
+                    $Id = if ($Import.family) { $Import.family } else { $Import.id }
+                    Set-Property $_ old_id $Id
+                    Set-Property $_ new_id $null
+                    $Config.Ids.($Pair.Key).Add($_)
                 }
-                # Filter 'groups' to 'id' values
-                if ($i.groups.id) { [string[]]$i.groups = $i.groups.id }
-                # Filter 'rule_group' to 'id' values
-                if ($i.rule_group.id) { [string[]]$i.rule_group = $i.rule_group.id }
-                # Filter 'ioa_rule_groups' to 'id' values
-                if ($i.ioa_rule_groups.id) { [string[]]$i.ioa_rule_groups = $i.ioa_rule_groups.id }
             }
         }
-        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(Ids|Excluded)$' })) {
-            # Retrieve existing items from CID
-            $Pair.Value['Cid'] = [object[]](Get-CidValue $Pair.Key)
-            if ($Pair.Value.Cid -and $ForceEnabled -eq $true) {
-                # Add existing item 'ids' for assignment when '-Force' is enabled
-                foreach ($i in $Pair.Value.Cid) { Update-ListId $i $Pair.Key }
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(Ids|Result)$' })) {
+            # Retrieve existing items from CID and update their id values
+            $Pair.Value['Cid'] = try {
+                Write-Host "[Import-FalconConfig] Retrieving '$($Pair.Key)'..."
+                @(& "Get-Falcon$($Pair.Key)" -Detailed -All).foreach{
+                    Update-Id $_ $Pair.Key
+                    Compress-Property $_
+                }
+            } catch {
+                throw $_
             }
             if ($Pair.Key -match 'Policy$') {
-                $Pair.Value.Import = foreach ($i in $Pair.Value.Import) {
-                    # Keep only non-existing policy items for each OS under 'Import'
-                    if (!($Config.($Pair.Key).Cid.Where({ $_.platform_name -eq $i.platform_name -and
-                        $_.name -eq $i.name }))) { $i } else { Add-ListId $i $Pair.Key Exists }
-                }
-            } else {
-                if ($Pair.Key -ne 'FirewallRule') {
-                    # Track excluded items for final output, excluding 'FirewallRule' which can be duplicated
-                    foreach ($i in $Pair.Value.Import) {
-                        [string]$Reason = if ($i.deleted -and $i.deleted -eq $true) {
-                            'Deleted'
-                        } elseif ($i.type -and $i.value -and $Pair.Value.Cid.Where({ $_.type -eq $i.type -and
-                        $_.value -eq $i.value })) {
-                            'Exists'
-                        } elseif ($i.value -and $Pair.Value.Cid.Where({ $_.value -eq $i.value })) {
-                            'Exists'
-                        } elseif ($Pair.Value.Cid.Where({ $_.name -eq $i.name })) {
-                            'Exists'
+                $Pair.Value.Import = foreach ($Policy in $Pair.Value.Import) {
+                    if (!($Config.($Pair.Key).Cid | Where-Object { $_.platform_name -eq $Policy.platform_name -and
+                    $_.name -eq $Policy.name })) {
+                        # Keep only missing policy items for each OS under 'Import'
+                        $Policy
+                    } else {
+                        # Add to relevant 'Modify' list or add result as 'Ignored'
+                        if (($ModifyDefault -contains $Pair.Key -and $Policy.name -eq 'platform_default') -or
+                        ($ModifyExisting -contains $Pair.Key -and $Policy.name -ne 'platform_default')) {
+                            $Pair.Value.Modify.Add($Policy)
+                        } elseif ($Policy.name -ne 'platform_default') {
+                            Add-Result Ignored $Policy $Pair.Key -Comment Exists
                         }
-                        if ($Reason) { Add-ListId $i $Pair.Key $Reason }
                     }
-                    # Remove excluded items from 'Import'
-                    $Pair.Value.Import = Compare-ImportData $Pair.Key
                 }
+            } elseif ($Pair.Key -ne 'FirewallRule') {
+                foreach ($Item in $Pair.Value.Import) {
+                    # Track 'Ignored' items for final output
+                    [string]$Comment = if ($Item.deleted -eq $true) {
+                        'Deleted'
+                    } elseif ($Item.type -and $Item.value -and ($Pair.Value.Cid | Where-Object { $_.type -eq
+                    $Item.type -and $_.value -eq $Item.value })) {
+                        'Exists'
+                    } elseif ($Item.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $Item.value })) {
+                        'Exists'
+                    } elseif ($Pair.Value.Cid | Where-Object { $_.name -eq $Item.name }) {
+                        'Exists'
+                    }
+                    if ($Comment -and $ModifyExisting -notcontains $Pair.Key) {
+                        Add-Result Ignored $Item $Pair.Key -Comment $Comment
+                    }
+                }
+                # Remove items that will not be created from 'Import'
+                $Pair.Value.Import = Compare-ImportData $Pair.Key
             }
-            if ($Pair.Key -eq 'SensorUpdatePolicy' -and $Pair.Value.Import) {
+            if ($Pair.Key -eq 'SensorUpdatePolicy' -and ($Pair.Value.Import -or $Pair.Value.Modify)) {
                 # Retrieve available sensor build versions to update 'tags'
-                $Builds = try {
+                [object[]]$Builds = try {
                     Write-Host "[Import-FalconConfig] Retrieving available sensor builds..."
                     Get-FalconBuild
                 } catch {
                     throw "Failed to retrieve available sensor builds for '$(
                         $Pair.Key)' import. Verify 'Sensor Update Policies: Write' permission."
                 }
-                foreach ($i in $Pair.Value.Import) {
+                foreach ($Item in @($Pair.Value.Import + $Pair.Value.Modify)) {
                     # Update tagged builds with current tagged build versions
-                    if ($i.settings.build -match '^\d+\|') {
-                        $Tag = ($i.settings.build -split '\|',2)[-1]
-                        $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
-                            $i.platform_name }).build
-                        if ($i.settings.build -ne $Current) { $i.settings.build = $Current }
+                    if ($Item.settings.build -match '^\d+\|') {
+                        [string]$Tag = ($Item.settings.build -split '\|',2)[-1]
+                        [string]$Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
+                            $Item.platform_name }).build
+                        if ($Item.settings.build -ne $Current) { $Item.settings.build = $Current }
                     }
-                    if ($i.settings.variants) {
+                    if ($Item.settings.variants) {
                         # Update tagged 'variant' builds with current tagged build versions
-                        @($i.settings.variants | Where-Object { $_.build }).foreach{
-                            $Tag = ($_.build -split '\|',2)[-1]
-                            $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
-                                $i.platform_name }).build
+                        @($Item.settings.variants | Where-Object { $_.build }).foreach{
+                            [string]$Tag = ($_.build -split '\|',2)[-1]
+                            [string]$Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and
+                                $_.platform -eq $Item.platform_name }).build
                             if ($_.build -ne $Current) { $_.build = $Current }
                         }
                     }
@@ -343,216 +474,338 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             }
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -eq 'HostGroup' -and $_.Value.Import })) {
-            # Create host groups
-            ($Pair.Value)['Created'] = $Pair.Value.Import | & "New-Falcon$($Pair.Key)"
-            foreach ($Group in $Pair.Value.Created) {
-                # Notify and capture new 'id' values
-                Write-Host "[Import-FalconConfig] Created $($Pair.Key) '$($Group.name)'."
-                Update-ListId $Group $Pair.Key
+            foreach ($HostGroup in ($Pair.Value.Import | & "New-Falcon$($Pair.Key)")) {
+                # Create HostGroup
+                Update-Id $HostGroup $Pair.Key
+                Add-Result Created $HostGroup $Pair.Key
+            }
+            [void]$Pair.Value.Remove('Import')
+        }
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Import })) {
+            foreach ($Policy in ($Pair.Value.Import | & "New-Falcon$($Pair.Key)")) {
+                # Create Policy
+                Update-Id $Policy $Pair.Key
+                Add-Result Created $Policy $Pair.Key
+                @($Pair.Value.Import | Where-Object { $_.name -eq $Policy.name -and $_.platform_name -eq
+                $Policy.platform_name }).foreach{
+                    # Add Policy to 'Modify' list for settings and assignment
+                    $Config.($Pair.Key).Modify.Add($Policy)
+                }
+            }
+            [void]$Pair.Value.Remove('Import')
+        }
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import -or $_.Value.Modify })) {
+            # Update 'Import' and 'Modify' with current host group ids
+            @('Import','Modify').foreach{
+                foreach ($Item in $Pair.Value.$_) {
+                    @('groups','host_groups').foreach{
+                        foreach ($OldId in $Item.$_) {
+                            [string]$NewId = ($Config.Ids.HostGroup | Where-Object { $_.old_id -eq $OldId }).new_id
+                            if ($NewId) { [string[]]$Item.$_ = $Item.$_ -replace $OldId,$NewId }
+                        }
+                    }
+                }
             }
         }
-        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(HostGroup|FirewallRule)$' -and
-        $_.Value.Import })) {
-            @($Pair.Value.Import).foreach{
-                if ($_.groups -or $_.host_groups) {
-                    # Update host group 'id' values
-                    foreach ($OldId in $Config.Ids.HostGroup.old_id) {
-                        $NewId = ($Config.Ids.HostGroup | Where-Object { $_.old_id -eq $OldId }).new_id
-                        if ($NewId -and $_.groups) {
-                            [string[]]$_.groups = $_.groups -replace $OldId,$NewId
-                        } elseif ($NewId -and $_.host_groups) {
-                            [string[]]$_.host_groups = $_.host_groups -replace $OldId,$NewId
-                        }
-                    }
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -ne 'FirewallRule' -and $_.Value.Import })) {
+            if ($Pair.Key -eq 'Ioc') {
+                @($Pair.Value.Import | & "New-Falcon$($Pair.Key)").foreach{
+                    # Create Ioc
+                    Update-Id $_ $Pair.Key
+                    Add-Result Created $_ $Pair.Key
                 }
-            }
-            $Pair.Value['Created'] = if ($Pair.Key -eq 'FirewallGroup') {
-                foreach ($i in $Pair.Value.Import) {
-                    # Create FirewallGroup using properties from 'Import'
-                    $FwGroup = $i | Select-Object name,enabled,description,comment,rule_ids
-                    if ($FwGroup.rule_ids) {
-                        # Select rule from Import using 'family' as 'id' value
-                        [object[]]$Rules = foreach ($i in $FwGroup.rule_ids) {
-                            $Config.FirewallRule.Import | Where-Object { $_.family -eq $i -and
-                                $_.deleted -eq $false }
-                        }
-                        # Trim rule names to 64 characters
-                        @($Rules).foreach{ if ($_.name.length -gt 64) { $_.name = ($_.name).SubString(0,63) }}
-                        if ($Rules) {
-                            # Add 'rules' and remove 'rule_ids' from object
-                            Set-Property $FwGroup rules $Rules
-                            $FwGroup.PSObject.Properties.Remove('rule_ids')
-                        }
-                    }
-                    @($FwGroup | & "New-Falcon$($Pair.Key)").foreach{
-                        # Append new 'id' to object, capture new 'id' and return result
-                        Set-Property $FwGroup id $_
-                        $FwGroup
-                    }
-                }
-            } elseif ($Pair.Key -eq 'IoaGroup') {
-                foreach ($i in $Pair.Value.Import) {
-                    # Create IoaGroup
-                    $IoaGroup = $i | & "New-Falcon$($Pair.Key)"
-                    if ($IoaGroup) {
-                        if ($i.rules) {
-                            # Create IoaRules
-                            $IoaGroup.rules = @($i.rules).foreach{
-                                $_.rulegroup_id = $IoaGroup.id
-                                $IoaRule = $_ | New-FalconIoaRule
-                                if ($IoaRule.enabled -eq $false -and $_.enabled -eq $true) {
-                                    # Enable created rule using status from 'Import'
-                                    $IoaRule.enabled = $true
+            } else {
+                foreach ($Item in $Pair.Value.Import) {
+                    if ($Pair.Key -eq 'FirewallGroup') {
+                        [object]$FwGroup = $Item | Select-Object name,enabled,description,comment,rule_ids
+                        if ($FwGroup) {
+                            if ($FwGroup.rule_ids) {
+                                # Select FirewallRule from import using 'family' as 'id' value
+                                [object[]]$Rules = foreach ($Id in $FwGroup.rule_ids) {
+                                    $Config.FirewallRule.Import | Where-Object { $_.family -eq $Id -and
+                                        $_.deleted -eq $false }
                                 }
-                                $IoaRule
+                                @($Rules).foreach{
+                                    # Trim rule names to 64 characters and use 'rules' as 'rule_ids'
+                                    if ($_.name.length -gt 64) { $_.name = ($_.name).SubString(0,63) }
+                                }
+                                if ($Rules) {
+                                    Set-Property $FwGroup rules $Rules
+                                    [void]$Group.PSObject.Properties.Remove('rule_ids')
+                                }
                             }
-                            if ($IoaGroup.rules.enabled -eq $true) {
-                                @($IoaGroup | Edit-FalconIoaRule).foreach{
-                                    @($_.rules).Where({ $_.enabled -eq $true }).foreach{
-                                        # Notify of enabled rules
-                                        Write-Host "[Import-FalconConfig] Enabled IoaRule '$($_.name)'."
+                            @($FwGroup | & "New-Falcon$($Pair.Key)").foreach{
+                                # Create FirewallGroup
+                                Set-Property $FwGroup id $_
+                                Update-Id $FwGroup $Pair.Key
+                                Add-Result Created $FwGroup $Pair.Key
+                            }
+                        }
+                    } elseif ($Pair.Key -eq 'IoaGroup') {
+                        # Create IoaGroup
+                        [object]$IoaGroup = $Item | & "New-Falcon$($Pair.Key)"
+                        if ($IoaGroup) {
+                            Update-Id $IoaGroup $Pair.Key
+                            Add-Result Created $IoaGroup $Pair.Key
+                            if ($Item.rules) {
+                                # Create IoaRule
+                                [object[]]$IoaGroup.rules = foreach ($Rule in $Item.rules) {
+                                    $Rule.rulegroup_id = $IoaGroup.id
+                                    $Req = try { $Rule | New-FalconIoaRule } catch { Write-Error $_ }
+                                    if ($Req) {
+                                        Add-Result Created $Req IoaRule
+                                        if ($Req.enabled -eq $false -and $Rule.enabled -eq $true) {
+                                            $Req.enabled = $true
+                                        }
+                                        $Req
+                                    }
+                                }
+                                if ($IoaGroup.rules.enabled -eq $true) {
+                                    @($IoaGroup | Edit-FalconIoaRule).foreach{
+                                        @($_.rules).Where({ $_.enabled -eq $true }).foreach{
+                                            # Enable IoaRule
+                                            Add-Result Modified $_ IoaRule enabled $false $_.enabled
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if ($i.enabled -eq $true -and $IoaGroup.enabled -eq $false) {
-                            $IoaGroup.enabled = $true
-                            $IoaGroup = @($IoaGroup | & "Edit-Falcon$($Pair.Key)").foreach{
-                                # Enable IoaGroup and return result
-                                Write-Host "[Import-FalconConfig] Enabled $($Pair.Key) '$($_.name)'."
-                                $_
+                            if ($Item.enabled -eq $true -and $IoaGroup.enabled -ne $true) {
+                                @(& "Edit-Falcon$($Pair.Key)" -Id $IoaGroup.id -Enabled $true).foreach{
+                                    # Enable IoaGroup
+                                    Add-Result Modified $_ $Pair.Key enabled $false $_.enabled
+                                }
                             }
                         }
-                        $IoaGroup
-                    }
-                }
-            } elseif ($Pair.Key -eq 'Script') {
-                foreach ($i in $Pair.Value.Import) {
-                    # Create scripts
-                    $Script = $i | & "Send-Falcon$($Pair.Key)"
-                    if ($Script) { $i | Select-Object name,platform }
-                }
-            } else {
-                # Create exclusions, IOCs and policies
-                $Pair.Value.Import | & "New-Falcon$($Pair.Key)"
-            }
-            foreach ($i in $Pair.Value.Created) {
-                # Output notification of created item(s)
-                $Name = if ($i.type -and $i.value) {
-                    @($i.type,$i.value) -join ':'
-                } elseif ($i.value) {
-                    $i.value
-                } else {
-                    $i.name
-                }
-                if ($i.platform_name -or $i.platform) {
-                    @('platform','platform_name').foreach{
-                        if ($i.$_) {
-                            Write-Host "[Import-FalconConfig] Created $($i.$_) $($Pair.Key) '$Name'."
+                    } elseif ($Pair.Key -eq 'Script') {
+                        # Create Script
+                        @($Item | & "Send-Falcon$($Pair.Key)").foreach{
+                            Add-Result Created ($Item | Select-Object name,platform) $Pair.Key
+                        }
+                    } elseif ($Pair.Key -match '^((Ioa|Ml|Sv)Exclusion)$') {
+                        # Create Exclusion
+                        @($Item | & "New-Falcon$($Pair.Key)").foreach{
+                            Update-Id $_ $Pair.Key
+                            Add-Result Created $_ $Pair.Key
                         }
                     }
-                } else {
-                    Write-Host "[Import-FalconConfig] Created $($Pair.Key) '$Name'."
                 }
-                # Capture new 'id' for assignment
-                Update-ListId $i $Pair.Key
+            }
+            [void]$Pair.Value.Remove('Import')
+        }
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch 'Policy$' -and $_.Value.Modify })) {
+            [string[]]$Select = switch ($Pair.Key) {
+                # Select required properties for comparison
+                'FirewallGroup' { 'name','enabled','rule_ids' }
+                'HostGroup' { 'group_type','name','assignment_rule' }
+                'IoaGroup' { 'enabled','name','platform','rules' }
+                'IoaExclusion' {
+                    'name','pattern_id','pattern_name','cl_regex','ifn_regex','groups',
+                        'applied_globally'
+                }
+                'Ioc' {
+                    'applied_globally','action','deleted','expiration','host_groups','mobile_action',
+                        'platforms','severity','tags','type','value'
+                }
+                'MlExclusion' { 'value','excluded_from','groups','applied_globally' }
+                'Script' { 'platform','permission_type','name','content' }
+                'SvExclusion' { 'value','groups','applied_globally' }
+            }
+            if ($Select) {
+                [object[]]$EditList = foreach ($Item in ($Pair.Value.Modify | Select-Object @($Select + 'id'))) {
+                    # Compare each 'Modify' item against CID (excluding non-dynamic HostGroup)
+                    [string[]]$Compare = @('name','type','value').foreach{ if ($Select -contains $_) { $_ }}
+                    [string]$Filter = (@($Compare).foreach{ "`$_.$($_) -eq `$Item.$($_)" }) -join ' -and '
+                    [object]$Cid = $Config.($Pair.Key).Cid | Select-Object $Select | Where-Object -FilterScript (
+                        [scriptblock]::Create($Filter))
+                    if ($Cid) {
+                        [System.Collections.Generic.List[string]]$Modify = @('id')
+                        @($Select).Where({ $_ -ne 'id' }).foreach{
+                            [object]$Diff = if (($Item.$_ -or $Item.$_ -is [boolean]) -and ($Cid.$_ -or
+                            $Cid.$_ -is [boolean])) {
+                                # Compare properties that exist in both 'Modify' and CID
+                                if ($Pair.Key -eq 'IoaGroup' -and $_ -eq 'rules') {
+                                    foreach ($Rule in $Item.$_) {
+                                        # Evaluate each IoaRule
+                                        [object]$CidRule = $Cid.$_ | Where-Object { $_.ruletype_id -eq
+                                            $Rule.ruletype_id -and $_.name -eq $Rule.name -and $Rule.deleted -ne
+                                            $true }
+                                        [string[]]$RuleDiff = if ($CidRule) {
+                                            @('enabled','pattern_severity','action_label').foreach{
+                                                if (Compare-Object $Rule.$_ $CidRule.$_) { $_ }
+                                            }
+                                            foreach ($FieldValue in $Rule.field_values) {
+                                                # Evaluate 'field_value' as a Json string for each IoaRule
+                                                [object]$CidFieldValue = $CidRule.field_values | Where-Object {
+                                                    $_.name -eq $FieldValue.name -and $_.type -eq
+                                                    $FieldValue.type }
+                                                if ($CidFieldValue) {
+                                                    if (Compare-Object ($FieldValue.values | ConvertTo-Json) (
+                                                    $CidFieldValue.values | ConvertTo-Json)) {
+                                                        'field_values'
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if ($RuleDiff) {
+                                            # Copy existing rule and modify properties
+                                            [object]$RuleEdit = $CidRule.PSObject.Copy()
+                                            @($RuleDiff).foreach{ $RuleEdit.$_ = $Rule.$_ }
+                                            @(Edit-FalconIoaRule -RuleUpdate $RuleEdit -RuleGroupId (
+                                            $Item.id)).foreach{
+                                                @($RuleDiff).foreach{
+                                                    # Capture result for each updated setting against original
+                                                    Compare-Setting $RuleEdit $CidRule IoaRule $_ -Result
+                                                }
+                                            }
+                                        }
+                                    }
+                                } elseif ($Pair.Key -eq 'FirewallGroup' -and $_ -eq 'rule_ids') {
+                                    <#
+                                    if ($Item.rule_ids) {
+                                        # Select FirewallRule from import using 'family' as 'id' value
+                                        [object[]]$FwRule = foreach ($Rule in $Item.rule_ids) {
+                                            $Config.FirewallRule.Import | Where-Object { $_.family -eq $Rule -and
+                                                $_.deleted -eq $false }
+                                        }
+                                        if ($FwRule) {
+                                            # Evaluate rules for modification
+                                        }
+                                    }
+                                    #>
+                                } else {
+                                    Compare-Object $Item.$_ $Cid.$_
+                                }
+                            }
+                            if ($Diff -or (($Item.$_ -or $Item.$_ -is [boolean]) -and (!$Cid.$_ -and
+                            $Cid.$_ -isnot [boolean]))) {
+                                # Output properties that differ, or are not present in CID
+                                $Modify.Add($_)
+                            }
+                        }
+                        # Output items with properties to be modified and remove from 'Modify' list
+                        if ($Modify.Count -gt 1) { $Item | Select-Object $Modify }
+                    }
+                }
+                if ($EditList) {
+                    foreach ($Edit in $EditList) {
+                        # Update with current 'id' and 'comment' when appropriate
+                        Set-Property $Edit id ($Config.Ids.($Pair.Key) | Where-Object { $_.old_id -eq
+                            $Edit.id }).new_id
+                        if ($Pair.Key -ne 'HostGroup') {
+                            Set-Property $Edit comment ($UserAgent,"Import-FalconConfig" -join ': ')
+                        }
+                    }
+                    if ($Pair.Key -eq 'FirewallGroup') {
+                        [hashtable[]]$DiffOp = @($EditList).foreach{
+                            if ($null -ne $_.enabled) {
+                                # Create 'DiffOperations' for FirewallGroup changes
+                                @{ op = 'replace'; path = "/enabled"; value = $_.enabled }
+                            }
+                        }
+                        if ($DiffOp) {
+                            # Modify FirewallGroup
+                            $Req = $EditList | Edit-FalconFirewallGroup -DiffOperation $DiffOp
+                            if ($Req) {
+                                Compare-Setting $Item ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
+                                    $Item.id }) $Pair.Key -Result
+                            }
+                        }
+                    } else {
+                        foreach ($Item in ($EditList | & "Edit-Falcon$($Pair.Key)")) {
+                            foreach ($Result in ($EditList | Where-Object { $_.id -eq $Item.id })) {
+                                @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne
+                                'comment' }).foreach{
+                                    # Modify item and capture result
+                                    Compare-Setting $Item ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
+                                        $Item.id }) $Pair.Key $_ -Result
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach ($Item in $Pair.Value.Modify) {
+                    if (($EditList -and $EditList.id -notcontains $Item.id) -or !$EditList) {
+                        # Record result for items that don't need modification
+                        [string]$Comment = if ($Pair.Key -eq 'HostGroup' -and $Item.group_type -ne 'dynamic') {
+                            'Static'
+                        } else {
+                            'Identical'
+                        }
+                        Add-Result Ignored $Item $Pair.Key -Comment $Comment
+                    }
+                }
+                [void]$Pair.Value.Remove('Modify')
             }
         }
-        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Created })) {
-            foreach ($Policy in $Pair.Value.Created) {
-                # Copy 'old' policy for replicating settings and assignment
-                $Clone = $Config.($Pair.Key).Import | Where-Object { $_.name -eq $Policy.name -and
-                    $_.platform_name -eq $Policy.platform_name }
-                $Clone.id = $Policy.id
+        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Modify })) {
+            foreach ($Policy in $Pair.Value.Modify) {
+                # Update policy with current id value and use CID value for comparison
+                [string]$Policy.id = ($Config.Ids.($Pair.Key) | Where-Object { $_.name -eq $Policy.name -and
+                    $_.platform_name -eq $Policy.platform_name }).new_id
+                [object]$Cid = $Config.($Pair.Key).Cid | Where-Object { $_.id -eq $Policy.id }
                 if ($Pair.Key -eq 'FirewallPolicy') {
-                    # Add new policy 'id' to FirewallPolicy settings
-                    if ($Clone.settings.policy_id) { $Clone.settings.policy_id = $Policy.id }
-                    foreach ($OldId in $Config.Ids.FirewallGroup.old_id) {
-                        # Update 'rule_group_ids' with new 'id' values
-                        $NewId = ($Config.Ids.FirewallGroup | Where-Object { $_.old_id -eq $OldId }).new_id
-                        if ($NewId -and $Clone.rule_group_ids) {
-                            [string[]]$_.rule_group_ids = $_.rule_group_ids -replace $OldId,$NewId
+                    if ($Policy.settings.policy_id) { $Policy.settings.policy_id = $Policy.id }
+                    foreach ($Id in $Policy.rule_group_ids) {
+                        # Update 'rule_group_ids' with new id values
+                        [object]$Group = $Config.Ids.FirewallGroup | Where-Object { $_.old_id -eq $Id }
+                        if ($Group -and $Policy.rule_group_ids -contains $Id) {
+                            [string[]]$Policy.rule_group_ids = $Policy.rule_group_ids -replace $Id,$Group.new_id
                         }
                     }
-                    if ($Clone.settings) {
-                        # Apply FirewallPolicy settings
-                        $Settings = $Clone.settings | Edit-FalconFirewallSetting
-                        if ($Settings) {
-                            Set-Property $Policy settings $Clone.settings
-                            Write-Host "[Import-FalconConfig] Applied settings to $($Policy.platform_name) $(
-                                $Pair.Key) '$($Policy.name)'."
+                    if ($Policy.settings) {
+                        # Apply FirewallSetting
+                        @($Policy.settings | Edit-FalconFirewallSetting).foreach{
+                            Set-Property $Policy settings $Policy.settings
                         }
                     }
-                } elseif ($Clone.settings -or $Clone.prevention_settings) {
-                    # Apply settings
-                    $Policy = $Clone | & "Edit-Falcon$($Pair.Key)"
-                    if ($Policy) {
-                        Write-Host "[Import-FalconConfig] Applied settings to $($Policy.platform_name) $(
-                            $Pair.Key) '$($Policy.name)'."
-                    }
-                }
-                if ($Pair.Key -eq 'PreventionPolicy' -and $Clone.ioa_rule_groups) {
-                    # Assign IoaGroup to PreventionPolicy
-                    foreach ($OldId in $Config.Ids.IoaGroup.old_id) {
-                        $NewId = ($Config.Ids.IoaGroup | Where-Object { $_.old_id -eq $OldId }).new_id
-                        if ($NewId) {
-                            $Name = ($Config.Ids.IoaGroup | Where-Object { $_.old_id -eq $OldId }).name
-                            $Policy = $Clone.id | & "Invoke-Falcon$($Pair.Key)Action" 'add-rule-group' $NewId
-                            if ($Policy) {
-                                Write-Host "[Import-FalconConfig] Assigned IoaGroup '$Name' to $(
-                                    $Policy.platform_name) $($Pair.Key) '$($Policy.name)'."
+                } elseif ($Policy.prevention_settings -or $Policy.settings) {
+                    # Compare Policy settings
+                    [object[]]$Setting = Compare-Setting $Policy $Cid $Pair.Key
+                    if ($Setting) {
+                        try {
+                            # Modify Policy
+                            @(& "Edit-Falcon$($Pair.Key)" -Id $Policy.id -Setting $Setting).foreach{
+                                Compare-Setting (Compress-Property $_) $Cid $Pair.Key -Result
                             }
+                        } catch {
+                            Write-Error $_
                         }
                     }
                 }
-                foreach ($NewId in $Clone.groups) {
-                    # Assign HostGroup to policy
-                    $Name = ($Config.Ids.HostGroup | Where-Object { $_.new_id -eq $NewId }).name
-                    if ($Name) {
-                        $Policy = $Clone.id | & "Invoke-Falcon$($Pair.Key)Action" 'add-host-group' $NewId
-                        if ($Policy) {
-                            Write-Host "[Import-FalconConfig] Assigned HostGroup '$Name' to $(
-                                $Policy.platform_name) $($Pair.Key) '$($Policy.name)'."
-                        }
-                    }
+                if ($Policy.ioa_rule_groups) {
+                    # Assign IoaGroup
+                    Submit-Group $Pair.Key ioa_rule_groups $Policy $Cid
                 }
-                if ($Clone.enabled -eq $true) {
-                    # Enable policy
-                    $Policy = $Clone.id | & "Invoke-Falcon$($Pair.Key)Action" enable
-                    if ($Policy) {
-                        Write-Host "[Import-FalconConfig] Enabled $($Policy.platform_name) $($Pair.Key) '$(
-                            $Policy.name)'."
+                if ($Policy.name -ne 'platform_default' -and $Policy.groups) {
+                    # Assign HostGroup
+                    Submit-Group $Pair.Key groups $Policy $Cid
+                }
+                if ($Policy.name -ne 'platform_default' -and $Cid.enabled -ne $Policy.enabled) {
+                    # Enable/disable non-default policies
+                    [string]$Action = if ($Policy.enabled -eq $true) { 'enable' } else { 'disable' }
+                    $Req = Invoke-PolicyAction $Pair.Key $Action $Policy.id
+                    if ($Req) {
+                        Add-Result Modified $Req $Pair.Key enabled $Cid.enabled $Policy.enabled
                     }
                 }
             }
         }
     }
     end {
-        foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Created })) {
-            foreach ($i in $Pair.Value.Created) {
-                # Output created items to CSV
-                $Obj = New-ResultObject $i $Pair.Key
-                try { $Obj | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $Obj }
-            }
-        }
-        foreach ($Pair in $Config.Excluded.GetEnumerator().Where({ $_.Value })) {
-            foreach ($i in $Pair.Value) {
-                # Output excluded items to CSV
-                $Obj = New-ResultObject $i $Pair.Key
-                try { $Obj | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $Obj }
-            }
-        }
-        if ($Config.Values.Created) {
-            foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Cid -and
-            $_.Value.Created })) {
-                foreach ($i in $Pair.Value.Created.platform_name) {
-                    if ($Pair.Value.Cid | Where-Object { $_.platform_name -eq $i }) {
-                        # Output precedence warning (per platform) if existing policies were found in CID
-                        Write-Warning "Existing $i $($Pair.Key) items were found. Verify policy precedence!"
+        if ($Config.Result | Where-Object { $_.action -ne 'Ignored' }) {
+            [object[]]$Existing = $Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match
+                'Policy$' }
+            if ($Existing) {
+                foreach ($Platform in $Existing.platform) {
+                    if ($Config.($_.type).Cid | Where-Object { $_.platform_name -eq $Platform -and $_.name -ne
+                    'platform_default' }) {
+                        # Output warning for existing policy precedence
+                        Write-Warning "Existing $Platform $($_.type) items were found. Verify precedence!"
                     }
                 }
             }
         }
+        @($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
         if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
 }

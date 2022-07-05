@@ -25,13 +25,13 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/reports/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/falconx/entities/report-summaries/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/falconx/queries/reports/v1:get',Position=1)]
@@ -100,11 +100,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/falconx/queries/submissions/v1:get',Position=1)]
@@ -155,7 +155,7 @@ Requires 'Sandbox (Falcon X): Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param()
     process {
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
@@ -202,14 +202,14 @@ Tags to categorize the submission
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Mandatory,Position=1)]
-        [ValidateSet('android','ubuntu16_x64','win7_x64','win7_x86','win10_x64',IgnoreCase=$false)]
+        [ValidateSet('android','macOS_10.15','ubuntu16_x64','win7_x64','win7_x86','win10_x64',IgnoreCase=$false)]
         [Alias('environment_id')]
         [string]$EnvironmentId,
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Sha256,
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=3)]
         [string]$Url,
@@ -266,6 +266,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         } else {
             $PSBoundParameters.EnvironmentId = switch ($PSBoundParameters.EnvironmentId) {
                 'android'      { 200 }
+                'macOS_10.15'  { 400 }
                 'ubuntu16_x64' { 300 }
                 'win7_x64'     { 110 }
                 'win7_x86'     { 100 }
@@ -292,13 +293,13 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/entities/artifacts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/entities/artifacts/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get',Mandatory,Position=1)]
         [string]$Path,
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get')]
         [switch]$Force
@@ -336,7 +337,7 @@ Report identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]

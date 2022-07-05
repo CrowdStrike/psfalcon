@@ -27,7 +27,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Intel
 #>
-    [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -102,7 +102,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Intel
 #>
-    [CmdletBinding(DefaultParameterSetName='/intel/entities/report-files/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/intel/entities/report-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/intel/entities/report-files/v1:get',ValueFromPipelineByPropertyName,
             Position=1)]

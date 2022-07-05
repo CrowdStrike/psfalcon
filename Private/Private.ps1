@@ -280,7 +280,7 @@ function Confirm-Parameter {
             if ($Object.$_) {
                 # Verify that 'ValidValues' contains provided value
                 [string[]]$ValidValues = Get-ValidValues $Command $Endpoint $Parameter
-                if ($Object.$_ -is [string[]]) {
+                if ($Object.$_ -is [array]) {
                     foreach ($Item in $Object.$_) {
                         if ($ValidValues -notcontains $Item) { "'$Item' is not a valid '$_' value. $ObjectString" }
                     }
@@ -312,9 +312,34 @@ function Convert-Rfc3339 {
             (Get-Date).AddHours($Hours),[Xml.XmlDateTimeSerializationMode]::Utc) -replace '\.\d+Z$','Z')"
     }
 }
+function Get-ContainerUrl {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param([switch]$Registry)
+    process {
+        if ($Registry) {
+            # Output 'registry' URL using cached 'Hostname' value
+            $Script:Falcon.Hostname -replace 'api(\.us-2|\.eu-1|laggar\.gcw)?','registry'
+        } else {
+            # Output 'container-upload' URL using cached 'Hostname' value
+            if ($Script:Falcon.Hostname -match 'api\.crowdstrike') {
+                $Script:Falcon.Hostname -replace 'api','container-upload.us-1'
+            } else {
+                $Script:Falcon.Hostname -replace 'api','container-upload'
+            }
+        }
+    }
+}
 function Get-ParamSet {
     [CmdletBinding()]
-    param([string]$Endpoint,[System.Object]$Headers,[System.Object]$Inputs,[System.Object]$Format,[int32]$Max)
+    param(
+        [string]$Endpoint,
+        [System.Object]$Headers,
+        [System.Object]$Inputs,
+        [System.Object]$Format,
+        [int32]$Max,
+        [string]$HostUrl
+    )
     begin {
         # Get baseline switch and endpoint parameters
         $Switches = @{}
@@ -324,7 +349,11 @@ function Get-ParamSet {
             }
         }
         $Base = @{
-            Path = $Script:Falcon.Hostname,$Endpoint.Split(':')[0] -join $null
+            Path = if ($HostUrl) {
+                $HostUrl,$Endpoint.Split(':',2)[0] -join $null
+            } else {
+                $Script:Falcon.Hostname,$Endpoint.Split(':',2)[0] -join $null
+            }
             Method = $Endpoint.Split(':')[1]
             Headers = $Headers
         }
@@ -347,7 +376,11 @@ function Get-ParamSet {
                 # Split 'Query' values into groups
                 $Split = $Switches.Clone()
                 $Split.Add('Endpoint',$Base.Clone())
-                $Split.Endpoint.Path += "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                $Split.Endpoint.Path += if ($Split.Endpoint.Path -match '\?') {
+                    "&$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                } else {
+                    "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+                }
                 $Content.GetEnumerator().Where({ $_.Key -ne 'Query' -and $_.Value }).foreach{
                     # Add values other than 'Query'
                     $Split.Endpoint.Add($_.Key,$_.Value)
@@ -364,7 +397,11 @@ function Get-ParamSet {
                 $Content.GetEnumerator().Where({ $_.Value }).foreach{
                     # Add values other than 'Body.ids'
                     if ($_.Key -eq 'Query') {
-                        $Split.Endpoint.Path += "?$($_.Value -join '&')"
+                        $Split.Endpoint.Path += if ($Split.Endpoint.Path -match '\?') {
+                            "&$($_.Value -join '&')"
+                        } else {
+                            "?$($_.Value -join '&')"
+                        }
                     } elseif ($_.Key -eq 'Body') {
                         ($_.Value).GetEnumerator().Where({ $_.Key -ne 'ids' }).foreach{
                             $Split.Endpoint.Body.Add($_.Key,$_.Value)
@@ -381,7 +418,11 @@ function Get-ParamSet {
             if ($Content) {
                 $Content.GetEnumerator().foreach{
                     if ($_.Key -eq 'Query') {
-                        $Switches.Endpoint.Path += "?$($_.Value -join '&')"
+                        $Switches.Endpoint.Path += if ($Switches.Endpoint.Path -match '\?') {
+                            "&$($_.Value -join '&')"
+                        } else {
+                            "?$($_.Value -join '&')"
+                        }
                     } else {
                         $Switches.Endpoint.Add($_.Key,$_.Value)
                     }
@@ -483,7 +524,7 @@ function Get-RtrResult {
     end { return $Output }
 }
 function Invoke-Falcon {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [string]$Command,
         [string]$Endpoint,
@@ -491,7 +532,9 @@ function Invoke-Falcon {
         [System.Object]$Inputs,
         [System.Object]$Format,
         [switch]$RawOutput,
-        [int32]$Max)
+        [int32]$Max,
+        [string]$HostUrl
+    )
     begin {
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
             # Request initial authorization token
@@ -504,7 +547,7 @@ function Invoke-Falcon {
         }
         # Add 'Accept: application/json' when undefined
         if (!$GetParam.Headers) { $GetParam.Add('Headers',@{}) }
-        if (!$GetParam.Headers.Accept) { $GetParam.Headers.Add('Accept','application/json') }
+        if (!$HostUrl -and !$GetParam.Headers.Accept) { $GetParam.Headers.Add('Accept','application/json') }
         if ($Format.Body -and !$GetParam.Headers.ContentType) {
             # Add 'ContentType: application/json' when undefined and 'Body' is present
             $GetParam.Headers.Add('ContentType','application/json')
@@ -542,42 +585,46 @@ function Invoke-Falcon {
         [regex]$NoDetail = '(/combined/|/rule-groups-full/)'
     }
     process {
-        foreach ($ParamSet in (Get-ParamSet @GetParam)) {
+        foreach ($Set in (Get-ParamSet @GetParam)) {
+            [string]$Operation = $Set.Endpoint.Method.ToUpper()
+            [string]$Target = New-ShouldMessage $Set.Endpoint
             try {
                 # Refresh authorization token during loop
                 if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
-                if ($ParamSet.Endpoint.Body -and $ParamSet.Endpoint.Headers.ContentType -eq 'application/json') {
-                    # Convert body to Json and output verbose
-                    $ParamSet.Endpoint.Body = ConvertTo-Json $ParamSet.Endpoint.Body -Depth 32 -Compress
+                if ($Set.Endpoint.Headers.ContentType -eq 'application/json' -and $Set.Endpoint.Body) {
+                    # Convert body to Json
+                    $Set.Endpoint.Body = ConvertTo-Json $Set.Endpoint.Body -Depth 32 -Compress
                 }
-                $Request = $Script:Falcon.Api.Invoke($ParamSet.Endpoint)
+                $Request = if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
+                    $Script:Falcon.Api.Invoke($Set.Endpoint)
+                }
                 if ($RawOutput) {
                     # Return result if 'RawOutput' is defined
                     $Request
-                } elseif ($ParamSet.Endpoint.Outfile -and (Test-Path $ParamSet.Endpoint.Outfile)) {
+                } elseif ($Set.Endpoint.Outfile -and (Test-Path $Set.Endpoint.Outfile)) {
                     # Display 'Outfile'
-                    Get-ChildItem $ParamSet.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
+                    Get-ChildItem $Set.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
                 } elseif ($Request.Result.Content) {
                     # Capture pagination for 'Total' and 'All'
                     $Pagination = (ConvertFrom-Json (
                         $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                    if ($ParamSet.Total -eq $true -and $Pagination) {
+                    if ($Set.Total -eq $true -and $Pagination) {
                         # Output 'Total'
                         $Pagination.total
                     } else {
-                        $Result = Write-Result -Request $Request
+                        $Result = Write-Result $Request
                         if ($null -ne $Result) {
-                            if ($ParamSet.Detailed -eq $true -and $ParamSet.Endpoint.Path -notmatch $NoDetail) {
+                            if ($Set.Detailed -eq $true -and $Set.Endpoint.Path -notmatch $NoDetail) {
                                 # Output 'Detailed'
                                 & $Command -Id $Result
                             } else {
                                 # Output result
                                 $Result
                             }
-                            if ($ParamSet.All -eq $true -and ($Result | Measure-Object).Count -lt
+                            if ($Set.All -eq $true -and ($Result | Measure-Object).Count -lt
                             $Pagination.total) {
                                 # Repeat request(s)
-                                Invoke-Loop $ParamSet $Pagination $Result
+                                Invoke-Loop $Set $Pagination $Result
                             }
                         }
                     }
@@ -625,7 +672,7 @@ function Invoke-Loop {
                 $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
                 $Page[1] += [int]$Current.Split('=')[-1]
                 $Clone.Endpoint.Path -replace $Current,($Page -join '=')
-            } elseif ($Clone.Endpoint.Path -match "$Endpoint^") {
+            } elseif ($Clone.Endpoint.Path -match "$Endpoint^" -and $Clone.Endpoint.Path -notmatch '\?') {
                 # Add pagination
                 $Clone.Endpoint.Path,($Page -join '=') -join '?'
             } else {
@@ -634,7 +681,7 @@ function Invoke-Loop {
             }
             $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
             if ($Request.Result.Content) {
-                $Result = Write-Result -Request $Request
+                $Result = Write-Result $Request
                 if ($null -ne $Result) {
                     if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
                         & $Command -Id $Result
@@ -642,7 +689,7 @@ function Invoke-Loop {
                         $Result
                     }
                 } else {
-                    $Message = "[Invoke-Loop] Results limited by API '$(($Clone.Endpoint.Path).Split(
+                    [string]$Message = "[Invoke-Loop] Results limited by API '$(($Clone.Endpoint.Path).Split(
                         '?')[0] -replace $Script:Falcon.Hostname,$null)' ($i of $($Pagination.total))."
                     Write-Error $Message
                 }
@@ -652,15 +699,59 @@ function Invoke-Loop {
         }
     }
 }
+function New-ShouldMessage {
+    [CmdletBinding()]
+    [OutputType([string[]])]
+    param ([System.Collections.Hashtable]$Object)
+    process {
+        try {
+            $Output = [PSCustomObject]@{}
+            if ($Object.Path) {
+                [string]$Path = $Object.Path
+                if ($Path -match $Script:Falcon.Hostname) {
+                    # Add 'Hostname' when using cached hostname value
+                    Set-Property $Output Hostname $Script:Falcon.Hostname
+                    $Path = $Path -replace $Script:Falcon.Hostname,$null
+                }
+                if ($Path -match '\?') {
+                    # Add 'Path' without query values
+                    [string[]]$Array = $Path -split '\?'
+                    [string[]]$Query = $Array[-1] -split '&'
+                    Set-Property $Output Path $Array[0]
+                } else {
+                    Set-Property $Output Path $Path
+                }
+            }
+            if ($Object.Headers) {
+                # Add 'Headers' value
+                Set-Property $Output Headers ($Object.Headers.GetEnumerator().foreach{
+                    $_.Key,$_.Value -join '=' } -join ', ')
+            }
+            if ($Query) {
+                # Add 'Query' value as an array
+                Set-Property $Output Query $Query
+            }
+            foreach ($Pair in $Object.GetEnumerator().Where({ $_.Key -ne '^(Headers|Method|Path)$' })) {
+                [string]$Value = switch ($Pair.Key) {
+                    'Body' {
+                        # Convert 'Body' to Json
+                        $Pair.Value | ConvertTo-Json -Depth 8
+                    }
+                }
+                if ($Value) { Set-Property $Output $Pair.Key $Value }
+            }
+            "`r`n",($Output | Format-List | Out-String).Trim(),"`r`n" -join "`r`n"
+        } catch {}
+    }
+}
 function Set-Property {
     [CmdletBinding()]
     [OutputType([void])]
     param([System.Object]$Object,[string]$Name,[System.Object]$Value)
     process {
-        if ($Object.$Name) { # -and ($Value -or $Value -is [boolean])) {
+        if ($Object.$Name) {
             # Update existing property
             $Object.$Name = $Value
-        #} elseif ($Value -or $Value -is [boolean]) {
         } else {
             # Add property to [PSCustomObject]
             $Object.PSObject.Properties.Add((New-Object PSNoteProperty($Name,$Value)))
@@ -676,7 +767,7 @@ function Test-FqlStatement {
     )
     begin {
         $Pattern = [regex]("(?<FqlProperty>[\w\.]+):(?<FqlOperator>(!~?|~|(>|<)=?|\*)?)" +
-            "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,':]+)")
+            "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,'`":]+)")
     }
     process {
         if ($String -notmatch $Pattern) {
@@ -777,25 +868,25 @@ function Write-Result {
             @($Object).Where({ $_.GetType().Name -eq 'PSCustomObject' }).foreach{ obj $_ $Output }
             if ($Output) {
                 Write-Verbose "[Write-Result] $($Output.GetEnumerator().foreach{ @((@('meta',$_.Key) -join '.'),
-                    $_.Value) -join '=' } -join ',')"
+                    $_.Value) -join '=' } -join ', ')"
             }
         }
     }
     process {
         # Capture result content
         $Result = if ($Request.Result.Content) { ($Request.Result.Content).ReadAsStringAsync().Result }
-        # Capture trace_id for error messages
-        $TraceId = if ($Request.Result.Headers) {
+        [string]$TraceId = if ($Request.Result.Headers) {
+            # Capture trace_id for error messages
             $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
         }
         # Convert content to Json
         $Json = if ($Result -and $Request.Result.Content.Headers.ContentType -eq 'application/json' -or
         $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
-            ConvertFrom-Json -InputObject $Result
+            ConvertFrom-Json $Result
         }
         if ($Json) {
             # Gather field names from result, excluding 'errors', 'extensions', and 'meta'
-            $ResponseFields = @($Json.PSObject.Properties).Where({ $_.Name -notmatch
+            [string[]]$ResponseFields = @($Json.PSObject.Properties).Where({ $_.Name -notmatch
                 '^(errors|extensions|meta)$' -and $_.Value }).foreach{ $_.Name }
             # Write verbose 'meta' output
             if ($Json.meta) { Write-Meta $Json.meta }
@@ -817,13 +908,13 @@ function Write-Result {
                 }
             } elseif ($Json.meta) {
                 # Output 'meta' fields when nothing else is available
-                $MetaFields = @($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
+                [string[]]$MetaFields = @($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
                     '^(entity|pagination|powered_by|query_time|trace_id)$' }).foreach{ $_.Name }
                 if ($MetaFields) { $Json.meta | Select-Object $MetaFields }
             }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
                 # Output error
-                $Message = ConvertTo-Json -InputObject $_.Value -Compress
+                $Message = ConvertTo-Json $_.Value -Compress
                 $PSCmdlet.WriteError(
                     [System.Management.Automation.ErrorRecord]::New(
                         [Exception]::New($Message),

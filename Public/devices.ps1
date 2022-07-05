@@ -4,14 +4,14 @@ function Add-FalconGroupingTag {
 Add FalconGroupingTags to Hosts
 .DESCRIPTION
 Requires 'Hosts: Write'.
-.PARAMETER Tags
+.PARAMETER Tag
 FalconGroupingTag value ['FalconGroupingTags/<string>']
 .PARAMETER Id
 Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^FalconGroupingTags/.+$')]
@@ -22,10 +22,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_ids','device_id','Ids')]
         [string[]]$Id
     )
@@ -51,7 +52,7 @@ function Get-FalconHost {
 .SYNOPSIS
 Search for hosts
 .DESCRIPTION
-Requires 'Hosts: Read'.
+Requires 'Hosts: Read' plus related permission(s) for 'Include' selection(s).
 .PARAMETER Id
 Host identifier
 .PARAMETER Filter
@@ -81,9 +82,9 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/devices/entities/devices/v1:get',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -91,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=1)]
@@ -156,7 +157,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             } else {
                 @{ Query = @('ids','filter','sort','limit','offset') }
             }
-            Max = 500
+            Max = if ($PSCmdlet.ParameterSetName -eq '/devices/entities/devices/v2:post') {
+                5000
+            } elseif ($PSCmdlet.ParameterSetName -eq '/devices/entities/online-state/v1:get') {
+                100
+            } else {
+                500
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -181,7 +188,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
             if ($Include -contains 'group_names') {
-                $Groups = Get-FalconHostGroup -Id $Request.groups -EA 0 | Select-Object id,name
+                $Groups = try { Get-FalconHostGroup -Id $Request.groups -EA 0 | Select-Object id,name } catch {}
                 if ($Groups) {
                     foreach ($i in $Request) {
                         $i.groups = @($Groups | Where-Object { $i.groups -contains $_.id })
@@ -237,7 +244,7 @@ function Invoke-FalconHostAction {
 .SYNOPSIS
 Perform actions on hosts
 .DESCRIPTION
-Requires 'Hosts: Write'.
+Requires 'Hosts: Write', plus related permission(s) for 'Include' selection(s).
 .PARAMETER Name
 Action to perform
 .PARAMETER Include
@@ -247,7 +254,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices-actions/v2:post')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices-actions/v2:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,Position=1)]
         [ValidateSet('contain','lift_containment','hide_host','unhide_host','detection_suppress',
@@ -262,7 +269,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [string[]]$Include,
         [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id')]
         [string[]]$Id
     )
@@ -296,14 +303,14 @@ function Remove-FalconGroupingTag {
 Remove FalconGroupingTags from hosts
 .DESCRIPTION
 Requires 'Hosts: Write'.
-.PARAMETER Tags
-FalconGroupingTag value
+.PARAMETER Tag
+FalconGroupingTag value ['FalconGroupingTags/<string>']
 .PARAMETER Id
 Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^FalconGroupingTags/.+$')]
@@ -316,10 +323,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_ids','device_id','Ids')]
         [string[]]$Id
     )

@@ -15,9 +15,11 @@ Severity level
 .PARAMETER Description
 Indicator description
 .PARAMETER Filename
-Indicator filename,used with hash values
+Indicator filename, used with hash values
 .PARAMETER Tag
 Indicator tag
+.PARAMETER MobileAction
+Action to perform when a mobile device observes the indicator
 .PARAMETER HostGroup
 Host group identifier
 .PARAMETER AppliedGlobally
@@ -35,7 +37,7 @@ Indicator identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -43,7 +45,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Action,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=2)]
-        [ValidateSet('linux','mac','windows',IgnoreCase=$false)]
+        [ValidateSet('android','ios','linux','mac','windows',IgnoreCase=$false)]
         [Alias('Platforms')]
         [string[]]$Platform,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
@@ -67,29 +69,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string[]]$Tag,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=8)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidateSet('no_action','allow','detect','prevent',IgnoreCase=$false)]
+        [Alias('mobile_action')]
+        [string]$MobileAction,
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
+            Position=9)]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('host_groups','HostGroups')]
         [string[]]$HostGroup,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=9)]
+            Position=10)]
         [Alias('applied_globally')]
         [boolean]$AppliedGlobally,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=10)]
+            Position=11)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
         [string]$Expiration,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=11)]
+            Position=12)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=12)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=13)]
         [Alias('retrodetects')]
         [boolean]$Retrodetect,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=13)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=14)]
         [Alias('ignore_warnings','IgnoreWarnings')]
         [boolean]$IgnoreWarning,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-            Position=14)]
-        [ValidatePattern('^\w{64}$')]
+            Position=15)]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Id
     )
     begin {
@@ -101,18 +108,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 Body = @{
                     root = @('comment')
                     indicators = @('id','tags','applied_globally','expiration','description',
-                        'metadata.filename','source','host_groups','severity','action','platforms')
+                        'metadata.filename','source','host_groups','severity','action','platforms','mobile_action')
                 }
             }
         }
     }
-    process {
-        if (!$PSBoundParameters.HostGroup -and !$PSBoundParameters.AppliedGlobally) {
-            throw "'HostGroup' or 'AppliedGlobally' must be provided."
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconIoc {
 <#
@@ -141,11 +142,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/queries/indicators/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/queries/indicators/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=1)]
@@ -231,6 +232,8 @@ Indicator description
 Indicator filename,used with hash values
 .PARAMETER Tag
 Indicator tag
+.PARAMETER MobileAction
+Action to perform when a mobile device observes the indicator
 .PARAMETER HostGroup
 Host group identifier
 .PARAMETER AppliedGlobally
@@ -246,7 +249,7 @@ Ignore warnings and create all indicators
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -269,7 +272,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [ValidateSet('no_action','allow','prevent_no_ui','detect','prevent',IgnoreCase=$false)]
         [string]$Action,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=2)]
-        [ValidateSet('linux','mac','windows',IgnoreCase=$false)]
+        [ValidateSet('android','ios','linux','mac','windows',IgnoreCase=$false)]
         [Alias('platforms')]
         [string[]]$Platform,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=3)]
@@ -287,30 +290,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('tags')]
         [string[]]$Tag,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=8)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidateSet('no_action','allow','detect','prevent',IgnoreCase=$false)]
+        [Alias('mobile_action')]
+        [string]$MobileAction,
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=9)]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('host_groups','HostGroups')]
         [string[]]$HostGroup,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=9)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=10)]
         [Alias('applied_globally')]
         [boolean]$AppliedGlobally,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=10)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=11)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
         [string]$Expiration,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=11)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=12)]
         [Parameter(ParameterSetName='array',Position=2)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=12)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=13)]
         [Parameter(ParameterSetName='array',Position=3)]
         [Alias('Retrodetects')]
         [boolean]$Retrodetect,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=13)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=14)]
         [Parameter(ParameterSetName='array',Position=4)]
         [Alias('ignore_warnings','IgnoreWarnings')]
         [boolean]$IgnoreWarning,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=14)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=15)]
         [ValidateSet('domain','ipv4','ipv6','md5','sha256',IgnoreCase=$false)]
         [string]$Type,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=15)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=16)]
         [Alias('indicator')]
         [string]$Value
     )
@@ -323,7 +330,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 Body = @{
                     root = @('comment','indicators')
                     indicators = @('tags','applied_globally','expiration','description','value',
-                        'metadata.filename','type','source','host_groups','severity','action','platforms')
+                        'metadata.filename','type','source','host_groups','severity','action','platforms',
+                        'mobile_action')
                 }
             }
         }
@@ -362,7 +370,7 @@ Indicator identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='Filter',Mandatory)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -372,7 +380,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:delete',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

@@ -20,7 +20,7 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -36,7 +36,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=5)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('RulegroupId')]
         [string]$Id
     )
@@ -85,7 +85,7 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Position=1)]
         [string]$Comment,
@@ -95,7 +95,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [object[]]$RuleUpdate,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('rulegroup_id','id')]
         [string]$RulegroupId
     )
@@ -158,11 +158,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=1)]
@@ -243,7 +243,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -311,7 +311,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -393,7 +393,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/pattern-severities/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -455,7 +455,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -513,7 +513,7 @@ Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -567,7 +567,7 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -597,7 +597,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=8)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('rulegroup_id','id')]
         [string]$RulegroupId
     )
@@ -634,13 +634,13 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Position=1)]
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -675,13 +675,13 @@ Rule identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Position=1)]
         [string]$Comment,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
             Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('rule_group_id','rulegroup_id','ioa_rule_groups')]
         [string]$RuleGroupId,
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
@@ -712,12 +712,12 @@ function Test-FalconIoaRule {
 Validate fields and patterns of a custom Indicator of Attack rule
 .DESCRIPTION
 Requires 'Custom IOA Rules: Write'.
-.PARAMETER Fields
+.PARAMETER Field
 An array of rule properties
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/validate/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/validate/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/validate/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]

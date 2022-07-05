@@ -9,13 +9,13 @@ Host group name
 .PARAMETER Description
 Host group description
 .PARAMETER AssignmentRule
-FQL-based assignment rule,used with dynamic host groups
+FQL-based assignment rule, used with dynamic host groups
 .PARAMETER Id
 Host group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [string]$AssignmentRule,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -68,11 +68,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-groups/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-groups/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/devices/queries/host-groups/v1:get',Position=1)]
@@ -156,13 +156,13 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-group-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/devices/queries/host-group-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',Position=2)]
@@ -212,18 +212,18 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-group-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-group-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-hosts','remove-hosts',IgnoreCase=$false)]
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','HostIds')]
         [string[]]$HostId
     )
@@ -238,9 +238,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($HostId) { @($HostId).foreach{ $List.Add($_) }}
-    }
+    process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
@@ -274,7 +272,7 @@ Assignment rule for 'dynamic' host groups
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -293,7 +291,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Mandatory,Position=1)]
-        [ValidateSet('static','dynamic',IgnoreCase=$false)]
+        [ValidateSet('dynamic','static','staticByID',IgnoreCase=$false)]
         [Alias('group_type')]
         [string]$GroupType,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Mandatory,Position=2)]
@@ -302,7 +300,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         [string]$Description,
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Position=4)]
         [ValidateScript({
-            if ($PSBoundParameters.GroupType -eq 'static') {
+            if ($PSBoundParameters.GroupType -ne 'dynamic') {
                 throw "'AssignmentRule' can only be used with GroupType 'dynamic'."
             } else {
                 $true
@@ -357,11 +355,11 @@ Host group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

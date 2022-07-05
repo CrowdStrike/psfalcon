@@ -7,7 +7,7 @@ Requires 'Installation Tokens: Write'.
 .PARAMETER Label
 Installation token label
 .PARAMETER ExpiresTimestamp
-Installation token expiration time (RFC3339),or 'null'
+Installation token expiration time (RFC3339), or 'null'
 .PARAMETER Revoked
 Set revocation status
 .PARAMETER Id
@@ -15,7 +15,7 @@ Installation token identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
         [boolean]$Revoked,
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -78,11 +78,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=1)]
@@ -149,11 +149,12 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/audit-events/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=1)]
@@ -206,7 +207,8 @@ installation of the Falcon sensor.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
+        SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -223,7 +225,7 @@ Installation token expiration time (RFC3339),or 'null'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=1)]
         [string]$Label,
@@ -252,11 +254,11 @@ Installation token identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

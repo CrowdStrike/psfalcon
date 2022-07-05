@@ -9,11 +9,11 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('sha256s','sha256','Ids')]
         [string[]]$Id
     )
@@ -50,7 +50,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get')]
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,Position=1)]
         [string]$Path,
@@ -59,7 +59,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         [boolean]$PasswordProtected,
         [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string]$Id,
         [Parameter(ParameterSetName='/samples/entities/samples/v3:get')]
@@ -100,11 +100,11 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete')]
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string]$Id
     )
@@ -139,7 +139,7 @@ Path to local file
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post')]
+    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
         [Alias('is_confidential')]

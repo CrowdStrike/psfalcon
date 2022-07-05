@@ -11,7 +11,7 @@ AWS region where the account resides
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -48,7 +48,7 @@ Azure tenant identifier, required when multiple tenants have been registered
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -91,7 +91,7 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -127,7 +127,7 @@ Cloud platform
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/settings/scan-schedule/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -159,7 +159,7 @@ Requires 'CSPM Registration: Read'.
 A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
 .PARAMETER Id
 AWS account identifier
-.PARAMETER OrganizationIds
+.PARAMETER OrganizationId
 AWS organization identifier
 .PARAMETER ScanType
 Scan type
@@ -178,7 +178,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -246,7 +246,7 @@ grant access.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get',SupportsShouldProcess)]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -273,7 +273,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -354,7 +354,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=1)]
         [ValidateSet('aws','azure',IgnoreCase=$false)]
@@ -458,7 +458,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]
@@ -538,7 +538,7 @@ Azure tenant identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]
@@ -601,16 +601,14 @@ AWS account or GCP Project identifier
 Azure subscription identifier
 .PARAMETER AzureTenantId
 Azure tenant identifier
-.PARAMETER Severity
-Indicator of Attack severity
+.PARAMETER Status
+Indicator of Misconfiguration status
 .PARAMETER Region
 Cloud platform region
+.PARAMETER Severity
+Indicator of Misconfiguration severity
 .PARAMETER Service
 Cloud service
-.PARAMETER State
-Indicator of Attack state
-.PARAMETER DateTimeSince
-Include results that occur after a specific date and time (RFC3339)
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER NextToken
@@ -622,7 +620,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/detects/entities/iom/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/detects/entities/iom/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
@@ -713,7 +711,7 @@ Retrieve detailed information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/settings/entities/policy-details/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Mandatory)]
@@ -774,7 +772,7 @@ Cloud platform
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/settings/scan-schedule/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -815,7 +813,7 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -854,7 +852,7 @@ Azure tenant identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -889,7 +887,7 @@ Overwrite existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
             Position=1)]
@@ -927,12 +925,14 @@ Download a Bash script which grants Falcon Horizon access using Azure Cloud Shel
 Requires 'CSPM Registration: Read'.
 .PARAMETER Path
 Destination path
+.PARAMETER TenantId
+Azure tenant identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Mandatory,
             Position=1)]
@@ -983,7 +983,8 @@ AWS organization identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
@@ -1030,7 +1031,8 @@ Azure account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Horizon
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]

@@ -18,11 +18,11 @@ Hosts can be hidden from the Falcon console by piping the results of 'Find-Falco
 .PARAMETER Hosts
 Array of detailed Host results
 .PARAMETER Filter
-Property to determine duplicate Host in addition to 'hostname'
+Property to determine duplicate Host in addition to 'Hostname'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position=1)]
         [object[]]$Hosts,
@@ -38,8 +38,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             }
         }
         # Comparison criteria and required properties for host results
-        [string[]]$Criteria = @('cid','hostname')
-        [string[]]$Required = @('cid','device_id','first_seen','last_seen','hostname')
+        [string[]]$Criteria = 'cid','hostname'
+        [string[]]$Required = 'cid','device_id','first_seen','last_seen','hostname'
         if ($PSBoundParameters.Filter) {
             $Criteria = $Criteria + $PSBoundParameters.Filter
             $Required = $Required + $PSBoundParameters.Filter
@@ -48,26 +48,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         $FilterScript = "$(($Criteria).foreach{ "`$_.$($_)" } -join ' -and ')"
     }
     process {
-        $HostArray = if (!$PSBoundParameters.Hosts) {
+        [object[]]$HostArray = if (!$PSBoundParameters.Hosts) {
             # Retreive Host details
             Get-FalconHost -Detailed -All
         } else {
             $PSBoundParameters.Hosts
         }
-        ($Required).foreach{
-            if (($HostArray | Get-Member -MemberType NoteProperty).Name -notcontains $_) {
-                # Verify required properties are present
-                throw "Missing required property '$_'."
+        if ($HostArray) {
+            @($Required).foreach{
+                if (($HostArray | Get-Member -MemberType NoteProperty).Name -notcontains $_) {
+                    # Verify required properties are present
+                    throw "Missing required property '$_'."
+                }
             }
+            # Group, sort and output result
+            $Param = @{
+                Object = $HostArray | Select-Object $Required | Where-Object -FilterScript {$FilterScript}
+                GroupBy = $Criteria
+            }
+            $Output = Group-Selection @Param
+            if ($Output) { $Output } else { Write-Warning "No duplicates found." }
         }
-        # Group, sort and output result
-        $Param = @{
-            Object = $HostArray | Select-Object $Required | Where-Object -FilterScript {$FilterScript}
-            GroupBy = $Criteria
-        }
-        $Output = Group-Selection @Param
-    }
-    end {
-        if ($Output) { $Output } else { Write-Warning "No duplicates found." }
     }
 }

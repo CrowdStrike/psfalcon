@@ -17,7 +17,8 @@ Command request identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/admin-command/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/admin-command/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:get',Position=1)]
         [Alias('sequence_id')]
@@ -61,7 +62,7 @@ Script identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -86,17 +87,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=6)]
         [Alias('content','FullName')]
-        [ValidateScript({
-            if (Test-Path $_ -PathType Leaf) {
-                $true
-            } else {
-                throw "Cannot find path '$_' because it does not exist or is a directory."
-            }
-        })]
         [string]$Path,
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=7)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -137,11 +131,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/put-files/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/put-files/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:get',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=1)]
@@ -170,11 +164,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -Inputs $PSBoundParameters }
     }
     end {
         if ($List) {
@@ -208,11 +198,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/scripts/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/scripts/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:get',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=1)]
@@ -241,11 +231,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -Inputs $PSBoundParameters }
     }
     end {
         if ($List) {
@@ -261,10 +247,10 @@ Issue a Real-time Response admin command to an existing single-host or batch ses
 .DESCRIPTION
 Requires 'Real Time Response (Admin): Write'.
 
-Sessions can be started using 'Start-FalconSession'. A successfully issued session will contain a 'session_id'
+Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
-The 'Confirm' parameter will use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to check for command
+The 'Wait' parameter will use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to check for command
 results every 5 seconds for a total of 60 seconds.
 .PARAMETER Command
 Real-time Response command
@@ -278,12 +264,13 @@ Restrict execution to specific host identifiers
 Session identifier
 .PARAMETER BatchId
 Batch session identifier
-.PARAMETER Confirm
+.PARAMETER Wait
 Use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to retrieve command results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-admin-command/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Mandatory,
@@ -304,7 +291,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [ValidateRange(30,600)]
         [int32]$Timeout,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('optional_hosts','OptionalHostIds')]
         [string[]]$OptionalHostId,
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,
@@ -319,7 +306,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [string]$BatchId,
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post')]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post')]
-        [switch]$Confirm
+        [switch]$Wait
     )
     begin {
         $Param = @{
@@ -338,46 +325,44 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             $GetParam = @{
                 FilePath = $PSBoundParameters.Argument
                 BatchId = $PSBoundParameters.BatchId
-                Confirm = $PSBoundParameters.Confirm
+                Wait = $PSBoundParameters.Wait
             }
             if ($Timeout) { $GetParam['Timeout'] = $PSBoundParameters.Timeout }
             if ($List) { $GetParam['OptionalHostId'] = @($List | Select-Object -Unique) }
             Invoke-FalconBatchGet @GetParam
         } else {
             # Verify 'Endpoint' using BatchId/SessionId
-            $Endpoint = if ($PSBoundParameters.BatchId) {
+            [string]$Endpoint = if ($PSBoundParameters.BatchId) {
                 if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
                 '/real-time-response/combined/batch-admin-command/v1:post'
             } elseif ($PSBoundParameters.SessionId) {
                 '/real-time-response/entities/admin-command/v1:post'
             }
-            if ($Endpoint) {
-                $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
-                    # Join 'Command' and 'Argument' into 'command_string'
-                    @($PSBoundParameters.Command,$PSBoundParameters.Argument) -join ' '
-                    [void]$PSBoundParameters.Remove('Argument')
-                } else {
-                    $PSBoundParameters.Command
-                }
-                @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
-                    if ($BatchId) {
-                        # Add 'batch_id' to each result and output
-                        Set-Property $_ 'batch_id' $BatchId
-                        $_
-                    } elseif ($SessionId -and $Confirm) {
-                        for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
-                            # Attempt to 'confirm' for 60 seconds
-                            Start-Sleep 5
-                            $Result = if ($Command -eq 'get') {
-                                $_ | Confirm-FalconGetFile
-                            } else {
-                                $_ | Confirm-FalconAdminCommand
-                            }
+            $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
+                # Join 'Command' and 'Argument' into 'command_string'
+                @($PSBoundParameters.Command,$PSBoundParameters.Argument) -join ' '
+                [void]$PSBoundParameters.Remove('Argument')
+            } else {
+                $PSBoundParameters.Command
+            }
+            @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
+                if ($BatchId) {
+                    # Add 'batch_id' to each result and output
+                    Set-Property $_ batch_id $BatchId
+                    $_
+                } elseif ($SessionId -and $Wait) {
+                    for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
+                        # Attempt to 'confirm' for 60 seconds
+                        Start-Sleep 5
+                        $Result = if ($Command -eq 'get') {
+                            $_ | Confirm-FalconGetFile
+                        } else {
+                            $_ | Confirm-FalconAdminCommand
                         }
-                        $Result
-                    } else {
-                        $_
                     }
+                    $Result
+                } else {
+                    $_
                 }
             }
         }
@@ -394,11 +379,12 @@ Real-time Response 'put' file identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string]$Id
     )
@@ -422,11 +408,11 @@ Script identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}_\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string]$Id
     )
@@ -456,7 +442,7 @@ Path to local file
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -510,7 +496,7 @@ Path to local file or string-based script content
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]

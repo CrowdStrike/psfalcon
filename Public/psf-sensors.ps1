@@ -6,8 +6,8 @@ Use Real-time Response to add FalconSensorTags to hosts
 Requires 'Real Time Response (Admin): Write'.
 
 Provided FalconSensorTag values will be appended to any existing tags.
-.PARAMETER Tags
-FalconSensorTag value
+.PARAMETER Tag
+FalconSensorTag value ['FalconSensorTags/<string>']
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .PARAMETER Id
@@ -15,7 +15,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory,Position=1)]
         [ValidateScript({
@@ -27,11 +27,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
     )
@@ -67,7 +68,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     # Start sessions for each 'platform' type
                     $Param = @{
                         Command = 'runscript'
-                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tags -join ',')
+                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
                         HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
                     }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
@@ -105,12 +106,12 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
     )
@@ -170,8 +171,8 @@ Use Real-time Response to remove FalconSensorTags from hosts
 Requires 'Real Time Response (Admin): Write'.
 
 Provided FalconSensorTag values will be removed from existing tags and others will be left unmodified.
-.PARAMETER Tags
-FalconSensorTag value
+.PARAMETER Tag
+FalconSensorTag value ['FalconSensorTags/<string>']
 .PARAMETER Id
 Host identifier
 .PARAMETER QueueOffline
@@ -179,7 +180,7 @@ Add command request to the offline queue
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory,Position=1)]
         [ValidateScript({
@@ -191,11 +192,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 }
             }
         })]
-        [string[]]$Tags,
+        [Alias('Tags')]
+        [string[]]$Tag,
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
     )
@@ -234,7 +236,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     # Start sessions for each 'platform' type
                     $Param = @{
                         Command = 'runscript'
-                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tags -join ',')
+                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
                         HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
                     }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
@@ -264,23 +266,32 @@ function Uninstall-FalconSensor {
 .SYNOPSIS
 Use Real-time Response to uninstall the Falcon sensor from a host
 .DESCRIPTION
-Requires 'Hosts: Read', 'Sensor Update Policies: Write', and 'Real Time Response (Admin): Write'.
+Requires 'Hosts: Read', 'Sensor Update Policies: Write', 'Real Time Response: Read', and 'Real Time Response
+(Admin): Write'.
 
-This command uses information from the registry of the target host to uninstall the Falcon sensor. If the sensor
-is damaged or malfunctioning, Real-time Response may not work properly and/or the uninstallation may not succeed.
+This command uses information from the registry and/or relevant Falcon command line utilities of the target host
+to uninstall the Falcon sensor. If the sensor is damaged or malfunctioning, Real-time Response may not work
+properly and/or the uninstallation may not succeed.
 .PARAMETER QueueOffline
 Add command request to the offline queue
+.PARAMETER Include
+Include additional properties
 .PARAMETER Id
 Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=2)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
+        [string[]]$Include,
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('HostId','device_id','host_ids','aid')]
         [string]$Id
     )
@@ -306,27 +317,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     }
     process {
         try {
-            $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,device_policies
+            [string[]]$Select = 'cid','device_id','platform_name','device_policies'
+            if ($Include) { $Select += $Include }
+            $Hosts = Get-FalconHost -Id $Id | Select-Object $Select
             if ($Hosts.platform_name -eq 'Mac') {
                 throw 'Only Windows and Linux hosts are currently supported in PSFalcon.'
             }
             $Param = @{
                 Command = 'runscript'
                 Argument = '-Raw=```{0}```' -f $Scripts.($Hosts.platform_name)
+                Timeout = 120
             }
             if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
-            $IdValue = switch ($Hosts.device_policies.sensor_update.uninstall_protection) {
-                'ENABLED'          { $Hosts.device_id }
+            [string]$IdValue = switch ($Hosts.device_policies.sensor_update.uninstall_protection) {
+                'ENABLED' { $Hosts.device_id }
                 'MAINTENANCE_MODE' { 'MAINTENANCE' }
             }
             if ($IdValue) {
-                $Token = (Get-FalconUninstallToken -DeviceId $IdValue -AuditMessage (
-                    "Uninstall-FalconSensor [$((Show-FalconModule).UserAgent)]")).uninstall_token
+                $Token = ($IdValue | Get-FalconUninstallToken -AuditMessage ("Uninstall-FalconSensor [$(
+                    (Show-FalconModule).UserAgent)]")).uninstall_token
                 if ($Token) { $Param.Argument += " -CommandLine='$Token'" }
             }
             $Request = $Hosts | Invoke-FalconRtr @Param
             if ($Request) {
-                @($Hosts | Select-Object cid,device_id).foreach{
+                [string[]]$Select = 'cid','device_id'
+                if ($Include) { $Select += $Include }
+                @($Hosts | Select-Object $Select).foreach{
                     $Status = if ($Request.stdout) {
                         ($Request.stdout).Trim()
                     } elseif (!$Request.stdout -and $QueueOffline -eq $true) {

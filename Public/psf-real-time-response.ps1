@@ -48,7 +48,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             $Sessions = Get-FalconSession @SessionParam | Select-Object id,device_id
             if (-not $Sessions) { throw "No queued Real-time Response sessions available." }
             Write-Host "[Get-FalconQueue] Found $(($Sessions | Measure-Object).Count) queued sessions..."
-            [array]$HostInfo = if ($Include) {
+            [object[]]$HostInfo = if ($Include) {
                 # Capture host information for eventual output
                 $Sessions.device_id | Get-FalconHost | Select-Object @($Include + 'device_id')
             }
@@ -126,14 +126,11 @@ appropriate temporary folder (\Windows\Temp or /tmp), 'cd' will navigate to the 
 archive will be 'put' into that folder. If the target is an archive, it will be extracted, and the designated
 'Run' file will be executed. If the target is a file, it will be 'run'.
 
-If the 'File' or 'Run' parameter is a script (.ps1, .sh, .zsh), the Real-time Response command 'runscript' will
-be used in place of the final 'run' command.
-
-Details of each step will be output to a CSV file in your current directory.
+Details of each step will be output to a CSV file in your current directory. 
 .PARAMETER File
 Name of a 'CloudFile' or path to a local executable to upload
 .PARAMETER Archive
-Name of a 'CloudFile' or path to a local archive (zip, tar, or tar.gz) to upload
+Name of a 'CloudFile' or path to a local archive (zip, tar, tar.gz, tgz) to upload
 .PARAMETER Run
 Name of the file to run once extracted from the target archive
 .PARAMETER Argument
@@ -142,6 +139,8 @@ Arguments to include when running the target executable
 Length of time to wait for a result, in seconds
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
+.PARAMETER Include
+Include additional properties
 .PARAMETER GroupId
 Host group identifier
 .PARAMETER HostId
@@ -149,7 +148,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='HostId_File')]
+    [CmdletBinding(DefaultParameterSetName='HostId_File',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='HostId_File',Mandatory,Position=1)]
         [Parameter(ParameterSetName='GroupId_File',Mandatory,Position=1)]
@@ -170,7 +169,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='HostId_Archive',Mandatory)]
         [Parameter(ParameterSetName='GroupId_Archive',Mandatory)]
         [ValidateScript({
-            if ($_ -match '\.(zip|tar(.gz)?)$') {
+            if ($_ -match '\.(zip|tar(.gz)?|tgz)$') {
                 if (Test-Path $_ -PathType Leaf) {
                     $true
                 } else {
@@ -182,7 +181,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     }
                 }
             } else {
-                throw "'$_' does not match expected file extension: 'zip', 'tar', 'tar.gz'."
+                throw "'$_' does not match expected file extension: 'zip', 'tar', 'tar.gz', or 'tgz'."
             }
         })]
         [string]$Archive,
@@ -206,14 +205,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [Parameter(ParameterSetName='HostId_Archive',Position=5)]
         [Parameter(ParameterSetName='GroupId_Archive',Position=5)]
         [boolean]$QueueOffline,
+        [Parameter(ParameterSetName='HostId_File',Position=5)]
+        [Parameter(ParameterSetName='GroupId_File',Position=5)]
+        [Parameter(ParameterSetName='HostId_Archive',Position=6)]
+        [Parameter(ParameterSetName='GroupId_Archive',Position=6)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
+        [string[]]$Include,
         [Parameter(ParameterSetName='GroupId_File',Mandatory,ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='GroupId_Archive',Mandatory,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('id')]
         [string]$GroupId,
         [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('HostIds','device_id','host_ids','aid')]
         [string[]]$HostId
     )
@@ -259,19 +266,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                         # Prompt for file choice and remove 'CloudFile' if 'LocalFile' is chosen
                         Write-Host "[CloudFile]"
                         $CloudFile | Select-Object name,created_timestamp,modified_timestamp,sha256 |
-                        Format-List | Out-Host
+                            Format-List | Out-Host
                         Write-Host "[LocalFile]"
                         $LocalFile | Select-Object name,created_timestamp,modified_timestamp,sha256 |
-                        Format-List | Out-Host
+                            Format-List | Out-Host
                         $FileChoice = $host.UI.PromptForChoice(
                             "[Invoke-FalconDeploy] '$FileName' exists in your 'Put' Files. Use existing version?",
                             $null,[System.Management.Automation.Host.ChoiceDescription[]]@("&Yes","&No"),0)
                         if ($FileChoice -eq 0) {
-                            Write-Host "[Invoke-FalconDeploy] Proceeding with CloudFile: $($CloudFile.id)..."
+                            Write-Host "[Invoke-FalconDeploy] Proceeding with CloudFile '$($CloudFile.id)'..."
                         } else {
                             [System.Object]$RemovePut = $CloudFile.id | Remove-FalconPutFile
                             if ($RemovePut.writes.resources_affected -eq 1) {
-                                Write-Host "[Invoke-FalconDeploy] Removed CloudFile: $($CloudFile.id)."
+                                Write-Host "[Invoke-FalconDeploy] Removed CloudFile '$($CloudFile.id)'."
                             }
                         }
                     }
@@ -281,7 +288,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             }
             if ($RemovePut.writes.resources_affected -eq 1 -or !$CloudFile) {
                 # Upload 'LocalFile' and output result
-                Write-Host "[Invoke-FalconDeploy] Uploading $FileName..."
+                Write-Host "[Invoke-FalconDeploy] Uploading '$FileName'..."
                 $Param = @{
                     Path = $FilePath
                     Name = $FileName
@@ -297,10 +304,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             }
         }
         function Write-RtrResult ([object[]]$Object,[string]$Step) {
-            # Create output, append results and output specified fields to CSV
+            # Create output, append results and output specified fields to CSV, and return successful hosts
             $Fields = @('aid','batch_id','cloud_request_id','complete','deployment_step','errors',
                 'offline_queued','session_id','stderr','stdout')
-            $Output = @($Object).foreach{ [PSCustomObject]@{ aid = $_.aid; deployment_step = $Step }}
+            if ($Include) { $Fields += $Include }
+            $Output = @($Object).foreach{
+                $i = [PSCustomObject]@{ aid = $_.aid; deployment_step = $Step }
+                if ($Include) {
+                    # Append 'Include' fields to output
+                    @($Hosts).Where({ $_.device_id -eq $i.aid }).foreach{
+                        @($_.PSObject.Properties).Where({ $Include -contains $_.Name }).foreach{
+                            Set-Property $i $_.Name $_.Value
+                        }
+                    }
+                }
+                $i
+            }
             Get-RtrResult $Object $Output | Select-Object $Fields | Export-Csv $Csv -Append -NoTypeInformation
             ($Object | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
                 $_.offline_queued -eq $true }).aid
@@ -315,8 +334,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 throw "Group size exceeds maximum number of results. [10,000]"
             } else {
                 # Retrieve Host Group member device_id and platform_name
-                @($GroupId | Get-FalconHostGroupMember -Detailed -All |
-                    Select-Object device_id,platform_name).foreach{ $Hosts.Add($_) }
+                $Select = @('device_id','platform_name')
+                if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
+                @($GroupId | Get-FalconHostGroupMember -Detailed -All | Select-Object $Select).foreach{
+                    $Hosts.Add($_)
+                }
             }
         } elseif ($HostId) {
             # Use provided Host identifiers
@@ -325,8 +347,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     }
     end {
         if ($List) {
-            # Use Host identifiers to also retrieve 'platform_name'
-            @($List | Select-Object -Unique | Get-FalconHost | Select-Object device_id,platform_name).foreach{
+            # Use Host identifiers to also retrieve 'platform_name' and 'Include' fields
+            $Select = @('device_id','platform_name')
+            if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
+            @($List | Select-Object -Unique | Get-FalconHost | Select-Object $Select).foreach{
                 $Hosts.Add($_)
             }
         }
@@ -334,12 +358,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
             if (Test-Path $FilePath -PathType Leaf) { Update-CloudFile $PutFile $FilePath }
             try {
+                # Force a base timeout of 30 to ensure a batch session
+                if (!$Timeout) { $Timeout = 30 }
                 for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 1000) {
                     # Start Real-time Response sessions in groups of 1,000 with 'Timeout' to force batch
-                    $Param = @{
-                        Id = @($Hosts[$i..($i + 999)].device_id)
-                        Timeout = if ($Timeout) { $Timeout } else { 30 }
-                    }
+                    $Param = @{ Id = @($Hosts[$i..($i + 999)].device_id); Timeout = $Timeout }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
                     $Session = Start-FalconSession @Param
                     [string[]]$SessionIds = if ($Session.batch_id) {
@@ -367,38 +390,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                             # Script content for 'runscript' by platform and 'Archive' or 'File'
                             $Runscript = @{
                                 Linux = @{
-                                    Archive = if ($PutFile -match '\.tar(.gz)?$') {
+                                    Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
                                         "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
-                                            " exit 1; fi; tar -xvf $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit"
+                                            " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     } else {
                                         "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
-                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,
-                                            $RunFile -join '/'); exit"
+                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     }
                                     File = "chmod +x $($TempDir,$PutFile -join '/')"
                                 }
                                 Mac = @{
-                                    Archive = if ($PutFile -match '\.tar(.gz)?$') {
+                                    Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
                                         "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
-                                            " exit 1; fi; tar -xvf $PutFile; exit"
+                                            " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     } else {
                                         "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
-                                            "ip'; exit 1; fi; unzip $PutFile; exit"
+                                            "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
+                                            '/'); exit 0"
                                     }
                                 }
-                                Windows = @{ Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir" }
+                                Windows = @{
+                                    Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir"
+                                }
                             }
                             foreach ($Cmd in @('mkdir','cd','put','runscript','run')) {
                                 # Define Real-time Response command parameters
                                 $Param = @{
                                     BatchId = $Session.batch_id
-                                    Command = if ($Cmd -eq 'run' -and $RunFile -match '\.(ps1|(z)?sh)$') {
-                                        # Switch 'run' for 'runscript' if 'Run' is a script file
-                                        'runscript'
-                                    } else {
-                                        $Cmd
-                                    }
+                                    Command = if ($Cmd -eq 'run') { 'runscript' } else { $Cmd }
                                     Argument = switch ($Cmd) {
                                         'mkdir' { $TempDir }
                                         'cd' { $TempDir }
@@ -414,32 +436,55 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                         }
                                         'run' {
                                             [string]$Join = if ($Pair.Key -eq 'Windows') { '\' } else { '/' }
-                                            [string]$CmdFile = if ($RunFile -match '\.(ps1|sh)$') {
-                                                '-HostPath="{0}"' -f ($TempDir,$RunFile -join $Join)
-                                            } else {
-                                                $TempDir,$RunFile -join $Join
-                                            }
-                                            if ($Argument) {
-                                                $CmdLine = '-CommandLine="{0}"' -f $Argument
-                                                $CmdFile,$CmdLine -join ' '
-                                            } else {
-                                                $CmdFile
+                                            if ($Pair.Key -eq 'Windows') {
+                                                # Use 'runscript' to start process and avoid timeout
+                                                [string]$String = if ($Argument) {
+                                                    ($TempDir,$RunFile -join $Join),$Argument -join ' '
+                                                } else {
+                                                    $TempDir,$RunFile -join $Join
+                                                }
+                                                [string]$Executable = if ($RunFile -match '\.cmd$') {
+                                                    'cmd',"'/c $String'" -join ' '
+                                                } else {
+                                                    'powershell.exe',"'-c &{$String}'" -join ' '
+                                                }
+                                                '-Raw=```Start-Process',$Executable,
+                                                "-RedirectStandardOutput '$($TempDir,'stdout.log' -join
+                                                    $Join)'",
+                                                "-RedirectStandardError '$($TempDir,'stderr.log' -join
+                                                    $Join)'",
+                                                ('-PassThru | ForEach-Object { "The process was successfully sta' +
+                                                    'rted"'),
+                                                '}```' -join ' '
+                                            } elseif ($Pair.Key -match '^(Linux|Mac)$') {
+                                                # Use 'runscript' to start background process and avoid timeout
+                                                [string]$String = if ($Argument) {
+                                                    ($TempDir,$RunFile -join $Join),$Argument -join ' '
+                                                } else {
+                                                    $TempDir,$RunFile -join $Join
+                                                }
+                                                $String = "'$String > $($TempDir,'stdout.log' -join
+                                                    $Join) 2> $($TempDir,'stderr.log' -join $Join) &'"
+                                                if ($Pair.Key -eq 'Linux') {
+                                                    ('-Raw=```(bash -c {0}); if [[ $? -eq 0 ]]; then echo "The p' +
+                                                        'rocess was successfully started"; fi```') -f $String
+                                                } else {
+                                                    ('-Raw=```(zsh -c {0}); if [[ $? -eq 0 ]]; then echo "The pr' +
+                                                    'ocess was successfully started"; fi```') -f $String
+                                                }
                                             }
                                         }
                                     }
                                     OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
+                                    Timeout = $Timeout
                                 }
-                                if ($Timeout) { $Param['Timeout'] = $Timeout }
                                 if ($Param.OptionalHostId -and $Param.Argument) {
-                                    # Issue command, output result to CSV and capture successful 'aid' values
+                                    # Issue command, output result to CSV and capture successful values
                                     Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
                                         Measure-Object).Count) $($Pair.Key) host(s)..."
-                                    $Result = Invoke-FalconAdminCommand @Param
-                                    [string[]]$Optional = if ($Result) {
-                                        # Rename 'runscript' to 'extract' for output
-                                        [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
-                                        Write-RtrResult $Result $Step $Session.batch_id
-                                    }
+                                    [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
+                                    [string[]]$Optional = Write-RtrResult (
+                                        Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
                                 }
                             }
                         }
@@ -448,9 +493,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             } catch {
                 throw $_
             } finally {
-                if (Test-Path $Csv) {
-                    Get-ChildItem $Csv | Select-Object FullName,Length,LastWriteTime
-                }
+                if (Test-Path $Csv) { Get-ChildItem $Csv | Select-Object FullName,Length,LastWriteTime }
             }
         }
     }
@@ -458,10 +501,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 function Invoke-FalconRtr {
 <#
 .SYNOPSIS
-Start Real-time Response session,execute a command and output the result
+Start a Real-time Response session, execute a command and output the result
 .DESCRIPTION
 Requires 'Real Time Response: Read', 'Real Time Response: Write' or 'Real Time Response (Admin): Write'
-depending on 'Command' provided.
+depending on 'Command' provided, plus related permission(s) for 'Include' selection(s).
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
@@ -479,7 +522,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
 #>
-    [CmdletBinding(DefaultParameterSetName='HostId')]
+    [CmdletBinding(DefaultParameterSetName='HostId',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='HostId',Mandatory,Position=1)]
         [Parameter(ParameterSetName='GroupId',Mandatory,Position=1)]
@@ -497,16 +540,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
         [boolean]$QueueOffline,
         [Parameter(ParameterSetName='HostId',Position=5)]
         [Parameter(ParameterSetName='GroupId',Position=5)]
-        [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname',
-            'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
-            'product_type_desc','serial_number','system_manufacturer','system_product_name','tags',
-            IgnoreCase=$false)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
         [Parameter(ParameterSetName='GroupId',Mandatory)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_id','host_ids','aid','HostIds')]
         [string[]]$HostId
     )
@@ -534,56 +576,57 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
     end {
         if ($List) {
             # Gather list of unique host identifiers and append 'GroupId' when present
-            $Output = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
-            if ($GroupId) { @($Output).foreach{ Set-Property $_ 'group_id' $GroupId }}
+            [object[]]$Hosts = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
+            if ($GroupId) { @($Hosts).foreach{ Set-Property $_ 'group_id' $GroupId }}
             if ($Include) {
-                foreach ($i in (Get-FalconHost -Id $Output.aid | Select-Object @($Include + 'device_id'))) {
+                foreach ($i in (Get-FalconHost -Id $Hosts.aid | Select-Object @($Include + 'device_id'))) {
                     foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
                         # Append 'Include' fields to output
-                        $Output | Where-Object { $_.aid -eq $i.device_id } | ForEach-Object {
+                        @($Hosts | Where-Object { $_.aid -eq $i.device_id }).foreach{
                             Set-Property $_ $p.Name $p.Value
                         }
                     }
                 }
             }
-            # Start batch Real-time Response session by forcing 'Timeout' value
-            $Init = @{
-                Id = $Output.aid
-                Timeout = if ($Timeout) { $Timeout } else { 30 }
-            }
-            if ($QueueOffline) { $Init['QueueOffline'] = $QueueOffline }
-            $InitReq = Start-FalconSession @Init
-            if ($InitReq.batch_id -or $InitReq.session_id) {
-                $Output = if ($InitReq.hosts) {
-                    @(Get-RtrResult $InitReq.hosts $Output).foreach{
-                        # Clear 'stdout' from batch initialization
-                        if ($_.stdout) { $_.stdout = $null }
-                        $_
+            # Force a base timeout of 30 to ensure a batch session
+            if (!$Timeout) { $Timeout = 30 }
+            for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 10000) {
+                # Start batch Real-time Response session in groups of 10,000
+                $Output = $Hosts[$i..($i + 9999)]
+                $Init = @{ Id = $Output.aid; Timeout = $Timeout }
+                if ($QueueOffline) { $Init['QueueOffline'] = $QueueOffline }
+                $InitReq = Start-FalconSession @Init
+                if ($InitReq.batch_id -or $InitReq.session_id) {
+                    $Output = if ($InitReq.hosts) {
+                        @(Get-RtrResult $InitReq.hosts $Output).foreach{
+                            # Clear 'stdout' from batch initialization
+                            if ($_.stdout) { $_.stdout = $null }
+                            $_
+                        }
+                    } else {
+                        Get-RtrResult $InitReq $Output
                     }
-                } else {
-                    Get-RtrResult $InitReq $Output
+                    # Determine PSFalcon command, execute and capture result
+                    [string]$Invoke = Get-RtrCommand $Command
+                    $Cmd = @{ Command = $Command; Timeout = $Timeout }
+                    if ($Argument) { $Cmd['Argument'] = $Argument }
+                    if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
+                    $CmdReq = $InitReq | & $Invoke @Cmd
+                    $Output = Get-RtrResult $CmdReq $Output
+                    [string[]]$Select = @($Output).foreach{
+                        # Clear 'stdout' for batch 'get' requests
+                        if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
+                        if ($_.stdout -and $Cmd.Command -eq 'runscript') {
+                            # Attempt to convert 'stdout' from Json for 'runscript'
+                            $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
+                            if ($StdOut) { $_.stdout = $StdOut }
+                        }
+                        # Output list of fields for each object
+                        $_.PSObject.Properties.Name
+                    } | Sort-Object -Unique
+                    # Force output of all unique fields
+                    $Output | Select-Object $Select
                 }
-                # Issue command and capture result
-                $Cmd = @{ Command = $Command }
-                @('Argument','Timeout').foreach{
-                    if ((Get-Variable $_ -EA 0).Value) { $Cmd[$_] = (Get-Variable $_).Value }
-                }
-                if ($QueueOffline -ne $true) { $Cmd['Confirm'] = $true }
-                $CmdReq = $InitReq | & "$(Get-RtrCommand $Command)" @Cmd
-                $Output = Get-RtrResult $CmdReq $Output
-                [string[]]$Select = @($Output).foreach{
-                    # Clear 'stdout' for batch 'get' requests
-                    if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
-                    if ($_.stdout -and $Cmd.Command -eq 'runscript') {
-                        # Attempt to convert 'stdout' from Json for 'runscript'
-                        $StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
-                        if ($StdOut) { $_.stdout = $StdOut }
-                    }
-                    # Output list of fields for each object
-                    $_.PSObject.Properties.Name
-                } | Sort-Object -Unique
-                # Force output of all unique fields
-                $Output | Select-Object $Select
             }
         }
     }

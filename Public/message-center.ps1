@@ -15,7 +15,7 @@ Case identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-activity/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-activity/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
            Position=1)]
@@ -61,19 +61,19 @@ Case identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Position=1)]
         [Alias('body')]
         [string]$Content,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
             Position=2)]
-        [ValidatePattern('^ldt:\w{32}:\d+$')]
+        [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [Alias('detections','detection_id','DetectionIds')]
         [string[]]$DetectionId,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
             Position=3)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('incidents','incident_id','IncidentIds')]
         [string[]]$IncidentId,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Mandatory,
@@ -132,7 +132,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activities/GET/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
@@ -210,7 +210,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -282,7 +282,7 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,Position=1)]
         [ValidateSet('fc:detection-support','fc:contact','fc:falcon-product-support','fc:incident-support',
@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string]$Content,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
             Position=4)]
-        [ValidatePattern('^ldt:\w{32}:\d+$')]
+        [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [ValidateScript({
             if ($PSBoundParameters.Type -eq 'fc:detection-support') {
                 $true
@@ -307,7 +307,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string[]]$DetectionId,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
             Position=5)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [ValidateScript({
             if ($PSBoundParameters.Type -eq 'fc:incident-support') {
                 $true
@@ -365,7 +365,8 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,Position=1)]
         [string]$Path,
@@ -414,7 +415,8 @@ Case identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]
         [ValidatePattern('\.(bmp|csv|doc|docx|gif|jpg|jpeg|pdf|png|pptx|txt|xls|xlsx)$')]

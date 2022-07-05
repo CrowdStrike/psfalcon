@@ -23,11 +23,11 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^ind:\w{32}:(\d|\-)+$')]
+        [ValidatePattern('^ind:[a-fA-F0-9]{32}:(\d|\-)+$')]
         [Alias('Ids','behavior_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=1)]
@@ -98,11 +98,11 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('Ids','incident_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=1)]
@@ -172,7 +172,7 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -218,11 +218,11 @@ Incident identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=1)]
-        [ValidateSet('add_tag','delete_tag','update_description','update_name','update_status',
-            IgnoreCase=$false)]
+        [ValidateSet('add_tag','delete_tag','unassign','update_description','update_name','update_status',
+            'update_assigned_to_v2',IgnoreCase=$false)]
         [string]$Name,
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=2)]
         [string]$Value,
@@ -234,7 +234,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [boolean]$OverwriteDetects,
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=5)]
-        [ValidatePattern('^inc:\w{32}:\w{32}$')]
+        [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('Ids','incident_id')]
         [string[]]$Id
     )

@@ -11,7 +11,7 @@ User role
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -59,7 +59,7 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/users/entities/users/v1:patch',Position=1)]
         [string]$FirstName,
@@ -98,7 +98,8 @@ Retrieve detailed information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-roles/queries/user-role-ids-by-cid/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/user-roles/queries/user-role-ids-by-cid/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -153,14 +154,14 @@ User roles can be appended to the results using the 'Include' parameter.
 Include additional properties
 .PARAMETER Id
 User identifier
-.PARAMETER Usernames
+.PARAMETER Username
 Username
 .PARAMETER Detailed
 Retrieve detailed information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/users/queries/user-uuids-by-cid/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/users/queries/user-uuids-by-cid/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/users/queries/user-uuids-by-cid/v1:get')]
         [Parameter(ParameterSetName='/users/entities/users/v1:get')]
@@ -224,10 +225,12 @@ Username
 First name
 .PARAMETER Lastname
 Last name
+.PARAMETER Password
+Password. If left unspecified, the user will be emailed a link to set their password.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/users/entities/users/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -268,7 +271,7 @@ User role
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -288,9 +291,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) { @($Id).foreach{ $List.Add($_) }}
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
@@ -309,7 +310,7 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/users/entities/users/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/users/entities/users/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -324,7 +325,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             Format = @{ Query = @('user_uuid') }
         }
     }
-    process {
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
+@('Add-FalconRole','Remove-FalconRole').foreach{
+    $Register = @{
+        CommandName = $_
+        ParameterName = 'Id'
+        ScriptBlock = { Get-FalconRole -EA 0 }
     }
+    Register-ArgumentCompleter @Register
 }

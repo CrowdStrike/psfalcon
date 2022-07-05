@@ -11,7 +11,7 @@ Azure account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:get',Position=1)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
@@ -52,7 +52,7 @@ GCP account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=1)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
@@ -93,7 +93,8 @@ Azure tenant identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -126,7 +127,8 @@ GCP project identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -156,7 +158,8 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
            Position=1)]
@@ -199,7 +202,8 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',Mandatory,
            Position=1)]
@@ -240,7 +244,8 @@ Azure client identifier for the associated Service Principal
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]

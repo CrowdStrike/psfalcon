@@ -25,11 +25,11 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
 #>
-    [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}_\w{64}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=1)]
@@ -99,7 +99,8 @@ Quarantined file identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
 #>
-    [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory,Position=1)]
@@ -116,7 +117,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
         [string]$Comment,
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}_\w{64}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -154,7 +155,8 @@ Falcon Query Language statement
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
 #>
-    [CmdletBinding(DefaultParameterSetName='/quarantine/aggregates/action-update-count/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/quarantine/aggregates/action-update-count/v1:get',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/aggregates/action-update-count/v1:get',Mandatory,Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]

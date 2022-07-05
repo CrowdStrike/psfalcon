@@ -17,7 +17,7 @@ Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -35,7 +35,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=2)]
         [string]$Name,
@@ -92,7 +92,7 @@ Operating system platform
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-builds/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-builds/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/combined/sensor-update-builds/v1:get')]
         [ValidateSet('linux','mac','windows',IgnoreCase=$false)]
@@ -130,7 +130,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-kernels/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Mandatory,
            Position=1)]
@@ -149,7 +149,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         [string]$Sort,
         [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=3)]
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Position=4)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,500)]
         [int32]$Limit,
         [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get')]
@@ -201,11 +201,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=1)]
@@ -290,13 +290,13 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=2)]
@@ -334,23 +334,31 @@ function Get-FalconUninstallToken {
 .SYNOPSIS
 Retrieve an uninstallation or maintenance token
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
+Requires 'Sensor Update Policies: Write', plus related permission(s) for 'Include' selection(s).
 .PARAMETER AuditMessage
 Audit log comment
+.PARAMETER Include
+Include additional properties
 .PARAMETER Id
 Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=1)]
         [Alias('audit_message')]
         [string]$AuditMessage,
+        [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=2)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
+        [string[]]$Include,
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
         [Alias('device_id','DeviceId')]
-        [ValidatePattern('^(\w{32}|MAINTENANCE)$')]
+        [ValidatePattern('^([a-fA-F0-9]{32}|MAINTENANCE)$')]
         [string]$Id
     )
     begin {
@@ -360,7 +368,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
             Format = @{ Body = @{ root = @('audit_message','device_id') }}
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        foreach ($r in (Invoke-Falcon @Param -Inputs $PSBoundParameters)) {
+            if ($Include) {
+                # Append properties from 'Include'
+                $i = Get-FalconHost -Id $r.device_id | Select-Object @($Include + 'device_id')
+                foreach ($p in $Include) { Set-Property $r $p $i.$p }
+            }
+            $r
+        }
+    }
 }
 function Invoke-FalconSensorUpdatePolicyAction {
 <#
@@ -377,18 +394,18 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -435,7 +452,7 @@ Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -510,11 +527,11 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -550,14 +567,15 @@ Policy identifiers in desired precedence order
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-precedence/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-precedence/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sensor-update-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/sensor-update-precedence/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

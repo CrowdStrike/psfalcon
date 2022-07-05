@@ -15,7 +15,7 @@ Action identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -77,7 +77,7 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -154,7 +154,7 @@ Permission level [public: 'All Intel users', private: 'Recon Admins']
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -243,7 +243,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/queries/actions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/recon/queries/actions/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -324,7 +324,7 @@ Include raw intelligence content and translate to English
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/notifications/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -414,7 +414,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/queries/rules/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/recon/queries/rules/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
@@ -478,7 +478,7 @@ Monitoring rule filter
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/aggregates/rules-preview/GET/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/recon/aggregates/rules-preview/GET/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/aggregates/rules-preview/GET/v1:post',Mandatory,Position=1)]
         [string]$Topic,
@@ -512,7 +512,7 @@ Notification recipient
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -579,7 +579,7 @@ Permission level [public: 'All Intel users', private: 'Recon Admins']
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -652,7 +652,7 @@ Action identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -679,7 +679,7 @@ Notification identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/notifications/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -714,7 +714,7 @@ Monitoring rule identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
 #>
-    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]

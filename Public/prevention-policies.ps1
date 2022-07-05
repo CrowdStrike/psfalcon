@@ -17,7 +17,7 @@ Policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -35,7 +35,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:patch',Position=2)]
         [string]$Name,
@@ -113,11 +113,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/prevention/v1:get',Position=1)]
@@ -202,13 +202,13 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/prevention-members/v1:get',
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/policy/combined/prevention-members/v1:get',
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/prevention-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/prevention-members/v1:get',Position=2)]
@@ -256,7 +256,7 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-actions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','add-rule-group','disable','enable','remove-host-group',
@@ -264,11 +264,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -280,24 +280,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
                 Body = @{ root = @('ids','action_parameters') }
             }
         }
+        $Message = $Param.Command,("$(if ($GroupId) { $Name,$GroupId -join ' ' } else { $Name })") -join ': '
     }
     process {
-        $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
-        [void]$PSBoundParameters.Remove('Id')
-        if ($PSBoundParameters.GroupId) {
-            $PSBoundParameters['action_parameters'] = @(
-                @{
-                    name = if ($PSBoundParameters.Name -match 'rule-group$') {
-                        'rule_group_id'
-                    } else {
-                        'group_id'
+        if ($PSCmdlet.ShouldProcess($Id,$Message)) {
+            $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+            [void]$PSBoundParameters.Remove('Id')
+            if ($PSBoundParameters.GroupId) {
+                $PSBoundParameters['action_parameters'] = @(
+                    @{
+                        name = if ($PSBoundParameters.Name -match 'rule-group$') {
+                            'rule_group_id'
+                        } else {
+                            'group_id'
+                        }
+                        value = $PSBoundParameters.GroupId
                     }
-                    value = $PSBoundParameters.GroupId
-                }
-            )
-            [void]$PSBoundParameters.Remove('GroupId')
+                )
+                [void]$PSBoundParameters.Remove('GroupId')
+            }
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconPreventionPolicy {
@@ -314,12 +317,12 @@ Policy name
 Operating system platform
 .PARAMETER Description
 Policy description
-.PARAMETER Settings
+.PARAMETER Setting
 An array of policy settings
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -401,11 +404,11 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -441,14 +444,14 @@ Policy identifiers in desired precedence order
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-precedence/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-precedence/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux','iOS','Android',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/prevention-precedence/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

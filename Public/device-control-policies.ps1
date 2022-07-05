@@ -17,7 +17,7 @@ Policy settings
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -35,7 +35,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=2)]
         [string]$Name,
@@ -114,11 +114,11 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Position=1)]
@@ -203,13 +203,13 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',Position=2)]
         [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',Position=2)]
@@ -257,7 +257,8 @@ Policy identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,
            Position=1)]
@@ -265,11 +266,11 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
         [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -316,7 +317,7 @@ Hashtable of policy settings
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -397,11 +398,11 @@ Policy identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -437,14 +438,15 @@ Policy identifiers in desired precedence order
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
         [Parameter(ParameterSetName='/policy/entities/device-control-precedence/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

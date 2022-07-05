@@ -15,6 +15,9 @@ an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' 
 @{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed
 under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
 becomes a column.
+
+There is potential for data loss due to object manipulation. Use 'ConvertTo-Json' to ensure all object properties
+are retained when integrity is a concern.
 .PARAMETER Path
 Destination path
 .PARAMETER Object
@@ -42,7 +45,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                         $ObjectParam = @{
                             Object = $Item | Select-Object -ExcludeProperty $IdField
                             Output = $Output
-                            Prefix = "$($Name).$($Item.$IdField)"
+                            Prefix = $Name,$Item.$IdField -join '.'
                         }
                         Get-PSObject @ObjectParam
                     } else {
@@ -71,7 +74,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     $ArrayParam = @{
                         Array = $Item.Value
                         Output = $Output
-                        Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Name = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
                     }
                     Get-Array @ArrayParam
                 } elseif ($Item.Value.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
@@ -79,14 +82,14 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     $ObjectParam = @{
                         Object = $Item.Value
                         Output = $Output
-                        Prefix = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Prefix = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
                     }
                     Get-PSObject @ObjectParam
                 } else {
                     # Add property to output with 'prefix.name'
                     $SetParam = @{
                         Object = $Output
-                        Name = if ($Prefix) { "$($Prefix).$($Item.Name)" } else { $Item.Name }
+                        Name = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
                         Value = $Item.Value
                     }
                     Set-Property @SetParam
@@ -102,7 +105,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
         if ($OutPath.Category -eq 'WriteError' -and !$Force) {
             Write-Error @OutPath
         } elseif ($List) {
-            @($List).foreach{
+            [object[]]$Output = @($List).foreach{
                 $i = [PSCustomObject]@{}
                 if ($_.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
                     # Add sorted properties to output
@@ -111,21 +114,17 @@ https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
                     # Add strings to output as 'id'
                     Set-Property $i id $_
                 }
-                if ($i -and $Path) {
-                    try {
-                        # Output to CSV
-                        $ExportParam = @{
-                            InputObject = $i
-                            Path = $Path
-                            NoTypeInformation = $true
-                            Append = $true
-                        }
-                        Export-Csv @ExportParam
-                    } catch {
-                        $i
-                    }
-                } elseif ($i) {
-                    $i
+                $i
+            }
+            if ($Output) {
+                # Select all available property names
+                [string[]]$Select = @($Output).foreach{ $_.PSObject.Properties.Name } | Select-Object -Unique
+                if ($Path) {
+                    # Export to CSV, forcing all properties
+                    $Output | Select-Object $Select | Export-Csv $Path -NoTypeInformation -Append
+                } else {
+                    # Export to console, forcing all properties
+                    $Output | Select-Object $Select
                 }
             }
         }
@@ -139,7 +138,7 @@ function Send-FalconWebhook {
 .SYNOPSIS
 Send a PSFalcon object to a supported Webhook
 .DESCRIPTION
-Sends an object to a Webhook,converting the object to an acceptable format when required.
+Sends an object to a Webhook, converting the object to an acceptable format when required.
 .PARAMETER Type
 Webhook type
 .PARAMETER Path
@@ -171,11 +170,11 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         }
     }
     process {
-        [array]$Content = switch ($PSBoundParameters.Type) {
+        [object[]]$Content = switch ($PSBoundParameters.Type) {
             'Slack' {
                 # Create 'attachment' for each object in submission
                 @($Object | Export-FalconReport).foreach{
-                    [array]$Fields = @($_.PSObject.Properties).foreach{
+                    [object[]]$Fields = @($_.PSObject.Properties).foreach{
                         ,@{
                             title = $_.Name
                             value = if ($_.Value -is [boolean]) {
@@ -208,10 +207,10 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
                     Path = $PSBoundParameters.Path
                     Method = 'post'
                     Headers = @{ ContentType = 'application/json' }
-                    Body = ConvertTo-Json -InputObject $Item -Depth 32
+                    Body = ConvertTo-Json $Item -Depth 32
                 }
                 $Request = $Script:Falcon.Api.Invoke($Param)
-                Write-Result -Request $Request
+                Write-Result $Request
             } catch {
                 throw $_
             }
@@ -235,16 +234,16 @@ Show-FalconMap will accept domains, SHA256 hashes, IP addresses and URLs. Invali
 .PARAMETER Indicator
 Indicator to display on the Indicator map
 .LINK
-
+https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
         [Alias('Indicators')]
         [string[]]$Indicator
     )
     begin {
-        $FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
+        [string]$FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
         $List = [System.Collections.Generic.List[string]]@()
     }
     process {
@@ -277,7 +276,8 @@ Indicator to display on the Indicator map
         if ($List) {
             [string[]]$IocInput = @($List | Select-Object -Unique) -join ','
             if (!$IocInput) { throw "No valid indicators found." }
-            Start-Process "$($FalconUI)/intelligence/graph?indicators=$($IocInput -join ',')"
+            [string]$Target = "$($FalconUI)/intelligence/graph?indicators=$($IocInput -join ',')"
+            if ($PSCmdlet.ShouldProcess($Target)) { Start-Process $Target }
         }
     }
 }
@@ -292,16 +292,16 @@ with the PSFalcon module.
     [CmdletBinding()]
     param()
     process {
-        $ManifestPath = Join-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -ChildPath 'PSFalcon.psd1'
+        $ManifestPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'PSFalcon.psd1'
         if (Test-Path $ManifestPath) {
             $ModuleData = Import-PowerShellDataFile -Path $ManifestPath
             [PSCustomObject]@{
                 PSVersion = "$($PSVersionTable.PSEdition) [$($PSVersionTable.PSVersion)]"
                 ModuleVersion = "v$($ModuleData.ModuleVersion) {$($ModuleData.GUID)}"
-                ModulePath = Split-Path -Path $ManifestPath -Parent
+                ModulePath = Split-Path $ManifestPath -Parent
                 UserModulePath = $env:PSModulePath
                 UserHome = $HOME
-                UserAgent = "crowdstrike-psfalcon/$($ModuleData.ModuleVersion)"
+                UserAgent = 'crowdstrike-psfalcon',$ModuleData.ModuleVersion -join '/'
             }
         } else {
             throw "Unable to locate '$ManifestPath'."

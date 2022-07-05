@@ -16,6 +16,7 @@ Define events to send to the collector
 https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
+    [OutputType([void])]
     param(
         [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=1)]
         [System.Uri]$Uri,
@@ -27,38 +28,19 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         [string[]]$Enable
     )
     process {
-        if (!$Script:Falcon.Api) {
-            throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
-        }
+        if (!$Script:Falcon.Api) { throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'." }
         $Script:Falcon.Api.Collector = @{
             Uri = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
             Token = $PSBoundParameters.Token
         }
-        $Message = "[Register-FalconEventCollector] Added '$($Script:Falcon.Api.Collector.Uri)'"
+        [string]$Message = "Added '$($Script:Falcon.Api.Collector.Uri)'"
         if ($PSBoundParameters.Enable) {
             $Script:Falcon.Api.Collector['Enable'] = $PSBoundParameters.Enable
             $Message += " for $(@($PSBoundParameters.Enable).foreach{ "'$_'" } -join ',')"
         }
-        Write-Verbose "$Message."
+        Write-Verbose "[Register-FalconEventCollector] $Message."
     }
 }
-$Register = @{
-    CommandName = 'Register-FalconEventCollector'
-    ParameterName = 'Uri'
-    ScriptBlock = {
-        param($CommandName,$ParameterName,$WordToComplete,$CommandAst,$FakeBoundParameters)
-        $PublicClouds = @('https://cloud.community.humio.com/','https://cloud.humio.com/',
-            'https://cloud.us.humio.com/')
-        $Match = $PublicClouds | Where-Object { $_ -like "$WordToComplete*" }
-        $Match | ForEach-Object {
-            New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
-            $_,
-            'ParameterValue',
-            $_
-        }
-    }
-}
-Register-ArgumentCompleter @Register
 function Send-FalconEvent {
 <#
 .SYNOPSIS
@@ -105,7 +87,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
                     Authorization = @('Bearer',$Script:Falcon.Api.Collector.Token) -join ' '
                     ContentType = 'application/json'
                 }
-                Body = ConvertTo-Json -InputObject @(
+                Body = ConvertTo-Json @(
                     @{
                         tags = @{ host = [System.Net.Dns]::GetHostname(); source = (Show-FalconModule).UserAgent }
                         events = $Events
@@ -125,16 +107,10 @@ Display existing Humio ingestion endpoint and token
 https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 #>
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     param()
     process {
-        if (!$Script:Falcon.Api.Collector) {
-            throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'."
-        }
-        [PSCustomObject]@{
-            Uri = $Script:Falcon.Api.Collector.Uri
-            Token = $Script:Falcon.Api.Collector.Token
-            Enabled = $Script:Falcon.Api.Collector.Enable
-        }
+        if ($Script:Falcon.Api.Collector) { [PSCustomObject]$Script:Falcon.Api.Collector }
     }
 }
 function Unregister-FalconEventCollector {
@@ -153,3 +129,20 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         }
     }
 }
+$Register = @{
+    CommandName = 'Register-FalconEventCollector'
+    ParameterName = 'Uri'
+    ScriptBlock = {
+        param($CommandName,$ParameterName,$WordToComplete,$CommandAst,$FakeBoundParameters)
+        $PublicClouds = @('https://cloud.community.humio.com/','https://cloud.humio.com/',
+            'https://cloud.us.humio.com/')
+        $Match = $PublicClouds | Where-Object { $_ -like "$WordToComplete*" }
+        $Match | ForEach-Object {
+            New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
+            $_,
+            'ParameterValue',
+            $_
+        }
+    }
+}
+Register-ArgumentCompleter @Register

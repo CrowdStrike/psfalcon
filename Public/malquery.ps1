@@ -1,7 +1,7 @@
 function Get-FalconMalQuery {
 <#
 .SYNOPSIS
-Verify the status and results of an asynchronous Falcon MalQuery request,such as a hunt or exact-search
+Verify the status and results of an asynchronous Falcon MalQuery request, such as a hunt or exact-search
 .DESCRIPTION
 Requires 'MalQuery: Read'.
 .PARAMETER Id
@@ -9,7 +9,7 @@ Request identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/requests/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/requests/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -35,7 +35,7 @@ Requires 'MalQuery: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/aggregates/quotas/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/aggregates/quotas/v1:get',SupportsShouldProcess)]
     param()
     process {
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
@@ -57,11 +57,11 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/metadata/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/metadata/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
     )
@@ -92,11 +92,12 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/samples-multidownload/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/samples-multidownload/v1:post',
+        SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/samples-multidownload/v1:post',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('samples','sample','ids')]
         [string[]]$Id
     )
@@ -119,7 +120,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 function Invoke-FalconMalQuery {
 <#
 .SYNOPSIS
-Initiate a Falcon MalQuery YARA hunt,exact search or fuzzy search
+Initiate a Falcon MalQuery YARA hunt, exact search or fuzzy search
 .DESCRIPTION
 Requires 'MalQuery: Write'.
 .PARAMETER YaraRule
@@ -147,7 +148,7 @@ Search MalQuery quickly but with more potential for false positives
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/queries/exact-search/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/queries/exact-search/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/queries/hunt/v1:post',Mandatory,Position=1)]
         [Alias('yara_rule')]
@@ -238,13 +239,13 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/entities/download-files/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/entities/download-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,Position=1)]
         [string]$Path,
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,
             ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^(\w{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
+        [ValidatePattern('^([A-Fa-f0-9]{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
         [Alias('Ids')]
         [string]$Id,
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get')]
@@ -253,12 +254,12 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = if ($PSBoundParameters.Id -match '^\w{64}$') {
+            Endpoint = if ($PSBoundParameters.Id -match '^[A-Fa-f0-9]{64}$') {
                 '/malquery/entities/download-files/v1:get'
             } else {
                 '/malquery/entities/samples-fetch/v1:get'
             }
-            Headers = if ($PSBoundParameters.Id -match '^\w{64}$') {
+            Headers = if ($PSBoundParameters.Id -match '^[A-Fa-f0-9]{64}$') {
                 @{ Accept = 'application/octet-stream' }
             } else {
                 @{ Accept = 'application/zip' }
@@ -289,17 +290,17 @@ Perform a simple Falcon MalQuery YARA Hunt for a Sha256 hash
 .DESCRIPTION
 Requires 'MalQuery: Write'.
 
-Performs a YARA Hunt for the given hash,then checks every 5 seconds--for up to 30 seconds--for a result.
+Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 30 seconds--for a result.
 .PARAMETER Sha256
 Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/MalQuery
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/queries/hunt/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/malquery/queries/hunt/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/queries/hunt/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{64}$')]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Sha256
     )
     process {

@@ -15,7 +15,7 @@ Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:patch')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         [string]$Comment,
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     begin {
@@ -46,7 +46,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -77,11 +77,11 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/sv-exclusions/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/sv-exclusions/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=1)]
@@ -141,7 +141,7 @@ Host group identifier or 'all' to apply to all hosts
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:post')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -168,7 +168,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^(\w{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -187,7 +187,7 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:delete')]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:delete',Position=1)]
         [string]$Comment,
@@ -204,11 +204,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) { @($Id).foreach{ $List.Add($_) }}
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }

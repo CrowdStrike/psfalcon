@@ -17,7 +17,7 @@ Detection identifier
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch')]
+    [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=1)]
         [ValidateSet('new','in_progress','true_positive','false_positive','ignored','closed','reopened',
@@ -38,7 +38,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
         [string]$AssignedToUuid,
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=5)]
-        [ValidatePattern('^ldt:\w{32}:\d+$')]
+        [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [Alias('Ids','detection_id','detection_ids')]
         [string[]]$Id
     )
@@ -86,11 +86,11 @@ Display total result count instead of results
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
 #>
-    [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get')]
+    [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^ldt:\w{32}:\d+$')]
+        [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [Alias('Ids','detection_id','detection_ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=1)]

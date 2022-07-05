@@ -3,16 +3,14 @@ function Request-FalconToken {
 .SYNOPSIS
 Request an OAuth2 access token
 .DESCRIPTION
-Requests an OAuth2 access token.
-
-If successful,your credentials ('ClientId','ClientSecret','MemberCid' and 'Cloud'/'Hostname') and token are
+If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and 'Cloud' or 'Hostname') and token are
 cached for re-use.
 
-If an active OAuth2 access token is due to expire in less than 60 seconds,a new token will automatically be
+If an active OAuth2 access token is due to expire in less than 60 seconds, a new token will automatically be
 requested using your cached credentials.
 
 The 'Collector' parameter allows for the submission of a [System.Collections.Hashtable] object containing the
-parameters included with a 'Register-FalconEventCollector' command ('Path','Token' and 'Enabled') in order to
+parameters included with a 'Register-FalconEventCollector' command ('Path', 'Token' and 'Enabled') in order to
 log an initial OAuth2 access token request.
 .PARAMETER ClientId
 OAuth2 client identifier
@@ -23,18 +21,18 @@ CrowdStrike cloud [default: 'us-1']
 .PARAMETER Hostname
 CrowdStrike API hostname
 .PARAMETER MemberCid
-Member CID,used when authenticating within a multi-CID environment ('Falcon Flight Control')
+Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control')
 .PARAMETER Collector
-A hashtable containing 'Path','Token' and 'Enabled' properties for 'Register-FalconEventCollector'
+A hashtable containing 'Path', 'Token' and 'Enabled' properties for 'Register-FalconEventCollector'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication
 #>
-    [CmdletBinding(DefaultParameterSetName='Hostname')]
+    [CmdletBinding(DefaultParameterSetName='Hostname',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=1)]
         [Alias('client_id')]
-        [ValidatePattern('^\w{32}$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$ClientId,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=2)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=2)]
@@ -51,7 +49,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=4)]
         [Alias('cid','member_cid')]
-        [ValidatePattern('^\w{32}(-\w{2})?$')]
+        [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
         [string]$MemberCid,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=5)]
         [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=5)]
@@ -66,7 +64,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
         [System.Collections.Hashtable]$Collector
     )
     begin {
-        if ($PSBoundParameters.MemberCid -match '^\w{32}-\w{2}$'){
+        if ($PSBoundParameters.MemberCid -match '^[a-fA-F0-9]{32}-\w{2}$'){
             $PSBoundParameters.MemberCid = $PSBoundParameters.MemberCid.Split('-')[0]
         }
         function Get-ApiCredential ($Inputs) {
@@ -79,7 +77,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
                     $Value = Read-Host $_
                     $BaseError = 'Cannot validate argument on parameter "{0}". The argument "{1}" does not ' +
                         'match the "{2}" pattern. Supply an argument that matches "{2}" and try the command again.'
-                    $ValidPattern = if ($_ -eq 'ClientId') { '^\w{32}$' } else { '^\w{40}$' }
+                    $ValidPattern = if ($_ -eq 'ClientId') { '^[a-fA-F0-9]{32}$' } else { '^\w{40}$' }
                     if ($Value -notmatch $ValidPattern) {
                         $InvalidValue = $BaseError -f $_,$Value,$ValidPattern
                         throw $InvalidValue
@@ -167,10 +165,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
                     Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result -Request $Request
+                $Result = Write-Result $Request
                 if ($Result.access_token) {
                     # Cache access token in ApiClient
-                    $Token = "$($Result.token_type) $($Result.access_token)"
+                    [string]$Token = $Result.token_type,$Result.access_token -join ' '
                     if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
                         $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization',$Token)
                     } else {
@@ -197,12 +195,12 @@ function Revoke-FalconToken {
 .SYNOPSIS
 Revoke your active OAuth2 access token
 .DESCRIPTION
-Revokes your active OAuth2 access token and clears cached credential information ('ClientId','ClientSecret',
-'MemberCid','Cloud'/'Hostname') from the module.
+Revokes your active OAuth2 access token and clears cached credential information ('ClientId', 'ClientSecret',
+'MemberCid', 'Cloud'/'Hostname') from the module.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication
 #>
-    [CmdletBinding(DefaultParameterSetName='/oauth2/revoke:post')]
+    [CmdletBinding(DefaultParameterSetName='/oauth2/revoke:post',SupportsShouldProcess)]
     param()
     process {
         if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter -and
@@ -215,16 +213,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Authentication
                     Accept = 'application/json'
                     ContentType = 'application/x-www-form-urlencoded'
                     Authorization = "basic $([System.Convert]::ToBase64String(
-                        [System.Text.Encoding]::ASCII.GetBytes(
-                        "$($Script:Falcon.ClientId):$($Script:Falcon.ClientSecret)")))"
+                        [System.Text.Encoding]::ASCII.GetBytes("$($Script:Falcon.ClientId):$(
+                        $Script:Falcon.ClientSecret)")))"
                 }
                 Body = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
             }
             $Request = $Script:Falcon.Api.Invoke($Param)
-            Write-Result -Request $Request
+            Write-Result $Request
             [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
-        @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove("$_") }
+        @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove($_) }
     }
 }
 function Test-FalconToken {
@@ -232,7 +230,7 @@ function Test-FalconToken {
 .SYNOPSIS
 Display OAuth2 access token status
 .DESCRIPTION
-Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname','ClientId' and
+Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname', 'ClientId' and
 'MemberCid' values.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Authentication
