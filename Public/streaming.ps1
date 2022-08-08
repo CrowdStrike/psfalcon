@@ -55,7 +55,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Event-Streams
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = $Endpoint
             Format = @{ Query = @('action_name','appId') }
         }
     }
