@@ -1,53 +1,3 @@
-function Invoke-FalconAlertAction {
-<#
-.SYNOPSIS
-Perform actions on alerts
-.DESCRIPTION
-Requires 'Alerts: Write'.
-.PARAMETER Name
-Action to perform
-.PARAMETER Value
-Value for the chosen action
-.PARAMETER Id
-Alert identifier
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Alerts
-#>
-    [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:patch',Mandatory,Position=1)]
-        [ValidateSet('add_tag','append_comment','assign_to_name','assign_to_user_id','assign_to_uuid',
-            'new_behavior_processed','remove_tag','remove_tags_by_prefix','show_in_ui','update_status',
-            'unassign',IgnoreCase=$false)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:patch',Position=2)]
-        [string]$Value,
-        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^[a-fA-F0-9]{32}:(aggind|ind):[a-fA-F0-9]{32}:.+$')]
-        [Alias('Ids','composite_id')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('ids','request') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            [hashtable]$Parameters = @{ name = $PSBoundParameters.name }
-            if ($PSBoundParameters.Value) { $Parameters['value'] = $PSBoundParameters.Value }
-            $PSBoundParameters['request'] = @{ action_parameters = @($Parameters) }
-            @('Name','Value').foreach{ [void]$PSBoundParameters.Remove($_) }
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
-}
 function Get-FalconAlert {
 <#
 .SYNOPSIS
@@ -123,6 +73,56 @@ https://github.com/crowdstrike/psfalcon/wiki/Alerts
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+}
+function Invoke-FalconAlertAction {
+<#
+.SYNOPSIS
+Perform actions on alerts
+.DESCRIPTION
+Requires 'Alerts: Write'.
+.PARAMETER Name
+Action to perform
+.PARAMETER Value
+Value for the chosen action
+.PARAMETER Id
+Alert identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Alerts
+#>
+    [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v1:patch',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:patch',Mandatory,Position=1)]
+        [ValidateSet('add_tag','append_comment','assign_to_name','assign_to_user_id','assign_to_uuid',
+            'new_behavior_processed','remove_tag','remove_tags_by_prefix','show_in_ui','update_status',
+            'unassign',IgnoreCase=$false)]
+        [string]$Name,
+        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:patch',Position=2)]
+        [string]$Value,
+        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:patch',Mandatory,ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=3)]
+        [ValidatePattern('^[a-fA-F0-9]{32}:(aggind|ind):[a-fA-F0-9]{32}:.+$')]
+        [Alias('Ids','composite_id')]
+        [string[]]$Id
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('ids','request') }}
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            [hashtable]$Parameters = @{ name = $PSBoundParameters.name }
+            if ($PSBoundParameters.Value) { $Parameters['value'] = $PSBoundParameters.Value }
+            $PSBoundParameters['request'] = @{ action_parameters = @($Parameters) }
+            @('Name','Value').foreach{ [void]$PSBoundParameters.Remove($_) }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
