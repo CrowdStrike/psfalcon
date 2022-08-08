@@ -80,7 +80,6 @@ function Invoke-FalconIdentityGraph {
                 }
             }
 
-
     #>
 
     [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post',SupportsShouldProcess)]
@@ -89,8 +88,8 @@ function Invoke-FalconIdentityGraph {
             ValueFromPipelineByPropertyName,Position=1)]
         [string]$Query
     )
+
     begin 
-    
     {
 
         $Param = @{
@@ -150,10 +149,8 @@ function Invoke-FalconIdentityGraph {
 
             }
 
-
         }
 
-    
     }
 
     end
@@ -162,6 +159,5 @@ function Invoke-FalconIdentityGraph {
         Write-Output $Results
 
     }
-
 
 }
