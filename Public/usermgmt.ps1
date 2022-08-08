@@ -182,7 +182,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Parameter(ParameterSetName='/users/queries/user-uuids-by-cid/v1:get')]
         [Parameter(ParameterSetName='/users/queries/user-uuids-by-email/v1:get')]
         [switch]$Detailed
-        
     )
     begin {
         $Param = @{
