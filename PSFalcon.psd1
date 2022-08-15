@@ -405,16 +405,15 @@
       'Get-FalconVulnerability',
       'Get-FalconVulnerabilityLogic',
 
-      # users
-      'Edit-FalconUser',
-      'Get-FalconUser',
-      'New-FalconUser',
-      'Remove-FalconUser',
-
-      # user-roles
+      # user-management
       'Add-FalconRole',
+      'Edit-FalconUser',
       'Get-FalconRole',
+      'Get-FalconUser',
+      'Invoke-FalconUserAction',
+      'New-FalconUser',
       'Remove-FalconRole',
+      'Remove-FalconUser',
 
       # zero-trust-assessment
       'Get-FalconZta'
@@ -430,17 +429,33 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = "@
+New Commands
+
+* user-management.ps1
+  Invoke-FalconUserAction
+
 General Changes
 
-* Re-organized 'Public' functions into files named for their URL prefix rather than their respective Swagger
-  'collection' (which sometimes would match the prefix and sometimes wouldn't). Because of the number of 
-  endpoints that fell under 'policy', it is segmented into specific files.
+* Re-organized public functions into files named for their URL prefix rather than their respective Swagger
+  collection (which sometimes would match the prefix and sometimes wouldn't). Because of the number of endpoints
+  that fell under 'policy', it is segmented into specific files.
+
+* The public 'users.ps1' and 'user-roles.ps1' files have been consolidated under 'user-management.ps1' and merged
+  with new /user-management/ endpoints.
 
 * Updated IPv4 regex used by 'Test-RegexValue' private function.
 
 Command Changes
 
 * Updated 'Invoke-FalconAlertAction' to use the new v2 endpoint.
+
+* Updated 'Add-FalconRole', 'Edit-FalconUser', 'Get-FalconUser', 'New-FalconUser', 'Remove-FalconRole', and
+  'Remove-FalconUser', to use new /user-management/ endpoints where appropriate. These commands behave as they
+  did before, unless using additional parameters to signify that requests are being performed within a
+  multi-CID environment.
+
+* 'Get-FalconRole' has been updated to produce results from a new /user-management/ endpoint, causing the output
+  to be more verbose.
 
 Resolved Issues
 
