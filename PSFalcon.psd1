@@ -194,6 +194,9 @@
       'Receive-FalconCompleteAttachment',
       'Send-FalconCompleteAttachment',
 
+      # mobile-enrollment
+      'Invoke-FalconMobileAction',
+
       # mssp
       'Add-FalconCidGroupMember',
       'Add-FalconGroupRole',
@@ -430,6 +433,9 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = "@
 New Commands
+
+* mobile-enrollment.ps1
+  Invoke-FalconMobileAction
 
 * user-management.ps1
   Invoke-FalconUserAction
