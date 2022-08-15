@@ -3,7 +3,7 @@ function Invoke-FalconMobileAction {
 .SYNOPSIS
 Trigger on-boarding process for a mobile device
 .DESCRIPTION
-Requires 'mobile-enrollment:write'.
+Requires 'Mobile Enrollment: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER ExpiresAt
