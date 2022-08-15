@@ -833,7 +833,7 @@ function Test-RegexValue {
     }
     end {
         if ($Output) {
-            Write-Verbose "[Test-RegexValue] $(@($Output,$String) -join ': ')"
+            Write-Verbose "[Test-RegexValue] $(@((($Output | Out-String).Trim()),$String) -join ': ')"
             $Output
         }
     }
