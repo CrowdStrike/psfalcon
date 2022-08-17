@@ -466,6 +466,9 @@ Command Changes
 Resolved Issues
 
 * Issue #223: Removed extraneous 'Endpoint' definition that was generating error.
+
+* Issue #231: Corrected addition of 'FirewallRule' when using 'Export-FalconConfig -Item FirewallGroup'. This fix
+  should also resolve issues when exporting 'HostGroup' and a singular 'exclusion' item.
 @"
         }
     }

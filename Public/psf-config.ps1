@@ -73,10 +73,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             }
             if ($Select -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and $Select -notcontains 'HostGroup') {
                 # Force 'HostGroup' when exporting Exclusions or IOCs
-                $Select += ,'HostGroup'
+                [string[]]$Select = @($Select + 'HostGroup')
             }
             # Force 'FirewallRule' when exporting 'FirewallGroup'
-            if ($Select -contains 'FirewallGroup') { $Select += ,'FirewallRule' }
+            if ($Select -contains 'FirewallGroup') { [string[]]$Select = @($Select + 'FirewallRule') }
             [string[]]$JsonFiles = foreach ($String in $Select) {
                 # Retrieve results, export to Json and capture file name
                 ,(Get-ItemContent $String)
