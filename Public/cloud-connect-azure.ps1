@@ -17,8 +17,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         [ValidateSet('full','dry',IgnoreCase=$false)]
         [Alias('scan-type')]
         [string]$ScanType,
-        [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:get',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:get',ValueFromPipeline,
+            ValueFromPipelineByPropertyName,Position=2)]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -31,13 +31,51 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    process {
+        if ($Id) {
+            @($Id).foreach{ $List.Add($_) }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
+}
+function Get-FalconDiscoverAzureCertificate {
+<#
+.SYNOPSIS
+Retrieve the base64 encoded certificate for a Falcon Discover Azure tenant
+.DESCRIPTION
+Requires 'D4C Registration: Read'.
+.PARAMETER Refresh
+Refresh certificate [default: false]
+.PARAMETER TenantId
+Azure tenant identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+#>
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',Position=1)]
+        [boolean]$Refresh,
+        [Parameter(ParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+        [Alias('tenant_id')]
+        [string[]]$TenantId
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('refresh','tenant_id') }
+        }
+    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function New-FalconDiscoverAzureAccount {
 <#
@@ -52,8 +90,7 @@ Azure tenant identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post',
-        SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]

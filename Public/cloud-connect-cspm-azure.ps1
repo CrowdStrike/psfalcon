@@ -112,6 +112,38 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         }
     }
 }
+function Get-FalconHorizonAzureCertificate {
+<#
+.SYNOPSIS
+Retrieve the base64 encoded certificate for a Falcon Horizon Azure tenant
+.DESCRIPTION
+Requires 'CSPM Registration: Read'.
+.PARAMETER Refresh
+Refresh certificate [default: false]
+.PARAMETER TenantId
+Azure tenant identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Horizon
+#>
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Position=1)]
+        [boolean]$Refresh,
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Mandatory,
+            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+        [Alias('tenant_id')]
+        [string[]]$TenantId
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('refresh','tenant_id') }
+        }
+    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
 function New-FalconHorizonAzureAccount {
 <#
 .SYNOPSIS

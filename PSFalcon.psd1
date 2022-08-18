@@ -27,6 +27,7 @@
 
       # cloud-connect-azure
       'Get-FalconDiscoverAzureAccount',
+      'Get-FalconDiscoverAzureCertificate',
       'New-FalconDiscoverAzureAccount',
       'Receive-FalconDiscoverAzureScript',
       'Update-FalconDiscoverAzureAccount',
@@ -42,6 +43,7 @@
       # cloud-connect-cspm-azure
       'Edit-FalconHorizonAzureAccount',
       'Get-FalconHorizonAzureAccount',
+      'Get-FalconHorizonAzureCertificate',
       'New-FalconHorizonAzureAccount',
       'Receive-FalconHorizonAzureScript',
       'Remove-FalconHorizonAzureAccount',
@@ -434,6 +436,12 @@
             ReleaseNotes = "@
 New Commands
 
+* cloud-connect-azure.ps1
+  Get-FalconDiscoverAzureCertificate
+
+* cloud-connect-cspm-azure.ps1
+  Get-FalconHorizonAzureCertificate
+
 * mobile-enrollment.ps1
   Invoke-FalconMobileAction
 
@@ -452,6 +460,8 @@ General Changes
 * Updated IPv4 regex used by 'Test-RegexValue' private function.
 
 Command Changes
+
+* Removed mandatory requirement for 'TenantId' parameter within the 'Get-FalconDiscoverAzureAccount' command.
 
 * Updated 'Invoke-FalconAlertAction' to use the new v2 endpoint.
 
