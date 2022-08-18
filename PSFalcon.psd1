@@ -461,6 +461,10 @@ General Changes
 
 Command Changes
 
+* Added warning messages and exclusions for the commands 'Add-FalconSensorTag', 'Get-FalconSensorTag' and
+  'Remove-FalconSensorTag' when targeting Windows sensors running v6.42 or newer. The 'CsSensorSettings.exe' tool
+  is the official method for changing FalconSensorTags on these sensor versions.
+
 * Removed mandatory requirement for 'TenantId' parameter within the 'Get-FalconDiscoverAzureAccount' command.
 
 * Updated 'Invoke-FalconAlertAction' to use the new v2 endpoint.

@@ -63,7 +63,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             [string[]]$Id = @($List | Select-Object -Unique)
             try {
                 # Get device info to determine script and begin session
-                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name
+                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version |
+                    Where-Object { $_.platform_name -eq 'Windows' -and $_.agent_version -lt 6.42 -or
+                    $_.platform_name -ne 'Windows' }
+                @($Id | Where-Object { $Hosts.device_id -notcontains $_ }).foreach{
+                    # Exclude Windows hosts running sensor versions newer than 6.42
+                    Write-Warning "[Add-FalconSensorTag] Sensor version unsupported [aid: $_]"
+                }
+                if (!$Hosts) { throw "No eligible hosts." }
                 foreach ($Platform in ($Hosts.platform_name | Group-Object).Name) {
                     # Start sessions for each 'platform' type
                     $Param = @{
@@ -133,7 +140,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             [string[]]$Id = @($List | Select-Object -Unique)
             try {
                 # Get device info to determine script and begin session
-                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name
+                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version |
+                    Where-Object { $_.platform_name -eq 'Windows' -and $_.agent_version -lt 6.42 -or
+                    $_.platform_name -ne 'Windows' }
+                @($Id | Where-Object { $Hosts.device_id -notcontains $_ }).foreach{
+                    # Exclude Windows hosts running sensor versions newer than 6.42
+                    Write-Warning "[Add-FalconSensorTag] Sensor version unsupported [aid: $_]"
+                }
+                if (!$Hosts) { throw "No eligible hosts." }
                 foreach ($Platform in ($Hosts.platform_name | Group-Object).Name) {
                     # Start sessions for each 'platform' type
                     $Param = @{
@@ -231,7 +245,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             [string[]]$Id = @($List | Select-Object -Unique)
             try {
                 # Get device info to determine script and begin session
-                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name
+                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version |
+                    Where-Object { $_.platform_name -eq 'Windows' -and $_.agent_version -lt 6.42 -or
+                    $_.platform_name -ne 'Windows' }
+                @($Id | Where-Object { $Hosts.device_id -notcontains $_ }).foreach{
+                    # Exclude Windows hosts running sensor versions newer than 6.42
+                    Write-Warning "[Add-FalconSensorTag] Sensor version unsupported [aid: $_]"
+                }
+                if (!$Hosts) { throw "No eligible hosts." }
                 foreach ($Platform in ($Hosts.platform_name | Group-Object).Name) {
                     # Start sessions for each 'platform' type
                     $Param = @{
