@@ -344,6 +344,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
             }
         }
         function Submit-Group ([string]$Type,[string]$Property,[object]$Object,[object]$Cid) {
+            # Assign group(s) to target object and capture result
             [string]$Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
             $Req = foreach ($Id in $Object.$Property) {
                 if ($Cid.$Property -notcontains $Id) {
