@@ -343,18 +343,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                 Write-Error $_
             }
         }
-        function Submit-Group ([string]$Policy,[string]$Property,[object]$Obj,[object]$Cid) {
+        function Submit-Group ([string]$Type,[string]$Property,[object]$Object,[object]$Cid) {
             [string]$Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
-            [string]$Group = if ($Property -eq 'ioa_rule_groups') { 'IoaGroup' } else { 'HostGroup' }
-            $Target = if ($Cid) { $Cid } else { $Obj }
-            $Req = foreach ($Id in $Obj.$Property) {
-                [object]$Match = $Config.Ids.$Group | Where-Object { $_.old_id -eq $Id }
-                if ($Match -and $Target.$Property -notcontains $Match.new_id) {
-                    @(Invoke-PolicyAction $Policy $Invoke $Target.id $Match.new_id).foreach{ $_ }
+            $Req = foreach ($Id in $Object.$Property) {
+                if ($Cid.$Property -notcontains $Id) {
+                    @(Invoke-PolicyAction $Type $Invoke $Object.id $Id).foreach{ $_ }
                 }
             }
             if ($Req) {
-                Add-Result Modified $Req[-1] $Policy $Property ($Target.$Property -join ',') (
+                Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') (
                     $Req[-1].$Property.id -join ',')
             }
         }
@@ -775,9 +772,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
                     # Enable/disable non-default policies
                     [string]$Action = if ($Policy.enabled -eq $true) { 'enable' } else { 'disable' }
                     $Req = Invoke-PolicyAction $Pair.Key $Action $Policy.id
-                    if ($Req) {
-                        Add-Result Modified $Req $Pair.Key enabled $Cid.enabled $Policy.enabled
-                    }
+                    if ($Req) { Add-Result Modified $Req $Pair.Key enabled $Cid.enabled $Policy.enabled }
                 }
             }
             [void]$Pair.Value.Remove('Modify')
