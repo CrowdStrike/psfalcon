@@ -608,7 +608,7 @@ function Invoke-Falcon {
                     # Capture pagination for 'Total' and 'All'
                     $Pagination = (ConvertFrom-Json (
                         $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                    if ($Set.Total -eq $true -and $Pagination) {
+                    if ($Set.Total -eq $true -and $Pagination.total) {
                         # Output 'Total'
                         $Pagination.total
                     } else {
@@ -652,7 +652,7 @@ function Invoke-Loop {
     process {
         for ($i = ($Result | Measure-Object).Count; $Pagination.next_page -or $i -lt $Pagination.total;
         $i += ($Result | Measure-Object).Count) {
-            Write-Verbose "[Invoke-Loop] $i of $($Pagination.total)"
+            if ($Pagination.total) { Write-Verbose "[Invoke-Loop] $i of $($Pagination.total)" }
             # Clone endpoint parameters and update pagination
             $Clone = $ParamSet.Clone()
             $Clone.Endpoint = $ParamSet.Endpoint.Clone()
@@ -688,7 +688,7 @@ function Invoke-Loop {
                     } else {
                         $Result
                     }
-                } else {
+                } elseif ($Pagination.total) {
                     [string]$Message = "[Invoke-Loop] Results limited by API '$(($Clone.Endpoint.Path).Split(
                         '?')[0] -replace $Script:Falcon.Hostname,$null)' ($i of $($Pagination.total))."
                     Write-Error $Message
@@ -718,6 +718,10 @@ function New-ShouldMessage {
                     [string[]]$Array = $Path -split '\?'
                     [string[]]$Query = $Array[-1] -split '&'
                     Set-Property $Output Path $Array[0]
+                    if ($Query) {
+                        # Add 'Query' value as an array
+                        Set-Property $Output Query $Query
+                    }
                 } else {
                     Set-Property $Output Path $Path
                 }
@@ -726,10 +730,6 @@ function New-ShouldMessage {
                 # Add 'Headers' value
                 Set-Property $Output Headers ($Object.Headers.GetEnumerator().foreach{
                     $_.Key,$_.Value -join '=' } -join ', ')
-            }
-            if ($Query) {
-                # Add 'Query' value as an array
-                Set-Property $Output Query $Query
             }
             foreach ($Pair in $Object.GetEnumerator().Where({ $_.Key -ne '^(Headers|Method|Path)$' })) {
                 [string]$Value = switch ($Pair.Key) {
