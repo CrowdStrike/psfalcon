@@ -309,11 +309,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ Accept = 'application/octet-stream' }
-            Format = @{ Query = @('name','id') }
+            Format = @{
+                Outfile = 'path'
+                Query = @('name','id')
+            }
         }
     }
     process {
-        #$PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path ''
         $OutPath = Test-OutFile $PSBoundParameters.Path
         if ($OutPath.Category -eq 'ObjectNotFound') {
             Write-Error @OutPath
