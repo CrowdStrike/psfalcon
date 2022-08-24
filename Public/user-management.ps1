@@ -122,10 +122,8 @@ Retrieve detailed information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-roles/queries/user-role-ids-by-cid/v1:get',
+    [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
         SupportsShouldProcess)]
-    <#[CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
-        SupportsShouldProcess)]#>
     param(
         [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -135,7 +133,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Alias('user_uuid','uuid')]
         [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
         [string]$UserId,
-        <#[Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=1)]#>
+        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=1)]
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Cid,
@@ -153,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=7)]
         [Alias('direct_only')]
         [boolean]$DirectOnly,
-        <#[Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]#>
+        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
         [Parameter(ParameterSetName='/user-roles/queries/user-role-ids-by-cid/v1:get')]
         [switch]$Detailed
     )
