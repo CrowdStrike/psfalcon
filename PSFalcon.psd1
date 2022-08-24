@@ -483,6 +483,9 @@ Resolved Issues
 
 * Issue #231: Corrected addition of 'FirewallRule' when using 'Export-FalconConfig -Item FirewallGroup'. This fix
   should also resolve issues when exporting 'HostGroup' and a singular 'exclusion' item.
+
+* Issue #232: Re-added 'Outfile' designation for 'Path' parameter in 'Receive-FalconArtifact'. This should have
+  been there and was accidentally removed in an earlier version.
 @"
         }
     }
