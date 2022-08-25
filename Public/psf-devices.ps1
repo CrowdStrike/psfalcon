@@ -3,7 +3,7 @@ function Find-FalconDuplicate {
 .SYNOPSIS
 Find potential duplicate hosts within your Falcon environment
 .DESCRIPTION
-Requires 'Hosts: Read' and 'Hosts: Write'.
+Requires 'Hosts: Read'.
 
 If the 'Hosts' parameter is not provided, all Host information will be retrieved. An error will be
 displayed if required fields 'cid', 'device_id', 'first_seen', 'last_seen', 'hostname' and any defined
