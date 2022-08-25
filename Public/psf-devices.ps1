@@ -71,3 +71,61 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         }
     }
 }
+function Find-FalconHostname {
+<#
+.SYNOPSIS
+Find hosts using a list of hostnames
+.DESCRIPTION
+Requires 'Hosts: Read'.
+
+Performs an exact-match hostname search in groups of 20.
+.PARAMETER Array
+An array containing one or more hostnames
+.PARAMETER Path
+Path to a plaintext file containing hostnames
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+#>
+    [CmdletBinding(DefaultParameterSetName='Path',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='Path',Mandatory,Position=1)]
+        [ValidateScript({
+            if (Test-Path $_ -PathType Leaf) {
+                $true
+            } else {
+                throw "Cannot find path '$_' because it does not exist."
+            }
+        })]
+        [string]$Path,
+        [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
+        [string[]]$Array
+    )
+    begin {
+        if ($Path) {
+            [string]$Path = $Script:Falcon.Api.Path($Path)
+        } else {
+            [System.Collections.Generic.List[string]]$List = @()
+        }
+    }
+    process { if ($Array) { @($Array).foreach{ $List.Add($_) }}}
+    end {
+        [string[]]$Hostnames = if ($List) {
+            $List | Select-Object -Unique
+        } else {
+            (Get-Content -Path $Path).Normalize() | Select-Object -Unique
+        }
+        for ($i = 0; $i -lt ($Hostnames | Measure-Object).Count; $i += 20) {
+            [string[]]$TempList = $Hostnames[$i..($i + 19)]
+            [string]$Filter = (@($TempList).foreach{
+                if (![string]::IsNullOrEmpty($_)) { "hostname:['$_']" }
+            }) -join ','
+            [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object hostname,device_id
+            @($TempList).foreach{
+                if ($HostList.hostname -notcontains $_) {
+                    Write-Warning "[Find-FalconHostname] No match found for '$_'."
+                }
+            }
+            if ($HostList) { $HostList }
+        }
+    }
+}

@@ -302,11 +302,8 @@
       'Import-FalconConfig',
 
       # psf-devices
-      'Add-FalconSensorTag',
       'Find-FalconDuplicate',
-      'Get-FalconSensorTag',
-      'Remove-FalconSensorTag',
-      'Uninstall-FalconSensor',
+      'Find-FalconHostname',
 
       # psf-humio
       'Register-FalconEventCollector',
@@ -326,6 +323,12 @@
       'Copy-FalconPreventionPolicy',
       'Copy-FalconResponsePolicy',
       'Copy-FalconSensorUpdatePolicy',
+
+      # psf-sensors
+      'Add-FalconSensorTag',
+      'Get-FalconSensorTag',
+      'Remove-FalconSensorTag',
+      'Uninstall-FalconSensor',
 
       # psf-real-time-response
       'Get-FalconQueue',
@@ -444,6 +447,9 @@ New Commands
 
 * mobile-enrollment.ps1
   Invoke-FalconMobileAction
+
+* psf-devices.ps1
+  Find-FalconHostname
 
 * user-management.ps1
   Invoke-FalconUserAction
