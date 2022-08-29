@@ -37,6 +37,7 @@ Repeat requests until all available results are retrieved
             if ($Object.entities.pageInfo.hasNextPage -eq $true -and $null -ne
             $Object.entities.pageInfo.endCursor) {
                 do {
+                    # Update 'After' argument with new endCursor value and repeat request
                     [string]$After = 'after:"{0}"' -f $Object.entities.pageInfo.endCursor
                     $Param = @{
                         Type = $Inputs.Type
@@ -60,14 +61,17 @@ Repeat requests until all available results are retrieved
         }
         function Write-GraphResult ($Object,$String) {
             if ($Object.$String.pageInfo) {
+                # Output verbose 'pageInfo' detail
                 [string]$Message = (@($Object.$String.pageInfo.PSObject.Properties).foreach{
                     $_.Name,$_.Value -join '='
                 }) -join ', '
                 Write-Verbose ('[Invoke-FalconIdentityGraph]',$Message -join ' ')
             }
             if ($Object.$String.nodes) {
+                # Output 'nodes'
                 $Object.$String.nodes
             } elseif ($Object.$String) {
+                # Output by 'type' when not using 'entities'
                 $Object.$String
             } else {
                 $Object
@@ -83,6 +87,7 @@ Repeat requests until all available results are retrieved
         $Request = if ($PSCmdlet.ParameterSetName -eq 'Query') {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         } else {
+            # Build [string[]] containing 'Type', 'Argument' and 'Node' input
             [string[]]$Query = switch ($PSBoundParameters) {
                 { $_.Type } {
                     if ($PSBoundParameters.Argument) {
@@ -99,6 +104,7 @@ Repeat requests until all available results are retrieved
                     }
                     if ($NodeString) {
                         if ($PSBoundParameters.All -and $PSBoundParameters.Type -eq 'entities') {
+                            # Append 'pageInfo' values
                             $NodeString = $NodeString,'pageInfo{hasNextPage endCursor}' -join ' '
                         }
                         $NodeString,'}' -join $null
@@ -111,8 +117,10 @@ Repeat requests until all available results are retrieved
     end {
         if ($Request) {
             if ($Type) {
+                # Output relevant sub-object when not using a full 'Query'
                 Write-GraphResult $Request $Type
                 if ($PSBoundParameters.All -and $PSBoundParameters.Node) {
+                    # Repeat requests when 'All' is included
                     Invoke-GraphLoop $Request $PSBoundParameters $Param.Command
                 }
             } else {
