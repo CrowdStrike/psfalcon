@@ -536,11 +536,83 @@ function Invoke-Falcon {
         [string]$HostUrl
     )
     begin {
+        function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
+            do {
+                [string[]]$Next = switch ($Object) {
+                    # Determine next offset value
+                    { $_.after } { @('after',$Object.after) }
+                    { $_.next_token } { @('next_token',$Object.next_token) }
+                    { $_.offset } {
+                        if ($Object.offset -match '^\d{1,}$') {
+                            @('offset',$Int)
+                        } else {
+                            @('offset',$Object.offset)
+                        }
+                    }
+                }
+                if ($Next) {
+                    # Clone parameters and make request
+                    $Clone = $Splat.Clone()
+                    $Clone.Endpoint = $Splat.Endpoint.Clone()
+                    $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match "$($Next[0])=\d{1,}") {
+                        # If offset was input, continue from that value
+                        $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
+                        $Next[1] += [int]$Current.Split('=')[-1]
+                        $Clone.Endpoint.Path -replace $Current,($Next -join '=')
+                    } elseif ($Clone.Endpoint.Path -match "$($Splat.Endpoint)^" -and
+                    $Clone.Endpoint.Path -notmatch '\?') {
+                        # Add pagination
+                        $Clone.Endpoint.Path,($Next -join '=') -join '?'
+                    } else {
+                        # Append pagination
+                        $Clone.Endpoint.Path,($Next -join '=') -join '&'
+                    }
+                    if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
+                    $Script:Falcon.Api.Invoke($Clone.Endpoint) | ForEach-Object {
+                        if ($_.Result.Content) {
+                            # Update pagination
+                            $Object = (ConvertFrom-Json (
+                                $_.Result.Content).ReadAsStringAsync().Result).meta.pagination
+                            Write-Request $Clone $_ -OutVariable Result
+                            if ($null -ne $Result) {
+                                # Update received count
+                                [int]$Int += ($Result | Measure-Object).Count
+                                Write-Verbose "[Invoke-Falcon] Retrieved $Int of $($Object.total)"
+                            }
+                        } elseif ($Object.total) {
+                            [string]$Message = "[Invoke-Falcon] Total results limited by API '$(
+                                ($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname,
+                                $null)' ($Int of $($Object.total))."
+                            Write-Error $Message
+                        }
+                    }
+                }
+            } while ( $Int -lt $Object.total )
+        }
+        function Write-Request {
+            [CmdletBinding()]
+            param(
+                [hashtable]$Splat,
+                [object]$Object
+            )
+            [boolean]$NoDetail = if ($Splat.Endpoint -match '(/combined/|/rule-groups-full/)') {
+                # Determine if endpoint requires a secondary 'Detailed' request
+                $true
+            } else {
+                $false
+            }
+            $Output = Write-Result $Object
+            if ($Output -and $Splat.Detailed -eq $true -and $NoDetail -eq $false) {
+                & $Command -Id $Output
+            } else {
+                $Output
+            }
+        }
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
-            # Request initial authorization token
+            # Force initial authorization token request
             Request-FalconToken
         }
-        # Gather parameters for 'Get-ParamSet'
+        # Gather request parameters and split into groups
         $GetParam = @{}
         $PSBoundParameters.GetEnumerator().Where({ $_.Key -notmatch '^(Command|RawOutput)$' }).foreach{
             $GetParam.Add($_.Key,$_.Value)
@@ -581,120 +653,47 @@ function Invoke-Falcon {
                 $_.Name -eq $Endpoint }).Parameters.Where({ $_.Name -eq 'Limit' }).Attributes.MaxRange
             if ($Limit) { $Inputs.Add('Limit',$Limit) }
         }
-        # Regex for URL paths that don't need a secondary 'Detailed' request
-        [regex]$NoDetail = '(/combined/|/rule-groups-full/)'
     }
     process {
-        foreach ($Set in (Get-ParamSet @GetParam)) {
-            [string]$Operation = $Set.Endpoint.Method.ToUpper()
-            [string]$Target = New-ShouldMessage $Set.Endpoint
-            try {
-                # Refresh authorization token during loop
+        Get-ParamSet @GetParam | ForEach-Object {
+            [string]$Operation = $_.Endpoint.Method.ToUpper()
+            [string]$Target = New-ShouldMessage $_.Endpoint
+            if ($_.Endpoint.Headers.ContentType -eq 'application/json' -and $_.Endpoint.Body) {
+                # Convert body to Json
+                $_.Endpoint.Body = ConvertTo-Json $_.Endpoint.Body -Depth 32 -Compress
+            }
+            if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
                 if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
-                if ($Set.Endpoint.Headers.ContentType -eq 'application/json' -and $Set.Endpoint.Body) {
-                    # Convert body to Json
-                    $Set.Endpoint.Body = ConvertTo-Json $Set.Endpoint.Body -Depth 32 -Compress
-                }
-                $Request = if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
-                    $Script:Falcon.Api.Invoke($Set.Endpoint)
-                }
-                if ($RawOutput) {
-                    # Return result if 'RawOutput' is defined
-                    $Request
-                } elseif ($Set.Endpoint.Outfile -and (Test-Path $Set.Endpoint.Outfile)) {
-                    # Display 'Outfile'
-                    Get-ChildItem $Set.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
-                } elseif ($Request.Result.Content) {
-                    # Capture pagination for 'Total' and 'All'
-                    $Pagination = (ConvertFrom-Json (
-                        $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                    if ($Set.Total -eq $true -and $Pagination.total) {
-                        # Output 'Total'
-                        $Pagination.total
-                    } else {
-                        $Result = Write-Result $Request
-                        if ($null -ne $Result) {
-                            if ($Set.Detailed -eq $true -and $Set.Endpoint.Path -notmatch $NoDetail) {
-                                # Output 'Detailed'
-                                & $Command -Id $Result
-                            } else {
-                                # Output result
-                                $Result
-                            }
-                            if ($Set.All -eq $true -and ($Result | Measure-Object).Count -lt
-                            $Pagination.total) {
+                try {
+                    $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
+                    if ($_.Endpoint.Outfile -and (Test-Path $_.Endpoint.Outfile)) {
+                        # Display 'Outfile'
+                        Get-ChildItem $_.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
+                    } elseif ($Request -and $RawOutput) {
+                        # Return result if 'RawOutput' is defined
+                        $Request
+                    } elseif ($Request.Result.Content) {
+                        # Capture pagination for 'Total' and 'All'
+                        $Pagination = (ConvertFrom-Json (
+                            $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
+                        if ($Pagination.total -and $_.Total -eq $true) {
+                            # Output 'Total'
+                            $Pagination.total
+                        } else {
+                            Write-Request $_ $Request -OutVariable Result
+                            if ($_.All -eq $true) {
                                 # Repeat request(s)
-                                Invoke-Loop $Set $Pagination $Result
+                                [int]$Count = ($Result | Measure-Object).Count
+                                if ($Count -lt $Pagination.total) {
+                                    Write-Verbose "[Invoke-Falcon] Retrieved $Count of $($Pagination.total)"
+                                    Invoke-Loop $_ $Pagination $Count
+                                }
                             }
                         }
                     }
+                } catch {
+                    Write-Error $_
                 }
-            } catch {
-                Write-Error $_
-            }
-        }
-    }
-}
-function Invoke-Loop {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [System.Collections.Hashtable]$ParamSet,
-        [Parameter(Mandatory)]
-        [System.Object]$Pagination,
-        [Parameter(Mandatory)]
-        [System.Object]$Result
-    )
-    begin {
-        # Regex for URL paths that don't need a secondary 'Detailed' request
-        [regex]$NoDetail = '(/combined/|/rule-groups-full/)'
-    }
-    process {
-        for ($i = ($Result | Measure-Object).Count; $Pagination.next_page -or $i -lt $Pagination.total;
-        $i += ($Result | Measure-Object).Count) {
-            if ($Pagination.total) { Write-Verbose "[Invoke-Loop] $i of $($Pagination.total)" }
-            # Clone endpoint parameters and update pagination
-            $Clone = $ParamSet.Clone()
-            $Clone.Endpoint = $ParamSet.Endpoint.Clone()
-            $Page = if ($Pagination.after) {
-                @('after',$Pagination.after)
-            } elseif ($Pagination.next_token) {
-                @('next_token',$Pagination.next_token)
-            } elseif ($Pagination.next_page) {
-                @('offset',$Pagination.offset)
-            } elseif ($Pagination.offset -match '^\d{1,}$') {
-                @('offset',$i)
-            } else {
-                @('offset',$Pagination.offset)
-            }
-            $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match "$($Page[0])=\d{1,}") {
-                # If offset was input, continue from that value
-                $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
-                $Page[1] += [int]$Current.Split('=')[-1]
-                $Clone.Endpoint.Path -replace $Current,($Page -join '=')
-            } elseif ($Clone.Endpoint.Path -match "$Endpoint^" -and $Clone.Endpoint.Path -notmatch '\?') {
-                # Add pagination
-                $Clone.Endpoint.Path,($Page -join '=') -join '?'
-            } else {
-                # Update pagination
-                $Clone.Endpoint.Path,($Page -join '=') -join '&'
-            }
-            $Request = $Script:Falcon.Api.Invoke($Clone.Endpoint)
-            if ($Request.Result.Content) {
-                $Result = Write-Result $Request
-                if ($null -ne $Result) {
-                    if ($Clone.Detailed -eq $true -and $Clone.Endpoint.Path -notmatch $NoDetail) {
-                        & $Command -Id $Result
-                    } else {
-                        $Result
-                    }
-                } elseif ($Pagination.total) {
-                    [string]$Message = "[Invoke-Loop] Results limited by API '$(($Clone.Endpoint.Path).Split(
-                        '?')[0] -replace $Script:Falcon.Hostname,$null)' ($i of $($Pagination.total))."
-                    Write-Error $Message
-                }
-                $Pagination = (ConvertFrom-Json (
-                    $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
             }
         }
     }
@@ -714,31 +713,25 @@ function New-ShouldMessage {
                     $Path = $Path -replace $Script:Falcon.Hostname,$null
                 }
                 if ($Path -match '\?') {
-                    # Add 'Path' without query values
+                    # Add 'Path' without query values, and 'Query' as an array
                     [string[]]$Array = $Path -split '\?'
                     [string[]]$Query = $Array[-1] -split '&'
                     Set-Property $Output Path $Array[0]
-                    if ($Query) {
-                        # Add 'Query' value as an array
-                        Set-Property $Output Query $Query
-                    }
+                    if ($Query) { Set-Property $Output Query $Query }
                 } else {
                     Set-Property $Output Path $Path
                 }
             }
             if ($Object.Headers) {
                 # Add 'Headers' value
-                Set-Property $Output Headers ($Object.Headers.GetEnumerator().foreach{
+                [string]$Header = ($Object.Headers.GetEnumerator().foreach{
                     $_.Key,$_.Value -join '=' } -join ', ')
+                if ($Header) { Set-Property $Output Headers $Header }
             }
-            foreach ($Pair in $Object.GetEnumerator().Where({ $_.Key -ne '^(Headers|Method|Path)$' })) {
-                [string]$Value = switch ($Pair.Key) {
-                    'Body' {
-                        # Convert 'Body' to Json
-                        $Pair.Value | ConvertTo-Json -Depth 8
-                    }
-                }
-                if ($Value) { Set-Property $Output $Pair.Key $Value }
+            if ($Object.Body -and $Object.Headers.ContentType -eq 'application/json') {
+                # Add 'Body' value
+                [string]$Body = try { $Object.Body | ConvertTo-Json -Depth 8 } catch {}
+                if ($Body) { Set-Property $Output Body $Body }
             }
             "`r`n",($Output | Format-List | Out-String).Trim(),"`r`n" -join "`r`n"
         } catch {}

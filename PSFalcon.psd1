@@ -465,6 +465,8 @@ General Changes
 
 * Updated IPv4 regex used by 'Test-RegexValue' private function.
 
+* Streamlined looping functionality (used with '-All' parameter).
+
 Command Changes
 
 * Added warning messages and exclusions for the commands 'Add-FalconSensorTag', 'Get-FalconSensorTag' and
@@ -484,6 +486,12 @@ Command Changes
   to be more verbose.
 
 Resolved Issues
+
+* Issue #170: 'Invoke-Loop' changes should eliminate token failures during retrieval of large result sets.
+
+* Issue #222: Updated comparison process to ensure an imported policy would be properly added to the list of
+  items to be modified, whether or not it was going to be created. Removed existing copy policy operation from
+  creation process.
 
 * Issue #223: Removed extraneous 'Endpoint' definition that was generating error.
 
