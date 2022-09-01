@@ -540,17 +540,11 @@ function Invoke-Falcon {
             do {
                 [string[]]$Next = switch ($Object) {
                     # Determine next offset value
-                    { $_.after } { @('after',$Object.after) }
-                    { $_.next_token } { @('next_token',$Object.next_token) }
-                    { $_.offset } {
-                        Write-Host "offset: $($Object.offset)"
-                        if ($Object.offset -match '^\d{1,}$') {
-                            Write-Host "regex: $Int"
-                            @('offset',$Int)
-                        } else {
-                            Write-Host "pagination: $($Object.offset)"
-                            @('offset',$Object.offset)
-                        }
+                    { $null -ne $_.after } { @('after',$Object.after) }
+                    { $null -ne $_.next_token } { @('next_token',$Object.next_token) }
+                    { $null -ne $_.offset } {
+                        $Value = if ($Object.offset -match '^\d{1,}$') { $Int } else { $Object.offset }
+                        @('offset',$Value)
                     }
                 }
                 if ($Next) {
@@ -573,13 +567,12 @@ function Invoke-Falcon {
                     if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
                     $Script:Falcon.Api.Invoke($Clone.Endpoint) | ForEach-Object {
                         if ($_.Result.Content) {
-                            # Update pagination
+                            # Output result, update pagination and received count
                             $Object = (ConvertFrom-Json (
                                 $_.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                            Write-Request $Clone $_ -OutVariable Object
-                            if ($null -ne $Result) {
-                                # Update received count
-                                [int]$Int += ($Result | Measure-Object).Count
+                            Write-Request $Clone $_ -OutVariable Output
+                            [int]$Int += ($Output | Measure-Object).Count
+                            if ($Object.total) {
                                 Write-Verbose "[Invoke-Falcon] Retrieved $Int of $($Object.total)"
                             }
                         } elseif ($Object.total) {
@@ -590,7 +583,7 @@ function Invoke-Falcon {
                         }
                     }
                 }
-            } while ( $Int -lt $Object.total )
+            } while ( $Object.total -and $Int -lt $Object.total )
         }
         function Write-Request {
             [CmdletBinding()]
@@ -604,11 +597,11 @@ function Invoke-Falcon {
             } else {
                 $false
             }
-            $Output = Write-Result $Object
-            if ($Output -and $Splat.Detailed -eq $true -and $NoDetail -eq $false) {
-                & $Command -Id $Output
+            if ($Splat.Detailed -eq $true -and $NoDetail -eq $false) {
+                $Output = Write-Result $Object
+                if ($Output) { & $Command -Id $Output }
             } else {
-                $Output
+                Write-Result $Object
             }
         }
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
@@ -687,7 +680,7 @@ function Invoke-Falcon {
                             if ($_.All -eq $true) {
                                 # Repeat request(s)
                                 [int]$Count = ($Result | Measure-Object).Count
-                                if ($Count -lt $Pagination.total) {
+                                if ($Pagination.total -and $Count -lt $Pagination.total) {
                                     Write-Verbose "[Invoke-Falcon] Retrieved $Count of $($Pagination.total)"
                                     Invoke-Loop $_ $Pagination $Count
                                 }
