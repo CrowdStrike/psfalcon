@@ -258,18 +258,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconFirewallField {
@@ -325,18 +317,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconFirewallGroup {
@@ -405,18 +389,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconFirewallPlatform {
@@ -467,18 +443,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconFirewallRule {
@@ -559,29 +527,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
-                if ($_.version -and $null -eq $_.version) { $_.version = 0 }
-                $_
-            }
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $Param['Format'] = @{ Query = @('ids') }
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            [object[]]$Request = @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
-                if ($_.version -and $null -eq $_.version) { $_.version = 0 }
-                $_
-            }
+        }
+        $Request = @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
+            if ($_.version -and $null -eq $_.version) { $_.version = 0 }
+            $_
+        }
+        if ($List) {
             foreach ($i in $List) {
                 # Return rules in order of provided 'Id' value(s)
                 [string]$IdField = if ($i -match '^\d+$') { 'id' } else { 'family' }
                 $Request | Where-Object { $_.$IdField -eq $i }
             }
+        } else {
+            $Request
         }
     }
 }

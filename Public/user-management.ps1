@@ -19,7 +19,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('uuid','user_uuid')]
         [string]$UserId,
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,ValueFromPipeline,
@@ -89,7 +89,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [Alias('user_uuid','uuid')]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id
     )
     begin {
@@ -131,7 +131,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [string[]]$Id,
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory,Position=1)]
         [Alias('user_uuid','uuid')]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$UserId,
         [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=1)]
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
@@ -214,7 +214,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
     param(
         [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('ids','uuid')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/users/queries/user-uuids-by-email/v1:get',Mandatory)]
@@ -293,7 +293,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [ValidateSet('reset_password','reset_2fa',IgnoreCase=$false)]
         [string]$Name,
         [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('ids')]
         [string[]]$Id
     )
@@ -398,7 +398,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
             ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('uuid','user_uuid')]
         [string]$UserId,
         [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:delete',Mandatory,ValueFromPipeline,

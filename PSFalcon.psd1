@@ -465,7 +465,8 @@ General Changes
 
 * Updated IPv4 regex used by 'Test-RegexValue' private function.
 
-* Streamlined looping functionality (used with '-All' parameter).
+* Streamlined looping functionality (used with '-All' parameter). Updated all commands to output groups of
+  results as they are retrieved instead of the entire result set at the end of a loop.
 
 Command Changes
 
@@ -475,15 +476,14 @@ Command Changes
 
 * Removed mandatory requirement for 'TenantId' parameter within the 'Get-FalconDiscoverAzureAccount' command.
 
-* Updated 'Invoke-FalconAlertAction' to use the new v2 endpoint.
+* Updated 'Invoke-FalconAlertAction' to use the new v2 endpoint which includes formatting corrections.
 
 * Updated 'Add-FalconRole', 'Edit-FalconUser', 'Get-FalconUser', 'New-FalconUser', 'Remove-FalconRole', and
   'Remove-FalconUser', to use new /user-management/ endpoints where appropriate. These commands behave as they
   did before, unless using additional parameters to signify that requests are being performed within a
   multi-CID environment.
 
-* 'Get-FalconRole' has been updated to produce results from a new /user-management/ endpoint, causing the output
-  to be more verbose.
+* 'Get-FalconRole' has been updated to produce results from new /user-management/ endpoints.
 
 Resolved Issues
 
@@ -493,13 +493,13 @@ Resolved Issues
   items to be modified, whether or not it was going to be created. Removed existing copy policy operation from
   creation process.
 
-* Issue #223: Removed extraneous 'Endpoint' definition that was generating error.
+* Issue #223: Removed extraneous 'Endpoint' definition that was generating an error.
 
 * Issue #231: Corrected addition of 'FirewallRule' when using 'Export-FalconConfig -Item FirewallGroup'. This fix
   should also resolve issues when exporting 'HostGroup' and a singular 'exclusion' item.
 
 * Issue #232: Re-added 'Outfile' designation for 'Path' parameter in 'Receive-FalconArtifact'. This should have
-  been there and was accidentally removed in an earlier version.
+  been present and was accidentally removed in an earlier module version.
 @"
         }
     }

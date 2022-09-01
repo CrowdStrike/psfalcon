@@ -210,76 +210,74 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        if ($Include) {
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($Request) {
+                if (!$Request.device_id) {
+                    $Request = if ($Include -contains 'group_names') {
+                        & $MyInvocation.MyCommand.Name -Id $Request | Select-Object device_id,groups
+                    } else {
+                        @($Request).foreach{ ,[PSCustomObject]@{ device_id = $_ }}
+                    }
+                }
+                if ($Include -contains 'group_names') {
+                    $Groups = try {
+                        Get-FalconHostGroup -Id $Request.groups -EA 0 | Select-Object id,name
+                    } catch {}
+                    if ($Groups) {
+                        foreach ($i in $Request) {
+                            $i.groups = @($Groups | Where-Object { $i.groups -contains $_.id })
+                        }
+                    }
+                }
+                if ($Include -contains 'login_history') {
+                    foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Login -EA 0)) {
+                        $SetParam = @{
+                            Object = $Request | Where-Object { $_.device_id -eq $i.device_id }
+                            Name = 'login_history'
+                            Value = $i.recent_logins
+                        }
+                        Set-Property @SetParam
+                    }
+                }
+                if ($Include -contains 'network_history') {
+                    foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Network -EA 0)) {
+                        $SetParam = @{
+                            Object = $Request | Where-Object { $_.device_id -eq $i.device_id }
+                            Name = 'network_history'
+                            Value = $i.history
+                        }
+                        Set-Property @SetParam
+                    }
+                }
+                if ($Include -contains 'online_state') {
+                    foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -State -EA 0)) {
+                        $SetParam = @{
+                            Object = $Request | Where-Object { $_.device_id -eq $i.id }
+                            Name = 'online_state'
+                            Value = $i
+                        }
+                        Set-Property @SetParam
+                    }
+                }
+                if ($Include -contains 'zero_trust_assessment') {
+                    foreach ($i in (Get-FalconZta -Id $Request.device_id -EA 0)) {
+                        $SetParam = @{
+                            Object = $Request | Where-Object { $_.device_id -eq $i.aid }
+                            Name = 'zero_trust_assessment'
+                            Value = $i | Select-Object modified_time,sensor_file_status,assessment,assessment_items
+                        }
+                        Set-Property @SetParam
+                    }
+                }
+                $Request
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        if ($Request -and $Include) {
-            if (!$Request.device_id) {
-                $Request = if ($Include -contains 'group_names') {
-                    & $MyInvocation.MyCommand.Name -Id $Request | Select-Object device_id,groups
-                } else {
-                    @($Request).foreach{ ,[PSCustomObject]@{ device_id = $_ }}
-                }
-            }
-            if ($Include -contains 'group_names') {
-                $Groups = try { Get-FalconHostGroup -Id $Request.groups -EA 0 | Select-Object id,name } catch {}
-                if ($Groups) {
-                    foreach ($i in $Request) {
-                        $i.groups = @($Groups | Where-Object { $i.groups -contains $_.id })
-                    }
-                }
-            }
-            if ($Include -contains 'login_history') {
-                foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Login -EA 0)) {
-                    $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $i.device_id }
-                        Name = 'login_history'
-                        Value = $i.recent_logins
-                    }
-                    Set-Property @SetParam
-                }
-            }
-            if ($Include -contains 'network_history') {
-                foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -Network -EA 0)) {
-                    $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $i.device_id }
-                        Name = 'network_history'
-                        Value = $i.history
-                    }
-                    Set-Property @SetParam
-                }
-            }
-            if ($Include -contains 'online_state') {
-                foreach ($i in (& $MyInvocation.MyCommand.Name -Id $Request.device_id -State -EA 0)) {
-                    $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $i.id }
-                        Name = 'online_state'
-                        Value = $i
-                    }
-                    Set-Property @SetParam
-                }
-            }
-            if ($Include -contains 'zero_trust_assessment') {
-                foreach ($i in (Get-FalconZta -Id $Request.device_id -EA 0)) {
-                    $SetParam = @{
-                        Object = $Request | Where-Object { $_.device_id -eq $i.aid }
-                        Name = 'zero_trust_assessment'
-                        Value = $i | Select-Object modified_time,sensor_file_status,assessment,assessment_items
-                    }
-                    Set-Property @SetParam
-                }
-            }
-        }
-        $Request
     }
 }
 function Get-FalconHostGroup {
@@ -354,22 +352,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        if ($Include) {
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($Request) { Add-Include $Request $PSBoundParameters @{ members = 'Get-FalconHostGroupMember' }}
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        if ($Request -and $Include) {
-            $Request = Add-Include $Request $PSBoundParameters @{ members = 'Get-FalconHostGroupMember' }
-        }
-        $Request
     }
 }
 function Get-FalconHostGroupMember {
@@ -486,11 +477,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-            if ($Request -and $Include) {
-                $Request = Add-Include $Request $PSBoundParameters -Command 'Get-FalconHost'
+            if ($Include) {
+                $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+                Add-Include $Request $PSBoundParameters -Command 'Get-FalconHost'
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
             }
-            $Request
         }
     }
 }
