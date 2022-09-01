@@ -543,9 +543,12 @@ function Invoke-Falcon {
                     { $_.after } { @('after',$Object.after) }
                     { $_.next_token } { @('next_token',$Object.next_token) }
                     { $_.offset } {
+                        Write-Host "offset: $($Object.offset)"
                         if ($Object.offset -match '^\d{1,}$') {
+                            Write-Host "regex: $Int"
                             @('offset',$Int)
                         } else {
+                            Write-Host "pagination: $($Object.offset)"
                             @('offset',$Object.offset)
                         }
                     }
@@ -573,7 +576,7 @@ function Invoke-Falcon {
                             # Update pagination
                             $Object = (ConvertFrom-Json (
                                 $_.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                            Write-Request $Clone $_ -OutVariable Result
+                            Write-Request $Clone $_ -OutVariable Object
                             if ($null -ne $Result) {
                                 # Update received count
                                 [int]$Int += ($Result | Measure-Object).Count
