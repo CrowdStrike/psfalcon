@@ -538,14 +538,14 @@ function Invoke-Falcon {
     begin {
         function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
             do {
-                [string[]]$Next = switch ($Object) {
-                    # Determine next offset value
-                    { $null -ne $_.after } { @('after',$Object.after) }
-                    { $null -ne $_.next_token } { @('next_token',$Object.next_token) }
-                    { $null -ne $_.offset } {
-                        $Value = if ($Object.offset -match '^\d{1,}$') { $Int } else { $Object.offset }
-                        @('offset',$Value)
-                    }
+                # Determine next offset value
+                [string[]]$Next = if ($Object.after) {
+                    @('after',$Object.after)
+                } elseif ($Object.next_token) {
+                    @('next_token',$Object.next_token)
+                } elseif ($null -ne $Object.offset) {
+                    $Value = if ($Object.offset -match '^\d{1,}$') { $Int } else { $Object.offset }
+                    @('offset',$Value)
                 }
                 if ($Next) {
                     # Clone parameters and make request
@@ -677,7 +677,7 @@ function Invoke-Falcon {
                             $Pagination.total
                         } else {
                             Write-Request $_ $Request -OutVariable Result
-                            if ($_.All -eq $true) {
+                            if ($Result -and $_.All -eq $true) {
                                 # Repeat request(s)
                                 [int]$Count = ($Result | Measure-Object).Count
                                 if ($Pagination.total -and $Count -lt $Pagination.total) {
