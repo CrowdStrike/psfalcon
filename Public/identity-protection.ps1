@@ -20,8 +20,8 @@ Repeat requests until all available results are retrieved
     begin {
         function Invoke-GraphLoop ($Object,$Splat,$Inputs) {
             if ($Inputs.Query -notmatch 'pageInfo(\s+)?{(\s+)?(hasNextPage(\s+)?|endCursor(\s+)?){2}(\s+)?}') {
-                Write-Warning ("[Invoke-FalconIdentityGraph] '-All' parameter specified, but 'pageInfo{hasNextPa" +
-                    "ge endCursor}' missing from query.")
+                [string]$Message = "'-All' parameter was specified but 'pageInfo' is missing from query."
+                Write-Warning ("[$($Splat.Command)]",$Message -join ' ')
             } else {
                 do {
                     # Ensure 'after' is present with current endCursor value
@@ -72,7 +72,12 @@ Repeat requests until all available results are retrieved
             { $_ -notmatch '^{' } { $PSBoundParameters.Query = "{$($PSBoundParameters.Query)" }
             { $_ -notmatch '}$' } { $PSBoundParameters.Query = "$($PSBoundParameters.Query)}" }
             { $_ -match '}$' } {
-                
+                # Verify that the number of open braces matches the number of close braces
+                [int]$Open = ($PSBoundParameters.Query.GetEnumerator() | Where-Object { $_ -eq '{' }).Count
+                [int]$Close = ($PSBoundParameters.Query.GetEnumerator() | Where-Object { $_ -eq '}' }).Count
+                [int]$Diff = $Open - $Close
+                [string[]]$Append = if ($Diff -ge 1) { @(1..$Diff).foreach{ '}' } }
+                if ($Append) { $PSBoundParameters.Query += $Append -join $null }
             }
         }
         Write-GraphResult (Invoke-Falcon @Param -Inputs $PSBoundParameters -OutVariable Request)
