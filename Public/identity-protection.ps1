@@ -80,7 +80,12 @@ Repeat requests until all available results are retrieved
                 if ($Append) { $PSBoundParameters.Query += $Append -join $null }
             }
         }
-        Write-GraphResult (Invoke-Falcon @Param -Inputs $PSBoundParameters -OutVariable Request)
+        if ($PSBoundParameters.All) {
+            # Output relevant sub-objects and repeat requests when using 'All'
+            Write-GraphResult (Invoke-Falcon @Param -Inputs $PSBoundParameters -OutVariable Request)
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
-    end { if ($Request -and $PSBoundParameters.All) { Invoke-GraphLoop $Request $Param $PSBoundParameters }}
+    end { if ($PSBoundParameters.All -and $Request) { Invoke-GraphLoop $Request $Param $PSBoundParameters }}
 }
