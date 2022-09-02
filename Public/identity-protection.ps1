@@ -6,76 +6,51 @@ Interact with Falcon Identity using GraphQL
 Requires 'Identity Protection GraphQL: Write'.
 .PARAMETER Query
 A complete GraphQL query statement
-.PARAMETER Type
-Query type
-.PARAMETER Argument
-Parameters and values to restrict result
-.PARAMETER Node
-Specific properties to return in the result
 .PARAMETER All
 Repeat requests until all available results are retrieved
 #>
-    [CmdletBinding(DefaultParameterSetName='Query',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='Query',Mandatory,ValueFromPipeline,Position=1)]
+        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post',Mandatory,ValueFromPipeline,
+            Position=1)]
         [string]$Query,
-        [Parameter(ParameterSetName='Parameters',Mandatory,ValueFromPipelineByPropertyName,Position=1)]
-        [ValidateSet('countEntities','entities','incident','incidents','riskByMembershipSummary','riskFactors',
-            'securityAssessment','securityAssessmentGoals','securityAssessmentHistory','timeline',
-            IgnoreCase=$false)]
-        [string]$Type,
-        [Parameter(ParameterSetName='Parameters',ValueFromPipelineByPropertyName,Position=2)]
-        [string[]]$Argument,
-        [Parameter(ParameterSetName='Parameters',ValueFromPipelineByPropertyName,Position=3)]
-        [Alias('nodes')]
-        [string[]]$Node,
-        [Parameter(ParameterSetName='Parameters')]
+        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post')]
         [switch]$All
     )
     begin {
-        function Invoke-GraphLoop ($Object,$Inputs,$Command) {
-            if ($Object.entities.pageInfo.hasNextPage -eq $true -and $null -ne
-            $Object.entities.pageInfo.endCursor) {
+        function Invoke-GraphLoop ($Object,$Splat,$Inputs) {
+            if ($Inputs.Query -notmatch 'pageInfo(\s+)?{(\s+)?(hasNextPage(\s+)?|endCursor(\s+)?){2}(\s+)?}') {
+                Write-Warning ("[Invoke-FalconIdentityGraph] '-All' parameter specified, but 'pageInfo{hasNextPa" +
+                    "ge endCursor}' missing from query.")
+            } else {
                 do {
-                    # Update 'After' argument with new endCursor value and repeat request
+                    # Ensure 'after' is present with current endCursor value
                     [string]$After = 'after:"{0}"' -f $Object.entities.pageInfo.endCursor
-                    $Param = @{
-                        Type = $Inputs.Type
-                        Argument = if ($Inputs.Argument) {
-                            if ($Inputs.Argument -match '^after:.*$') {
-                                $Inputs.Argument -replace '^after:.*$',$After
-                            } else {
-                                [string[]]$Inputs.Argument + $After
-                            }
-                        } else {
-                            [string[]]$After
-                        }
-                        Node = $Inputs.Node
+                    [string]$Entities = [regex]::Match($Inputs.Query,'entities(\s+)?\([\w\s:\[\],="]+[^)]').Value
+                    [string]$Next = if ($Entities -match 'after:"[\w=]+"') {
+                        $Entities -replace 'after:"[\w=]+"',$After
+                    } else {
+                        $Entities,$After -join ' '
                     }
-                    & $Command @Param -All -OutVariable Object
-                } until (
-                    $Object.entities.pageInfo.hasNextPage -eq $false -or $null -eq
+                    # Update 'query' and repeat request
+                    $Inputs['Query'] = ($Inputs.Query).Replace($Entities,$Next)
+                    Write-GraphResult (Invoke-Falcon @Splat -Inputs $Inputs -OutVariable Object)
+                } while (
+                    $Object.entities.pageInfo.hasNextPage -eq $true -and $null -ne
                         $Object.entities.pageInfo.endCursor
                 )
             }
         }
-        function Write-GraphResult ($Object,$String) {
-            if ($Object.$String.pageInfo) {
+        function Write-GraphResult ($Object) {
+            if ($Object.entities.pageInfo) {
                 # Output verbose 'pageInfo' detail
-                [string]$Message = (@($Object.$String.pageInfo.PSObject.Properties).foreach{
+                [string]$Message = (@($Object.entities.pageInfo.PSObject.Properties).foreach{
                     $_.Name,$_.Value -join '='
                 }) -join ', '
                 Write-Verbose ('[Invoke-FalconIdentityGraph]',$Message -join ' ')
             }
-            if ($Object.$String.nodes) {
-                # Output 'nodes'
-                $Object.$String.nodes
-            } elseif ($Object.$String) {
-                # Output by 'type' when not using 'entities'
-                $Object.$String
-            } else {
-                $Object
-            }
+            # Output 'nodes'
+            if ($Object.entities.nodes) { $Object.entities.nodes } else { $Object }
         }
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
@@ -84,48 +59,23 @@ Repeat requests until all available results are retrieved
         }
     }
     process {
-        $Request = if ($PSCmdlet.ParameterSetName -eq 'Query') {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        } else {
-            # Build [string[]] containing 'Type', 'Argument' and 'Node' input
-            [string[]]$Query = switch ($PSBoundParameters) {
-                { $_.Type } {
-                    if ($PSBoundParameters.Argument) {
-                        $PSBoundParameters.Type,"($($PSBoundParameters.Argument -join ' '))" -join $null
-                    } else {
-                        $PSBoundParameters.Type
-                    }
+        switch ($PSBoundParameters.Query) {
+            { $_ -match '\n' } {
+                if ($PSBoundParameters.Query -match '\#(\s+)?(\w|\W|\s).+') {
+                    # Remove comments
+                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace '\#(\s+)?(\w|\W|\s).+',$null
                 }
-                { $_.Node } {
-                    [string]$NodeString = if ($PSBoundParameters.Type -eq 'securityAssessment') {
-                        '{',($PSBoundParameters.Node -join ' ') -join $null
-                    } elseif ($PSBoundParameters.Type -ne 'countEntities') {
-                        "{nodes{$($PSBoundParameters.Node -join ' ')}"
-                    }
-                    if ($NodeString) {
-                        if ($PSBoundParameters.All -and $PSBoundParameters.Type -eq 'entities') {
-                            # Append 'pageInfo' values
-                            $NodeString = $NodeString,'pageInfo{hasNextPage endCursor}' -join ' '
-                        }
-                        $NodeString,'}' -join $null
-                    }
-                }
+                # Convert into a single line and remove duplicate spaces
+                $PSBoundParameters.Query = $PSBoundParameters.Query -replace '\n',' ' -replace '\s+',' '
             }
-            & $MyInvocation.MyCommand.Name -Query "{$($Query -join ' ')}"
-        }
-    }
-    end {
-        if ($Request) {
-            if ($Type) {
-                # Output relevant sub-object when not using a full 'Query'
-                Write-GraphResult $Request $Type
-                if ($PSBoundParameters.All -and $PSBoundParameters.Node) {
-                    # Repeat requests when 'All' is included
-                    Invoke-GraphLoop $Request $PSBoundParameters $Param.Command
-                }
-            } else {
-                $Request
+            # Enforce beginning and ending braces
+            { $_ -notmatch '^{' } { $PSBoundParameters.Query = "{$($PSBoundParameters.Query)" }
+            { $_ -notmatch '}$' } { $PSBoundParameters.Query = "$($PSBoundParameters.Query)}" }
+            { $_ -match '}$' } {
+                
             }
         }
+        Write-GraphResult (Invoke-Falcon @Param -Inputs $PSBoundParameters -OutVariable Request)
     }
+    end { if ($Request -and $PSBoundParameters.All) { Invoke-GraphLoop $Request $Param $PSBoundParameters }}
 }
