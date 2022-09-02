@@ -49,11 +49,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 'lconctl grouping-tags clear &> /dev/null && /Applications/Falcon.app/Contents/Resources/falconc' +
                 'tl grouping-tags set "$uniq" &> /dev/null && /Applications/Falcon.app/Contents/Resources/falcon' +
                 'ctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
-            Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
-                '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags" | Where-Ob' +
-                'ject { $_ }; $V = if ($T) { (($T -split "REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Se' +
-                'lect-Object -Unique) -join "," } else { $args }; [void](reg add $K /v GroupingTags /d $V /f); "' +
-                '$((((reg query $K) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
+            Windows = @{
+                Reg = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
+                    '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags" | Wher' +
+                    'e-Object { $_ }; $V = if ($T) { (($T -split "REG_SZ")[-1].Trim().Split(",") + $args.Split("' +
+                    ',") | Select-Object -Unique) -join "," } else { $args }; [void](reg add $K /v GroupingTags ' +
+                    '/d $V /f); "$((((reg query $K) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
+                Tool = @{
+                    Token = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test' +
+                        '-Path $E){echo {1} | & "$E" set --grouping-tags "$V"}else{throw "Not found: $E"}'
+                    NoToken = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Te' +
+                        'st-Path $E){& "$E" set --grouping-tags "$V"}else{throw "Not found: $E"}'
+                }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -61,35 +69,102 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
+            [string]$UserAgent = (Show-FalconModule).UserAgent
             try {
                 # Get device info to determine script and begin session
-                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version |
-                    Where-Object { $_.platform_name -eq 'Windows' -and $_.agent_version -lt 6.42 -or
-                    $_.platform_name -ne 'Windows' }
-                @($Id | Where-Object { $Hosts.device_id -notcontains $_ }).foreach{
-                    # Exclude Windows hosts running sensor versions newer than 6.42
-                    Write-Warning "[Add-FalconSensorTag] Sensor version unsupported [aid: $_]"
-                }
-                if (!$Hosts) { throw "No eligible hosts." }
+                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version,
+                    device_policies,tags
                 foreach ($Platform in ($Hosts.platform_name | Group-Object).Name) {
                     # Start sessions for each 'platform' type
-                    $Param = @{
-                        Command = 'runscript'
-                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
-                        HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
-                    }
+                    $Param = @{ Command = 'runscript' }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
-                    Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
-                        # Output device properties and 'tags' value
-                        [PSCustomObject]@{
-                            cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
-                            device_id = $_.aid
-                            tags = if ($_.stdout) {
-                                ($_.stdout).Trim()
-                            } elseif ($_.stderr) {
-                                $_.stderr
+                    if ($Platform -eq 'Windows') {
+                        foreach ($i in ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
+                        $_.agent_version -ge 6.42 })) {
+                            # Use 'CsSensorSettings.exe' script for devices 6.42 or newer
+                            [boolean]$TagMatch = $false
+                            @($Tag).foreach{ if ($TagMatch -eq $false -and $i.tags -notcontains $_) {
+                                $TagMatch = $true }}
+                            if ($TagMatch -eq $true) {
+                                [string]$TagString = (@([string[]]($i.tags | Where-Object { $_ -match
+                                    'SensorGroupingTags/' }) + [string[]]$Tag) | Select-Object -Unique) -join
+                                    ',' -replace 'SensorGroupingTags/',$null
+                                [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq
+                                'ENABLED') {
+                                    [string]$Token = ($i.device_id | Get-FalconUninstallToken -AuditMessage (
+                                        'Add-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
+                                    $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString -replace
+                                        '\{1\}',$Token
+                                } else {
+                                    $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString
+                                }
+                                $Param['Argument'] = '-Raw=```{0}```' -f $Script
+                                $Param['HostId'] = $i.device_id
+                                Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors |
+                                ForEach-Object {
+                                    # Output device properties and 'tags' value after script
+                                    [PSCustomObject]@{
+                                        cid = $i.cid
+                                        device_id = $_.aid
+                                        tags = if ($_.stdout) {
+                                            ($_.stdout).Trim()
+                                        } elseif ($_.stderr) {
+                                            $_.stderr
+                                        } else {
+                                            $_.errors
+                                        }
+                                    }
+                                }
                             } else {
-                                $_.errors
+                                # Output device properties and 'tags' value when no changes required
+                                [PSCustomObject]@{
+                                    cid = $i.cid
+                                    device_id = $i.device_id
+                                    tags = ($i.tags | Where-Object { $_ -match 'SensorGroupingTags/' }) -join ','
+                                }
+                            }
+                        }
+                        if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt
+                        6.42 }) {
+                            # Run registry modification script for devices older than 6.42
+                            $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,
+                                ($Tag -join ',')
+                            $Param['HostId'] = ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
+                                $_.agent_version -lt 6.42 }).device_id
+                            Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
+                                # Output device properties and 'tags' value
+                                [PSCustomObject]@{
+                                    cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
+                                    device_id = $_.aid
+                                    tags = if ($_.stdout) {
+                                        ($_.stdout).Trim()
+                                    } elseif ($_.stderr) {
+                                        $_.stderr
+                                    } else {
+                                        $_.errors
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $Param = @{
+                            Command = 'runscript'
+                            Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
+                            HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
+                        }
+                        if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
+                        Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
+                            # Output device properties and 'tags' value
+                            [PSCustomObject]@{
+                                cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
+                                device_id = $_.aid
+                                tags = if ($_.stdout) {
+                                    ($_.stdout).Trim()
+                                } elseif ($_.stderr) {
+                                    $_.stderr
+                                } else {
+                                    $_.errors
+                                }
                             }
                         }
                     }
@@ -138,35 +213,66 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
+            [string]$UserAgent = (Show-FalconModule).UserAgent
             try {
                 # Get device info to determine script and begin session
-                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version |
-                    Where-Object { $_.platform_name -eq 'Windows' -and $_.agent_version -lt 6.42 -or
-                    $_.platform_name -ne 'Windows' }
-                @($Id | Where-Object { $Hosts.device_id -notcontains $_ }).foreach{
-                    # Exclude Windows hosts running sensor versions newer than 6.42
-                    Write-Warning "[Add-FalconSensorTag] Sensor version unsupported [aid: $_]"
-                }
-                if (!$Hosts) { throw "No eligible hosts." }
+                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version,
+                    device_policies,tags
                 foreach ($Platform in ($Hosts.platform_name | Group-Object).Name) {
                     # Start sessions for each 'platform' type
-                    $Param = @{
-                        Command = 'runscript'
-                        Argument = '-Raw=```{0}```' -f $Scripts.$Platform
-                        HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
-                    }
+                    $Param = @{ Command = 'runscript' }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
-                    Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
-                        # Output device properties and 'tags' value
-                        [PSCustomObject]@{
-                            cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
-                            device_id = $_.aid
-                            tags = if ($_.stdout) {
-                                ($_.stdout).Trim()
-                            } elseif ($_.stderr) {
-                                $_.stderr
-                            } else {
-                                $_.errors
+                    if ($Platform -eq 'Windows') {
+                        foreach ($i in ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
+                        $_.agent_version -ge 6.42 })) {
+                            # Use devices API to return tag values for devices 6.42 and newer
+                            [PSCustomObject]@{
+                                cid = $i.cid
+                                device_id = $i.device_id
+                                tags = ($i.tags | Where-Object { $_ -match 'SensorGroupingTags/' }) -join ','
+                            }
+                        }
+                        if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt
+                        6.42 }) {
+                            # Run registry modification script for devices older than 6.42
+                            $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,
+                                ($Tag -join ',')
+                            $Param['HostId'] = ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
+                                $_.agent_version -lt 6.42 }).device_id
+                            Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
+                                # Output device properties and 'tags' value
+                                [PSCustomObject]@{
+                                    cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
+                                    device_id = $_.aid
+                                    tags = if ($_.stdout) {
+                                        ($_.stdout).Trim()
+                                    } elseif ($_.stderr) {
+                                        $_.stderr
+                                    } else {
+                                        $_.errors
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $Param = @{
+                            Command = 'runscript'
+                            Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
+                            HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
+                        }
+                        if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
+                        Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
+                            # Output device properties and 'tags' value
+                            [PSCustomObject]@{
+                                cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
+                                device_id = $_.aid
+                                tags = if ($_.stdout) {
+                                    ($_.stdout).Trim()
+                                } elseif ($_.stderr) {
+                                    $_.stderr
+                                } else {
+                                    $_.errors
+                                }
                             }
                         }
                     }
@@ -230,12 +336,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 'cations/Falcon.app/Contents/Resources/falconctl grouping-tags set "$tag" &> /dev/null && /Appli' +
                 'cations/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping tags se' +
                 't//; s/^Grouping tags: //"'
-            Windows = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
-                '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags"; if ($T) {' +
-                ' $D = $args.Split(","); $V = ($T -split "REG_SZ")[-1].Trim().Split(",").Where({ $D -notcontains' +
-                ' $_ }) -join ","; if ($V) { [void](reg add $K /v GroupingTags /d $V /f) } else { [void](reg del' +
-                'ete $K /v GroupingTags /f) }}; $T = (reg query $K) -match "GroupingTags"; if ($T) { ($T -split ' +
-                '"REG_SZ")[-1].Trim() }'
+            Windows = @{
+                Reg = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
+                    '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags"; if ($' +
+                    'T) {$D = $args.Split(","); $V = ($T -split "REG_SZ")[-1].Trim().Split(",").Where({ $D -notc' +
+                    'ontains $_ }) -join ","; if ($V) { [void](reg add $K /v GroupingTags /d $V /f) } else { [vo' +
+                    'id](reg delete $K /v GroupingTags /f) }}; $T = (reg query $K) -match "GroupingTags"; if ($T' +
+                    ') { ($T -split "REG_SZ")[-1].Trim() }'
+                Tool = @{
+                    Token = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test' +
+                        '-Path $E){if($V){echo {1} | & "$E" set --grouping-tags "$V"}else{echo {1} | & "$E" clea' +
+                        'r --grouping-tags}}else{throw "Not found: $E"}'
+                    NoToken = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Te' +
+                        'st-Path $E){if($V){& "$E" set --grouping-tags "$V"}else{& "$E" clear --grouping-tags}}e' +
+                        'lse{throw "Not found: $E"}'
+                }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -243,35 +359,102 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
+            [string]$UserAgent = (Show-FalconModule).UserAgent
             try {
                 # Get device info to determine script and begin session
-                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version |
-                    Where-Object { $_.platform_name -eq 'Windows' -and $_.agent_version -lt 6.42 -or
-                    $_.platform_name -ne 'Windows' }
-                @($Id | Where-Object { $Hosts.device_id -notcontains $_ }).foreach{
-                    # Exclude Windows hosts running sensor versions newer than 6.42
-                    Write-Warning "[Add-FalconSensorTag] Sensor version unsupported [aid: $_]"
-                }
-                if (!$Hosts) { throw "No eligible hosts." }
+                $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version,
+                    device_policies,tags
                 foreach ($Platform in ($Hosts.platform_name | Group-Object).Name) {
                     # Start sessions for each 'platform' type
-                    $Param = @{
-                        Command = 'runscript'
-                        Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
-                        HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
-                    }
+                    $Param = @{ Command = 'runscript' }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
-                    Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
-                        # Output device properties and 'tags' value
-                        [PSCustomObject]@{
-                            cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
-                            device_id = $_.aid
-                            tags = if ($_.stdout) {
-                                ($_.stdout).Trim()
-                            } elseif ($_.stderr) {
-                                $_.stderr
+                    if ($Platform -eq 'Windows') {
+                        foreach ($i in ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
+                        $_.agent_version -ge 6.42 })) {
+                            # Use 'CsSensorSettings.exe' script for devices 6.42 or newer
+                            [boolean]$TagMatch = $false
+                            @($Tag).foreach{ if ($TagMatch -eq $false -and $i.tags -contains $_) {
+                                $TagMatch = $true }}
+                            if ($TagMatch -eq $true) {
+                                [string]$TagString = ($i.tags | Where-Object { $_ -match
+                                    '^SensorGroupingTags/' -and $Tag -notcontains $_ }) -join ',' -replace
+                                    'SensorGroupingTags/',$null
+                                [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq
+                                'ENABLED') {
+                                    [string]$Token = ($i.device_id | Get-FalconUninstallToken -AuditMessage (
+                                        'Remove-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
+                                    $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString -replace
+                                        '\{1\}',$Token
+                                } else {
+                                    $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString
+                                }
+                                $Param['Argument'] = '-Raw=```{0}```' -f $Script
+                                $Param['HostId'] = $i.device_id
+                                Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors |
+                                ForEach-Object {
+                                    # Output device properties and 'tags' value after script
+                                    [PSCustomObject]@{
+                                        cid = $i.cid
+                                        device_id = $_.aid
+                                        tags = if ($_.stdout) {
+                                            ($_.stdout).Trim()
+                                        } elseif ($_.stderr) {
+                                            $_.stderr
+                                        } else {
+                                            $_.errors
+                                        }
+                                    }
+                                }
                             } else {
-                                $_.errors
+                                # Output device properties and 'tags' value when no changes required
+                                [PSCustomObject]@{
+                                    cid = $i.cid
+                                    device_id = $i.device_id
+                                    tags = ($i.tags | Where-Object { $_ -match 'SensorGroupingTags/' }) -join ','
+                                }
+                            }
+                        }
+                        if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt
+                        6.42 }) {
+                            # Run registry modification script for devices older than 6.42
+                            $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,
+                                ($Tag -join ',')
+                            $Param['HostId'] = ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
+                                $_.agent_version -lt 6.42 }).device_id
+                            Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
+                                # Output device properties and 'tags' value
+                                [PSCustomObject]@{
+                                    cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
+                                    device_id = $_.aid
+                                    tags = if ($_.stdout) {
+                                        ($_.stdout).Trim()
+                                    } elseif ($_.stderr) {
+                                        $_.stderr
+                                    } else {
+                                        $_.errors
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $Param = @{
+                            Command = 'runscript'
+                            Argument = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform,($Tag -join ',')
+                            HostId = ($Hosts | Where-Object { $_.platform_name -eq $Platform }).device_id
+                        }
+                        if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
+                        Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
+                            # Output device properties and 'tags' value
+                            [PSCustomObject]@{
+                                cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
+                                device_id = $_.aid
+                                tags = if ($_.stdout) {
+                                    ($_.stdout).Trim()
+                                } elseif ($_.stderr) {
+                                    $_.stderr
+                                } else {
+                                    $_.errors
+                                }
                             }
                         }
                     }
