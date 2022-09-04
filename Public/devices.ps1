@@ -354,8 +354,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
         if ($Include) {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-            if ($Request) { Add-Include $Request $PSBoundParameters @{ members = 'Get-FalconHostGroupMember' }}
+            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+                Add-Include $_ $PSBoundParameters @{ members = 'Get-FalconHostGroupMember' }
+            }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
@@ -476,8 +477,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             if ($Include) {
-                $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-                Add-Include $Request $PSBoundParameters -Command 'Get-FalconHost'
+                Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+                    Add-Include $_ $PSBoundParameters -Command 'Get-FalconHost'
+                }
             } else {
                 Invoke-Falcon @Param -Inputs $PSBoundParameters
             }

@@ -146,25 +146,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-        if ($Request -and $Include) {
-            $Request = Add-Include $Request $PSBoundParameters @{
-                members = 'Get-FalconFirewallPolicyMember'
-                settings = 'Get-FalconFirewallSetting'
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        if ($Include) {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+                $Request = Add-Include $_ $PSBoundParameters @{
+                    members = 'Get-FalconFirewallPolicyMember'
+                    settings = 'Get-FalconFirewallSetting'
+                }
+                $Request
             }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        $Request
     }
 }
 function Get-FalconFirewallPolicyMember {

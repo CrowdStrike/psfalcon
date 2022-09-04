@@ -247,22 +247,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        if ($Include) {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+                Add-Include $_ $PSBoundParameters @{ members = 'Get-FalconSensorUpdatePolicyMember' }
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        if ($Request -and $Include) {
-            $Request = Add-Include $Request $PSBoundParameters @{ members = 'Get-FalconSensorUpdatePolicyMember' }
-        }
-        $Request
     }
 }
 function Get-FalconSensorUpdatePolicyMember {
