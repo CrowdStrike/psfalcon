@@ -591,7 +591,7 @@ function Invoke-Falcon {
                 [hashtable]$Splat,
                 [object]$Object
             )
-            [boolean]$NoDetail = if ($Splat.Endpoint -match '(/combined/|/rule-groups-full/)') {
+            [boolean]$NoDetail = if ($Splat.Endpoint.Path -match '(/combined/|/rule-groups-full/)') {
                 # Determine if endpoint requires a secondary 'Detailed' request
                 $true
             } else {
