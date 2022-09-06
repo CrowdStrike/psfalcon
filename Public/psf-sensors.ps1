@@ -69,6 +69,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
+            [string[]]$Tag = $Tag -replace 'SensorGroupingTags/',$null
             [string]$UserAgent = (Show-FalconModule).UserAgent
             try {
                 # Get device info to determine script and begin session
@@ -83,12 +84,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         $_.agent_version -ge 6.42 })) {
                             # Use 'CsSensorSettings.exe' script for devices 6.42 or newer
                             [boolean]$TagMatch = $false
-                            @($Tag).foreach{ if ($TagMatch -eq $false -and $i.tags -notcontains $_) {
+                            [string[]]$Existing = ($i.tags | Where-Object {
+                                $_ -match 'SensorGroupingTags/' }) -replace 'SensorGroupingTags/',$null
+                            @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -notcontains $_) {
                                 $TagMatch = $true }}
                             if ($TagMatch -eq $true) {
-                                [string]$TagString = (@([string[]]($i.tags | Where-Object { $_ -match
-                                    'SensorGroupingTags/' }) + [string[]]$Tag) | Select-Object -Unique) -join
-                                    ',' -replace 'SensorGroupingTags/',$null
+                                [string]$TagString = (@($Existing + $Tag) | Select-Object -Unique) -join ','
                                 [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq
                                 'ENABLED') {
                                     [string]$Token = ($i.device_id | Get-FalconUninstallToken -AuditMessage (
@@ -107,7 +108,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                                         cid = $i.cid
                                         device_id = $_.aid
                                         tags = if ($_.stdout) {
-                                            ($_.stdout).Trim()
+                                            $Result = ($_.stdout).Trim()
+                                            if ($Result -eq 'Maintenance Token>') { $TagString } else { $Result }
                                         } elseif ($_.stderr) {
                                             $_.stderr
                                         } else {
@@ -120,7 +122,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                                 [PSCustomObject]@{
                                     cid = $i.cid
                                     device_id = $i.device_id
-                                    tags = ($i.tags | Where-Object { $_ -match 'SensorGroupingTags/' }) -join ','
+                                    tags = $Existing -join ','
                                 }
                             }
                         }
@@ -213,7 +215,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
-            [string]$UserAgent = (Show-FalconModule).UserAgent
+            [string[]]$Tag = $Tag -replace 'SensorGroupingTags/',$null
             try {
                 # Get device info to determine script and begin session
                 $Hosts = Get-FalconHost -Id $Id | Select-Object cid,device_id,platform_name,agent_version,
@@ -229,7 +231,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                             [PSCustomObject]@{
                                 cid = $i.cid
                                 device_id = $i.device_id
-                                tags = ($i.tags | Where-Object { $_ -match 'SensorGroupingTags/' }) -join ','
+                                tags = ($i.tags | Where-Object { $_ -match 'SensorGroupingTags/' }) -replace
+                                    'SensorGroupingTags/',$null -join ','
                             }
                         }
                         if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt
@@ -359,6 +362,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
     end {
         if ($List) {
             [string[]]$Id = @($List | Select-Object -Unique)
+            [string[]]$Tag = $Tag -replace 'SensorGroupingTags/',$null
             [string]$UserAgent = (Show-FalconModule).UserAgent
             try {
                 # Get device info to determine script and begin session
@@ -373,12 +377,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                         $_.agent_version -ge 6.42 })) {
                             # Use 'CsSensorSettings.exe' script for devices 6.42 or newer
                             [boolean]$TagMatch = $false
-                            @($Tag).foreach{ if ($TagMatch -eq $false -and $i.tags -contains $_) {
+                            [string[]]$Existing = ($i.tags | Where-Object {
+                                $_ -match 'SensorGroupingTags/' }) -replace 'SensorGroupingTags/',$null
+                            @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -contains $_) {
                                 $TagMatch = $true }}
                             if ($TagMatch -eq $true) {
-                                [string]$TagString = ($i.tags | Where-Object { $_ -match
-                                    '^SensorGroupingTags/' -and $Tag -notcontains $_ }) -join ',' -replace
-                                    'SensorGroupingTags/',$null
+                                [string]$TagString = ($Existing | Where-Object { $Tag -notcontains $_ }) -join ','
                                 [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq
                                 'ENABLED') {
                                     [string]$Token = ($i.device_id | Get-FalconUninstallToken -AuditMessage (
@@ -397,7 +401,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                                         cid = $i.cid
                                         device_id = $_.aid
                                         tags = if ($_.stdout) {
-                                            ($_.stdout).Trim()
+                                            $Result = ($_.stdout).Trim()
+                                            if ($Result -eq 'Maintenance Token>') { $TagString } else { $Result }
                                         } elseif ($_.stderr) {
                                             $_.stderr
                                         } else {
@@ -410,7 +415,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                                 [PSCustomObject]@{
                                     cid = $i.cid
                                     device_id = $i.device_id
-                                    tags = ($i.tags | Where-Object { $_ -match 'SensorGroupingTags/' }) -join ','
+                                    tags = $Existing -join ','
                                 }
                             }
                         }
