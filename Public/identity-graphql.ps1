@@ -18,24 +18,22 @@ function Invoke-FalconIdentityGraph {
             Query Falcon Identity to retieve all entities with the BuiltInAdministratorRole
 
             PS> $query = '
-                    Query:
-                    entities (
-                        # Returns all entities that hold the built in administrators role
-                        roles: [BuiltinAdministratorRole]
-                        sortKey: PRIMARY_DISPLAY_NAME
-                        sortOrder: ASCENDING
-                        first: 1000
-                    )
-                    {
-                        nodes {
-                        primaryDisplayName
-                        secondaryDisplayName
-                        }
-                        pageInfo {
-                        hasNextPage
-                        endCursor
-                        }
-                    }'
+                entities (   
+                    # Query "Roles" to get administrator accounts:
+                    roles: [BuiltinAdministratorRole]
+                    # Sort the results in ascending primary display name order:
+                    sortKey: PRIMARY_DISPLAY_NAME
+                    sortOrder: ASCENDING
+                )
+                {
+                    # Use "nodes" keyword when expecting multiple matching entities:
+                    nodes {
+                    # Requested fields:
+                    primaryDisplayName
+                    secondaryDisplayName
+                    }
+                }
+                }'
             
             PS> Invoke-FalconIdentityGraph -Query $query
 
@@ -79,71 +77,221 @@ function Invoke-FalconIdentityGraph {
                     "consumedPoints": 5
                 }
             }
+        
+            .EXAMPLE
+                Query Falcon Cloud US-2 for all user objects in Falcon Identity
+
+                    $query = '
+                        query ($after: Cursor)
+                        {
+                        entities(types: [USER]
+                        archived: false
+                        after: $after
+                        first: 1000) {
+                        nodes {
+                                primaryDisplayName
+                                secondaryDisplayName
+                                riskScoreSeverity
+                                hasADDomainAdminRole
+                                riskFactors
+                                {
+                                    type
+                                }
+                                    accounts {
+                                    description
+                                    ... on ActiveDirectoryAccountDescriptor{
+                                    passwordAttributes{
+                                        lastChange
+                                        strength
+                                    }
+                                    creationTime
+                                    objectSid
+                                    samAccountName
+                                    domain
+                                    enabled
+                                    ou
+                                    lastUpdateTime
+                                    department
+                                    servicePrincipalNames
+                                    upn
+                                    dn
+                                    title
+                                    userAccountControl
+                                    objectGuid
+                                    containingGroupEntities {
+                                        secondaryDisplayName
+                                    }
+                                    flattenedContainingGroupEntities{
+                                        secondaryDisplayName
+                                    }
+                                    }
+                                }
+                            }
+                        pageInfo {
+                            hasNextPage
+                            endCursor
+                        }
+                        }
+                        }'
+                    
+                    PS> Invoke-FalconIdentityGraph -FalconCloud US-2 -Query $query
+
+                    Example Output: 
+                        PrimaryDisplayName   : LIZ_ACOSTA
+                        secondaryDisplayName : AFL.COM\LIZ_ACOSTA
+                        riskScoreSeverity    : MEDIUM
+                        hasADDomainAdminRole : False
+                        riskFactors          : {@{type=STALE_ACCOUNT}, @{type=WEAK_PASSWORD_POLICY}}
+                        accounts             : {@{description=Created with secframe.com/badblood.; passwordAttributes=; creationTime=10/14/2021 4:12:32 AM; objectSid=S-1-5-21-30036428-1354013063-3705842367-1952; samAccountName=LIZ_ACOSTA; domain=AFL.COM; 
+                                            enabled=True; ou=AFL.com/Tier 1/BDE/Groups; lastUpdateTime=10/14/2021 4:12:32 AM; department=; servicePrincipalNames=System.Object[]; upn=LIZ_ACOSTA@AFL.com; dn=CN=LIZ_ACOSTA,OU=Groups,OU=BDE,OU=Tier 
+                                            1,DC=AFL,DC=com; title=; userAccountControl=512; objectGuid=48f58645-fb49-4724-aa86-807149a41ec3; containingGroupEntities=System.Object[]; flattenedContainingGroupEntities=System.Object[]}}
+
+                        primaryDisplayName   : DARIUS_HUNTER
+                        secondaryDisplayName : AFL.COM\DARIUS_HUNTER
+                        riskScoreSeverity    : MEDIUM
+                        hasADDomainAdminRole : False
+                        riskFactors          : {@{type=STALE_ACCOUNT}, @{type=WEAK_PASSWORD_POLICY}}
+                        accounts             : {@{description=Created with secframe.com/badblood.; passwordAttributes=; creationTime=10/14/2021 4:11:40 AM; objectSid=S-1-5-21-30036428-1354013063-3705842367-1615; samAccountName=DARIUS_HUNTER; domain=AFL.COM; 
+                                            enabled=True; ou=AFL.com/Tier 2/FSR/Devices; lastUpdateTime=10/14/2021 4:11:40 AM; department=; servicePrincipalNames=System.Object[]; upn=DARIUS_HUNTER@AFL.com; dn=CN=DARIUS_HUNTER,OU=Devices,OU=FSR,OU=Tier 
+                                            2,DC=AFL,DC=com; title=; userAccountControl=512; objectGuid=48fe10c2-7672-416f-a18b-38106db6a8e1; containingGroupEntities=System.Object[]; flattenedContainingGroupEntities=System.Object[]}}
+
+                        primaryDisplayName   : ANDERSON_SYKES
+                        secondaryDisplayName : AFL.COM\ANDERSON_SYKES
+                        riskScoreSeverity    : MEDIUM
+                        hasADDomainAdminRole : False
+                        riskFactors          : {@{type=STALE_ACCOUNT}, @{type=WEAK_PASSWORD_POLICY}}
+                        accounts             : {@{description=Created with secframe.com/badblood.; passwordAttributes=; creationTime=10/14/2021 4:12:39 AM; objectSid=S-1-5-21-30036428-1354013063-3705842367-1997; samAccountName=ANDERSON_SYKES; 
+                                            domain=AFL.COM; enabled=True; ou=AFL.com/Admin/Tier 2/T2-Servers; lastUpdateTime=10/14/2021 4:12:39 AM; department=; servicePrincipalNames=System.Object[]; upn=ANDERSON_SYKES@AFL.com; 
+                                            dn=CN=ANDERSON_SYKES,OU=T2-Servers,OU=Tier 2,OU=Admin,DC=AFL,DC=com; title=; userAccountControl=512; objectGuid=490652ce-f3bc-405f-972b-170043460a4b; containingGroupEntities=System.Object[]; 
+                                            flattenedContainingGroupEntities=System.Object[]}}
 
     #>
 
-    [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post',SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [ValidateSet('US-1','US-2','EU-1','US-GOV-1')]
+        [string]$FalconCloud,
+        [Parameter (Mandatory=$true)]
         [string]$Query
     )
 
-    begin 
+    begin
     {
-
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{Body = @{ root = @('query') }}
-        }
-
-    }
-
-    process 
-    {
-        
-        $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters 
-        $Results = $Request.entities.nodes
-        $RequestPageInfo = $Request.entities.pageInfo
-        $EndCursor = $RequestPageInfo.endCursor
-
-        if ($RequestPageInfo.hasNextPage -eq $true)
+        if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) 
         {
 
-            $pageTracker = $true
+            # Request initial authorization token if one doesnt exist already
+            Request-FalconToken
+            
+        }
 
-            while ($pageTracker -eq $true)
+        switch ($FalconCloud) 
+        {
+            'US-1' 
             {
 
-                $query = ($query.Replace('($after: Cursor)','')).Replace('$after',"$endCursor")
-                $sessionVariables = @{after = $EndCursor} 
+                $GraphURL = "https://api.crowdstrike.com/identity-protection/combined/graphql/v1"
 
-                $Param = @{
-                    Command = $MyInvocation.MyCommand.Name
-                    Endpoint = $PSCmdlet.ParameterSetName
-                    Format = @{ 
-                        Body = @{ root = @('query') }
+            }
+
+            'US-2'
+            {
+
+                $GraphURL = "https://api.us-2.crowdstrike.com/identity-protection/combined/graphql/v1"
+
+            }
+
+            'EU-1'
+            {
+
+                $GraphURL = "https://api.eu-1.crowdstrike.com/identity-protection/combined/graphql/v1"
+
+            }
+
+            'US-GOV-1'
+            {
+
+                $GraphURL = "https://api.laggar.gcw.crowdstrike.com/identity-protection/combined/graphql/v1"
+
+            }
+
+            Default
+            {
+                # US-1 as default
+                $GraphURL = "https://api.crowdstrike.com/identity-protection/combined/graphql/v1"
+                
+            }
+
+        }
+
+    } 
+    
+    process
+    {
+        $params = @{
+            Uri         = $GraphURL
+            Headers     = @{ 'Authorization' = $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization }
+            Method      = 'POST'
+            Body 		= @{"query"=$Query} | ConvertTo-Json		
+            ContentType = 'application/json'
+            ErrorAction = 'Stop'
+        }
+
+
+        $Request = Invoke-RestMethod @params
+        $Results = $Request.data.entities.nodes
+        $ResultsPageInfo = $Request.data.entities.pageInfo
+
+        if (!$ResultsPageInfo)
+        {
+
+            Write-Verbose "No pageInfo was returned from the provided graph query. Will be unable to paginate if more results are available."
+
+        }
+
+        else
+        {
+
+            $EndCursor = $ResultsPageInfo.endCursor
+            if ($RequestPageInfo.hasNextPage -eq $true)
+            {
+
+                $pageTracker = $true
+
+                while ($pageTracker -eq $true)
+                {
+
+                    $Query = ($Query.Replace('($after: Cursor)','')).Replace('$after',"$endCursor")
+                    $sessionVariables = @{after = $EndCursor} 
+
+                    $params = @{
+                        Uri             = $GraphURL
+                        Headers         = @{ 'Authorization' = $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization }
+                        Method          = 'POST'
+                        Body 		    = @{"query"=$Query} | ConvertTo-Json		
+                        ContentType     = 'application/json'
                         SessionVariable = $sessionVariables
+                        ErrorAction     = 'Stop'
                     }
-                }
 
-                $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters 
-                $Results = $Results + $Request.data.entities.nodes
-                $RequestPageInfo = $Request.data.entities.pageInfo
-                $EndCursor = $RequestPageInfo.endCursor
+                    $Request = Invoke-RestMethod @params
+                    $Results = $Results + $Request.data.entities.nodes
+                    $ResultsPageInfo = $Request.data.entities.pageInfo
+                    $EndCursor = $ResultsPageInfo.endCursor
 
-                if ($ResultsPageInfo.hasNextPage -eq $true)
-                {
+                    if ($ResultsPageInfo.hasNextPage -eq $true)
+                    {
 
-                    $pageTracker = $true
+                        $pageTracker = $true
 
-                }
+                    }
 
-                else
-                {
+                    else
+                    {
 
-                    $pageTracker = $false
+                        $pageTracker = $false
+
+                    }
 
                 }
 
@@ -151,6 +299,7 @@ function Invoke-FalconIdentityGraph {
 
         }
 
+        
     }
 
     end
