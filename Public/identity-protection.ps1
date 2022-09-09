@@ -52,6 +52,12 @@ Repeat requests until all available results are retrieved
             # Output 'nodes'
             if ($Object.entities.nodes) { $Object.entities.nodes } else { $Object }
         }
+        $RegEx = @{
+            # RegEx patterns for query modification
+            AfterDef = '^(\s+)?(query)?(\s+)?\((\s+)?\$after(\s+)?:(\s+)?cursor(\s+)?\)(\s+)?{'
+            AfterVar = 'after(\s+)?:(\s+)?\$after'
+            Comment = '\#(\s+)?(\w|\W|\s).+'
+        }
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/identity-protection/combined/graphql/v1:post'
@@ -60,18 +66,25 @@ Repeat requests until all available results are retrieved
     }
     process {
         switch ($PSBoundParameters.Query) {
+            { $_ -match $RegEx.AfterDef } {
+                # Remove prefix 'after' variable definition and closing brace
+                $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterDef,$null
+                    #$null -replace '}(\s+)?$',$null
+            }
+            { $_ -match $RegEx.AfterVar } {
+                # Remove 'after' when using variable and add 'All'
+                $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterVar,$null
+                if (!$PSBoundParameters.All) { $PSBoundParameters['All'] = $true }
+            }
             { $_ -match '\n' } {
-                if ($PSBoundParameters.Query -match '\#(\s+)?(\w|\W|\s).+') {
+                if ($PSBoundParameters.Query -match $RegEx.Comment) {
                     # Remove comments
-                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace '\#(\s+)?(\w|\W|\s).+',$null
+                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.Comment,$null
                 }
                 # Convert into a single line and remove duplicate spaces
                 $PSBoundParameters.Query = $PSBoundParameters.Query -replace '\n',' ' -replace '\s+',' '
             }
-            # Enforce beginning and ending braces
-            { $_ -notmatch '^{' } { $PSBoundParameters.Query = "{$($PSBoundParameters.Query)" }
-            { $_ -notmatch '}$' } { $PSBoundParameters.Query = "$($PSBoundParameters.Query)}" }
-            { $_ -match '}$' } {
+            { $_ -match '}(\s+)?$' } {
                 # Verify that the number of open braces matches the number of close braces
                 [int]$Open = ($PSBoundParameters.Query.GetEnumerator() | Where-Object { $_ -eq '{' }).Count
                 [int]$Close = ($PSBoundParameters.Query.GetEnumerator() | Where-Object { $_ -eq '}' }).Count
@@ -79,6 +92,9 @@ Repeat requests until all available results are retrieved
                 [string[]]$Append = if ($Diff -ge 1) { @(1..$Diff).foreach{ '}' } }
                 if ($Append) { $PSBoundParameters.Query += $Append -join $null }
             }
+            # Enforce beginning and ending braces
+            { $_ -notmatch '^(\s+)?{' } { $PSBoundParameters.Query = "{$($PSBoundParameters.Query)" }
+            { $_ -notmatch '}(\s+)?$' } { $PSBoundParameters.Query = "$($PSBoundParameters.Query)}" }
         }
         if ($PSBoundParameters.All) {
             # Output relevant sub-objects and repeat requests when using 'All'
