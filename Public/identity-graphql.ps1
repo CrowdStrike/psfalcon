@@ -1,21 +1,30 @@
 function Invoke-FalconIdentityGraph {
     <#
         .SYNOPSIS
-            Interact with the Falcon Identity Protection platform using GraphQL
+            Interact with the Falcon Identity Protection platform using GraphQ.
 
         .DESCRIPTION
             Invokes a provided query against the Falcon Identity Protection platform via GraphQL. 
-            The Invoke-FalconIdentityGraph function is able to paginate through the results in its entirety
+            The Invoke-FalconIdentityGraph function is able to paginate through the results in its entirety.
 
             The API key permissions that are required in order to run this are:
                 - Identity Protection Entities: Read
                 - Identity Protection GraphQL: Write
 
         .PARAMETER Query
-            GraphQL query statement
+            GraphQL query statement. This parameter is mandatory
+
+        .PARAMETER FalconCloud
+            Specify the Falcon cloud you wish to query (US-1, US-2, EU-1, US-GOV-1). URLs for each instance:
+                - US-1: https://api.crowdstrike.com
+                - US-2: https://api.us-2.crowdstrike.com
+                - EU-1: https://api.eu-1.crowdstrike.com
+                - US-GOV-1: https://api.laggar.gcw.crowdstrike.com
+            
+                This parameter is mandatory.
 
         .EXAMPLE
-            Query Falcon Identity to retieve all entities with the BuiltInAdministratorRole
+            Query Falcon Identity to retieve all entities with the BuiltInAdministratorRole.
 
             PS> $query = '
                 entities (   
