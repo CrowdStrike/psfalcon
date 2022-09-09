@@ -69,7 +69,6 @@ Repeat requests until all available results are retrieved
             { $_ -match $RegEx.AfterDef } {
                 # Remove prefix 'after' variable definition and closing brace
                 $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterDef,$null
-                    #$null -replace '}(\s+)?$',$null
             }
             { $_ -match $RegEx.AfterVar } {
                 # Remove 'after' when using variable and add 'All'
