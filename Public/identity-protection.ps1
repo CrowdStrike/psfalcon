@@ -18,6 +18,10 @@ Repeat requests until all available results are retrieved
         [switch]$All
     )
     begin {
+        function Get-CharacterCount ($String,$Character) {
+            # Count the number of character occurances within a string
+            ($String.GetEnumerator() | Where-Object { $_ -eq $Character }).Count
+        }
         function Invoke-GraphLoop ($Object,$Splat,$Inputs) {
             if ($Inputs.Query -notmatch 'pageInfo(\s+)?{(\s+)?(hasNextPage(\s+)?|endCursor(\s+)?){2}(\s+)?}') {
                 [string]$Message = "'-All' parameter was specified but 'pageInfo' is missing from query."
@@ -83,17 +87,31 @@ Repeat requests until all available results are retrieved
                 # Convert into a single line and remove duplicate spaces
                 $PSBoundParameters.Query = $PSBoundParameters.Query -replace '\n',' ' -replace '\s+',' '
             }
-            { $_ -match '}(\s+)?$' } {
-                # Verify that the number of open braces matches the number of close braces
-                [int]$Open = ($PSBoundParameters.Query.GetEnumerator() | Where-Object { $_ -eq '{' }).Count
-                [int]$Close = ($PSBoundParameters.Query.GetEnumerator() | Where-Object { $_ -eq '}' }).Count
-                [int]$Diff = $Open - $Close
-                [string[]]$Append = if ($Diff -ge 1) { @(1..$Diff).foreach{ '}' } }
-                if ($Append) { $PSBoundParameters.Query += $Append -join $null }
-            }
             # Enforce beginning and ending braces
             { $_ -notmatch '^(\s+)?{' } { $PSBoundParameters.Query = "{$($PSBoundParameters.Query)" }
             { $_ -notmatch '}(\s+)?$' } { $PSBoundParameters.Query = "$($PSBoundParameters.Query)}" }
+            { $_ -match '(^(\s+)?{|}(\s+)?$)' } {
+                # Verify that the number of braces match
+                [int]$Open = Get-CharacterCount $PSBoundParameters.Query '{'
+                [int]$Close = Get-CharacterCount $PSBoundParameters.Query '}'
+                if ($Open -ne $Close) {
+                    if (($Close - $Open) -ge 1) {
+                        do {
+                            # Append opening braces
+                            $PSBoundParameters.Query = ((@(1..($Close - $Open)).foreach{ '{' }) -join $null),
+                                $PSBoundParameters.Query -join $null
+                            [int]$Open = Get-CharacterCount $PSBoundParameters.Query '{'
+                        } until ( ($Close - $Open) -le 0 )
+                    }
+                    if (($Open - $Close) -ge 1) {
+                        do {
+                            # Append closing braces
+                            $PSBoundParameters.Query += (@(1..($Open - $Close)).foreach{ '}' }) -join $null
+                            [int]$Close = Get-CharacterCount $PSBoundParameters.Query '}'
+                        } until ( ($Open - $Close) -le 0 )
+                    }
+                }
+            }
         }
         if ($PSBoundParameters.All) {
             # Output relevant sub-objects and repeat requests when using 'All'
