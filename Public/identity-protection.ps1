@@ -104,3 +104,4 @@ function Invoke-FalconIdentityGraph {
         }
         end { if ($PSBoundParameters.All -and $Request) { Invoke-GraphLoop $Request $Param $PSBoundParameters }}
     }
+    
