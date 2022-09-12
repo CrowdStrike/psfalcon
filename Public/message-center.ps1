@@ -27,7 +27,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string]$Content,
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$UserId,
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
@@ -171,18 +171,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconCompleteCase {
@@ -247,18 +239,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconCompleteCase {
@@ -319,7 +303,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string[]]$IncidentId,
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=6)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$UserId
     )
@@ -438,7 +422,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
         [string]$Path,
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$UserId,
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,

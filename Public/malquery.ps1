@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
     param(
         [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string]$Id
     )

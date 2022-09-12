@@ -34,7 +34,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [string]$Status,
         [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=4)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id
 
     )
@@ -101,7 +101,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=2)]
         [string]$Status,
         [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=3)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('assigned_to_uuid')]
         [string]$AssignedToUuid
     )
@@ -173,7 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         [Alias('resources')]
         [object[]]$Array,
         [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=2)]
         [string]$Name,
@@ -247,7 +247,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/recon/queries/actions/v1:get',Position=1)]
@@ -277,18 +277,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconReconNotification {
@@ -373,18 +365,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconReconRule {
@@ -418,7 +402,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
     param(
         [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=1)]
@@ -451,18 +435,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconReconRulePreview {
@@ -516,7 +492,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('rule_id')]
         [string]$RuleId,
         [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
@@ -656,7 +632,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id
     )
     begin {
@@ -718,7 +694,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
     param(
         [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id
     )

@@ -1,9 +1,9 @@
-function Edit-FalconDeviceControlPolicy {
+function Edit-FalconFirewallPolicy {
 <#
 .SYNOPSIS
-Modify Falcon Device Control policies
+Modify Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Firewall Management: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
 .PARAMETER Id
@@ -12,20 +12,18 @@ Policy identifier
 Policy name
 .PARAMETER Description
 Policy description
-.PARAMETER Setting
-Policy settings
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
                     Object = $Object
-                    Command = 'Edit-FalconDeviceControlPolicy'
-                    Endpoint = '/policy/entities/device-control/v1:patch'
+                    Command = 'Edit-FalconFirewallPolicy'
+                    Endpoint = '/policy/entities/firewall/v1:patch'
                     Required = @('id')
                     Pattern = @('id')
                 }
@@ -34,24 +32,21 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         })]
         [Alias('resources')]
         [object[]]$Array,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Mandatory,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Position=2)]
         [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=3)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=4)]
-        [Alias('settings')]
-        [System.Object]$Setting
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:patch',Position=3)]
+        [string]$Description
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = '/policy/entities/device-control/v1:patch'
+            Endpoint = '/policy/entities/firewall/v1:patch'
             Format = @{
                 Body = @{
-                    resources = @('name','id','description','settings')
+                    resources = @('name','id','description')
                     root = @('resources')
                 }
             }
@@ -62,16 +57,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         if ($Array) {
             @($Array).foreach{
                 $i = $_
-                if ($i.settings.classes.exceptions) {
-                    @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
-                        # Remove exception 'id' values from 'settings' object
-                        $_.PSObject.Properties.Remove('id')
-                    }
-                }
-                # Select allowed fields, when populated
-                [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
-                    if ($i.$_) { $_ }
-                }
+                [string[]]$Select = @('id','name','description').foreach{ if ($i.$_) { $_ }}
                 $List.Add(($i | Select-Object $Select))
             }
         } else {
@@ -87,12 +73,12 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         }
     }
 }
-function Get-FalconDeviceControlPolicy {
+function Get-FalconFirewallPolicy {
 <#
 .SYNOPSIS
-Search for Falcon Device Control policies
+Search for Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Device Control Policies: Read'.
+Requires 'Firewall Management: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -112,44 +98,44 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
-        [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Position=1)]
-        [Parameter(ParameterSetName='/policy/queries/device-control/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-        [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/policy/queries/device-control/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=2)]
         [ValidateSet('created_by.asc','created_by.desc','created_timestamp.asc','created_timestamp.desc',
             'enabled.asc','enabled.desc','modified_by.asc','modified_by.desc','modified_timestamp.asc',
             'modified_timestamp.desc','name.asc','name.desc','platform_name.asc','platform_name.desc',
             'precedence.asc','precedence.desc',IgnoreCase=$false)]
         [string]$Sort,
-        [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Position=3)]
-        [Parameter(ParameterSetName='/policy/queries/device-control/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=3)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/policy/queries/device-control/v1:get',Position=4)]
-        [ValidateSet('members',IgnoreCase=$false)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=4)]
+        [ValidateSet('members','settings',IgnoreCase=$false)]
         [string[]]$Include,
-        [Parameter(ParameterSetName='/policy/combined/device-control/v1:get')]
-        [Parameter(ParameterSetName='/policy/queries/device-control/v1:get')]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Mandatory)]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Mandatory)]
         [switch]$Detailed,
-        [Parameter(ParameterSetName='/policy/combined/device-control/v1:get')]
-        [Parameter(ParameterSetName='/policy/queries/device-control/v1:get')]
+        [Parameter(ParameterSetName='/policy/combined/firewall/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get')]
         [switch]$All,
-        [Parameter(ParameterSetName='/policy/queries/device-control/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall/v1:get')]
         [switch]$Total
     )
     begin {
@@ -160,30 +146,28 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        if ($Include) {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+                $Request = Add-Include $_ $PSBoundParameters @{
+                    members = 'Get-FalconFirewallPolicyMember'
+                    settings = 'Get-FalconFirewallSetting'
+                }
+                $Request
+            }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        if ($Request -and $Include) {
-            $Request = Add-Include $Request $PSBoundParameters @{ members = 'Get-FalconDeviceControlPolicyMember' }
-        }
-        $Request
     }
 }
-function Get-FalconDeviceControlPolicyMember {
+function Get-FalconFirewallPolicyMember {
 <#
 .SYNOPSIS
-Search for members of Falcon Device Control policies
+Search for Falcon Firewall Management policy members
 .DESCRIPTION
-Requires 'Device Control Policies: Read'.
+Requires 'Firewall Management: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -201,37 +185,38 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall-members/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=2)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',Position=3)]
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=3)]
         [string]$Sort,
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=4)]
         [ValidateRange(1,5000)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get')]
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',Mandatory)]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Mandatory)]
         [switch]$Detailed,
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get')]
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
         [switch]$All,
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get')]
+        [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
         [switch]$Total
+
     )
     begin {
         $Param = @{
@@ -242,12 +227,12 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
-function Invoke-FalconDeviceControlPolicyAction {
+function Invoke-FalconFirewallPolicyAction {
 <#
 .SYNOPSIS
-Perform actions on Falcon Device Control policies
+Perform actions on Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Firewall Management: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER GroupId
@@ -255,20 +240,18 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post',
-        SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-actions/v1:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,
-           Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
         [Alias('action_name')]
         [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
-        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
@@ -298,12 +281,12 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
-function New-FalconDeviceControlPolicy {
+function New-FalconFirewallPolicy {
 <#
 .SYNOPSIS
-Create Falcon Device Control policies
+Create Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Firewall Management: Write'.
 .PARAMETER Array
 An array of policies to create in a single request
 .PARAMETER Name
@@ -312,20 +295,18 @@ Policy name
 Operating system platform
 .PARAMETER Description
 Policy description
-.PARAMETER Settings
-Hashtable of policy settings
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
                     Object = $Object
-                    Command = 'New-FalconDeviceControlPolicy'
-                    Endpoint = '/policy/entities/device-control/v1:post'
+                    Command = 'New-FalconFirewallPolicy'
+                    Endpoint = '/policy/entities/firewall/v1:post'
                     Required = @('name','platform_name')
                     Content = @('platform_name')
                     Format = @{ platform_name = 'PlatformName' }
@@ -335,25 +316,22 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         })]
         [Alias('resources')]
         [object[]]$Array,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:post',Mandatory,Position=1)]
         [string]$Name,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:post',Mandatory,Position=2)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Position=3)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Position=4)]
-        [Alias('settings')]
-        [System.Object]$Setting
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:post',Position=3)]
+        [string]$Description
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = '/policy/entities/device-control/v1:post'
+            Endpoint = '/policy/entities/firewall/v1:post'
             Format = @{
                 Body = @{
-                    resources = @('name','description','platform_name','settings')
+                    resources = @('description','platform_name','name')
                     root = @('resources')
                 }
             }
@@ -362,16 +340,9 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
-                if ($i.settings.classes.exceptions) {
-                    @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
-                        # Remove exception 'id' values from 'settings' object
-                        $_.PSObject.Properties.Remove('id')
-                    }
-                }
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
-                [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
+                [string[]]$Select = @('name','description','platform_name').foreach{ if ($i.$_) { $_ }}
                 $List.Add(($i | Select-Object $Select))
             }
         } else {
@@ -387,20 +358,20 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         }
     }
 }
-function Remove-FalconDeviceControlPolicy {
+function Remove-FalconFirewallPolicy {
 <#
 .SYNOPSIS
-Remove Falcon Device Control policies
+Remove Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Firewall Management: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:delete',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/policy/entities/firewall/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
@@ -422,12 +393,12 @@ https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
         }
     }
 }
-function Set-FalconDeviceControlPrecedence {
+function Set-FalconFirewallPrecedence {
 <#
 .SYNOPSIS
-Set Falcon Device Control policy precedence
+Set Falcon Firewall Management policy precedence
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Firewall Management: Write'.
 
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
@@ -436,16 +407,15 @@ Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post',
-        SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-precedence/v1:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/device-control-precedence/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/firewall-precedence/v1:post',Mandatory,Position=1)]
         [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
         [Alias('platform_name')]
         [string]$PlatformName,
-        [Parameter(ParameterSetName='/policy/entities/device-control-precedence/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/firewall-precedence/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
