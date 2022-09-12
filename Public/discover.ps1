@@ -90,10 +90,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        $Request = if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } elseif ($Detailed -and ($Login -or $Account)) {
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        $Request = if ($Detailed -and ($Login -or $Account)) {
             [void]$PSBoundParameters.Remove('Detailed')
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
             if ($Request -and $Account) {
@@ -101,39 +101,42 @@ https://github.com/crowdstrike/psfalcon/wiki/Discover
             } elseif ($Request -and $Login) {
                 & $MyInvocation.MyCommand.Name -Id $Request -Login
             }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-    }
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-        if ($Request -and $Include) {
+        if ($Include) {
+            if (!$Request) { $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters }
             if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}}
             if ($Include -contains 'login_event') {
                 # Define property to match 'login' results with 'id' value
-                [string]$p = if ($Account) { 'account_id' } else { 'host_id' }
+                [string]$Property = if ($Account) { 'account_id' } else { 'host_id' }
                 [int]$Count = ($Request | Measure-Object).Count
                 for ($i = 0; $i -lt $Count; $i += 20) {
                     # In groups of 20, perform filtered search for login events
                     [object[]]$Group = @($Request)[$i..($i + 19)]
-                    [string]$Filter = @($Group[$i..($i + 19)]).foreach{ "$($p):'$($_.id)'" } -join ','
-                    foreach ($e in (& $MyInvocation.MyCommand.Name -Filter $Filter -Detailed -Login -EA 0)) {
-                        # Append matched login events to 'id' using 'host_id' or 'account_id'
-                        foreach ($a in $Group) {
-                            $SetParam = @{
-                                Object = $Request | Where-Object { $_.id -eq $a.id }
-                                Name = 'login_event'
-                                Value = @($e | Where-Object { $_.$p -eq $a.id })
+                    if ($Group.id) {
+                        [string]$Filter = @($Group[$i..($i + 19)]).foreach{ "$($Property):'$($_.id)'" } -join ','
+                        if ($Filter) {
+                            $Param = @{
+                                Filter = $Filter
+                                Detailed = $true
+                                Login = $true
+                                ErrorAction = 'SilentlyContinue'
                             }
-                            Set-Property @SetParam
+                            foreach ($Event in (& $MyInvocation.MyCommand.Name @Param)) {
+                                # Append matched login events to 'id' using 'host_id' or 'account_id'
+                                foreach ($Asset in $Group) {
+                                    $SetParam = @{
+                                        Object = $Request | Where-Object { $_.id -eq $Asset.id }
+                                        Name = 'login_event'
+                                        Value = @($Event | Where-Object { $_.$Property -eq $Asset.id })
+                                    }
+                                    Set-Property @SetParam
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        $Request
+        if ($Request) { $Request } else { Invoke-Falcon @Param -Inputs $PSBoundParameters }
     }
 }

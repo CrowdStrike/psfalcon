@@ -253,25 +253,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        if ($Include) {
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-        if ($Request -and $Include) {
-            if (!$Request.uuid) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}}
+            if ($Request -and !$Request.uuid) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}}
             if ($Include -contains 'roles') {
                 @($Request).foreach{ Set-Property $_ roles @(Get-FalconRole -UserId $_.uuid) }
             }
+            $Request
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        $Request
     }
 }
 function Invoke-FalconUserAction {
