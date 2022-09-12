@@ -6,21 +6,64 @@ Interact with Falcon Identity using GraphQL
 Requires 'Identity Protection GraphQL: Write'.
 .PARAMETER Query
 A complete GraphQL query statement
+.PARAMETER Mutation
+A complete GraphQL mutation statement
 .PARAMETER All
 Repeat requests until all available results are retrieved
 #>
-    [CmdletBinding(DefaultParameterSetName='/identity-protection/combined/graphql/v1:post',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='Query',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post',Mandatory,ValueFromPipeline,
-            Position=1)]
+        [Parameter(ParameterSetName='Query',Mandatory,ValueFromPipeline,Position=1)]
         [string]$Query,
-        [Parameter(ParameterSetName='/identity-protection/combined/graphql/v1:post')]
+        [Parameter(ParameterSetName='Mutation',Mandatory,ValueFromPipeline,Position=1)]
+        [string]$Mutation,
+        [Parameter(ParameterSetName='Query')]
         [switch]$All
     )
     begin {
-        function Get-CharacterCount ($String,$Character) {
-            # Count the number of character occurances within a string
-            ($String.GetEnumerator() | Where-Object { $_ -eq $Character }).Count
+        function Test-Statement ($String) {
+            function Get-CharacterCount ($String,$Character) {
+                # Count the number of character occurances within a string
+                ($String.GetEnumerator() | Where-Object { $_ -eq $Character }).Count
+            }
+            if ($String -and $String -notmatch '^(\s+)?mutation') {
+                switch ($String) {
+                    { $_ -match '\n' } {
+                        if ($String -match $RegEx.Comment) {
+                            # Remove comments
+                            $String = $String -replace $RegEx.Comment,$null
+                        }
+                        # Convert into a single line and remove duplicate spaces
+                        $String = $String -replace '\n',' ' -replace '\s+',' '
+                    }
+                    # Enforce beginning and ending braces
+                    { $_ -notmatch '^(\s+)?{' } { $String = "{$($String)" }
+                    { $_ -notmatch '}(\s+)?$' } { $String = "$($String)}" }
+                    { $_ -match '(^(\s+)?{|}(\s+)?$)' } {
+                        # Verify that the number of braces match
+                        [int]$Open = Get-CharacterCount $String '{'
+                        [int]$Close = Get-CharacterCount $String '}'
+                        if ($Open -ne $Close) {
+                            if (($Close - $Open) -ge 1) {
+                                do {
+                                    # Append opening braces
+                                    $String = ((@(1..($Close - $Open)).foreach{ '{' }) -join $null),
+                                        $String -join $null
+                                    [int]$Open = Get-CharacterCount $String '{'
+                                } until ( ($Close - $Open) -le 0 )
+                            }
+                            if (($Open - $Close) -ge 1) {
+                                do {
+                                    # Append closing braces
+                                    $String += (@(1..($Open - $Close)).foreach{ '}' }) -join $null
+                                    [int]$Close = Get-CharacterCount $String '}'
+                                } until ( ($Open - $Close) -le 0 )
+                            }
+                        }
+                    }
+                }
+            }
+            $String
         }
         function Invoke-GraphLoop ($Object,$Splat,$Inputs) {
             if ($Inputs.Query -notmatch 'pageInfo(\s+)?{(\s+)?(hasNextPage(\s+)?|endCursor(\s+)?){2}(\s+)?}') {
@@ -69,49 +112,23 @@ Repeat requests until all available results are retrieved
         }
     }
     process {
-        switch ($PSBoundParameters.Query) {
-            { $_ -match $RegEx.AfterDef } {
-                # Remove prefix 'after' variable definition and closing brace
-                $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterDef,$null
-            }
-            { $_ -match $RegEx.AfterVar } {
-                # Remove 'after' when using variable and add 'All'
-                $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterVar,$null
-                if (!$PSBoundParameters.All) { $PSBoundParameters['All'] = $true }
-            }
-            { $_ -match '\n' } {
-                if ($PSBoundParameters.Query -match $RegEx.Comment) {
-                    # Remove comments
-                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.Comment,$null
+        if ($PSBoundParameters.Query) {
+            switch ($PSBoundParameters.Query) {
+                { $_ -match $RegEx.AfterDef } {
+                    # Remove prefix 'after' variable definition and closing brace
+                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterDef,$null
                 }
-                # Convert into a single line and remove duplicate spaces
-                $PSBoundParameters.Query = $PSBoundParameters.Query -replace '\n',' ' -replace '\s+',' '
-            }
-            # Enforce beginning and ending braces
-            { $_ -notmatch '^(\s+)?{' } { $PSBoundParameters.Query = "{$($PSBoundParameters.Query)" }
-            { $_ -notmatch '}(\s+)?$' } { $PSBoundParameters.Query = "$($PSBoundParameters.Query)}" }
-            { $_ -match '(^(\s+)?{|}(\s+)?$)' } {
-                # Verify that the number of braces match
-                [int]$Open = Get-CharacterCount $PSBoundParameters.Query '{'
-                [int]$Close = Get-CharacterCount $PSBoundParameters.Query '}'
-                if ($Open -ne $Close) {
-                    if (($Close - $Open) -ge 1) {
-                        do {
-                            # Append opening braces
-                            $PSBoundParameters.Query = ((@(1..($Close - $Open)).foreach{ '{' }) -join $null),
-                                $PSBoundParameters.Query -join $null
-                            [int]$Open = Get-CharacterCount $PSBoundParameters.Query '{'
-                        } until ( ($Close - $Open) -le 0 )
-                    }
-                    if (($Open - $Close) -ge 1) {
-                        do {
-                            # Append closing braces
-                            $PSBoundParameters.Query += (@(1..($Open - $Close)).foreach{ '}' }) -join $null
-                            [int]$Close = Get-CharacterCount $PSBoundParameters.Query '}'
-                        } until ( ($Open - $Close) -le 0 )
-                    }
+                { $_ -match $RegEx.AfterVar } {
+                    # Remove 'after' when using variable and add 'All'
+                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterVar,$null
+                    if (!$PSBoundParameters.All) { $PSBoundParameters['All'] = $true }
                 }
             }
+            $PSBoundParameters.Query = Test-Statement $PSBoundParameters.Query
+        } elseif ($PSBoundParameters.Mutation) {
+            # Submit 'Mutation' as 'Query' but without formatting changes
+            $PSBoundParameters['Query'] = $PSBoundParameters.Mutation
+            [void]$PSBoundParameters.Remove('Mutation')
         }
         if ($PSBoundParameters.All) {
             # Output relevant sub-objects and repeat requests when using 'All'

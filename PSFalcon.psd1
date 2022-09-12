@@ -482,7 +482,8 @@ Command Changes
 
 * Updated 'Invoke-FalconAlertAction' to use the new v2 endpoint which includes formatting corrections.
 
-* Based on code provided by @SleepySysadmin, 'Invoke-FalconIdentityGraph' now has an '-All' parameter!
+* Based on code provided by @SleepySysadmin, 'Invoke-FalconIdentityGraph' now has an '-All' parameter when using
+  '-Query'!
 
   When used with a query that includes 'pageInfo{endCursor hasNextPage}', results will be paginated automatically
   and only relevant data will be output (similar to the rest of the PSFalcon commands) instead of the entire
@@ -494,6 +495,8 @@ Command Changes
   If 'pageInfo' is not provided in the query and '-All' is specified, a warning message will be generated.
 
   A  query without '-All' will produce the same results as earlier versions of the module.
+
+* Added '-Mutation' parameter to 'Invoke-FalconIdentityGraph'.
 
 * Updated 'Add-FalconRole', 'Edit-FalconUser', 'Get-FalconUser', 'New-FalconUser', 'Remove-FalconRole', and
   'Remove-FalconUser', to use new /user-management/ endpoints where appropriate. These commands behave as they
