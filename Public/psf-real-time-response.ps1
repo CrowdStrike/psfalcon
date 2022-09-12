@@ -449,13 +449,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                                                     'powershell.exe',"'-c &{$String}'" -join ' '
                                                 }
                                                 '-Raw=```Start-Process',$Executable,
-                                                "-RedirectStandardOutput '$($TempDir,'stdout.log' -join
-                                                    $Join)'",
-                                                "-RedirectStandardError '$($TempDir,'stderr.log' -join
-                                                    $Join)'",
+                                                "-RedirectStandardOutput '$($TempDir,'stdout.log' -join $Join)'",
+                                                "-RedirectStandardError '$($TempDir,'stderr.log' -join $Join)'",
                                                 ('-PassThru | ForEach-Object { "The process was successfully sta' +
-                                                    'rted"'),
-                                                '}```' -join ' '
+                                                'rted"'),'}```' -join ' '
                                             } elseif ($Pair.Key -match '^(Linux|Mac)$') {
                                                 # Use 'runscript' to start background process and avoid timeout
                                                 [string]$String = if ($Argument) {

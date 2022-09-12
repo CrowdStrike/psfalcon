@@ -112,7 +112,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [string]$Id,
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuids','UserIds')]
         [string[]]$UserId
     )
@@ -266,18 +266,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconCidGroupMember {
@@ -340,18 +332,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconGroupRole {
@@ -492,18 +476,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconUserGroup {
@@ -564,18 +540,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconUserGroupMember {
@@ -612,7 +580,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$UserId,
         [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=2)]
@@ -638,18 +606,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconCidGroup {
@@ -897,7 +857,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
         [string]$Id,
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuids','uuid','UserIds')]
         [string[]]$UserId
     )

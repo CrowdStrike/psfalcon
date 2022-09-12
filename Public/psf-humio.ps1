@@ -21,7 +21,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
         [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=1)]
         [System.Uri]$Uri,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Token,
         [Parameter(ValueFromPipelineByPropertyName,Position=3)]
         [ValidateSet('responses','requests')]

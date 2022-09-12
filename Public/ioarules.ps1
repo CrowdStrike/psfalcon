@@ -202,23 +202,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
-                if ($_.version -and $null -eq $_.version) { $_.version = 0 }
-                $_
-            }
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
-                if ($_.version -and $null -eq $_.version) { $_.version = 0 }
-                $_
-            }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
+            if ($_.version -and $null -eq $_.version) { $_.version = 0 }
+            $_
         }
     }
 }
@@ -270,18 +259,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconIoaRule {
@@ -358,18 +339,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconIoaSeverity {
@@ -420,18 +393,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconIoaType {
@@ -482,18 +447,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function New-FalconIoaGroup {

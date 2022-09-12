@@ -61,18 +61,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconSubmission {
@@ -132,18 +124,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconSubmissionQuota {
@@ -309,11 +293,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ Accept = 'application/octet-stream' }
-            Format = @{ Query = @('name','id') }
+            Format = @{
+                Outfile = 'path'
+                Query = @('name','id')
+            }
         }
     }
     process {
-        #$PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path ''
         $OutPath = Test-OutFile $PSBoundParameters.Path
         if ($OutPath.Category -eq 'ObjectNotFound') {
             Write-Error @OutPath
