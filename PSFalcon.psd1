@@ -1,13 +1,13 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.2.2'
+    ModuleVersion        = '2.2.3'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
     CompanyName          = 'CrowdStrike'
     Copyright            = '(c) CrowdStrike. All rights reserved.'
     Description          = 'PowerShell for the CrowdStrike Falcon OAuth2 APIs'
-    HelpInfoURI          = 'https://bk-cs.github.io/help/psfalcon/en-US'
+    HelpInfoURI          = 'https://github.com/CrowdStrike/psfalcon/wiki'
     PowerShellVersion    = '5.1'
     RequiredAssemblies   = @('System.Net.Http')
     ScriptsToProcess     = @('Class/Class.ps1')
@@ -439,87 +439,19 @@
             ReleaseNotes = "@
 New Commands
 
-* cloud-connect-azure.ps1
-  Get-FalconDiscoverAzureCertificate
-
-* cloud-connect-cspm-azure.ps1
-  Get-FalconHorizonAzureCertificate
-
-* mobile-enrollment.ps1
-  Invoke-FalconMobileAction
-
-* psf-devices.ps1
-  Find-FalconHostname
-
-* user-management.ps1
-  Invoke-FalconUserAction
+*
 
 General Changes
 
-* Re-organized public functions into files named for their URL prefix rather than their respective Swagger
-  collection (which sometimes would match the prefix and sometimes wouldn't). Because of the number of endpoints
-  that fell under 'policy', it is segmented into specific files.
-
-* The public 'users.ps1' and 'user-roles.ps1' files have been consolidated under 'user-management.ps1' and merged
-  with new /user-management/ endpoints.
-
-* Updated IPv4 regex used by 'Test-RegexValue' private function.
-
-* Streamlined looping functionality (used with '-All' parameter). Updated all commands to output groups of
-  results as they are retrieved instead of the entire result set at the end of a loop. Also verified that
-  authorization tokens are properly refreshed during a long running loop.
+*
 
 Command Changes
 
-* Modified 'Add-FalconSensorTag' and 'Remove-FalconSensorTag' to include the uninstall token of the target device
-  and while adding and removing sensor tags with 'CsSensorSettings.exe' on Windows sensor versions v6.42 and above.
-
-* Modified 'Get-FalconSensorTag' to return the 'FalconSensorTags' values listed in a devices API response if the
-  target device is Windows sensor version 6.42 or above. If 'CsSensorSettings.exe' is updated to include a method
-  to 'get' sensor tags, 'Get-FalconSensorTag' will use that method in the future.
-
-* Removed mandatory requirement for 'TenantId' parameter within the 'Get-FalconDiscoverAzureAccount' command.
-
-* Updated 'Invoke-FalconAlertAction' to use the new v2 endpoint which includes formatting corrections.
-
-* Based on code provided by @SleepySysadmin, 'Invoke-FalconIdentityGraph' now has an '-All' parameter when using
-  '-Query'!
-
-  When used with a query that includes 'pageInfo{endCursor hasNextPage}', results will be paginated automatically
-  and only relevant data will be output (similar to the rest of the PSFalcon commands) instead of the entire
-  object.
-
-  '-All' will automatically be added if a query begins with (`$after: Cursor) and has 'after' in the query
-  parameters, as it is assumed that all results are expected.
-
-  If 'pageInfo' is not provided in the query and '-All' is specified, a warning message will be generated.
-
-  A  query without '-All' will produce the same results as earlier versions of the module.
-
-* Added '-Mutation' parameter to 'Invoke-FalconIdentityGraph'.
-
-* Updated 'Add-FalconRole', 'Edit-FalconUser', 'Get-FalconUser', 'New-FalconUser', 'Remove-FalconRole', and
-  'Remove-FalconUser', to use new /user-management/ endpoints where appropriate. These commands behave as they
-  did before, unless using additional parameters to signify that requests are being performed within a
-  multi-CID environment.
-
-* 'Get-FalconRole' has been updated to produce results from new /user-management/ endpoints.
+*
 
 Resolved Issues
 
-* Issue #170: 'Invoke-Loop' changes should eliminate token failures during retrieval of large result sets.
-
-* Issue #222: Updated comparison process to ensure an imported policy would be properly added to the list of
-  items to be modified, whether or not it was going to be created. Removed existing copy policy operation from
-  creation process.
-
-* Issue #223: Removed extraneous 'Endpoint' definition that was generating an error.
-
-* Issue #231: Corrected addition of 'FirewallRule' when using 'Export-FalconConfig -Item FirewallGroup'. This fix
-  should also resolve issues when exporting 'HostGroup' and a singular 'exclusion' item.
-
-* Issue #232: Re-added 'Outfile' designation for 'Path' parameter in 'Receive-FalconArtifact'. This should have
-  been present and was accidentally removed in an earlier module version.
+*
 @"
         }
     }
