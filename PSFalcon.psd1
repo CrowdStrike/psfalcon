@@ -451,7 +451,8 @@ Command Changes
 
 Resolved Issues
 
-*
+* Issue #241: Updated 'Confirm-Parameter' to eliminate 'Cannot validate argument on parameter 'Array'. Key cannot
+  be null. (Parameter 'key')' errors generated when using 'Import-FalconConfig'.
 @"
         }
     }

@@ -274,29 +274,37 @@ function Confirm-Parameter {
                 }
             }
         }
-        @($Content).foreach{
-            # Match property name with parameter name
-            [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
-            if ($Object.$_) {
-                # Verify that 'ValidValues' contains provided value
-                [string[]]$ValidValues = Get-ValidValues $Command $Endpoint $Parameter
-                if ($Object.$_ -is [array]) {
-                    foreach ($Item in $Object.$_) {
-                        if ($ValidValues -notcontains $Item) { "'$Item' is not a valid '$_' value. $ObjectString" }
+        if ($Content) {
+            @($Content).foreach{
+                # Match property name with parameter name
+                [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
+                if ($Object.$_) {
+                    # Verify that 'ValidValues' contains provided value
+                    [string[]]$ValidValues = Get-ValidValues $Command $Endpoint $Parameter
+                    if ($ValidValues) {
+                        if ($Object.$_ -is [array]) {
+                            foreach ($Item in $Object.$_) {
+                                if ($ValidValues -notcontains $Item) {
+                                    "'$Item' is not a valid '$_' value. $ObjectString"
+                                }
+                            }
+                        } elseif ($ValidValues -notcontains $Object.$_) {
+                            throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
+                        }
                     }
-                } elseif ($ValidValues -notcontains $Object.$_) {
-                    throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
                 }
             }
         }
-        @($Pattern).foreach{
-            # Match property name with parameter name
-            [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
-            if ($Object.$_) {
-                # Verify provided value matches 'ValidPattern'
-                $ValidPattern = Get-ValidPattern $Command $Endpoint $Parameter
-                if ($Object.$_ -notmatch $ValidPattern) {
-                    throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
+        if ($Pattern) {
+            @($Pattern).foreach{
+                # Match property name with parameter name
+                [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
+                if ($Object.$_) {
+                    # Verify provided value matches 'ValidPattern'
+                    $ValidPattern = Get-ValidPattern $Command $Endpoint $Parameter
+                    if ($ValidPattern -and $Object.$_ -notmatch $ValidPattern) {
+                        throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
+                    }
                 }
             }
         }
