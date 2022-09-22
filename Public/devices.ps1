@@ -227,7 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                     $Groups = try { $Request.groups | Get-FalconHostGroup -EA 0 | Select-Object id,name } catch {}
                     if ($Groups) {
                         foreach ($i in $Request) {
-                            $i.groups = $Groups | Where-Object { $i.groups -contains $_.id }
+                            if ($i.groups) { $i.groups = $Groups | Where-Object { $i.groups -contains $_.id }}
                         }
                     }
                 }
