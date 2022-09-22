@@ -193,8 +193,6 @@ Search for users
 Requires 'User Management: Read'.
 .PARAMETER Id
 User identifier
-.PARAMETER Username
-Username
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Offset
@@ -203,6 +201,8 @@ Position to begin retrieving results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Username
+Username
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER Include
@@ -217,12 +217,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('ids','uuid')]
         [string[]]$Id,
-        [Parameter(ParameterSetName='/users/queries/user-uuids-by-email/v1:get',Mandatory)]
-        [ValidateScript({
-            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
-        })]
-        [Alias('uid','Usernames')]
-        [string[]]$Username,
         [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=1)]
         [string]$Filter,
         [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=2)]
@@ -234,11 +228,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
         [int]$Limit,
         [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=4)]
         [int]$Offset,
+        [Parameter(ParameterSetName='Username',Mandatory)]
+        [ValidateScript({
+            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
+        })]
+        [Alias('uid','Usernames')]
+        [string[]]$Username,
         [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+        [Parameter(ParameterSetName='Username')]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
         [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post')]
-        [Parameter(ParameterSetName='/users/queries/user-uuids-by-email/v1:get')]
+        [Parameter(ParameterSetName='Username')]
         [ValidateSet('roles',IgnoreCase=$false)]
         [string[]]$Include
     )
@@ -255,16 +256,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
     }
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        if ($Include) {
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-            if ($Request -and !$Request.uuid) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}}
-            if ($Include -contains 'roles') {
-                @($Request).foreach{ Set-Property $_ roles @(Get-FalconRole -UserId $_.uuid) }
+        if ($Username) {
+            # Re-submit 'Username' values as filtered searches
+            $Username = @($Username | Select-Object -Unique)
+            for ($i = 0; $i -lt ($Username | Measure-Object).Count; $i += 20) {
+                [string]$Filter = ($Username[$i..($i + 19)] | ForEach-Object { "uid:*'$_'" }) -join ','
+                if ($Filter) {
+                    $Search = @{ Filter = $Filter }
+                    if ($Include) { $Search['Include'] = $Include }
+                    if ($Detailed) { $Search['Detailed'] = $Detailed }
+                    & $MyInvocation.MyCommand.Name @Search
+                }
             }
-            $Request
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($IdList) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+            if ($Include) {
+                $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+                if ($Request -and !$Request.uuid) {
+                    $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}
+                }
+                if ($Include -contains 'roles') {
+                    @($Request).foreach{ Set-Property $_ roles @(Get-FalconRole -UserId $_.uuid) }
+                }
+                $Request
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
         }
     }
 }
