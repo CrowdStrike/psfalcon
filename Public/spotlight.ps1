@@ -7,7 +7,7 @@ Requires 'Spotlight Vulnerabilities: Read'.
 .PARAMETER Id
 Remediation identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Spotlight
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/entities/remediations/v2:get',SupportsShouldProcess)]
     param(
@@ -72,7 +72,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Spotlight
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
     param(
@@ -145,7 +145,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Spotlight
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/evaluation-logic/v1:get',SupportsShouldProcess)]
     param(

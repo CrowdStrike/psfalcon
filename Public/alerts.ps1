@@ -23,7 +23,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Alerts
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v1:get',SupportsShouldProcess)]
     param(
@@ -82,7 +82,7 @@ Value for the chosen action
 .PARAMETER Id
 Alert identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Alerts
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v2:patch',SupportsShouldProcess)]
     param(

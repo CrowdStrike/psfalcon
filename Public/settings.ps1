@@ -11,7 +11,7 @@ Policy enablement status
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:patch',SupportsShouldProcess)]
     param(
@@ -47,7 +47,7 @@ Scan interval
 .PARAMETER CloudPlatform
 Cloud platform
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonSchedule
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:post',SupportsShouldProcess)]
     param(
@@ -88,7 +88,7 @@ Cloud platform
 .PARAMETER Detailed
 Retrieve detailed information
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:get',SupportsShouldProcess)]
     param(
@@ -141,7 +141,7 @@ Requires 'CSPM Registration: Read'.
 .PARAMETER CloudPlatform
 Cloud platform
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:get',SupportsShouldProcess)]
     param(

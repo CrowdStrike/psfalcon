@@ -9,7 +9,7 @@ Scan type
 .PARAMETER Id
 GCP account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:get',SupportsShouldProcess)]
     param(
@@ -48,7 +48,7 @@ Requires 'D4C Registration: Write'.
 .PARAMETER ParentId
 GCP project identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:post',
         SupportsShouldProcess)]
@@ -79,7 +79,7 @@ Destination path
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverGcpScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]

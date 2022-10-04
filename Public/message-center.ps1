@@ -13,7 +13,7 @@ User identifier
 .PARAMETER Id
 Case identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-activity/v1:post',SupportsShouldProcess)]
     param(
@@ -59,7 +59,7 @@ Incident identifier
 .PARAMETER Id
 Case identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:patch',SupportsShouldProcess)]
     param(
@@ -130,7 +130,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get',SupportsShouldProcess)]
     param(
@@ -200,7 +200,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get',SupportsShouldProcess)]
     param(
@@ -264,7 +264,7 @@ Incident identifier
 .PARAMETER UserId
 User identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:post',SupportsShouldProcess)]
     param(
@@ -347,7 +347,7 @@ Attachment identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCompleteAttachment
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:get',
         SupportsShouldProcess)]
@@ -397,7 +397,7 @@ User identifier
 .PARAMETER Id
 Case identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Message-Center
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:post',
         SupportsShouldProcess)]

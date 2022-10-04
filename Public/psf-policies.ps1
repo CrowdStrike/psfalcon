@@ -14,7 +14,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/USB-Device-Control-Policy
+https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -67,7 +67,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Firewall-Management
+https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconFirewallPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -127,7 +127,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconPreventionPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -180,7 +180,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconResponsePolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -233,7 +233,7 @@ Policy description
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(

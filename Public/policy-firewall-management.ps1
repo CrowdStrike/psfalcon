@@ -13,7 +13,7 @@ Policy name
 .PARAMETER Description
 Policy description
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:patch',SupportsShouldProcess)]
     param(
@@ -98,7 +98,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall/v1:get',SupportsShouldProcess)]
     param(
@@ -185,7 +185,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall-members/v1:get',SupportsShouldProcess)]
     param(
@@ -240,7 +240,7 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFirewallPolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -296,7 +296,7 @@ Operating system platform
 .PARAMETER Description
 Policy description
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:post',SupportsShouldProcess)]
     param(
@@ -367,7 +367,7 @@ Requires 'Firewall Management: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:delete',SupportsShouldProcess)]
     param(
@@ -407,7 +407,7 @@ Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFirewallPrecedence
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-precedence/v1:post',SupportsShouldProcess)]
     param(

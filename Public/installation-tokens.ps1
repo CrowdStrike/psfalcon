@@ -13,7 +13,7 @@ Set revocation status
 .PARAMETER Id
 Installation token identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch',SupportsShouldProcess)]
     param(
@@ -76,7 +76,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
     param(
@@ -139,7 +139,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get',
         SupportsShouldProcess)]
@@ -189,7 +189,7 @@ Requires 'Installation Tokens: Read'.
 Returns the maximum number of allowed installation tokens,and whether or not they are required for
 installation of the Falcon sensor.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
         SupportsShouldProcess)]
@@ -207,7 +207,7 @@ Installation token label
 .PARAMETER ExpiresTimestamp
 Installation token expiration time (RFC3339),or 'null'
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post',SupportsShouldProcess)]
     param(
@@ -236,7 +236,7 @@ Requires 'Installation Tokens: Write'.
 .PARAMETER Id
 Installation token identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Installation-Tokens
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
     param(

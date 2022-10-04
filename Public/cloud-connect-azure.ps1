@@ -9,7 +9,7 @@ Scan type
 .PARAMETER Id
 Azure account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:get',SupportsShouldProcess)]
     param(
@@ -48,7 +48,7 @@ Refresh certificate [default: false]
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureCertificate
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',
         SupportsShouldProcess)]
@@ -80,7 +80,7 @@ Azure subscription identifier
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post',SupportsShouldProcess)]
     param(
@@ -115,7 +115,7 @@ Destination path
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
@@ -157,7 +157,7 @@ Requires 'D4C Registration: Write'.
 .PARAMETER Id
 Azure client identifier for the associated Service Principal
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',
         SupportsShouldProcess)]

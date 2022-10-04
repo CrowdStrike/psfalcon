@@ -23,7 +23,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get',SupportsShouldProcess)]
     param(
@@ -90,7 +90,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param(
@@ -137,7 +137,7 @@ Retrieve monthly Falcon X Sandbox submission quota
 .DESCRIPTION
 Requires 'Sandbox (Falcon X): Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmissionQuota
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param()
@@ -184,7 +184,7 @@ Route traffic via TOR
 .PARAMETER UserTag
 Tags to categorize the submission
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
     param(
@@ -275,7 +275,7 @@ Artifact identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconArtifact
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/artifacts/v1:get',SupportsShouldProcess)]
     param(
@@ -321,7 +321,7 @@ Requires 'Sandbox (Falcon X): Write'.
 .PARAMETER Id
 Report identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess)]
     param(

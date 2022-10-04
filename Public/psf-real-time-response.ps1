@@ -15,7 +15,7 @@ Days worth of results to retrieve [default: 7]
 .PARAMETER Include
 Include additional properties
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
 #>
     [CmdletBinding()]
     param(
@@ -146,7 +146,7 @@ Host group identifier
 .PARAMETER HostId
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
 #>
     [CmdletBinding(DefaultParameterSetName='HostId_File',SupportsShouldProcess)]
     param(
@@ -517,7 +517,7 @@ Host group identifier
 .PARAMETER HostId
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
 #>
     [CmdletBinding(DefaultParameterSetName='HostId',SupportsShouldProcess)]
     param(

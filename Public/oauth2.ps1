@@ -25,7 +25,7 @@ Member CID, used when authenticating within a multi-CID environment ('Falcon Fli
 .PARAMETER Collector
 A hashtable containing 'Path', 'Token' and 'Enabled' properties for 'Register-FalconEventCollector'
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Authentication
+https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
 #>
     [CmdletBinding(DefaultParameterSetName='Hostname',SupportsShouldProcess)]
     param(
@@ -198,7 +198,7 @@ Revoke your active OAuth2 access token
 Revokes your active OAuth2 access token and clears cached credential information ('ClientId', 'ClientSecret',
 'MemberCid', 'Cloud'/'Hostname') from the module.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Authentication
+https://github.com/crowdstrike/psfalcon/wiki/Revoke-FalconToken
 #>
     [CmdletBinding(DefaultParameterSetName='/oauth2/revoke:post',SupportsShouldProcess)]
     param()
@@ -233,7 +233,7 @@ Display OAuth2 access token status
 Displays a [PSCustomObject] containing token status ('Token') along with cached 'Hostname', 'ClientId' and
 'MemberCid' values.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Authentication
+https://github.com/crowdstrike/psfalcon/wiki/Test-FalconToken
 #>
     [CmdletBinding()]
     param()

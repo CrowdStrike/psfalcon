@@ -11,7 +11,7 @@ Selected items to export from your current CID, or leave unspecified to export a
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
+https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
 #>
     [CmdletBinding(DefaultParameterSetName='ExportItem',SupportsShouldProcess)]
     param(
@@ -121,7 +121,7 @@ Modify specified 'platform_default' policies to match import
 .PARAMETER ModifyExisting
 Modify existing specified items to match import
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
+https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(

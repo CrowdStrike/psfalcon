@@ -21,7 +21,7 @@ The resulting output can be passed to 'New-FalconIoaExclusion' to create an excl
 .PARAMETER Detection
 Falcon detection content, including 'behaviors' and 'device'
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
 #>
     [CmdletBinding()]
     param(
@@ -72,7 +72,7 @@ Audit log comment
 .PARAMETER Id
 Exclusion identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:patch',SupportsShouldProcess)]
     param(
@@ -147,7 +147,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ioa-exclusions/v1:get',SupportsShouldProcess)]
     param(
@@ -217,7 +217,7 @@ Exclusion description
 .PARAMETER Comment
 Audit log comment
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:post',SupportsShouldProcess)]
     param(
@@ -288,7 +288,7 @@ Audit log comment
 .PARAMETER Id
 Exclusion identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:delete',SupportsShouldProcess)]
     param(

@@ -11,7 +11,7 @@ User role
 .PARAMETER Cid
 Customer identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
 #>
     [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:post',SupportsShouldProcess)]
     param(
@@ -76,7 +76,7 @@ Last name
 .PARAMETER Id
 User identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:patch',SupportsShouldProcess)]
     param(
@@ -120,7 +120,7 @@ Customer identifier
 .PARAMETER Detailed
 Retrieve detailed information
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
         SupportsShouldProcess)]
@@ -208,7 +208,7 @@ Retrieve detailed information
 .PARAMETER Include
 Include additional properties
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/queries/users/v1:get',SupportsShouldProcess)]
     param(
@@ -296,7 +296,7 @@ Action name
 .PARAMETER Id
 User identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -345,7 +345,7 @@ Customer identifier
 .PARAMETER ValidateOnly
 Validate if user is allowed but do not create them
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:post',SupportsShouldProcess)]
     param(
@@ -401,7 +401,7 @@ User role
 .PARAMETER Cid
 Customer identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
 #>
     [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:delete',SupportsShouldProcess)]
     param(
@@ -462,7 +462,7 @@ Requires 'User Management: Write'.
 .PARAMETER Id
 User identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Users-and-Roles
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:delete',SupportsShouldProcess)]
     param(

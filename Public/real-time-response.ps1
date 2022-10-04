@@ -15,7 +15,7 @@ Sequence identifier
 .PARAMETER CloudRequestId
 Command request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconAdminCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/admin-command/v1:get',
         SupportsShouldProcess)]
@@ -56,7 +56,7 @@ Sequence identifier
 .PARAMETER CloudRequestId
 Command request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/command/v1:get',SupportsShouldProcess)]
     param(
@@ -92,7 +92,7 @@ Length of time to wait for a result, in seconds
 .PARAMETER BatchGetCmdReqId
 Batch 'get' command identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-get-command/v1:get',
         SupportsShouldProcess)]
@@ -155,7 +155,7 @@ Sequence identifier
 .PARAMETER CloudRequestId
 Command request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconResponderCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/active-responder-command/v1:get',
         SupportsShouldProcess)]
@@ -200,7 +200,7 @@ Path to script file
 .PARAMETER Id
 Script identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:patch',SupportsShouldProcess)]
     param(
@@ -269,7 +269,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/put-files/v1:get',SupportsShouldProcess)]
     param(
@@ -336,7 +336,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/scripts/v1:get',SupportsShouldProcess)]
     param(
@@ -410,7 +410,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/sessions/v1:get',SupportsShouldProcess)]
     param(
@@ -485,7 +485,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to retrieve command results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',
         SupportsShouldProcess)]
@@ -609,7 +609,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconGetFile' to attempt to retrieve results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-get-command/v1:post',
         SupportsShouldProcess)]
@@ -710,7 +710,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconCommand' to retrieve single-host command results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-command/v1:post',
         SupportsShouldProcess)]
@@ -820,7 +820,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconResponderCommand' to retrieve single-host command results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
         SupportsShouldProcess)]
@@ -945,7 +945,7 @@ Session identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get',
         SupportsShouldProcess)]
@@ -1004,7 +1004,7 @@ Session identifier
 .PARAMETER CloudRequestId
 Cloud request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',
         SupportsShouldProcess)]
@@ -1044,7 +1044,7 @@ Session identifier
 .PARAMETER Id
 Real-time Response 'get' file identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete',SupportsShouldProcess)]
     param(
@@ -1077,7 +1077,7 @@ Requires 'Real Time Response (Admin): Write'.
 .PARAMETER Id
 Real-time Response 'put' file identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete',
         SupportsShouldProcess)]
@@ -1106,7 +1106,7 @@ Requires 'Real Time Response (Admin): Write'.
 .PARAMETER Id
 Script identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete',SupportsShouldProcess)]
     param(
@@ -1134,7 +1134,7 @@ Requires 'Real Time Response: Read'.
 .PARAMETER Id
 Session identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/sessions/v1:delete',
         SupportsShouldProcess)]
@@ -1169,7 +1169,7 @@ Comment for audit log
 .PARAMETER Path
 Path to local file
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:post',SupportsShouldProcess)]
     param(
@@ -1223,7 +1223,7 @@ Audit log comment
 .PARAMETER Path
 Path to local file or string-based script content
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post',SupportsShouldProcess)]
     param(
@@ -1287,7 +1287,7 @@ Add hosts to an existing batch session
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-init-session/v1:post',
         SupportsShouldProcess)]
@@ -1379,7 +1379,7 @@ Host identifier, for a single-host session
 .PARAMETER BatchId
 Batch session identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/refresh-session/v1:post',
         SupportsShouldProcess)]

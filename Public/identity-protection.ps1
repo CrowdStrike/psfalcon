@@ -10,6 +10,8 @@ A complete GraphQL query statement
 A complete GraphQL mutation statement
 .PARAMETER All
 Repeat requests until all available results are retrieved
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
 #>
     [CmdletBinding(DefaultParameterSetName='Query',SupportsShouldProcess)]
     param(

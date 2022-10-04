@@ -15,7 +15,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch',SupportsShouldProcess)]
     param(
@@ -110,7 +110,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/response/v1:get',SupportsShouldProcess)]
     param(
@@ -193,7 +193,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/response-members/v1:get',SupportsShouldProcess)]
     param(
@@ -247,7 +247,7 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponsePolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -305,7 +305,7 @@ Policy description
 .PARAMETER Settings
 Policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post',SupportsShouldProcess)]
     param(
@@ -384,7 +384,7 @@ Requires 'Response Policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:delete',SupportsShouldProcess)]
     param(
@@ -424,7 +424,7 @@ Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconResponsePrecedence
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response-precedence/v1:post',SupportsShouldProcess)]
     param(

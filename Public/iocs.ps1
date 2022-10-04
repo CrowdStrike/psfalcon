@@ -35,7 +35,7 @@ Ignore warnings and modify all indicators
 .PARAMETER Id
 Indicator identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch',SupportsShouldProcess)]
     param(
@@ -140,7 +140,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/queries/indicators/v1:get',SupportsShouldProcess)]
     param(
@@ -239,7 +239,7 @@ Generate retroactive detections for hosts that have observed the indicator
 .PARAMETER IgnoreWarning
 Ignore warnings and create all indicators
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post',SupportsShouldProcess)]
     param(
@@ -360,7 +360,7 @@ Audit log comment
 .PARAMETER Id
 Indicator identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete',SupportsShouldProcess)]
     param(

@@ -23,7 +23,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconQuarantine
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
     param(
@@ -89,7 +89,7 @@ Audit log comment
 .PARAMETER Id
 Quarantined file identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
+https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconQuarantineAction
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch',
         SupportsShouldProcess)]
@@ -137,7 +137,7 @@ Requires 'Quarantined Files: Write'.
 .PARAMETER Filter
 Falcon Query Language statement
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Quarantine
+https://github.com/CrowdStrike/psfalcon/wiki/Test-FalconQuarantineAction
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/aggregates/action-update-count/v1:get',
         SupportsShouldProcess)]

@@ -20,7 +20,7 @@ Array of detailed Host results
 .PARAMETER Filter
 Property to determine duplicate Host in addition to 'Hostname'
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -84,7 +84,7 @@ An array containing one or more hostnames
 .PARAMETER Path
 Path to a plaintext file containing hostnames
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
 #>
     [CmdletBinding(DefaultParameterSetName='Path',SupportsShouldProcess)]
     param(

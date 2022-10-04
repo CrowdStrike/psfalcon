@@ -7,7 +7,7 @@ Requires 'Sensor Download: Read'.
 
 Returns your Customer Checksum Identifier which is requested during the installation of the Falcon Sensor.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCcid
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/ccid/v1:get',SupportsShouldProcess)]
     param()
@@ -36,7 +36,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
     param(
@@ -92,7 +92,7 @@ Connection label
 .PARAMETER Format
 Format for streaming events [default: json]
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Event-Streams
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed/v2:get',SupportsShouldProcess)]
     param(
@@ -124,7 +124,7 @@ Sha256 hash value
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Download
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconInstaller
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v1:get',SupportsShouldProcess)]
     param(
@@ -175,7 +175,7 @@ Connection label
 .PARAMETER Partition
 Partition number
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Event-Streams
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',
         SupportsShouldProcess)]

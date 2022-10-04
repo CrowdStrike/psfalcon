@@ -21,7 +21,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScan
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
     param(
@@ -68,7 +68,7 @@ Display monthly Falcon QuickScan quota
 .DESCRIPTION
 Requires 'Quick Scan (Falcon X): Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScanQuota
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
     param()
@@ -95,7 +95,7 @@ Time required for analysis increases with the number of samples in a volume but 
 .PARAMETER Id
 Sha256 hash value
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconQuickScan
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/entities/scans/v1:post',SupportsShouldProcess)]
     param(

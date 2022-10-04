@@ -13,7 +13,7 @@ Action status
 .PARAMETER Id
 Action identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:patch',SupportsShouldProcess)]
     param(
@@ -75,7 +75,7 @@ Notification status
 .PARAMETER AssignedToUuid
 User identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:patch',SupportsShouldProcess)]
     param(
@@ -152,7 +152,7 @@ Monitoring rule priority
 .PARAMETER Permission
 Permission level [public: 'All Intel users', private: 'Recon Admins']
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:patch',SupportsShouldProcess)]
     param(
@@ -241,7 +241,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/actions/v1:get',SupportsShouldProcess)]
     param(
@@ -314,7 +314,7 @@ Translate to English
 .PARAMETER Combined
 Include raw intelligence content and translate to English
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications/v1:get',SupportsShouldProcess)]
     param(
@@ -396,7 +396,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/rules/v1:get',SupportsShouldProcess)]
     param(
@@ -452,7 +452,7 @@ Monitoring rule topic
 .PARAMETER Filter
 Monitoring rule filter
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRulePreview
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/aggregates/rules-preview/GET/v1:post',SupportsShouldProcess)]
     param(
@@ -486,7 +486,7 @@ Notification frequency
 .PARAMETER Recipient
 Notification recipient
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:post',SupportsShouldProcess)]
     param(
@@ -553,7 +553,7 @@ Monitoring rule priority
 .PARAMETER Permission
 Permission level [public: 'All Intel users', private: 'Recon Admins']
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:post',SupportsShouldProcess)]
     param(
@@ -626,7 +626,7 @@ Requires 'Monitoring Rules (Falcon X Recon): Write'.
 .PARAMETER Id
 Action identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:delete',SupportsShouldProcess)]
     param(
@@ -653,7 +653,7 @@ Requires 'Monitoring Rules (Falcon X Recon): Write'.
 .PARAMETER Id
 Notification identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:delete',SupportsShouldProcess)]
     param(
@@ -688,7 +688,7 @@ Requires 'Monitoring Rules (Falcon X Recon): Write'.
 .PARAMETER Id
 Monitoring rule identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X-Recon
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:delete',SupportsShouldProcess)]
     param(

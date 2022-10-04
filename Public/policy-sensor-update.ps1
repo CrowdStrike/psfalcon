@@ -15,7 +15,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch',SupportsShouldProcess)]
     param(
@@ -90,7 +90,7 @@ Requires 'Sensor Update Policies: Read'.
 .PARAMETER Platform
 Operating system platform
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBuild
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-builds/v1:get',SupportsShouldProcess)]
     param(
@@ -128,7 +128,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconKernel
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-kernels/v1:get',SupportsShouldProcess)]
     param(
@@ -199,7 +199,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update/v1:get',SupportsShouldProcess)]
     param(
@@ -282,7 +282,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update-members/v1:get',SupportsShouldProcess)]
     param(
@@ -336,7 +336,7 @@ Include additional properties
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',
         SupportsShouldProcess)]
@@ -386,7 +386,7 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconSensorUpdatePolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -444,7 +444,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post',SupportsShouldProcess)]
     param(
@@ -519,7 +519,7 @@ Requires 'Sensor Update Policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v1:delete',SupportsShouldProcess)]
     param(
@@ -559,7 +559,7 @@ Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorUpdatePrecedence
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-precedence/v1:post',
         SupportsShouldProcess)]

@@ -25,7 +25,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/queries/scheduled-reports/v1:get',SupportsShouldProcess)]
     param(
@@ -105,7 +105,7 @@ Requires 'Scheduled Reports: Read'.
 .PARAMETER Id
 Report identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',
         SupportsShouldProcess)]
@@ -141,7 +141,7 @@ Report identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-download/v1:get',
         SupportsShouldProcess)]
@@ -206,7 +206,7 @@ Requires 'Scheduled Reports: Read'.
 .PARAMETER Id
 Report identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Scheduled-Reports-and-Searches
+https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-retry/v1:post',
         SupportsShouldProcess)]

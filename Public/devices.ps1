@@ -9,7 +9,7 @@ FalconGroupingTag value ['FalconGroupingTags/<string>']
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupingTag
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
     param(
@@ -62,7 +62,7 @@ FQL-based assignment rule, used with dynamic host groups
 .PARAMETER Id
 Host group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:patch',SupportsShouldProcess)]
     param(
@@ -123,7 +123,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
     param(
@@ -303,7 +303,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/host-groups/v1:get',SupportsShouldProcess)]
     param(
@@ -385,7 +385,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/host-group-members/v1:get',SupportsShouldProcess)]
     param(
@@ -439,7 +439,7 @@ Include additional properties
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostAction
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/devices-actions/v2:post',SupportsShouldProcess)]
     param(
@@ -501,7 +501,7 @@ Host group identifier
 .PARAMETER HostId
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostGroupAction
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-group-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -561,7 +561,7 @@ Host group description
 .PARAMETER AssignmentRule
 Assignment rule for 'dynamic' host groups
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post',SupportsShouldProcess)]
     param(
@@ -646,7 +646,7 @@ FalconGroupingTag value ['FalconGroupingTags/<string>']
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
     param(
@@ -695,7 +695,7 @@ Requires 'Host Groups: Write'.
 .PARAMETER Id
 Host group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete',SupportsShouldProcess)]
     param(

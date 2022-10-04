@@ -27,7 +27,7 @@ Search for user account assets
 .PARAMETER Login
 Search for login events
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Discover
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
 #>
     [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get',SupportsShouldProcess)]
     param(

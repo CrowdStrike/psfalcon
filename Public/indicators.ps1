@@ -17,7 +17,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display the total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconIocHost
 #>
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/devices/v1:get',SupportsShouldProcess)]
     param(
@@ -74,7 +74,7 @@ Retrieve detailed information
 .PARAMETER All
 Repeat requests until all available results are retrieved
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconIocProcess
 #>
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/processes/v1:get',SupportsShouldProcess)]
     param(

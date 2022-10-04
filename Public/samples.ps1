@@ -7,7 +7,7 @@ Requires 'Sample Uploads: Read'.
 .PARAMETER Id
 Sha256 hash value
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post',SupportsShouldProcess)]
     param(
@@ -48,7 +48,7 @@ Sha256 hash value
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get',SupportsShouldProcess)]
     param(
@@ -98,7 +98,7 @@ Requires 'Sample Uploads: Write'.
 .PARAMETER Id
 Sha256 hash value
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess)]
     param(
@@ -137,7 +137,7 @@ File name
 .PARAMETER Path
 Path to local file
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
     param(

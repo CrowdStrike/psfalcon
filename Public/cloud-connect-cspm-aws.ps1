@@ -9,7 +9,7 @@ AWS account identifier
 .PARAMETER CloudtrailRegion
 AWS region where the account resides
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
         SupportsShouldProcess)]
@@ -61,7 +61,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
         SupportsShouldProcess)]
@@ -122,7 +122,7 @@ Requires 'CSPM Registration: Read'.
 Once logging in to the provided link using your AWS administrator credentials, use the 'Create Stack' button to
 grant access.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsLink
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get',
         SupportsShouldProcess)]
@@ -142,7 +142,7 @@ AWS region where the account resides
 .PARAMETER AccountId
 AWS account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
         SupportsShouldProcess)]
@@ -182,7 +182,7 @@ Destination path
 .PARAMETER Force
 Overwrite existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
@@ -226,7 +226,7 @@ AWS account identifier
 .PARAMETER OrganizationId
 AWS organization identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
         SupportsShouldProcess)]
@@ -236,7 +236,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Horizon
         [ValidatePattern('^\d{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
-
         [Parameter(ParameterSetName='OrganizationIds',Mandatory)]
         [ValidatePattern('^o-[0-9a-z]{10,32}$')]
         [Alias('organization-ids','OrganizationIds')]

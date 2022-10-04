@@ -21,7 +21,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconBehavior
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get',SupportsShouldProcess)]
     param(
@@ -88,7 +88,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconIncident
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get',SupportsShouldProcess)]
     param(
@@ -154,7 +154,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconScore
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get',SupportsShouldProcess)]
     param(
@@ -200,7 +200,7 @@ Replace existing status for related detections
 .PARAMETER Id
 Incident identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
+https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconIncidentAction
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post',SupportsShouldProcess)]
     param(

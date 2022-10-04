@@ -25,7 +25,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get',SupportsShouldProcess)]
     param(
@@ -107,7 +107,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/indicators/v1:get',SupportsShouldProcess)]
     param(
@@ -192,7 +192,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get',SupportsShouldProcess)]
     param(
@@ -281,7 +281,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get',SupportsShouldProcess)]
     param(
@@ -354,7 +354,7 @@ Report identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/entities/report-files/v1:get',SupportsShouldProcess)]
     param(
@@ -409,7 +409,7 @@ Ruleset identifier, used for a specific ruleset
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/entities/rules-files/v1:get',SupportsShouldProcess)]
     param(

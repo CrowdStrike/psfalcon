@@ -18,7 +18,7 @@ Audit log comment
 .PARAMETER Id
 Rule group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:patch',SupportsShouldProcess)]
     param(
@@ -83,7 +83,7 @@ An array of rule properties
 .PARAMETER RulegroupId
 Rule group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch',SupportsShouldProcess)]
     param(
@@ -156,7 +156,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get',SupportsShouldProcess)]
     param(
@@ -230,7 +230,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get',SupportsShouldProcess)]
     param(
@@ -290,7 +290,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get',SupportsShouldProcess)]
     param(
@@ -364,7 +364,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/pattern-severities/v1:get',SupportsShouldProcess)]
     param(
@@ -418,7 +418,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get',SupportsShouldProcess)]
     param(
@@ -468,7 +468,7 @@ Rule group description
 .PARAMETER Comment
 Audit log comment
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post',SupportsShouldProcess)]
     param(
@@ -522,7 +522,7 @@ Audit log comment
 .PARAMETER RulegroupId
 Rule group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post',SupportsShouldProcess)]
     param(
@@ -589,7 +589,7 @@ Audit log comment
 .PARAMETER Id
 Rule group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess)]
     param(
@@ -630,7 +630,7 @@ Rule group identifier
 .PARAMETER Id
 Rule identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess)]
     param(
@@ -672,7 +672,7 @@ Requires 'Custom IOA Rules: Write'.
 .PARAMETER Field
 An array of rule properties
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Test-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/validate/v1:post',SupportsShouldProcess)]
     param(

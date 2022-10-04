@@ -13,7 +13,7 @@ Add command request to the offline queue
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -188,7 +188,7 @@ Add command request to the offline queue
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -301,7 +301,7 @@ Host identifier
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -488,7 +488,7 @@ Include additional properties
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
