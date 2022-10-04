@@ -374,8 +374,11 @@ function Get-ParamSet {
             # Output maximum, no greater than 500
             $Max = if ($IdCount -and $IdCount -lt 500) { $IdCount } else { 500 }
         }
-        # Get 'Content' from user input
+        # Get 'Content' from user input and find identifier field
         $Content = Build-Content -Inputs $Inputs -Format $Format
+        [string]$Field = if ($Content.Body) {
+            if ($Content.Body.ids) { 'ids' } elseif ($Content.Body.samples) { 'samples' }
+        }
     }
     process {
         if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
@@ -395,15 +398,15 @@ function Get-ParamSet {
                 }
                 ,$Split
             }
-        } elseif ($Content.Body -and ($Content.Body.ids | Measure-Object).Count -gt $Max) {
-            Write-Verbose "[Get-ParamSet] Creating groups of $Max 'ids'"
-            for ($i = 0; $i -lt ($Content.Body.ids | Measure-Object).Count; $i += $Max) {
-                # Split 'Body' content into groups using 'ids'
+        } elseif ($Content.Body -and $Field -and ($Content.Body.$Field | Measure-Object).Count -gt $Max) {
+            Write-Verbose "[Get-ParamSet] Creating groups of $Max '$Field' values"
+            for ($i = 0; $i -lt ($Content.Body.$Field | Measure-Object).Count; $i += $Max) {
+                # Split 'Body' content into groups using '$Field'
                 $Split = $Switches.Clone()
                 $Split.Add('Endpoint',$Base.Clone())
-                $Split.Endpoint.Add('Body',@{ ids = $Content.Body.ids[$i..($i + ($Max - 1))] })
+                $Split.Endpoint.Add('Body',@{ $Field = $Content.Body.$Field[$i..($i + ($Max - 1))] })
                 $Content.GetEnumerator().Where({ $_.Value }).foreach{
-                    # Add values other than 'Body.ids'
+                    # Add values other than 'Body.$Field'
                     if ($_.Key -eq 'Query') {
                         $Split.Endpoint.Path += if ($Split.Endpoint.Path -match '\?') {
                             "&$($_.Value -join '&')"
@@ -411,7 +414,7 @@ function Get-ParamSet {
                             "?$($_.Value -join '&')"
                         }
                     } elseif ($_.Key -eq 'Body') {
-                        ($_.Value).GetEnumerator().Where({ $_.Key -ne 'ids' }).foreach{
+                        ($_.Value).GetEnumerator().Where({ $_.Key -ne $Field }).foreach{
                             $Split.Endpoint.Body.Add($_.Key,$_.Value)
                         }
                     } else {
