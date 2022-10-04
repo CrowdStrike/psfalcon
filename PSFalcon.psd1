@@ -443,6 +443,8 @@ New Commands
 
 General Changes
 
+* Updated comment-based help to link directly to specific wiki pages for each command.
+
 * Modified 'Get-ParamSet' private function to look for 'ids' and 'samples' as potential body values to break into
   groups of 'Max' values.
 
