@@ -443,12 +443,18 @@ New Commands
 
 General Changes
 
-*
+* Modified 'Get-ParamSet' private function to look for 'ids' and 'samples' as potential body values to break into
+  groups of 'Max' values.
 
 Command Changes
 
 * Modified 'Get-FalconUser' to remove deprecated API when using 'Username' parameter. 'Username' now submits
   filtered searches for provided 'uid' values to the appropriate /user-management/ API.
+
+* Added 'Max' of 1,000 sha256 values for 'New-FalconQuickScan'.
+
+* Added 'sha256' as a PipelineByPropertyName value for 'New-FalconQuickScan' to support pipeline input from
+  'Send-FalconSample'.
 
 Resolved Issues
 
