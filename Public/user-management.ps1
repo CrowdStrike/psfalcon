@@ -88,8 +88,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
         [string]$LastName,
         [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=3)]
-        [Alias('user_uuid','uuid')]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+        [Alias('user_uuid','uuid')]
         [string]$Id
     )
     begin {
