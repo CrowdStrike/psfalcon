@@ -413,6 +413,10 @@
       'Get-FalconVulnerability',
       'Get-FalconVulnerabilityLogic',
 
+      # ti
+      'Get-FalconTailoredEvent',
+      'Get-FalconTailoredRule',
+
       # user-management
       'Add-FalconRole',
       'Edit-FalconUser',
@@ -439,7 +443,9 @@
             ReleaseNotes = "@
 New Commands
 
-*
+* ti
+  'Get-FalconTailoredEvent'
+  'Get-FalconTailoredRule'
 
 General Changes
 
@@ -457,6 +463,8 @@ Command Changes
 
 * Added 'sha256' as a PipelineByPropertyName value for 'New-FalconQuickScan' to support pipeline input from
   'Send-FalconSample'.
+
+* Added pattern validation to 'Remove-FalconUser' for the 'Id' parameter.
 
 Resolved Issues
 
