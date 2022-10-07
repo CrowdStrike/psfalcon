@@ -449,10 +449,15 @@ New Commands
 
 General Changes
 
-* Updated comment-based help to link directly to specific wiki pages for each command.
+* Created 'Confirm-Property' private function to filter [hashtable] and [PSCustomObject] into pre-defined
+  properties containing values.
+
+* Updated comment-based help to link directly to specific wiki pages for each command. Using 'Get-Help <command>
+  -Online' will launch the appropriate wiki page. These pages will be updated with current examples present within
+  existing wiki pages, and those pages will be re-organized.
 
 * Modified 'Get-ParamSet' private function to look for 'ids' and 'samples' as potential body values to break into
-  groups of 'Max' values.
+  groups of 'Max' values, instead of only 'ids'.
 
 Command Changes
 
@@ -474,6 +479,10 @@ Resolved Issues
 * Issue #242: Modified 'Edit-FalconDetection' to check whether a 'status' value is present with a 'comment' value
   during command execution rather than during parameter validation. This will prevent errors from occurring when
   parameters are specified in an unexpected order.
+
+* Issue #246: Created 'Confirm-Property' function to properly filter 'Rule' content for both [hashtable] and
+  [PSCustomObject] rules. This will eliminate errors caused by [hashtable] objects being improperly filtered
+  in PowerShell 5.1.
 @"
         }
     }

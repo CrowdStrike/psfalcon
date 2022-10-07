@@ -25,7 +25,7 @@ Firewall rule version value(s) from the existing rule group [or 'null' for each 
 .PARAMETER Id
 Rule group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:patch',SupportsShouldProcess)]
     param(
@@ -129,7 +129,7 @@ Enable local logging of firewall events
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:put',SupportsShouldProcess)]
     param(
@@ -220,7 +220,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/events/v1:get',SupportsShouldProcess)]
     param(
@@ -285,7 +285,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallField
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/firewall-fields/v1:get',SupportsShouldProcess)]
     param(
@@ -350,7 +350,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rule-groups/v1:get',SupportsShouldProcess)]
     param(
@@ -414,7 +414,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPlatform
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/platforms/v1:get',SupportsShouldProcess)]
     param(
@@ -478,7 +478,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallRule
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rules/v1:get',SupportsShouldProcess)]
     param(
@@ -557,7 +557,7 @@ Requires 'Firewall Management: Read'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:get',SupportsShouldProcess)]
     param(
@@ -604,7 +604,7 @@ Clone default Firewall rules
 .PARAMETER CloneId
 Clone an existing rule group
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:post',SupportsShouldProcess)]
     param(
@@ -643,13 +643,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
     }
     process {
         if ($PSBoundParameters.Rule) {
-            $Fields = @('name','description','enabled','platform_ids','direction','action','address_family',
-                'local_address','remote_address','protocol','local_port','remote_port','icmp','monitor','fields')
-            [object[]] $PSBoundParameters.Rule = foreach ($i in $PSBoundParameters.Rule) {
-                # Filter 'rule' to required properties that contain a value
-                $Select = @($Fields).foreach{ if ($i.$_) { $_ } }
-                $i | Select-Object $Select
-            }
+            [object[]]$PSBoundParameters.Rule = Confirm-Property 'name','description','enabled','platform_ids',
+                'direction','action','address_family','local_address','remote_address','protocol','local_port',
+                'remote_port','icmp','monitor','fields' $PSBoundParameters.Rule
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
@@ -665,7 +661,7 @@ Audit log comment
 .PARAMETER Id
 Rule group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Firewall-Management
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rule-groups/v1:delete',SupportsShouldProcess)]
     param(

@@ -310,6 +310,23 @@ function Confirm-Parameter {
         }
     }
 }
+function Confirm-Property {
+    [CmdletBinding()]
+    [OutputType([PSCustomObject[]])]
+    param(
+        [Parameter(Mandatory,Position=1)]
+        [string[]]$Property,
+        [Parameter(Position=2)]
+        [object[]]$Object
+    )
+    process {
+        foreach ($Item in $Object) {
+            # Filter to defined properties containing values
+            [string[]]$Select = @($Property).foreach{ if ($Item.$_) { $_ } }
+            if ($Select) { [PSCustomObject]$Item | Select-Object $Select }
+        }
+    }
+}
 function Convert-Rfc3339 {
     [CmdletBinding()]
     [OutputType([string])]
