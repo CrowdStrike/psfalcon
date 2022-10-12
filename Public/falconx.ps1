@@ -1,9 +1,9 @@
 function Get-FalconReport {
 <#
 .SYNOPSIS
-Search for Falcon X Sandbox reports
+Search for Falcon Intelligence Sandbox reports
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .PARAMETER Id
 Report identifier
 .PARAMETER Filter
@@ -70,9 +70,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
 function Get-FalconSubmission {
 <#
 .SYNOPSIS
-Search for Falcon X Sandbox submissions
+Search for Falcon Intelligence Sandbox submissions
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .PARAMETER Id
 Submission identifier
 .PARAMETER Filter
@@ -133,9 +133,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
 function Get-FalconSubmissionQuota {
 <#
 .SYNOPSIS
-Retrieve monthly Falcon X Sandbox submission quota
+Retrieve monthly Falcon Intelligence Sandbox submission quota
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmissionQuota
 #>
@@ -153,12 +153,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmissionQuota
 function New-FalconSubmission {
 <#
 .SYNOPSIS
-Submit a sample to the Falcon X Sandbox
+Submit a sample to the Falcon Intelligence Sandbox
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Write'.
+Requires 'Sandbox (Falcon Intelligence): Write'.
 
 'Sha256' values are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be uploaded
-before they can be provided to the Falcon X Sandbox.
+before they can be provided to the Falcon Intelligence Sandbox.
 .PARAMETER EnvironmentId
 Analysis environment
 .PARAMETER Sha256
@@ -263,11 +263,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 function Receive-FalconArtifact {
 <#
 .SYNOPSIS
-Download an artifact from a Falcon X Sandbox report
+Download an artifact from a Falcon Intelligence Sandbox report
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 
-Artifact identifier values can be retrieved for specific Falcon X Sandbox reports using 'Get-FalconReport'.
+Artifact identifier values can be retrieved for specific Falcon Intelligence Sandbox reports using
+'Get-FalconReport'.
 .PARAMETER Path
 Destination path
 .PARAMETER Id
@@ -315,9 +316,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconArtifact
 function Remove-FalconReport {
 <#
 .SYNOPSIS
-Remove a Falcon X Sandbox report
+Remove a Falcon Intelligence Sandbox report
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Write'.
+Requires 'Sandbox (Falcon Intelligence): Write'.
 .PARAMETER Id
 Report identifier
 .LINK

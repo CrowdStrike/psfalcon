@@ -124,7 +124,7 @@ Upload a sample file
 .DESCRIPTION
 Requires 'Sample Uploads: Write'.
 
-A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon X Sandbox or
+A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon Sandbox or
 Falcon QuickScan.
 
 Maximum file size is 256MB. ZIP archives will automatically redirect to the archive submission API.

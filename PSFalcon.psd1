@@ -459,6 +459,8 @@ General Changes
 * Modified 'Get-ParamSet' private function to look for 'ids' and 'samples' as potential body values to break into
   groups of 'Max' values, instead of only 'ids'.
 
+* Updated Falcon X references to Falcon Intelligence due to product name change.
+
 Command Changes
 
 * Modified 'Get-FalconUser' to remove deprecated API when using 'Username' parameter. 'Username' now submits

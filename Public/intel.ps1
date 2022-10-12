@@ -3,7 +3,7 @@ function Get-FalconActor {
 .SYNOPSIS
 Search for threat actors
 .DESCRIPTION
-Requires 'Actors (Falcon X): Read'.
+Requires 'Actors (Falcon Intelligence): Read'.
 .PARAMETER Id
 Threat actor identifier
 .PARAMETER Filter
@@ -85,7 +85,7 @@ function Get-FalconIndicator {
 .SYNOPSIS
 Search for intelligence indicators
 .DESCRIPTION
-Requires 'Indicators (Falcon X): Read'.
+Requires 'Indicators (Falcon Intelligence): Read'.
 .PARAMETER Id
 Indicator identifier
 .PARAMETER Filter
@@ -170,7 +170,7 @@ function Get-FalconIntel {
 .SYNOPSIS
 Search for intelligence reports
 .DESCRIPTION
-Requires 'Reports (Falcon X): Read'.
+Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Id
 Report identifier
 .PARAMETER Filter
@@ -249,9 +249,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 function Get-FalconRule {
 <#
 .SYNOPSIS
-Search for Falcon X rulesets
+Search for Falcon Intelligence rulesets
 .DESCRIPTION
-Requires 'Rules (Falcon X): Read'.
+Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Id
 Ruleset identifier
 .PARAMETER Type
@@ -346,7 +346,7 @@ function Receive-FalconIntel {
 .SYNOPSIS
 Download an intelligence report
 .DESCRIPTION
-Requires 'Reports (Falcon X): Read'.
+Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Path
 Destination path [default: <slug>.pdf]
 .PARAMETER Id
@@ -399,7 +399,7 @@ function Receive-FalconRule {
 .SYNOPSIS
 Download the most recent ruleset,or a specific ruleset
 .DESCRIPTION
-Requires 'Rules (Falcon X): Read'.
+Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Type
 Ruleset type, used to retrieve the latest ruleset
 .PARAMETER Path

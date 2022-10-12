@@ -1,9 +1,9 @@
 function Edit-FalconReconAction {
 <#
 .SYNOPSIS
-Modify a Falcon X Recon action
+Modify a Falcon Intelligence Recon action
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Frequency
 Action frequency
 .PARAMETER Recipient
@@ -63,9 +63,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
 function Edit-FalconReconNotification {
 <#
 .SYNOPSIS
-Modify a Falcon X Recon notification
+Modify a Falcon Intelligence Recon notification
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Array
 An array of notifications to modify in a single request
 .PARAMETER Id
@@ -136,9 +136,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
 function Edit-FalconReconRule {
 <#
 .SYNOPSIS
-Modify a Falcon X Recon monitoring rule
+Modify a Falcon Intelligence Recon monitoring rule
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Array
 An array of monitoring rules to modify in a single request
 .PARAMETER Id
@@ -219,9 +219,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 function Get-FalconReconAction {
 <#
 .SYNOPSIS
-Search for Falcon X Recon actions
+Search for Falcon Intelligence Recon actions
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Read'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Id
 Action identifier
 .PARAMETER Filter
@@ -286,9 +286,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
 function Get-FalconReconNotification {
 <#
 .SYNOPSIS
-Search for Falcon X Recon notifications
+Search for Falcon Intelligence Recon notifications
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Read'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Id
 Notification identifier
 .PARAMETER Filter
@@ -374,9 +374,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
 function Get-FalconReconRule {
 <#
 .SYNOPSIS
-Search for Falcon X Recon monitoring rules
+Search for Falcon Intelligence Recon monitoring rules
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Read'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Id
 Monitoring rule identifier
 .PARAMETER Filter
@@ -444,9 +444,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
 function Get-FalconReconRulePreview {
 <#
 .SYNOPSIS
-Preview Falcon X Recon monitoring rule notification count and distribution
+Preview Falcon Intelligence Recon monitoring rule notification count and distribution
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Read'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Topic
 Monitoring rule topic
 .PARAMETER Filter
@@ -474,9 +474,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRulePreview
 function New-FalconReconAction {
 <#
 .SYNOPSIS
-Create Falcon X Recon monitoring rule actions
+Create Falcon Intelligence Recon monitoring rule actions
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER RuleId
 Monitoring rule identifier
 .PARAMETER Type
@@ -537,9 +537,9 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
 function New-FalconReconRule {
 <#
 .SYNOPSIS
-Create Falcon X Recon monitoring rules
+Create Falcon Intelligence Recon monitoring rules
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Array
 An array of monitoring rules to create in a single request
 .PARAMETER Name
@@ -620,9 +620,9 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 function Remove-FalconReconAction {
 <#
 .SYNOPSIS
-Remove an action from a Falcon X Recon monitoring rule
+Remove an action from a Falcon Intelligence Recon monitoring rule
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Id
 Action identifier
 .LINK
@@ -647,9 +647,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconAction
 function Remove-FalconReconNotification {
 <#
 .SYNOPSIS
-Remove Falcon X Recon notifications
+Remove Falcon Intelligence Recon notifications
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Id
 Notification identifier
 .LINK
@@ -682,9 +682,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconNotification
 function Remove-FalconReconRule {
 <#
 .SYNOPSIS
-Remove Falcon X Recon monitoring rules
+Remove Falcon Intelligence Recon monitoring rules
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon X Recon): Write'.
+Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Id
 Monitoring rule identifier
 .LINK

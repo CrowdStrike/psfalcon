@@ -3,7 +3,7 @@ function Get-FalconQuickScan {
 .SYNOPSIS
 Search for Falcon QuickScan results
 .DESCRIPTION
-Requires 'Quick Scan (Falcon X): Read'.
+Requires 'Quick Scan (Falcon Intelligence): Read'.
 .PARAMETER Id
 QuickScan identifier
 .PARAMETER Filter
@@ -66,7 +66,7 @@ function Get-FalconQuickScanQuota {
 .SYNOPSIS
 Display monthly Falcon QuickScan quota
 .DESCRIPTION
-Requires 'Quick Scan (Falcon X): Read'.
+Requires 'Quick Scan (Falcon Intelligence): Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScanQuota
 #>
@@ -86,7 +86,7 @@ function New-FalconQuickScan {
 .SYNOPSIS
 Submit a volume of files to Falcon QuickScan
 .DESCRIPTION
-Requires 'Quick Scan (Falcon X): Write'.
+Requires 'Quick Scan (Falcon Intelligence): Write'.
 
 'Id' values (Sha256 hashes) are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be
 uploaded before they can be used with Falcon QuickScan.

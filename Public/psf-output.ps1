@@ -226,7 +226,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Send-FalconWebhook
 function Show-FalconMap {
 <#
 .SYNOPSIS
-Display indicators on the Falcon X Indicator Map
+Display indicators on the Falcon Intelligence Indicator Map
 .DESCRIPTION
 Your default web browser will be used to view the Indicator Map.
 
