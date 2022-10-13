@@ -107,6 +107,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
             AfterDef = '^(\s+)?(query)?(\s+)?\((\s+)?\$after(\s+)?:(\s+)?cursor(\s+)?\)(\s+)?{'
             AfterVar = 'after(\s+)?:(\s+)?\$after'
             Comment = '\#(\s+)?(\w|\W|\s).+'
+            Prefix = '^(\s+)?query(\s+)?'
         }
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
@@ -117,6 +118,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
     process {
         if ($PSBoundParameters.Query) {
             switch ($PSBoundParameters.Query) {
+                { $_ -match $RegEx.Prefix } {
+                    # Remove 'query' prefix
+                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.Prefix,$null
+                }
                 { $_ -match $RegEx.AfterDef } {
                     # Remove prefix 'after' variable definition and closing brace
                     $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterDef,$null

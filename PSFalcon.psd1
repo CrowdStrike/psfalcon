@@ -463,6 +463,9 @@ General Changes
 
 Command Changes
 
+* Added RegEx pattern to 'Invoke-FalconIdentityGraph' to strip 'query' prefix in statement. Modified existing
+  RegEx matches to support commas and periods.
+
 * Modified 'Get-FalconUser' to remove deprecated API when using 'Username' parameter. 'Username' now submits
   filtered searches for provided 'uid' values to the appropriate /user-management/ API.
 
