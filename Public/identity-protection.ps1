@@ -8,6 +8,8 @@ Requires 'Identity Protection GraphQL: Write'.
 A complete GraphQL query statement
 .PARAMETER Mutation
 A complete GraphQL mutation statement
+.PARAMETER Variable
+A hashtable containing variables used in your GraphQL query statement
 .PARAMETER All
 Repeat requests until all available results are retrieved
 .LINK
@@ -19,6 +21,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
         [string]$Query,
         [Parameter(ParameterSetName='Mutation',Mandatory,ValueFromPipeline,Position=1)]
         [string]$Mutation,
+        [Parameter(ParameterSetName='Query',ValueFromPipeline,Position=2)]
+        [Alias('variables')]
+        [hashtable]$Variable,
         [Parameter(ParameterSetName='Query')]
         [switch]$All
     )
@@ -29,13 +34,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
                 ($String.GetEnumerator() | Where-Object { $_ -eq $Character }).Count
             }
             if ($String -and $String -notmatch '^(\s+)?mutation') {
+                [string]$Comment = '\#(\s+)?(\w|\W|\s).+'
                 switch ($String) {
                     { $_ -match '\n' } {
-                        if ($String -match $RegEx.Comment) {
-                            # Remove comments
-                            $String = $String -replace $RegEx.Comment,$null
-                        }
-                        # Convert into a single line and remove duplicate spaces
+                        # Remove comments, convert to single line and remove duplicate spaces
+                        if ($String -match $Comment) { $String = $String -replace $Comment,$null }
                         $String = $String -replace '\n',' ' -replace '\s+',' '
                     }
                     # Enforce beginning and ending braces
@@ -74,16 +77,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
                 Write-Warning ("[$($Splat.Command)]",$Message -join ' ')
             } else {
                 do {
-                    # Ensure 'after' is present with current endCursor value
-                    [string]$After = 'after:"{0}"' -f $Object.entities.pageInfo.endCursor
-                    [string]$Entities = [regex]::Match($Inputs.Query,'entities(\s+)?\([.\w\s:\[\],="]+[^)]').Value
-                    [string]$Next = if ($Entities -match 'after:"[\w=]+"') {
-                        $Entities -replace 'after:"[\w=]+"',$After
+                    if ($Inputs.Query -notmatch '\$after') {
+                        # Ensure 'after' is present with current endCursor value in query statement
+                        [string]$After = 'after:"{0}"' -f $Object.entities.pageInfo.endCursor
+                        [string]$Entities = [regex]::Match($Inputs.Query,
+                            'entities(\s+)?\([.$\w\s:\[\],="]+[^)]').Value
+                        [string]$Next = if ($Entities -match 'after:"[\w=]+"') {
+                            $Entities -replace 'after:"[\w=]+"',$After
+                        } else {
+                            $Entities,$After -join ' '
+                        }
+                        $Inputs['Query'] = ($Inputs.Query).Replace($Entities,$Next)
+                    } elseif ($Inputs.Variables -and $Inputs.Variables.ContainsKey('After')) {
+                        # Update 'after' variable
+                        $Inputs.Variables.After = $Object.entities.pageInfo.endCursor
                     } else {
-                        $Entities,$After -join ' '
+                        # Add 'variables' with current 'after' endCursor value
+                        $Inputs['Variable'] = @{ after = $Object.entities.pageInfo.endCursor }
                     }
-                    # Update 'query' and repeat request
-                    $Inputs['Query'] = ($Inputs.Query).Replace($Entities,$Next)
+                    # Repeat request
                     Write-GraphResult (Invoke-Falcon @Splat -Inputs $Inputs -OutVariable Object)
                 } while (
                     $Object.entities.pageInfo.hasNextPage -eq $true -and $null -ne
@@ -102,6 +114,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
             # Output 'nodes'
             if ($Object.entities.nodes) { $Object.entities.nodes } else { $Object }
         }
+        <#
         $RegEx = @{
             # RegEx patterns for query modification
             AfterDef = '^(\s+)?(query)?(\s+)?\((\s+)?\$after(\s+)?:(\s+)?cursor(\s+)?\)(\s+)?{'
@@ -109,14 +122,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
             Comment = '\#(\s+)?(\w|\W|\s).+'
             Prefix = '^(\s+)?query(\s+)?'
         }
+        #>
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/identity-protection/combined/graphql/v1:post'
-            Format = @{ Body = @{ root = @('query') }}
+            Format = @{ Body = @{ root = @('query','variables') }}
         }
     }
     process {
         if ($PSBoundParameters.Query) {
+            <#
             switch ($PSBoundParameters.Query) {
                 { $_ -match $RegEx.Prefix } {
                     # Remove 'query' prefix
@@ -132,9 +147,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
                     if (!$PSBoundParameters.All) { $PSBoundParameters['All'] = $true }
                 }
             }
+            #>
             $PSBoundParameters.Query = Test-Statement $PSBoundParameters.Query
-        } elseif ($PSBoundParameters.Mutation) {
-            # Submit 'Mutation' as 'Query' but without formatting changes
+        }
+        if ($PSBoundParameters.Mutation) {
+            # Submit 'Mutation' as 'Query'
             $PSBoundParameters['Query'] = $PSBoundParameters.Mutation
             [void]$PSBoundParameters.Remove('Mutation')
         }
