@@ -68,7 +68,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
             $String
         }
         function Invoke-GraphLoop ($Object,$Splat,$Inputs) {
-            if ($Inputs.Query -notmatch 'pageInfo(\s+)?{(\s+)?(hasNextPage([,\s]+)?|endCursor([,\s]+)?){2}(\s+)?}') {
+            [string]$PageInfo = 'pageInfo(\s+)?{(\s+)?(hasNextPage([,\s]+)?|endCursor([,\s]+)?){2}(\s+)?}'
+            if ($Inputs.Query -notmatch $PageInfo) {
                 [string]$Message = "'-All' parameter was specified but 'pageInfo' is missing from query."
                 Write-Warning ("[$($Splat.Command)]",$Message -join ' ')
             } else {
