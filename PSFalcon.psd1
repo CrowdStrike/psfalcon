@@ -318,6 +318,7 @@
       'Show-FalconModule',
 
       # psf-policies
+      'Compare-FalconPreventionPhase',
       'Copy-FalconDeviceControlPolicy',
       'Copy-FalconFirewallPolicy',
       'Copy-FalconPreventionPolicy',
@@ -442,6 +443,9 @@
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = "@
 New Commands
+
+* psf-policies
+  'Compare-FalconPreventionPhase'
 
 * ti
   'Get-FalconTailoredEvent'
