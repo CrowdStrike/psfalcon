@@ -467,8 +467,11 @@ General Changes
 
 Command Changes
 
-* Added RegEx pattern to 'Invoke-FalconIdentityGraph' to strip 'query' prefix in statement. Modified existing
-  RegEx matches to support commas and periods.
+* Updated 'Invoke-FalconIdentityGraph' to no longer modify the GraphQL statement when attempting to use '-All' for
+  pagination. Renamed 'Query' parameter to 'String' and made it work for both query and mutation statements but
+  kept 'Query' as an alias. Now, when your statement includes a 'Cursor' variable definition and the required
+  'pageInfo { hasNextPage endCursor }' properties, '-All' will automatically paginate results. If either of those
+  requirements are missing, a warning message will be displayed and pagination will not occur.
 
 * Modified 'Get-FalconUser' to remove deprecated API when using 'Username' parameter. 'Username' now submits
   filtered searches for provided 'uid' values to the appropriate /user-management/ API.
