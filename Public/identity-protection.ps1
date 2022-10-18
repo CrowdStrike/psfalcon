@@ -40,8 +40,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
                         [string]$After = 'after:"{0}"' -f $Object.entities.pageInfo.endCursor
                         [string]$Entities = [regex]::Match($Inputs.Query,
                             'entities(\s+)?\([.$\w\s:\[\],="]+[^)]').Value
-                        [string]$Next = if ($Entities -match 'after:"[\w=]+"') {
-                            $Entities -replace 'after:"[\w=]+"',$After
+                        [string]$Next = if ($Entities -match 'after\s+?:\s+?"[\w=]+"') {
+                            $Entities -replace 'after\s+?:\s+?"[\w=]+"',$After
                         } else {
                             $Entities,$After -join ' '
                         }
