@@ -4,57 +4,63 @@ function Invoke-FalconIdentityGraph {
 Interact with Falcon Identity using GraphQL
 .DESCRIPTION
 Requires 'Identity Protection GraphQL: Write'.
-.PARAMETER Query
-A complete GraphQL query statement
-.PARAMETER Mutation
-A complete GraphQL mutation statement
+.PARAMETER String
+A complete GraphQL statement
 .PARAMETER Variable
-A hashtable containing variables used in your GraphQL query statement
+A hashtable containing variables used in your GraphQL statement
 .PARAMETER All
 Repeat requests until all available results are retrieved
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
 #>
-    [CmdletBinding(DefaultParameterSetName='Query',SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='Query',Mandatory,ValueFromPipeline,Position=1)]
-        [string]$Query,
-        [Parameter(ParameterSetName='Mutation',Mandatory,ValueFromPipeline,Position=1)]
-        [string]$Mutation,
-        [Parameter(ParameterSetName='Query',ValueFromPipeline,Position=2)]
+        [Parameter(Mandatory,ValueFromPipeline,Position=1)]
+        [Alias('query')]
+        [string]$String,
+        [Parameter(ValueFromPipeline,Position=2)]
         [Alias('variables')]
         [hashtable]$Variable,
-        [Parameter(ParameterSetName='Query')]
         [switch]$All
     )
     begin {
+        function Assert-CursorVariable ($Inputs,$EndCursor) {
+            # Use variable definition to ensure 'Cursor' is within 'Variable' hashtable
+            if ($Inputs.query -match '^(\s+)?query\s+?\(.+Cursor') {
+                @([regex]::Matches($Inputs.query,
+                    '(?<=query\s+?\()(\$\w+:.[^\)]+)').Value -replace '\$',$null).foreach{
+                    $Array = ($_ -split ':',2).Trim()
+                    if ($Array[1] -eq 'Cursor') {
+                        if (!$Inputs.variables) {
+                            $Inputs.Add('variables',@{ $Array[0] = $EndCursor })
+                        } elseif ($Inputs.variables.($Array[0])) {
+                            $Inputs.variables.($Array[0]) = $EndCursor
+                        }
+                    }
+                }
+            }
+            return $Inputs
+        }
         function Invoke-GraphLoop ($Object,$Splat,$Inputs) {
-            [string]$PageInfo = 'pageInfo(\s+)?{(\s+)?(hasNextPage([,\s]+)?|endCursor([,\s]+)?){2}(\s+)?}'
-            if ($Inputs.Query -notmatch $PageInfo) {
-                [string]$Message = "'-All' parameter was specified but 'pageInfo' is missing from query."
+            $RegEx = @{
+                # Patterns to validate statement for 'pageInfo' and 'Cursor' variable
+                CursorVariable = '^(\s+)?query\s+?\(.+Cursor'
+                PageInfo = 'pageInfo(\s+)?{(\s+)?(hasNextPage([,\s]+)?|endCursor([,\s]+)?){2}(\s+)?}'
+            }
+            [string]$Message = if ($Inputs.query -notmatch $RegEx.CursorVariable) {
+                "'-All' parameter was specified but 'Cursor' definition is missing from statement."
+            } elseif ($Inputs.query -notmatch $RegEx.PageInfo) {
+                "'-All' parameter was specified but 'pageInfo' is missing from statement."
+            }
+            if ($Message) {
                 Write-Warning ("[$($Splat.Command)]",$Message -join ' ')
             } else {
                 do {
-                    if ($Inputs.Query -notmatch '\$after') {
-                        # Ensure 'after' is present with current endCursor value in query statement
-                        [string]$After = 'after:"{0}"' -f $Object.entities.pageInfo.endCursor
-                        [string]$Entities = [regex]::Match($Inputs.Query,
-                            'entities(\s+)?\([.$\w\s:\[\],="]+[^)]').Value
-                        [string]$Next = if ($Entities -match 'after\s+?:\s+?"[\w=]+"') {
-                            $Entities -replace 'after\s+?:\s+?"[\w=]+"',$After
-                        } else {
-                            $Entities,$After -join ' '
-                        }
-                        $Inputs['Query'] = ($Inputs.Query).Replace($Entities,$Next)
-                    } elseif ($Inputs.Variables -and $Inputs.Variables.ContainsKey('After')) {
-                        # Update 'after' variable
-                        $Inputs.Variables.After = $Object.entities.pageInfo.endCursor
-                    } else {
-                        # Add 'variables' with current 'after' endCursor value
-                        $Inputs['Variable'] = @{ after = $Object.entities.pageInfo.endCursor }
+                    if ($Object.entities.pageInfo.endCursor) {
+                        # Update 'Cursor' and repeat
+                        $Inputs = Assert-CursorVariable $Inputs $Object.entities.pageInfo.endCursor
+                        Write-GraphResult (Invoke-Falcon @Splat -Inputs $Inputs -OutVariable Object)
                     }
-                    # Repeat request
-                    Write-GraphResult (Invoke-Falcon @Splat -Inputs $Inputs -OutVariable Object)
                 } while (
                     $Object.entities.pageInfo.hasNextPage -eq $true -and $null -ne
                         $Object.entities.pageInfo.endCursor
@@ -79,17 +85,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
         }
     }
     process {
-        if ($PSBoundParameters.Mutation) {
-            # Submit 'Mutation' as 'Query'
-            $PSBoundParameters['Query'] = $PSBoundParameters.Mutation
-            [void]$PSBoundParameters.Remove('Mutation')
-        }
         if ($PSBoundParameters.All) {
-            # Output relevant sub-objects and repeat requests when using 'All'
             Write-GraphResult (Invoke-Falcon @Param -Inputs $PSBoundParameters -OutVariable Request)
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
-    end { if ($PSBoundParameters.All -and $Request) { Invoke-GraphLoop $Request $Param $PSBoundParameters }}
+    end { if ($Request -and $PSBoundParameters.All) { Invoke-GraphLoop $Request $Param $PSBoundParameters }}
 }
