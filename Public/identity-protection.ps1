@@ -28,48 +28,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
         [switch]$All
     )
     begin {
-        function Test-Statement ($String) {
-            function Get-CharacterCount ($String,$Character) {
-                # Count the number of character occurances within a string
-                ($String.GetEnumerator() | Where-Object { $_ -eq $Character }).Count
-            }
-            if ($String -and $String -notmatch '^(\s+)?mutation') {
-                [string]$Comment = '\#(\s+)?(\w|\W|\s).+'
-                switch ($String) {
-                    { $_ -match '\n' } {
-                        # Remove comments, convert to single line and remove duplicate spaces
-                        if ($String -match $Comment) { $String = $String -replace $Comment,$null }
-                        $String = $String -replace '\n',' ' -replace '\s+',' '
-                    }
-                    # Enforce beginning and ending braces
-                    { $_ -notmatch '^(\s+)?{' } { $String = "{$($String)" }
-                    { $_ -notmatch '}(\s+)?$' } { $String = "$($String)}" }
-                    { $_ -match '(^(\s+)?{|}(\s+)?$)' } {
-                        # Verify that the number of braces match
-                        [int]$Open = Get-CharacterCount $String '{'
-                        [int]$Close = Get-CharacterCount $String '}'
-                        if ($Open -ne $Close) {
-                            if (($Close - $Open) -ge 1) {
-                                do {
-                                    # Append opening braces
-                                    $String = ((@(1..($Close - $Open)).foreach{ '{' }) -join $null),
-                                        $String -join $null
-                                    [int]$Open = Get-CharacterCount $String '{'
-                                } until ( ($Close - $Open) -le 0 )
-                            }
-                            if (($Open - $Close) -ge 1) {
-                                do {
-                                    # Append closing braces
-                                    $String += (@(1..($Open - $Close)).foreach{ '}' }) -join $null
-                                    [int]$Close = Get-CharacterCount $String '}'
-                                } until ( ($Open - $Close) -le 0 )
-                            }
-                        }
-                    }
-                }
-            }
-            $String
-        }
         function Invoke-GraphLoop ($Object,$Splat,$Inputs) {
             [string]$PageInfo = 'pageInfo(\s+)?{(\s+)?(hasNextPage([,\s]+)?|endCursor([,\s]+)?){2}(\s+)?}'
             if ($Inputs.Query -notmatch $PageInfo) {
@@ -114,15 +72,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
             # Output 'nodes'
             if ($Object.entities.nodes) { $Object.entities.nodes } else { $Object }
         }
-        <#
-        $RegEx = @{
-            # RegEx patterns for query modification
-            AfterDef = '^(\s+)?(query)?(\s+)?\((\s+)?\$after(\s+)?:(\s+)?cursor(\s+)?\)(\s+)?{'
-            AfterVar = 'after(\s+)?:(\s+)?\$after'
-            Comment = '\#(\s+)?(\w|\W|\s).+'
-            Prefix = '^(\s+)?query(\s+)?'
-        }
-        #>
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/identity-protection/combined/graphql/v1:post'
@@ -130,26 +79,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
         }
     }
     process {
-        if ($PSBoundParameters.Query) {
-            <#
-            switch ($PSBoundParameters.Query) {
-                { $_ -match $RegEx.Prefix } {
-                    # Remove 'query' prefix
-                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.Prefix,$null
-                }
-                { $_ -match $RegEx.AfterDef } {
-                    # Remove prefix 'after' variable definition and closing brace
-                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterDef,$null
-                }
-                { $_ -match $RegEx.AfterVar } {
-                    # Remove 'after' when using variable and add 'All'
-                    $PSBoundParameters.Query = $PSBoundParameters.Query -replace $RegEx.AfterVar,$null
-                    if (!$PSBoundParameters.All) { $PSBoundParameters['All'] = $true }
-                }
-            }
-            #>
-            $PSBoundParameters.Query = Test-Statement $PSBoundParameters.Query
-        }
         if ($PSBoundParameters.Mutation) {
             # Submit 'Mutation' as 'Query'
             $PSBoundParameters['Query'] = $PSBoundParameters.Mutation
