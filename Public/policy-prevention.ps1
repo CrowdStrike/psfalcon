@@ -427,10 +427,10 @@ function Set-FalconPreventionPrecedence {
 .SYNOPSIS
 Set Prevention policy precedence
 .DESCRIPTION
-Requires 'Prevention Policies: Write'.
-
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to
 define policy precedence.
+
+Requires 'Prevention Policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

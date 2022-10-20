@@ -119,11 +119,11 @@ function Request-FalconRegistryCredential {
 .SYNOPSIS
 Request your Falcon container registry username, password and access token
 .DESCRIPTION
-Requires 'Falcon Container Image: Read' and 'Sensor Download: Read'.
-
 If successful, you token and username are cached for re-use as you use Falcon container security related commands.
 
 If an active access token is due to expire in less than 15 seconds, a new token will automatically be requested.
+
+Requires 'Falcon Container Image: Read' and 'Sensor Download: Read'.
 .PARAMETER SensorType
 Container sensor type, used to determine container registry
 .LINK

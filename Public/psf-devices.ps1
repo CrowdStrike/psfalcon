@@ -3,8 +3,6 @@ function Find-FalconDuplicate {
 .SYNOPSIS
 Find potential duplicate hosts within your Falcon environment
 .DESCRIPTION
-Requires 'Hosts: Read'.
-
 If the 'Hosts' parameter is not provided, all Host information will be retrieved. An error will be
 displayed if required fields 'cid', 'device_id', 'first_seen', 'last_seen', 'hostname' and any defined
 'filter' value are not present.
@@ -15,6 +13,8 @@ within the output.
 
 Hosts can be hidden from the Falcon console by piping the results of 'Find-FalconDuplicate' to
 'Invoke-FalconHostAction' using the action 'hide_host'.
+
+Requires 'Hosts: Read'.
 .PARAMETER Hosts
 Array of detailed Host results
 .PARAMETER Filter
@@ -76,9 +76,9 @@ function Find-FalconHostname {
 .SYNOPSIS
 Find hosts using a list of hostnames
 .DESCRIPTION
-Requires 'Hosts: Read'.
+Performs an exact match hostname search in groups of 20.
 
-Performs an exact-match hostname search in groups of 20.
+Requires 'Hosts: Read'.
 .PARAMETER Array
 An array containing one or more hostnames
 .PARAMETER Path

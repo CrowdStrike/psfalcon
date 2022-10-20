@@ -106,10 +106,10 @@ function Copy-FalconDeviceControlPolicy {
 .SYNOPSIS
 Duplicate a Falcon Device Control policy
 .DESCRIPTION
-Requires 'Device Control Policies: Read', 'Device Control Policies: Write'.
-
 The specified Falcon Device Control policy will be duplicated without assigned Host Groups. If a policy
 description is not supplied, the description from the existing policy will be used.
+
+Requires 'Device Control Policies: Read', 'Device Control Policies: Write'.
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -159,10 +159,10 @@ function Copy-FalconFirewallPolicy {
 .SYNOPSIS
 Duplicate a Falcon Firewall Management policy
 .DESCRIPTION
-Requires 'Firewall Management: Read', 'Firewall Management: Write'.
-
 The specified Falcon Firewall Management policy will be duplicated without assigned Host Groups. If a policy
 description is not supplied, the description from the existing policy will be used.
+
+Requires 'Firewall Management: Read', 'Firewall Management: Write'.
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -219,10 +219,10 @@ function Copy-FalconPreventionPolicy {
 .SYNOPSIS
 Duplicate a Prevention policy
 .DESCRIPTION
-Requires 'Prevention Policies: Read', 'Prevention Policies: Write'.
-
 The specified Prevention policy will be duplicated without assigned Host Groups. If a policy description is not
 supplied, the description from the existing policy will be used.
+
+Requires 'Prevention Policies: Read', 'Prevention Policies: Write'.
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -272,10 +272,10 @@ function Copy-FalconResponsePolicy {
 .SYNOPSIS
 Duplicate a Real-time Response policy
 .DESCRIPTION
-Requires 'Response Policies: Read', 'Response Policies: Write'.
-
 The specified Real-time Response policy will be duplicated without assigned Host Groups. If a policy description
 is not supplied, the description from the existing policy will be used.
+
+Requires 'Response Policies: Read', 'Response Policies: Write'.
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -325,10 +325,10 @@ function Copy-FalconSensorUpdatePolicy {
 .SYNOPSIS
 Duplicate a Sensor Update policy
 .DESCRIPTION
-Requires 'Sensor Update Policies: Read', 'Sensor Update Policies: Write'.
-
 The specified Sensor Update policy will be duplicated without assigned Host Groups. If a policy description is
 not supplied, the description from the existing policy will be used.
+
+Requires 'Sensor Update Policies: Read', 'Sensor Update Policies: Write'.
 .PARAMETER Name
 Policy name
 .PARAMETER Description

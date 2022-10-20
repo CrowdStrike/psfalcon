@@ -196,10 +196,10 @@ function New-FalconIoaExclusion {
 .SYNOPSIS
 Create an Indicator of Attack exclusion
 .DESCRIPTION
-Requires 'IOA Exclusions: Write'.
-
 'ConvertTo-FalconIoaExclusion' can be used to generate the required Indicator of Attack exclusion properties
 using an existing detection.
+
+Requires 'IOA Exclusions: Write'.
 .PARAMETER Name
 Exclusion name
 .PARAMETER PatternId

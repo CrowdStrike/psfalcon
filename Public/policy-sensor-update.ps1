@@ -550,10 +550,10 @@ function Set-FalconSensorUpdatePrecedence {
 .SYNOPSIS
 Set Sensor Update policy precedence
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
-
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
+
+Requires 'Sensor Update Policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

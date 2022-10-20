@@ -3,8 +3,6 @@ function Edit-FalconFirewallGroup {
 .SYNOPSIS
 Modify Falcon Firewall Management rule groups
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
-
 All fields (plus 'rulegroup_version' and 'tracking') are required when making a rule group change. PSFalcon adds
 missing values automatically using data from your existing rule group.
 
@@ -14,6 +12,8 @@ missing values automatically using data from your existing rule group.
 When adding a rule to a rule group,the required rule fields must be included along with a 'temp_id' (in both the
 rule properties and in precedence order within 'rule_ids') to establish proper placement of the rule within the
 rule group. Simlarly, the value 'null' must be placed within 'rule_versions' in precedence order.
+
+Requires 'Firewall Management: Write'.
 .PARAMETER DiffOperation
 An array of hashtables containing rule or rule group changes
 .PARAMETER Comment
@@ -106,12 +106,12 @@ function Edit-FalconFirewallSetting {
 .SYNOPSIS
 Modify Falcon Firewall Management policy settings
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
-
 All fields are required to modify policy settings. PSFalcon adds missing values automatically using data from
 your existing policy.
 
-If adding or removing rule groups,all rule groups must be supplied in precedence order.
+If adding or removing rule groups, all rule groups must be supplied in precedence order.
+
+Requires 'Firewall Management: Write'.
 .PARAMETER PlatformId
 Operating System platform identifier
 .PARAMETER Enforce

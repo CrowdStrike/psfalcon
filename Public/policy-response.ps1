@@ -415,10 +415,10 @@ function Set-FalconResponsePrecedence {
 .SYNOPSIS
 Set Real-time Response policy precedence
 .DESCRIPTION
-Requires 'Response Policies: Write'.
-
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
+
+Requires 'Response Policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

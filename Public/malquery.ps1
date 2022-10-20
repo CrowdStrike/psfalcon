@@ -288,9 +288,9 @@ function Search-FalconMalQueryHash {
 .SYNOPSIS
 Perform a simple Falcon MalQuery YARA Hunt for a Sha256 hash
 .DESCRIPTION
-Requires 'MalQuery: Write'.
+Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 60 seconds--for a result.
 
-Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 30 seconds--for a result.
+Requires 'MalQuery: Write'.
 .PARAMETER Sha256
 Sha256 hash value
 .LINK
@@ -319,7 +319,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Search-FalconMalQueryHash
                         $i += 5
                         $Result = Get-FalconMalQuery -Id $Request.reqid
                     } until (
-                        ($Result.status -ne 'inprogress') -or ($i -ge 30)
+                        ($Result.status -ne 'inprogress') -or ($i -ge 60)
                     )
                 }
                 $Result

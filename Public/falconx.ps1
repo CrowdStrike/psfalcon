@@ -155,10 +155,10 @@ function New-FalconSubmission {
 .SYNOPSIS
 Submit a sample to the Falcon Intelligence Sandbox
 .DESCRIPTION
-Requires 'Sandbox (Falcon Intelligence): Write'.
-
 'Sha256' values are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be uploaded
 before they can be provided to the Falcon Intelligence Sandbox.
+
+Requires 'Sandbox (Falcon Intelligence): Write'.
 .PARAMETER EnvironmentId
 Analysis environment
 .PARAMETER Sha256
@@ -265,10 +265,10 @@ function Receive-FalconArtifact {
 .SYNOPSIS
 Download an artifact from a Falcon Intelligence Sandbox report
 .DESCRIPTION
-Requires 'Sandbox (Falcon Intelligence): Read'.
-
 Artifact identifier values can be retrieved for specific Falcon Intelligence Sandbox reports using
 'Get-FalconReport'.
+
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER Id

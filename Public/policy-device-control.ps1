@@ -421,10 +421,10 @@ function Set-FalconDeviceControlPrecedence {
 .SYNOPSIS
 Set Falcon Device Control policy precedence
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
-
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
+
+Requires 'Device Control Policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

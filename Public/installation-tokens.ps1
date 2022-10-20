@@ -184,10 +184,10 @@ function Get-FalconInstallTokenSetting {
 .SYNOPSIS
 Retrieve installation token settings
 .DESCRIPTION
-Requires 'Installation Tokens: Read'.
-
 Returns the maximum number of allowed installation tokens,and whether or not they are required for
 installation of the Falcon sensor.
+
+Requires 'Installation Tokens: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenSetting
 #>

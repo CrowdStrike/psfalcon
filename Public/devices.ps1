@@ -491,9 +491,9 @@ function Invoke-FalconHostGroupAction {
 .SYNOPSIS
 Perform actions on host groups
 .DESCRIPTION
-Requires 'Host Groups: Write'.
-
 Adds or removes hosts from host groups in batches of 500.
+
+Requires 'Host Groups: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER Id

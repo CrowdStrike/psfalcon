@@ -3,9 +3,9 @@ function Get-FalconCcid {
 .SYNOPSIS
 Retrieve your Falcon Customer Checksum Identifier (CCID)
 .DESCRIPTION
-Requires 'Sensor Download: Read'.
-
 Returns your Customer Checksum Identifier which is requested during the installation of the Falcon Sensor.
+
+Requires 'Sensor Download: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCcid
 #>

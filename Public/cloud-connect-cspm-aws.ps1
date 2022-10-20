@@ -39,9 +39,9 @@ function Get-FalconHorizonAwsAccount {
 .SYNOPSIS
 Search for Falcon Horizon AWS accounts
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
-
 A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
+
+Requires 'CSPM Registration: Read'.
 .PARAMETER Id
 AWS account identifier
 .PARAMETER OrganizationId
@@ -117,10 +117,10 @@ function Get-FalconHorizonAwsLink {
 .SYNOPSIS
 Retrieve a URL to grant Falcon Horizon access in AWS
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
-
 Once logging in to the provided link using your AWS administrator credentials, use the 'Create Stack' button to
 grant access.
+
+Requires 'CSPM Registration: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsLink
 #>

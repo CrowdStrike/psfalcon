@@ -86,12 +86,12 @@ function New-FalconQuickScan {
 .SYNOPSIS
 Submit a volume of files to Falcon QuickScan
 .DESCRIPTION
-Requires 'Quick Scan (Falcon Intelligence): Write'.
-
 'Id' values (Sha256 hashes) are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be
 uploaded before they can be used with Falcon QuickScan.
 
 Time required for analysis increases with the number of samples in a volume but usually takes less than 1 minute.
+
+Requires 'Quick Scan (Falcon Intelligence): Write'.
 .PARAMETER Id
 Sha256 hash value
 .LINK

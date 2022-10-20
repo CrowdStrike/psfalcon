@@ -398,10 +398,10 @@ function Set-FalconFirewallPrecedence {
 .SYNOPSIS
 Set Falcon Firewall Management policy precedence
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
-
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
+
+Requires 'Firewall Management: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

@@ -170,10 +170,10 @@ function New-FalconMlExclusion {
 .SYNOPSIS
 Create a Machine Learning exclusion
 .DESCRIPTION
-Requires 'Machine Learning Exclusions: Write'.
-
 'ConvertTo-FalconMlExclusion' can be used to generate the required Machine Learning exclusion properties using
 an existing detection.
+
+Requires 'Machine Learning Exclusions: Write'.
 .PARAMETER Value
 RegEx pattern value
 .PARAMETER ExcludedFrom

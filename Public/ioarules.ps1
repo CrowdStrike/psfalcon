@@ -3,10 +3,10 @@ function Edit-FalconIoaGroup {
 .SYNOPSIS
 Modify a custom Indicator of Attack rule group
 .DESCRIPTION
-Requires 'Custom IOA Rules: Write'.
-
 All fields (plus 'rulegroup_version') are required when making a rule group change. PSFalcon adds missing values
 automatically using data from your existing rule group.
+
+Requires 'Custom IOA Rules: Write'.
 .PARAMETER Name
 Rule group name
 .PARAMETER Enabled
@@ -68,14 +68,14 @@ function Edit-FalconIoaRule {
 .SYNOPSIS
 Modify custom Indicator of Attack rules within a rule group
 .DESCRIPTION
-Requires 'Custom IOA Rules: Write'.
-
 All fields are required (plus 'rulegroup_version') when making a rule group change. PSFalcon adds missing values
 automatically using data from your existing rule group.
 
 If an existing rule is submitted within 'rule_updates', it will be filtered to the required properties ('comment',
 'description', 'disposition_id', 'enabled', 'field_values', 'instance_id', 'name', and 'pattern_severity')
 including those under 'field_values' ('name', 'label', 'type' and 'values').
+
+Requires 'Custom IOA Rules: Write'.
 .PARAMETER Comment
 Audit log comment
 .PARAMETER RuleUpdate
@@ -501,10 +501,10 @@ function New-FalconIoaRule {
 .SYNOPSIS
 Create a custom Indicator of Attack rule within a rule group
 .DESCRIPTION
-Requires 'Custom IOA Rules: Write'.
-
 'RuleTypeId' and 'DispositionId' values can be found using 'Get-FalconIoaType -Detailed' under the 'id' and
 'disposition_map' properties.
+
+Requires 'Custom IOA Rules: Write'.
 .PARAMETER Name
 Rule name
 .PARAMETER PatternSeverity
