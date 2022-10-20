@@ -182,7 +182,7 @@ function Get-FalconSensorTag {
 .SYNOPSIS
 Use Real-time Response to display FalconSensorTags assigned to hosts
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Hosts: Read' and 'Real Time Response (Admin): Write'.
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .PARAMETER Id
