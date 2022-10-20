@@ -495,6 +495,8 @@ Resolved Issues
 * Issue #246: Created 'Confirm-Property' function to properly filter 'Rule' content for both [hashtable] and
   [PSCustomObject] rules. This will eliminate errors caused by [hashtable] objects being improperly filtered
   in PowerShell 5.1.
+
+  * Issue #247: Updated 'Write-Warning' to use a PSCmdlet method in order to properly support 'WarningVariable'.
 @"
         }
     }

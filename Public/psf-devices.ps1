@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
                 GroupBy = $Criteria
             }
             $Output = Group-Selection @Param
-            if ($Output) { $Output } else { Write-Warning "No duplicates found." }
+            if ($Output) { $Output } else { $PSCmdlet.WriteWarning("[Find-FalconDuplicate] No duplicates found.") }
         }
     }
 }
@@ -122,7 +122,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
             [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object hostname,device_id
             @($TempList).foreach{
                 if ($HostList.hostname -notcontains $_) {
-                    Write-Warning "[Find-FalconHostname] No match found for '$_'."
+                    $PSCmdlet.WriteWarning("[Find-FalconHostname] No match found for '$_'.")
                 }
             }
             if ($HostList) { $HostList }

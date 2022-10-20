@@ -57,9 +57,9 @@ https://github.com/CrowdStrike/psfalcon/wiki/Compare-FalconPreventionPhase
                 } else {
                     foreach ($Policy in $PolicyList) {
                         if ($AllowedOS -notcontains $Policy.platform_name) {
-                            Write-Warning ($Ineligible -f $Policy.id,$Policy.platform_name)
+                            $PSCmdlet.WriteWarning(($Ineligible -f $Policy.id,$Policy.platform_name))
                         } elseif (!$Policy.prevention_settings) {
-                            Write-Warning ($Ineligible -f $Policy.id,'Missing prevention_settings')
+                            $PSCmdlet.WriteWarning(($Ineligible -f $Policy.id,'Missing prevention_settings'))
                         } elseif ($Compare.($Policy.platform_name)) {
                             # Filter to settings for eligible policies
                             [PSCustomObject[]]$Ref = $Compare.($Policy.platform_name)

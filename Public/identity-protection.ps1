@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
                 "'-All' parameter was specified but 'pageInfo' is missing from statement."
             }
             if ($Message) {
-                Write-Warning ("[$($Splat.Command)]",$Message -join ' ')
+                $PSCmdlet.WriteWarning(("[$($Splat.Command)]",$Message -join ' '))
             } else {
                 do {
                     if ($Object.entities.pageInfo.endCursor) {

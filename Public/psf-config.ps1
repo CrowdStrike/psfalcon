@@ -786,7 +786,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             'Policy$' } | Select-Object type,platform)) {
                 if ($Config.($Item.type).Cid | Where-Object { $_.platform_name -eq $Item.platform -and $_.name -ne
                 'platform_default' }) {
-                    Write-Warning "Existing $($Item.platform) $($Item.type) items were found. Verify precedence!"
+                    $PSCmdlet.WriteWarning("[Import-FalconConfig] Existing $($Item.platform) $(
+                        $Item.type) items were found. Verify precedence!")
                 }
             }
         }
