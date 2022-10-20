@@ -5,7 +5,7 @@ Use Real-time Response to add FalconSensorTags to hosts
 .DESCRIPTION
 Provided FalconSensorTag values will be appended to any existing tags.
 
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Hosts: Read', 'Sensor Update Policies: Write' and 'Real Time Response (Admin): Write'.
 .PARAMETER Tag
 FalconSensorTag value ['FalconSensorTags/<string>']
 .PARAMETER QueueOffline
@@ -293,7 +293,7 @@ Use Real-time Response to remove FalconSensorTags from hosts
 .DESCRIPTION
 Provided FalconSensorTag values will be removed from existing tags and others will be left unmodified.
 
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Hosts: Read', 'Sensor Update Policies: Write' and 'Real Time Response (Admin): Write'.
 .PARAMETER Tag
 FalconSensorTag value ['FalconSensorTags/<string>']
 .PARAMETER Id
