@@ -19,7 +19,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
-        [Alias('query')]
+        [Alias('query','mutation')]
         [string]$String,
         [Parameter(ValueFromPipeline,Position=2)]
         [Alias('variables')]
