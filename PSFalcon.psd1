@@ -483,6 +483,9 @@ Command Changes
 
 * Added pattern validation to 'Remove-FalconUser' for the 'Id' parameter.
 
+* Modified 'Status' parameter for 'Edit-FalconDetection' to support ValueFromPipelineByPropertyName and changed
+  parameter to position 3.
+
 Resolved Issues
 
 * Issue #241: Updated 'Confirm-Parameter' to eliminate 'Cannot validate argument on parameter 'Array'. Key cannot

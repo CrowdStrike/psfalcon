@@ -4,12 +4,12 @@ function Edit-FalconDetection {
 Modify detections
 .DESCRIPTION
 Requires 'Detections: Write'.
-.PARAMETER Status
-Detection status
 .PARAMETER Comment
 Detection comment
 .PARAMETER ShowInUi
 Visible within the Falcon UI [default: $true]
+.PARAMETER Status
+Detection status
 .PARAMETER AssignedToUuid
 User identifier for assignment
 .PARAMETER Id
@@ -20,14 +20,15 @@ https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDetection
     [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=1)]
+        [string]$Comment,
+        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=2)]
+        [Alias('show_in_ui')]
+        [boolean]$ShowInUi,
+        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidateSet('new','in_progress','true_positive','false_positive','ignored','closed','reopened',
             IgnoreCase=$false)]
         [string]$Status,
-        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=2)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=3)]
-        [Alias('show_in_ui')]
-        [boolean]$ShowInUi,
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
            Position=4)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
