@@ -486,6 +486,12 @@ Command Changes
 * Modified 'Status' parameter for 'Edit-FalconDetection' to support ValueFromPipelineByPropertyName and changed
   parameter to position 3.
 
+* Modified 'Edit-FalconSensorUpdatePolicy' and 'New-FalconSensorUpdatePolicy' to filter out properties with
+  empty string values in order to prevent errors when creating and/or modifying Sensor Update policies.
+
+* Modified 'Import-FalconConfig' to prevent an attempt to modify a policy when the policy was not successfully
+  created earlier in the import process.
+
 Resolved Issues
 
 * Issue #241: Updated 'Confirm-Parameter' to eliminate 'Cannot validate argument on parameter 'Array'. Key cannot

@@ -60,13 +60,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
-                $i = $_
                 [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
+                    if ($_ -eq 'settings') {
+                        # Filter 'settings'
+                        $i.settings = $i.settings | Select-Object @($i.settings.PSObject.Properties |
+                            Where-Object { $null -ne $_.Value -and $_.Value -ne '' }).Name
+                        if ($i.settings.variants) {
+                            # Filter 'variants'
+                            $i.settings.variants = @($i.settings.variants).foreach{
+                                $_ | Select-Object @($_.PSObject.Properties | Where-Object {
+                                    $null -ne $_.Value -and $_.Value -ne '' }).Name
+                            }
+                        }
+                    }
                     if ($i.$_) { $_ }
                 }
-                $List.Add(($i | Select-Object $Select))
+                if ($Select) { $List.Add(($i | Select-Object $Select)) }
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -491,11 +502,24 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
-                $i = $_
-                [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
-                $List.Add(($i | Select-Object $Select))
+                [string[]]$Select = @('name','description','platform_name','settings').foreach{
+                    if ($_ -eq 'settings') {
+                        # Filter 'settings'
+                        $i.settings = $i.settings | Select-Object @($i.settings.PSObject.Properties |
+                            Where-Object { $null -ne $_.Value -and $_.Value -ne '' }).Name
+                        if ($i.settings.variants) {
+                            # Filter 'variants'
+                            $i.settings.variants = @($i.settings.variants).foreach{
+                                $_ | Select-Object @($_.PSObject.Properties | Where-Object {
+                                    $null -ne $_.Value -and $_.Value -ne '' }).Name
+                            }
+                        }
+                    }
+                    if ($i.$_) { $_ }
+                }
+                if ($Select) { $List.Add(($i | Select-Object $Select)) }
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters

@@ -334,9 +334,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         function Invoke-PolicyAction ([string]$Type,[string]$Action,[string]$PolicyId,[string]$GroupId) {
             try {
                 # Perform an action on a policy and output result
-                if ($GroupId) {
+                if ($GroupId -and $PolicyId) {
                     $PolicyId | & "Invoke-Falcon$($Type)Action" -Name $Action -GroupId $GroupId
-                } else {
+                } elseif ($PolicyId) {
                     $PolicyId | & "Invoke-Falcon$($Type)Action" -Name $Action
                 }
             } catch {
