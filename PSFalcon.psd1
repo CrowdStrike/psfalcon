@@ -490,7 +490,8 @@ Command Changes
   empty string values in order to prevent errors when creating and/or modifying Sensor Update policies.
 
 * Modified 'Import-FalconConfig' to prevent an attempt to modify a policy when the policy was not successfully
-  created earlier in the import process.
+  created earlier in the import process. Also ensured that the precedence warnings when existing policies were
+  found would only be displayed once.
 
 Resolved Issues
 

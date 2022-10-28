@@ -783,7 +783,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($Config.Result | Where-Object { $_.action -ne 'Ignored' }) {
             # Output warning for existing policy precedence
             foreach ($Item in ($Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match
-            'Policy$' } | Select-Object type,platform)) {
+            'Policy$' } | Select-Object type,platform -Unique)) {
                 if ($Config.($Item.type).Cid | Where-Object { $_.platform_name -eq $Item.platform -and $_.name -ne
                 'platform_default' }) {
                     $PSCmdlet.WriteWarning("[Import-FalconConfig] Existing $($Item.platform) $(
