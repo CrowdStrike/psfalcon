@@ -17,7 +17,7 @@ The resulting output can be passed to 'New-FalconMlExclusion' to create an exclu
 .PARAMETER Detection
 Falcon detection content, including 'behaviors' and 'device'
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
 #>
     [CmdletBinding()]
     param(
@@ -60,7 +60,7 @@ Audit log comment
 .PARAMETER Id
 Exclusion identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch',SupportsShouldProcess)]
     param(
@@ -122,7 +122,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
     param(
@@ -170,10 +170,10 @@ function New-FalconMlExclusion {
 .SYNOPSIS
 Create a Machine Learning exclusion
 .DESCRIPTION
-Requires 'Machine Learning Exclusions: Write'.
-
 'ConvertTo-FalconMlExclusion' can be used to generate the required Machine Learning exclusion properties using
 an existing detection.
+
+Requires 'Machine Learning Exclusions: Write'.
 .PARAMETER Value
 RegEx pattern value
 .PARAMETER ExcludedFrom
@@ -183,7 +183,7 @@ Host group identifier or 'all' to apply to all hosts
 .PARAMETER Comment
 Audit log comment
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:post',SupportsShouldProcess)]
     param(
@@ -234,7 +234,7 @@ Audit log comment
 .PARAMETER Id
 Exclusion identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:delete',SupportsShouldProcess)]
     param(

@@ -15,7 +15,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:patch',SupportsShouldProcess)]
     param(
@@ -111,7 +111,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention/v1:get',SupportsShouldProcess)]
     param(
@@ -194,7 +194,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention-members/v1:get',SupportsShouldProcess)]
     param(
@@ -248,7 +248,7 @@ Host or rule group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconPreventionPolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -314,7 +314,7 @@ Policy description
 .PARAMETER Setting
 An array of policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:post',SupportsShouldProcess)]
     param(
@@ -396,7 +396,7 @@ Requires 'Prevention Policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:delete',SupportsShouldProcess)]
     param(
@@ -427,16 +427,16 @@ function Set-FalconPreventionPrecedence {
 .SYNOPSIS
 Set Prevention policy precedence
 .DESCRIPTION
-Requires 'Prevention Policies: Write'.
-
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to
 define policy precedence.
+
+Requires 'Prevention Policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconPreventionPrecedence
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-precedence/v1:post',SupportsShouldProcess)]
     param(

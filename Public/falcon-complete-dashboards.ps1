@@ -17,7 +17,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteAllowlist
 #>
     [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get',
         SupportsShouldProcess)]
@@ -65,7 +65,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteBlocklist
 #>
     [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get',
         SupportsShouldProcess)]
@@ -113,7 +113,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCollection
 #>
     [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get',
         SupportsShouldProcess)]
@@ -164,7 +164,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/detects/v1:get',
         SupportsShouldProcess)]
@@ -212,7 +212,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteEscalation
 #>
     [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get',
         SupportsShouldProcess)]
@@ -260,7 +260,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteIncident
 #>
     [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get',
         SupportsShouldProcess)]
@@ -308,7 +308,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-Complete-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteRemediation
 #>
     [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get',
         SupportsShouldProcess)]

@@ -7,7 +7,7 @@ Requires 'Zero Trust Assessment: Read'.
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Zero-Trust-Assessment
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
 #>
     [CmdletBinding(DefaultParameterSetName='/zero-trust-assessment/entities/audit/v1:get',SupportsShouldProcess)]
     param(

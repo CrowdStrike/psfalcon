@@ -3,8 +3,6 @@ function Find-FalconDuplicate {
 .SYNOPSIS
 Find potential duplicate hosts within your Falcon environment
 .DESCRIPTION
-Requires 'Hosts: Read'.
-
 If the 'Hosts' parameter is not provided, all Host information will be retrieved. An error will be
 displayed if required fields 'cid', 'device_id', 'first_seen', 'last_seen', 'hostname' and any defined
 'filter' value are not present.
@@ -15,12 +13,14 @@ within the output.
 
 Hosts can be hidden from the Falcon console by piping the results of 'Find-FalconDuplicate' to
 'Invoke-FalconHostAction' using the action 'hide_host'.
+
+Requires 'Hosts: Read'.
 .PARAMETER Hosts
 Array of detailed Host results
 .PARAMETER Filter
 Property to determine duplicate Host in addition to 'Hostname'
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
                 GroupBy = $Criteria
             }
             $Output = Group-Selection @Param
-            if ($Output) { $Output } else { Write-Warning "No duplicates found." }
+            if ($Output) { $Output } else { $PSCmdlet.WriteWarning("[Find-FalconDuplicate] No duplicates found.") }
         }
     }
 }
@@ -76,15 +76,15 @@ function Find-FalconHostname {
 .SYNOPSIS
 Find hosts using a list of hostnames
 .DESCRIPTION
-Requires 'Hosts: Read'.
+Performs an exact match hostname search in groups of 20.
 
-Performs an exact-match hostname search in groups of 20.
+Requires 'Hosts: Read'.
 .PARAMETER Array
 An array containing one or more hostnames
 .PARAMETER Path
 Path to a plaintext file containing hostnames
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
+https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
 #>
     [CmdletBinding(DefaultParameterSetName='Path',SupportsShouldProcess)]
     param(
@@ -122,7 +122,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Host-and-Host-Group-Management
             [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object hostname,device_id
             @($TempList).foreach{
                 if ($HostList.hostname -notcontains $_) {
-                    Write-Warning "[Find-FalconHostname] No match found for '$_'."
+                    $PSCmdlet.WriteWarning("[Find-FalconHostname] No match found for '$_'.")
                 }
             }
             if ($HostList) { $HostList }

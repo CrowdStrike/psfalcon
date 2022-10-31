@@ -7,7 +7,7 @@ Requires 'AWS Accounts: Write'.
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/CrowdStrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',
         SupportsShouldProcess)]
@@ -55,7 +55,7 @@ Maximum number of requests within 'RateLimitTime'
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
     param(
@@ -125,7 +125,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',SupportsShouldProcess)]
     param(
@@ -176,7 +176,7 @@ Retrieve Global Settings Falcon Discover for Cloud AWS accounts
 .DESCRIPTION
 Requires 'AWS Accounts: Read'.
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get',SupportsShouldProcess)]
     param()
@@ -205,7 +205,7 @@ Maximum number of requests within 'RateLimitTime'
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',SupportsShouldProcess)]
     param(
@@ -266,7 +266,7 @@ Requires 'AWS Accounts: Write'.
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/CrowdStrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:delete',SupportsShouldProcess)]
     param(
@@ -303,7 +303,7 @@ AWS account identifier containing cloudtrail logs
 .PARAMETER StaticExternalId
 Default external identifier to apply to AWS accounts
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Discover-for-Cloud-and-Containers
+https://github.com/CrowdStrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post',SupportsShouldProcess)]
     param(

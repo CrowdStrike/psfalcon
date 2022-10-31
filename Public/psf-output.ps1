@@ -25,7 +25,7 @@ Response object to format
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Importing,-Syntax-and-Output
+https://github.com/CrowdStrike/psfalcon/wiki/Export-FalconReport
 #>
     [CmdletBinding()]
     param(
@@ -148,7 +148,7 @@ Message label
 .PARAMETER Object
 Response object to format
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
+https://github.com/CrowdStrike/psfalcon/wiki/Send-FalconWebhook
 #>
     [CmdletBinding()]
     param(
@@ -226,7 +226,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
 function Show-FalconMap {
 <#
 .SYNOPSIS
-Display indicators on the Falcon X Indicator Map
+Display indicators on the Falcon Intelligence Indicator Map
 .DESCRIPTION
 Your default web browser will be used to view the Indicator Map.
 
@@ -234,7 +234,7 @@ Show-FalconMap will accept domains, SHA256 hashes, IP addresses and URLs. Invali
 .PARAMETER Indicator
 Indicator to display on the Indicator map
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Third-party-ingestion
+https://github.com/CrowdStrike/psfalcon/wiki/Show-FalconMap
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -288,6 +288,8 @@ Display information about your PSFalcon module
 .DESCRIPTION
 Outputs an object containing module, user and system version information that is helpful for diagnosing problems
 with the PSFalcon module.
+.LINK
+https://github.com/CrowdStrike/psfalcon/wiki/Show-FalconModule
 #>
     [CmdletBinding()]
     param()

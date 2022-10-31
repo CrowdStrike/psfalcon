@@ -25,7 +25,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get',SupportsShouldProcess)]
     param(
@@ -105,7 +105,7 @@ Azure subscription identifier
 .PARAMETER AzureTenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
 #>
     [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get',SupportsShouldProcess)]
     param(

@@ -1,9 +1,9 @@
 function Get-FalconReport {
 <#
 .SYNOPSIS
-Search for Falcon X Sandbox reports
+Search for Falcon Intelligence Sandbox reports
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .PARAMETER Id
 Report identifier
 .PARAMETER Filter
@@ -23,7 +23,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get',SupportsShouldProcess)]
     param(
@@ -70,9 +70,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 function Get-FalconSubmission {
 <#
 .SYNOPSIS
-Search for Falcon X Sandbox submissions
+Search for Falcon Intelligence Sandbox submissions
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .PARAMETER Id
 Submission identifier
 .PARAMETER Filter
@@ -90,7 +90,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param(
@@ -133,11 +133,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 function Get-FalconSubmissionQuota {
 <#
 .SYNOPSIS
-Retrieve monthly Falcon X Sandbox submission quota
+Retrieve monthly Falcon Intelligence Sandbox submission quota
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmissionQuota
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param()
@@ -153,12 +153,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 function New-FalconSubmission {
 <#
 .SYNOPSIS
-Submit a sample to the Falcon X Sandbox
+Submit a sample to the Falcon Intelligence Sandbox
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Write'.
-
 'Sha256' values are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be uploaded
-before they can be provided to the Falcon X Sandbox.
+before they can be provided to the Falcon Intelligence Sandbox.
+
+Requires 'Sandbox (Falcon Intelligence): Write'.
 .PARAMETER EnvironmentId
 Analysis environment
 .PARAMETER Sha256
@@ -184,7 +184,7 @@ Route traffic via TOR
 .PARAMETER UserTag
 Tags to categorize the submission
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
     param(
@@ -263,11 +263,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 function Receive-FalconArtifact {
 <#
 .SYNOPSIS
-Download an artifact from a Falcon X Sandbox report
+Download an artifact from a Falcon Intelligence Sandbox report
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Read'.
+Artifact identifier values can be retrieved for specific Falcon Intelligence Sandbox reports using
+'Get-FalconReport'.
 
-Artifact identifier values can be retrieved for specific Falcon X Sandbox reports using 'Get-FalconReport'.
+Requires 'Sandbox (Falcon Intelligence): Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER Id
@@ -275,7 +276,7 @@ Artifact identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconArtifact
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/artifacts/v1:get',SupportsShouldProcess)]
     param(
@@ -315,13 +316,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
 function Remove-FalconReport {
 <#
 .SYNOPSIS
-Remove a Falcon X Sandbox report
+Remove a Falcon Intelligence Sandbox report
 .DESCRIPTION
-Requires 'Sandbox (Falcon X): Write'.
+Requires 'Sandbox (Falcon Intelligence): Write'.
 .PARAMETER Id
 Report identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess)]
     param(

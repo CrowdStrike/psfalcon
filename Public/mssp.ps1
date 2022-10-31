@@ -9,7 +9,7 @@ CID group identifier
 .PARAMETER Cid
 CID
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:post',SupportsShouldProcess)]
     param(
@@ -55,7 +55,7 @@ User Group identifier
 .PARAMETER RoleId
 Role identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupRole
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:post',SupportsShouldProcess)]
     param(
@@ -101,7 +101,7 @@ User group identifier
 .PARAMETER UserId
 User identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:post',SupportsShouldProcess)]
     param(
@@ -145,7 +145,7 @@ CID group description
 .PARAMETER Id
 CID group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:patch',SupportsShouldProcess)]
     param(
@@ -183,7 +183,7 @@ User group name
 .PARAMETER Description
 User group description
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:patch',SupportsShouldProcess)]
     param(
@@ -231,7 +231,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get',SupportsShouldProcess)]
     param(
@@ -295,7 +295,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get',SupportsShouldProcess)]
     param(
@@ -365,7 +365,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconGroupRole
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/mssp-roles/v1:get',SupportsShouldProcess)]
     param(
@@ -444,7 +444,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get',SupportsShouldProcess)]
     param(
@@ -505,7 +505,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get',SupportsShouldProcess)]
     param(
@@ -569,7 +569,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get',SupportsShouldProcess)]
     param(
@@ -623,7 +623,7 @@ CID group name
 .PARAMETER Description
 CID group description
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:post',SupportsShouldProcess)]
     param(
@@ -652,7 +652,7 @@ User group name
 .PARAMETER Description
 User group description
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:post',SupportsShouldProcess)]
     param(
@@ -679,7 +679,7 @@ Requires 'Flight Control: Write'.
 .PARAMETER Id
 CID group
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete',SupportsShouldProcess)]
     param(
@@ -716,7 +716,7 @@ CID group identifier
 .PARAMETER Cid
 CID
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:delete',SupportsShouldProcess)]
     param(
@@ -760,7 +760,7 @@ User group identifier
 .PARAMETER RoleId
 Role identifier, or leave blank to remove user group/CID group association
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupRole
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete',SupportsShouldProcess)]
     param(
@@ -810,7 +810,7 @@ Requires 'Flight Control: Write'.
 .PARAMETER Id
 User group identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete',SupportsShouldProcess)]
     param(
@@ -847,7 +847,7 @@ User group identifier
 .PARAMETER UserId
 User identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Flight-Control
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess)]
     param(

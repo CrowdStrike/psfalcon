@@ -15,7 +15,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch',SupportsShouldProcess)]
     param(
@@ -60,13 +60,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
-                $i = $_
                 [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
+                    if ($_ -eq 'settings') {
+                        # Filter 'settings'
+                        $i.settings = $i.settings | Select-Object @($i.settings.PSObject.Properties |
+                            Where-Object { $null -ne $_.Value -and $_.Value -ne '' }).Name
+                        if ($i.settings.variants) {
+                            # Filter 'variants'
+                            $i.settings.variants = @($i.settings.variants).foreach{
+                                $_ | Select-Object @($_.PSObject.Properties | Where-Object {
+                                    $null -ne $_.Value -and $_.Value -ne '' }).Name
+                            }
+                        }
+                    }
                     if ($i.$_) { $_ }
                 }
-                $List.Add(($i | Select-Object $Select))
+                if ($Select) { $List.Add(($i | Select-Object $Select)) }
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -90,7 +101,7 @@ Requires 'Sensor Update Policies: Read'.
 .PARAMETER Platform
 Operating system platform
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBuild
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-builds/v1:get',SupportsShouldProcess)]
     param(
@@ -128,7 +139,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconKernel
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-kernels/v1:get',SupportsShouldProcess)]
     param(
@@ -199,7 +210,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update/v1:get',SupportsShouldProcess)]
     param(
@@ -282,7 +293,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update-members/v1:get',SupportsShouldProcess)]
     param(
@@ -336,7 +347,7 @@ Include additional properties
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',
         SupportsShouldProcess)]
@@ -386,7 +397,7 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconSensorUpdatePolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -444,7 +455,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post',SupportsShouldProcess)]
     param(
@@ -491,11 +502,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
-                $i = $_
-                [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
-                $List.Add(($i | Select-Object $Select))
+                [string[]]$Select = @('name','description','platform_name','settings').foreach{
+                    if ($_ -eq 'settings') {
+                        # Filter 'settings'
+                        $i.settings = $i.settings | Select-Object @($i.settings.PSObject.Properties |
+                            Where-Object { $null -ne $_.Value -and $_.Value -ne '' }).Name
+                        if ($i.settings.variants) {
+                            # Filter 'variants'
+                            $i.settings.variants = @($i.settings.variants).foreach{
+                                $_ | Select-Object @($_.PSObject.Properties | Where-Object {
+                                    $null -ne $_.Value -and $_.Value -ne '' }).Name
+                            }
+                        }
+                    }
+                    if ($i.$_) { $_ }
+                }
+                if ($Select) { $List.Add(($i | Select-Object $Select)) }
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -519,7 +543,7 @@ Requires 'Sensor Update Policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v1:delete',SupportsShouldProcess)]
     param(
@@ -550,16 +574,16 @@ function Set-FalconSensorUpdatePrecedence {
 .SYNOPSIS
 Set Sensor Update policy precedence
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
-
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
+
+Requires 'Sensor Update Policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Sensor-Update-Policy
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorUpdatePrecedence
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-precedence/v1:post',
         SupportsShouldProcess)]

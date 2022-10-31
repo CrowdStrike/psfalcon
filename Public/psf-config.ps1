@@ -11,7 +11,7 @@ Selected items to export from your current CID, or leave unspecified to export a
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
+https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
 #>
     [CmdletBinding(DefaultParameterSetName='ExportItem',SupportsShouldProcess)]
     param(
@@ -121,7 +121,7 @@ Modify specified 'platform_default' policies to match import
 .PARAMETER ModifyExisting
 Modify existing specified items to match import
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
+https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -334,9 +334,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         function Invoke-PolicyAction ([string]$Type,[string]$Action,[string]$PolicyId,[string]$GroupId) {
             try {
                 # Perform an action on a policy and output result
-                if ($GroupId) {
+                if ($GroupId -and $PolicyId) {
                     $PolicyId | & "Invoke-Falcon$($Type)Action" -Name $Action -GroupId $GroupId
-                } else {
+                } elseif ($PolicyId) {
                     $PolicyId | & "Invoke-Falcon$($Type)Action" -Name $Action
                 }
             } catch {
@@ -783,10 +783,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Configuration-Import-Export
         if ($Config.Result | Where-Object { $_.action -ne 'Ignored' }) {
             # Output warning for existing policy precedence
             foreach ($Item in ($Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match
-            'Policy$' } | Select-Object type,platform)) {
+            'Policy$' } | Select-Object type,platform -Unique)) {
                 if ($Config.($Item.type).Cid | Where-Object { $_.platform_name -eq $Item.platform -and $_.name -ne
                 'platform_default' }) {
-                    Write-Warning "Existing $($Item.platform) $($Item.type) items were found. Verify precedence!"
+                    $PSCmdlet.WriteWarning("[Import-FalconConfig] Existing $($Item.platform) $(
+                        $Item.type) items were found. Verify precedence!")
                 }
             }
         }

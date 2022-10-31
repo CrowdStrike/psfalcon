@@ -9,7 +9,7 @@ AWS cloud region
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',
         SupportsShouldProcess)]
@@ -57,7 +57,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
         SupportsShouldProcess)]
@@ -102,7 +102,7 @@ Requires 'Kubernetes Protection: Read'.
 .PARAMETER Cloud
 Cloud provider
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCloud
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
         SupportsShouldProcess)]
@@ -154,7 +154,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
         SupportsShouldProcess)]
@@ -209,7 +209,7 @@ Requires 'Kubernetes Protection: Write'.
 .PARAMETER ScanType
 Scan type
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContainerScan
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',
         SupportsShouldProcess)]
@@ -240,7 +240,7 @@ AWS cloud region
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',
         SupportsShouldProcess)]
@@ -270,7 +270,7 @@ Regenerate the API key for Falcon Container Security Docker registry integration
 .DESCRIPTION
 Requires 'Kubernetes Protection: Write'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerKey
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/api-key/v1:post',
         SupportsShouldProcess)]
@@ -290,7 +290,7 @@ Cluster name
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconContainerYaml
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',
         SupportsShouldProcess)]
@@ -338,7 +338,7 @@ Requires 'Kubernetes Protection: Write'.
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',
         SupportsShouldProcess)]

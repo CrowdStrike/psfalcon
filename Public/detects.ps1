@@ -4,33 +4,31 @@ function Edit-FalconDetection {
 Modify detections
 .DESCRIPTION
 Requires 'Detections: Write'.
-.PARAMETER Status
-Detection status
 .PARAMETER Comment
 Detection comment
 .PARAMETER ShowInUi
 Visible within the Falcon UI [default: $true]
+.PARAMETER Status
+Detection status
 .PARAMETER AssignedToUuid
 User identifier for assignment
 .PARAMETER Id
 Detection identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
+https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=1)]
+        [string]$Comment,
+        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=2)]
+        [Alias('show_in_ui')]
+        [boolean]$ShowInUi,
+        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
+            Position=3)]
         [ValidateSet('new','in_progress','true_positive','false_positive','ignored','closed','reopened',
             IgnoreCase=$false)]
         [string]$Status,
-        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=2)]
-        [ValidateScript({
-            if ($PSBoundParameters.Status) { $true } else { throw "A valid 'status' value must also be supplied." }
-        })]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=3)]
-        [Alias('show_in_ui')]
-        [boolean]$ShowInUi,
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
            Position=4)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
@@ -53,7 +51,9 @@ https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
     }
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
+        if ($PSBoundParameters.Comment -and !$PSBoundParameters.Status) {
+            throw "A 'status' value must be supplied when adding a comment."
+        } elseif ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
@@ -84,7 +84,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Incident-and-Detection-Monitoring
+https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
     param(
@@ -167,7 +167,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get',SupportsShouldProcess)]
     param(
@@ -275,7 +275,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/iom/v1:get',SupportsShouldProcess)]
     param(

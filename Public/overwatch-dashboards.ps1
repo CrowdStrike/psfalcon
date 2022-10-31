@@ -7,7 +7,7 @@ Requires 'OverWatch Dashboard: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-OverWatch-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/ow-events-global-counts/v1:get',
         SupportsShouldProcess)]
@@ -35,7 +35,7 @@ Requires 'OverWatch Dashboard: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-OverWatch-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/detections-global-counts/v1:get',
         SupportsShouldProcess)]
@@ -63,7 +63,7 @@ Requires 'OverWatch Dashboard: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-OverWatch-Dashboards
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchIncident
 #>
     [CmdletBinding(DefaultParameterSetName='/overwatch-dashboards/aggregates/incidents-global-counts/v1:get',
         SupportsShouldProcess)]

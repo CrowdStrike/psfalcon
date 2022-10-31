@@ -7,7 +7,7 @@ Requires 'MalQuery: Read'.
 .PARAMETER Id
 Request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/MalQuery
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/requests/v1:get',SupportsShouldProcess)]
     param(
@@ -33,7 +33,7 @@ Retrieve Falcon MalQuery search and download quotas
 .DESCRIPTION
 Requires 'MalQuery: Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/MalQuery
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQueryQuota
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/aggregates/quotas/v1:get',SupportsShouldProcess)]
     param()
@@ -55,7 +55,7 @@ Requires 'MalQuery: Read'.
 .PARAMETER Id
 Sha256 hash value
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/MalQuery
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/metadata/v1:get',SupportsShouldProcess)]
     param(
@@ -90,7 +90,7 @@ Requires 'MalQuery: Write'.
 .PARAMETER Id
 Sha256 hash value
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/MalQuery
+https://github.com/crowdstrike/psfalcon/wiki/Group-FalconMalQuerySample
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/samples-multidownload/v1:post',
         SupportsShouldProcess)]
@@ -146,7 +146,7 @@ Maximum number of results per request
 .PARAMETER Fuzzy
 Search MalQuery quickly but with more potential for false positives
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/MalQuery
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMalQuery
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/queries/exact-search/v1:post',SupportsShouldProcess)]
     param(
@@ -237,7 +237,7 @@ Sha256 hash value or MalQuery sample archive identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/MalQuery
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalQuerySample
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/download-files/v1:get',SupportsShouldProcess)]
     param(
@@ -288,13 +288,13 @@ function Search-FalconMalQueryHash {
 .SYNOPSIS
 Perform a simple Falcon MalQuery YARA Hunt for a Sha256 hash
 .DESCRIPTION
-Requires 'MalQuery: Write'.
+Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 60 seconds--for a result.
 
-Performs a YARA Hunt for the given hash, then checks every 5 seconds--for up to 30 seconds--for a result.
+Requires 'MalQuery: Write'.
 .PARAMETER Sha256
 Sha256 hash value
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/MalQuery
+https://github.com/crowdstrike/psfalcon/wiki/Search-FalconMalQueryHash
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/queries/hunt/v1:post',SupportsShouldProcess)]
     param(
@@ -319,7 +319,7 @@ https://github.com/crowdstrike/psfalcon/wiki/MalQuery
                         $i += 5
                         $Result = Get-FalconMalQuery -Id $Request.reqid
                     } until (
-                        ($Result.status -ne 'inprogress') -or ($i -ge 30)
+                        ($Result.status -ne 'inprogress') -or ($i -ge 60)
                     )
                 }
                 $Result

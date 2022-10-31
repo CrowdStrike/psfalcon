@@ -3,19 +3,19 @@ function Get-FalconQueue {
 .SYNOPSIS
 Create a report of Real-time Response commands in the offline queue
 .DESCRIPTION
-Requires 'Real Time Response: Read', 'Real Time Response: Write' and 'Real Time Response (Admin): Write'.
-
 Creates a CSV of pending Real-time Response commands and their related session information. By default, sessions
 within the offline queue expire 7 days after creation. Sessions can have additional commands appended to them to
 extend their expiration time.
 
 Additional host information can be appended to the results using the 'Include' parameter.
+
+Requires 'Real Time Response: Read', 'Real Time Response: Write' and 'Real Time Response (Admin): Write'.
 .PARAMETER Days
 Days worth of results to retrieve [default: 7]
 .PARAMETER Include
 Include additional properties
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
 #>
     [CmdletBinding()]
     param(
@@ -115,8 +115,6 @@ function Invoke-FalconDeploy {
 .SYNOPSIS
 Deploy and run an executable using Real-time Response
 .DESCRIPTION
-Requires 'Hosts: Read', 'Real Time Response (Admin): Write'.
-
 'Put' files will be checked for identical file names, and if any are found, the Sha256 hash values will be
 compared between your local and cloud files. If they are different, a prompt will appear asking which file to use.
 
@@ -127,6 +125,8 @@ archive will be 'put' into that folder. If the target is an archive, it will be 
 'Run' file will be executed. If the target is a file, it will be 'run'.
 
 Details of each step will be output to a CSV file in your current directory. 
+
+Requires 'Hosts: Read', 'Real Time Response (Admin): Write'.
 .PARAMETER File
 Name of a 'CloudFile' or path to a local executable to upload
 .PARAMETER Archive
@@ -146,7 +146,7 @@ Host group identifier
 .PARAMETER HostId
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
 #>
     [CmdletBinding(DefaultParameterSetName='HostId_File',SupportsShouldProcess)]
     param(
@@ -517,7 +517,7 @@ Host group identifier
 .PARAMETER HostId
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
 #>
     [CmdletBinding(DefaultParameterSetName='HostId',SupportsShouldProcess)]
     param(

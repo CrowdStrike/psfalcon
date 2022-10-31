@@ -3,19 +3,19 @@ function Confirm-FalconAdminCommand {
 .SYNOPSIS
 Verify the status of a Real-time Response 'admin' command issued to a single-host session
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
-
 Confirms the status of an executed 'admin' command. The single-host Real-time Response APIs require that commands
 be confirmed to 'acknowledge' that they have been processed as part of your API-based workflow. Failing to confirm
 after commands can lead to unexpected results.
 
 A 'sequence_id' value of 0 is added if the parameter is not specified.
+
+Requires 'Real Time Response (Admin): Write'.
 .PARAMETER SequenceId
 Sequence identifier
 .PARAMETER CloudRequestId
 Command request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconAdminCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/admin-command/v1:get',
         SupportsShouldProcess)]
@@ -44,19 +44,19 @@ function Confirm-FalconCommand {
 .SYNOPSIS
 Verify the status of a Real-time Response 'read-only' command issued to a single-host session
 .DESCRIPTION
-Requires 'Real Time Response: Read'.
-
 Confirms the status of an executed 'read-only' command. The single-host Real-time Response APIs require that
 commands be confirmed to 'acknowledge' that they have been processed as part of your API-based workflow. Failing
 to confirm after commands can lead to unexpected results.
 
 A 'sequence_id' value of 0 is added if the parameter is not specified.
+
+Requires 'Real Time Response: Read'.
 .PARAMETER SequenceId
 Sequence identifier
 .PARAMETER CloudRequestId
 Command request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/command/v1:get',SupportsShouldProcess)]
     param(
@@ -92,7 +92,7 @@ Length of time to wait for a result, in seconds
 .PARAMETER BatchGetCmdReqId
 Batch 'get' command identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-get-command/v1:get',
         SupportsShouldProcess)]
@@ -143,19 +143,19 @@ function Confirm-FalconResponderCommand {
 .SYNOPSIS
 Verify the status of a Real-time Response 'active-responder' command issued to a single-host session
 .DESCRIPTION
-Requires 'Real Time Response: Write'.
-
 Confirms the status of an executed 'active-responder' command. The single-host Real-time Response APIs require
 that commands be confirmed to 'acknowledge' that they have been processed as part of your API-based workflow.
 Failing to confirm after commands can lead to unexpected results.
 
 A 'sequence_id' value of 0 is added if the parameter is not specified.
+
+Requires 'Real Time Response: Write'.
 .PARAMETER SequenceId
 Sequence identifier
 .PARAMETER CloudRequestId
 Command request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconResponderCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/active-responder-command/v1:get',
         SupportsShouldProcess)]
@@ -200,7 +200,7 @@ Path to script file
 .PARAMETER Id
 Script identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:patch',SupportsShouldProcess)]
     param(
@@ -269,7 +269,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/put-files/v1:get',SupportsShouldProcess)]
     param(
@@ -336,7 +336,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/scripts/v1:get',SupportsShouldProcess)]
     param(
@@ -385,12 +385,12 @@ function Get-FalconSession {
 .SYNOPSIS
 Search for Real-time Response sessions
 .DESCRIPTION
-Requires 'Real Time Response: Read'.
-
 Real-time Response sessions are segmented by permission,meaning that only sessions that were created using
 your OAuth2 API Client will be visible.
 
 'Get-FalconQueue' can be used to find and export information about sessions in the 'offline queue'.
+
+Requires 'Real Time Response: Read'.
 .PARAMETER Id
 Session identifier
 .PARAMETER Filter
@@ -410,7 +410,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/sessions/v1:get',SupportsShouldProcess)]
     param(
@@ -463,13 +463,13 @@ function Invoke-FalconAdminCommand {
 .SYNOPSIS
 Issue a Real-time Response admin command to an existing single-host or batch session
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
-
 Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
 The 'Wait' parameter will use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to check for command
 results every 5 seconds for a total of 60 seconds.
+
+Requires 'Real Time Response (Admin): Write'.
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
@@ -485,7 +485,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to retrieve command results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',
         SupportsShouldProcess)]
@@ -591,13 +591,13 @@ function Invoke-FalconBatchGet {
 .SYNOPSIS
 Issue a Real-time Response batch 'get' command to an existing batch session
 .DESCRIPTION
-Requires 'Real Time Response: Write'.
-
 When a 'get' command has been issued, the 'batch_get_cmd_req_id' property will be returned. That value is used
 to verify the completion of the file transfer using 'Confirm-FalconBatchGet'.
 
 The 'Wait' parameter will use 'Confirm-FalconGetFile' to check for command results every 5 seconds for a total
 of 60 seconds.
+
+Requires 'Real Time Response: Write'.
 .PARAMETER FilePath
 Path to file on target host
 .PARAMETER Timeout
@@ -609,7 +609,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconGetFile' to attempt to retrieve results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-get-command/v1:post',
         SupportsShouldProcess)]
@@ -660,12 +660,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                 }
                 @($Request.hosts).Where({ $_.errors }).foreach{
                     # Write warning for hosts in batch that produced errors
-                    Write-Warning "[Invoke-FalconBatchGet] $(@($_.errors.code,
-                        $_.errors.message) -join ': ') [aid: $($_.aid)]"
+                    $PSCmdlet.WriteWarning("[Invoke-FalconBatchGet] $(@($_.errors.code,
+                        $_.errors.message) -join ': ') [aid: $($_.aid)]")
                 }
                 @($Request.hosts).Where({ $_.stderr }).foreach{
                     # Write warning for hosts in batch that produced 'stderr'
-                    Write-Warning "[Invoke-FalconBatchGet] $($_.stderr) [aid: $($_.aid)]"
+                    $PSCmdlet.WriteWarning("[Invoke-FalconBatchGet] $($_.stderr) [aid: $($_.aid)]")
                 }
                 if ($Wait) {
                     for ($i = 0; $i -lt 60 -and !$Result.sha256; $i += 5) {
@@ -688,13 +688,13 @@ function Invoke-FalconCommand {
 .SYNOPSIS
 Issue a Real-time Response read-only command to an existing single-host or batch session
 .DESCRIPTION
-Requires 'Real Time Response: Read'.
-
 Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
 The 'Wait' parameter will use 'Confirm-FalconCommand' to check for command results every 5 seconds for a total
 of 60 seconds.
+
+Requires 'Real Time Response: Read'.
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
@@ -710,7 +710,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconCommand' to retrieve single-host command results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-command/v1:post',
         SupportsShouldProcess)]
@@ -798,13 +798,13 @@ function Invoke-FalconResponderCommand {
 .SYNOPSIS
 Issue a Real-time Response active-responder command to an existing single-host or batch session
 .DESCRIPTION
-Requires 'Real Time Response: Write'.
-
 Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
 The 'Wait' parameter will use 'Confirm-FalconResponderCommand' to check for command results every 5 seconds for
 a total of 60 seconds.
+
+Requires 'Real Time Response: Write'.
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
@@ -820,7 +820,7 @@ Batch session identifier
 .PARAMETER Wait
 Use 'Confirm-FalconResponderCommand' to retrieve single-host command results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
         SupportsShouldProcess)]
@@ -931,11 +931,11 @@ function Receive-FalconGetFile {
 .SYNOPSIS
 Download a password protected .7z archive containing a Real-time Response 'get' file [password: 'infected']
 .DESCRIPTION
-Requires 'Real Time Response: Write'.
-
 'Sha256' and 'SessionId' values can be found using 'Confirm-FalconGetFile'. 'Invoke-FalconResponderCommand' or
 'Invoke-FalconAdminCommand' can be used to issue a 'get' command to a single-host, and 'Invoke-FalconBatchGet' can
 be used for multiple hosts within existing Real-time Response session.
+
+Requires 'Real Time Response: Write'.
 .PARAMETER Path
 Destination path
 .PARAMETER Sha256
@@ -945,7 +945,7 @@ Session identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get',
         SupportsShouldProcess)]
@@ -1004,7 +1004,7 @@ Session identifier
 .PARAMETER CloudRequestId
 Cloud request identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',
         SupportsShouldProcess)]
@@ -1034,17 +1034,17 @@ function Remove-FalconGetFile {
 .SYNOPSIS
 Remove Real-time Response 'get' files
 .DESCRIPTION
-Requires 'Real Time Response: Write'.
-
 Delete files previously retrieved during a Real-time Response session. The required 'Id' and 'SessionId' values
 are contained in the results of 'Start-FalconSession' and 'Invoke-FalconAdminCommand' or 'Invoke-FalconBatchGet'
 commands.
+
+Requires 'Real Time Response: Write'.
 .PARAMETER SessionId
 Session identifier
 .PARAMETER Id
 Real-time Response 'get' file identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete',SupportsShouldProcess)]
     param(
@@ -1077,7 +1077,7 @@ Requires 'Real Time Response (Admin): Write'.
 .PARAMETER Id
 Real-time Response 'put' file identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete',
         SupportsShouldProcess)]
@@ -1106,7 +1106,7 @@ Requires 'Real Time Response (Admin): Write'.
 .PARAMETER Id
 Script identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete',SupportsShouldProcess)]
     param(
@@ -1134,7 +1134,7 @@ Requires 'Real Time Response: Read'.
 .PARAMETER Id
 Session identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/sessions/v1:delete',
         SupportsShouldProcess)]
@@ -1169,7 +1169,7 @@ Comment for audit log
 .PARAMETER Path
 Path to local file
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:post',SupportsShouldProcess)]
     param(
@@ -1223,7 +1223,7 @@ Audit log comment
 .PARAMETER Path
 Path to local file or string-based script content
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post',SupportsShouldProcess)]
     param(
@@ -1270,14 +1270,14 @@ function Start-FalconSession {
 .SYNOPSIS
 Initialize a single-host or batch Real-time Response session
 .DESCRIPTION
-Requires 'Real Time Response: Read'.
-
 Real-time Response sessions require Host identifier values. Sessions that are successfully started return a
 'session_id' (for single hosts) or 'batch_id' (multiple hosts) value which can be used to issue commands that
 will be processed by the host(s) in the session.
 
 Commands can be issued using 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand'
 and 'Invoke-FalconBatchGet'.
+
+Requires 'Real Time Response: Read'.
 .PARAMETER QueueOffline
 Add non-responsive hosts to the offline queue
 .PARAMETER Timeout
@@ -1287,7 +1287,7 @@ Add hosts to an existing batch session
 .PARAMETER Id
 Host identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-init-session/v1:post',
         SupportsShouldProcess)]
@@ -1338,8 +1338,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
                     [string]$BatchId = $_.batch_id
                     @($_.resources.PSObject.Properties.Value).Where({ $_.errors }).foreach{
                         # Write warning for hosts in batch that produced errors
-                        Write-Warning "[Start-FalconSession] $(
-                            @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]"
+                        $PSCmdlet.WriteWarning("[Start-FalconSession] $(
+                            @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]")
                     }
                     @($_.resources.PSObject.Properties.Value).Where({ $_.session_id }).foreach{
                         # Append 'batch_id' for hosts with a 'session_id'
@@ -1363,11 +1363,11 @@ function Update-FalconSession {
 .SYNOPSIS
 Refresh a single-host or batch Real-time Response session to prevent expiration
 .DESCRIPTION
-Requires 'Real Time Response: Read'.
-
 Real-time Response sessions expire after 10 minutes by default. Any commands that were issued to a session that
 take longer than 10 minutes will not return results without refreshing the session to keep it alive until the
 command process completes.
+
+Requires 'Real Time Response: Read'.
 .PARAMETER QueueOffline
 Add non-responsive hosts to the offline queue
 .PARAMETER Timeout
@@ -1379,7 +1379,7 @@ Host identifier, for a single-host session
 .PARAMETER BatchId
 Batch session identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/refresh-session/v1:post',
         SupportsShouldProcess)]
@@ -1429,8 +1429,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Real-time-Response
             if ($Endpoint -eq '/real-time-response/combined/batch-refresh-session/v1:post') {
                 @($_.PSObject.Properties.Value).Where({ $_.errors }).foreach{
                     # Write warning for hosts in batch that produced errors
-                    Write-Warning "[Update-FalconSession] $(
-                        @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]"
+                    $PSCmdlet.WriteWarning("[Update-FalconSession] $(
+                        @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]")
                 }
                 # Output 'batch_id' and 'hosts' containing result
                 [PSCustomObject]@{

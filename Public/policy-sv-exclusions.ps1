@@ -13,7 +13,7 @@ Host group identifier or 'all' to apply to all hosts
 .PARAMETER Comment
 Audit log comment
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:patch',SupportsShouldProcess)]
     param(
@@ -75,7 +75,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sv-exclusions/v1:get',SupportsShouldProcess)]
     param(
@@ -131,7 +131,7 @@ Audit log comment
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:post',SupportsShouldProcess)]
     param(
@@ -177,7 +177,7 @@ Audit log comment
 .PARAMETER Id
 Exclusion identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Detection-and-Prevention-Policies
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:delete',SupportsShouldProcess)]
     param(

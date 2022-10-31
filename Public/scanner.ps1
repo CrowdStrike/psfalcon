@@ -3,7 +3,7 @@ function Get-FalconQuickScan {
 .SYNOPSIS
 Search for Falcon QuickScan results
 .DESCRIPTION
-Requires 'Quick Scan (Falcon X): Read'.
+Requires 'Quick Scan (Falcon Intelligence): Read'.
 .PARAMETER Id
 QuickScan identifier
 .PARAMETER Filter
@@ -21,7 +21,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScan
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
     param(
@@ -66,9 +66,9 @@ function Get-FalconQuickScanQuota {
 .SYNOPSIS
 Display monthly Falcon QuickScan quota
 .DESCRIPTION
-Requires 'Quick Scan (Falcon X): Read'.
+Requires 'Quick Scan (Falcon Intelligence): Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScanQuota
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
     param()
@@ -86,23 +86,23 @@ function New-FalconQuickScan {
 .SYNOPSIS
 Submit a volume of files to Falcon QuickScan
 .DESCRIPTION
-Requires 'Quick Scan (Falcon X): Write'.
-
-'Ids' values (Sha256 hashes) are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be
+'Id' values (Sha256 hashes) are retrieved from files that are uploaded using 'Send-FalconSample'. Files must be
 uploaded before they can be used with Falcon QuickScan.
 
 Time required for analysis increases with the number of samples in a volume but usually takes less than 1 minute.
+
+Requires 'Quick Scan (Falcon Intelligence): Write'.
 .PARAMETER Id
 Sha256 hash value
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconQuickScan
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/entities/scans/v1:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/scanner/entities/scans/v1:post',Mandatory,ValueFromPipeline,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-        [Alias('samples','Ids')]
+        [Alias('samples','Ids','sha256')]
         [string[]]$Id
     )
     begin {
@@ -110,6 +110,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Falcon-X
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('samples') }}
+            Max = 1000
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

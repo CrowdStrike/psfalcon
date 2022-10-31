@@ -11,7 +11,7 @@ Azure subscription identifier
 .PARAMETER TenantId
 Azure tenant identifier, required when multiple tenants have been registered
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',
         SupportsShouldProcess)]
@@ -63,7 +63,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
         SupportsShouldProcess)]
@@ -115,7 +115,7 @@ Refresh certificate [default: false]
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',
         SupportsShouldProcess)]
@@ -147,7 +147,7 @@ Azure subscription identifier
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',
         SupportsShouldProcess)]
@@ -185,7 +185,7 @@ Azure tenant identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
@@ -235,7 +235,7 @@ Requires 'CSPM Registration: Write'.
 .PARAMETER Id
 Azure account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Horizon
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
         SupportsShouldProcess)]

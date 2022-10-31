@@ -11,7 +11,7 @@ Expiration time [default: 30 days]
 .PARAMETER Email
 Email address
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Mobile-Enrollment
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMobileAction
 #>
        [CmdletBinding(DefaultParameterSetName='/enrollments/entities/details/v3:post',SupportsShouldProcess)]
        param(

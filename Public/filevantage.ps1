@@ -21,7 +21,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/FileVantage
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFimChange
 #>
     [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v2:get',SupportsShouldProcess)]
     param(

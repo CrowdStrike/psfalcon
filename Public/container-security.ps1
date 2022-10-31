@@ -11,7 +11,7 @@ Container repository
 .PARAMETER Tag
 Container tag
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
 #>
     [CmdletBinding(DefaultParameterSetName='/reports:get',SupportsShouldProcess)]
     param(
@@ -44,7 +44,7 @@ Requires 'Falcon Container Image: Read'.
 .PARAMETER LatestUrl
 Create a URL using the most recent build tag
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerSensor
 #>
     [CmdletBinding(DefaultParameterSetName='/v2/{sensortype}/{region}/release/falcon-sensor/tags/list:get',
         SupportsShouldProcess)]
@@ -80,7 +80,7 @@ Requires 'Falcon Container Image: Write'.
 .PARAMETER Id
 Container image identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerImage
 #>
     [CmdletBinding(DefaultParameterSetName='/images/{id}:delete',SupportsShouldProcess)]
     param(
@@ -108,7 +108,7 @@ function Remove-FalconRegistryCredential {
 .SYNOPSIS
 Remove your cached Falcon container registry access token and credential information from the module
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRegistryCredential
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param()
@@ -119,15 +119,15 @@ function Request-FalconRegistryCredential {
 .SYNOPSIS
 Request your Falcon container registry username, password and access token
 .DESCRIPTION
-Requires 'Falcon Container Image: Read' and 'Sensor Download: Read'.
-
 If successful, you token and username are cached for re-use as you use Falcon container security related commands.
 
 If an active access token is due to expire in less than 15 seconds, a new token will automatically be requested.
+
+Requires 'Falcon Container Image: Read' and 'Sensor Download: Read'.
 .PARAMETER SensorType
 Container sensor type, used to determine container registry
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Request-FalconRegistryCredential
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -196,7 +196,7 @@ function Show-FalconRegistryCredential {
 .SYNOPSIS
 Display Falcon container registry credential information
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Kubernetes-Protection
+https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
 #>
     [CmdletBinding()]
     param()

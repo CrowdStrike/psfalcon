@@ -3,7 +3,7 @@ function Get-FalconActor {
 .SYNOPSIS
 Search for threat actors
 .DESCRIPTION
-Requires 'Actors (Falcon X): Read'.
+Requires 'Actors (Falcon Intelligence): Read'.
 .PARAMETER Id
 Threat actor identifier
 .PARAMETER Filter
@@ -25,7 +25,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get',SupportsShouldProcess)]
     param(
@@ -85,7 +85,7 @@ function Get-FalconIndicator {
 .SYNOPSIS
 Search for intelligence indicators
 .DESCRIPTION
-Requires 'Indicators (Falcon X): Read'.
+Requires 'Indicators (Falcon Intelligence): Read'.
 .PARAMETER Id
 Indicator identifier
 .PARAMETER Filter
@@ -107,7 +107,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/indicators/v1:get',SupportsShouldProcess)]
     param(
@@ -170,7 +170,7 @@ function Get-FalconIntel {
 .SYNOPSIS
 Search for intelligence reports
 .DESCRIPTION
-Requires 'Reports (Falcon X): Read'.
+Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Id
 Report identifier
 .PARAMETER Filter
@@ -192,7 +192,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get',SupportsShouldProcess)]
     param(
@@ -249,9 +249,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Intel
 function Get-FalconRule {
 <#
 .SYNOPSIS
-Search for Falcon X rulesets
+Search for Falcon Intelligence rulesets
 .DESCRIPTION
-Requires 'Rules (Falcon X): Read'.
+Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Id
 Ruleset identifier
 .PARAMETER Type
@@ -281,7 +281,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get',SupportsShouldProcess)]
     param(
@@ -346,7 +346,7 @@ function Receive-FalconIntel {
 .SYNOPSIS
 Download an intelligence report
 .DESCRIPTION
-Requires 'Reports (Falcon X): Read'.
+Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Path
 Destination path [default: <slug>.pdf]
 .PARAMETER Id
@@ -354,7 +354,7 @@ Report identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/entities/report-files/v1:get',SupportsShouldProcess)]
     param(
@@ -399,7 +399,7 @@ function Receive-FalconRule {
 .SYNOPSIS
 Download the most recent ruleset,or a specific ruleset
 .DESCRIPTION
-Requires 'Rules (Falcon X): Read'.
+Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Type
 Ruleset type, used to retrieve the latest ruleset
 .PARAMETER Path
@@ -409,7 +409,7 @@ Ruleset identifier, used for a specific ruleset
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Intel
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/entities/rules-files/v1:get',SupportsShouldProcess)]
     param(
