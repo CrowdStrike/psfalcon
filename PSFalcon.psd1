@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.2.3'
+    ModuleVersion        = '2.2.4'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -442,71 +442,6 @@
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
             ReleaseNotes = "@
-New Commands
-
-* psf-policies
-  'Compare-FalconPreventionPhase'
-
-* ti
-  'Get-FalconTailoredEvent'
-  'Get-FalconTailoredRule'
-
-General Changes
-
-* Created 'Confirm-Property' private function to filter [hashtable] and [PSCustomObject] into pre-defined
-  properties containing values.
-
-* Updated comment-based help to link directly to specific wiki pages for each command. Using 'Get-Help <command>
-  -Online' will launch the appropriate wiki page. These pages will be updated with current examples present within
-  existing wiki pages, and those pages will be re-organized.
-
-* Modified 'Get-ParamSet' private function to look for 'ids' and 'samples' as potential body values to break into
-  groups of 'Max' values, instead of only 'ids'.
-
-* Updated Falcon X references to Falcon Intelligence due to product name change.
-
-Command Changes
-
-* Updated 'Invoke-FalconIdentityGraph' to no longer modify the GraphQL statement when attempting to use '-All' for
-  pagination. Renamed 'Query' parameter to 'String' and made it work for both query and mutation statements but
-  kept 'Query' as an alias. Now, when your statement includes a 'Cursor' variable definition and the required
-  'pageInfo { hasNextPage endCursor }' properties, '-All' will automatically paginate results. If either of those
-  requirements are missing, a warning message will be displayed and pagination will not occur.
-
-* Modified 'Get-FalconUser' to remove deprecated API when using 'Username' parameter. 'Username' now submits
-  filtered searches for provided 'uid' values to the appropriate /user-management/ API.
-
-* Added 'Max' of 1,000 sha256 values for 'New-FalconQuickScan'.
-
-* Added 'sha256' as a PipelineByPropertyName value for 'New-FalconQuickScan' to support pipeline input from
-  'Send-FalconSample'.
-
-* Added pattern validation to 'Remove-FalconUser' for the 'Id' parameter.
-
-* Modified 'Status' parameter for 'Edit-FalconDetection' to support ValueFromPipelineByPropertyName and changed
-  parameter to position 3.
-
-* Modified 'Edit-FalconSensorUpdatePolicy' and 'New-FalconSensorUpdatePolicy' to filter out properties with
-  empty string values in order to prevent errors when creating and/or modifying Sensor Update policies.
-
-* Modified 'Import-FalconConfig' to prevent an attempt to modify a policy when the policy was not successfully
-  created earlier in the import process. Also ensured that the precedence warnings when existing policies were
-  found would only be displayed once.
-
-Resolved Issues
-
-* Issue #241: Updated 'Confirm-Parameter' to eliminate 'Cannot validate argument on parameter 'Array'. Key cannot
-  be null. (Parameter 'key')' errors generated when using 'Import-FalconConfig'.
-
-* Issue #242: Modified 'Edit-FalconDetection' to check whether a 'status' value is present with a 'comment' value
-  during command execution rather than during parameter validation. This will prevent errors from occurring when
-  parameters are specified in an unexpected order.
-
-* Issue #246: Created 'Confirm-Property' function to properly filter 'Rule' content for both [hashtable] and
-  [PSCustomObject] rules. This will eliminate errors caused by [hashtable] objects being improperly filtered
-  in PowerShell 5.1.
-
-  * Issue #247: Updated 'Write-Warning' to use a PSCmdlet method in order to properly support 'WarningVariable'.
 @"
         }
     }
