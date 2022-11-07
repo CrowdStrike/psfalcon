@@ -216,7 +216,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicyMember
         [switch]$All,
         [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
         [switch]$Total
-
     )
     begin {
         $Param = @{

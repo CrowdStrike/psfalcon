@@ -36,7 +36,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
             Position=4)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id
-
     )
     begin {
         $Param = @{

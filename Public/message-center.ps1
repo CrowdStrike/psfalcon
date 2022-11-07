@@ -359,7 +359,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCompleteAttachment
         [string]$Id,
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get')]
         [switch]$Force
-
     )
     begin {
         $Param = @{

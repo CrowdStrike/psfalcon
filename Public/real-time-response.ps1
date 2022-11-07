@@ -439,7 +439,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
         [switch]$All,
         [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get')]
         [switch]$Total
-
     )
     begin {
         $Param = @{
