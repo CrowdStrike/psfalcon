@@ -188,7 +188,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Send-FalconWebhook
                         }
                     }
                     ,@{
-                        username = "PSFalcon: $($Script:Falcon.ClientId)"
+                        username = 'PSFalcon',$Script:Falcon.ClientId -join ': '
                         icon_url = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
                         text = $PSBoundParameters.Label
                         attachments = @(
