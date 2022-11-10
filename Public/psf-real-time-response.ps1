@@ -628,9 +628,4 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         }
     }
 }
-$Register = @{
-    CommandName = 'Invoke-FalconRtr'
-    ParameterName = 'Command'
-    ScriptBlock = { Get-RtrCommand }
-}
-Register-ArgumentCompleter @Register
+Register-ArgumentCompleter -CommandName Invoke-FalconRtr -ParameterName Command -ScriptBlock {Get-RtrCommand}
