@@ -111,11 +111,11 @@ description is not supplied, the description from the existing policy will be us
 
 Requires 'Device Control Policies: Read', 'Device Control Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
 #>
@@ -164,11 +164,11 @@ description is not supplied, the description from the existing policy will be us
 
 Requires 'Firewall Management: Read', 'Firewall Management: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconFirewallPolicy
 #>
@@ -224,11 +224,11 @@ supplied, the description from the existing policy will be used.
 
 Requires 'Prevention Policies: Read', 'Prevention Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconPreventionPolicy
 #>
@@ -277,11 +277,11 @@ is not supplied, the description from the existing policy will be used.
 
 Requires 'Response Policies: Read', 'Response Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconResponsePolicy
 #>
@@ -330,11 +330,11 @@ not supplied, the description from the existing policy will be used.
 
 Requires 'Sensor Update Policies: Read', 'Sensor Update Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
 #>
