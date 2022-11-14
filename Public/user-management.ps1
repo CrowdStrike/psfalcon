@@ -116,7 +116,6 @@ Role identifier
 User identifier
 .PARAMETER Cid
 Customer identifier
-
 .PARAMETER Detailed
 Retrieve detailed information
 .LINK
@@ -203,10 +202,14 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Username
 Username
-.PARAMETER Detailed
-Retrieve detailed information
 .PARAMETER Include
 Include additional properties
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
 #>
@@ -235,13 +238,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
         [Alias('uid','Usernames')]
         [string[]]$Username,
         [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
-        [Parameter(ParameterSetName='Username')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
         [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post')]
         [Parameter(ParameterSetName='Username')]
         [ValidateSet('roles',IgnoreCase=$false)]
-        [string[]]$Include
+        [string[]]$Include,
+        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+        [Parameter(ParameterSetName='Username')]
+        [switch]$Detailed,
+        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+        [switch]$Total
     )
     begin {
         $Param = @{
