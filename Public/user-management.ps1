@@ -258,6 +258,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
                 Body = @{ root = @('ids') }
                 Query = @('filter','sort','limit','offset','uid')
             }
+            Max = 100
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
