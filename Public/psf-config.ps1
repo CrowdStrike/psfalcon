@@ -448,16 +448,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 foreach ($Item in @($Pair.Value.Import + $Pair.Value.Modify)) {
                     # Update tagged builds with current tagged build versions
                     if ($Item.settings.build -match '^\d+\|') {
-                        [string]$Tag = ($Item.settings.build -split '\|',2)[-1]
-                        [string]$Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
+                        $Tag = ($Item.settings.build -split '\|',2)[-1]
+                        $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
                             $Item.platform_name }).build
                         if ($Item.settings.build -ne $Current) { $Item.settings.build = $Current }
                     }
                     if ($Item.settings.variants) {
                         # Update tagged 'variant' builds with current tagged build versions
-                        @($Item.settings.variants | Where-Object { $_.build }).foreach{
-                            [string]$Tag = ($_.build -split '\|',2)[-1]
-                            [string]$Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and
+                        @($Item.settings.variants | Where-Object { $_.build -match '^\d+\|' }).foreach{
+                            $Tag = ($_.build -split '\|',2)[-1]
+                            $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and
                                 $_.platform -eq $Item.platform_name }).build
                             if ($_.build -ne $Current) { $_.build = $Current }
                         }
