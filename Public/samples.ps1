@@ -11,8 +11,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('sha256s','sha256','Ids')]
         [string[]]$Id
@@ -57,8 +57,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconSample
         [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Position=2)]
         [Alias('password_protected')]
         [boolean]$PasswordProtected,
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=3)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string]$Id,
@@ -102,8 +102,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string]$Id

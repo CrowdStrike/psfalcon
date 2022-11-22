@@ -80,8 +80,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -145,7 +145,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/audit-events/v1:get',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -241,7 +241,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id

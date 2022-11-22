@@ -22,8 +22,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMobileAction
         [Parameter(ParameterSetName='/enrollments/entities/details/v3:post',Position=2)]
         [Alias('expires_at')]
         [string]$ExpiresAt,
-        [Parameter(ParameterSetName='/enrollments/entities/details/v3:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/enrollments/entities/details/v3:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidateScript({
             if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]

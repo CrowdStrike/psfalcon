@@ -29,8 +29,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=1)]
@@ -111,8 +111,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/indicators/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/indicators/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/indicators/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=1)]
@@ -196,8 +196,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/reports/v1:get',Position=1)]
@@ -285,8 +285,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^\d{4,}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -421,8 +421,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
         [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=2)]
         [ValidatePattern('\.(gz|gzip|zip)$')]
         [string]$Path,
-        [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=2)]
         [int32]$Id,
         [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get')]
         [switch]$Force

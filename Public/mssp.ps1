@@ -235,8 +235,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_ids','Ids')]
         [string[]]$Id,
@@ -299,8 +299,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_ids','Ids')]
         [string[]]$Id,
@@ -448,8 +448,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/children/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/mssp/entities/children/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','child_cid')]
         [string[]]$Id,
@@ -509,8 +509,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_ids','user_group_id','Ids')]
         [string[]]$Id,
@@ -573,8 +573,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_ids','user_group_id','Ids')]
         [string[]]$Id,
@@ -683,8 +683,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('cid_group_ids','cid_group_id','Ids')]
         [string[]]$Id
@@ -814,8 +814,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_ids','user_group_id','Ids')]
         [string[]]$Id
@@ -855,8 +855,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('user_group_id')]
         [string]$Id,
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuids','uuid','UserIds')]
         [string[]]$UserId

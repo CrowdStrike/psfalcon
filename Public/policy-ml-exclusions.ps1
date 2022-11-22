@@ -126,8 +126,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Mandatory)]
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Mandatory)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -240,8 +240,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Position=1)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id

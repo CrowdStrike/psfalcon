@@ -28,7 +28,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconQuarantine
     [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -107,8 +107,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconQuarantineAction
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Position=2)]
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Position=4)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id

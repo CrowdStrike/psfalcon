@@ -160,8 +160,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -234,8 +234,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
         [Alias('Ids')]
         [string[]]$Id,
@@ -294,8 +294,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^\d+$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -368,8 +368,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/pattern-severities/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
         [Alias('Ids','pattern_severity')]
         [string[]]$Id,
@@ -422,8 +422,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^\d{1,2}$')]
         [Alias('Ids','ruletype_id')]
         [string[]]$Id,
@@ -595,8 +595,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Position=1)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id

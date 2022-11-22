@@ -135,7 +135,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activities/GET/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Mandatory,Position=1)]
@@ -204,8 +204,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=1)]
@@ -354,8 +354,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCompleteAttachment
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,Position=1)]
         [string]$Path,
-        [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [string]$Id,
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get')]
         [switch]$Force

@@ -25,8 +25,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFimChange
 #>
     [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v2:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,

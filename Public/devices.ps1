@@ -24,8 +24,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupingTag
         })]
         [Alias('Tags')]
         [string[]]$Tag,
-        [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_ids','device_id','Ids')]
         [string[]]$Id
@@ -127,14 +127,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
+        [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Parameter(ParameterSetName='/devices/combined/devices/network-address-history/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id,
@@ -307,8 +307,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/host-groups/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -389,10 +389,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/host-group-members/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
+        [Parameter(ParameterSetName='/devices/combined/host-group-members/v1:get',ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',Position=2)]
@@ -454,8 +454,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostAction
             'product_type_desc','reduced_functionality_mode','serial_number','system_manufacturer',
             'system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
-        [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id')]
         [string[]]$Id
@@ -512,8 +512,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostGroupAction
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
-        [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','HostIds')]
         [string[]]$HostId
@@ -663,8 +663,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
         })]
         [Alias('Tags')]
         [string[]]$Tag,
-        [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_ids','device_id','Ids')]
         [string[]]$Id
@@ -699,8 +699,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/devices/entities/host-groups/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id

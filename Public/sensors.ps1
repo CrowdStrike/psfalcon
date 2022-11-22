@@ -40,8 +40,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -132,8 +132,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconInstaller
             ValueFromPipelineByPropertyName,Position=1)]
         [Alias('name')]
         [string]$Path,
-        [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('sha256')]
         [string]$Id,

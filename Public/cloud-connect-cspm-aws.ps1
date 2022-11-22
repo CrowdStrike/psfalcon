@@ -65,8 +65,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
         SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^\d{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -231,7 +231,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('Ids')]
         [string[]]$Id,

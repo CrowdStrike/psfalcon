@@ -92,8 +92,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/settings/entities/policy-details/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Mandatory)]
+        [Parameter(ParameterSetName='/settings/entities/policy-details/v1:get',ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Mandatory)]
         [ValidatePattern('^\d+$')]
         [Alias('Ids','policy_id')]
         [int32[]]$Id,
@@ -145,8 +145,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/settings/scan-schedule/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/settings/scan-schedule/v1:get',ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('cloud-platform','cloud_platform','cloud_provider')]
         [string[]]$CloudPlatform

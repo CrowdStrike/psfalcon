@@ -27,10 +27,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/falconx/entities/reports/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/falconx/entities/report-summaries/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/falconx/entities/reports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
+        [Parameter(ParameterSetName='/falconx/entities/report-summaries/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -94,8 +94,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -282,8 +282,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconArtifact
     param(
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get',Mandatory,Position=1)]
         [string]$Path,
-        [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=2)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/falconx/entities/artifacts/v1:get')]
@@ -326,8 +326,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [Alias('Ids')]
         [string]$Id
     )

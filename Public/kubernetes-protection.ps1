@@ -17,7 +17,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAwsAccount
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Position=1)]
         [string]$Region,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^\d{12}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -62,8 +62,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
         SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -107,8 +107,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCloud
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
         SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('clouds')]
         [string[]]$Cloud
@@ -160,7 +160,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [Alias('account_ids','Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=2)]
@@ -249,7 +249,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAwsAccount
            Position=1)]
         [string]$Region,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^\d{12}$')]
         [Alias('account_id')]
         [string]$Id
@@ -299,7 +299,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconContainerYaml
            Position=1)]
         [string]$Path,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [Alias('cluster_name')]
         [string]$ClusterName,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get')]
@@ -344,7 +344,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAwsAccount
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('Ids')]
         [string[]]$Id

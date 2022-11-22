@@ -218,8 +218,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('id')]
         [string]$GroupId,
-        [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('HostIds','device_id','host_ids','aid')]
         [string[]]$HostId
@@ -544,7 +544,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         [Parameter(ParameterSetName='GroupId',Mandatory)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
-        [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_id','host_ids','aid','HostIds')]
         [string[]]$HostId

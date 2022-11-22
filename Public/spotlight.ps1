@@ -11,8 +11,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/entities/remediations/v2:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [Alias('Ids')]
         [object[]]$Id
     )
@@ -76,8 +76,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -149,8 +149,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/evaluation-logic/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/spotlight/entities/evaluation-logic/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/spotlight/entities/evaluation-logic/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('Ids','apps')]
         [object[]]$Id,
         [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Mandatory,Position=1)]

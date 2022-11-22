@@ -12,7 +12,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Compare-FalconPreventionPhase
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([PSCustomObject[]])]
     param(
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -125,7 +125,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -178,7 +178,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconFirewallPolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -238,7 +238,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconPreventionPolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -291,7 +291,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconResponsePolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -344,7 +344,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )

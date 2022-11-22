@@ -244,8 +244,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/actions/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -317,14 +317,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/recon/entities/notifications-detailed/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/recon/entities/notifications-translated/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Parameter(ParameterSetName='/recon/entities/notifications-detailed/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Parameter(ParameterSetName='/recon/entities/notifications-translated/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Parameter(ParameterSetName='/recon/entities/notifications-detailed-translated/v1:get',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^\w{76}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -399,8 +399,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/rules/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -629,8 +629,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/recon/entities/actions/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id
     )
@@ -656,8 +656,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/recon/entities/notifications/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/recon/entities/notifications/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^\w{76}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -691,8 +691,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id

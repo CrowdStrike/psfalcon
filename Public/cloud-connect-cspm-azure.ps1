@@ -68,8 +68,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureAccount
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
         SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -123,7 +123,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Position=1)]
         [boolean]$Refresh,
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [Alias('tenant_id')]
         [string[]]$TenantId
     )
@@ -194,7 +194,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
             Position=1)]
         [string]$Path,
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('tenant-id','tenant_id')]
         [string]$TenantId,
@@ -241,7 +241,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string[]]$Id

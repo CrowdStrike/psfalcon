@@ -98,7 +98,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
             Position=6)]
         [string]$Comment,
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=7)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=7)]
         [ValidatePattern('^([a-fA-F0-9]{32}|all)$')]
         [string]$Id
     )
@@ -151,8 +151,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ioa-exclusions/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -294,8 +294,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Position=1)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
