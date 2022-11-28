@@ -6,57 +6,42 @@ Assign roles to users
 Requires 'User Management: Write'.
 .PARAMETER UserId
 User identifier
-.PARAMETER Id
-User role
 .PARAMETER Cid
 Customer identifier
+.PARAMETER Id
+User role
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:post',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
+        SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('uuid','user_uuid')]
         [string]$UserId,
-        [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:post',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [Alias('Ids','roles')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=3)]
-        [string]$Cid
+        [string]$Cid,
+        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
+        [Alias('role_ids','Ids')]
+        [string[]]$Id
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = if ($PSCmdlet.ParameterSetName -eq '/user-management/entities/user-role-actions/v1:post') {
-                @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-            } else {
-                @{ Query = @('user_uuid'); Body = @{ root = @('roleIds') }}
-            }
+            Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) { @($Id).foreach{ $List.Add($_) }}
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
-            if ($PSCmdlet.ParameterSetName -eq '/user-management/entities/user-role-actions/v1:post') {
-                $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
-                $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
-                $PSBoundParameters['action'] = 'grant'
-            } else {
-                $PSBoundParameters['roleIds'] = @($List | Select-Object -Unique)
-                $PSBoundParameters['user_uuid'] = $PSBoundParameters.UserId
-            }
+            $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
+            $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
+            $PSBoundParameters['action'] = 'grant'
             [void]$PSBoundParameters.Remove('Id')
             [void]$PSBoundParameters.Remove('UserId')
             Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -86,8 +71,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
         [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Position=2)]
         [Alias('last_name')]
         [string]$LastName,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$Id
@@ -124,18 +109,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
         SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('ids')]
+        [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+        [Alias('ids','roles')]
         [string[]]$Id,
+        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Position=2)]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
+        [string]$Cid,
+        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=2)]
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory,Position=1)]
         [Alias('user_uuid','uuid')]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$UserId,
-        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=1)]
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [string]$Cid,
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=3)]
         [string]$Filter,
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=4)]
@@ -150,8 +137,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=7)]
         [Alias('direct_only')]
         [boolean]$DirectOnly,
-        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
-        [Parameter(ParameterSetName='/user-roles/queries/user-role-ids-by-cid/v1:get')]
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory)]
         [switch]$Detailed
     )
     begin {
@@ -170,7 +156,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
                 } elseif ($_ -match '^[a-fA-F0-9]{32}$') {
                     Get-FalconRole -Cid $_
                 } else {
-                    $List.Add($_)
+                    if ($_ -notmatch '^\w+') {
+                        Write-Error "'$_' is not a valid user role."
+                    } else {
+                        $List.Add($_)
+                    }
                 }
             }
         } else {
@@ -215,8 +205,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/queries/users/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('ids','uuid')]
         [string[]]$Id,
@@ -310,6 +300,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
     param(
         [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('reset_password','reset_2fa',IgnoreCase=$false)]
+        [Alias('action_name')]
         [string]$Name,
         [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
@@ -357,8 +348,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidateScript({
             if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
@@ -404,57 +395,42 @@ Remove roles from a user
 Requires 'User Management: Write'.
 .PARAMETER UserId
 User identifier
-.PARAMETER Id
-User role
 .PARAMETER Cid
 Customer identifier
+.PARAMETER Id
+User role
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-roles/entities/user-roles/v1:delete',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
+        SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('uuid','user_uuid')]
         [string]$UserId,
-        [Parameter(ParameterSetName='/user-roles/entities/user-roles/v1:delete',Mandatory,ValueFromPipeline,
+        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
-        [Alias('roleIds','Ids','roles')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=3)]
-        [string]$Cid
+        [string]$Cid,
+        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
+        [Alias('role_ids','Ids')]
+        [string[]]$Id
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = if ($PSCmdlet.ParameterSetName -eq '/user-management/entities/user-role-actions/v1:post') {
-                @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-            } else {
-                @{ Query = @('user_uuid','ids') }
-            }
+            Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Id) { @($Id).foreach{ $List.Add($_) }}
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
-            if ($PSCmdlet.ParameterSetName -eq '/user-management/entities/user-role-actions/v1:post') {
-                $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
-                $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
-                $PSBoundParameters['action'] = 'revoke'
-            } else {
-                $PSBoundParameters['Ids'] = @($List | Select-Object -Unique)
-                $PSBoundParameters['user_uuid'] = $PSBoundParameters.UserId
-            }
+            $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
+            $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
+            $PSBoundParameters['action'] = 'revoke'
             [void]$PSBoundParameters.Remove('Id')
             [void]$PSBoundParameters.Remove('UserId')
             Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -474,8 +450,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/user-management/entities/users/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuid','uuid')]
         [string]$Id
@@ -489,11 +465,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
-@('Add-FalconRole','Remove-FalconRole').foreach{
-    $Register = @{
-        CommandName = $_
-        ParameterName = 'Id'
-        ScriptBlock = { Get-FalconRole -EA 0 }
-    }
-    Register-ArgumentCompleter @Register
+@('Add-FalconRole','Get-FalconRole','Remove-FalconRole').foreach{
+    Register-ArgumentCompleter -CommandName $_ -ParameterName 'Id' -ScriptBlock { Get-FalconRole -EA 0 }
 }
