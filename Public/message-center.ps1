@@ -86,21 +86,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('id','body','detections','incidents') }}
         }
-        [System.Collections.Generic.List[string]]$LdtList = @()
-        [System.Collections.Generic.List[string]]$IncList = @()
+        [System.Collections.Generic.List[hashtable]]$LdtList = @()
+        [System.Collections.Generic.List[hashtable]]$IncList = @()
     }
     process {
         if ($DetectionId -or $IncidentId) {
-            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add($_) }}
-            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add($_) }}
+            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add(@{ id = $_ }) }}
+            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add(@{ id = $_ }) }}
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
         if ($LdtList -or $IncList) {
-            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList | Select-Object -Unique }
-            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList | Select-Object -Unique }
+            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList }
+            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -315,21 +315,21 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
                 Body = @{ root = @('body','detections','incidents','title','type','user_uuid') }
             }
         }
-        [System.Collections.Generic.List[string]]$LdtList = @()
-        [System.Collections.Generic.List[string]]$IncList = @()
+        [System.Collections.Generic.List[hashtable]]$LdtList = @()
+        [System.Collections.Generic.List[hashtable]]$IncList = @()
     }
     process {
         if ($DetectionId -or $IncidentId) {
-            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add($_) }}
-            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add($_) }}
+            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add(@{ id = $_ }) }}
+            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add(@{ id = $_ }) }}
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
         if ($LdtList -or $IncList) {
-            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList | Select-Object -Unique }
-            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList | Select-Object -Unique }
+            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList }
+            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
