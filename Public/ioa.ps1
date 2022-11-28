@@ -14,8 +14,10 @@ AWS account identifier
 Azure subscription identifier
 .PARAMETER AzureTenantId
 Azure tenant identifier
-.PARAMETER UserIds
+.PARAMETER UserId
 User identifier
+.PARAMETER State
+Event state
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -51,9 +53,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
         [Alias('azure_tenant_id')]
         [string]$AzureTenantId,
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=6)]
-        [Alias('user_ids')]
-        [string[]]$UserIds,
+        [Alias('user_ids','UserIds')]
+        [string[]]$UserId,
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=7)]
+        [string]$State,
+        [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=8)]
         [ValidateRange(1,500)]
         [int32]$Limit,
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get')]
@@ -68,8 +72,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('cloud_provider','limit','aws_account_id','azure_subscription_id','policy_id',
-                    'offset','azure_tenant_id','user_ids')
+                Query = @('cloud_provider','limit','aws_account_id','azure_subscription_id','policy_id','offset',
+                    'azure_tenant_id','user_ids','state','account_id')
             }
         }
     }
@@ -104,6 +108,8 @@ AWS account identifier
 Azure subscription identifier
 .PARAMETER AzureTenantId
 Azure tenant identifier
+.PARAMETER State
+Event state
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
 #>
@@ -129,14 +135,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
         [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('azure_tenant_id')]
-        [string]$AzureTenantId
+        [string]$AzureTenantId,
+        [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Position=6)]
+        [string]$State
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('cloud_provider','policy_id','azure_tenant_id','aws_account_id',
+                Query = @('cloud_provider','policy_id','azure_tenant_id','aws_account_id','state','account_id',
                     'azure_subscription_id')
             }
         }
