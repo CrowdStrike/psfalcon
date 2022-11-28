@@ -10,6 +10,10 @@ Action frequency
 Email address
 .PARAMETER Status
 Action status
+.PARAMETER ContentFormat
+Email format
+.PARAMETER TriggerMatchless
+Send email when no matches are found
 .PARAMETER Id
 Action identifier
 .LINK
@@ -34,6 +38,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
         [string]$Status,
         [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=4)]
+        [ValidateSet('standard','enhanced',IgnoreCase=$false)]
+        [Alias('content_format')]
+        [string]$ContentFormat,
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=5)]
+        [Alias('trigger_matchless')]
+        [boolean]$TriggerMatchless,
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+            Position=6)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id
     )
@@ -41,7 +54,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('recipients','id','status','frequency') }}
+            Format = @{
+                Body = @{ root = @('id','frequency','trigger_matchless','recipients','status','content_format') }
+            }
         }
         [System.Collections.Generic.List[string]] $List = @()
     }
@@ -484,6 +499,10 @@ Notification type
 Notification frequency
 .PARAMETER Recipient
 Notification recipient
+.PARAMETER ContentFormat
+Email format
+.PARAMETER TriggerMatchless
+Send email when no matches are found
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
 #>
@@ -508,7 +527,17 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
             if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
         })]
         [Alias('Recipients','uid')]
-        [string[]]$Recipient
+        [string[]]$Recipient,
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',ValueFromPipelineByPropertyName,
+            Position=5)]
+        [ValidateSet('standard','enhanced',IgnoreCase=$false)]
+        [Alias('content_format')]
+        [string]$ContentFormat,
+        [Parameter(ParameterSetName='/recon/entities/actions/v1:post',ValueFromPipelineByPropertyName,
+            Position=6)]
+        [Alias('trigger_matchless')]
+        [boolean]$TriggerMatchless
+
     )
     begin {
         $Param = @{
@@ -517,7 +546,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
             Format = @{
                 Body = @{
                     root = @('rule_id')
-                    actions = @('recipients','type','frequency')
+                    actions = @('type','trigger_matchless','recipients','frequency','content_format')
                 }
             }
         }
