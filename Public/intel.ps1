@@ -98,6 +98,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER IncludeDeleted
 Include previously deleted indicators
+.PARAMETER IncludeRelation
+Include related indicators
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -137,6 +139,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
         [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=5)]
         [Alias('include_deleted')]
         [boolean]$IncludeDeleted,
+        [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=6)]
+        [Alias('include_relations')]
+        [boolean]$IncludeRelation,
         [Parameter(ParameterSetName='/intel/queries/indicators/v1:get')]
         [Parameter(ParameterSetName='/intel/combined/indicators/v1:get')]
         [int32]$Offset,
@@ -153,7 +159,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('sort','limit','filter','offset','include_deleted','q')
+                Query = @('sort','limit','filter','offset','include_deleted','q','include_relations')
                 Body = @{ root = @('ids') }
             }
         }
