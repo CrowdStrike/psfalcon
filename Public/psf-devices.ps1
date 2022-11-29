@@ -138,7 +138,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
             }) -join ','
             [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object $Select
             @($TempList).foreach{
-                if (($Partial -and $HostList.hostname -notmatch $_) -or (!$Partial -and
+                if (($Partial -and $HostList.hostname -notlike "$_*") -or (!$Partial -and
                 $HostList.hostname -notcontains $_)) {
                     $PSCmdlet.WriteWarning("[Find-FalconHostname] No match found for '$_'.")
                 }
