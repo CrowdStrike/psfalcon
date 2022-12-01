@@ -60,7 +60,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
         [string]$Description,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=6)]
-        [Alias('metadata.filename')]
+        [Alias('metadata')]
         [string]$Filename,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=7)]
@@ -111,12 +111,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
                 Body = @{
                     root = @('comment')
                     indicators = @('id','tags','applied_globally','expiration','description','source','action',
-                        'metadata.filename','host_groups','severity','platforms','mobile_action','from_parent')
+                        'metadata','host_groups','severity','platforms','mobile_action','from_parent')
                 }
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        if ($PSBoundParameters.Filename) {
+            $PSBoundParameters['metadata'] = @{ filename = $PSBoundParameters.Filename }
+            [void]$PSBoundParameters.Remove('Filename')
+        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
 }
 function Get-FalconIoc {
 <#
@@ -423,7 +429,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=5)]
         [string]$Description,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=6)]
-        [Alias('metadata.filename')]
+        [Alias('metadata')]
         [string]$Filename,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=7)]
         [Alias('tags')]
@@ -467,9 +473,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
                 Query = @('retrodetects','ignore_warnings')
                 Body = @{
                     root = @('comment','indicators')
-                    indicators = @('tags','applied_globally','expiration','description','value',
-                        'metadata.filename','type','source','host_groups','severity','action','platforms',
-                        'mobile_action')
+                    indicators = @('tags','applied_globally','expiration','description','value','metadata','type',
+                        'source','host_groups','severity','action','platforms','mobile_action')
                 }
             }
         }
@@ -481,6 +486,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
         } elseif (!$PSBoundParameters.HostGroup -and !$PSBoundParameters.AppliedGlobally) {
             throw "'HostGroup' or 'AppliedGlobally' must be provided."
         } else {
+            if ($PSBoundParameters.Filename) {
+                $PSBoundParameters['metadata'] = @{ filename = $PSBoundParameters.Filename }
+                [void]$PSBoundParameters.Remove('Filename')
+            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
