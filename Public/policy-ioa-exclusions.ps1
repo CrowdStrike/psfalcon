@@ -69,6 +69,10 @@ Host group identifier or 'all' to apply to all hosts
 Exclusion description
 .PARAMETER Comment
 Audit log comment
+.PARAMETER PatternId
+Indicator of Attack pattern identifier
+.PARAMETER PatternName
+Indicator of Attack pattern name
 .PARAMETER Id
 Exclusion identifier
 .LINK
@@ -97,8 +101,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=6)]
         [string]$Comment,
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=7)]
+        [Alias('pattern_id')]
+        [string]$PatternId,
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=8)]
+        [Alias('pattern_name')]
+        [string]$PatternName,
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=7)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^([a-fA-F0-9]{32}|all)$')]
         [string]$Id
     )
@@ -107,7 +119,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Body = @{ root = @('cl_regex','ifn_regex','groups','name','id','description','comment') }
+                Body = @{
+                    root = @('cl_regex','ifn_regex','groups','name','id','description','comment','pattern_id',
+                        'pattern_name')
+                }
             }
         }
     }
