@@ -235,10 +235,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_ids','Ids')]
+        [Alias('ids','cid_group_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=1)]
         [string]$Name,
@@ -262,7 +262,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('cid_group_ids','offset','limit','name','sort') }
+            Format = @{ Query = @('ids','offset','limit','name','sort') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -299,10 +299,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:get',Mandatory,
+        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_ids','Ids')]
+        [Alias('ids','cid_group_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -328,7 +328,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('cid_group_ids','offset','limit','sort','cid') }
+            Format = @{ Query = @('ids','offset','limit','sort','cid') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -448,8 +448,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/children/v1:get',Mandatory,ValueFromPipelineByPropertyName,
-            ValueFromPipeline)]
+        [Parameter(ParameterSetName='/mssp/entities/children/GET/v2:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','child_cid')]
         [string[]]$Id,
@@ -472,7 +472,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','ids','offset','limit') }
+            Format = @{
+                Body = @{ root = @('ids') }
+                Query = @('sort','offset','limit')
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -509,10 +512,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+        [Parameter(ParameterSetName='/mssp/entities/user-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_ids','user_group_id','Ids')]
+        [Alias('ids','user_group_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=1)]
         [string]$Name,
@@ -536,7 +539,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','offset','user_group_ids','limit','name') }
+            Format = @{ Query = @('sort','offset','ids','limit','name') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -573,10 +576,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:get',Mandatory,
+        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_ids','user_group_id','Ids')]
+        [Alias('ids','user_group_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -602,7 +605,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','offset','user_group_ids','limit','user_uuid') }
+            Format = @{ Query = @('sort','offset','ids','limit','user_uuid') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
