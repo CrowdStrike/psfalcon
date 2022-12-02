@@ -165,6 +165,10 @@ Monitoring rule filter
 Monitoring rule priority
 .PARAMETER Permission
 Permission level [public: 'All Intel users', private: 'Recon Admins']
+.PARAMETER BreachMonitoring
+Monitor for breach data
+.PARAMETER SubstringMatching
+Monitor for substring matches
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
@@ -200,13 +204,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
         [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=5)]
         [ValidateSet('private','public',IgnoreCase=$false)]
         [Alias('permissions')]
-        [string]$Permission
+        [string]$Permission,
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=6)]
+        [Alias('breach_monitoring_enabled')]
+        [boolean]$BreachMonitoring,
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=7)]
+        [Alias('substring_matching_enabled')]
+        [boolean]$SubstringMatching
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/recon/entities/rules/v1:patch'
-            Format = @{ Body = @{ root = @('permissions','priority','name','id','filter','raw_array') }}
+            Format = @{
+                Body = @{
+                    root = @('permissions','priority','name','id','filter','raw_array','breach_monitoring_enabled',
+                        'substring_matching_enabled')
+                }
+            }
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -214,7 +229,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
         if ($Array) {
             @($Array).foreach{
                 # Select allowed fields, when populated
-                [string[]]$Select = @('permissions','priority','name','id','filter').foreach{ if ($i.$_) { $_ }}
+                [string[]]$Select = @('permissions','priority','name','filter','breach_monitoring_enabled',
+                'substring_match_enabled','id').foreach{
+                    if ($null -ne $i.$_) { $_ }
+                }
                 $List.Add(($_ | Select-Object $Select))
             }
         } else {
@@ -580,6 +598,10 @@ Falcon Query Language expression to limit results
 Monitoring rule priority
 .PARAMETER Permission
 Permission level [public: 'All Intel users', private: 'Recon Admins']
+.PARAMETER BreachMonitoring
+Monitor for breach data
+.PARAMETER SubstringMatching
+Monitor for substring matches
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
@@ -615,13 +637,24 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
         [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Mandatory,Position=5)]
         [ValidateSet('private','public',IgnoreCase=$false)]
         [Alias('permissions')]
-        [string]$Permission
+        [string]$Permission,
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=6)]
+        [Alias('breach_monitoring_enabled')]
+        [boolean]$BreachMonitoring,
+        [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=7)]
+        [Alias('substring_matching_enabled')]
+        [boolean]$SubstringMatching
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/recon/entities/rules/v1:post'
-            Format = @{ Body = @{ root = @('permissions','priority','name','filter','topic','raw_array') }}
+            Format = @{
+                Body = @{
+                    root = @('filter','permissions','topic','name','breach_monitoring_enabled',
+                        'substring_matching_enabled','priority','raw_array')
+                }
+            }
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -629,7 +662,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
         if ($Array) {
             @($Array).foreach{
                 # Select allowed fields, when populated
-                [string[]]$Select = @('permissions','priority','name','filter','topic').foreach{ if ($i.$_) { $_ }}
+                [string[]]$Select = @('permissions','priority','name','filter','topic',
+                'breach_monitoring_enabled','substring_match_enabled').foreach{
+                    if ($null -ne $i.$_) { $_ }
+                }
                 $List.Add(($_ | Select-Object $Select))
             }
         } else {
