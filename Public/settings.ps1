@@ -46,6 +46,8 @@ Requires 'CSPM Registration: Write'.
 Scan interval
 .PARAMETER CloudPlatform
 Cloud platform
+.PARAMETER NextScanTimestamp
+Next scan timestamp (RFC3339)
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonSchedule
 #>
@@ -60,13 +62,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonSchedule
             Position=2)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('cloud_platform','cloud_provider')]
-        [string]$CloudPlatform
+        [string]$CloudPlatform,
+        [Parameter(ParameterSetName='/settings/scan-schedule/v1:post',ValueFromPipelineByPropertyName,Position=3)]
+        [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+        [Alias('next_scan_timestamp')]
+        [string]$NextScanTimestamp
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('cloud_platform','scan_schedule') }}
+            Format = @{ Body = @{ resources = @('cloud_platform','scan_schedule','next_scan_timestamp') }}
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -145,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/settings/scan-schedule/v1:get',ValueFromPipelineByPropertyName,
+        [Parameter(ParameterSetName='/settings/scan-schedule/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('cloud-platform','cloud_platform','cloud_provider')]
@@ -159,9 +165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($CloudPlatform) { @($CloudPlatform).foreach{ $List.Add($_) }}
-    }
+    process { if ($CloudPlatform) { @($CloudPlatform).foreach{ $List.Add($_) }}}
     end {
         if ($List) {
             $PSBoundParameters['CloudPlatform'] = @($List | Select-Object -Unique)
