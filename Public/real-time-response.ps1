@@ -88,7 +88,7 @@ Requires 'Real Time Response: Write'.
 .PARAMETER SessionId
 Session identifier
 .PARAMETER Timeout
-Length of time to wait for a result, in seconds
+Length of time to wait for a result, in seconds [default: 30]
 .PARAMETER BatchGetCmdReqId
 Batch 'get' command identifier
 .LINK
@@ -103,7 +103,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
         [Alias('session_id')]
         [string]$SessionId,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:get',Position=1)]
-        [ValidateRange(30,600)]
+        [ValidateRange(1,600)]
         [int32]$Timeout,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:get',Mandatory,
             ValueFromPipelineByPropertyName)]
@@ -473,10 +473,12 @@ Requires 'Real Time Response (Admin): Write'.
 Real-time Response command
 .PARAMETER Argument
 Arguments to include with the command
-.PARAMETER Timeout
-Length of time to wait for a result, in seconds
 .PARAMETER OptionalHostId
 Restrict execution to specific host identifiers
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds [default: 30]
+.PARAMETER HostTimeout
+Length of time to wait for a result from target host(s), in seconds
 .PARAMETER SessionId
 Session identifier
 .PARAMETER BatchId
@@ -505,12 +507,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
         [Alias('Arguments')]
         [string]$Argument,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=3)]
-        [ValidateRange(30,600)]
-        [int32]$Timeout,
-        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=4)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('optional_hosts','OptionalHostIds')]
         [string[]]$OptionalHostId,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=4)]
+        [ValidateRange(1,600)]
+        [int32]$Timeout,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Position=5)]
+        [ValidateRange(1,600)]
+        [Alias('host_timeout_duration')]
+        [int32]$HostTimeout,
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
@@ -529,7 +535,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Format = @{
-                Query = @('timeout')
+                Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
             }
         }
@@ -555,31 +561,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
             } elseif ($PSBoundParameters.SessionId) {
                 '/real-time-response/entities/admin-command/v1:post'
             }
-            $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
-                # Join 'Command' and 'Argument' into 'command_string'
-                @($PSBoundParameters.Command,$PSBoundParameters.Argument) -join ' '
-                [void]$PSBoundParameters.Remove('Argument')
-            } else {
-                $PSBoundParameters.Command
-            }
-            @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
-                if ($BatchId) {
-                    # Add 'batch_id' to each result and output
-                    Set-Property $_ batch_id $BatchId
-                    $_
-                } elseif ($SessionId -and $Wait) {
-                    for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
-                        # Attempt to 'confirm' for 60 seconds
-                        Start-Sleep 5
-                        $Result = if ($Command -eq 'get') {
-                            $_ | Confirm-FalconGetFile
-                        } else {
-                            $_ | Confirm-FalconAdminCommand
-                        }
-                    }
-                    $Result
+            if ($Endpoint) {
+                if ($PSBoundParameters.HostTimeout) {
+                    # Add 's' to denote seconds for 'host_timeout_duration'
+                    $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+                }
+                $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
+                    # Join 'Command' and 'Argument' into 'command_string'
+                    @($PSBoundParameters.Command,$PSBoundParameters.Argument) -join ' '
+                    [void]$PSBoundParameters.Remove('Argument')
                 } else {
-                    $_
+                    $PSBoundParameters.Command
+                }
+                @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
+                    if ($BatchId) {
+                        # Add 'batch_id' to each result and output
+                        Set-Property $_ batch_id $BatchId
+                        $_
+                    } elseif ($SessionId -and $Wait) {
+                        for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
+                            # Attempt to 'confirm' for 60 seconds
+                            Start-Sleep 5
+                            $Result = if ($Command -eq 'get') {
+                                $_ | Confirm-FalconGetFile
+                            } else {
+                                $_ | Confirm-FalconAdminCommand
+                            }
+                        }
+                        $Result
+                    } else {
+                        $_
+                    }
                 }
             }
         }
@@ -599,10 +611,12 @@ of 60 seconds.
 Requires 'Real Time Response: Write'.
 .PARAMETER FilePath
 Path to file on target host
-.PARAMETER Timeout
-Length of time to wait for a result, in seconds
 .PARAMETER OptionalHostId
 Restrict execution to specific host identifiers
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds [default: 30]
+.PARAMETER HostTimeout
+Length of time to wait for a result from target host(s), in seconds
 .PARAMETER BatchId
 Batch session identifier
 .PARAMETER Wait
@@ -617,14 +631,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
         [Alias('file_path')]
         [string]$FilePath,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Position=2)]
-        [ValidateRange(30,600)]
-        [int32]$Timeout,
-        [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('optional_hosts','OptionalHostIds')]
         [string[]]$OptionalHostId,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Position=3)]
+        [ValidateRange(1,600)]
+        [int32]$Timeout,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Position=4)]
+        [ValidateRange(1,600)]
+        [Alias('host_timeout_duration')]
+        [int32]$HostTimeout,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('batch_id')]
         [string]$BatchId,
@@ -636,7 +654,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('timeout')
+                Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('batch_id','file_path','optional_hosts') }
             }
         }
@@ -645,6 +663,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
     process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
+        if ($PSBoundParameters.HostTimeout) {
+            # Add 's' to denote seconds for 'host_timeout_duration'
+            $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+        }
         @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
             if ($_.batch_get_cmd_req_id -and $_.combined.resources) {
                 # Output result with 'batch_get_cmd_req_id' and 'hosts' values
@@ -701,7 +723,9 @@ Arguments to include with the command
 .PARAMETER OptionalHostId
 Restrict execution to specific host identifiers
 .PARAMETER Timeout
-Length of time to wait for a result, in seconds
+Length of time to wait for a result, in seconds [default: 30]
+.PARAMETER HostTimeout
+Length of time to wait for a result from target host(s), in seconds
 .PARAMETER SessionId
 Session identifier
 .PARAMETER BatchId
@@ -730,8 +754,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
         [Alias('optional_hosts','OptionalHostIds')]
         [string[]]$OptionalHostId,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-command/v1:post',Position=4)]
-        [ValidateRange(30,600)]
+        [ValidateRange(1,600)]
         [int32]$Timeout,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-command/v1:post',Position=5)]
+        [ValidateRange(1,600)]
+        [Alias('host_timeout_duration')]
+        [int32]$HostTimeout,
         [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post',Mandatory,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
@@ -750,7 +778,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Format = @{
-                Query = @('timeout')
+                Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
             }
         }
@@ -766,6 +794,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
             '/real-time-response/entities/command/v1:post'
         }
         if ($Endpoint) {
+            if ($PSBoundParameters.HostTimeout) {
+                # Add 's' to denote seconds for 'host_timeout_duration'
+                $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+            }
             $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
                 # Join 'Command' and 'Argument' into 'command_string'
                 @($PSBoundParameters.Command,$PSBoundParameters.Argument) -join ' '
@@ -811,7 +843,9 @@ Arguments to include with the command
 .PARAMETER OptionalHostId
 Restrict execution to specific host identifiers
 .PARAMETER Timeout
-Length of time to wait for a result, in seconds
+Length of time to wait for a result, in seconds [default: 30]
+.PARAMETER HostTimeout
+Length of time to wait for a result from target host(s), in seconds
 .PARAMETER SessionId
 Session identifier
 .PARAMETER BatchId
@@ -847,8 +881,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
         [string[]]$OptionalHostId,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
            Position=4)]
-        [ValidateRange(30,600)]
+        [ValidateRange(1,600)]
         [int32]$Timeout,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
+           Position=5)]
+        [ValidateRange(1,600)]
+        [Alias('host_timeout_duration')]
+        [int32]$HostTimeout,
         [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post',Mandatory,
             ValueFromPipelineByPropertyName)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
@@ -867,7 +906,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Format = @{
-                Query = @('timeout')
+                Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
             }
         }
@@ -894,6 +933,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
                 '/real-time-response/entities/active-responder-command/v1:post'
             }
             if ($Endpoint) {
+                if ($PSBoundParameters.HostTimeout) {
+                    # Add 's' to denote seconds for 'host_timeout_duration'
+                    $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+                }
                 $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
                     # Join 'Command' and 'Argument' into 'command_string'
                     @($PSBoundParameters.Command,$PSBoundParameters.Argument) -join ' '
@@ -1279,10 +1322,12 @@ and 'Invoke-FalconBatchGet'.
 Requires 'Real Time Response: Read'.
 .PARAMETER QueueOffline
 Add non-responsive hosts to the offline queue
-.PARAMETER Timeout
-Length of time to wait for a result, in seconds [default: 30]
 .PARAMETER ExistingBatchId
 Add hosts to an existing batch session
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds [default: 30]
+.PARAMETER HostTimeout
+Length of time to wait for a result from target host(s), in seconds
 .PARAMETER Id
 Host identifier
 .LINK
@@ -1296,12 +1341,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
         [Alias('queue_offline')]
         [boolean]$QueueOffline,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=2)]
-        [ValidateRange(1,600)]
-        [int32]$Timeout,
-        [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('existing_batch_id')]
         [string]$ExistingBatchId,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:post',Position=2)]
+        [ValidateRange(1,600)]
+        [int32]$Timeout,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=4)]
+        [ValidateRange(1,600)]
+        [Alias('host_timeout_duration')]
+        [int32]$HostTimeout,
         [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:post',Mandatory)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -1314,7 +1364,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Format = @{
-                Query = @('timeout')
+                Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('existing_batch_id','host_ids','queue_offline','device_id') }
             }
         }
@@ -1325,10 +1375,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
         if ($List) {
             # Verify 'Endpoint' using BatchId/SessionId and select hosts
             [void]$PSBoundParameters.Remove('Id')
-            $Endpoint = if ($List.Count -eq 1 -and !$Timeout -and !$ExistingBatchId) {
+            $Endpoint = if ($List.Count -eq 1 -and !$HostTimeout -and !$ExistingBatchId) {
                 $PSBoundParameters['device_id'] = $List[0]
                 '/real-time-response/entities/sessions/v1:post'
             } else {
+                if ($PSBoundParameters.HostTimeout) {
+                    # Add 's' to denote seconds for 'host_timeout_duration'
+                    $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+                }
                 $PSBoundParameters['host_ids'] = @($List | Select-Object -Unique)
                 '/real-time-response/combined/batch-init-session/v1:post'
             }
@@ -1369,10 +1423,10 @@ command process completes.
 Requires 'Real Time Response: Read'.
 .PARAMETER QueueOffline
 Add non-responsive hosts to the offline queue
-.PARAMETER Timeout
-Length of time to wait for a result, in seconds
 .PARAMETER HostToRemove
 Host identifier(s) to remove from a batch Real-time Response session
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds [default: 30]
 .PARAMETER HostId
 Host identifier, for a single-host session
 .PARAMETER BatchId
@@ -1388,12 +1442,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
         [Alias('queue_offline')]
         [boolean]$QueueOffline,
         [Parameter(ParameterSetName='/real-time-response/combined/batch-refresh-session/v1:post',Position=2)]
-        [ValidateRange(30,600)]
-        [int32]$Timeout,
-        [Parameter(ParameterSetName='/real-time-response/combined/batch-refresh-session/v1:post',Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('hosts_to_remove','HostsToRemove')]
         [string[]]$HostToRemove,
+        [Parameter(ParameterSetName='/real-time-response/combined/batch-refresh-session/v1:post',Position=3)]
+        [ValidateRange(1,600)]
+        [int32]$Timeout,
         [Parameter(ParameterSetName='/real-time-response/entities/refresh-session/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
