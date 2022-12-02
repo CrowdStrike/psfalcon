@@ -1,9 +1,41 @@
+function Edit-FalconInstallTokenSetting {
+<#
+.SYNOPSIS
+Update installation token settings
+.DESCRIPTION
+Requires 'Installation token settings: Write'.
+.PARAMETER TokensRequired
+Installation token requirement
+.PARAMETER MaxActiveToken
+Maximum number of active installation tokens
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconInstallTokenSetting
+#>
+    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',Position=1)]
+        [Alias('tokens_required')]
+        [boolean]$TokenRequired,
+        [Parameter(ParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',Position=2)]
+        [Alias('max_active_tokens')]
+        [int]$MaxActiveToken
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('tokens_required','max_active_tokens') }}
+        }
+    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
 function Edit-FalconInstallToken {
 <#
 .SYNOPSIS
 Modify installation tokens
 .DESCRIPTION
-Requires 'Installation Tokens: Write'.
+Requires 'Installation tokens: Write'.
 .PARAMETER Label
 Installation token label
 .PARAMETER ExpiresTimestamp
@@ -58,7 +90,7 @@ function Get-FalconInstallToken {
 .SYNOPSIS
 Search for installation tokens
 .DESCRIPTION
-Requires 'Installation Tokens: Read'.
+Requires 'Installation tokens: Read'.
 .PARAMETER Id
 Installation token identifier
 .PARAMETER Filter
@@ -121,7 +153,7 @@ function Get-FalconInstallTokenEvent {
 .SYNOPSIS
 Search for installation token audit events
 .DESCRIPTION
-Requires 'Installation Tokens: Read'.
+Requires 'Installation tokens: Read'.
 .PARAMETER Id
 Installation token audit event identifier
 .PARAMETER Filter
@@ -187,7 +219,7 @@ Retrieve installation token settings
 Returns the maximum number of allowed installation tokens,and whether or not they are required for
 installation of the Falcon sensor.
 
-Requires 'Installation Tokens: Read'.
+Requires 'Installation tokens: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenSetting
 #>
@@ -201,7 +233,7 @@ function New-FalconInstallToken {
 .SYNOPSIS
 Create an installation token
 .DESCRIPTION
-Requires 'Installation Tokens: Write'.
+Requires 'Installation tokens: Write'.
 .PARAMETER Label
 Installation token label
 .PARAMETER ExpiresTimestamp
@@ -232,7 +264,7 @@ function Remove-FalconInstallToken {
 .SYNOPSIS
 Remove installation tokens
 .DESCRIPTION
-Requires 'Installation Tokens: Write'.
+Requires 'Installation tokens: Write'.
 .PARAMETER Id
 Installation token identifier
 .LINK
