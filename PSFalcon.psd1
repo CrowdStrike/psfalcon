@@ -475,11 +475,22 @@
   * Test-FalconFirewallPath
   ### installation-tokens
   * Edit-FalconInstallTokenSetting
+  ### image-assessment
+  * Get-FalconContainerVulnerability
   ### iocs
   * Get-FalconIocAction
   * Get-FalconIocPlatform
   * Get-FalconIocSeverity
   * Get-FalconIocType
+  ### ods
+  * Get-FalconOnDemandScan
+  * Get-FalconScanFile
+  * Get-FalconScanHost
+  * Get-FalconScheduledScan
+  * New-FalconScheduledScan
+  * Remove-FalconScheduledScan
+  * Start-FalconOnDemandScan
+  * Stop-FalconOnDemandScan
   ### settings-discover
   * Get-FalconDiscoverAwsScript
 
