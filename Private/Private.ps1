@@ -761,6 +761,54 @@ function New-ShouldMessage {
         } catch {}
     }
 }
+function Select-Property {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,Position=1)]
+        [object[]]$Object,
+        [Parameter(Mandatory,Position=2)]
+        [string]$Parameter,
+        [Parameter(Mandatory,Position=3)]
+        [string]$Pattern,
+        [Parameter(Mandatory,Position=4)]
+        [string]$Command,
+        [Parameter(Mandatory,Position=5)]
+        [string]$Property,
+        [Parameter(Position=6)]
+        [string]$Parent
+    )
+    function Select-StringMatch ([string[]]$String,[string]$Parameter,[string]$Pattern,[string]$Command) {
+        @($String).foreach{
+            if ($_ -notmatch $Pattern) {
+                # Output error record for eventual return
+                [string]$Message = "Cannot validate argument on parameter '$Parameter'.",
+                    ('The argument "{0}" does not match the "{1}" pattern.' -f $_,$Pattern),
+                    ('Supply an argument that matches "{0}" and try the command again.' -f $Pattern) -join ' '
+                [System.Management.Automation.ErrorRecord]::New(
+                    [Exception]::New($Message),
+                    'ParameterArgumentValidationError',
+                    [System.Management.Automation.ErrorCategory]::InvalidData,
+                    $_
+                )
+            } elseif ($_ -match $Pattern) {
+                # Output matching string value
+                $_
+            }
+        }
+    }
+    @($Object).foreach{
+        if ($Parent -and $_.$Parent.$Property) {
+            # Check 'Property' under 'Parent' for matching value
+            @($_.$Parent.$Property).foreach{ Select-StringMatch $_ $Parameter $Pattern $Command }
+        } elseif ($_.$Property) {
+            # Check 'Property' for matching value
+            @($_.$Property).foreach{ Select-StringMatch $_ $Parameter $Pattern $Command }
+        } elseif (![string]::IsNullOrEmpty($_)) {
+            # Treat value as [string] and check for match
+            Select-StringMatch $_ $Parameter $Pattern $Command
+        }
+    }
+}
 function Set-Property {
     [CmdletBinding()]
     [OutputType([void])]
@@ -853,34 +901,6 @@ function Test-RegexValue {
             Write-Verbose "[Test-RegexValue] $(@((($Output | Out-String).Trim()),$String) -join ': ')"
             $Output
         }
-    }
-}
-function Test-StringPattern {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory,Position=1)]
-        [string]$String,
-        [Parameter(Mandatory,Position=2)]
-        [string]$Parameter,
-        [Parameter(Mandatory,Position=3)]
-        [string]$Pattern,
-        [Parameter(Mandatory,Position=4)]
-        [string]$Command
-    )
-    if ($String -notmatch $Pattern) {
-        # Output error record for requesting command to return
-        [string]$Message = "Cannot validate argument on parameter '$Parameter'.",
-            ('The argument "{0}" does not match the "{1}" pattern.' -f $String,$Pattern),
-            ('Supply an argument that matches "{0}" and try the command again.' -f $Pattern) -join ' '
-        [System.Management.Automation.ErrorRecord]::New(
-            [Exception]::New($Message),
-            'ParameterArgumentValidationError',
-            [System.Management.Automation.ErrorCategory]::InvalidData,
-            $String
-        )
-    } else {
-        # Output matching string value
-        $String
     }
 }
 function Write-Result {

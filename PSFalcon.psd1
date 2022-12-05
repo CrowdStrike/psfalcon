@@ -501,9 +501,9 @@
 
 # General Changes
   * Renamed 'mobile-enrollment.ps1' to 'enrollments.ps1' to match URL prefix.
-  * Created 'Test-StringPattern' private function for validating values passed to parameters that accept [object[]]
-    values which are ultimately filtered down to [string]. This function is used to output error messages when the
-    proper 'id' values are not found in objects submitted from the pipeline.
+  * Created 'Select-Property' private function for validating the presence of specific properties within
+    [object[]] values. This function is used to output error messages when the proper sub-property values (or
+    string values themselves) are not found in objects submitted via the pipeline.
 
 # Command Changes
 ## Add-FalconRole
