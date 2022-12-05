@@ -855,6 +855,34 @@ function Test-RegexValue {
         }
     }
 }
+function Test-StringPattern {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,Position=1)]
+        [string]$String,
+        [Parameter(Mandatory,Position=2)]
+        [string]$Parameter,
+        [Parameter(Mandatory,Position=3)]
+        [string]$Pattern,
+        [Parameter(Mandatory,Position=4)]
+        [string]$Command
+    )
+    if ($String -notmatch $Pattern) {
+        # Output error record for requesting command to return
+        [string]$Message = "Cannot validate argument on parameter '$Parameter'.",
+            ('The argument "{0}" does not match the "{1}" pattern.' -f $String,$Pattern),
+            ('Supply an argument that matches "{0}" and try the command again.' -f $Pattern) -join ' '
+        [System.Management.Automation.ErrorRecord]::New(
+            [Exception]::New($Message),
+            'ParameterArgumentValidationError',
+            [System.Management.Automation.ErrorCategory]::InvalidData,
+            $String
+        )
+    } else {
+        # Output matching string value
+        $String
+    }
+}
 function Write-Result {
     [CmdletBinding()]
     param([System.Object]$Request)

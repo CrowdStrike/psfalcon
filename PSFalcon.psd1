@@ -236,14 +236,14 @@
       'Test-FalconToken'
 
       # ods
-      'Get-FalconOnDemandScan'
+      'Get-FalconScan'
       'Get-FalconScanFile'
       'Get-FalconScanHost'
       'Get-FalconScheduledScan'
       'New-FalconScheduledScan'
       'Remove-FalconScheduledScan'
-      'Start-FalconOnDemandScan'
-      'Stop-FalconOnDemandScan'
+      'Start-FalconScan'
+      'Stop-FalconScan'
 
       # overwatch-dashboards
       'Get-FalconOverWatchEvent'
@@ -483,14 +483,14 @@
   * Get-FalconIocSeverity
   * Get-FalconIocType
   ### ods
-  * Get-FalconOnDemandScan
+  * Get-FalconScan
   * Get-FalconScanFile
   * Get-FalconScanHost
   * Get-FalconScheduledScan
   * New-FalconScheduledScan
   * Remove-FalconScheduledScan
-  * Start-FalconOnDemandScan
-  * Stop-FalconOnDemandScan
+  * Start-FalconScan
+  * Stop-FalconScan
   ### settings-discover
   * Get-FalconDiscoverAwsScript
 
@@ -501,6 +501,9 @@
 
 # General Changes
   * Renamed 'mobile-enrollment.ps1' to 'enrollments.ps1' to match URL prefix.
+  * Created 'Test-StringPattern' private function for validating values passed to parameters that accept [object[]]
+    values which are ultimately filtered down to [string]. This function is used to output error messages when the
+    proper 'id' values are not found in objects submitted from the pipeline.
 
 # Command Changes
 ## Add-FalconRole
