@@ -8,6 +8,12 @@ Requires 'CSPM Registration: Write'.
 Severity level
 .PARAMETER Enabled
 Policy enablement status
+.PARAMETER Region
+Cloud region
+.PARAMETER TagExcluded
+
+.PARAMETER AccountId
+Account identifier
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -22,8 +28,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonPolicy
         [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=2)]
         [boolean]$Enabled,
-        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,
             Position=3)]
+        [Alias('regions')]
+        [string[]]$Region,
+        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,
+            Position=4)]
+        [Alias('tag_excluded')]
+        [boolean]$TagExcluded,
+        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,
+            Position=5)]
+        [Alias('account_id')]
+        [string]$AccountId,
+        [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName)]
         [Alias('policy_id','PolicyId')]
         [int32]$Id
     )
@@ -31,7 +49,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonPolicy
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('severity','policy_id','enabled') }}
+            Format = @{
+                Body = @{ resources = @('enabled','policy_id','regions','account_id','severity','tag_excluded') }
+            }
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
