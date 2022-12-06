@@ -521,6 +521,8 @@
   * Added 'Validate' parameter to utilize new '/fwmgr/entities/rule-groups/validation/v1:patch' endpoint.
 ## Edit-FalconFirewallSetting
   * Updated to use new '/fwmgr/entities/policies/v2:put' endpoint.
+## Edit-FalconHorizonPolicy
+  * Added 'Region', 'TagExcluded' and 'AccountId' parameters.
 ## Edit-FalconHorizonSchedule
   * Added 'NextScanTimestamp' parameter.
 ## Edit-FalconIoaExclusion
