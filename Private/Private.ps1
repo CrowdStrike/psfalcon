@@ -757,6 +757,11 @@ function New-ShouldMessage {
                 [string]$Body = try { $Object.Body | ConvertTo-Json -Depth 8 } catch {}
                 if ($Body) { Set-Property $Output Body $Body }
             }
+            if ($Object.Formdata) {
+                # Add 'Formdata' value
+                [string]$Formdata = try { $Object.Formdata | ConvertTo-Json -Depth 8 } catch {}
+                if ($Formdata) { Set-Property $Output Formdata $Formdata }
+            }
             "`r`n",($Output | Format-List | Out-String).Trim(),"`r`n" -join "`r`n"
         } catch {}
     }

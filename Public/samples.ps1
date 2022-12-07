@@ -125,14 +125,14 @@ Upload a sample file
 A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon Sandbox or
 Falcon QuickScan.
 
-Maximum file size is 256MB. ZIP archives will automatically redirect to the archive submission API.
+Maximum file size is 256MB. ZIP archives will automatically redirect to 'Send-FalconSampleArchive'.
 
 Requires 'Sample Uploads: Write'.
 .PARAMETER IsConfidential
 Prohibit sample from being displayed in MalQuery [default: True]
 .PARAMETER Comment
-Sample comment
-.PARAMETER FileName
+Audit log comment
+.PARAMETER Name
 File name
 .PARAMETER Path
 Path to local file
@@ -148,10 +148,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
         [string]$Comment,
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',ValueFromPipelineByPropertyName,
             Position=3)]
-        [Alias('file_name','name')]
-        [string]$FileName,
+        [Alias('file_name','FileName')]
+        [string]$Name,
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Mandatory,
-            ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,Position=4)]
         [ValidateScript({
             if (Test-Path $_ -PathType Leaf) {
                 $true
@@ -168,20 +168,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ ContentType = 'application/octet-stream' }
             Format = @{
-                Query = @('comment','file_name','is_confidential','name')
+                Query = @('comment','file_name','is_confidential')
                 Body = @{ root = @('body') }
             }
         }
     }
     process {
-        if (!$PSBoundParameters.FileName) {
-            $PSBoundParameters['FileName'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
+        if (!$PSBoundParameters.Name) {
+            $PSBoundParameters['Name'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
         }
-        if ($PSBoundParameters.FileName -match '\.zip$') {
-            $Param.Endpoint = '/archives/entities/archives/v1:post'
-            $PSBoundParameters['name'] = $PSBoundParameters.FileName
-            [void]$PSBoundParameters.Remove('FileName')
+        if ($PSBoundParameters.Path -match '\.zip$') {
+            Send-FalconSampleArchive @PSBoundParameters
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }

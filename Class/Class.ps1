@@ -44,7 +44,11 @@ class ApiClient {
                             $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),
                                 [System.IO.FileMode]::Open)
                             $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
+                            $FileType = [System.IO.Path]::GetExtension($this.Path($_.Value)) -replace '^.',$null
                             $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
+                            if ($FileType -eq 'zip') {
+                                $StreamContent.Headers.ContentType = 'application',$FileType -join '/'
+                            }
                             $Message.Content.Add($StreamContent,$_.Key,$Filename)
                             @($_.Key,'<StreamContent>') -join '='
                         } else {
@@ -65,6 +69,7 @@ class ApiClient {
                     }
                 }
                 if ($this.Collector.Enable -contains 'requests') { $this.Log($Message) }
+                $Message | ConvertTo-Json -Depth 64 | Out-File C:\temp\falcon\test.json
                 $this.Client.SendAsync($Message)
             }
             if ($Output.Result.StatusCode) {

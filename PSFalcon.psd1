@@ -16,6 +16,13 @@
       'Get-FalconAlert'
       'Invoke-FalconAlertAction'
 
+      # archives
+      'Expand-FalconSampleArchive'
+      'Get-FalconSampleArchive'
+      'Get-FalconSampleExtraction'
+      'Remove-FalconSampleArchive'
+      'Send-FalconSampleArchive'
+
       # cloud-connect-aws
       'Confirm-FalconDiscoverAwsAccess'
       'Edit-FalconDiscoverAwsAccount'
@@ -468,6 +475,12 @@
             ReleaseNotes = "@
 
 # New Commands
+  ### archives
+  * Expand-FalconSampleArchive
+  * Get-FalconSampleArchive
+  * Get-FalconSampleExtraction
+  * Remove-FalconSampleArchive
+  * Send-FalconSampleArchive
   ### cloud-connect-aws
   * Get-FalconDiscoverAwsLink
   * Receive-FalconDiscoverAwsScript
@@ -504,6 +517,10 @@
   * Created 'Select-Property' private function for validating the presence of specific properties within
     [object[]] values. This function is used to output error messages when the proper sub-property values (or
     string values themselves) are not found in objects submitted via the pipeline.
+  * Modified method for internal [ApiClient]::Invoke() to ensure that 'type=application/zip' is included when
+    submitting a 'file' formdata payload with a zip archive (like with 'Send-FalconSampleArchive').
+  * Updated internal 'New-ShouldMessage' function to ensure that 'Formdata' payloads are displayed when using
+    '-WhatIf' parameter.
 
 # Command Changes
 ## Add-FalconRole
@@ -609,6 +626,9 @@
   * Changed parameter positions and removed pipeline support for 'Id'.
   * 'Cid' is now a required parameter due to the endpoint change. 'Cid' is included in a 'Get-FalconUser
     -Detailed' result.
+## Send-FalconSample
+  * Renamed parameter 'FileName' to 'Name' to match 'Send-FalconSampleArchive' when redirecting sample
+    archives. 'FileName' was retained as an alias for 'Name'.
 ## Start-FalconSession
   * Added 'HostTimeout' parameter.
   * Added 'Timeout' parameter to 'Start-FalconSession' when working with single-host sessions. 'Timeout' would
