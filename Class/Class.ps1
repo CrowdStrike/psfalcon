@@ -69,7 +69,6 @@ class ApiClient {
                     }
                 }
                 if ($this.Collector.Enable -contains 'requests') { $this.Log($Message) }
-                $Message | ConvertTo-Json -Depth 64 | Out-File C:\temp\falcon\test.json
                 $this.Client.SendAsync($Message)
             }
             if ($Output.Result.StatusCode) {
