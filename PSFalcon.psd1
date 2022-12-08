@@ -127,6 +127,7 @@
       'New-FalconFirewallGroup'
       'Remove-FalconFirewallGroup'
       'Remove-FalconFirewallLocation'
+      'Set-FalconFirewallLocationPrecedence'
       'Test-FalconFirewallPath'
 
       # identity-protection
@@ -495,6 +496,7 @@
   ### fwmgr
   * Get-FalconFirewallLocation
   * Remove-FalconFirewallLocation
+  * Set-FalconFirewallLocationPrecedence
   * Test-FalconFirewallPath
   ### image-assessment
   * Get-FalconContainerVulnerability
