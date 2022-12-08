@@ -403,6 +403,73 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
+function Get-FalconReconRecord {
+<#
+.SYNOPSIS
+Search for Falcon Intelligence Recon exposed data record notifications
+.DESCRIPTION
+Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Id
+Exposed data record identifier
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
+#>
+    [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/recon/entities/notifications-exposed-data-records/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [ValidatePattern('^\w{76}$')]
+        [Alias('ids')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=1)]
+        [string]$Filter,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=2)]
+        [Alias('q')]
+        [string]$Query,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=3)]
+        [int]$Limit,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=4)]
+        [string]$Sort,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
+        [int]$Offset,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
+        [switch]$Detailed,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
+        [switch]$Total
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('q','offset','sort','limit','filter','ids') }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+}
 function Get-FalconReconRule {
 <#
 .SYNOPSIS

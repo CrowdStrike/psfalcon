@@ -400,6 +400,7 @@
       'Edit-FalconReconRule'
       'Get-FalconReconAction'
       'Get-FalconReconNotification'
+      'Get-FalconReconRecord'
       'Get-FalconReconRule'
       'Get-FalconReconRulePreview'
       'New-FalconReconAction'
@@ -507,6 +508,8 @@
   * Remove-FalconScheduledScan
   * Start-FalconScan
   * Stop-FalconScan
+  ### recon
+  * Get-FalconReconRecord
   ### settings-discover
   * Get-FalconDiscoverAwsScript
 
