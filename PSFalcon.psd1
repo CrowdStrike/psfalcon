@@ -145,6 +145,7 @@
 
       # intel
       'Get-FalconActor'
+      'Get-FalconCve'
       'Get-FalconIndicator'
       'Get-FalconIntel'
       'Get-FalconRule'
@@ -486,10 +487,12 @@
   * Receive-FalconDiscoverAwsScript
   ### fwmgr
   * Test-FalconFirewallPath
-  ### installation-tokens
-  * Edit-FalconInstallTokenSetting
   ### image-assessment
   * Get-FalconContainerVulnerability
+  ### installation-tokens
+  * Edit-FalconInstallTokenSetting
+  ### intel
+  * Get-FalconCve
   ### iocs
   * Get-FalconIocAction
   * Get-FalconIocPlatform

@@ -80,6 +80,72 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
+function Get-FalconCve {
+<#
+.SYNOPSIS
+Search for Falcon Intelligence CVE reports
+.DESCRIPTION
+Requires 'Vulnerabilities (Falcon Intelligence): Read'.
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
+#>
+    [CmdletBinding(DefaultParameterSetName='/intel/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/intel/entities/vulnerabilities/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Alias('ids')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=1)]
+        [string]$Filter,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=2)]
+        [Alias('q')]
+        [string]$Query,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=3)]
+        [string]$Sort,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=4)]
+        [int]$Limit,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [string]$Offset,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [switch]$Detailed,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [switch]$Total
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Body = @{ root = @('ids') }
+                Query = @('q','offset','sort','limit','filter')
+            }
+        }
+    [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+}
 function Get-FalconIndicator {
 <#
 .SYNOPSIS
@@ -403,7 +469,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
 function Receive-FalconRule {
 <#
 .SYNOPSIS
-Download the most recent ruleset,or a specific ruleset
+Download the most recent ruleset, or a specific ruleset
 .DESCRIPTION
 Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Type
