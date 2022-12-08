@@ -48,6 +48,8 @@ class ApiClient {
                             $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
                             if ($FileType -eq 'zip') {
                                 $StreamContent.Headers.ContentType = 'application',$FileType -join '/'
+                            } elseif ($FileType -eq '7z') {
+                                $StreamContent.Headers.ContentType = 'application/x-7z-compressed'
                             }
                             $Message.Content.Add($StreamContent,$_.Key,$Filename)
                             @($_.Key,'<StreamContent>') -join '='

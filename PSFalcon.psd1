@@ -517,8 +517,9 @@
   * Created 'Select-Property' private function for validating the presence of specific properties within
     [object[]] values. This function is used to output error messages when the proper sub-property values (or
     string values themselves) are not found in objects submitted via the pipeline.
-  * Modified method for internal [ApiClient]::Invoke() to ensure that 'type=application/zip' is included when
-    submitting a 'file' formdata payload with a zip archive (like with 'Send-FalconSampleArchive').
+  * Modified method for internal [ApiClient]::Invoke() to ensure that 'type=application/zip' or
+    'type=application/x-7z-compressed' is included when submitting a 'file' formdata payload with a zip or 7z
+    archive ('Send-FalconSampleArchive').
   * Updated internal 'New-ShouldMessage' function to ensure that 'Formdata' payloads are displayed when using
     '-WhatIf' parameter.
 
