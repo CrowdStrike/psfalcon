@@ -402,13 +402,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]
-        [ValidatePattern('\.(bmp|csv|doc|docx|gif|jpg|jpeg|pdf|png|pptx|txt|xls|xlsx)$')]
+        [ValidatePattern('\.(bmp|csv|doc(x?)|gif|jpg|jpeg|pdf|png|ppt(x?)|txt|xls(x?))$')]
         [ValidateScript({
             if (Test-Path $_ -PathType Leaf) {
                 $Leaf = Split-Path $_ -Leaf
                 if ($Leaf -match '\W') {
                     throw 'Filename contains invalid characters.'
-                } elseif (((Split-Path $_ -Leaf) -Split '.')[0].Length -gt 255) {
+                } elseif (($Leaf -Split '.')[0].Length -gt 255) {
                     throw 'Maximum filename length is 255 characters.'
                 } else {
                     $true
