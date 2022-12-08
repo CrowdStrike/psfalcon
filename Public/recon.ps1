@@ -409,16 +409,16 @@ function Get-FalconReconRecord {
 Search for Falcon Intelligence Recon exposed data record notifications
 .DESCRIPTION
 Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
+.PARAMETER Id
+Exposed data record identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Query
 Perform a generic substring search across available fields
-.PARAMETER Id
-Exposed data record identifier
-.PARAMETER Limit
-Maximum number of results per request
 .PARAMETER Sort
 Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -444,9 +444,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
         [Alias('q')]
         [string]$Query,
         [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=3)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=4)]
         [string]$Sort,
+        [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=4)]
+        [int]$Limit,
         [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
         [int]$Offset,
         [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
