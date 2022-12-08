@@ -44,12 +44,10 @@ class ApiClient {
                             $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),
                                 [System.IO.FileMode]::Open)
                             $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
-                            $FileType = [System.IO.Path]::GetExtension($this.Path($_.Value)) -replace '^.',$null
                             $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
-                            if ($FileType -eq 'zip') {
-                                $StreamContent.Headers.ContentType = 'application',$FileType -join '/'
-                            } elseif ($FileType -eq '7z') {
-                                $StreamContent.Headers.ContentType = 'application/x-7z-compressed'
+                            switch (([System.IO.Path]::GetExtension($this.Path($_.Value)) -replace '^.',$null)) {
+                                '7z' { $StreamContent.Headers.ContentType = 'application/x-7z-compressed' }
+                                'zip' { $StreamContent.Headers.ContentType = 'application/zip' }
                             }
                             $Message.Content.Add($StreamContent,$_.Key,$Filename)
                             @($_.Key,'<StreamContent>') -join '='
