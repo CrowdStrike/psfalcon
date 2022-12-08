@@ -45,10 +45,8 @@ class ApiClient {
                                 [System.IO.FileMode]::Open)
                             $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
                             $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
-                            switch (([System.IO.Path]::GetExtension($this.Path($_.Value)) -replace '^.',$null)) {
-                                '7z' { $StreamContent.Headers.ContentType = 'application/x-7z-compressed' }
-                                'zip' { $StreamContent.Headers.ContentType = 'application/zip' }
-                            }
+                            $FileType = $this.StreamType($Filename)
+                            if ($FileType) { $StreamContent.Headers.ContentType = $FileType }
                             $Message.Content.Add($StreamContent,$_.Key,$Filename)
                             @($_.Key,'<StreamContent>') -join '='
                         } else {
@@ -138,5 +136,38 @@ class ApiClient {
             Write-Verbose "[ApiClient.Log] Removed job '$($_.Name)'."
             Remove-Job -Id $_.Id
         }
+    }
+    [string] StreamType([string]$String) {
+        [string]$Extension = [System.IO.Path]::GetExtension($String) -replace '^\.',$null
+        $Output = switch -Regex ($Extension) {
+            '^(bmp|gif|jp(e?)g|png)$' { "image/$_" }
+            '^(pdf|zip)$' { "application/$_" }
+            '^7z$' { 'application/x-7z-compressed' }
+            '^(csv|txt)$' {
+                if ($_ -eq 'txt') { 'text/plain' } else { "text/$_" }
+            }
+            '^doc(x?)$' {
+                if ($_ -match 'x$') {
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                } else {
+                    'application/msword'
+                }
+            }
+            '^ppt(x?)$' {
+                if ($_ -match 'x$') {
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                } else {
+                    'application/vnd.ms-powerpoint'
+                }
+            }
+            '^xls(x?)$' {
+                if ($_ -match 'x$') {
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                } else {
+                    'application/vnd.ms-excel'
+                }
+            }
+        }
+        return $Output
     }
 }
