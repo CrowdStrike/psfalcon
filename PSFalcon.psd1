@@ -120,11 +120,13 @@
       'Get-FalconFirewallEvent'
       'Get-FalconFirewallField'
       'Get-FalconFirewallGroup'
+      'Get-FalconFirewallLocation'
       'Get-FalconFirewallPlatform'
       'Get-FalconFirewallRule'
       'Get-FalconFirewallSetting'
       'New-FalconFirewallGroup'
       'Remove-FalconFirewallGroup'
+      'Remove-FalconFirewallLocation'
       'Test-FalconFirewallPath'
 
       # identity-protection
@@ -399,13 +401,17 @@
       'Edit-FalconReconNotification'
       'Edit-FalconReconRule'
       'Get-FalconReconAction'
+      'Get-FalconReconExport'
       'Get-FalconReconNotification'
       'Get-FalconReconRecord'
       'Get-FalconReconRule'
       'Get-FalconReconRulePreview'
+      'Invoke-FalconReconExport'
       'New-FalconReconAction'
       'New-FalconReconRule'
+      'Receive-FalconReconExport'
       'Remove-FalconReconAction'
+      'Remove-FalconReconExport'
       'Remove-FalconReconRule'
       'Remove-FalconReconNotification'
 
@@ -487,6 +493,8 @@
   * Get-FalconDiscoverAwsLink
   * Receive-FalconDiscoverAwsScript
   ### fwmgr
+  * Get-FalconFirewallLocation
+  * Remove-FalconFirewallLocation
   * Test-FalconFirewallPath
   ### image-assessment
   * Get-FalconContainerVulnerability
@@ -509,7 +517,11 @@
   * Start-FalconScan
   * Stop-FalconScan
   ### recon
+  * Get-FalconReconExport
   * Get-FalconReconRecord
+  * Invoke-FalconReconExport
+  * Receive-FalconReconExport
+  * Remove-FalconReconExport
   ### settings-discover
   * Get-FalconDiscoverAwsScript
 
@@ -523,9 +535,8 @@
   * Created 'Select-Property' private function for validating the presence of specific properties within
     [object[]] values. This function is used to output error messages when the proper sub-property values (or
     string values themselves) are not found in objects submitted via the pipeline.
-  * Modified method for internal [ApiClient]::Invoke() to ensure that 'type=application/zip' or
-    'type=application/x-7z-compressed' is included when submitting a 'file' formdata payload with a zip or 7z
-    archive ('Send-FalconSampleArchive').
+  * Created [ApiClient]::StreamType() method to ensure that (a supported) 'type' is included when submitting a
+    'file' or 'upfile' formdata payload.
   * Updated internal 'New-ShouldMessage' function to ensure that 'Formdata' payloads are displayed when using
     '-WhatIf' parameter.
 
