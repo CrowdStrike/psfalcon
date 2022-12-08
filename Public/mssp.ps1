@@ -7,7 +7,7 @@ Requires 'Flight Control: Write'.
 .PARAMETER Id
 CID group identifier
 .PARAMETER Cid
-CID
+Customer identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
 #>
@@ -717,7 +717,7 @@ Requires 'Flight Control: Write'.
 .PARAMETER Id
 CID group identifier
 .PARAMETER Cid
-CID
+Customer identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
 #>
