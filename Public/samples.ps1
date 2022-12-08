@@ -125,7 +125,7 @@ Upload a sample file
 A successful upload will provide a 'sha256' value that can be used in submissions to the Falcon Sandbox or
 Falcon QuickScan.
 
-Maximum file size is 256MB. ZIP archives will automatically redirect to 'Send-FalconSampleArchive'.
+Maximum file size is 256MB. ZIP and 7z archives will automatically redirect to 'Send-FalconSampleArchive'.
 
 Requires 'Sample Uploads: Write'.
 .PARAMETER IsConfidential
@@ -177,7 +177,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
         if (!$PSBoundParameters.Name) {
             $PSBoundParameters['Name'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
         }
-        if ($PSBoundParameters.Path -match '\.zip$') {
+        if ($PSBoundParameters.Path -match '\.(7z|zip)$') {
             Send-FalconSampleArchive @PSBoundParameters
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
