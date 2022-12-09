@@ -531,6 +531,8 @@
   * Issue #255: Added missing parameters and maximum limit of 100 'ids' per 'detailed' request.
   * Issue #256: Removed type definition when creating build tag variables. Added filter to ensure that LinuxArm64
     builds were only being checked when they were using tagged versions.
+  * Issue #260: @datorr2 fixed 'ConvertTo-IoaExclusion' and 'ConvertTo-MlExclusion' generating errors about missing
+    properties when detection objects were not passed via the pipeline.
 
 # General Changes
   * Renamed 'mobile-enrollment.ps1' to 'enrollments.ps1' to match URL prefix.
