@@ -55,8 +55,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallPolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
+                # Select allowed fields, when populated
                 [string[]]$Select = @('id','name','description').foreach{ if ($i.$_) { $_ }}
                 $List.Add(($i | Select-Object $Select))
             }

@@ -60,8 +60,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.settings.settings) {
                     # Select required values from 'settings' sub-object
                     $i.settings = $i.settings.settings | Select-Object id,value
@@ -352,8 +351,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.settings.settings) {
                     # Select required values from 'settings' sub-object
                     $i.settings = $i.settings.settings | Select-Object id,value

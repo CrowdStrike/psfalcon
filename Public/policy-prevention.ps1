@@ -60,8 +60,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.prevention_settings.settings) {
                     # Migrate 'prevention_settings' to 'settings' containing required values
                     Set-Property $i settings ($i.prevention_settings.settings | Select-Object id,value)
@@ -361,8 +360,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.prevention_settings.settings) {
                     # Migrate 'prevention_settings' to 'settings' containing required values
                     Set-Property $i settings @(($i.prevention_settings.settings | Select-Object id,value))

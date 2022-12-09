@@ -60,8 +60,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.settings.classes.exceptions) {
                     @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
                         # Remove exception 'id' values from 'settings' object
@@ -356,8 +355,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDeviceControlPolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.settings.classes.exceptions) {
                     @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
                         # Remove exception 'id' values from 'settings' object

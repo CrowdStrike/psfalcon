@@ -122,17 +122,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = '/recon/entities/notifications/v1'
+            Endpoint = '/recon/entities/notifications/v1:patch'
             Format = @{ Body = @{ root = @('assigned_to_uuid','id','status','raw_array') }}
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
     process {
         if ($Array) {
-            @($Array).foreach{
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
                 [string[]]$Select = @('id','assigned_to_uuid','status').foreach{ if ($i.$_) { $_ }}
-                $List.Add(($_ | Select-Object $Select))
+                $List.Add(($i | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -227,13 +227,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
     }
     process {
         if ($Array) {
-            @($Array).foreach{
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
                 [string[]]$Select = @('permissions','priority','name','filter','breach_monitoring_enabled',
                 'substring_match_enabled','id').foreach{
                     if ($null -ne $i.$_) { $_ }
                 }
-                $List.Add(($_ | Select-Object $Select))
+                $List.Add(($i | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -727,13 +727,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     }
     process {
         if ($Array) {
-            @($Array).foreach{
+            foreach ($i in $Array) {
                 # Select allowed fields, when populated
                 [string[]]$Select = @('permissions','priority','name','filter','topic',
                 'breach_monitoring_enabled','substring_match_enabled').foreach{
                     if ($null -ne $i.$_) { $_ }
                 }
-                $List.Add(($_ | Select-Object $Select))
+                $List.Add(($i | Select-Object $Select))
             }
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
