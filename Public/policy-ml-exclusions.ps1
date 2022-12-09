@@ -22,12 +22,12 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
     [CmdletBinding()]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
-        [System.Object]$Detection
+        [object]$Detection
     )
-    begin { [System.Collections.Generic.List[object]]$Output = @() }
+    begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
     process {
-        if ($_.behaviors -and $_.device) {
-            @($_.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
+        if ($Detection.behaviors -and $Detection.device) {
+            @($Detection.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
                 $Output.Add(([PSCustomObject]@{
                     value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
                     excluded_from = @('blocking')
@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
             }
         } else {
             foreach ($Property in @('behaviors','device')) {
-                if (!$_.$Property) {
+                if (!$Detection.$Property) {
                     throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
                 }
             }

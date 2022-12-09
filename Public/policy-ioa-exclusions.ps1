@@ -26,12 +26,12 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
     [CmdletBinding()]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
-        [System.Object]$Detection
+        [object]$Detection
     )
-    begin { [System.Collections.Generic.List[object]]$Output = @() }
+    begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
     process {
-        if ($_.behaviors -and $_.device) {
-            @($_.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
+        if ($Detection.behaviors -and $Detection.device) {
+            @($Detection.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
                 $Output.Add(([PSCustomObject]@{
                     pattern_id = $_.behavior_id
                     pattern_name = $_.display_name
@@ -43,7 +43,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
             }
         } else {
             foreach ($Property in @('behaviors','device')) {
-                if (!$_.$Property) {
+                if (!$Detection.$Property) {
                     throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
                 }
             }
