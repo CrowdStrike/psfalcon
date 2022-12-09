@@ -221,7 +221,7 @@ function Confirm-Parameter {
     [OutputType([boolean])]
     param(
         [Parameter(Mandatory)]
-        [System.Object]$Object,
+        [object]$Object,
         [Parameter(Mandatory)]
         [string]$Command,
         [Parameter(Mandatory)]
@@ -230,66 +230,50 @@ function Confirm-Parameter {
         [string[]]$Allowed,
         [string[]]$Content,
         [string[]]$Pattern,
-        [System.Collections.Hashtable]$Format
+        [hashtable]$Format
     )
     begin {
-        function Get-ValidPattern ([string]$Command,[string]$Endpoint,[string]$Parameter) {
-            # Return 'ValidPattern' from parameter of a given command
-            (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
-                $_.Name -eq $Parameter -or $_.Aliases -contains $Parameter }).Attributes.RegexPattern
-        }
-        function Get-ValidValues ([string]$Command,[string]$Endpoint,[string]$Parameter) {
-            # Return 'ValidValues' from parameter of a given command
-            (Get-Command $Command).ParameterSets.Where({ $_.Name -eq $Endpoint }).Parameters.Where({
-                $_.Name -eq $Parameter -or $_.Aliases -contains $Parameter }).Attributes.ValidValues
-        }
-        # Create object string
-        $ObjectString = ConvertTo-Json $Object -Depth 32 -Compress
+        # Retrieve parameters from target $Endpoint and create object string for error message
+        $ParamList = (Get-Command $Command).Parameters.Values | Where-Object { $_.ParameterSets.Keys -contains
+            $Endpoint }
+        [string]$ErrorObject = ConvertTo-Json $Object -Depth 32 -Compress
     }
     process {
-        if ($Object -is [System.Collections.Hashtable]) {
-            @($Required).foreach{
-                # Verify object contains required fields
-                if ($Object.Keys -notcontains $_) { throw "Missing '$_'. $ObjectString" } else { $true }
-            }
-            if ($Allowed) {
-                @($Object.Keys).foreach{
-                    # Error if field is not in allowed list
-                    if ($Allowed -notcontains $_) { throw "Unexpected '$_'. $ObjectString" } else { $true }
-                }
-            }
+        [string[]]$Keys = if ($Object -is [hashtable]) {
+            $Object.Keys
         } elseif ($Object -is [PSCustomObject]) {
-            @($Required).foreach{
-                # Verify object contains required fields
-                if ($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name -notcontains $_) {
-                    throw "Missing '$_'. $ObjectString"
-                } else {
-                    $true
-                }
-            }
-            if ($Allowed) {
-                @($Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name).foreach{
-                    # Error if field is not in allowed list
-                    if ($Allowed -notcontains $_) { throw "Unexpected '$_'. $ObjectString" } else { $true }
-                }
+            $Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name
+        }
+        @($Required).foreach{
+            # Verify object contains required fields
+            if ($Keys -notcontains $_) { throw "Missing property '$_'. $ErrorObject" } else { $true }
+        }
+        @($Keys).foreach{
+            # Error if field is not in allowed list
+            if ($Allowed -and $Allowed -notcontains $_) {
+                throw "Unexpected property '$_'. $ErrorObject"
+            } else {
+                $true
             }
         }
         if ($Content) {
             @($Content).foreach{
                 # Match property name with parameter name
-                [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
+                [string]$Name = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
                 if ($Object.$_) {
                     # Verify that 'ValidValues' contains provided value
-                    [string[]]$ValidValues = Get-ValidValues $Command $Endpoint $Parameter
+                    [string[]]$ValidValues = ($ParamList | Where-Object Name -eq $Name).Attributes.ValidValues
                     if ($ValidValues) {
                         if ($Object.$_ -is [array]) {
                             foreach ($Item in $Object.$_) {
                                 if ($ValidValues -notcontains $Item) {
-                                    "'$Item' is not a valid '$_' value. $ObjectString"
+                                    "'$Item' is not a valid '$_' value. $ErrorObject"
                                 }
                             }
                         } elseif ($ValidValues -notcontains $Object.$_) {
-                            throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
+                            throw "'$($Object.$_)' is not a valid '$_' value. $ErrorObject"
+                        } else {
+                            $true
                         }
                     }
                 }
@@ -298,12 +282,15 @@ function Confirm-Parameter {
         if ($Pattern) {
             @($Pattern).foreach{
                 # Match property name with parameter name
-                [string]$Parameter = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
+                [string]$Name = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
                 if ($Object.$_) {
                     # Verify provided value matches 'ValidPattern'
-                    $ValidPattern = Get-ValidPattern $Command $Endpoint $Parameter
+                    [string]$ValidPattern = ($ParamList | Where-Object { $_.Name -eq $Name -or
+                        $_.Aliases -contains $Name }).Attributes.RegexPattern
                     if ($ValidPattern -and $Object.$_ -notmatch $ValidPattern) {
-                        throw "'$($Object.$_)' is not a valid '$_' value. $ObjectString"
+                        throw "'$($Object.$_)' is not a valid '$_' value. $ErrorObject"
+                    } else {
+                        $true
                     }
                 }
             }
@@ -561,7 +548,8 @@ function Invoke-Falcon {
         [System.Object]$Format,
         [switch]$RawOutput,
         [int32]$Max,
-        [string]$HostUrl
+        [string]$HostUrl,
+        [switch]$BodyArray
     )
     begin {
         function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
@@ -638,7 +626,7 @@ function Invoke-Falcon {
         }
         # Gather request parameters and split into groups
         $GetParam = @{}
-        $PSBoundParameters.GetEnumerator().Where({ $_.Key -notmatch '^(Command|RawOutput)$' }).foreach{
+        $PSBoundParameters.GetEnumerator().Where({ $_.Key -notmatch '^(BodyArray|Command|RawOutput)$' }).foreach{
             $GetParam.Add($_.Key,$_.Value)
         }
         # Add 'Accept: application/json' when undefined
@@ -681,11 +669,16 @@ function Invoke-Falcon {
     process {
         Get-ParamSet @GetParam | ForEach-Object {
             [string]$Operation = $_.Endpoint.Method.ToUpper()
-            [string]$Target = New-ShouldMessage $_.Endpoint
             if ($_.Endpoint.Headers.ContentType -eq 'application/json' -and $_.Endpoint.Body) {
-                # Convert body to Json
-                $_.Endpoint.Body = ConvertTo-Json $_.Endpoint.Body -Depth 32 -Compress
+                $_.Endpoint.Body = if ($BodyArray) {
+                    # Force Json array when 'BodyArray' is present
+                    ConvertTo-Json @($_.Endpoint.Body) -Depth 32 -Compress
+                } else {
+                    # Convert body to Json
+                    ConvertTo-Json $_.Endpoint.Body -Depth 32 -Compress
+                }
             }
+            [string]$Target = New-ShouldMessage $_.Endpoint
             if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
                 if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
                 try {
@@ -754,8 +747,7 @@ function New-ShouldMessage {
             }
             if ($Object.Body -and $Object.Headers.ContentType -eq 'application/json') {
                 # Add 'Body' value
-                [string]$Body = try { $Object.Body | ConvertTo-Json -Depth 8 } catch {}
-                if ($Body) { Set-Property $Output Body $Body }
+                Set-Property $Output Body $Object.Body
             }
             if ($Object.Formdata) {
                 # Add 'Formdata' value

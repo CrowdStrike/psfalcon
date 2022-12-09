@@ -542,7 +542,11 @@
   * Created [ApiClient]::StreamType() method to ensure that (a supported) 'type' is included when submitting a
     'file' or 'upfile' formdata payload.
   * Updated internal 'New-ShouldMessage' function to ensure that 'Formdata' payloads are displayed when using
-    '-WhatIf' parameter.
+    '-WhatIf' parameter (with some exceptions).
+  * Streamlined 'Confirm-Property' internal function for validating pipeline input.
+  * Added 'BodyArray' to 'Invoke-Falcon' internal function to force body payloads into a Json array when required.
+  * Moved 'ShouldMessage' output during 'Invoke-Falcon' so that the body payload is shown after Json conversion
+    instead of before.
 
 # Command Changes
 ## Add-FalconRole
