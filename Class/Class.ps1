@@ -76,6 +76,9 @@ class ApiClient {
             if ($Output.Result.Headers) {
                 Write-Verbose "[ApiClient.Invoke] $($Output.Result.Headers.GetEnumerator().foreach{
                     @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')"
+                ($Output.Result.Headers.GetEnumerator().Where({ $_.Key -match '^X-Api-Deprecation' })).foreach{
+                    Write-Warning ([string]$_.Key,[string]$_.Value -join ': ')
+                }
             }
             if ($Output.Result -and $this.Collector.Enable -contains 'responses') { $this.Log($Output.Result) }
         } catch {

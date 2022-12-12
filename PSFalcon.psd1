@@ -547,6 +547,7 @@
   * Added 'BodyArray' to 'Invoke-Falcon' internal function to force body payloads into a Json array when required.
   * Moved 'ShouldMessage' output during 'Invoke-Falcon' so that the body payload is shown after Json conversion
     instead of before.
+  * Added warning messages to [ApiClient]::Invoke() when 'X-Api-Deprecation' header responses are detected.
 
 # Command Changes
 ## Add-FalconRole
