@@ -189,19 +189,24 @@
       'Get-FalconIocPlatform'
       'Get-FalconIocSeverity'
       'Get-FalconIocType'
+      'Invoke-FalconIocReport'
       'New-FalconIoc'
       'Remove-FalconIoc'
 
       # kubernetes-protection
       'Edit-FalconContainerAwsAccount'
+      'Edit-FalconContainerAzureAccount'
       'Get-FalconContainerAwsAccount'
+      'Get-FalconContainerAzureAccount'
       'Get-FalconContainerCloud'
       'Get-FalconContainerCluster'
       'Invoke-FalconContainerScan'
       'New-FalconContainerAwsAccount'
+      'New-FalconContainerAzureAccount'
       'New-FalconContainerKey'
       'Receive-FalconContainerYaml'
       'Remove-FalconContainerAwsAccount'
+      'Remove-FalconContainerAzureAccount'
 
       # malquery
       'Get-FalconMalQuery'
@@ -509,6 +514,12 @@
   * Get-FalconIocPlatform
   * Get-FalconIocSeverity
   * Get-FalconIocType
+  * Invoke-FalconIocReport
+  ### kubernetes-protection
+  * Edit-FalconContainerAzureAccount
+  * Get-FalconContainerAzureAccount
+  * New-FalconContainerAzureAccount
+  * Remove-FalconContainerAzureAccount
   ### ods
   * Get-FalconScan
   * Get-FalconScanFile
