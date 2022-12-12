@@ -559,85 +559,75 @@
   * Moved 'ShouldMessage' output during 'Invoke-Falcon' so that the body payload is shown after Json conversion
     instead of before.
   * Added warning messages to [ApiClient]::Invoke() when 'X-Api-Deprecation' header responses are detected.
+  * Updated reference policy Json files for 'Compare-FalconPreventionPhase'.
 
 # Command Changes
+## Updated to use their new respective v2 API endpoints:
+  * Edit-FalconFirewallSetting
+  * Get-FalconCidGroup
+  * Get-FalconCidGroupMember
+  * Get-FalconDiscoverAwsAccount
+  * Get-FalconMemberCid
+  * Get-FalconUserGroup
+  * Get-FalconUserGroupMember
+  * Remove-FalconDiscoverAwsAccount
+## Added 'HostTimeout' parameter, re-ordered positioning and updated 'Timeout' and 'HostTimeout' ranges from
+  30-600 to 1-600:
+  * Invoke-FalconAdminCommand
+  * Invoke-FalconBatchGet
+  * Invoke-FalconCommand
+  * Invoke-FalconResponderCommand
+  * Start-FalconSession
+## Added 'FromParent' parameter:
+  * Edit-FalconIoc
+  * Get-FalconIoc
+  * Remove-FalconIoc
+## Added 'ContentFormat' and 'TriggerMatchless' parameters:
+  * Edit-FalconReconAction
+  * New-FalconReconAction
+## Added 'BreachMonitoring' and 'SubstringMatching' parameters:
+  * Edit-FalconReconRule
+  * New-FalconReconRule
+## Added 'State' parameter:
+  * Get-FalconHorizonIoaEvent
+  * Get-FalconHorizonIoaUser
 ## Add-FalconRole
   * Removed deprecated endpoint '/user-roles/entities/user-roles/v1:post'. This command now uses the
     '/user-management/entities/user-role-actions/v1:post' endpoint exclusively (using 'action: grant').
   * Changed parameter positions and removed pipeline support for 'Id'.
   * 'Cid' is now a required parameter due to the endpoint change. 'Cid' is included in a 'Get-FalconUser
     -Detailed' result.
-## Compare-FalconPreventionPhase
-  * Updated reference Json files.
 ## Edit-FalconCompleteCase
   * Updated 'DetectionId' and 'IncidentId' to submit as hashtables with 'id' property, rather than an array of
     string values.
 ## Edit-FalconFirewallGroup
   * Added 'Validate' parameter to utilize new '/fwmgr/entities/rule-groups/validation/v1:patch' endpoint.
-## Edit-FalconFirewallSetting
-  * Updated to use new '/fwmgr/entities/policies/v2:put' endpoint.
 ## Edit-FalconHorizonPolicy
   * Added 'Region', 'TagExcluded' and 'AccountId' parameters.
 ## Edit-FalconHorizonSchedule
   * Added 'NextScanTimestamp' parameter.
 ## Edit-FalconIoaExclusion
   * Added 'PatternId' and 'PatternName' parameters.
-## Edit-FalconIoc
-  * Added 'FromParent' parameter.
   * Modified how 'Filename' is submitted to prevent potential errors.
-## Edit-FalconReconAction
-  * Added 'ContentFormat' and 'TriggerMatchless' parameters.
-## Edit-FalconReconRule
-  * Added 'BreachMonitoring' and 'SubstringMatching' parameters.
 ## Find-FalconHostname
-  * Added 'Partial' switch to perform non-exact matches, an idea from Reddit user 'Runs_on_empty'.
+  * Added 'Partial' switch to perform non-exact matches, an idea from Reddit user 'Runs_on_empty'!
   * Added 'Include' parameter.
-## Get-FalconCidGroup
-  * Updated to use new v2 endpoint.
-## Get-FalconCidGroupMember
-  * Updated to use new v2 endpoint.
 ## Get-FalconDiscoverAwsAccount
-  * Updated to use new v2 endpoint.
-  * Because the v2 endpoint no longer includes them, 'Filter' and 'Sort' have been removed from available
+  * Because the new v2 endpoint no longer includes them, 'Filter' and 'Sort' have been removed from available
     parameters, but 'Migrated', 'OrganizationId' and 'ScanType' have been added.
   * 'Detailed' has been removed because a single call now includes details.
 ## Get-FalconHorizonIoaEvent
-  * Added 'State' parameter.
   * Renamed 'UserIds' parameter to 'UserId' but kept 'UserIds' as an alias.
-## Get-FalconHorizonIoaUser
-  * Added 'State' parameter.
 ## Get-FalconHorizonSchedule
   * Changed 'CloudPlatform' to mandatory, as the API no longer returns results without specifying a value.
 ## Get-FalconIndicator
   * Added 'IncludeRelation' parameter.
-## Get-FalconIoc
-  * Added 'FromParent' parameter.
-## Get-FalconMemberCid
-  * Updated to use new v2 endpoint.
 ## Get-FalconRole
   * Added error message when a user attempts to pipeline a detailed 'Get-FalconUser' result to 'Get-FalconRole'.
   * Added auto-complete for 'Id' using list of roles from authorized CID.
 ## Get-FalconUser
   * Added 'All' and 'Total' parameters. These were mistakenly missed in the 2.2.3 release.
   * Added maximum of 100 user ids per 'detailed' request.
-## Get-FalconUserGroup
-  * Updated to use new v2 endpoint.
-## Get-FalconUserGroupMember
-  * Updated to use new v2 endpoint.
-## Invoke-FalconAdminCommand
-  * Added 'HostTimeout' parameter.
-  * Updated 'Timeout' and 'HostTimeout' accepted ranges from 30-600 to 1-600.
-  * Re-ordered positioning of 'Timeout' parameter.
-## Invoke-FalconBatchGet
-  * Added 'HostTimeout' parameter.
-  * Updated 'Timeout' and 'HostTimeout' accepted ranges from 30-600 to 1-600.
-  * Re-ordered positioning of 'Timeout' parameter.
-## Invoke-FalconCommand
-  * Added 'HostTimeout' parameter.
-  * Updated 'Timeout' and 'HostTimeout' accepted ranges from 30-600 to 1-600.
-## Invoke-FalconResponderCommand
-  * Added 'HostTimeout' parameter.
-  * Updated 'Timeout' and 'HostTimeout' accepted ranges from 30-600 to 1-600.
 ## New-FalconCompleteCase
   * Updated 'DetectionId' and 'IncidentId' to submit as hashtables with 'id' property, rather than an array of
     string values.
@@ -649,15 +639,6 @@
   * Added 'Platform' parameter, with auto-complete using 'Get-FalconFirewallPlatform' for available values.
 ## New-FalconIoc
   * Modified how 'Filename' is submitted to prevent potential errors.
-## New-FalconReconAction
-  * Added 'ContentFormat' and 'TriggerMatchless' parameters.
-## New-FalconReconRule
-  * Added 'BreachMonitoring' and 'SubstringMatching' parameters.
-## Remove-FalconDiscoverAwsAccount
-  * Updated to use new '/cloud-connect-aws/entities/account/v2:delete' endpoint. Parameters have changed to match
-  new endpoint.
-## Remove-FalconIoc
-  * Added 'FromParent' parameter.
 ## Remove-FalconRole
   * Removed deprecated endpoint '/user-roles/entities/user-roles/v1:delete'. This command now uses the
     '/user-management/entities/user-role-actions/v1:post' endpoint exclusively (using 'action: revoke').
@@ -668,12 +649,10 @@
   * Renamed parameter 'FileName' to 'Name' to match 'Send-FalconSampleArchive' when redirecting sample
     archives. 'FileName' was retained as an alias for 'Name'.
 ## Start-FalconSession
-  * Added 'HostTimeout' parameter.
   * Added 'Timeout' parameter to 'Start-FalconSession' when working with single-host sessions. 'Timeout' would
     previously force a batch session to be created even if a single host was submitted. Now that 'Timeout' also
     works for single host sessions, 'HostTimeout' or 'ExistingBatchId' must be used to force creation of a batch
     session.
-  * Updated 'Timeout' and 'HostTimeout' accepted ranges from 30-600 to 1-600.
 @"
         }
     }
