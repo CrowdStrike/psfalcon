@@ -542,6 +542,8 @@
     builds were only being checked when they were using tagged versions.
   * Issue #260: @datorr2 fixed 'ConvertTo-IoaExclusion' and 'ConvertTo-MlExclusion' generating errors about missing
     properties when detection objects were not passed via the pipeline.
+  * Issue #263: Added additional property check to 'Import-FalconConfig' to prevent 'sha256' IOCs from being
+    ignored and marked as 'Exists' when they didn't actually exist in the target CID.
 
 # General Changes
   * Renamed 'mobile-enrollment.ps1' to 'enrollments.ps1' to match URL prefix.
