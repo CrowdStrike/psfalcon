@@ -637,6 +637,8 @@
   * Added 'Platform' parameter, with auto-complete using 'Get-FalconFirewallPlatform' for available values.
 ## New-FalconIoc
   * Modified how 'Filename' is submitted to prevent potential errors.
+## New-FalconSubmission
+  * Repositioned parameters and added pipeline support for 'SubmitName' and 'Sha256'.
 ## Remove-FalconRole
   * Removed deprecated endpoint '/user-roles/entities/user-roles/v1:delete'. This command now uses the
     '/user-management/entities/user-role-actions/v1:post' endpoint exclusively (using 'action: revoke').

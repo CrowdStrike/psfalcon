@@ -161,12 +161,8 @@ before they can be provided to the Falcon Intelligence Sandbox.
 Requires 'Sandbox (Falcon Intelligence): Write'.
 .PARAMETER EnvironmentId
 Analysis environment
-.PARAMETER Sha256
-Sha256 hash value
 .PARAMETER Url
 A webpage or file URL
-.PARAMETER SubmitName
-Submission name
 .PARAMETER ActionScript
 Runtime script for sandbox analysis
 .PARAMETER CommandLine
@@ -183,6 +179,10 @@ Network settings to use in the analysis environment
 Route traffic via TOR
 .PARAMETER UserTag
 Tags to categorize the submission
+.PARAMETER SubmitName
+Submission name
+.PARAMETER Sha256
+Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 #>
@@ -193,42 +193,44 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
         [Alias('environment_id')]
         [string]$EnvironmentId,
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=2)]
-        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-        [string]$Sha256,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=3)]
         [string]$Url,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=4)]
-        [Alias('submit_name')]
-        [string]$SubmitName,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=5)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=3)]
         [ValidateSet('default','default_maxantievasion','default_randomfiles','default_randomtheme',
             'default_openie',IgnoreCase=$false)]
         [Alias('action_script')]
         [string]$ActionScript,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=6)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=4)]
         [Alias('command_line')]
         [string]$CommandLine,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=7)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=5)]
         [ValidatePattern('^\d{4}-\d{2}-\d{2}$')]
         [Alias('system_date')]
         [string]$SystemDate,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=8)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=6)]
         [ValidatePattern('^\d{2}:\d{2}$')]
         [Alias('system_time')]
         [string]$SystemTime,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=9)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=7)]
         [Alias('document_password')]
         [string]$DocumentPassword,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=10)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=8)]
         [ValidateSet('default','tor','simulated','offline',IgnoreCase=$false)]
         [Alias('network_settings','NetworkSettings')]
         [string]$NetworkSetting,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=11)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=9)]
         [Alias('enable_tor')]
         [boolean]$EnableTor,
-        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=12)]
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=10)]
         [Alias('user_tags','UserTags')]
-        [string[]]$UserTag
+        [string[]]$UserTag,
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',ValueFromPipelineByPropertyName,
+            Position=11)]
+        [Alias('submit_name','file_name')]
+        [string]$SubmitName,
+        [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=12)]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
+        [string]$Sha256
     )
     begin {
         $Param = @{
