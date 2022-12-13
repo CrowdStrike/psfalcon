@@ -189,7 +189,6 @@
       'Get-FalconIocPlatform'
       'Get-FalconIocSeverity'
       'Get-FalconIocType'
-      'Invoke-FalconIocReport'
       'New-FalconIoc'
       'Remove-FalconIoc'
 
@@ -514,7 +513,6 @@
   * Get-FalconIocPlatform
   * Get-FalconIocSeverity
   * Get-FalconIocType
-  * Invoke-FalconIocReport
   ### kubernetes-protection
   * Edit-FalconContainerAzureAccount
   * Get-FalconContainerAzureAccount
