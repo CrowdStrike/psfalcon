@@ -426,7 +426,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                         'Exists'
                     } elseif ($Item.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $Item.value })) {
                         'Exists'
-                    } elseif ($Pair.Value.Cid | Where-Object { $_.name -eq $Item.name }) {
+                    } elseif ($Item.name -and ($Pair.Value.Cid | Where-Object { $_.name -eq $Item.name })) {
                         'Exists'
                     }
                     if ($Comment -and $ModifyExisting -notcontains $Pair.Key) {
