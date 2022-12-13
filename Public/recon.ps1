@@ -315,6 +315,40 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
+function Get-FalconReconExport {
+<#
+.SYNOPSIS
+Return status of Falcon Intelligence Recon export jobs
+.DESCRIPTION
+Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
+.PARAMETER Id
+Recon export job identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconExport
+#>
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/exports/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
+        [Alias('ids')]
+        [string[]]$Id
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('ids') }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+}
 function Get-FalconReconNotification {
 <#
 .SYNOPSIS
@@ -570,6 +604,56 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRulePreview
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
+function Invoke-FalconReconExport {
+<#
+.SYNOPSIS
+Initiate a Falcon Intelligence Recon export job
+.DESCRIPTION
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
+.PARAMETER Array
+An array of jobs to submit in a single request
+.PARAMETER Entity
+Entity type
+.PARAMETER ExportType
+Export file format
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER HumanReadable
+Use property names that match the Falcon UI [default: True]
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
+#>
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/exports/v1:post',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=1)]
+        [ValidateSet('notification-exposed-data-record',IgnoreCase=$false)]
+        [string]$Entity,
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=2)]
+        [ValidateSet('csv','json',IgnoreCase=$false)]
+        [Alias('export_type')]
+        [string]$ExportType,
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Position=3)]
+        [string]$Filter,
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Position=4)]
+        [ValidateSet('created_timestamp|asc','created_timestamp|desc','last_updated_timestamp|asc',
+            'last_updated_timestamp|desc',IgnoreCase=$false)]
+        [string]$Sort,
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Position=5)]
+        [Alias('human_readable')]
+        [boolean]$HumanReadable
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('filter','sort','entity','human_readable','export_type') }}
+            BodyArray = $true
+        }
+    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
 function New-FalconReconAction {
 <#
 .SYNOPSIS
@@ -748,6 +832,32 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
         }
     }
 }
+function Receive-FalconReconExport {
+<#
+.SYNOPSIS
+Download a Falcon Intelligence Recon export
+.DESCRIPTION
+Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
+.PARAMETER Id
+Recon export job identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconReconExport
+#>
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/export-files/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/recon/entities/export-files/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+        [string]$Id
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('id') }
+        }
+    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
 function Remove-FalconReconAction {
 <#
 .SYNOPSIS
@@ -774,6 +884,40 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconAction
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
+function Remove-FalconReconExport {
+<#
+.SYNOPSIS
+Remove a Falcon Intelligence Recon export job
+.DESCRIPTION
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
+.PARAMETER Id
+Recon export job identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconExport
+#>
+    [CmdletBinding(DefaultParameterSetName='/recon/entities/exports/v1:delete',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
+        [Alias('ids')]
+        [string[]]$Id
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('ids') }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
 }
 function Remove-FalconReconNotification {
 <#
