@@ -3,8 +3,8 @@ function Add-Include {
     [OutputType([void])]
     param(
         [object[]]$Object,
-        [System.Object]$Inputs,
-        [System.Collections.Hashtable]$Index,
+        [object]$Inputs,
+        [hashtable]$Index,
         [string]$Command
     )
     if ($Inputs.Include) {
@@ -36,9 +36,9 @@ function Add-Include {
                         foreach ($i in (& "$($_.Value)" -Id $Object.id)) {
                             $SetParam = @{
                                 Object = if ($i.policy_id) {
-                                    $Object | Where-Object { $_.id -eq $i.policy_id }
+                                    @($Object).Where({ $_.id -eq $i.policy_id })
                                 } else {
-                                    $Object | Where-Object { $_.id -eq $i.id }
+                                    @($Object).Where({ $_.id -eq $i.id })
                                 }
                                 Name = $_.Key
                                 Value = $i
@@ -54,9 +54,9 @@ function Add-Include {
                     # Append all properties from 'Include'
                     $SetParam = @{
                         Object = if ($i.device_id) {
-                            $Object | Where-Object { $_.id -eq $i.device_id }
+                            @($Object).Where({ $_.id -eq $i.device_id })
                         } else {
-                            $Object | Where-Object { $_.id -eq $i.id }
+                            @($Object).Where({ $_.id -eq $i.id })
                         }
                         Name = $_
                         Value = $i.$_
@@ -86,7 +86,7 @@ function Assert-Extension {
 function Build-Content {
     [CmdletBinding()]
     [OutputType([hashtable])]
-    param([System.Object]$Format,[System.Object]$Inputs)
+    param([hashtable]$Format,[object]$Inputs)
     begin {
         function Build-Body ($Format,$Inputs) {
             $Body = @{}
@@ -116,8 +116,8 @@ function Build-Content {
                         $ByteArray.Headers.Add('Content-Type',$Headers.ContentType)
                     } else {
                         if (!$Body) { $Body = @{} }
-                        if (($Value -is [array] -or $Value -is [string]) -and $Value |
-                        Get-Member -MemberType Method | Where-Object { $_.Name -eq 'Normalize' }) {
+                        if (($Value -is [array] -or $Value -is [string]) -and ($Value |
+                        Get-Member -MemberType Method).Where({ $_.Name -eq 'Normalize' })) {
                             # Normalize values to avoid Json conversion errors when 'Get-Content' was used
                             if ($Value -is [array]) {
                                 $Value = [array] ($Value).Normalize()
@@ -234,8 +234,8 @@ function Confirm-Parameter {
     )
     begin {
         # Retrieve parameters from target $Endpoint and create object string for error message
-        $ParamList = (Get-Command $Command).Parameters.Values | Where-Object { $_.ParameterSets.Keys -contains
-            $Endpoint }
+        $ParamList = @((Get-Command $Command).Parameters.Values).Where({ $_.ParameterSets.Keys -contains
+            $Endpoint })
         [string]$ErrorObject = ConvertTo-Json $Object -Depth 32 -Compress
     }
     process {
@@ -262,7 +262,7 @@ function Confirm-Parameter {
                 [string]$Name = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
                 if ($Object.$_) {
                     # Verify that 'ValidValues' contains provided value
-                    [string[]]$ValidValues = ($ParamList | Where-Object Name -eq $Name).Attributes.ValidValues
+                    [string[]]$ValidValues = @($ParamList).Where({ $_.Name -eq $Name }).Attributes.ValidValues
                     if ($ValidValues) {
                         if ($Object.$_ -is [array]) {
                             foreach ($Item in $Object.$_) {
@@ -285,8 +285,8 @@ function Confirm-Parameter {
                 [string]$Name = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
                 if ($Object.$_) {
                     # Verify provided value matches 'ValidPattern'
-                    [string]$ValidPattern = ($ParamList | Where-Object { $_.Name -eq $Name -or
-                        $_.Aliases -contains $Name }).Attributes.RegexPattern
+                    [string]$ValidPattern = @($ParamList).Where.({ $_.Name -eq $Name -or $_.Aliases -contains
+                        $Name }).Attributes.RegexPattern
                     if ($ValidPattern -and $Object.$_ -notmatch $ValidPattern) {
                         throw "'$($Object.$_)' is not a valid '$_' value. $ErrorObject"
                     } else {
@@ -346,9 +346,9 @@ function Get-ParamSet {
     [CmdletBinding()]
     param(
         [string]$Endpoint,
-        [System.Object]$Headers,
-        [System.Object]$Inputs,
-        [System.Object]$Format,
+        [hashtable]$Headers,
+        [object]$Inputs,
+        [hashtable]$Format,
         [int32]$Max,
         [string]$HostUrl
     )
@@ -472,12 +472,12 @@ function Get-RtrCommand {
                 $_.Key -eq 'Command' }).Value.Attributes.ValidValues
         }
         # Filter 'Responder' and 'Admin' to unique command(s)
-        $Index.Responder = $Index.Responder | Where-Object { $Index.ReadOnly -notcontains $_ }
-        $Index.Admin = $Index.Admin | Where-Object { $Index.ReadOnly -notcontains $_ -and
-            $Index.Responder -notcontains $_ }
+        $Index.Responder = @($Index.Responder).Where({ $Index.ReadOnly -notcontains $_ })
+        $Index.Admin = @($Index.Admin).Where({ $Index.ReadOnly -notcontains $_ -and $Index.Responder -notcontains
+            $_ })
         if ($Command) {
             # Determine command to invoke using $Command and permission level
-            $Result = if ($Command -eq 'runscript') {
+            [string]$Result = if ($Command -eq 'runscript') {
                 # Force 'Admin' for 'runscript' command
                 'Invoke-FalconAdminCommand'
             } else {
@@ -500,14 +500,14 @@ function Get-RtrResult {
     param([object[]]$Object,[object[]]$Output)
     begin {
         # Real-time Response fields to capture from results
-        $RtrFields = @('aid','batch_get_cmd_req_id','batch_id','cloud_request_id','complete','errors',
+        [string[]]$RtrFields = 'aid','batch_get_cmd_req_id','batch_id','cloud_request_id','complete','errors',
             'error_message','name','offline_queued','progress','queued_command_offline','session_id','sha256',
-            'size','status','stderr','stdout','task_id')
+            'size','status','stderr','stdout','task_id'
     }
     process {
         foreach ($Result in ($Object | Select-Object $RtrFields)) {
             # Update 'Output' with populated result(s) from 'Object'
-            @($Result.PSObject.Properties | Where-Object { $_.Value -or $_.Value -is [boolean] }).foreach{
+            @($Result.PSObject.Properties).Where({ $_.Value -or $_.Value -is [boolean] }).foreach{
                 $Name = if ($_.Name -eq 'task_id') {
                     # Rename 'task_id' to 'cloud_request_id'
                     'cloud_request_id'
@@ -529,7 +529,7 @@ function Get-RtrResult {
                 # Update 'Output' with result using 'aid' or 'session_id'
                 $Match = if ($Result.aid) { 'aid' } else { 'session_id' }
                 if ($Result.$Match) {
-                    @($Output | Where-Object { $Result.$Match -eq $_.$Match }).foreach{
+                    @($Output).Where({ $Result.$Match -eq $_.$Match }).foreach{
                         Set-Property $_ $Name $Value
                     }
                 }
@@ -543,9 +543,9 @@ function Invoke-Falcon {
     param(
         [string]$Command,
         [string]$Endpoint,
-        [System.Collections.Hashtable]$Headers,
-        [System.Object]$Inputs,
-        [System.Object]$Format,
+        [hashtable]$Headers,
+        [object]$Inputs,
+        [hashtable]$Format,
         [switch]$RawOutput,
         [int32]$Max,
         [string]$HostUrl,
@@ -718,7 +718,7 @@ function Invoke-Falcon {
 function New-ShouldMessage {
     [CmdletBinding()]
     [OutputType([string[]])]
-    param ([System.Collections.Hashtable]$Object)
+    param ([hashtable]$Object)
     process {
         try {
             $Output = [PSCustomObject]@{}
@@ -809,7 +809,7 @@ function Select-Property {
 function Set-Property {
     [CmdletBinding()]
     [OutputType([void])]
-    param([System.Object]$Object,[string]$Name,[System.Object]$Value)
+    param([object]$Object,[string]$Name,[object]$Value)
     process {
         if ($Object.$Name) {
             # Update existing property
@@ -842,7 +842,7 @@ function Test-FqlStatement {
 }
 function Test-OutFile {
     [CmdletBinding()]
-    [OutputType([System.Collections.Hashtable])]
+    [OutputType([hashtable])]
     param([string]$Path)
     process {
         if (!$Path) {
@@ -902,7 +902,7 @@ function Test-RegexValue {
 }
 function Write-Result {
     [CmdletBinding()]
-    param([System.Object]$Request)
+    param([object]$Request)
     begin {
         function Write-Meta ($Object) {
             # Convert [array] and [PSCustomObject] into a flat Verbose output message
@@ -997,7 +997,7 @@ function Write-Result {
 }
 function Wait-RetryAfter {
     [CmdletBinding()]
-    param([System.Object]$Request)
+    param([object]$Request)
     process {
         if ($Request.Result.StatusCode -and $Request.Result.StatusCode.GetHashCode() -eq 429 -and
         $Request.Result.RequestMessage.RequestUri.AbsolutePath -ne '/oauth2/token') {
