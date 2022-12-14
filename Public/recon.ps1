@@ -621,7 +621,7 @@ Falcon Query Language expression to limit results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER HumanReadable
-Use property names that match the Falcon UI [default: True]
+Use property names that match the Falcon UI
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
 #>
@@ -634,13 +634,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
         [ValidateSet('csv','json',IgnoreCase=$false)]
         [Alias('export_type')]
         [string]$ExportType,
-        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Position=3)]
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=3)]
         [string]$Filter,
-        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Position=4)]
-        [ValidateSet('created_timestamp|asc','created_timestamp|desc','last_updated_timestamp|asc',
-            'last_updated_timestamp|desc',IgnoreCase=$false)]
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=4)]
         [string]$Sort,
-        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Position=5)]
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=5)]
         [Alias('human_readable')]
         [boolean]$HumanReadable
     )
@@ -838,6 +836,8 @@ function Receive-FalconReconExport {
 Download a Falcon Intelligence Recon export
 .DESCRIPTION
 Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
+.PARAMETER Path
+Destination path
 .PARAMETER Id
 Recon export job identifier
 .LINK
@@ -845,18 +845,35 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconReconExport
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/export-files/v1:get',SupportsShouldProcess)]
     param(
+        [Parameter(ParameterSetName='/recon/entities/export-files/v1:get',Mandatory,Position=1)]
+        [string]$Path,
         [Parameter(ParameterSetName='/recon/entities/export-files/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [string]$Id
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('id') }
+            Format = @{
+                Outfile = 'path'
+                Query = @('id')
+            }
+            Headers = @{ Accept = 'application/octet-stream' }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process {
+        $OutPath = Test-OutFile $PSBoundParameters.Path
+        if ($OutPath.Category -eq 'ObjectNotFound') {
+            Write-Error @OutPath
+        } elseif ($PSBoundParameters.Path) {
+            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+                Write-Error @OutPath
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
 }
 function Remove-FalconReconAction {
 <#
