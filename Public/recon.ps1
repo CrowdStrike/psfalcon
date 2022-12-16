@@ -614,12 +614,12 @@ Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 An array of jobs to submit in a single request
 .PARAMETER Entity
 Entity type
-.PARAMETER ExportType
-Export file format
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
 Property and direction to sort results
+.PARAMETER ExportType
+Export file format
 .PARAMETER HumanReadable
 Use property names that match the Falcon UI
 .LINK
@@ -631,12 +631,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
         [ValidateSet('notification-exposed-data-record',IgnoreCase=$false)]
         [string]$Entity,
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=2)]
-        [ValidateSet('csv','json',IgnoreCase=$false)]
-        [Alias('export_type')]
-        [string]$ExportType,
-        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=3)]
         [string]$Filter,
-        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=4)]
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=3)]
         [ValidateSet('author|asc','author|desc','author_id|asc','author_id|desc','cid|asc','cid|desc',
             'created_date|asc','created_date|desc','credentials_domain|asc','credentials_domain|desc',
             'credentials_ip|asc','credentials_ip|desc','display_name|asc','display_name|desc','domain|asc',
@@ -658,6 +654,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
             'user_id|asc','user_id|desc','user_ip|asc','user_ip|desc','user_name|asc','user_name|desc',
             'user_uuid|asc','user_uuid|desc',IgnoreCase=$false)]
         [string]$Sort,
+        [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=4)]
+        [ValidateSet('csv','json',IgnoreCase=$false)]
+        [Alias('export_type')]
+        [string]$ExportType,
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=5)]
         [Alias('human_readable')]
         [boolean]$HumanReadable
