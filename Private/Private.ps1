@@ -969,8 +969,8 @@ function Write-Result {
                     # Output single field
                     $Json.$ResponseFields
                 }
-            } elseif ($Json.meta) {
-                # Output 'meta' fields when nothing else is available
+            } elseif ($Json.meta -and !$Json.errors) {
+                # Output 'meta' fields when nothing else is available and no errors were produced
                 [string[]]$MetaFields = @($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
                     '^(entity|pagination|powered_by|query_time|trace_id)$' }).foreach{ $_.Name }
                 if ($MetaFields) { $Json.meta | Select-Object $MetaFields }
