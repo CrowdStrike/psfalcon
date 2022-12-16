@@ -560,6 +560,8 @@
     instead of before.
   * Added warning messages to [ApiClient]::Invoke() when 'X-Api-Deprecation' header responses are detected.
   * Updated reference policy Json files for 'Compare-FalconPreventionPhase'.
+  * Updated 'Invoke-Falcon' to output 'meta' content when no other results are available and no errors were
+    produced, to prevent certain endpoints from outputting 'errors' and 'meta' together.
 
 # Command Changes
 ## Updated to use their new respective v2 API endpoints:
