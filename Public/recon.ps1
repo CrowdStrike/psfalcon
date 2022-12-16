@@ -637,6 +637,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=3)]
         [string]$Filter,
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=4)]
+        [ValidateSet('author|asc','author|desc','author_id|asc','author_id|desc','cid|asc','cid|desc',
+            'created_date|asc','created_date|desc','credentials_domain|asc','credentials_domain|desc',
+            'credentials_ip|asc','credentials_ip|desc','display_name|asc','display_name|desc','domain|asc',
+            'domain|desc','email|asc','email|desc','email_domain|asc','email_domain|desc','exposure_date|asc',
+            'exposure_date|desc','file.complete_data_set|asc','file.complete_data_set|desc',
+            'financial.bank_account|asc','financial.bank_account|desc','financial.credit_card|asc',
+            'financial.credit_card|desc','financial.crypto_currency_addresses|asc',
+            'financial.crypto_currency_addresses|desc','hash_type|asc','hash_type|desc','id|asc','id|desc',
+            'impacted_domain|asc','impacted_domain|desc','impacted_ip|asc','impacted_ip|desc',
+            'location.country_code|asc','location.country_code|desc','location.postal_code|asc',
+            'location.postal_code|desc','login_id|asc','login_id|desc','notification_id|asc',
+            'notification_id|desc','phone_number|asc','phone_number|desc','rule.id|asc','rule.id|desc',
+            'rule.topic|asc','rule.topic|desc','site|asc','site|desc','site_id|asc','site_id|desc',
+            'social.aim_id|asc','social.aim_id|desc','social.facebook_id|asc','social.facebook_id|desc',
+            'social.icq_id|asc','social.icq_id|desc','social.instagram_id|asc','social.instagram_id|desc',
+            'social.msn_id|asc','social.msn_id|desc','social.skype_id|asc','social.skype_id|desc',
+            'social.twitter_id|asc','social.twitter_id|desc','social.vk_id|asc','social.vk_id|desc',
+            'social.vk_token|asc','social.vk_token|desc','source_category|asc','source_category|desc',
+            'user_id|asc','user_id|desc','user_ip|asc','user_ip|desc','user_name|asc','user_name|desc',
+            'user_uuid|asc','user_uuid|desc',IgnoreCase=$false)]
         [string]$Sort,
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=5)]
         [Alias('human_readable')]
