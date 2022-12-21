@@ -341,6 +341,9 @@
       'Find-FalconDuplicate'
       'Find-FalconHostname'
 
+      # psf-fwmgr
+      'ConvertTo-FalconFirewallRule'
+
       # psf-humio
       'Register-FalconEventCollector'
       'Send-FalconEvent'
@@ -527,6 +530,8 @@
   * Remove-FalconScheduledScan
   * Start-FalconScan
   * Stop-FalconScan
+  ### psf-fwmgr
+  * ConvertTo-FalconFirewallRule
   ### recon
   * Get-FalconReconExport
   * Get-FalconReconRecord
