@@ -1,15 +1,15 @@
 function Register-FalconEventCollector {
 <#
 .SYNOPSIS
-Define Humio ingestion endpoint and token for logging
+Define Falcon LogScale ingestion endpoint and token for logging
 .DESCRIPTION
-Once configured, the Humio destination can be used by PSFalcon but the module will not send events to Humio
+Once configured, the Falcon LogScale destination can be used by PSFalcon but the module will not send events to Falcon LogScale
 until 'Enable' options are chosen. 'Remove-FalconEventCollector' can be used to remove a configured destination
 and stop the transmission of events.
 .PARAMETER Uri
-Humio cloud
+Falcon LogScale cloud
 .PARAMETER Token
-Humio ingestion token
+Falcon LogScale ingestion token
 .PARAMETER Enable
 Define events to send to the collector
 .LINK
@@ -44,7 +44,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Register-FalconEventCollector
 function Send-FalconEvent {
 <#
 .SYNOPSIS
-Create Humio events from PSFalcon command results
+Create Falcon LogScale events from PSFalcon command results
 .DESCRIPTION
 Uses the pre-defined 'Path' and 'Token' values from 'Register-FalconEventCollector' to create events from the
 output provided by a PSFalcon command.
@@ -67,7 +67,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Send-FalconEvent
     process { if ($Object) { @($Object).foreach{ $List.Add($_) }}}
     end {
         if (!$Script:Falcon.Api.Collector.Uri -or !$Script:Falcon.Api.Collector.Token) {
-            throw "Humio destination has not been configured. Try 'Register-FalconEventCollector'."
+            throw "Falcon LogScale destination has not been configured. Try 'Register-FalconEventCollector'."
         } elseif ($List) {
             [object[]]$Events = @($List).foreach{
                 $Item = @{ timestamp = Get-Date -Format o; attributes = @{}}
@@ -102,7 +102,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Send-FalconEvent
 function Show-FalconEventCollector {
 <#
 .SYNOPSIS
-Display existing Humio ingestion endpoint and token
+Display existing Falcon LogScale ingestion endpoint and token
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Show-FalconEventCollector
 #>
@@ -116,7 +116,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Show-FalconEventCollector
 function Unregister-FalconEventCollector {
 <#
 .SYNOPSIS
-Remove an existing Humio ingestion endpoint and token
+Remove an existing Falcon LogScale ingestion endpoint and token
 .LINK
 https://github.com/CrowdStrike/psfalcon/wiki/Unregister-FalconEventCollector
 #>

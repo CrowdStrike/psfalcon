@@ -341,7 +341,7 @@
       # psf-fwmgr
       'ConvertTo-FalconFirewallRule'
 
-      # psf-humio
+      # psf-logscale
       'Register-FalconEventCollector'
       'Send-FalconEvent'
       'Show-FalconEventCollector'
@@ -546,6 +546,8 @@
 
 # General Changes
   * Renamed 'mobile-enrollment.ps1' to 'enrollments.ps1' to match URL prefix.
+  * Renamed 'psf-humio.ps1' to 'psf-logscale.ps1' to match product name change.
+  * Updated references of 'Humio' to 'Falcon LogScale'.
   * Created 'Select-Property' private function for validating the presence of specific properties within
     [object[]] values. This function is used to output error messages when the proper sub-property values (or
     string values themselves) are not found in objects submitted via the pipeline.
