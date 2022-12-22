@@ -7,7 +7,7 @@ Requires 'Prevention Policies: Read'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Compare-FalconPreventionPhase
+https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconPreventionPhase
 #>
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([PSCustomObject[]])]
@@ -117,7 +117,7 @@ Description for the policy that will be created
 .PARAMETER Id
 Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -170,7 +170,7 @@ Description for the policy that will be created
 .PARAMETER Id
 Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconFirewallPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconFirewallPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -230,7 +230,7 @@ Description for the policy that will be created
 .PARAMETER Id
 Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconPreventionPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconPreventionPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -283,7 +283,7 @@ Description for the policy that will be created
 .PARAMETER Id
 Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconResponsePolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconResponsePolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -336,7 +336,7 @@ Description for the policy that will be created
 .PARAMETER Id
 Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(

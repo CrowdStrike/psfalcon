@@ -15,7 +15,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
     param(
@@ -111,7 +111,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get',SupportsShouldProcess)]
     param(
@@ -194,7 +194,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get',SupportsShouldProcess)]
     param(
@@ -248,7 +248,7 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAction
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post',
         SupportsShouldProcess)]
@@ -308,7 +308,7 @@ Policy description
 .PARAMETER Settings
 Hashtable of policy settings
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
     param(
@@ -388,7 +388,7 @@ Requires 'Device Control Policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete',SupportsShouldProcess)]
     param(
@@ -428,7 +428,7 @@ Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Set-FalconDeviceControlPrecedence
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconDeviceControlPrecedence
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post',
         SupportsShouldProcess)]

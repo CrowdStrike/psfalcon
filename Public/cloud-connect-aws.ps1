@@ -7,7 +7,7 @@ Requires 'AWS Accounts: Write'.
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',
         SupportsShouldProcess)]
@@ -55,7 +55,7 @@ Maximum number of requests within 'RateLimitTime'
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
     param(
@@ -127,7 +127,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:get',SupportsShouldProcess)]
     param(
@@ -206,7 +206,7 @@ Retrieve global settings for Cloud AWS accounts in Falcon Discover
 .DESCRIPTION
 Requires 'AWS Accounts: Read'.
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get',SupportsShouldProcess)]
     param()
@@ -229,7 +229,7 @@ AWS region where the account containing cloudtrail logs resides
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:post',SupportsShouldProcess)]
     param(
@@ -334,7 +334,7 @@ AWS organization identifier
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:delete',SupportsShouldProcess)]
     param(
@@ -376,7 +376,7 @@ AWS account identifier containing cloudtrail logs
 .PARAMETER StaticExternalId
 Default external identifier to apply to AWS accounts
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post',SupportsShouldProcess)]
     param(

@@ -13,7 +13,7 @@ Falcon LogScale ingestion token
 .PARAMETER Enable
 Define events to send to the collector
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Register-FalconEventCollector
+https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
 #>
     [CmdletBinding()]
     [OutputType([void])]
@@ -51,7 +51,7 @@ output provided by a PSFalcon command.
 .PARAMETER Object
 PSFalcon command output
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Send-FalconEvent
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconEvent
 #>
     [CmdletBinding()]
     [OutputType([void])]
@@ -104,7 +104,7 @@ function Show-FalconEventCollector {
 .SYNOPSIS
 Display existing Falcon LogScale ingestion endpoint and token
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Show-FalconEventCollector
+https://github.com/crowdstrike/psfalcon/wiki/Show-FalconEventCollector
 #>
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
@@ -118,7 +118,7 @@ function Unregister-FalconEventCollector {
 .SYNOPSIS
 Remove an existing Falcon LogScale ingestion endpoint and token
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Unregister-FalconEventCollector
+https://github.com/crowdstrike/psfalcon/wiki/Unregister-FalconEventCollector
 #>
     [CmdletBinding()]
     param()

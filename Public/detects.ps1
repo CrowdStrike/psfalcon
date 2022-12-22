@@ -15,7 +15,7 @@ User identifier for assignment
 .PARAMETER Id
 Detection identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDetection
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
     param(
@@ -84,7 +84,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDetection
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
     param(
