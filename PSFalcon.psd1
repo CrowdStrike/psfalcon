@@ -120,14 +120,11 @@
       'Get-FalconFirewallEvent'
       'Get-FalconFirewallField'
       'Get-FalconFirewallGroup'
-      'Get-FalconFirewallLocation'
       'Get-FalconFirewallPlatform'
       'Get-FalconFirewallRule'
       'Get-FalconFirewallSetting'
       'New-FalconFirewallGroup'
       'Remove-FalconFirewallGroup'
-      'Remove-FalconFirewallLocation'
-      'Set-FalconFirewallLocationPrecedence'
       'Test-FalconFirewallPath'
 
       # identity-protection
@@ -501,9 +498,6 @@
   * Get-FalconDiscoverAwsLink
   * Receive-FalconDiscoverAwsScript
   ### fwmgr
-  * Get-FalconFirewallLocation
-  * Remove-FalconFirewallLocation
-  * Set-FalconFirewallLocationPrecedence
   * Test-FalconFirewallPath
   ### image-assessment
   * Get-FalconContainerVulnerability

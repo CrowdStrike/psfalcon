@@ -405,75 +405,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
-function Get-FalconFirewallLocation {
-<#
-.SYNOPSIS
-Search for Falcon Firewall Management locations
-.DESCRIPTION
-Requires 'Firewall Management: Read'.
-.PARAMETER Id
-Location identifier
-.PARAMETER Filter
-Falcon Query Language expression to limit results
-.PARAMETER Query
-Perform a generic substring search across available fields
-.PARAMETER Sort
-Property and direction to sort results
-.PARAMETER Limit
-Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
-.PARAMETER After
-Pagination token to retrieve the next set of results
-.PARAMETER Detailed
-Retrieve detailed information
-.PARAMETER All
-Repeat requests until all available results are retrieved
-.PARAMETER Total
-Display total result count instead of results
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/
-#>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/network-locations/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-details/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [Alias('ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get',Position=1)]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get',Position=2)]
-        [Alias('q')]
-        [string]$Query,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get',Position=3)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get',Position=4)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get')]
-        [string]$Offset,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get')]
-        [string]$After,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('filter','q','after','limit','sort','offset','ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
-}
 function Get-FalconFirewallPlatform {
 <#
 .SYNOPSIS
@@ -745,9 +676,9 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallGroup
     }
     process {
         if ($PSBoundParameters.Rule) {
-            [object[]]$PSBoundParameters.Rule = Confirm-Property 'name','description','enabled','platform_ids',
-                'direction','action','address_family','local_address','remote_address','protocol','local_port',
-                'remote_port','icmp','monitor','fields' $PSBoundParameters.Rule
+            [object[]]$PSBoundParameters.Rule = Confirm-Property 'action','address_family','description',
+                'direction','enabled','fields','icmp','local_address','local_port','log','monitor','name',
+                'protocol','remote_address','remote_port','temp_id' $PSBoundParameters.Rule
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
@@ -790,78 +721,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallGroup
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
-}
-function Remove-FalconFirewallLocation {
-<#
-.SYNOPSIS
-Remove Falcon Firewall Management locations
-.DESCRIPTION
-Requires 'Firewall Management: Write'.
-.PARAMETER Id
-Location identifier
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallLocation
-#>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [Alias('ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
-}
-function Set-FalconFirewallLocationPrecedence {
-<#
-.SYNOPSIS
-Set Falcon Firewall Management location precedence
-.DESCRIPTION
-Requires 'Firewall Management: Write'.
-.PARAMETER Cid
-Customer identifier
-.PARAMETER Comment
-Audit log comment
-.PARAMETER Id
-Location identifiers in desired precedence order
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFirewallLocationPrecedence
-#>
-    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations-precedence/v1:post',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-precedence/v1:post',Position=1)]
-        [string]$Cid,
-        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-precedence/v1:post',Position=2)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-precedence/v1:post',Mandatory,Position=3)]
-        [Alias('location_precedence')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{ root = @('cid','location_precedence') }
-                Query = @('comment')
-            }
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Test-FalconFirewallPath {
 <#
