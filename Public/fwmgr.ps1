@@ -733,7 +733,7 @@ Glob pattern
 .PARAMETER String
 Filepath string
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Test-FalconFirewallRulePath
+https://github.com/crowdstrike/psfalcon/wiki/Test-FalconFirewallPath
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rules/validate-filepath/v1:post',
         SupportsShouldProcess)]
