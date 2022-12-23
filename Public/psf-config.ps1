@@ -331,6 +331,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             if ($Msg) { Write-Host "[Import-FalconConfig] Imported from $($FilePath): $($Msg -join ', ')." }
             $Output
         }
+        function Invoke-CreateIoc ([object]$Object) {
+            foreach ($i in ($Object.Value.Import | & "New-Falcon$($Object.Key)")) {
+                if ($i.id) {
+                    # Track created Ioc
+                    Update-Id $i $Object.Key
+                    Add-Result Created $i $Object.Key
+                } elseif ($i.type -and $i.value -and $i.message) {
+                    @($Object.Value.Import).Where({ $_.type -eq $i.type -and $_.value -eq $i.value }).foreach{
+                        # Ignore failed Ioc
+                        Add-Result Ignored $_ $Object.Key -Comment $i.message
+                    }
+                }
+                # Remove created and failed Ioc from 'Import' using 'id' value
+                [string[]]$Remove = @($Object.Value.Import).Where({ $_.type -eq $i.type -and $_.value -eq
+                    $i.value }).id
+                $Object.Value.Import = @($Object.Value.Import).Where({ $Remove -notcontains $_.id })
+            }
+            # Repeat until 'Import' is empty
+            if ($Object.Value.Import) { Invoke-CreateIoc $Object }
+        }
         function Invoke-PolicyAction ([string]$Type,[string]$Action,[string]$PolicyId,[string]$GroupId) {
             try {
                 # Perform an action on a policy and output result
@@ -496,11 +516,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -ne 'FirewallRule' -and $_.Value.Import })) {
             if ($Pair.Key -eq 'Ioc') {
-                @($Pair.Value.Import | & "New-Falcon$($Pair.Key)").foreach{
-                    # Create Ioc
-                    Update-Id $_ $Pair.Key
-                    Add-Result Created $_ $Pair.Key
-                }
+                # Create Ioc
+                Invoke-CreateIoc $Pair
             } elseif ($Pair.Key -eq 'FirewallGroup') {
                 foreach ($Item in $Pair.Value.Import) {
                     [object]$FwGroup = $Item | Select-Object name,enabled,description,comment,rule_ids

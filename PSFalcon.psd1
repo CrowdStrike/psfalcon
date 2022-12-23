@@ -631,6 +631,8 @@
 ## Get-FalconUser
   * Added 'All' and 'Total' parameters. These were mistakenly missed in the 2.2.3 release.
   * Added maximum of 100 user ids per 'detailed' request.
+## Import-FalconConfig
+  * Added loop to retry creation of 'Ioc' items after excluding failures and those that were successfully created.
 ## New-FalconCompleteCase
   * Updated 'DetectionId' and 'IncidentId' to submit as hashtables with 'id' property, rather than an array of
     string values.
