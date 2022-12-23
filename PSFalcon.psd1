@@ -633,6 +633,7 @@
   * Added maximum of 100 user ids per 'detailed' request.
 ## Import-FalconConfig
   * Added loop to retry creation of 'Ioc' items after excluding failures and those that were successfully created.
+  * Updated to ensure that 'Created' results are not generated when creation of an 'Ioc' actually failed.
 ## New-FalconCompleteCase
   * Updated 'DetectionId' and 'IncidentId' to submit as hashtables with 'id' property, rather than an array of
     string values.
