@@ -284,6 +284,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
             # Filter to 'id' if supplied with 'detailed' objects
             [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
         }
+        if ($PSBoundParameters.GroupId -eq 'all') {
+            # Remove 'all' from 'GroupId', and remove 'GroupId' if 'all' was the only value
+            $PSBoundParameters.GroupId = @($PSBoundParameters.GroupId).Where({ $_ -ne 'all' })
+            if ([string]::IsNullOrEmpty($PSBoundParameters.GroupId)) { [void]$PSBoundParameters.Remove('GroupId') }
+        }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
                 if ($_ -notmatch '^[a-fA-F0-9]{32}$') { throw "'$_' is not a valid Host Group identifier." }

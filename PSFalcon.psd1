@@ -643,6 +643,11 @@
 ## New-FalconFirewallGroup
   * Added 'Validate' parameter to utilize new '/fwmgr/entities/rule-groups/validation/v1:post' endpoint.
   * Added 'Platform' parameter, with auto-complete using 'Get-FalconFirewallPlatform' for available values.
+## New-FalconIoaExclusion
+  * Added check to remove the value 'all' when submitted within 'GroupId'. While 'all' will allow the creation
+    of globally applied Machine Learning and Sensor Visibility exclusions, IOA exclusions expect no 'groups' 
+    value. This also fixes 'Import-FalconConfig' failing to create 'IoaExclusion' because 'all' being an invalid
+    Host Group identifier errors.
 ## New-FalconIoc
   * Modified how 'Filename' is submitted to prevent potential errors.
 ## New-FalconSubmission
