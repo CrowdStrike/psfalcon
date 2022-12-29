@@ -482,9 +482,9 @@
         PSData = @{
             Tags         = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
                 'Windows','Linux','MacOS')
-            LicenseUri   = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/LICENSE'
+            LicenseUri   = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
-            IconUri      = 'https://raw.githubusercontent.com/CrowdStrike/psfalcon/master/icon.png'
+            IconUri      = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
             ReleaseNotes = "@
 
 # New Commands
@@ -658,6 +658,8 @@
   * Changed parameter positions and removed pipeline support for 'Id'.
   * 'Cid' is now a required parameter due to the endpoint change. 'Cid' is included in a 'Get-FalconUser
     -Detailed' result.
+## Send-FalconCompleteAttachment
+  * Updated filename verification pattern and added check to ensure that filesize is less than 15MB.
 ## Send-FalconSample
   * Renamed parameter 'FileName' to 'Name' to match 'Send-FalconSampleArchive' when redirecting sample
     archives. 'FileName' was retained as an alias for 'Name'.
