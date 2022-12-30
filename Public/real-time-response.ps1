@@ -1416,7 +1416,7 @@ function Update-FalconSession {
 .SYNOPSIS
 Refresh a single-host or batch Real-time Response session to prevent expiration
 .DESCRIPTION
-Real-time Response sessions expire after 10 minutes by default. Any commands that were issued to a session that
+Real-time Response sessions expire after 5 minutes by default. Any commands that were issued to a session that
 take longer than 5 minutes will not return results without refreshing the session to keep it alive until the
 command process completes.
 
