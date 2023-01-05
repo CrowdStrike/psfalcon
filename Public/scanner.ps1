@@ -76,7 +76,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScanQuota
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta.quota
-        } else {
+        } elseif ($Request) {
             throw "Unable to retrieve QuickScan quota. Check client permissions."
         }
     }
