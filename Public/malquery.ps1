@@ -41,7 +41,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQueryQuota
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta
-        } else {
+        } elseif ($Request) {
             throw "Unable to retrieve MalQuery quota. Check client permissions."
         }
     }
