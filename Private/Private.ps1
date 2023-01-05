@@ -622,7 +622,7 @@ function Invoke-Falcon {
         }
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
             # Force initial authorization token request
-            Request-FalconToken
+            if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) { Request-FalconToken }
         }
         # Gather request parameters and split into groups
         $GetParam = @{}
