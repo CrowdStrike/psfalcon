@@ -56,12 +56,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAzureAccount
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',Mandatory,
             Position=1)]
-        [ValidatePattern('^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('client_id')]
         [string]$ClientId,
         [Parameter(ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [string]$Id
     )
     begin {
