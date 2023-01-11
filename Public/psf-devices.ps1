@@ -48,26 +48,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
         $FilterScript = "$(($Criteria).foreach{ "`$_.$($_)" } -join ' -and ')"
     }
     process {
-        [object[]]$HostArray = if (!$PSBoundParameters.Hosts) {
-            # Retreive Host details
-            Get-FalconHost -Detailed -All
-        } else {
-            $PSBoundParameters.Hosts
-        }
-        if ($HostArray) {
-            @($Required).foreach{
-                if (($HostArray | Get-Member -MemberType NoteProperty).Name -notcontains $_) {
-                    # Verify required properties are present
-                    throw "Missing required property '$_'."
+        if ($PSCmdlet.ShouldProcess('Find-FalconDuplicate','Get-FalconHost')) {
+            [object[]]$HostArray = if (!$PSBoundParameters.Hosts) {
+                # Retreive Host details
+                Get-FalconHost -Detailed -All -EA 0
+            } else {
+                $PSBoundParameters.Hosts
+            }
+            if ($HostArray) {
+                @($Required).foreach{
+                    if (($HostArray | Get-Member -MemberType NoteProperty).Name -notcontains $_) {
+                        # Verify required properties are present
+                        throw "Missing required property '$_'."
+                    }
+                }
+                $Param = @{
+                    # Group, sort and output result
+                    Object = $HostArray | Select-Object $Required | Where-Object -FilterScript {$FilterScript}
+                    GroupBy = $Criteria
+                }
+                $Output = Group-Selection @Param
+                if ($Output) {
+                    $Output
+                } else {
+                    $PSCmdlet.WriteWarning("[Find-FalconDuplicate] No duplicates found.")
                 }
             }
-            # Group, sort and output result
-            $Param = @{
-                Object = $HostArray | Select-Object $Required | Where-Object -FilterScript {$FilterScript}
-                GroupBy = $Criteria
-            }
-            $Output = Group-Selection @Param
-            if ($Output) { $Output } else { $PSCmdlet.WriteWarning("[Find-FalconDuplicate] No duplicates found.") }
         }
     }
 }
