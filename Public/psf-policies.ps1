@@ -23,11 +23,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconPreventionPhase
     }
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
+        if ($List -and $PSCmdlet.ShouldProcess('Compare-FalconPreventionPhase','Get-FalconPreventionPolicy')) {
             # Collect detailed policy information for unique identifiers
             $PolicyList = Get-FalconPreventionPolicy -Id ($List | Select-Object -Unique) -EA 0 | Select-Object id,
                 name,platform_name,prevention_settings | Sort-Object platform_name
-            $List | Where-Object { $PolicyList.id -notcontains $_ } | ForEach-Object {
+            @($List).Where({ $PolicyList.id -notcontains $_ }).foreach{
                 # Generate error when 'id' values were not found
                 Write-Error "'$_' was not found."
             }
@@ -130,27 +130,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconDeviceControlPolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconDeviceControlPolicy
-                if ($Clone.id) {
-                    $Clone.settings = $Policy.settings
-                    $Clone = $Clone | Edit-FalconDeviceControlPolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconDeviceControlPolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconDeviceControlPolicy','Get-FalconDeviceControlPolicy')) {
+            try {
+                $Policy = Get-FalconDeviceControlPolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconDeviceControlPolicy
+                    if ($Clone.id) {
+                        $Clone.settings = $Policy.settings
+                        $Clone = $Clone | Edit-FalconDeviceControlPolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconDeviceControlPolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -183,34 +187,38 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconFirewallPolicy
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconFirewallPolicy -Id $Id -Include settings
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
+        if ($PSCmdlet.ShouldProcess('Copy-FalconFirewallPolicy','Get-FalconFirewallPolicy')) {
+            try {
+                $Policy = Get-FalconFirewallPolicy -Id $Id -Include settings
                 if ($Policy) {
-                    $Clone = $Policy | New-FalconFirewallPolicy
-                    if ($Clone.id) {
-                        if ($Policy.settings) {
-                            $Policy.settings.policy_id = $Clone.id
-                            $Settings = $Policy.settings | Edit-FalconFirewallSetting
-                            if ($Settings) { $Settings = Get-FalconFirewallSetting -Id $Clone.id }
-                        }
-                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                            $Enable = $Clone.id | Invoke-FalconFirewallPolicyAction enable
-                            if ($Enable) {
-                                Set-Property $Enable settings $Settings
-                                $Enable
-                            } else {
-                                $Clone.enabled = $true
-                                Set-Property $Clone settings $Settings
-                                $Clone
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    if ($Policy) {
+                        $Clone = $Policy | New-FalconFirewallPolicy
+                        if ($Clone.id) {
+                            if ($Policy.settings) {
+                                $Policy.settings.policy_id = $Clone.id
+                                $Settings = $Policy.settings | Edit-FalconFirewallSetting
+                                if ($Settings) { $Settings = Get-FalconFirewallSetting -Id $Clone.id }
+                            }
+                            if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                                $Enable = $Clone.id | Invoke-FalconFirewallPolicyAction enable
+                                if ($Enable) {
+                                    Set-Property $Enable settings $Settings
+                                    $Enable
+                                } else {
+                                    $Clone.enabled = $true
+                                    Set-Property $Clone settings $Settings
+                                    $Clone
+                                }
                             }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -243,27 +251,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconPreventionPolicy
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconPreventionPolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconPreventionPolicy
-                if ($Clone.id) {
-                    $Clone.prevention_settings = $Policy.prevention_settings
-                    $Clone = $Clone | Edit-FalconPreventionPolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconPreventionPolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconPreventionPolicy','Get-FalconPreventionPolicy')) {
+            try {
+                $Policy = Get-FalconPreventionPolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconPreventionPolicy
+                    if ($Clone.id) {
+                        $Clone.prevention_settings = $Policy.prevention_settings
+                        $Clone = $Clone | Edit-FalconPreventionPolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconPreventionPolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -296,27 +308,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconResponsePolicy
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconResponsePolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconResponsePolicy
-                if ($Clone.id) {
-                    $Clone.settings = $Policy.settings
-                    $Clone = $Clone | Edit-FalconResponsePolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconResponsePolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconResponsePolicy','Get-FalconResponsePolicy')) {
+            try {
+                $Policy = Get-FalconResponsePolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconResponsePolicy
+                    if ($Clone.id) {
+                        $Clone.settings = $Policy.settings
+                        $Clone = $Clone | Edit-FalconResponsePolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconResponsePolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -349,27 +365,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconSensorUpdatePolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconSensorUpdatePolicy
-                if ($Clone.id) {
-                    $Clone.settings = $Policy.settings
-                    $Clone = $Clone | Edit-FalconSensorUpdatePolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconSensorUpdatePolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconSensorUpdatePolicy','Get-FalconSensorUpdatePolicy')) {
+            try {
+                $Policy = Get-FalconSensorUpdatePolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconSensorUpdatePolicy
+                    if ($Clone.id) {
+                        $Clone.settings = $Policy.settings
+                        $Clone = $Clone | Edit-FalconSensorUpdatePolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconSensorUpdatePolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
