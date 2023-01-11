@@ -40,13 +40,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
         }
     }
     process {
-        if ($PSBoundParameters.GroupId.id) {
-            # Filter to 'id' if supplied with 'detailed' objects
-            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-        }
-        if ($PSBoundParameters.GroupId) {
-            @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+        if ($PSCmdlet.ShouldProcess('Edit-FalconSvExclusion','Test-GroupId')) {
+            if ($PSBoundParameters.GroupId) {
+                if ($PSBoundParameters.GroupId.id) {
+                    # Filter to 'id' if supplied with 'detailed' objects
+                    [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+                }
+                @($PSBoundParameters.GroupId).foreach{
+                    if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
+                        throw "'$_' is not a valid Host Group identifier."
+                    }
+                }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
