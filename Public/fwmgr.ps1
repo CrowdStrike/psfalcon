@@ -86,29 +86,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
         }
     }
     process {
-        ($Param.Format.Body.root | Where-Object { $_ -notmatch '^(diff_operations|id)$' }).foreach{
-            if (!$PSBoundParameters.$_) {
-                # When not provided, add required fields using existing rule group
-                if (!$Group) { $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {}}
-                $PSBoundParameters[$_] = if ($_ -eq 'rulegroup_version') {
-                    if ($Group.version) { $Group.version } else { 0 }
-                } elseif ($_ -eq 'rule_versions') {
-                    if ($PSBoundParameters.RuleId) {
-                        (Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version
-                    } else {
-                        (Get-FalconFirewallRule -Id $Group.rule_ids).version
+        if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallGroup','Get-FalconFirewallGroup')) {
+            @($Param.Format.Body.root).Where({ $_ -notmatch '^(diff_operations|id)$' }).foreach{
+                if (!$PSBoundParameters.$_) {
+                    # When not provided, add required fields using existing rule group
+                    if (!$Group) {
+                        $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {}
                     }
-                } else {
-                    $Group.$_
+                    $PSBoundParameters[$_] = if ($_ -eq 'rulegroup_version') {
+                        if ($Group.version) { $Group.version } else { 0 }
+                    } elseif ($_ -eq 'rule_versions') {
+                        if ($PSBoundParameters.RuleId) {
+                            (Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version
+                        } else {
+                            (Get-FalconFirewallRule -Id $Group.rule_ids).version
+                        }
+                    } else {
+                        $Group.$_
+                    }
                 }
             }
+            if (!$PSBoundParameters.Tracking) {
+                throw "Unable to obtain 'tracking' value from rule group '$($PSBoundParameters.Id)'."
+            }
         }
-        if (!$PSBoundParameters.Tracking) {
-            throw "Unable to obtain 'tracking' value from rule group '$($PSBoundParameters.Id)'."
-        } else {
-            $PSBoundParameters['diff_type'] = 'application/json-patch+json'
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        $PSBoundParameters['diff_type'] = 'application/json-patch+json'
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Edit-FalconFirewallSetting {
@@ -193,11 +196,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
         }
     }
     process {
-        ($Param.Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
-            # When not provided, add required fields using existing policy settings
-            if (!$PSBoundParameters.$_) {
-                if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
-                if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
+        if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallSetting','Get-FalconFirewallPolicy')) {
+            ($Param.Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
+                # When not provided, add required fields using existing policy settings
+                if (!$PSBoundParameters.$_) {
+                    if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
+                    if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
+                }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
