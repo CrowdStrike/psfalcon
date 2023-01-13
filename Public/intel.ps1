@@ -16,12 +16,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Fields
 Specific fields, or a predefined collection name surrounded by two underscores [default: _basic_]
-.PARAMETER Format
-Export file format for Mitre ATT&CK information
 .PARAMETER Offset
 Position to begin retrieving results
-.PARAMETER Mitre
-Retrieve Mitre ATT&CK information for a given actor
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -35,9 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
     param(
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
-        [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [Alias('Ids','actor_id')]
+        [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=1)]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=1)]
@@ -61,14 +55,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=2)]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=5)]
         [string[]]$Fields,
-        [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=2)]
-        [ValidateSet('csv','json',IgnoreCase=$false)]
-        [string]$Format,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get')]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory)]
-        [switch]$Mitre,
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Mandatory)]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get')]
@@ -81,22 +70,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','limit','ids','filter','offset','fields','q','actor_id','format') }
+            Format = @{ Query = @('sort','limit','ids','filter','offset','fields','q') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
-    process {
-        if ($Mitre) {
-            $PSBoundParameters['actor_id'] = $PSBoundParameters.Id
-            [void]$PSBoundParameters.Remove('Id')
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        } elseif ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        }
-    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        if (!$Mitre) { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Get-FalconCve {
