@@ -128,7 +128,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAttck
             Format = if ($PSCmdlet.ParameterSetName -eq '/intel/entities/mitre/v1:post') {
                 @{ Body = @{ root = @('ids') }}
             } else {
-                @{ Query = @('id','actor_id') }
+                @{ Query = @('id') }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
