@@ -16,6 +16,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Fields
 Specific fields, or a predefined collection name surrounded by two underscores [default: _basic_]
+.PARAMETER Include
+Include additional information
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -55,6 +57,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=2)]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=5)]
         [string[]]$Fields,
+        [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=6)]
+        [ValidateSet('tactic_and_technique',IgnoreCase=$false)]
+        [string]$Include,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get')]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get')]
         [int32]$Offset,
@@ -77,7 +83,70 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        if ($Include) {
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if (!$Request.slug) { $Request = $Request | & $MyInvocation.MyCommand.Name | Select-Object id,slug }
+            @($Request).foreach{
+                $Attck = try { [string[]](Get-FalconAttck -Slug $_.slug -EA 0) } catch { [string[]]@() }
+                if ($Attck -and $PSBoundParameters.Detailed) {
+                    $Attck = try { [object[]]($Attck | Get-FalconAttck -EA 0) } catch { [object[]]@() }
+                }
+                $_.PSObject.Properties.Add((New-Object PSNoteProperty('tactic_and_technique',$Attck)))
+            }
+            $Request
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+}
+function Get-FalconAttck {
+<#
+.SYNOPSIS
+Search for Mitre ATT&CK tactic and technique information related to specific actors
+.DESCRIPTION
+Requires 'Actors (Falcon Intelligence): Read'.
+.PARAMETER Id
+Tactic and technique identifier, by actor
+.PARAMETER Slug
+Actor identifier ('slug')
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAttck
+#>
+    [CmdletBinding(DefaultParameterSetName='/intel/queries/mitre/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/intel/entities/mitre/v1:post',Mandatory,ValueFromPipeline)]
+        [Alias('ids')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/intel/queries/mitre/v1:get',Mandatory,Position=1)]
+        [Alias('actor_id')]
+        [string]$Slug
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = if ($PSCmdlet.ParameterSetName -eq '/intel/entities/mitre/v1:post') {
+                @{ Body = @{ root = @('ids') }}
+            } else {
+                @{ Query = @('id','actor_id') }
+            }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ $List.Add($_) }
+        } else {
+            $PSBoundParameters['id'] = $PSBoundParameters.Slug
+            [void]$PSBoundParameters.Remove('Slug')
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconCve {

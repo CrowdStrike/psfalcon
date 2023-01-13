@@ -145,6 +145,7 @@
 
       # intel
       'Get-FalconActor'
+      'Get-FalconAttck'
       'Get-FalconCve'
       'Get-FalconIndicator'
       'Get-FalconIntel'
