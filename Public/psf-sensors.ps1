@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
         [string[]]$Tag,
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
@@ -194,7 +194,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
     param(
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
@@ -319,7 +319,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
         [string[]]$Tag,
         [Parameter(Position=2)]
         [boolean]$QueueOffline,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
         [string[]]$Id
@@ -494,12 +494,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
     param(
         [Parameter(Position=1)]
         [boolean]$QueueOffline,
-        [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=2)]
+        [Parameter(Position=2)]
         [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
             'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
             'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('HostId','device_id','host_ids','aid')]
         [string]$Id

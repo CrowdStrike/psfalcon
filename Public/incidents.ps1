@@ -21,12 +21,12 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconBehavior
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^ind:[a-fA-F0-9]{32}:(\d|\-)+$')]
         [Alias('Ids','behavior_id')]
         [string[]]$Id,
@@ -88,12 +88,12 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconIncident
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('Ids','incident_id')]
         [string[]]$Id,
@@ -154,7 +154,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconScore
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get',SupportsShouldProcess)]
     param(
@@ -200,7 +200,7 @@ Replace existing status for related detections
 .PARAMETER Id
 Incident identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconIncidentAction
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post',SupportsShouldProcess)]
     param(
@@ -216,8 +216,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconIncidentAction
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Position=4)]
         [Alias('overwrite_detects')]
         [boolean]$OverwriteDetects,
-        [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=5)]
+        [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
         [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [Alias('Ids','incident_id')]
         [string[]]$Id

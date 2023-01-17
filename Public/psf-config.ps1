@@ -331,6 +331,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             if ($Msg) { Write-Host "[Import-FalconConfig] Imported from $($FilePath): $($Msg -join ', ')." }
             $Output
         }
+        function Invoke-CreateIoc ([object]$Object) {
+            foreach ($i in ($Object.Value.Import | & "New-Falcon$($Object.Key)")) {
+                if ($i.id) {
+                    # Track created Ioc
+                    Update-Id $i $Object.Key
+                    Add-Result Created $i $Object.Key
+                } elseif ($i.type -and $i.value -and $i.message) {
+                    @($Object.Value.Import).Where({ $_.type -eq $i.type -and $_.value -eq $i.value }).foreach{
+                        # Ignore failed Ioc
+                        Add-Result Ignored $_ $Object.Key -Comment $i.message
+                    }
+                }
+                # Remove created and failed Ioc from 'Import' using 'id' value
+                [string[]]$Remove = @($Object.Value.Import).Where({ $_.type -eq $i.type -and $_.value -eq
+                    $i.value }).id
+                $Object.Value.Import = @($Object.Value.Import).Where({ $Remove -notcontains $_.id })
+            }
+            # Repeat until 'Import' is empty
+            if ($Object.Value.Import) { Invoke-CreateIoc $Object }
+        }
         function Invoke-PolicyAction ([string]$Type,[string]$Action,[string]$PolicyId,[string]$GroupId) {
             try {
                 # Perform an action on a policy and output result
@@ -426,7 +446,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                         'Exists'
                     } elseif ($Item.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $Item.value })) {
                         'Exists'
-                    } elseif ($Pair.Value.Cid | Where-Object { $_.name -eq $Item.name }) {
+                    } elseif ($Item.name -and ($Pair.Value.Cid | Where-Object { $_.name -eq $Item.name })) {
                         'Exists'
                     }
                     if ($Comment -and $ModifyExisting -notcontains $Pair.Key) {
@@ -448,16 +468,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 foreach ($Item in @($Pair.Value.Import + $Pair.Value.Modify)) {
                     # Update tagged builds with current tagged build versions
                     if ($Item.settings.build -match '^\d+\|') {
-                        [string]$Tag = ($Item.settings.build -split '\|',2)[-1]
-                        [string]$Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
+                        $Tag = ($Item.settings.build -split '\|',2)[-1]
+                        $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
                             $Item.platform_name }).build
                         if ($Item.settings.build -ne $Current) { $Item.settings.build = $Current }
                     }
                     if ($Item.settings.variants) {
                         # Update tagged 'variant' builds with current tagged build versions
-                        @($Item.settings.variants | Where-Object { $_.build }).foreach{
-                            [string]$Tag = ($_.build -split '\|',2)[-1]
-                            [string]$Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and
+                        @($Item.settings.variants | Where-Object { $_.build -match '^\d+\|' }).foreach{
+                            $Tag = ($_.build -split '\|',2)[-1]
+                            $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and
                                 $_.platform -eq $Item.platform_name }).build
                             if ($_.build -ne $Current) { $_.build = $Current }
                         }
@@ -496,11 +516,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -ne 'FirewallRule' -and $_.Value.Import })) {
             if ($Pair.Key -eq 'Ioc') {
-                @($Pair.Value.Import | & "New-Falcon$($Pair.Key)").foreach{
-                    # Create Ioc
-                    Update-Id $_ $Pair.Key
-                    Add-Result Created $_ $Pair.Key
-                }
+                # Create Ioc
+                Invoke-CreateIoc $Pair
             } elseif ($Pair.Key -eq 'FirewallGroup') {
                 foreach ($Item in $Pair.Value.Import) {
                     [object]$FwGroup = $Item | Select-Object name,enabled,description,comment,rule_ids

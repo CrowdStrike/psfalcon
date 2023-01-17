@@ -22,12 +22,12 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
     [CmdletBinding()]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
-        [System.Object]$Detection
+        [object]$Detection
     )
-    begin { [System.Collections.Generic.List[object]]$Output = @() }
+    begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
     process {
-        if ($_.behaviors -and $_.device) {
-            @($_.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
+        if ($Detection.behaviors -and $Detection.device) {
+            @($Detection.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
                 $Output.Add(([PSCustomObject]@{
                     value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
                     excluded_from = @('blocking')
@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
             }
         } else {
             foreach ($Property in @('behaviors','device')) {
-                if (!$_.$Property) {
+                if (!$Detection.$Property) {
                     throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
                 }
             }
@@ -87,13 +87,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
         }
     }
     process {
-        if ($PSBoundParameters.GroupId.id) {
-            # Filter to 'id' if supplied with 'detailed' objects
-            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-        }
-        if ($PSBoundParameters.GroupId) {
-            @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+        if ($PSCmdlet.ShouldProcess('Edit-FalconMlExclusion','Test-GroupId')) {
+            if ($PSBoundParameters.GroupId) {
+                if ($PSBoundParameters.GroupId.id) {
+                    # Filter to 'id' if supplied with 'detailed' objects
+                    [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+                }
+                @($PSBoundParameters.GroupId).foreach{
+                    if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
+                        throw "'$_' is not a valid Host Group identifier."
+                    }
+                }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -126,8 +130,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Mandatory)]
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Mandatory)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -240,8 +244,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Position=1)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id

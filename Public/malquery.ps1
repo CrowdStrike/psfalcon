@@ -11,8 +11,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/requests/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('Ids')]
         [string]$Id
@@ -41,7 +41,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQueryQuota
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta
-        } else {
+        } elseif ($Request) {
             throw "Unable to retrieve MalQuery quota. Check client permissions."
         }
     }
@@ -59,8 +59,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/metadata/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -96,7 +96,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Group-FalconMalQuerySample
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/malquery/entities/samples-multidownload/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('samples','sample','ids')]
         [string[]]$Id
@@ -244,7 +244,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalQuerySample
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,Position=1)]
         [string]$Path,
         [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^([A-Fa-f0-9]{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
         [Alias('Ids')]
         [string]$Id,
@@ -296,10 +296,9 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Search-FalconMalQueryHash
 #>
-    [CmdletBinding(DefaultParameterSetName='/malquery/queries/hunt/v1:post',SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/malquery/queries/hunt/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Sha256
     )

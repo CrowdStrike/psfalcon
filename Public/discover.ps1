@@ -31,12 +31,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
 #>
     [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/discover/entities/hosts/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/discover/entities/accounts/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/discover/entities/hosts/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
+        [Parameter(ParameterSetName='/discover/entities/accounts/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
+        [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_\w+$')]
         [Alias('Ids')]
         [string[]]$Id,

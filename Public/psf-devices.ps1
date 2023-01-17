@@ -48,26 +48,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
         $FilterScript = "$(($Criteria).foreach{ "`$_.$($_)" } -join ' -and ')"
     }
     process {
-        [object[]]$HostArray = if (!$PSBoundParameters.Hosts) {
-            # Retreive Host details
-            Get-FalconHost -Detailed -All
-        } else {
-            $PSBoundParameters.Hosts
-        }
-        if ($HostArray) {
-            @($Required).foreach{
-                if (($HostArray | Get-Member -MemberType NoteProperty).Name -notcontains $_) {
-                    # Verify required properties are present
-                    throw "Missing required property '$_'."
+        if ($PSCmdlet.ShouldProcess('Find-FalconDuplicate','Get-FalconHost')) {
+            [object[]]$HostArray = if (!$PSBoundParameters.Hosts) {
+                # Retreive Host details
+                Get-FalconHost -Detailed -All -EA 0
+            } else {
+                $PSBoundParameters.Hosts
+            }
+            if ($HostArray) {
+                @($Required).foreach{
+                    if (($HostArray | Get-Member -MemberType NoteProperty).Name -notcontains $_) {
+                        # Verify required properties are present
+                        throw "Missing required property '$_'."
+                    }
+                }
+                $Param = @{
+                    # Group, sort and output result
+                    Object = $HostArray | Select-Object $Required | Where-Object -FilterScript {$FilterScript}
+                    GroupBy = $Criteria
+                }
+                $Output = Group-Selection @Param
+                if ($Output) {
+                    $Output
+                } else {
+                    $PSCmdlet.WriteWarning("[Find-FalconDuplicate] No duplicates found.")
                 }
             }
-            # Group, sort and output result
-            $Param = @{
-                Object = $HostArray | Select-Object $Required | Where-Object -FilterScript {$FilterScript}
-                GroupBy = $Criteria
-            }
-            $Output = Group-Selection @Param
-            if ($Output) { $Output } else { $PSCmdlet.WriteWarning("[Find-FalconDuplicate] No duplicates found.") }
         }
     }
 }
@@ -76,13 +82,17 @@ function Find-FalconHostname {
 .SYNOPSIS
 Find hosts using a list of hostnames
 .DESCRIPTION
-Performs an exact match hostname search in groups of 20.
+Perform hostname searches in groups of 20.
 
 Requires 'Hosts: Read'.
 .PARAMETER Array
-An array containing one or more hostnames
+An array containing hostnames
+.PARAMETER Include
+Include additional properties
+.PARAMETER Partial
+Perform a non-exact search
 .PARAMETER Path
-Path to a plaintext file containing hostnames
+Path to a plain text file containing hostnames
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
 #>
@@ -97,6 +107,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
             }
         })]
         [string]$Path,
+        [Parameter(ParameterSetName='Path',Position=2)]
+        [Parameter(ParameterSetName='Array',Position=2)]
+        [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
+            'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
+            'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
+        [string[]]$Include,
+        [Parameter(ParameterSetName='Path')]
+        [Parameter(ParameterSetName='Array')]
+        [switch]$Partial,
         [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
         [string[]]$Array
     )
@@ -106,6 +125,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
         } else {
             [System.Collections.Generic.List[string]]$List = @()
         }
+        [string[]]$Select = 'device_id','hostname'
+        if ($Include) { $Select += $Include }
     }
     process { if ($Array) { @($Array).foreach{ $List.Add($_) }}}
     end {
@@ -117,11 +138,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
         for ($i = 0; $i -lt ($Hostnames | Measure-Object).Count; $i += 20) {
             [string[]]$TempList = $Hostnames[$i..($i + 19)]
             [string]$Filter = (@($TempList).foreach{
-                if (![string]::IsNullOrEmpty($_)) { "hostname:['$_']" }
+                if (![string]::IsNullOrEmpty($_)) {
+                    if ($Partial) { "hostname:'$_'" } else { "hostname:['$_']" }
+                }
             }) -join ','
-            [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object hostname,device_id
+            [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object $Select
             @($TempList).foreach{
-                if ($HostList.hostname -notcontains $_) {
+                if (($Partial -and $HostList.hostname -notlike "$_*") -or (!$Partial -and
+                $HostList.hostname -notcontains $_)) {
                     $PSCmdlet.WriteWarning("[Find-FalconHostname] No match found for '$_'.")
                 }
             }

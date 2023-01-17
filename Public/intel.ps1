@@ -16,6 +16,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Fields
 Specific fields, or a predefined collection name surrounded by two underscores [default: _basic_]
+.PARAMETER Include
+Include additional information
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -29,8 +31,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=1)]
@@ -55,6 +57,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=2)]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=5)]
         [string[]]$Fields,
+        [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=6)]
+        [ValidateSet('tactic_and_technique',IgnoreCase=$false)]
+        [string]$Include,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get')]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get')]
         [int32]$Offset,
@@ -73,6 +79,135 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
             Format = @{ Query = @('sort','limit','ids','filter','offset','fields','q') }
         }
         [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        if ($Include) {
+            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if (!$Request.slug) { $Request = $Request | & $MyInvocation.MyCommand.Name | Select-Object id,slug }
+            @($Request).foreach{
+                $Attck = try { [string[]](Get-FalconAttck -Slug $_.slug -EA 0) } catch { [string[]]@() }
+                if ($Attck -and $PSBoundParameters.Detailed) {
+                    $Attck = try { [object[]]($Attck | Get-FalconAttck -EA 0) } catch { [object[]]@() }
+                }
+                $_.PSObject.Properties.Add((New-Object PSNoteProperty('tactic_and_technique',$Attck)))
+            }
+            $Request
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+}
+function Get-FalconAttck {
+<#
+.SYNOPSIS
+Search for Mitre ATT&CK tactic and technique information related to specific actors
+.DESCRIPTION
+Requires 'Actors (Falcon Intelligence): Read'.
+.PARAMETER Id
+Tactic and technique identifier, by actor
+.PARAMETER Slug
+Actor identifier ('slug')
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAttck
+#>
+    [CmdletBinding(DefaultParameterSetName='/intel/queries/mitre/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/intel/entities/mitre/v1:post',Mandatory,ValueFromPipeline)]
+        [Alias('ids')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/intel/queries/mitre/v1:get',Mandatory,Position=1)]
+        [Alias('actor_id')]
+        [string]$Slug
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = if ($PSCmdlet.ParameterSetName -eq '/intel/entities/mitre/v1:post') {
+                @{ Body = @{ root = @('ids') }}
+            } else {
+                @{ Query = @('id') }
+            }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process {
+        if ($Id) {
+            @($Id).foreach{ $List.Add($_) }
+        } else {
+            $PSBoundParameters['id'] = $PSBoundParameters.Slug
+            [void]$PSBoundParameters.Remove('Slug')
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+    end {
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
+    }
+}
+function Get-FalconCve {
+<#
+.SYNOPSIS
+Search for Falcon Intelligence CVE reports
+.DESCRIPTION
+Requires 'Vulnerabilities (Falcon Intelligence): Read'.
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
+#>
+    [CmdletBinding(DefaultParameterSetName='/intel/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/intel/entities/vulnerabilities/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Alias('ids')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=1)]
+        [string]$Filter,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=2)]
+        [Alias('q')]
+        [string]$Query,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=3)]
+        [string]$Sort,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=4)]
+        [int]$Limit,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [string]$Offset,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [switch]$Detailed,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
+        [switch]$Total
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Body = @{ root = @('ids') }
+                Query = @('q','offset','sort','limit','filter')
+            }
+        }
+    [System.Collections.Generic.List[string]]$List = @()
     }
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
@@ -98,6 +233,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER IncludeDeleted
 Include previously deleted indicators
+.PARAMETER IncludeRelation
+Include related indicators
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -111,8 +248,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/indicators/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/indicators/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/indicators/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=1)]
@@ -137,6 +274,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
         [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=5)]
         [Alias('include_deleted')]
         [boolean]$IncludeDeleted,
+        [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=6)]
+        [Alias('include_relations')]
+        [boolean]$IncludeRelation,
         [Parameter(ParameterSetName='/intel/queries/indicators/v1:get')]
         [Parameter(ParameterSetName='/intel/combined/indicators/v1:get')]
         [int32]$Offset,
@@ -153,7 +294,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('sort','limit','filter','offset','include_deleted','q')
+                Query = @('sort','limit','filter','offset','include_deleted','q','include_relations')
                 Body = @{ root = @('ids') }
             }
         }
@@ -196,8 +337,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/reports/v1:get',Position=1)]
@@ -285,8 +426,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^\d{4,}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -397,7 +538,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
 function Receive-FalconRule {
 <#
 .SYNOPSIS
-Download the most recent ruleset,or a specific ruleset
+Download the most recent ruleset, or a specific ruleset
 .DESCRIPTION
 Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Type
@@ -421,8 +562,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
         [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=2)]
         [ValidatePattern('\.(gz|gzip|zip)$')]
         [string]$Path,
-        [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=2)]
         [int32]$Id,
         [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get')]
         [switch]$Force

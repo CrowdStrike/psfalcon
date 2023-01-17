@@ -27,8 +27,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=3)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -40,13 +40,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
         }
     }
     process {
-        if ($PSBoundParameters.GroupId.id) {
-            # Filter to 'id' if supplied with 'detailed' objects
-            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-        }
-        if ($PSBoundParameters.GroupId) {
-            @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+        if ($PSCmdlet.ShouldProcess('Edit-FalconSvExclusion','Test-GroupId')) {
+            if ($PSBoundParameters.GroupId) {
+                if ($PSBoundParameters.GroupId.id) {
+                    # Filter to 'id' if supplied with 'detailed' objects
+                    [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+                }
+                @($PSBoundParameters.GroupId).foreach{
+                    if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
+                        throw "'$_' is not a valid Host Group identifier."
+                    }
+                }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -79,8 +83,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sv-exclusions/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -183,8 +187,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSvExclusion
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:delete',Position=1)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [Alias('Ids')]
         [string[]]$Id
     )

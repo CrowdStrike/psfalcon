@@ -198,7 +198,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         [Parameter(ParameterSetName='GroupId_File',Position=3)]
         [Parameter(ParameterSetName='HostId_Archive',Position=4)]
         [Parameter(ParameterSetName='GroupId_Archive',Position=4)]
-        [ValidateRange(1,600)]
+        [ValidateRange(30,600)]
         [int32]$Timeout,
         [Parameter(ParameterSetName='HostId_File',Position=4)]
         [Parameter(ParameterSetName='GroupId_File',Position=4)]
@@ -218,8 +218,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('id')]
         [string]$GroupId,
-        [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('HostIds','device_id','host_ids','aid')]
         [string[]]$HostId
@@ -358,11 +358,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
             # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
             if (Test-Path $FilePath -PathType Leaf) { Update-CloudFile $PutFile $FilePath }
             try {
-                # Force a base timeout of 30 to ensure a batch session
+                # Force a base timeout of 30
                 if (!$Timeout) { $Timeout = 30 }
                 for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 1000) {
-                    # Start Real-time Response sessions in groups of 1,000 with 'Timeout' to force batch
-                    $Param = @{ Id = @($Hosts[$i..($i + 999)].device_id); Timeout = $Timeout }
+                    # Start Real-time Response sessions in groups of 1,000 with 'HostTimeout' to force batch
+                    $Param = @{
+                        Id = @($Hosts[$i..($i + 999)].device_id)
+                        Timeout = $Timeout
+                        HostTimeout = ($Timeout - 5)
+                    }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
                     $Session = Start-FalconSession @Param
                     [string[]]$SessionIds = if ($Session.batch_id) {
@@ -544,7 +548,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         [Parameter(ParameterSetName='GroupId',Mandatory)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
-        [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('device_id','host_ids','aid','HostIds')]
         [string[]]$HostId
@@ -585,12 +589,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                     }
                 }
             }
-            # Force a base timeout of 30 to ensure a batch session
+            # Force a base timeout of 30
             if (!$Timeout) { $Timeout = 30 }
             for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 10000) {
                 # Start batch Real-time Response session in groups of 10,000
                 $Output = $Hosts[$i..($i + 9999)]
-                $Init = @{ Id = $Output.aid; Timeout = $Timeout }
+                $Init = @{ Id = $Output.aid; Timeout = $Timeout; HostTimeout = ($Timeout - 5) }
                 if ($QueueOffline) { $Init['QueueOffline'] = $QueueOffline }
                 $InitReq = Start-FalconSession @Init
                 if ($InitReq.batch_id -or $InitReq.session_id) {
@@ -605,7 +609,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                     }
                     # Determine PSFalcon command, execute and capture result
                     [string]$Invoke = Get-RtrCommand $Command
-                    $Cmd = @{ Command = $Command; Timeout = $Timeout }
+                    $Cmd = @{ Command = $Command; Timeout = $Timeout; HostTimeout = ($Timeout - 5) }
                     if ($Argument) { $Cmd['Argument'] = $Argument }
                     if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
                     $CmdReq = $InitReq | & $Invoke @Cmd
@@ -628,9 +632,4 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         }
     }
 }
-$Register = @{
-    CommandName = 'Invoke-FalconRtr'
-    ParameterName = 'Command'
-    ScriptBlock = { Get-RtrCommand }
-}
-Register-ArgumentCompleter @Register
+Register-ArgumentCompleter -CommandName Invoke-FalconRtr -ParameterName Command -ScriptBlock {Get-RtrCommand}

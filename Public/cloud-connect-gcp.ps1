@@ -17,8 +17,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
         [ValidateSet('full','dry',IgnoreCase=$false)]
         [Alias('scan-type')]
         [string]$ScanType,
-        [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^\d{10,}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -53,8 +53,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:post',
         SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('parent_id')]
         [string]$ParentId

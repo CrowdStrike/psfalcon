@@ -222,7 +222,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Revoke-FalconToken
             Write-Result $Request
             [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
         }
-        @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove($_) }
+        @('ClientId','ClientSecret','MemberCid').foreach{
+            if ($Script:Falcon.$_) { [void]$Script:Falcon.Remove($_) }
+        }
     }
 }
 function Test-FalconToken {

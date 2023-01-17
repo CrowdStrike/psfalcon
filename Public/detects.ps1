@@ -15,7 +15,7 @@ User identifier for assignment
 .PARAMETER Id
 Detection identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDetection
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
     param(
@@ -34,8 +34,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDetection
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('assigned_to_uuid','uuid')]
         [string]$AssignedToUuid,
-        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=5)]
+        [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=5)]
         [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [Alias('Ids','detection_id','detection_ids')]
         [string[]]$Id
@@ -84,12 +84,12 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDetection
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [Alias('Ids','detection_id','detection_ids')]
         [string[]]$Id,

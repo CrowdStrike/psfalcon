@@ -29,10 +29,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/queries/scheduled-reports/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/reports/entities/scheduled-reports/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/reports/entities/scheduled-reports/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -111,7 +111,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconScheduledReport
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -151,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconScheduledReport
         [Alias('result_metadata','last_execution')]
         [object]$Path,
         [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=2)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string]$Id,
@@ -212,7 +212,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconScheduledReport
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/reports/entities/report-executions-retry/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )

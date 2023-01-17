@@ -86,21 +86,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('id','body','detections','incidents') }}
         }
-        [System.Collections.Generic.List[string]]$LdtList = @()
-        [System.Collections.Generic.List[string]]$IncList = @()
+        [System.Collections.Generic.List[hashtable]]$LdtList = @()
+        [System.Collections.Generic.List[hashtable]]$IncList = @()
     }
     process {
         if ($DetectionId -or $IncidentId) {
-            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add($_) }}
-            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add($_) }}
+            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add(@{ id = $_ }) }}
+            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add(@{ id = $_ }) }}
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
         if ($LdtList -or $IncList) {
-            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList | Select-Object -Unique }
-            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList | Select-Object -Unique }
+            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList }
+            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -135,7 +135,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activities/GET/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Mandatory,Position=1)]
@@ -204,8 +204,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('Ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=1)]
@@ -315,21 +315,21 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
                 Body = @{ root = @('body','detections','incidents','title','type','user_uuid') }
             }
         }
-        [System.Collections.Generic.List[string]]$LdtList = @()
-        [System.Collections.Generic.List[string]]$IncList = @()
+        [System.Collections.Generic.List[hashtable]]$LdtList = @()
+        [System.Collections.Generic.List[hashtable]]$IncList = @()
     }
     process {
         if ($DetectionId -or $IncidentId) {
-            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add($_) }}
-            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add($_) }}
+            if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add(@{ id = $_ }) }}
+            if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add(@{ id = $_ }) }}
         } else {
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
     end {
         if ($LdtList -or $IncList) {
-            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList | Select-Object -Unique }
-            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList | Select-Object -Unique }
+            if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList }
+            if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -354,12 +354,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCompleteAttachment
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,Position=1)]
         [string]$Path,
-        [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [string]$Id,
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get')]
         [switch]$Force
-
     )
     begin {
         $Param = @{
@@ -403,14 +402,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]
-        [ValidatePattern('\.(bmp|csv|doc|docx|gif|jpg|jpeg|pdf|png|pptx|txt|xls|xlsx)$')]
+        [ValidatePattern('\.(bmp|csv|doc(x?)|gif|jp(e?)g|pdf|png|ppt(x?)|txt|xls(x?))$')]
         [ValidateScript({
             if (Test-Path $_ -PathType Leaf) {
                 $Leaf = Split-Path $_ -Leaf
-                if ($Leaf -match '\W') {
+                if ($Leaf -notmatch '^[a-z0-9-_\.\s]+$') {
                     throw 'Filename contains invalid characters.'
-                } elseif (((Split-Path $_ -Leaf) -Split '.')[0].Length -gt 255) {
+                } elseif (($Leaf -Split '.')[0].Length -gt 255) {
                     throw 'Maximum filename length is 255 characters.'
+                } elseif ((Get-Item $_).Length/15MB -ge 1) {
+                    throw 'Maximum filesize is 15MB.'
                 } else {
                     $true
                 }

@@ -27,8 +27,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/alerts/entities/alerts/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}:(aggind|ind):[a-fA-F0-9]{32}:.+$')]
         [Alias('Ids','composite_id')]
         [string[]]$Id,
@@ -93,8 +93,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
         [string]$Name,
         [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Position=2)]
         [string]$Value,
-        [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}:(aggind|ind):[a-fA-F0-9]{32}:.+$')]
         [Alias('Ids','composite_id')]
         [string[]]$Id

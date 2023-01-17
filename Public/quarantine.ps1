@@ -23,12 +23,12 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconQuarantine
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -89,7 +89,7 @@ Audit log comment
 .PARAMETER Id
 Quarantined file identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconQuarantineAction
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch',
         SupportsShouldProcess)]
@@ -107,8 +107,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconQuarantineAction
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Position=2)]
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Position=4)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -137,7 +137,7 @@ Requires 'Quarantined Files: Write'.
 .PARAMETER Filter
 Falcon Query Language statement
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Test-FalconQuarantineAction
+https://github.com/crowdstrike/psfalcon/wiki/Test-FalconQuarantineAction
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/aggregates/action-update-count/v1:get',
         SupportsShouldProcess)]

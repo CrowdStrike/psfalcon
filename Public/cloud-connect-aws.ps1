@@ -7,13 +7,13 @@ Requires 'AWS Accounts: Write'.
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
+https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^\d{12}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -55,7 +55,7 @@ Maximum number of requests within 'RateLimitTime'
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
     param(
@@ -110,56 +110,60 @@ Search for Falcon Discover for Cloud AWS accounts
 Requires 'AWS Accounts: Read'.
 .PARAMETER Id
 AWS account identifier
-.PARAMETER Filter
-Falcon Query Language expression to limit results
-.PARAMETER Sort
-Property and direction to sort results
+.PARAMETER OrganizationId
+AWS organization identifier
+.PARAMETER ScanType
+Scan type
+.PARAMETER Status
+AWS account status
+.PARAMETER Migrated
+Account migration status
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
-.PARAMETER Detailed
-Retrieve detailed information
 .PARAMETER All
 Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('Ids')]
+        [Alias('ids')]
         [string[]]$Id,
-        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',Position=1)]
-        [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Position=1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Position=2)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get',Position=3)]
-        [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=1)]
+        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
+        [Alias('organization-ids')]
+        [string[]]$OrganizationId,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=2)]
+        [ValidateSet('full','dry',IgnoreCase=$false)]
+        [Alias('scan-type')]
+        [string]$ScanType,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=3)]
+        [ValidateSet('provisioned','operational',IgnoreCase=$false)]
+        [string]$Status,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=4)]
+        [boolean]$Migrated,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=5)]
         [ValidateRange(1,500)]
         [int32]$Limit,
-        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get')]
-        [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get')]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
         [int32]$Offset,
-        [Parameter(ParameterSetName='/cloud-connect-aws/combined/accounts/v1:get',Mandatory)]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
         [switch]$All,
-        [Parameter(ParameterSetName='/cloud-connect-aws/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
         [switch]$Total
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','ids','offset','limit','filter') }
+            Format = @{ Query = @('migrated','ids','scan-type','status','limit','organization-ids','offset') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -169,14 +173,40 @@ https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
+function Get-FalconDiscoverAwsLink {
+<#
+.SYNOPSIS
+Retrieve previously generated Falcon Discover AWS CloudFormation links
+.DESCRIPTION
+Requires 'AWS Accounts: Read'.
+.PARAMETER Region
+AWS region
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
+#>
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',Position=1)]
+        [string]$Region
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('region') }
+        }
+    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
 function Get-FalconDiscoverAwsSetting {
 <#
 .SYNOPSIS
-Retrieve Global Settings Falcon Discover for Cloud AWS accounts
+Retrieve global settings for Cloud AWS accounts in Falcon Discover
 .DESCRIPTION
 Requires 'AWS Accounts: Read'.
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get',SupportsShouldProcess)]
     param()
@@ -188,60 +218,43 @@ function New-FalconDiscoverAwsAccount {
 Provision Falcon Discover for Cloud AWS Accounts
 .DESCRIPTION
 Requires 'AWS Accounts: Write'.
-.PARAMETER Mode
-Provisioning mode [default: manual]
-.PARAMETER ExternalId
-AWS account identifier with cross-account IAM role access
-.PARAMETER IamRoleArn
-Full ARN of the IAM role created in the AWS account to control access
-.PARAMETER CloudtrailBucketOwnerId
-AWS account identifier containing cloudtrail logs
-.PARAMETER CloudtrailBucketRegion
+.PARAMETER OrganizationId
+AWS organization identifier
+.PARAMETER AccountType
+AWS account type
+.PARAMETER IsMaster
+AWS master account status
+.PARAMETER CloudtrailRegion
 AWS region where the account containing cloudtrail logs resides
-.PARAMETER RateLimitTime
-Number of seconds between requests defined by 'RateLimitReq'
-.PARAMETER RateLimitReq
-Maximum number of requests within 'RateLimitTime'
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidateSet('cloudformation','manual',IgnoreCase=$false)]
-        [string]$Mode,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('external_id')]
-        [string]$ExternalId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
-            ValueFromPipelineByPropertyName,Position=3)]
-        [Alias('iam_role_arn')]
-        [string]$IamRoleArn,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
-            ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('cloudtrail_bucket_owner_id')]
-        [string]$CloudtrailBucketOwnerId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+            Position=1)]
+        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
+        [Alias('organization_id')]
+        [string]$OrganizationId,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+            Position=2)]
+        [ValidateSet('commercial','gov',IgnoreCase=$false)]
+        [Alias('account_type')]
+        [string]$AccountType,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+            Position=3)]
+        [Alias('is_master')]
+        [boolean]$IsMaster,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+            Position=4)]
+        [Alias('cloudtrail_region')]
+        [string]$CloudtrailRegion,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=5)]
-        [Alias('cloudtrail_bucket_region')]
-        [string]$CloudtrailBucketRegion,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
-            ValueFromPipelineByPropertyName,Position=6)]
-        [Alias('rate_limit_time')]
-        [int64]$RateLimitTime,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',
-            ValueFromPipelineByPropertyName,Position=7)]
-        [Alias('rate_limit_reqs','RateLimitReqs')]
-        [int32]$RateLimitReq,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=8)]
         [ValidatePattern('^\d{12}$')]
+        [Alias('account_id')]
         [string]$Id
     )
     begin {
@@ -249,13 +262,66 @@ https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('mode')
-                Body = @{ resources = @('rate_limit_time','external_id','rate_limit_reqs',
-                    'cloudtrail_bucket_region','iam_role_arn','id','cloudtrail_bucket_owner_id') }
+                Body = @{
+                    resources = @('account_id','account_type','cloudtrail_region','is_master','organization_id')
+                }
             }
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
+function Receive-FalconDiscoverAwsScript {
+<#
+.SYNOPSIS
+Download a Bash script which grants Falcon Discover access using the AWS CLI
+.DESCRIPTION
+Requires 'AWS Accounts: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Id
+AWS Account identifier
+.PARAMETER Force
+Overwrite existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
+#>
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
+            Position=1)]
+        [string]$Path,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+        [Alias('ids','account_id')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get')]
+        [switch]$Force
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Headers = @{ Accept = 'application/octet-stream' }
+            Format = @{
+                Query = @('ids')
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
+        $OutPath = Test-OutFile $PSBoundParameters.Path
+        if ($OutPath.Category -eq 'ObjectNotFound') {
+            Write-Error @OutPath
+        } elseif ($PSBoundParameters.Path) {
+            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+                Write-Error @OutPath
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
 }
 function Remove-FalconDiscoverAwsAccount {
 <#
@@ -263,24 +329,31 @@ function Remove-FalconDiscoverAwsAccount {
 Remove Falcon Discover for Cloud AWS accounts
 .DESCRIPTION
 Requires 'AWS Accounts: Write'.
+.PARAMETER OrganizationId
+AWS organization identifier
 .PARAMETER Id
 AWS account identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:delete',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:delete',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
+        [Alias('organization-ids')]
+        [string[]]$OrganizationId,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^\d{12}$')]
-        [Alias('Ids')]
+        [Alias('ids')]
         [string[]]$Id
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
+            Format = @{ Query = @('ids','organization-ids') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -303,7 +376,7 @@ AWS account identifier containing cloudtrail logs
 .PARAMETER StaticExternalId
 Default external identifier to apply to AWS accounts
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post',SupportsShouldProcess)]
     param(

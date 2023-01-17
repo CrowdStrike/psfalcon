@@ -7,12 +7,12 @@ Requires 'Prevention Policies: Read'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Compare-FalconPreventionPhase
+https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconPreventionPhase
 #>
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([PSCustomObject[]])]
     param(
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -23,11 +23,11 @@ https://github.com/CrowdStrike/psfalcon/wiki/Compare-FalconPreventionPhase
     }
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
+        if ($List -and $PSCmdlet.ShouldProcess('Compare-FalconPreventionPhase','Get-FalconPreventionPolicy')) {
             # Collect detailed policy information for unique identifiers
             $PolicyList = Get-FalconPreventionPolicy -Id ($List | Select-Object -Unique) -EA 0 | Select-Object id,
                 name,platform_name,prevention_settings | Sort-Object platform_name
-            $List | Where-Object { $PolicyList.id -notcontains $_ } | ForEach-Object {
+            @($List).Where({ $PolicyList.id -notcontains $_ }).foreach{
                 # Generate error when 'id' values were not found
                 Write-Error "'$_' was not found."
             }
@@ -111,13 +111,13 @@ description is not supplied, the description from the existing policy will be us
 
 Requires 'Device Control Policies: Read', 'Device Control Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -125,32 +125,36 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconDeviceControlPolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconDeviceControlPolicy
-                if ($Clone.id) {
-                    $Clone.settings = $Policy.settings
-                    $Clone = $Clone | Edit-FalconDeviceControlPolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconDeviceControlPolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconDeviceControlPolicy','Get-FalconDeviceControlPolicy')) {
+            try {
+                $Policy = Get-FalconDeviceControlPolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconDeviceControlPolicy
+                    if ($Clone.id) {
+                        $Clone.settings = $Policy.settings
+                        $Clone = $Clone | Edit-FalconDeviceControlPolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconDeviceControlPolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -164,13 +168,13 @@ description is not supplied, the description from the existing policy will be us
 
 Requires 'Firewall Management: Read', 'Firewall Management: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconFirewallPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconFirewallPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -178,39 +182,43 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconFirewallPolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconFirewallPolicy -Id $Id -Include settings
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
+        if ($PSCmdlet.ShouldProcess('Copy-FalconFirewallPolicy','Get-FalconFirewallPolicy')) {
+            try {
+                $Policy = Get-FalconFirewallPolicy -Id $Id -Include settings
                 if ($Policy) {
-                    $Clone = $Policy | New-FalconFirewallPolicy
-                    if ($Clone.id) {
-                        if ($Policy.settings) {
-                            $Policy.settings.policy_id = $Clone.id
-                            $Settings = $Policy.settings | Edit-FalconFirewallSetting
-                            if ($Settings) { $Settings = Get-FalconFirewallSetting -Id $Clone.id }
-                        }
-                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                            $Enable = $Clone.id | Invoke-FalconFirewallPolicyAction enable
-                            if ($Enable) {
-                                Set-Property $Enable settings $Settings
-                                $Enable
-                            } else {
-                                $Clone.enabled = $true
-                                Set-Property $Clone settings $Settings
-                                $Clone
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    if ($Policy) {
+                        $Clone = $Policy | New-FalconFirewallPolicy
+                        if ($Clone.id) {
+                            if ($Policy.settings) {
+                                $Policy.settings.policy_id = $Clone.id
+                                $Settings = $Policy.settings | Edit-FalconFirewallSetting
+                                if ($Settings) { $Settings = Get-FalconFirewallSetting -Id $Clone.id }
+                            }
+                            if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                                $Enable = $Clone.id | Invoke-FalconFirewallPolicyAction enable
+                                if ($Enable) {
+                                    Set-Property $Enable settings $Settings
+                                    $Enable
+                                } else {
+                                    $Clone.enabled = $true
+                                    Set-Property $Clone settings $Settings
+                                    $Clone
+                                }
                             }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -224,13 +232,13 @@ supplied, the description from the existing policy will be used.
 
 Requires 'Prevention Policies: Read', 'Prevention Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconPreventionPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconPreventionPolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -238,32 +246,36 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconPreventionPolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconPreventionPolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconPreventionPolicy
-                if ($Clone.id) {
-                    $Clone.prevention_settings = $Policy.prevention_settings
-                    $Clone = $Clone | Edit-FalconPreventionPolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconPreventionPolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconPreventionPolicy','Get-FalconPreventionPolicy')) {
+            try {
+                $Policy = Get-FalconPreventionPolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconPreventionPolicy
+                    if ($Clone.id) {
+                        $Clone.prevention_settings = $Policy.prevention_settings
+                        $Clone = $Clone | Edit-FalconPreventionPolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconPreventionPolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -277,13 +289,13 @@ is not supplied, the description from the existing policy will be used.
 
 Requires 'Response Policies: Read', 'Response Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconResponsePolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconResponsePolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -291,32 +303,36 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconResponsePolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconResponsePolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconResponsePolicy
-                if ($Clone.id) {
-                    $Clone.settings = $Policy.settings
-                    $Clone = $Clone | Edit-FalconResponsePolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconResponsePolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconResponsePolicy','Get-FalconResponsePolicy')) {
+            try {
+                $Policy = Get-FalconResponsePolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconResponsePolicy
+                    if ($Clone.id) {
+                        $Clone.settings = $Policy.settings
+                        $Clone = $Clone | Edit-FalconResponsePolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconResponsePolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }
@@ -330,13 +346,13 @@ not supplied, the description from the existing policy will be used.
 
 Requires 'Sensor Update Policies: Read', 'Sensor Update Policies: Write'.
 .PARAMETER Name
-Policy name
+Name for the policy that will be created
 .PARAMETER Description
-Policy description
+Description for the policy that will be created
 .PARAMETER Id
-Policy identifier
+Identifier of policy to be copied
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
+https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -344,32 +360,36 @@ https://github.com/CrowdStrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
         [string]$Name,
         [Parameter(Position=2)]
         [string]$Description,
-        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
     process {
-        try {
-            $Policy = Get-FalconSensorUpdatePolicy -Id $Id
-            if ($Policy) {
-                @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
-                $Clone = $Policy | New-FalconSensorUpdatePolicy
-                if ($Clone.id) {
-                    $Clone.settings = $Policy.settings
-                    $Clone = $Clone | Edit-FalconSensorUpdatePolicy
-                    if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-                        $Enable = $Clone.id | Invoke-FalconSensorUpdatePolicyAction enable
-                        if ($Enable) {
-                            $Enable
-                        } else {
-                            $Clone.enabled = $true
-                            $Clone
+        if ($PSCmdlet.ShouldProcess('Copy-FalconSensorUpdatePolicy','Get-FalconSensorUpdatePolicy')) {
+            try {
+                $Policy = Get-FalconSensorUpdatePolicy -Id $Id
+                if ($Policy) {
+                    @('Name','Description').foreach{
+                        if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
+                    }
+                    $Clone = $Policy | New-FalconSensorUpdatePolicy
+                    if ($Clone.id) {
+                        $Clone.settings = $Policy.settings
+                        $Clone = $Clone | Edit-FalconSensorUpdatePolicy
+                        if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
+                            $Enable = $Clone.id | Invoke-FalconSensorUpdatePolicyAction enable
+                            if ($Enable) {
+                                $Enable
+                            } else {
+                                $Clone.enabled = $true
+                                $Clone
+                            }
                         }
                     }
                 }
+            } catch {
+                throw $_
             }
-        } catch {
-            throw $_
         }
     }
 }

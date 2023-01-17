@@ -25,8 +25,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScan
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/scanner/entities/scans/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/scanner/entities/scans/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -76,7 +76,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScanQuota
         $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta.quota
-        } else {
+        } elseif ($Request) {
             throw "Unable to retrieve QuickScan quota. Check client permissions."
         }
     }
@@ -99,8 +99,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconQuickScan
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/entities/scans/v1:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/scanner/entities/scans/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/scanner/entities/scans/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [Alias('samples','Ids','sha256')]
         [string[]]$Id

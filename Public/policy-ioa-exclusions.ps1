@@ -26,12 +26,12 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
     [CmdletBinding()]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
-        [System.Object]$Detection
+        [object]$Detection
     )
-    begin { [System.Collections.Generic.List[object]]$Output = @() }
+    begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
     process {
-        if ($_.behaviors -and $_.device) {
-            @($_.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
+        if ($Detection.behaviors -and $Detection.device) {
+            @($Detection.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
                 $Output.Add(([PSCustomObject]@{
                     pattern_id = $_.behavior_id
                     pattern_name = $_.display_name
@@ -43,7 +43,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
             }
         } else {
             foreach ($Property in @('behaviors','device')) {
-                if (!$_.$Property) {
+                if (!$Detection.$Property) {
                     throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
                 }
             }
@@ -69,6 +69,10 @@ Host group identifier or 'all' to apply to all hosts
 Exclusion description
 .PARAMETER Comment
 Audit log comment
+.PARAMETER PatternId
+Indicator of Attack pattern identifier
+.PARAMETER PatternName
+Indicator of Attack pattern name
 .PARAMETER Id
 Exclusion identifier
 .LINK
@@ -97,8 +101,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=6)]
         [string]$Comment,
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=7)]
+        [Alias('pattern_id')]
+        [string]$PatternId,
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+            Position=8)]
+        [Alias('pattern_name')]
+        [string]$PatternName,
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',Mandatory,
-            ValueFromPipeline,ValueFromPipelineByPropertyName,Position=7)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^([a-fA-F0-9]{32}|all)$')]
         [string]$Id
     )
@@ -107,18 +119,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Body = @{ root = @('cl_regex','ifn_regex','groups','name','id','description','comment') }
+                Body = @{
+                    root = @('cl_regex','ifn_regex','groups','name','id','description','comment','pattern_id',
+                        'pattern_name')
+                }
             }
         }
     }
     process {
-        if ($PSBoundParameters.GroupId.id) {
-            # Filter to 'id' if supplied with 'detailed' objects
-            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-        }
-        if ($PSBoundParameters.GroupId) {
-            @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+        if ($PSCmdlet.ShouldProcess('Edit-FalconIoaExclusion','Test-GroupId')) {
+            if ($PSBoundParameters.GroupId) {
+                if ($PSBoundParameters.GroupId.id) {
+                    # Filter to 'id' if supplied with 'detailed' objects
+                    [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
+                }
+                @($PSBoundParameters.GroupId).foreach{
+                    if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
+                        throw "'$_' is not a valid Host Group identifier."
+                    }
+                }
             }
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
@@ -151,8 +170,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ioa-exclusions/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -269,6 +288,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
             # Filter to 'id' if supplied with 'detailed' objects
             [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
         }
+        if ($PSBoundParameters.GroupId -eq 'all') {
+            # Remove 'all' from 'GroupId', and remove 'GroupId' if 'all' was the only value
+            $PSBoundParameters.GroupId = @($PSBoundParameters.GroupId).Where({ $_ -ne 'all' })
+            if ([string]::IsNullOrEmpty($PSBoundParameters.GroupId)) { [void]$PSBoundParameters.Remove('GroupId') }
+        }
         if ($PSBoundParameters.GroupId) {
             @($PSBoundParameters.GroupId).foreach{
                 if ($_ -notmatch '^[a-fA-F0-9]{32}$') { throw "'$_' is not a valid Host Group identifier." }
@@ -294,8 +318,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Position=1)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id

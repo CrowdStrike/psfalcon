@@ -84,8 +84,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerImage
 #>
     [CmdletBinding(DefaultParameterSetName='/images/{id}:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/images/{id}:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/images/{id}:delete',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline,Position=1)]
         [object]$Id
     )
     begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; HostUrl = Get-ContainerUrl }}

@@ -15,7 +15,7 @@ Policy description
 .PARAMETER Setting
 Policy settings
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
     param(
@@ -60,8 +60,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.settings.classes.exceptions) {
                     @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
                         # Remove exception 'id' values from 'settings' object
@@ -112,12 +111,12 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id,
@@ -195,14 +194,14 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+        [Parameter(ParameterSetName='/policy/combined/device-control-members/v1:get',
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id,
         [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',Position=2)]
@@ -249,7 +248,7 @@ Host group identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAction
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post',
         SupportsShouldProcess)]
@@ -262,8 +261,8 @@ https://github.com/CrowdStrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAct
         [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Position=2)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$GroupId,
-        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Id
     )
@@ -309,7 +308,7 @@ Policy description
 .PARAMETER Settings
 Hashtable of policy settings
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
     param(
@@ -356,8 +355,7 @@ https://github.com/CrowdStrike/psfalcon/wiki/New-FalconDeviceControlPolicy
     }
     process {
         if ($Array) {
-            @($Array).foreach{
-                $i = $_
+            foreach ($i in $Array) {
                 if ($i.settings.classes.exceptions) {
                     @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
                         # Remove exception 'id' values from 'settings' object
@@ -390,12 +388,12 @@ Requires 'Device Control Policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/policy/entities/device-control/v1:delete',Mandatory,ValueFromPipeline,
-            ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/policy/entities/device-control/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids')]
         [string[]]$Id
@@ -430,7 +428,7 @@ Operating system platform
 .PARAMETER Id
 Policy identifiers in desired precedence order
 .LINK
-https://github.com/CrowdStrike/psfalcon/wiki/Set-FalconDeviceControlPrecedence
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconDeviceControlPrecedence
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-precedence/v1:post',
         SupportsShouldProcess)]
