@@ -11,9 +11,11 @@ Additional host information can be appended to the results using the 'Include' p
 
 Requires 'Real Time Response: Read', 'Real Time Response: Write' and 'Real Time Response (Admin): Write'.
 .PARAMETER Days
-Days worth of results to retrieve [default: 7]
+Number of days worth of sessions to retrieve [default: 7]
 .PARAMETER Include
 Include additional properties
+.PARAMETER HostId
+Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
 #>
@@ -26,88 +28,101 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
             'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
             'product_type_desc','reduced_functionality_mode','serial_number','system_manufacturer',
             'system_product_name','tags',IgnoreCase=$false)]
-        [string[]]$Include
+        [string[]]$Include,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [string[]]$HostId
     )
     begin {
-        $Days = if ($PSBoundParameters.Days) { $PSBoundParameters.Days } else { 7 }
-        # Properties to capture from request results
+        # Default to 7 days if not provided
+        if (!$Days) { $Days = 7 }
         $Select = @{
-            Session = @('aid','user_id','user_uuid','id','created_at','deleted_at','status')
-            Command = @('stdout','stderr','complete')
+            # Properties to select from requests and/or objects
+            Session = 'aid','user_id','user_uuid','id','created_at','deleted_at','status'
+            Command = 'stdout','stderr','complete'
+            Output = 'aid','user_id','user_uuid','session_id','session_created_at','session_deleted_at',
+                'session_status','cloud_request_id','command_created_at','command_updated_at',
+                'command_deleted_at','base_command','command_string','command_status','command_complete',
+                'command_stdout','command_stderr'
         }
-        # Define output path
+        # Set output filepath and base FQL query
         $Csv = Join-Path (Get-Location).Path "FalconQueue_$(Get-Date -Format FileDateTime).csv"
+        $BaseFql = "commands_queued:1+(deleted_at:null,created_at:>'now-$($Days)d')"
+        if ($HostId) { [System.Collections.Generic.List[string]]$List = @() }
     }
-    process {
-        try {
-            $SessionParam = @{
-                Filter = "(deleted_at:null+commands_queued:1),(created_at:>'last $Days days'+commands_queued:1)"
-                Detailed = $true
-                All = $true
+    process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
+    end {
+        [string[]]$Filter = if ($List) {
+            $List = $List | Where-Object { ![string]::IsNullOrEmpty($_) } | Select-Object -Unique
+            for ($i = 0; $i -lt $List.Count; $i += 17) {
+                # Create individual filter statements for groups of host identifiers
+                [string]$IdList = "($((@($List[$i..($i + 16)]).foreach{ "aid:'$_'" }) -join ','))"
+                $BaseFql,$IdList -join '+'
             }
-            $Sessions = Get-FalconSession @SessionParam | Select-Object id,device_id
-            if (-not $Sessions) { throw "No queued Real-time Response sessions available." }
-            Write-Host "[Get-FalconQueue] Found $(($Sessions | Measure-Object).Count) queued sessions..."
-            [object[]]$HostInfo = if ($Include) {
-                # Capture host information for eventual output
-                $Sessions.device_id | Get-FalconHost | Select-Object @($Include + 'device_id')
-            }
-            foreach ($Session in ($Sessions.id | Get-FalconSession -Queue)) {
-                Write-Host "[Get-FalconQueue] Retrieved command detail for $($Session.id)..."
-                @($Session.Commands).foreach{
-                    # Create output for each individual command in queued session
-                    $Obj = [PSCustomObject]@{}
+        } else {
+            $BaseFql
+        }
+        @($Filter).foreach{
+            @(Get-FalconSession -Filter $_ -Detailed -All | Select-Object id,device_id).foreach{
+                [object[]]$HostList = if ($Include) {
+                    # Retrieve host information for hosts involved in sessions
+                    $_.device_id | Get-FalconHost -EA 0 | Select-Object @($Include + 'device_id')
+                }
+                foreach ($Session in ($_.id | Get-FalconSession -Queue)) {
+                    # Create base output for each queued session
+                    $BaseObj = @{}
                     @($Session | Select-Object $Select.Session).foreach{
                         @($_.PSObject.Properties).foreach{
-                            # Add session properties with 'session' prefix
                             $Name = if ($_.Name -match '^(id|(created|deleted|updated)_at|status)$') {
-                                "session_$($_.Name)"
+                                # Prefix session-related columns
+                                'session',$_.Name -join '_'
                             } else {
                                 $_.Name
                             }
-                            Set-Property $Obj $Name $_.Value
+                            $BaseObj[$Name] = $_.Value
                         }
                     }
-                    @($_.PSObject.Properties).foreach{
-                        # Add command properties
-                        $Name = if ($_.Name -match '^((created|deleted|updated)_at|status)$') {
-                            "command_$($_.Name)"
-                        } else {
-                            $_.Name
-                        }
-                        Set-Property $Obj $Name $_.Value
-                    }
-                    if ($Obj.command_status -eq 'FINISHED') {
-                        # Update command properties with results
-                        Write-Host "[Get-FalconQueue] Retrieving command result for cloud_request_id '$(
-                            $Obj.cloud_request_id)'..."
-                        $ConfirmCmd = Get-RtrCommand $Obj.base_command -ConfirmCommand
-                        @($Obj.cloud_request_id | & $ConfirmCmd -EA 4 | Select-Object $Select.Command).foreach{
-                            @($_.PSObject.Properties).foreach{ Set-Property $Obj "command_$($_.Name)" $_.Value }
-                        }
-                    } else {
-                        @('command_complete','command_stdout','command_stderr').foreach{
-                            # Add empty command output
-                            $Value = if ($_ -eq 'command_complete') { $false } else { $null }
-                            Set-Property $Obj $_ $Value
-                        }
-                    }
-                    if ($Include -and $HostInfo) {
-                        @($HostInfo.Where({ $_.device_id -eq $Obj.aid })).foreach{
+                    if ($Include -and $HostList) {
+                        @($HostList.Where({ $_.device_id -eq $BaseObj.aid })).foreach{
                             @($_.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
-                                # Add 'Include' properties
-                                Set-Property $Obj $_.Name $_.Value
+                                # Append 'Include' properties to base output
+                                $BaseObj[$_.Name] = $_.Value
                             }
                         }
                     }
-                    try { $Obj | Export-Csv $Csv -NoTypeInformation -Append } catch { $Obj }
+                    @($Session.commands).foreach{
+                        # Build upon base output for each command
+                        $Obj = $BaseObj.Clone()
+                        @($_.PSObject.Properties).foreach{
+                            $Name = if ($_.Name -match '^((created|deleted|updated)_at|status)$') {
+                                # Prefix command-related columns
+                                'command',$_.Name -join '_'
+                            } else {
+                                $_.Name
+                            }
+                            $Obj[$Name] = $_.Value
+                        }
+                        if ($Obj.command_status -eq 'FINISHED') {
+                            [string]$ConfirmCmd = Get-RtrCommand $Obj.base_command -ConfirmCommand
+                            @($Obj.cloud_request_id | & $ConfirmCmd -EA 4 | Select-Object $Select.Command).foreach{
+                                @($_.PSObject.Properties).foreach{
+                                    # Append 'stdout','stderr','complete' for 'FINISHED' command(s)
+                                    $Obj[('command',$_.Name -join '_')] = $_.Value
+                                }
+                            }
+                        } else {
+                            $Obj.command_complete = $false
+                        }
+                        $Output = if ($Include) {
+                            [PSCustomObject]$Obj | Select-Object @($Select.Output + $Include)
+                        } else {
+                            [PSCustomObject]$Obj | Select-Object $Select.Output
+                        }
+                        try { $Output | Export-Csv $Csv -NoTypeInformation -Append } catch { $Output }
+                    }
                 }
             }
-        } catch {
-            throw $_
-        } finally {
-            if (Test-Path $Csv) { Get-ChildItem $Csv | Select-Object FullName,Length,LastWriteTime }
         }
+        if (Test-Path $Csv) { Get-ChildItem $Csv | Select-Object FullName,Length,LastWriteTime }
     }
 }
 function Invoke-FalconDeploy {
