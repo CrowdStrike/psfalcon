@@ -33,7 +33,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
         [string[]]$HostId
     )
     begin {
-        # Default to 7 days if not provided
+        # Default to 7 days when not provided
         if (!$Days) { $Days = 7 }
         $Select = @{
             # Properties to select from requests and/or objects
@@ -47,7 +47,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
         # Set output filepath and base FQL query
         $Csv = Join-Path (Get-Location).Path "FalconQueue_$(Get-Date -Format FileDateTime).csv"
         $BaseFql = "commands_queued:1+(deleted_at:null,created_at:>'now-$($Days)d')"
-        if ($HostId) { [System.Collections.Generic.List[string]]$List = @() }
+        [System.Collections.Generic.List[string]]$List = @()
     }
     process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
     end {
