@@ -139,7 +139,7 @@ appropriate temporary folder (\Windows\Temp or /tmp), 'cd' will navigate to the 
 archive will be 'put' into that folder. If the target is an archive, it will be extracted, and the designated
 'Run' file will be executed. If the target is a file, it will be 'run'.
 
-Details of each step will be output to a CSV file in your current directory. 
+Details of each step will be output to a CSV file in your current directory.
 
 Requires 'Hosts: Read', 'Real Time Response (Admin): Write'.
 .PARAMETER File
@@ -493,6 +493,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                     }
                                     OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
                                     Timeout = $Timeout
+                                    HostTimeout = ($Timeout - 5)
                                 }
                                 if ($Param.OptionalHostId -and $Param.Argument) {
                                     # Issue command, output result to CSV and capture successful values
