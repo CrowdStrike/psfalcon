@@ -26,8 +26,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
         [boolean]$ShowInUi,
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
             Position=3)]
-        [ValidateSet('new','in_progress','true_positive','false_positive','ignored','closed','reopened',
-            IgnoreCase=$false)]
+        [ValidateSet('new','in_progress','true_positive','false_positive','closed','reopened',IgnoreCase=$false)]
         [string]$Status,
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
            Position=4)]
