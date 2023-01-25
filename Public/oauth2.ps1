@@ -252,7 +252,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconToken
                 MemberCid = $Script:Falcon.MemberCid
             }
         } else {
-            Write-Error "No authorization token available. Try 'Request-FalconToken'."
+            $PSCmdlet.WriteError("No authorization token available. Try 'Request-FalconToken'.")
         }
     }
 }
