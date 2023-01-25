@@ -109,23 +109,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                 $Script:Falcon = Get-ApiCredential $PSBoundParameters
                 $Script:Falcon.Add('Api',[ApiClient]::New())
                 if ($Script:Falcon.Api) {
-                    try {
+                    [string]$String = try {
                         # Set TLS 1.2 for [System.Net.Http.HttpClientHandler]
                         $Script:Falcon.Api.Handler.SslProtocols = 'Tls12'
-                        Write-Verbose "[Request-FalconToken] Set TLS 1.2 via [System.Net.Http.HttpClientHandler]"
+                        '[System.Net.Http.HttpClientHandler]'
                     } catch {
                         if ([Net.ServicePointManager]::SecurityProtocol -notmatch 'Tls12') {
                             # Set TLS 1.2 for PowerShell session
                             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-                            Write-Verbose "[Request-FalconToken] Set TLS 1.2 via [Net.ServicePointManager]"
+                            '[Net.ServicePointManager]'
                         }
+                    }
+                    if ($String) {
+                        $PSCmdlet.WriteVerbose(('[Request-FalconToken] Set TLS 1.2 via',$String -join ' '))
                     }
                     $Script:Falcon.Api.Handler.AutomaticDecompression = [System.Net.DecompressionMethods]::Gzip,
                         [System.Net.DecompressionMethods]::Deflate
                     $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd(
                         "$((Show-FalconModule).UserAgent)")
                 } else {
-                    Write-Error "Unable to initialize [ApiClient] object."
+                    $PSCmdlet.WriteError('Unable to initialize [ApiClient] object.')
                 }
             } catch {
                 throw $_
@@ -162,7 +165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                     'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
                 }
                 if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
-                    Write-Verbose "[Request-FalconToken] Redirected to '$Region'"
+                    $PSCmdlet.WriteVerbose("[Request-FalconToken] Redirected to '$Region'")
                     $Script:Falcon.Hostname = $Redirect
                 }
                 $Result = Write-Result $Request
@@ -175,13 +178,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                         $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
                     }
                     $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
-                    Write-Verbose "[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)"
+                    $PSCmdlet.WriteVerbose("[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)")
                 } elseif (@(308,429) -contains $Request.Result.StatusCode.GetHashCode()) {
                     # Retry token request when rate limited or unable to automatically follow redirection
                     & $MyInvocation.MyCommand.Name
                 }
             } else {
-                @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove("$_") }
+                @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove($_) }
                 [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
                 throw 'Authorization token request failed.'
             }
@@ -207,16 +210,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Revoke-FalconToken
         $Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             # Revoke OAuth2 access token
             $Param = @{
-                Path = "$($Script:Falcon.Hostname)/oauth2/revoke"
+                Path = $Script:Falcon.Hostname,'oauth2/revoke' -join '/'
                 Method = 'post'
                 Headers = @{
                     Accept = 'application/json'
                     ContentType = 'application/x-www-form-urlencoded'
                     Authorization = "basic $([System.Convert]::ToBase64String(
-                        [System.Text.Encoding]::ASCII.GetBytes("$($Script:Falcon.ClientId):$(
-                        $Script:Falcon.ClientSecret)")))"
+                        [System.Text.Encoding]::ASCII.GetBytes(($Script:Falcon.ClientId,
+                            $Script:Falcon.ClientSecret -join ':'))))"
                 }
-                Body = "token=$($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter)"
+                Body = 'token',$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter -join '='
             }
             $Request = $Script:Falcon.Api.Invoke($Param)
             Write-Result $Request
