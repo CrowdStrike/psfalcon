@@ -386,7 +386,7 @@ function Get-ParamSet {
     }
     process {
         if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
-            Write-Verbose "[Get-ParamSet] Creating groups of $Max query values"
+            $PSCmdlet.WriteVerbose("[Get-ParamSet] Creating groups of $Max query values")
             for ($i = 0; $i -lt ($Content.Query | Measure-Object).Count; $i += $Max) {
                 # Split 'Query' values into groups
                 $Split = $Switches.Clone()
@@ -403,7 +403,7 @@ function Get-ParamSet {
                 ,$Split
             }
         } elseif ($Content.Body -and $Field -and ($Content.Body.$Field | Measure-Object).Count -gt $Max) {
-            Write-Verbose "[Get-ParamSet] Creating groups of $Max '$Field' values"
+            $PSCmdlet.WriteVerbose("[Get-ParamSet] Creating groups of $Max '$Field' values")
             for ($i = 0; $i -lt ($Content.Body.$Field | Measure-Object).Count; $i += $Max) {
                 # Split 'Body' content into groups using '$Field'
                 $Split = $Switches.Clone()
@@ -589,13 +589,13 @@ function Invoke-Falcon {
                             Write-Request $Clone $_ -OutVariable Output
                             [int]$Int += ($Output | Measure-Object).Count
                             if ($Object.total) {
-                                Write-Verbose "[Invoke-Falcon] Retrieved $Int of $($Object.total)"
+                                $PSCmdlet.WriteVerbose("[$Command] Retrieved $Int of $($Object.total)")
                             }
                         } elseif ($Object.total) {
-                            [string]$Message = "[Invoke-Falcon] Total results limited by API '$(
+                            [string]$Message = "[$Command] Total results limited by API '$(
                                 ($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname,
                                 $null)' ($Int of $($Object.total))."
-                            Write-Error $Message
+                            $PSCmdlet.WriteError($Message)
                         }
                     }
                 }
@@ -702,14 +702,15 @@ function Invoke-Falcon {
                                 # Repeat request(s)
                                 [int]$Count = ($Result | Measure-Object).Count
                                 if ($Pagination.total -and $Count -lt $Pagination.total) {
-                                    Write-Verbose "[Invoke-Falcon] Retrieved $Count of $($Pagination.total)"
+                                    $PSCmdlet.WriteVerbose("[$Command] Retrieved $Count of $(
+                                        $Pagination.total)")
                                     Invoke-Loop $_ $Pagination $Count
                                 }
                             }
                         }
                     }
                 } catch {
-                    Write-Error $_
+                    $PSCmdlet.WriteError($_)
                 }
             }
         }
@@ -895,7 +896,7 @@ function Test-RegexValue {
     }
     end {
         if ($Output) {
-            Write-Verbose "[Test-RegexValue] $(@((($Output | Out-String).Trim()),$String) -join ': ')"
+            $PSCmdlet.WriteVerbose("[Test-RegexValue] $(@((($Output | Out-String).Trim()),$String) -join ': ')")
             $Output
         }
     }
@@ -930,8 +931,8 @@ function Write-Result {
             $Output = @{}
             @($Object).Where({ $_.GetType().Name -eq 'PSCustomObject' }).foreach{ obj $_ $Output }
             if ($Output) {
-                Write-Verbose "[Write-Result] $($Output.GetEnumerator().foreach{ @((@('meta',$_.Key) -join '.'),
-                    $_.Value) -join '=' } -join ', ')"
+                $PSCmdlet.WriteVerbose("[Write-Result] $($Output.GetEnumerator().foreach{ @((@('meta',
+                    $_.Key) -join '.'),$_.Value) -join '=' } -join ', ')")
             }
         }
     }
@@ -1004,7 +1005,7 @@ function Wait-RetryAfter {
             # Convert 'X-Ratelimit-Retryafter' value to seconds and wait
             $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(($Request.Result.Headers.GetEnumerator().Where({
                 $_.Key -eq 'X-Ratelimit-Retryafter' }).Value)).Second
-            Write-Verbose "[Wait-RetryAfter] Rate limited for $Wait seconds..."
+            $PSCmdlet.WriteVerbose("[Wait-RetryAfter] Rate limited for $Wait seconds...")
             Start-Sleep -Seconds $Wait
         }
     }
