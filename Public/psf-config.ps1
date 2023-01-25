@@ -92,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
                 Compress-Archive @Param
                 @($JsonFiles).foreach{
                     if (Test-Path $_) {
-                        Write-Verbose "[Export-FalconConfig] Removing '$_'."
+                        $PSCmdlet.WriteVerbose("[Export-FalconConfig] Removing '$_'.")
                         Remove-Item $_ -Force
                     }
                 }
