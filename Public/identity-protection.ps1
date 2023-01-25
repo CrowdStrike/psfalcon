@@ -76,7 +76,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
                 [string]$Message = (@($Object.entities.pageInfo.PSObject.Properties).foreach{
                     $_.Name,$_.Value -join '='
                 }) -join ', '
-                Write-Verbose ('[Invoke-FalconIdentityGraph]',$Message -join ' ')
+                $PSCmdlet.WriteVerbose(('[Invoke-FalconIdentityGraph]',$Message -join ' '))
             }
             # Output 'nodes'
             if ($Object.entities.nodes) { $Object.entities.nodes } else { $Object }
