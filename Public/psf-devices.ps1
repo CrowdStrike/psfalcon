@@ -82,7 +82,7 @@ function Find-FalconHostname {
 .SYNOPSIS
 Find hosts using a list of hostnames
 .DESCRIPTION
-Perform hostname searches in groups of 20.
+Perform hostname searches in groups of 100.
 
 Requires 'Hosts: Read'.
 .PARAMETER Array
@@ -135,8 +135,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
         } else {
             (Get-Content -Path $Path).Normalize() | Select-Object -Unique
         }
-        for ($i = 0; $i -lt ($Hostnames | Measure-Object).Count; $i += 20) {
-            [string[]]$TempList = $Hostnames[$i..($i + 19)]
+        for ($i = 0; $i -lt ($Hostnames | Measure-Object).Count; $i += 100) {
+            [string[]]$TempList = $Hostnames[$i..($i + 99)]
             [string]$Filter = (@($TempList).foreach{
                 if (![string]::IsNullOrEmpty($_)) {
                     if ($Partial) { "hostname:'$_'" } else { "hostname:['$_']" }
