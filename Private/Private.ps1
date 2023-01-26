@@ -682,6 +682,7 @@ function Invoke-Falcon {
             if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
                 if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
                 try {
+                    $PSCmdlet.WriteVerbose("[$Command] $Endpoint")
                     $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
                     if ($_.Endpoint.Outfile -and (Test-Path $_.Endpoint.Outfile)) {
                         # Display 'Outfile'
@@ -821,6 +822,150 @@ function Set-Property {
         }
     }
 }
+function Start-RtrUpdate {
+    [CmdletBinding()]
+    [OutputType([int32])]
+    param(
+        [Parameter(Mandatory=$true,Position=1)]
+        [object]$Object,
+        [Parameter(Mandatory=$true,Position=2)]
+        [int]$Int
+    )
+    begin {
+        # Script to run as background job for Real-time Response session refresh
+        $ScriptBlock = {
+            param(
+                [string]$BaseAddress,
+                [string]$ApiClient,
+                [string]$Token,
+                [int]$ExpiresIn,
+                [int]$Timeout,
+                [string]$Id
+            )
+            $Expiration = (Get-Date).AddSeconds($ExpiresIn)
+            do {
+
+
+                ### add rate limits for 429 during token request/session refresh
+
+
+
+                Start-Sleep -Seconds ($Timeout - 10)
+                if ($Expiration -le (Get-Date).AddSeconds(60)) {
+                    # Renew authorization token for background job
+                    $Param = @{
+                        Uri = $BaseAddress,'oauth2/token' -join '/'
+                        Method = 'post'
+                        Headers = @{
+                            Accept = 'application/json'
+                            'Content-Type' = 'application/x-www-form-urlencoded'
+                        }
+                        Body = $ApiClient
+                    }
+                    $Request = Invoke-RestMethod @Param -UseBasicParsing
+                    if ($Request.expires_in) {
+                        Write-Output ('New token received. Expires in {0} seconds.' -f $Request.expires_in)
+                    }
+                    Set-Variable -Name Expiration -Value (Get-Date).AddSeconds($Request.expires_in)
+                    Set-Variable -Name Token -Value ($Request.token_type,$Request.access_token -join ' ')
+                }
+                if ($Id -and $Token) {
+                    # Refresh Real-time Response session before timeout
+                    $Param = @{
+                        Uri = if ($Id -match '^[a-fA-F0-9]{32}$') {
+                            $BaseAddress,('real-time-response/entities/sessions/v1?timeout',
+                                $Timeout -join '=') -join '/'
+                        } else {
+                            $BaseAddress,('real-time-response/combined/batch-init-session/v1?timeout',
+                                $Timeout -join '=') -join '/'
+                        }
+                        Method = 'post'
+                        Headers = @{
+                            Accept = 'application/json'
+                            Authorization = $Token
+                            'Content-Type' = 'application/json'
+                        }
+                        Body = if ($Id -match '^[a-fA-F0-9]{32}$') {
+                            @{ device_id = $Id } | ConvertTo-Json -Compress
+                        } else {
+                            @{ batch_id = $Id } | ConvertTo-Json -Compress
+                        }
+                    }
+                    $Request = Invoke-RestMethod @Param -UseBasicParsing
+                    $Value = if ($Request.resources.batch_id) {
+                        # Re-capture 'batch_id'
+                        $Request.resources.batch_id
+                    } elseif ($Request.resources.session_id) {
+                        # Use existing 'device_id' value
+                        $Id
+                    }
+                    Set-Variable -Name Id -Value $Value
+                    if ($Id -match '^[a-fA-F0-9]{32}$') {
+                        # Notify of successful session refresh
+                        Write-Output ((Get-Date -Format u),
+                            ('Refreshed session {0}' -f $Request.resources.session_id) -join ': ')
+                    } elseif ($Id) {
+                        Write-Output ((Get-Date -Format u),
+                            ('Refreshed batch session {0}' -f $Request.resources.batch_id) -join ': ')
+                    }
+                }
+            } while ($Expiration -and $Id -and $Token)
+        }
+        Stop-RtrUpdate
+    }
+    process {
+        # Start background job to refresh Real-time Response session
+        [string]$Name = 'psfalcon-rtr',(Get-Date -Format FileDateTime) -join '_'
+        [string]$Id = if ($Object.batch_id) { $Object.batch_id } elseif ($Object.aid) { $Object.aid }
+        [string[]]$ApiClient = ('client_id',$Script:Falcon.ClientId -join '='),('client_secret',
+            $Script:Falcon.ClientSecret -join '=')
+        if ($Script:Falcon.MemberCid) { $ApiClient += 'member_cid',$Script:Falcon.MemberCid -join '=' }
+        [string[]]$ArgList = @(
+            # Capture required arguments for background job
+            $Script:Falcon.Hostname,
+            ($ApiClient -join '&'),
+            $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.ToString(),
+            ($Script:Falcon.Expiration-(Get-Date)).TotalSeconds,
+            $Int,
+            $Id
+        )
+        $Output = Start-Job -Name $Name -ScriptBlock $ScriptBlock -ArgumentList $ArgList
+        if ($Output) {
+            $PSCmdlet.WriteVerbose("[Start-RtrUpdate] Started '$($Output.Name)'")
+            $Output.Id
+        }
+    }
+}
+function Stop-RtrUpdate {
+    [CmdletBinding()]
+    [OutputType([void])]
+    param(
+        [int32]$Int
+    )
+    process {
+        if ($Int) {
+            $Job = Get-Job -Id $Int -EA 0
+            if ($Job) {
+                # Kill background job by id
+                Remove-Job -Id $Job.Id -Force
+                if (Get-Job -Id $Job.Id -EA 0) {
+                    $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Failed to terminate '$($Job.Name)'")
+                } else {
+                    $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Terminated '$($Job.Name)'")
+                }
+            }
+        }
+        @(Get-Job).Where({ $_.Name -match '^psfalcon-rtr_' -and $_.State -eq 'Completed' }).foreach{
+            # Remove 'Completed' background jobs
+            Remove-Job -Id $_.Id
+            if (Get-Job -Id $_.Id -EA 0) {
+                $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Failed to remove '$($_.Name)'")
+            } else {
+                $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Removed '$($_.Name)'")
+            }
+        }
+    }
+}
 function Test-FqlStatement {
     [CmdletBinding()]
     [OutputType([boolean])]
@@ -906,30 +1051,30 @@ function Write-Result {
     param([object]$Request)
     begin {
         function Write-Meta ($Object) {
-            # Convert [array] and [PSCustomObject] into a flat Verbose output message
-            function arr ($Array,$Output,$String) {
+            # Convert [array] and [PSCustomObject] into a flat verbose output string
+            function Get-ArrayItem ($Array,$Output,$String) {
                 @($Array).foreach{
                     if ($_.GetType().Name -eq 'PSCustomObject') {
-                        obj $_ $Output $String
+                        Get-ObjectProperty $_ $Output $String
                     } else {
                         $Output[$String] = $_ -join ','
                     }
                 }
             }
-            function obj ($Object,$Output,$String) {
+            function Get-ObjectProperty ($Object,$Output,$String) {
                 $Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).foreach{
                     $Name = if ($String) { @($String,$_.Name) -join '.' } else { $_.Name }
                     if ($_.Value.GetType().Name -eq 'PSCustomObject') {
-                        obj $_.Value $Output $Name
+                        Get-ObjectProperty $_.Value $Output $Name
                     } elseif ($_.Value.GetType().Name -eq 'Object[]') {
-                        arr $_.Value $Output $Name
+                        Get-ArrayItem $_.Value $Output $Name
                     } else {
                         $Output[$Name] = $_.Value -join ','
                     }
                 }
             }
             $Output = @{}
-            @($Object).Where({ $_.GetType().Name -eq 'PSCustomObject' }).foreach{ obj $_ $Output }
+            @($Object).Where({ $_.GetType().Name -eq 'PSCustomObject' }).foreach{ Get-ObjectProperty $_ $Output }
             if ($Output) {
                 $PSCmdlet.WriteVerbose("[Write-Result] $($Output.GetEnumerator().foreach{ @((@('meta',
                     $_.Key) -join '.'),$_.Value) -join '=' } -join ', ')")
