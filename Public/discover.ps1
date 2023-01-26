@@ -95,48 +95,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
         $Request = if ($Detailed -and ($Login -or $Account)) {
             [void]$PSBoundParameters.Remove('Detailed')
-            $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-            if ($Request -and $Account) {
-                & $MyInvocation.MyCommand.Name -Id $Request -Account
-            } elseif ($Request -and $Login) {
-                & $MyInvocation.MyCommand.Name -Id $Request -Login
+            $IdList = Invoke-Falcon @Param -Inputs $PSBoundParameters
+            if ($IdList -and $Account) {
+                $IdList | & $MyInvocation.MyCommand.Name -Account
+            } elseif ($IdList -and $Login) {
+                $IdList | & $MyInvocation.MyCommand.Name -Login
             }
+        } else {
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
         if ($Include) {
-            if (!$Request) { $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters }
             if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ }}}
             if ($Include -contains 'login_event') {
                 # Define property to match 'login' results with 'id' value
                 [string]$Property = if ($Account) { 'account_id' } else { 'host_id' }
-                [int]$Count = ($Request | Measure-Object).Count
-                for ($i = 0; $i -lt $Count; $i += 20) {
-                    # In groups of 20, perform filtered search for login events
-                    [object[]]$Group = @($Request)[$i..($i + 19)]
-                    if ($Group.id) {
-                        [string]$Filter = @($Group[$i..($i + 19)]).foreach{ "$($Property):'$($_.id)'" } -join ','
-                        if ($Filter) {
-                            $Param = @{
-                                Filter = $Filter
-                                Detailed = $true
-                                Login = $true
-                                ErrorAction = 'SilentlyContinue'
-                            }
-                            foreach ($Event in (& $MyInvocation.MyCommand.Name @Param)) {
-                                # Append matched login events to 'id' using 'host_id' or 'account_id'
-                                foreach ($Asset in $Group) {
-                                    $SetParam = @{
-                                        Object = $Request | Where-Object { $_.id -eq $Asset.id }
-                                        Name = 'login_event'
-                                        Value = @($Event | Where-Object { $_.$Property -eq $Asset.id })
-                                    }
-                                    Set-Property @SetParam
-                                }
-                            }
+                for ($i = 0; $i -lt ($Request | Measure-Object).Count; $i += 100) {
+                    # In groups of 100, perform filtered search for login events
+                    $Group = $Request[$i..($i + 99)]
+                    $Filter = @($Group.id).foreach{ $Property,"'$_'" -join ':' } -join ','
+                    $Content = & $MyInvocation.MyCommand.Name -Filter $Filter -Detailed -All -Login -EA 0
+                    foreach ($Value in @($Content.$Property | Select-Object -Unique)) {
+                        @($Group).Where({ $_.id -eq $Value }).foreach{
+                            # Append matched login events to 'id' using 'host_id' or 'account_id'
+                            Set-Property $_ login_event @($Content).Where({ $_.$Property -eq $Value })
                         }
                     }
                 }
             }
         }
-        if ($Request) { $Request } else { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+        $Request
     }
 }
