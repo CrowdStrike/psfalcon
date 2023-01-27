@@ -600,7 +600,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                 try {
                     # Start Real-time Response session in groups of up to 10,000 hosts
                     [object[]]$Output = $HostList[$i..($i + 9999)]
-                    $Init = @{ Id = $Output.aid; Timeout = $Timeout }
+                    $Init = @{ Id = $Output.aid; Timeout = $Timeout; QueueOffline = $QueueOffline }
                     $InitReq = Start-FalconSession @Init
                     if ($InitReq) {
                         # Output verbose message with batch_id or session_id
@@ -624,7 +624,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         }
                         # Determine PSFalcon command, execute and capture result
                         $Cmd = @{ Command = $Command }
-                        if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
+                        if (($Output | Measure-Object).Count -gt 1) {
+                            $Cmd['Timeout'] = $Timeout
+                            $Cmd['HostTimeout'] = ($Timeout - 10)
+                        } elseif ($QueueOffline -ne $true) {
+                            $Cmd['Wait'] = $true
+                        }
                         if ($Argument) { $Cmd['Argument'] = $Argument }
                         $Invoke = Get-RtrCommand $Command
                         $PSCmdlet.WriteVerbose("[$Invoke] Submitting '$($Command,$Argument -join ' ')'")
