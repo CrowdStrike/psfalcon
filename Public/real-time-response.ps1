@@ -1097,8 +1097,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
         [string]$SessionId,
         [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-        [Alias('Ids','sha256')]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+        [Alias('Ids')]
         [string]$Id
     )
     begin {
