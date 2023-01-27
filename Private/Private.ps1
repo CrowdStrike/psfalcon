@@ -931,7 +931,7 @@ function Start-RtrUpdate {
         )
         $Output = Start-Job -Name $Name -ScriptBlock $ScriptBlock -ArgumentList $ArgList
         if ($Output) {
-            $PSCmdlet.WriteVerbose("[Start-RtrUpdate] Started '$($Output.Name)'")
+            $PSCmdlet.WriteVerbose(('[Start-RtrUpdate]','Started job:',$Output.Name -join ' '))
             $Output.Id
         }
     }
@@ -949,9 +949,9 @@ function Stop-RtrUpdate {
                 # Kill background job by id
                 Remove-Job -Id $Job.Id -Force
                 if (Get-Job -Id $Job.Id -EA 0) {
-                    $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Failed to terminate '$($Job.Name)'")
+                    $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Failed to terminate job:',$Job.Name -join ' '))
                 } else {
-                    $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Terminated '$($Job.Name)'")
+                    $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Terminated job:',$Job.Name -join ' '))
                 }
             }
         }
@@ -959,9 +959,9 @@ function Stop-RtrUpdate {
             # Remove 'Completed' background jobs
             Remove-Job -Id $_.Id
             if (Get-Job -Id $_.Id -EA 0) {
-                $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Failed to remove '$($_.Name)'")
+                $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Failed to remove job:',$_.Name -join ' '))
             } else {
-                $PSCmdlet.WriteVerbose("[Stop-RtrUpdate] Removed '$($_.Name)'")
+                $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Removed job:',$_.Name -join ' '))
             }
         }
     }
