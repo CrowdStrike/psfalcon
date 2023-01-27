@@ -627,9 +627,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         if (($Output | Measure-Object).Count -gt 1) {
                             $Cmd['Timeout'] = $Timeout
                             $Cmd['HostTimeout'] = ($Timeout - 10)
-                        } elseif ($QueueOffline -ne $true) {
-                            $Cmd['Wait'] = $true
                         }
+                        if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
                         if ($Argument) { $Cmd['Argument'] = $Argument }
                         $Invoke = Get-RtrCommand $Command
                         $PSCmdlet.WriteVerbose("[$Invoke] Submitting '$($Command,$Argument -join ' ')'")
