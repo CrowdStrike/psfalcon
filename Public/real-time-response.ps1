@@ -584,7 +584,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
                                 Start-Sleep -Seconds 30
                                 $Result = @($Result | Confirm-FalconGetFile).foreach{
                                     if (!$_.deleted_at -and $_.complete -eq $false) {
-                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconGetFile]',
+                                        $PSCmdlet.WriteVerbose(('[Invoke-FalconAdminCommand]',
                                             'Waiting for cloud_request_id:',$_.cloud_request_id,('[{0} {1}]' -f
                                             ($_.stage),($_.progress/1).ToString("P")) -join ' '))
                                     }
@@ -596,7 +596,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
                                 Start-Sleep -Seconds 30
                                 $Result = @($Result | Confirm-FalconAdminCommand).foreach{
                                     if ($_.task_id -and $_.complete -eq $false) {
-                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconAdminCommand]',
+                                        $PSCmdlet.WriteVerbose(('[Invoke-FalconAdminCommand]',
                                             'Waiting for task_id:',$_.task_id -join ' '))
                                     }
                                     $_
@@ -709,7 +709,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
                         $Result = @($Request | Confirm-FalconGetFile).foreach{
                             @($_.hosts).foreach{
                                 if (!$_.deleted_at -and $_.complete -eq $false) {
-                                    $PSCmdlet.WriteVerbose(('[Confirm-FalconGetFile]',
+                                    $PSCmdlet.WriteVerbose(('[Invoke-FalconBatchGet]',
                                         'Waiting for cloud_request_id:',$_.cloud_request_id,('[{0} {1}]' -f
                                         ($_.stage),($_.progress/1).ToString("P")) -join ' '))
                                 }
@@ -838,7 +838,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
                         Start-Sleep -Seconds 30
                         $Result = @($Result | Confirm-FalconCommand).foreach{
                             if ($_.task_id -and $_.complete -eq $false) {
-                                $PSCmdlet.WriteVerbose(('[Confirm-FalconCommand]','Waiting for task_id:',
+                                $PSCmdlet.WriteVerbose(('[Invoke-FalconCommand]','Waiting for task_id:',
                                     $_.task_id -join ' '))
                             }
                             $_
@@ -983,7 +983,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
                                 Start-Sleep -Seconds 30
                                 $Result = @($Result | Confirm-FalconGetFile).foreach{
                                     if (!$_.deleted_at -and $_.complete -eq $false) {
-                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconGetFile]',
+                                        $PSCmdlet.WriteVerbose(('[Invoke-FalconResponderCommand]',
                                             'Waiting for cloud_request_id:',$_.cloud_request_id,('[{0} {1}]' -f
                                             ($_.stage),($_.progress/1).ToString("P")) -join ' '))
                                     }
@@ -995,7 +995,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
                                 Start-Sleep -Seconds 30
                                 $Result = @($Result | Confirm-FalconResponderCommand).foreach{
                                     if ($_.task_id -and $_.complete -eq $false) {
-                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconResponderCommand]',
+                                        $PSCmdlet.WriteVerbose(('[Invoke-FalconResponderCommand]',
                                             'Waiting for task_id:',$_.task_id -join ' '))
                                     }
                                     $_
