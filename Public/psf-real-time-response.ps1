@@ -613,14 +613,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         }
                         $PSCmdlet.WriteVerbose("[Invoke-FalconRtr] $($Message -join ' ')")
                         $JobId = if ($QueueOffline -ne $true) { Start-RtrUpdate $InitReq $Timeout }
-                        [object[]]$Output = if ($InitReq.session_id) {
-                            Get-RtrResult $InitReq $Output
-                        } elseif ($InitReq.batch_id) {
+                        [object[]]$Output = if ($InitReq.batch_id) {
                             @(Get-RtrResult $InitReq.hosts $Output).foreach{
                                 # Clear 'stdout' from batch initialization
                                 if ($_.stdout) { $_.stdout = $null }
                                 $_
                             }
+                        } elseif ($InitReq.session_id) {
+                            Get-RtrResult $InitReq $Output
                         }
                         # Determine PSFalcon command, execute and capture result
                         $Cmd = @{ Command = $Command }
@@ -634,17 +634,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         $PSCmdlet.WriteVerbose("[$Invoke] Submitting '$($Command,$Argument -join ' ')'")
                         $CmdReq = $InitReq | & $Invoke @Cmd
                         if ($JobId) { Stop-RtrUpdate $JobId }
-                        @(Get-RtrResult $CmdReq $Output).foreach{
-                            # Clear 'stdout' for batch 'get' requests
-                            if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
-                            if ($_.stdout -and $Command -eq 'runscript') {
-                                # Attempt to convert 'stdout' from Json for 'runscript'
-                                [object[]]$StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
-                                if ($StdOut) { $_.stdout = $StdOut }
+                        if ($CmdReq) {
+                            $Output = @(Get-RtrResult $CmdReq $Output).foreach{
+                                # Clear 'stdout' for batch 'get' requests
+                                if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
+                                if ($_.stdout -and $Command -eq 'runscript') {
+                                    # Attempt to convert 'stdout' from Json for 'runscript'
+                                    [object[]]$StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
+                                    if ($StdOut) { $_.stdout = $StdOut }
+                                }
+                                $_
                             }
-                            # Output result
-                            $_
                         }
+                        $Output
                     }
                 } catch {
                     $PSCmdlet.WriteError($_)
