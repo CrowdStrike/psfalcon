@@ -633,7 +633,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         $Invoke = Get-RtrCommand $Command
                         $PSCmdlet.WriteVerbose("[$Invoke] Submitting '$($Command,$Argument -join ' ')'")
                         $CmdReq = $InitReq | & $Invoke @Cmd
-                        [string[]]$Select = @(Get-RtrResult $CmdReq $Output).foreach{
+                        if ($JobId) { Stop-RtrUpdate $JobId }
+                        @(Get-RtrResult $CmdReq $Output).foreach{
                             # Clear 'stdout' for batch 'get' requests
                             if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
                             if ($_.stdout -and $Command -eq 'runscript') {
@@ -641,11 +642,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                                 [object[]]$StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
                                 if ($StdOut) { $_.stdout = $StdOut }
                             }
-                            $_.PSObject.Properties.Name
-                        } | Sort-Object -Unique
-                        if ($JobId) { Stop-RtrUpdate $JobId }
-                        # Force output of all unique fields
-                        $Output | Select-Object $Select
+                            # Output result
+                            $_
+                        }
                     }
                 } catch {
                     $PSCmdlet.WriteError($_)
