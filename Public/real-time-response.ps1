@@ -466,7 +466,7 @@ Sessions can be started using 'Start-FalconSession'. A successfully created sess
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
 The 'Wait' parameter will use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to check for command
-results every 5 seconds for a total of 60 seconds.
+results every 30 seconds until complete or processing ends.
 
 Requires 'Real Time Response (Admin): Write'.
 .PARAMETER Command
@@ -484,7 +484,7 @@ Session identifier
 .PARAMETER BatchId
 Batch session identifier
 .PARAMETER Wait
-Use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to retrieve command results
+Use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to retrieve command result
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
 #>
@@ -573,24 +573,39 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
                 } else {
                     $PSBoundParameters.Command
                 }
-                @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
+                foreach ($Result in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
                     if ($BatchId) {
                         # Add 'batch_id' to each result and output
-                        Set-Property $_ batch_id $BatchId
-                        $_
+                        Set-Property $Result batch_id $BatchId
+                        $Result
                     } elseif ($SessionId -and $Wait) {
-                        for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
-                            # Attempt to 'confirm' for 60 seconds
-                            Start-Sleep 5
-                            $Result = if ($Command -eq 'get') {
-                                $_ | Confirm-FalconGetFile
-                            } else {
-                                $_ | Confirm-FalconAdminCommand
-                            }
+                        if ($Command -eq 'get') {
+                            do {
+                                Start-Sleep -Seconds 30
+                                $Result = @($Result | Confirm-FalconGetFile).foreach{
+                                    if (!$_.deleted_at -and $_.complete -eq $false) {
+                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconGetFile]',
+                                            'Waiting for cloud_request_id:',$_.cloud_request_id,('[{0} {1}]' -f
+                                            ($_.stage),($_.progress/1).ToString("P")) -join ' '))
+                                    }
+                                    $_
+                                }
+                            } while ($Result.Where({ !$_.deleted_at -and $_.complete -eq $false }))
+                        } else {
+                            do {
+                                Start-Sleep -Seconds 30
+                                $Result = @($Result | Confirm-FalconAdminCommand).foreach{
+                                    if ($_.task_id -and $_.complete -eq $false) {
+                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconAdminCommand]',
+                                            'Waiting for task_id:',$_.task_id -join ' '))
+                                    }
+                                    $_
+                                }
+                            } while ($Result -and $Result.complete -eq $false)
                         }
                         $Result
                     } else {
-                        $_
+                        $Result
                     }
                 }
             }
@@ -605,8 +620,8 @@ Issue a Real-time Response batch 'get' command to an existing batch session
 When a 'get' command has been issued, the 'batch_get_cmd_req_id' property will be returned. That value is used
 to verify the completion of the file transfer using 'Confirm-FalconBatchGet'.
 
-The 'Wait' parameter will use 'Confirm-FalconGetFile' to check for command results every 5 seconds for a total
-of 60 seconds.
+The 'Wait' parameter will use 'Confirm-FalconGetFile' to check for command results every 30 seconds until complete
+or processing ends.
 
 Requires 'Real Time Response: Write'.
 .PARAMETER FilePath
@@ -620,7 +635,7 @@ Length of time to wait for a result from target host(s), in seconds
 .PARAMETER BatchId
 Batch session identifier
 .PARAMETER Wait
-Use 'Confirm-FalconGetFile' to attempt to retrieve results
+Use 'Confirm-FalconGetFile' to retrieve command result
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
 #>
@@ -667,39 +682,47 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
             # Add 's' to denote seconds for 'host_timeout_duration'
             $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
         }
-        @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
-            if ($_.batch_get_cmd_req_id -and $_.combined.resources) {
+        foreach ($Request in (Invoke-Falcon @Param -Inputs $PSBoundParameters)) {
+            if ($Request.batch_get_cmd_req_id -and $Request.combined.resources) {
                 # Output result with 'batch_get_cmd_req_id' and 'hosts' values
-                $BatchGetCmdReqId = $_.batch_get_cmd_req_id
                 $Request = [PSCustomObject]@{
-                    batch_get_cmd_req_id = $BatchGetCmdReqId
-                    hosts = @($_.combined.resources.PSObject.Properties.Value).foreach{
+                    batch_get_cmd_req_id = $Request.batch_get_cmd_req_id
+                    hosts = @($Request.combined.resources.PSObject.Properties.Value).foreach{
                         # Append 'batch_get_cmd_req_id'
-                        Set-Property $_ batch_get_cmd_req_id $BatchGetCmdReqId
+                        Set-Property $_ batch_get_cmd_req_id $Request.batch_get_cmd_req_id
                         $_
                     }
                 }
                 @($Request.hosts).Where({ $_.errors }).foreach{
                     # Write warning for hosts in batch that produced errors
-                    $PSCmdlet.WriteWarning("[Invoke-FalconBatchGet] $(@($_.errors.code,
-                        $_.errors.message) -join ': ') [aid: $($_.aid)]")
+                    $PSCmdlet.WriteWarning(('[Invoke-FalconBatchGet]',($_.errors.code,
+                        $_.errors.message -join ': '),('[aid: {0}]' -f $_.aid) -join ' '))
                 }
                 @($Request.hosts).Where({ $_.stderr }).foreach{
                     # Write warning for hosts in batch that produced 'stderr'
-                    $PSCmdlet.WriteWarning("[Invoke-FalconBatchGet] $($_.stderr) [aid: $($_.aid)]")
+                    $PSCmdlet.WriteWarning(('[Invoke-FalconBatchGet]',$_.stderr,
+                        ('[aid: {0}' -f $_.aid) -join ' '))
                 }
                 if ($Wait) {
-                    for ($i = 0; $i -lt 60 -and !$Result.sha256; $i += 5) {
-                        # Attempt to 'confirm' for 60 seconds
-                        Start-Sleep 5
-                        $Result = $Request | Confirm-FalconGetFile
-                    }
+                    do {
+                        Start-Sleep -Seconds 30
+                        $Result = @($Request | Confirm-FalconGetFile).foreach{
+                            @($_.hosts).foreach{
+                                if (!$_.deleted_at -and $_.complete -eq $false) {
+                                    $PSCmdlet.WriteVerbose(('[Confirm-FalconGetFile]',
+                                        'Waiting for cloud_request_id:',$_.cloud_request_id,('[{0} {1}]' -f
+                                        ($_.stage),($_.progress/1).ToString("P")) -join ' '))
+                                }
+                            }
+                            $_
+                        }
+                    } while ($Result.hosts.Where({ !$_.deleted_at -and $_.complete -eq $false }))
                     $Result
                 } else {
                     $Request
                 }
             } else {
-                $_
+                $Request
             }
         }
     }
@@ -712,8 +735,8 @@ Issue a Real-time Response read-only command to an existing single-host or batch
 Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
-The 'Wait' parameter will use 'Confirm-FalconCommand' to check for command results every 5 seconds for a total
-of 60 seconds.
+The 'Wait' parameter will use 'Confirm-FalconCommand' to check for command results every 30 seconds until complete
+or processing ends.
 
 Requires 'Real Time Response: Read'.
 .PARAMETER Command
@@ -731,7 +754,7 @@ Session identifier
 .PARAMETER BatchId
 Batch session identifier
 .PARAMETER Wait
-Use 'Confirm-FalconCommand' to retrieve single-host command results
+Use 'Confirm-FalconCommand' to retrieve command result
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
 #>
@@ -805,20 +828,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
             } else {
                 $PSBoundParameters.Command
             }
-            @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
+            foreach ($Result in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
                 if ($BatchId) {
                     # Add 'batch_id' to each result and output
-                    Set-Property $_ batch_id $BatchId
-                    $_
+                    Set-Property $Result batch_id $BatchId
+                    $Result
                 } elseif ($SessionId -and $Wait) {
-                    for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
-                        # Attempt to 'confirm' for 60 seconds
-                        Start-Sleep 5
-                        $Result = $_ | Confirm-FalconCommand
-                    }
+                    do {
+                        Start-Sleep -Seconds 30
+                        $Result = @($Result | Confirm-FalconCommand).foreach{
+                            if ($_.task_id -and $_.complete -eq $false) {
+                                $PSCmdlet.WriteVerbose(('[Confirm-FalconCommand]','Waiting for task_id:',
+                                    $_.task_id -join ' '))
+                            }
+                            $_
+                        }
+                    } while ($Result -and $Result.complete -eq $false)
                     $Result
                 } else {
-                    $_
+                    $Result
                 }
             }
         }
@@ -832,8 +860,8 @@ Issue a Real-time Response active-responder command to an existing single-host o
 Sessions can be started using 'Start-FalconSession'. A successfully created session will contain a 'session_id'
 or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parameters.
 
-The 'Wait' parameter will use 'Confirm-FalconResponderCommand' to check for command results every 5 seconds for
-a total of 60 seconds.
+The 'Wait' parameter will use 'Confirm-FalconResponderCommand' or 'Confirm-FalconGetFile' to check for command
+results every 30 seconds until complete or processing ends.
 
 Requires 'Real Time Response: Write'.
 .PARAMETER Command
@@ -851,7 +879,7 @@ Session identifier
 .PARAMETER BatchId
 Batch session identifier
 .PARAMETER Wait
-Use 'Confirm-FalconResponderCommand' to retrieve single-host command results
+Use 'Confirm-FalconResponderCommand' or 'Confirm-FalconGetFile' to retrieve command result
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
 #>
@@ -944,24 +972,39 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
                 } else {
                     $PSBoundParameters.Command
                 }
-                @(Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters).foreach{
+                foreach ($Result in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
                     if ($BatchId) {
                         # Add 'batch_id' to each result and output
-                        Set-Property $_ batch_id $BatchId
-                        $_
+                        Set-Property $Result batch_id $BatchId
+                        $Result
                     } elseif ($SessionId -and $Wait) {
-                        for ($i = 0; $i -lt 60 -and $Result.Complete -ne $true -and !$Result.sha256; $i += 5) {
-                            # Attempt to 'confirm' for 60 seconds
-                            Start-Sleep 5
-                            $Result = if ($Command -eq 'get') {
-                                $_ | Confirm-FalconGetFile
-                            } else {
-                                $_ | Confirm-FalconResponderCommand
-                            }
+                        if ($Command -eq 'get') {
+                            do {
+                                Start-Sleep -Seconds 30
+                                $Result = @($Result | Confirm-FalconGetFile).foreach{
+                                    if (!$_.deleted_at -and $_.complete -eq $false) {
+                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconGetFile]',
+                                            'Waiting for cloud_request_id:',$_.cloud_request_id,('[{0} {1}]' -f
+                                            ($_.stage),($_.progress/1).ToString("P")) -join ' '))
+                                    }
+                                    $_
+                                }
+                            } while ($Result.Where({ !$_.deleted_at -and $_.complete -eq $false }))
+                        } else {
+                            do {
+                                Start-Sleep -Seconds 30
+                                $Result = @($Result | Confirm-FalconResponderCommand).foreach{
+                                    if ($_.task_id -and $_.complete -eq $false) {
+                                        $PSCmdlet.WriteVerbose(('[Confirm-FalconResponderCommand]',
+                                            'Waiting for task_id:',$_.task_id -join ' '))
+                                    }
+                                    $_
+                                }
+                            } while ($Result -and $Result.complete -eq $false)
                         }
                         $Result
                     } else {
-                        $_
+                        $Result
                     }
                 }
             }
