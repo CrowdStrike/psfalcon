@@ -565,7 +565,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
     )
     begin {
         [System.Collections.Generic.List[string]]$List = @()
-        $Timeout = 600
+        $Timeout = 30
     }
     process {
         if ($GroupId) {
