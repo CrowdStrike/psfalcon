@@ -1156,3 +1156,49 @@ function Wait-RetryAfter {
     }
     end { if ($Request) { $Request.Dispose() }}
 }
+function Wait-RtrCommand {
+    [CmdletBinding()]
+    [OutputType([object])]
+    param(
+        [object]$Object,
+        [string]$String
+    )
+    begin { $Confirm = $String -replace '^Invoke','Confirm' }
+    process {
+        Start-Sleep -Seconds 5
+        do {
+            # Wait for the result of single-host Real-time Response command
+            $Object = @($Object | & $Confirm).foreach{
+                if ($_.task_id -and $_.complete -eq $false) {
+                    $PSCmdlet.WriteVerbose(("[$String]",'Waiting for task_id:',$_.task_id -join ' '))
+                }
+                $_
+            }
+            if ($Object -and $Object.complete -eq $false) { Start-Sleep -Seconds 20 }
+        } while ($Object -and $Object.complete -eq $false)
+    }
+    end { $Object }
+}
+function Wait-RtrGet {
+    [CmdletBinding()]
+    [OutputType([object])]
+    param(
+        [object]$Object,
+        [string]$String
+    )
+    process {
+        Start-Sleep -Seconds 5
+        do {
+            # Wait for the result of Real-time Response 'get' command
+            $Object = @($Object | Confirm-FalconGetFile).foreach{
+                if (!$_.deleted_at -and $_.complete -eq $false) {
+                    $PSCmdlet.WriteVerbose(("[$String]",'Waiting for cloud_request_id:',$_.cloud_request_id,
+                        ('[{0} {1}]' -f ($_.stage),($_.progress/1).ToString("P")) -join ' '))
+                }
+                $_
+            }
+            if ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false })) { Start-Sleep -Seconds 20 }
+        } while ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false }))
+    }
+    end { $Object }
+}
