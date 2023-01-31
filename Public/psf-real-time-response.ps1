@@ -602,7 +602,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                     [object[]]$Output = $HostList[$i..($i + 9999)]
                     $Init = @{ Id = $Output.aid; Timeout = $Timeout; QueueOffline = $QueueOffline }
                     $InitReq = Start-FalconSession @Init
-                    if ($InitReq) {
+                    if ($InitReq.batch_id -or $InitReq.session_id) {
                         # Output verbose message with batch_id or session_id
                         [string[]]$Message = if ($InitReq.batch_id) {
                             'batch_id:',$InitReq.batch_id,"[$(@($InitReq.hosts).Where({
@@ -631,7 +631,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
                         if ($Argument) { $Cmd['Argument'] = $Argument }
                         $Invoke = Get-RtrCommand $Command
-                        $PSCmdlet.WriteVerbose("[$Invoke] Submitting '$($Command,$Argument -join ' ')'")
+                        $PSCmdlet.WriteVerbose(('[Invoke-FalconRtr]','Submitting',"'$($Command,
+                            $Argument -join ' ')'" -join ' '))
                         $CmdReq = $InitReq | & $Invoke @Cmd
                         if ($JobId) { Stop-RtrUpdate $JobId }
                         if ($CmdReq) {
