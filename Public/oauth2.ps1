@@ -145,7 +145,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
         }
         if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
             $Param = @{
-                Path = "$($Script:Falcon.Hostname)/oauth2/token"
+                Path = $Script:Falcon.Hostname,'oauth2/token' -join '/'
                 Method = 'post'
                 Headers = @{
                     Accept = 'application/json'
