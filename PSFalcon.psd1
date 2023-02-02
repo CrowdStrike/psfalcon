@@ -11,6 +11,7 @@
     PowerShellVersion    = '5.1'
     RequiredAssemblies   = @('System.Net.Http')
     ScriptsToProcess     = @('Class/Class.ps1')
+    FormatsToProcess     = @('PSFalcon.ps1xml')
     FunctionsToExport    = @(
       # alerts
       'Get-FalconAlert'
