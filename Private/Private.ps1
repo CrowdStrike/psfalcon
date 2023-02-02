@@ -1088,41 +1088,15 @@ function Write-Result {
             # Capture trace_id for error messages
             $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
         }
-        # Convert content to Json
+        # Convert content from Json
         $Json = if ($Result -and $Request.Result.Content.Headers.ContentType -eq 'application/json' -or
         $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
             ConvertFrom-Json $Result
         }
         if ($Json) {
-            # Gather field names from result, excluding 'errors', 'extensions', and 'meta'
-            [string[]]$ResponseFields = @($Json.PSObject.Properties).Where({ $_.Name -notmatch
-                '^(errors|extensions|meta)$' -and $_.Value }).foreach{ $_.Name }
-            # Write verbose 'meta' output
             if ($Json.meta) { Write-Meta $Json.meta }
-            if ($ResponseFields) {
-                if (($ResponseFields | Measure-Object).Count -gt 1) {
-                    # Output all fields by name
-                    $Json | Select-Object $ResponseFields
-                } elseif ($ResponseFields -eq 'combined' -and $Json.$ResponseFields.PSObject.Properties.Name -eq
-                'resources' -and ($Json.$ResponseFields.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                    # Output values under 'combined.resources'
-                    $Json.$ResponseFields.resources.PSObject.Properties.Value
-                } elseif ($ResponseFields -eq 'resources' -and $Json.$ResponseFields.PSObject.Properties.Name -eq
-                'events' -and ($Json.$ResponseFields.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                    # Output 'resources.events'
-                    $Json.$ResponseFields.events
-                } else {
-                    # Output single field
-                    $Json.$ResponseFields
-                }
-            } elseif ($Json.meta -and !$Json.errors) {
-                # Output 'meta' fields when nothing else is available and no errors were produced
-                [string[]]$MetaFields = @($Json.meta.PSObject.Properties).Where({ $_.Name -notmatch
-                    '^(entity|pagination|powered_by|query_time|trace_id)$' }).foreach{ $_.Name }
-                if ($MetaFields) { $Json.meta | Select-Object $MetaFields }
-            }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                # Output error
+                # Output error(s) from API
                 $Message = ConvertTo-Json $_.Value -Compress
                 $PSCmdlet.WriteError(
                     [System.Management.Automation.ErrorRecord]::New(
@@ -1132,6 +1106,54 @@ function Write-Result {
                         $Request
                     )
                 )
+            }
+            # Use Endpoint and StatusCode to find matching schema
+            [string]$Endpoint = $Request.Result.RequestMessage.RequestUri.AbsolutePath,
+                ([string]($Request.Result.RequestMessage.Method)).ToLower() -join ':'
+            [string]$Schema = $Script:Response.Where({ $_.PSObject.Properties.Name -eq $Endpoint }).foreach{
+                $_.PSObject.Properties.Value
+            }
+            if ($Schema) {
+                $PSCmdlet.WriteVerbose(('[Write-Result]',$Schema -join ' '))
+                $Schema = 'PSFalcon',$Schema -join '.'
+            }
+            if ($Json.combined) {
+                if (($Json.combined.PSObject.Properties.Name).Count -eq 1) {
+                    # Output single property values under 'combined'
+                    if ($Schema) {
+                        @($Json.combined.PSObject.Properties.Value).foreach{
+                            $_.PSObject.TypeNames.Insert(0,$Schema)
+                        }
+                    }
+                    $Json.combined.PSObject.Properties.Value
+                } else {
+                    # Output 'combined'
+                    if ($Schema) { @($Json.combined).foreach{ $_.PSObject.TypeNames.Insert(0,$Schema) }}
+                    $Json.combined
+                }
+            } elseif ($Json.resources) {
+                if (($Json.resources.PSObject.Properties.Name).Count -eq 1) {
+                    # Output single property values under 'resources'
+                    if ($Schema) {
+                        @($Json.resources.PSObject.Properties.Value).foreach{
+                            $_.PSObject.TypeNames.Insert(0,$Schema)
+                        }
+                    }
+                    $Json.resources.PSObject.Properties.Value
+                } else {
+                    # Output 'resources'
+                    if ($Schema) { @($Json.resources).foreach{ $_.PSObject.TypeNames.Insert(0,$Schema) }}
+                    $Json.resources
+                }
+            } else {
+                if ($Json.meta -and !$Json.errors) {
+                    # Output 'meta'
+                    if ($Schema) { @($Json.meta).foreach{ $_.PSObject.TypeNames.Insert(0,$Schema) }}
+                    $Json.meta
+                } else {
+                    if ($Schema) { $Json.PSObject.TypeNames.Insert(0,$Schema) }
+                    $Json
+                }
             }
         } else {
             # Output non-Json content
@@ -1188,17 +1210,32 @@ function Wait-RtrGet {
     )
     process {
         Start-Sleep -Seconds 5
-        do {
-            # Wait for the result of Real-time Response 'get' command
-            $Object = @($Object | Confirm-FalconGetFile).foreach{
-                if (!$_.deleted_at -and $_.complete -eq $false) {
-                    $PSCmdlet.WriteVerbose(("[$String]",'Waiting for cloud_request_id:',$_.cloud_request_id,
-                        ('[{0} {1}]' -f ($_.stage),($_.progress/1).ToString("P")) -join ' '))
+        if ($Object.batch_get_cmd_req_id) {
+            do {
+                # Wait for the result of multi-host Real-time Response 'get' command
+                $Request = $Object | Confirm-FalconGetFile
+                if (!$Request) {
+                    $PSCmdlet.WriteVerbose("[$String]",'Waiting for batch_get_cmd_req_id:',
+                        $Object.batch_get_cmd_req_id -join ' ')
+                    Start-Sleep -Seconds 20
                 }
-                $_
-            }
-            if ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false })) { Start-Sleep -Seconds 20 }
-        } while ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false }))
+            } until ($Request)
+            $Request
+        } else {
+            do {
+                # Wait for the result of single-host Real-time Response 'get' command
+                $Object = @($Object | Confirm-FalconGetFile).Where({
+                    $_.cloud_request_id -eq $Object.cloud_request_id
+                }).foreach{
+                    if (!$_.deleted_at -and $_.complete -eq $false) {
+                        $PSCmdlet.WriteVerbose(("[$String]",'Waiting for cloud_request_id:',$_.cloud_request_id,
+                            ('[{0} {1}]' -f ($_.stage),($_.progress/1).ToString("P")) -join ' '))
+                    }
+                    $_
+                }
+                if ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false })) { Start-Sleep -Seconds 20 }
+            } while ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false }))
+        }
     }
     end { $Object }
 }
