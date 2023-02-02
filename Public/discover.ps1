@@ -24,6 +24,8 @@ Repeat requests until all available results are retrieved
 Display total result count instead of results
 .PARAMETER Account
 Search for user account assets
+.PARAMETER Application
+Search for applications
 .PARAMETER Login
 Search for login events
 .LINK
@@ -35,6 +37,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
             ValueFromPipeline)]
         [Parameter(ParameterSetName='/discover/entities/accounts/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
+        [Parameter(ParameterSetName='/discover/entities/applications/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}_\w+$')]
@@ -42,15 +46,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
         [string[]]$Id,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=1)]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=1)]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=2)]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=2)]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=2)]
         [string]$Sort,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=3)]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=3)]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=3)]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=3)]
         [ValidateRange(1,100)]
         [int32]$Limit,
@@ -60,23 +67,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
         [string[]]$Include,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
         [int32]$Offset,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
         [switch]$All,
         [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
         [switch]$Total,
         [Parameter(ParameterSetName='/discover/entities/accounts/v1:get',Mandatory)]
         [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Mandatory)]
         [switch]$Account,
+        [Parameter(ParameterSetName='/discover/entities/applications/v1:get',Mandatory)]
+        [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Mandatory)]
+        [switch]$Application,
         [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory)]
         [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Mandatory)]
         [switch]$Login
@@ -93,11 +107,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        $Request = if ($Detailed -and ($Login -or $Account)) {
+        $Request = if ($Detailed -and ($Login -or $Account -or $Application)) {
             [void]$PSBoundParameters.Remove('Detailed')
             $IdList = Invoke-Falcon @Param -Inputs $PSBoundParameters
             if ($IdList -and $Account) {
                 $IdList | & $MyInvocation.MyCommand.Name -Account
+            } elseif ($IdList -and $Application) {
+                $IdList | & $MyInvocation.MyCommand.Name -Application
             } elseif ($IdList -and $Login) {
                 $IdList | & $MyInvocation.MyCommand.Name -Login
             }
