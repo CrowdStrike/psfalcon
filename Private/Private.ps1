@@ -1,3 +1,16 @@
+function Add-Schema ([object[]]$Object,[string]$String) {
+    if ($String) {
+        # Append schema to object output, when present
+        $PSCmdlet.WriteVerbose(('[Add-Schema]',$String -join ' '))
+        @($Object).foreach{
+            $_.PSObject.TypeNames.Insert(0,$String)
+            $_
+        }
+    } else {
+        $Object
+    }
+}
+
 function Add-Include {
     [CmdletBinding()]
     [OutputType([void])]
@@ -550,7 +563,7 @@ function Invoke-Falcon {
         [int32]$Max,
         [string]$HostUrl,
         [switch]$BodyArray,
-        [hashtable]$TypeName
+        [string]$Schema
     )
     begin {
         function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
@@ -620,10 +633,10 @@ function Invoke-Falcon {
                 $false
             }
             if ($Splat.Detailed -eq $true -and $NoDetail -eq $false) {
-                $Output = Write-Result $Object $TypeName
+                $Output = Write-Result $Object $Schema
                 if ($Output) { & $Command -Id $Output }
             } else {
-                Write-Result $Object $TypeName
+                Write-Result $Object $Schema
             }
         }
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
@@ -631,7 +644,7 @@ function Invoke-Falcon {
             if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) { Request-FalconToken }
         }
         # Gather request parameters and split into groups
-        [string[]]$Exclude = 'BodyArray','Command','RawOutput','TypeName'
+        [string[]]$Exclude = 'BodyArray','Command','RawOutput','Schema'
         $GetParam = @{}
         $PSBoundParameters.GetEnumerator().Where({ $Exclude -notcontains $_.Key }).foreach{
             $GetParam.Add($_.Key,$_.Value)
@@ -1055,21 +1068,8 @@ function Test-RegexValue {
 }
 function Write-Result {
     [CmdletBinding()]
-    param([object]$Request,[hashtable]$TypeName)
+    param([object]$Request,[string]$Schema)
     begin {
-        function Add-Schema ([object[]]$Object,[string]$String) {
-            if ($String) {
-                # Append schema to object output, when present
-                $PSCmdlet.WriteVerbose(('[Write-Result]',$String -join ' '))
-                $String = 'PSFalcon',$String -join '.'
-                @($Object).foreach{
-                    $_.PSObject.TypeNames.Insert(0,$String)
-                    $_
-                }
-            } else {
-                $Object
-            }
-        }
         function Write-Meta ($Object) {
             # Convert [array] and [PSCustomObject] into a flat verbose output string
             function Get-ArrayItem ($Array,$Output,$String) {
@@ -1122,10 +1122,6 @@ function Write-Result {
                 $PSCmdlet.WriteError([System.Management.Automation.ErrorRecord]::New([Exception]::New($Message),
                     $TraceId,[System.Management.Automation.ErrorCategory]::InvalidResult,$Request))
             }
-            # Use endpoint and 'TypeName' to determine object schema
-            [string]$Endpoint = $Request.Result.RequestMessage.RequestUri.AbsolutePath,
-                    ([string]($Request.Result.RequestMessage.Method)).ToLower() -join ':'
-            [string]$Schema = if ($TypeName) { $TypeName.$Endpoint }
             $Output = if ($Json.combined) {
                 # Output single property values under 'combined', or 'combined'
                 if (($Json.combined.PSObject.Properties.Name).Count -eq 1) {
@@ -1136,7 +1132,6 @@ function Write-Result {
             } elseif ($Json.resources) {
                 # Output single property values under 'resources' or 'resources'
                 if (($Json.resources.PSObject.Properties.Name).Count -eq 1) {
-                    Write-Host $Json.resources.PSObject.Properties.Name
                     $Json.resources.PSObject.Properties.Value
                 } else {
                     $Json.resources
