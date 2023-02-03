@@ -126,6 +126,11 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
+    [OutputType('deviceapi.LoginDetailV1',ParameterSetName='/devices/combined/devices/login-history/v1:post')]
+    [OutputType('deviceapi.NetworkAddressHistoryV1',
+        ParameterSetName='/devices/combined/devices/network-address-history/v1:post')]
+    [OutputType('deviceapi.DeviceSwagger',ParameterSetName='/devices/entities/devices/v2:post')]
+    [OutputType('state.OnlineStateResultV1',ParameterSetName='/devices/entities/online-state/v1:get')]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -206,6 +211,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
                 100
             } else {
                 500
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/devices/combined/devices/login-history/v1:post' { 'deviceapi.LoginDetailV1' }
+                '/devices/combined/devices/network-address-history/v1:post' { 'deviceapi.NetworkAddressHistoryV1' }
+                '/devices/entities/devices/v2:post' { 'deviceapi.DeviceSwagger' }
+                '/devices/entities/online-state/v1:get' { 'state.OnlineStateResultV1' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
