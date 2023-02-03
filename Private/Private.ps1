@@ -1107,53 +1107,25 @@ function Write-Result {
                     )
                 )
             }
-            # Use Endpoint and StatusCode to find matching schema
-            [string]$Endpoint = $Request.Result.RequestMessage.RequestUri.AbsolutePath,
-                ([string]($Request.Result.RequestMessage.Method)).ToLower() -join ':'
-            [string]$Schema = $Script:Response.Where({ $_.PSObject.Properties.Name -eq $Endpoint }).foreach{
-                $_.PSObject.Properties.Value
-            }
-            if ($Schema) {
-                $PSCmdlet.WriteVerbose(('[Write-Result]',$Schema -join ' '))
-                $Schema = 'PSFalcon',$Schema -join '.'
-            }
             if ($Json.combined) {
                 if (($Json.combined.PSObject.Properties.Name).Count -eq 1) {
                     # Output single property values under 'combined'
-                    if ($Schema) {
-                        @($Json.combined.PSObject.Properties.Value).foreach{
-                            $_.PSObject.TypeNames.Insert(0,$Schema)
-                        }
-                    }
                     $Json.combined.PSObject.Properties.Value
                 } else {
                     # Output 'combined'
-                    if ($Schema) { @($Json.combined).foreach{ $_.PSObject.TypeNames.Insert(0,$Schema) }}
                     $Json.combined
                 }
             } elseif ($Json.resources) {
                 if (($Json.resources.PSObject.Properties.Name).Count -eq 1) {
                     # Output single property values under 'resources'
-                    if ($Schema) {
-                        @($Json.resources.PSObject.Properties.Value).foreach{
-                            $_.PSObject.TypeNames.Insert(0,$Schema)
-                        }
-                    }
                     $Json.resources.PSObject.Properties.Value
                 } else {
                     # Output 'resources'
-                    if ($Schema) { @($Json.resources).foreach{ $_.PSObject.TypeNames.Insert(0,$Schema) }}
                     $Json.resources
                 }
             } else {
-                if ($Json.meta -and !$Json.errors) {
-                    # Output 'meta'
-                    if ($Schema) { @($Json.meta).foreach{ $_.PSObject.TypeNames.Insert(0,$Schema) }}
-                    $Json.meta
-                } else {
-                    if ($Schema) { $Json.PSObject.TypeNames.Insert(0,$Schema) }
-                    $Json
-                }
+                # Output 'meta' or other unexpected Json result
+                if ($Json.meta -and !$Json.errors) { $Json.meta } elseif (!$Json.meta) { $Json }
             }
         } else {
             # Output non-Json content
