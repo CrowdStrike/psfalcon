@@ -549,7 +549,8 @@ function Invoke-Falcon {
         [switch]$RawOutput,
         [int32]$Max,
         [string]$HostUrl,
-        [switch]$BodyArray
+        [switch]$BodyArray,
+        [hashtable]$TypeName
     )
     begin {
         function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
@@ -580,22 +581,30 @@ function Invoke-Falcon {
                         # Append pagination
                         $Clone.Endpoint.Path,($Next -join '=') -join '&'
                     }
-                    if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
-                    $Script:Falcon.Api.Invoke($Clone.Endpoint) | ForEach-Object {
-                        if ($_.Result.Content) {
-                            # Output result, update pagination and received count
-                            $Object = (ConvertFrom-Json (
-                                $_.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                            Write-Request $Clone $_ -OutVariable Output
-                            [int]$Int += ($Output | Measure-Object).Count
-                            if ($Object.total) {
-                                $PSCmdlet.WriteVerbose("[$Command] Retrieved $Int of $($Object.total)")
+                    if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) {
+                        if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) {
+                            # Refresh authorization token when required
+                            Request-FalconToken
+                        }
+                    }
+                    [string]$Target = New-ShouldMessage $Clone.Endpoint
+                    if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
+                        $Script:Falcon.Api.Invoke($Clone.Endpoint) | ForEach-Object {
+                            if ($_.Result.Content) {
+                                # Output result, update pagination and received count
+                                $Object = (ConvertFrom-Json (
+                                    $_.Result.Content).ReadAsStringAsync().Result).meta.pagination
+                                Write-Request $Clone $_ -OutVariable Output
+                                [int]$Int += ($Output | Measure-Object).Count
+                                if ($Object.total) {
+                                    $PSCmdlet.WriteVerbose("[$Command] Retrieved $Int of $($Object.total)")
+                                }
+                            } elseif ($Object.total) {
+                                [string]$Message = "[$Command] Total results limited by API '$(
+                                    ($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname,
+                                    $null)' ($Int of $($Object.total))."
+                                $PSCmdlet.WriteError($Message)
                             }
-                        } elseif ($Object.total) {
-                            [string]$Message = "[$Command] Total results limited by API '$(
-                                ($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname,
-                                $null)' ($Int of $($Object.total))."
-                            $PSCmdlet.WriteError($Message)
                         }
                     }
                 }
@@ -603,10 +612,7 @@ function Invoke-Falcon {
         }
         function Write-Request {
             [CmdletBinding()]
-            param(
-                [hashtable]$Splat,
-                [object]$Object
-            )
+            param([hashtable]$Splat,[object]$Object)
             [boolean]$NoDetail = if ($Splat.Endpoint.Path -match '(/combined/|/rule-groups-full/)') {
                 # Determine if endpoint requires a secondary 'Detailed' request
                 $true
@@ -614,10 +620,10 @@ function Invoke-Falcon {
                 $false
             }
             if ($Splat.Detailed -eq $true -and $NoDetail -eq $false) {
-                $Output = Write-Result $Object
+                $Output = Write-Result $Object $TypeName
                 if ($Output) { & $Command -Id $Output }
             } else {
-                Write-Result $Object
+                Write-Result $Object $TypeName
             }
         }
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
@@ -625,8 +631,9 @@ function Invoke-Falcon {
             if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) { Request-FalconToken }
         }
         # Gather request parameters and split into groups
+        [string[]]$Exclude = 'BodyArray','Command','RawOutput','TypeName'
         $GetParam = @{}
-        $PSBoundParameters.GetEnumerator().Where({ $_.Key -notmatch '^(BodyArray|Command|RawOutput)$' }).foreach{
+        $PSBoundParameters.GetEnumerator().Where({ $Exclude -notcontains $_.Key }).foreach{
             $GetParam.Add($_.Key,$_.Value)
         }
         # Add 'Accept: application/json' when undefined
@@ -1048,8 +1055,21 @@ function Test-RegexValue {
 }
 function Write-Result {
     [CmdletBinding()]
-    param([object]$Request)
+    param([object]$Request,[hashtable]$TypeName)
     begin {
+        function Add-Schema ([object[]]$Object,[string]$String) {
+            if ($String) {
+                # Append schema to object output, when present
+                $PSCmdlet.WriteVerbose(('[Write-Result]',$String -join ' '))
+                $String = 'PSFalcon',$String -join '.'
+                @($Object).foreach{
+                    $_.PSObject.TypeNames.Insert(0,$String)
+                    $_
+                }
+            } else {
+                $Object
+            }
+        }
         function Write-Meta ($Object) {
             # Convert [array] and [PSCustomObject] into a flat verbose output string
             function Get-ArrayItem ($Array,$Output,$String) {
@@ -1076,8 +1096,9 @@ function Write-Result {
             $Output = @{}
             @($Object).Where({ $_.GetType().Name -eq 'PSCustomObject' }).foreach{ Get-ObjectProperty $_ $Output }
             if ($Output) {
-                $PSCmdlet.WriteVerbose("[Write-Result] $($Output.GetEnumerator().foreach{ @((@('meta',
-                    $_.Key) -join '.'),$_.Value) -join '=' } -join ', ')")
+                $PSCmdlet.WriteVerbose("[Write-Result] $($Output.GetEnumerator().foreach{
+                    @((@('meta',$_.Key) -join '.'),$_.Value) -join '='
+                } -join ', ')")
             }
         }
     }
@@ -1098,35 +1119,33 @@ function Write-Result {
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
                 # Output error(s) from API
                 $Message = ConvertTo-Json $_.Value -Compress
-                $PSCmdlet.WriteError(
-                    [System.Management.Automation.ErrorRecord]::New(
-                        [Exception]::New($Message),
-                        $TraceId,
-                        [System.Management.Automation.ErrorCategory]::InvalidResult,
-                        $Request
-                    )
-                )
+                $PSCmdlet.WriteError([System.Management.Automation.ErrorRecord]::New([Exception]::New($Message),
+                    $TraceId,[System.Management.Automation.ErrorCategory]::InvalidResult,$Request))
             }
-            if ($Json.combined) {
+            # Use endpoint and 'TypeName' to determine object schema
+            [string]$Endpoint = $Request.Result.RequestMessage.RequestUri.AbsolutePath,
+                    ([string]($Request.Result.RequestMessage.Method)).ToLower() -join ':'
+            [string]$Schema = if ($TypeName) { $TypeName.$Endpoint }
+            $Output = if ($Json.combined) {
+                # Output single property values under 'combined', or 'combined'
                 if (($Json.combined.PSObject.Properties.Name).Count -eq 1) {
-                    # Output single property values under 'combined'
                     $Json.combined.PSObject.Properties.Value
                 } else {
-                    # Output 'combined'
                     $Json.combined
                 }
             } elseif ($Json.resources) {
+                # Output single property values under 'resources' or 'resources'
                 if (($Json.resources.PSObject.Properties.Name).Count -eq 1) {
-                    # Output single property values under 'resources'
+                    Write-Host $Json.resources.PSObject.Properties.Name
                     $Json.resources.PSObject.Properties.Value
                 } else {
-                    # Output 'resources'
                     $Json.resources
                 }
             } else {
                 # Output 'meta' or other unexpected Json result
                 if ($Json.meta -and !$Json.errors) { $Json.meta } elseif (!$Json.meta) { $Json }
             }
+            if ($Output) { Add-Schema $Output $Schema }
         } else {
             # Output non-Json content
             $Result
