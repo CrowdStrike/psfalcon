@@ -6,5 +6,3 @@
 ).foreach{
     try { . $_.FullName } catch { throw $_ }
 }
-# Import object formats for successful API responses
-$Script:Response = try { Get-Content $PSScriptRoot\Response\Response.json -EA 0 | ConvertFrom-Json } catch {}
