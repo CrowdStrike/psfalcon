@@ -55,7 +55,7 @@ function Send-FalconWebhook {
 .SYNOPSIS
 Send a PSFalcon object to a supported Webhook
 .DESCRIPTION
-Sends an object to a Webhook, converting the object to an acceptable format when required.
+Sends an object to a Webhook, converting the object to an acceptable format when required
 .PARAMETER Type
 Webhook type
 .PARAMETER Path
@@ -77,7 +77,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconWebhook
         [Parameter(Position=3)]
         [string]$Label,
         [Parameter(Mandatory,ValueFromPipeline,Position=4)]
-        [System.Object]$Object
+        [object]$Object
     )
     begin {
         $Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
