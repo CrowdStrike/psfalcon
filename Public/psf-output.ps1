@@ -3,25 +3,14 @@ function Export-FalconReport {
 .SYNOPSIS
 Format a response object and output to console or CSV
 .DESCRIPTION
-Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with
-each column having an appended 'prefix'--and then exported to the console or designated file path.
+If providing a string, values will be exported with a single 'id' column.
 
-For instance, if the object contains a property called 'device_policies', and that contains other objects called
-'prevention' and 'sensor_update', the result will contain properties labelled 'device_policies.prevention' and
-'device_policies.sensor_update' with additional '.<field_name>' values for any sub-properties of those objects.
-
-When the result contains an array with similarly named properties, it will attempt to add each sub-property with
-an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example,
-@{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed
-under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
-becomes a column.
-
-There is potential for data loss due to object manipulation. Use 'ConvertTo-Json' to ensure all object properties
-are retained when integrity is a concern.
+PSFalcon response objects will exported with available properties to ensure CSV compatibility. Use
+'Select-Object' to pre-filter any unwanted properties.
 .PARAMETER Path
 Destination path
 .PARAMETER Object
-Response object to format
+Response object
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Export-FalconReport
 #>
