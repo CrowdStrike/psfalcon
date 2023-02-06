@@ -150,8 +150,6 @@ Name of a 'CloudFile' or path to a local archive (zip, tar, tar.gz, tgz) to uplo
 Name of the file to run once extracted from the target archive
 .PARAMETER Argument
 Arguments to include when running the target executable
-.PARAMETER Timeout
-Length of time to wait for a result, in seconds
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
 .PARAMETER Include
@@ -213,17 +211,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         [Parameter(ParameterSetName='GroupId_File',Position=3)]
         [Parameter(ParameterSetName='HostId_Archive',Position=4)]
         [Parameter(ParameterSetName='GroupId_Archive',Position=4)]
-        [ValidateRange(30,600)]
-        [int32]$Timeout,
+        [boolean]$QueueOffline,
         [Parameter(ParameterSetName='HostId_File',Position=4)]
         [Parameter(ParameterSetName='GroupId_File',Position=4)]
         [Parameter(ParameterSetName='HostId_Archive',Position=5)]
         [Parameter(ParameterSetName='GroupId_Archive',Position=5)]
-        [boolean]$QueueOffline,
-        [Parameter(ParameterSetName='HostId_File',Position=5)]
-        [Parameter(ParameterSetName='GroupId_File',Position=5)]
-        [Parameter(ParameterSetName='HostId_Archive',Position=6)]
-        [Parameter(ParameterSetName='GroupId_Archive',Position=6)]
         [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
             'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
             'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
@@ -320,14 +312,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         }
         function Write-RtrResult ([object[]]$Object,[string]$Step) {
             # Create output, append results and output specified fields to CSV, and return successful hosts
-            $Fields = @('aid','batch_id','cloud_request_id','complete','deployment_step','errors',
-                'offline_queued','session_id','stderr','stdout')
+            [string[]]$Fields = 'aid','batch_id','cloud_request_id','complete','deployment_step','errors',
+                'offline_queued','session_id','stderr','stdout'
             if ($Include) { $Fields += $Include }
             $Output = @($Object).foreach{
                 $i = [PSCustomObject]@{ aid = $_.aid; deployment_step = $Step }
                 if ($Include) {
                     # Append 'Include' fields to output
-                    @($Hosts).Where({ $_.device_id -eq $i.aid }).foreach{
+                    @($HostList).Where({ $_.device_id -eq $i.aid }).foreach{
                         @($_.PSObject.Properties).Where({ $Include -contains $_.Name }).foreach{
                             Set-Property $i $_.Name $_.Value
                         }
@@ -339,20 +331,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
             ($Object | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
                 $_.offline_queued -eq $true }).aid
         }
-        [System.Collections.Generic.List[object]]$Hosts = @()
+        [System.Collections.Generic.List[object]]$HostList = @()
         [System.Collections.Generic.List[string]]$List = @()
     }
     process {
         if ($GroupId) {
-            if (($GroupId | Get-FalconHostGroupMember -Total) -gt 10000) {
+            if ((Get-FalconHostGroupMember -Id $GroupId -Total) -gt 10000) {
                 # Stop if number of members exceeds API limit
                 throw "Group size exceeds maximum number of results. [10,000]"
             } else {
                 # Retrieve Host Group member device_id and platform_name
-                $Select = @('device_id','platform_name')
+                [string[]]$Select = 'device_id','platform_name'
                 if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
-                @($GroupId | Get-FalconHostGroupMember -Detailed -All | Select-Object $Select).foreach{
-                    $Hosts.Add($_)
+                @(Get-FalconHostGroupMember -Id $GroupId -Detailed -All | Select-Object $Select).foreach{
+                    $HostList.Add($_)
                 }
             }
         } elseif ($HostId) {
@@ -363,24 +355,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
     end {
         if ($List) {
             # Use Host identifiers to also retrieve 'platform_name' and 'Include' fields
-            $Select = @('device_id','platform_name')
+            [string[]]$Select = 'device_id','platform_name'
             if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
             @($List | Select-Object -Unique | Get-FalconHost | Select-Object $Select).foreach{
-                $Hosts.Add($_)
+                $HostList.Add($_)
             }
         }
-        if ($Hosts) {
+        if ($HostList) {
             # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
             if (Test-Path $FilePath -PathType Leaf) { Update-CloudFile $PutFile $FilePath }
             try {
-                # Force a base timeout of 30
-                if (!$Timeout) { $Timeout = 30 }
-                for ($i = 0; $i -lt ($Hosts | Measure-Object).Count; $i += 1000) {
-                    # Start Real-time Response sessions in groups of 1,000 with 'HostTimeout' to force batch
+                for ($i = 0; $i -lt ($HostList | Measure-Object).Count; $i += 10000) {
+                    # Start Real-time Response sessions in groups of 10,000 with 'HostTimeout' to force batch
                     $Param = @{
-                        Id = @($Hosts[$i..($i + 999)].device_id)
-                        Timeout = $Timeout
-                        HostTimeout = ($Timeout - 5)
+                        Id = @($HostList[$i..($i + 9999)].device_id)
+                        Timeout = 60
+                        HostTimeout = 55
                     }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
                     $Session = Start-FalconSession @Param
@@ -393,11 +383,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                         Write-Host "[Invoke-FalconDeploy] Initiated session with $(($SessionIds |
                             Measure-Object).Count) host(s)..."
                         foreach ($Pair in (@{
-                            Windows = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
+                            Windows = ($HostList | Where-Object { $SessionIds -contains $_.device_id -and
                                 $_.platform_name -eq 'Windows' }).device_id
-                            Mac = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
+                            Mac = ($HostList | Where-Object { $SessionIds -contains $_.device_id -and
                                 $_.platform_name -eq 'Mac' }).device_id
-                            Linux = ($Hosts | Where-Object { $SessionIds -contains $_.device_id -and
+                            Linux = ($HostList | Where-Object { $SessionIds -contains $_.device_id -and
                                 $_.platform_name -eq 'Linux' }).device_id
                         }).GetEnumerator().Where({ $_.Value })) {
                             # Define target temporary folder
@@ -431,9 +421,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                             '/'); exit 0"
                                     }
                                 }
-                                Windows = @{
-                                    Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir"
-                                }
+                                Windows = @{ Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir" }
                             }
                             foreach ($Cmd in @('mkdir','cd','put','runscript','run')) {
                                 # Define Real-time Response command parameters
@@ -458,9 +446,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                             if ($Pair.Key -eq 'Windows') {
                                                 # Use 'runscript' to start process and avoid timeout
                                                 [string]$String = if ($Argument) {
-                                                    ($TempDir,$RunFile -join $Join),$Argument -join ' '
+                                                    "Set-Location $TempDir;$($TempDir,$RunFile -join $Join)",
+                                                        $Argument -join ' '
                                                 } else {
-                                                    $TempDir,$RunFile -join $Join
+                                                    "Set-Location $TempDir;$($TempDir,$RunFile -join $Join)"
                                                 }
                                                 [string]$Executable = if ($RunFile -match '\.cmd$') {
                                                     'cmd',"'/c $String'" -join ' '
@@ -492,8 +481,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                         }
                                     }
                                     OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
-                                    Timeout = $Timeout
-                                    HostTimeout = ($Timeout - 5)
+                                    Timeout = 600
                                 }
                                 if ($Param.OptionalHostId -and $Param.Argument) {
                                     # Issue command, output result to CSV and capture successful values
