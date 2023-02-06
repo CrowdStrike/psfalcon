@@ -3,7 +3,7 @@ function Add-Schema ([object[]]$Object,[string]$String) {
         # Append schema to object output, when present
         $PSCmdlet.WriteVerbose(('[Add-Schema]',$String -join ' '))
         @($Object).foreach{
-            $_.PSObject.TypeNames.Insert(0,$String)
+            $_.PSObject.TypeNames.Insert(0,('PSFalcon',$String -join '.'))
             $_
         }
     } else {
