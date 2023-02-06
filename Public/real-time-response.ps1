@@ -574,7 +574,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
                     $PSBoundParameters.Command
                 }
                 foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
-                    if ($BatchId) { Set-Property $Request batch_id $BatchId }
+                    if ($Request.resources) {
+                        $Request = @($Request.resources.PSObject.Properties.Value).foreach{
+                            Set-Property $_ batch_id $BatchId
+                            $_
+                        }
+                    }
                     if ($Wait -and $Command -eq 'get') {
                         Wait-RtrGet $Request $MyInvocation.MyCommand.Name
                     } elseif ($Wait -and $SessionId) {
@@ -785,7 +790,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
                 $PSBoundParameters.Command
             }
             foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
-                if ($BatchId) { Set-Property $Request batch_id $BatchId }
+                if ($Request.resources) {
+                    $Request = @($Request.resources.PSObject.Properties.Value).foreach{
+                        Set-Property $_ batch_id $BatchId
+                        $_
+                    }
+                }
                 if ($Wait -and $SessionId) {
                     Wait-RtrCommand $Request $MyInvocation.MyCommand.Name
                 } else {
@@ -916,7 +926,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
                     $PSBoundParameters.Command
                 }
                 foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
-                    if ($BatchId) { Set-Property $Request batch_id $BatchId }
+                    if ($Request.resources) {
+                        $Request = @($Request.resources.PSObject.Properties.Value).foreach{
+                            Set-Property $_ batch_id $BatchId
+                            $_
+                        }
+                    }
                     if ($Wait -and $Command -eq 'get') {
                         Wait-RtrGet $Request $MyInvocation.MyCommand.Name
                     } elseif ($Wait -and $SessionId) {
