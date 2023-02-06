@@ -1069,39 +1069,6 @@ function Test-RegexValue {
 function Write-Result {
     [CmdletBinding()]
     param([object]$Request,[string]$Schema)
-    begin {
-        function Write-Meta ($Object) {
-            # Convert [array] and [PSCustomObject] into a flat verbose output string
-            function Get-ArrayItem ($Array,$Output,$String) {
-                @($Array).foreach{
-                    if ($_.GetType().Name -eq 'PSCustomObject') {
-                        Get-ObjectProperty $_ $Output $String
-                    } else {
-                        $Output[$String] = $_ -join ','
-                    }
-                }
-            }
-            function Get-ObjectProperty ($Object,$Output,$String) {
-                $Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).foreach{
-                    $Name = if ($String) { @($String,$_.Name) -join '.' } else { $_.Name }
-                    if ($_.Value.GetType().Name -eq 'PSCustomObject') {
-                        Get-ObjectProperty $_.Value $Output $Name
-                    } elseif ($_.Value.GetType().Name -eq 'Object[]') {
-                        Get-ArrayItem $_.Value $Output $Name
-                    } else {
-                        $Output[$Name] = $_.Value -join ','
-                    }
-                }
-            }
-            $Output = @{}
-            @($Object).Where({ $_.GetType().Name -eq 'PSCustomObject' }).foreach{ Get-ObjectProperty $_ $Output }
-            if ($Output) {
-                $PSCmdlet.WriteVerbose("[Write-Result] $($Output.GetEnumerator().foreach{
-                    @((@('meta',$_.Key) -join '.'),$_.Value) -join '='
-                } -join ', ')")
-            }
-        }
-    }
     process {
         # Capture result content
         $Result = if ($Request.Result.Content) { ($Request.Result.Content).ReadAsStringAsync().Result }
@@ -1115,32 +1082,37 @@ function Write-Result {
             ConvertFrom-Json $Result
         }
         if ($Json) {
-            if ($Json.meta) { Write-Meta $Json.meta }
+            if ($Json.meta) {
+                # Output 'meta' to verbose stream
+                $Message = (@($Json.meta.PSObject.Properties).foreach{
+                    if ($_.Name -eq 'pagination') {
+                        @($_.Value.PSObject.Properties).foreach{
+                            ('pagination',$_.Name -join '.'),$_.Value -join '='
+                        }
+                    } else {
+                        $_.Name,$_.Value -join '='
+                    }
+                }) -join ', '
+                $PSCmdlet.WriteVerbose(('[Write-Result]',$Message -join ' '))
+            }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                # Output error(s) from API
-                $Message = ConvertTo-Json $_.Value -Compress
-                $PSCmdlet.WriteError([System.Management.Automation.ErrorRecord]::New([Exception]::New($Message),
-                    $TraceId,[System.Management.Automation.ErrorCategory]::InvalidResult,$Request))
+                # Output 'errors' to error stream as Json string
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::New(
+                        [Exception]::New((ConvertTo-Json $_.Value -Compress)),
+                        $TraceId,
+                        [System.Management.Automation.ErrorCategory]::InvalidResult,
+                        $Request
+                    )
+                )
             }
-            $Output = if ($Json.combined) {
-                # Output single property values under 'combined', or 'combined'
-                if (($Json.combined.PSObject.Properties.Name).Count -eq 1) {
-                    $Json.combined.PSObject.Properties.Value
-                } else {
-                    $Json.combined
-                }
-            } elseif ($Json.resources) {
-                # Output single property values under 'resources' or 'resources'
-                if (($Json.resources.PSObject.Properties.Name).Count -eq 1) {
-                    $Json.resources.PSObject.Properties.Value
-                } else {
-                    $Json.resources
-                }
+            @('meta','errors').foreach{ [void]$Json.PSObject.Properties.Remove($_) }
+            if (($Json.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
+                # Output single sub-property value
+                Add-Schema ($Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name) $Schema
             } else {
-                # Output 'meta' or other unexpected Json result
-                if ($Json.meta -and !$Json.errors) { $Json.meta } elseif (!$Json.meta) { $Json }
+                Add-Schema $Json $Schema
             }
-            if ($Output) { Add-Schema $Output $Schema }
         } else {
             # Output non-Json content
             $Result
