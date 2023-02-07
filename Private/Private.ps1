@@ -10,7 +10,6 @@ function Add-Schema ([object[]]$Object,[string]$String) {
         $Object
     }
 }
-
 function Add-Include {
     [CmdletBinding()]
     [OutputType([void])]
