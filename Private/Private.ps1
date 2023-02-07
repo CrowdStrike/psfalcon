@@ -1094,6 +1094,10 @@ function Write-Result {
                 }) -join ', '
                 $PSCmdlet.WriteVerbose(('[Write-Result]',$Message -join ' '))
             }
+            if ($Schema -notmatch 'ReplyMetaOnly') {
+                # Remove meta when it's not the intended output
+                [void]$Json.PSObject.Properties.Remove('meta')
+            }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
                 # Output 'errors' to error stream as Json string
                 $PSCmdlet.WriteError(
@@ -1105,7 +1109,7 @@ function Write-Result {
                     )
                 )
             }
-            @('meta','errors').foreach{ [void]$Json.PSObject.Properties.Remove($_) }
+            [void]$Json.PSObject.Properties.Remove('errors')
             if (($Json.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
                 # Output single sub-property value
                 Add-Schema ($Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name) $Schema
