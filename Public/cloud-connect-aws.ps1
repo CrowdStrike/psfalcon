@@ -11,7 +11,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',
         SupportsShouldProcess)]
-    [OutputType('models.VerifyAccessResponseV1',
+    [OutputType('PSFalcon.domain.AccountAccessResult',
         ParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',Mandatory,
@@ -26,7 +26,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/verify-account-access/v1:post' { 'models.VerifyAccessResponseV1' }
+                '/cloud-connect-aws/entities/verify-account-access/v1:post' { 'domain.AccountAccessResult' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -63,7 +63,7 @@ AWS account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
-    [OutputType('models.AWSAccountsV1',ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch')]
+    [OutputType('PSFalcon.models.AWSAccountV1',ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -105,7 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
                     'cloudtrail_bucket_region','iam_role_arn','id','cloudtrail_bucket_owner_id') }
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/accounts/v1:patch' { 'models.AWSAccountsV1' }
+                '/cloud-connect-aws/entities/accounts/v1:patch' { 'models.AWSAccountV1' }
             }
         }
     }
@@ -139,8 +139,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:get',SupportsShouldProcess)]
-    [OutputType('registration.AWSAccountResponseV2',
-        ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
+    [OutputType('PSFalcon.domain.AWSAccountV2',ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -176,7 +175,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('migrated','ids','scan-type','status','limit','organization-ids','offset') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/account/v2:get' { 'registration.AWSAccountResponseV2' }
+                '/cloud-connect-aws/entities/account/v2:get' { 'domain.AWSAccountV2' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -200,7 +199,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',
         SupportsShouldProcess)]
-    [OutputType('registration.AWSAccountConsoleURL',
+    [OutputType('PSFalcon.registration.AWSAccountConsoleURL',
         ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',Position=1)]
@@ -228,9 +227,8 @@ Requires 'AWS Accounts: Read'.
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get',SupportsShouldProcess)]
-    [OutputType('models.CustomerConfigurationsV1',ParameterSetName='/cloud-connect-aws/combined/settings/v1:get')]
     param()
-    process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -Schema models.CustomerConfigurationsV1 }
+    process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
 function New-FalconDiscoverAwsAccount {
 <#
@@ -252,7 +250,7 @@ AWS account identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:post',SupportsShouldProcess)]
-    [OutputType('registration.AWSAccountD4CExtV2',ParameterSetName='/cloud-connect-aws/entities/account/v2:post')]
+    [OutputType('PSFalcon.domain.AWSAccountV2',ParameterSetName='/cloud-connect-aws/entities/account/v2:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -288,7 +286,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
                 }
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/account/v2:post' { 'registration.AWSAccountD4CExtV2' }
+                '/cloud-connect-aws/entities/account/v2:post' { 'domain.AWSAccountV2' }
             }
         }
     }
@@ -311,7 +309,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('registration.AWSProvisionGetAccountScriptResponseV2',
+    [OutputType('PSFalcon.registration.AWSAccountScript',
         ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
@@ -334,9 +332,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
                 Outfile = 'path'
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/user-scripts-download/v1:get' {
-                    'registration.AWSProvisionGetAccountScriptResponseV2'
-                }
+                '/cloud-connect-aws/entities/user-scripts-download/v1:get' { 'registration.AWSAccountScript' }
             }
         }
     }
@@ -368,7 +364,8 @@ AWS account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:delete',SupportsShouldProcess)]
-    [OutputType('msa.BaseEntitiesResponse',ParameterSetName='/cloud-connect-aws/entities/account/v2:delete')]
+    [OutputType('PSFalcon.msa.BaseEntitiesResponse',
+        ParameterSetName='/cloud-connect-aws/entities/account/v2:delete')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -414,6 +411,8 @@ Default external identifier to apply to AWS accounts
 https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.AWSConfiguration',
+        ParameterSetName='/cloud-connect-aws/entities/settings/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/settings/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -431,6 +430,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cloudtrail_bucket_owner_id','static_external_id') }}
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/cloud-connect-aws/entities/settings/v1:post' { 'domain.AWSConfiguration' }
+            }
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
