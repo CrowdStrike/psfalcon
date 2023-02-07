@@ -126,11 +126,12 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
-    [OutputType('deviceapi.DeviceSwagger',ParameterSetName='/devices/entities/devices/v2:post')]
-    [OutputType('deviceapi.LoginDetailV1',ParameterSetName='/devices/combined/devices/login-history/v1:post')]
-    [OutputType('deviceapi.NetworkAddressHistoryV1',
+    [OutputType('PSFalcon.deviceapi.DeviceSwagger',ParameterSetName='/devices/entities/devices/v2:post')]
+    [OutputType('PSFalcon.deviceapi.LoginDetailV1',
+        ParameterSetName='/devices/combined/devices/login-history/v1:post')]
+    [OutputType('PSFalcon.deviceapi.NetworkAddressHistoryV1',
         ParameterSetName='/devices/combined/devices/network-address-history/v1:post')]
-    [OutputType('state.OnlineStateResultV1',ParameterSetName='/devices/entities/online-state/v1:get')]
+    [OutputType('PSFalcon.state.OnlineStateResultV1',ParameterSetName='/devices/entities/online-state/v1:get')]
     [OutputType([string],ParameterSetName='/devices/queries/devices-hidden/v1:get')]
     [OutputType([string],ParameterSetName='/devices/queries/devices-scroll/v1:get')]
     
