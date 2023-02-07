@@ -333,6 +333,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         }
         [System.Collections.Generic.List[object]]$HostList = @()
         [System.Collections.Generic.List[string]]$List = @()
+        $Timeout = 600
     }
     process {
         if ($GroupId) {
@@ -379,7 +380,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                         Write-RtrResult $Session.hosts init $Session.batch_id
                     }
                     if ($SessionIds) {
-                        # Change to a 'temp' directory for each device by platform
+                        # Keep RTR session alive and Change to a 'temp' directory for each device by platform
+                        $JobId = Start-RtrUpdate $Session.batch_id $Timeout
                         Write-Host "[Invoke-FalconDeploy] Initiated session with $(($SessionIds |
                             Measure-Object).Count) host(s)..."
                         foreach ($Pair in (@{
@@ -481,7 +483,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                         }
                                     }
                                     OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
-                                    Timeout = 600
+                                    Timeout = $Timeout
                                 }
                                 if ($Param.OptionalHostId -and $Param.Argument) {
                                     # Issue command, output result to CSV and capture successful values
@@ -493,6 +495,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                 }
                             }
                         }
+                        Stop-RtrUpdate $JobId
                     }
                 }
             } catch {
@@ -591,6 +594,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                     $Init = @{ Id = $Output.aid; Timeout = 30; QueueOffline = $QueueOffline }
                     $InitReq = Start-FalconSession @Init
                     if ($InitReq.batch_id -or $InitReq.session_id) {
+                        $JobId = Start-RtrUpdate $InitReq $Timeout
                         # Output verbose message with batch_id or session_id
                         [string[]]$Message = if ($InitReq.batch_id) {
                             'batch_id:',$InitReq.batch_id,"[$(@($InitReq.hosts).Where({
@@ -600,7 +604,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                             'session_id:',$InitReq.session_id
                         }
                         $PSCmdlet.WriteVerbose("[Invoke-FalconRtr] $($Message -join ' ')")
-                        $JobId = if ($QueueOffline -ne $true) { Start-RtrUpdate $InitReq $Timeout }
                         [object[]]$Output = if ($InitReq.batch_id) {
                             @(Get-RtrResult $InitReq.hosts $Output).foreach{
                                 # Clear 'stdout' from batch initialization
@@ -619,7 +622,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         $PSCmdlet.WriteVerbose(('[Invoke-FalconRtr]','Submitting',"'$($Command,
                             $Argument -join ' ')'" -join ' '))
                         $CmdReq = $InitReq | & $Invoke @Cmd
-                        if ($JobId) { Stop-RtrUpdate $JobId }
+                        Stop-RtrUpdate $JobId
                         if ($CmdReq) {
                             $Output = @(Get-RtrResult $CmdReq $Output).foreach{
                                 # Clear 'stdout' for batch 'get' requests
