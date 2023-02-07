@@ -25,9 +25,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/verify-account-access/v1:post' { 'domain.AccountAccessResult' }
-            }
+            Schema = 'domain.AccountAccessResult'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -104,9 +102,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
                 Body = @{ resources = @('rate_limit_time','external_id','rate_limit_reqs',
                     'cloudtrail_bucket_region','iam_role_arn','id','cloudtrail_bucket_owner_id') }
             }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/accounts/v1:patch' { 'models.AWSAccountV1' }
-            }
+            Schema = 'models.AWSAccountV1'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -174,9 +170,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('migrated','ids','scan-type','status','limit','organization-ids','offset') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/account/v2:get' { 'domain.AWSAccountV2' }
-            }
+            Schema = 'domain.AWSAccountV2'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -210,9 +204,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('region') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/console-setup-urls/v1:get' { 'registration.AWSAccountConsoleURL' }
-            }
+            Schema = 'registration.AWSAccountConsoleURL'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -285,9 +277,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
                     resources = @('account_id','account_type','cloudtrail_region','is_master','organization_id')
                 }
             }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/account/v2:post' { 'domain.AWSAccountV2' }
-            }
+            Schema = 'domain.AWSAccountV2'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -331,9 +321,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
                 Query = @('ids')
                 Outfile = 'path'
             }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/user-scripts-download/v1:get' { 'registration.AWSAccountScript' }
-            }
+            Schema = 'registration.AWSAccountScript'
         }
     }
     process {
@@ -383,9 +371,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','organization-ids') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/account/v2:delete' { 'msa.BaseEntitiesResponse' }
-            }
+            Schema = 'msa.BaseEntitiesResponse'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -430,9 +416,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cloudtrail_bucket_owner_id','static_external_id') }}
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/cloud-connect-aws/entities/settings/v1:post' { 'domain.AWSConfiguration' }
-            }
+            Schema = 'domain.AWSConfiguration'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
