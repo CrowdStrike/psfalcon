@@ -15,6 +15,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.AzureClientServicePrincipalV1',
+        ParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -38,6 +40,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('tenant-id','id','subscription_id') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/cloud-connect-cspm-azure/entities/client-id/v1:patch' { 'domain.AzureClientServicePrincipalV1' }
+            }
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -67,6 +72,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.AzureAccountV1',
+        ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -95,6 +102,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('scan-type','offset','ids','status','limit') }
+            Schema = 'domain.AzureAccountV1'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -119,6 +127,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.registration.AzureKeyV1',
+        ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Position=1)]
         [boolean]$Refresh,
@@ -133,6 +143,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('refresh','tenant_id') }
+            Schema = 'registration.AzureKeyV1'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -152,6 +163,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.AzureAccountV1',
+        ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -169,6 +182,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('subscription_id','tenant_id') }}
+            Schema = 'domain.AzureAccountV1'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -190,6 +204,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.registration.AzureUserScript',
+        ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Mandatory,
             Position=1)]
@@ -211,6 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
                 Query = @('tenant-id')
                 Outfile = 'path'
             }
+            Schema = 'registration.AzureUserScript'
         }
     }
     process {
@@ -240,6 +257,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.registration.BaseResponseV1',
+        ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -252,6 +271,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
+            Schema = 'registration.BaseResponseV1'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
