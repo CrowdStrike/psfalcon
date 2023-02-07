@@ -27,32 +27,32 @@ A hashtable containing 'Path', 'Token' and 'Enabled' properties for 'Register-Fa
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
 #>
-    [CmdletBinding(DefaultParameterSetName='Hostname',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/oauth2/token:post',SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=1)]
-        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=1)]
+        [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=1)]
         [Alias('client_id')]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$ClientId,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=2)]
-        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=2)]
+        [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=2)]
         [Alias('client_secret')]
         [ValidatePattern('^\w{40}$')]
         [string]$ClientSecret,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=3)]
         [ValidateSet('eu-1','us-gov-1','us-1','us-2',IgnoreCase=$false)]
         [string]$Cloud,
-        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=3)]
         [ValidateSet('https://api.crowdstrike.com','https://api.us-2.crowdstrike.com',
             'https://api.laggar.gcw.crowdstrike.com','https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
         [string]$Hostname,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
-        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=4)]
         [Alias('cid','member_cid')]
         [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
         [string]$MemberCid,
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=5)]
-        [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=5)]
+        [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=5)]
         [ValidateScript({
             @($_.Keys).foreach{
                 if ($_ -notmatch '^(Enable|Token|Uri)$') { throw "Unexpected key in 'Collector' object. ['$_']" }
