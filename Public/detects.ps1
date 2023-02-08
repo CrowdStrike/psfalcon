@@ -202,12 +202,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=7)]
         [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
             'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
-            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS',
-            'ELB','EMR','Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis',
-            'Kubernetes','Lambda','LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL',
-            'RDS','Redshift','S3','SES','SNS','SQLDatabase','SQLServer','SQS','SSM',
-            'Serverless Application Repository','StorageAccount','Subscriptions','VPC','VirtualMachine',
-            'VirtualNetwork',IgnoreCase=$false)]
+            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
+            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
+            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
+            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
+            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase=$false)]
         [string]$Service,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=8)]
         [ValidateSet('open','closed',IgnoreCase=$false)]
@@ -315,12 +314,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=8)]
         [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
             'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
-            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS',
-            'ELB','EMR','Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis',
-            'Kubernetes','Lambda','LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL',
-            'RDS','Redshift','S3','SES','SNS','SQLDatabase','SQLServer','SQS','SSM',
-            'Serverless Application Repository','StorageAccount','Subscriptions','VPC','VirtualMachine',
-            'VirtualNetwork',IgnoreCase=$false)]
+            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
+            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
+            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
+            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
+            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase=$false)]
         [string]$Service,
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=9)]
         [ValidateRange(1,5000)]
