@@ -20,6 +20,7 @@ Display the total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocHost
 #>
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/devices/v1:get',SupportsShouldProcess)]
+    [OutputType([string],ParameterSetName='/indicators/queries/devices/v1:get')]
     param(
         [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -77,6 +78,8 @@ Repeat requests until all available results are retrieved
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
 #>
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/processes/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.api.ProcessDetail',ParameterSetName='/processes/entities/processes/v1:get')]
+    [OutputType([string],ParameterSetName='/processes/queries/processes/v1:get')]
     param(
         [Parameter(ParameterSetName='/processes/entities/processes/v1:get',ValueFromPipeline,Mandatory)]
         [ValidatePattern('^pid:[a-fA-F0-9]{32}:\d+$')]
@@ -107,6 +110,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','device_id','offset','type','value','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/processes/entities/processes/v1:get' { 'api.ProcessDetail' }
+            }
         }
     }
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
