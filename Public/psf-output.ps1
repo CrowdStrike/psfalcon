@@ -5,8 +5,7 @@ Format a response object and output to console or CSV
 .DESCRIPTION
 If providing a string, values will be exported with a single 'id' column.
 
-PSFalcon response objects will exported with available properties to ensure CSV compatibility. Use
-'Select-Object' to pre-filter any unwanted properties.
+PSFalcon response objects will exported with all available properties to ensure CSV compatibility.
 .PARAMETER Path
 Destination path
 .PARAMETER Object
