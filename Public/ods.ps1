@@ -60,6 +60,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/scans/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.Scan',ParameterSetName='/ods/entities/scans/v1:get')]
+    [OutputType([string],ParameterSetName='/ods/queries/scans/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scans/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -95,6 +97,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('offset','limit','sort','filter','ids') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/ods/entities/scans/v1:get' { 'domain.Scan' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -130,6 +135,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/malicious-files/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.MaliciousFile',ParameterSetName='/ods/entities/malicious-files/v1:get')]
+    [OutputType([string],ParameterSetName='/ods/queries/malicious-files/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/malicious-files/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -161,6 +168,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('offset','limit','sort','filter','ids') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/ods/entities/malicious-files/v1:get' { 'domain.MaliciousFile' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -196,6 +206,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanHost
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/scan-hosts/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.ScanHostMetadata',ParameterSetName='/ods/entities/scan-hosts/v1:get')]
+    [OutputType([string],ParameterSetName='/ods/queries/scan-hosts/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scan-hosts/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -228,6 +240,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanHost
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('offset','limit','sort','filter','ids') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/ods/entities/scan-hosts/v1:get' { 'domain.ScanHostMetadata' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -273,6 +288,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/scheduled-scans/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.ScanProfile',ParameterSetName='/ods/entities/scheduled-scans/v1:get')]
+    [OutputType([string],ParameterSetName='/ods/queries/scheduled-scans/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -304,6 +321,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledScan
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('offset','limit','sort','filter','ids') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/ods/entities/scheduled-scans/v1:get' { 'domain.ScanProfile' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -355,6 +375,7 @@ Host group identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/entities/scheduled-scans/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.ScanProfile',ParameterSetName='/ods/entities/scheduled-scans/v1:post')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Mandatory,Position=1)]
         [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$')]
@@ -424,6 +445,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
                         'schedule','ignored_by_channel_file')
                 }
             }
+            Schema = 'domain.ScanProfile'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -516,6 +538,7 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Start-FalconScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/entities/scans/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.Scan',ParameterSetName='/ods/entities/scans/v1:post')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Mandatory,Position=1)]
         [Alias('file_paths')]
@@ -583,6 +606,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconScan
                         'cpu_priority','cloud_ml_level_prevention','file_paths','max_file_size')
                 }
             }
+            Schema = 'domain.Scan'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
