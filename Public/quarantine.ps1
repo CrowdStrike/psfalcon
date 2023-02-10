@@ -26,6 +26,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.quarantine.QuarantinedFile',
+        ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post')]
+    [OutputType([string],ParameterSetName='/quarantine/queries/quarantined-files/v1:get')]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -63,6 +66,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
                 Query = @('sort','limit','filter','offset','q')
                 Body = @{ root = @('ids') }
             }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/quarantine/entities/quarantined-files/GET/v1:post' { 'quarantine.QuarantinedFile' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -93,6 +99,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/queries/quarantined-files/v1:patch')]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory,Position=1)]
@@ -119,6 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('action','filter','ids','comment','q') }}
             Max = 500
+            Schema = 'msa.ReplyMetaOnly'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
