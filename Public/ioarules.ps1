@@ -113,14 +113,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
     process {
         if ($RuleUpdate) {
             # Filter 'rule_updates' to required fields
-            $RuleRequired = @('instance_id','pattern_severity','enabled','disposition_id','name',
-                'description','comment','field_values')
-            $FieldRequired = @('name','label','type','values')
-            [object[]]$RuleUpdate = ,(@($RuleUpdate | Select-Object $RuleRequired).foreach{
-                    $_.field_values = $_.field_values | Select-Object $FieldRequired
-                    $_
-                }
-            )
+            [object[]]$RuleRequired = 'instance_id','pattern_severity','enabled','disposition_id','name',
+                'description','comment',@{ label = 'field_values'; expression = { $_.field_values |
+                Select-Object name,label,type,values }}
+            [object[]]$RuleUpdate = $RuleUpdate | Select-Object $RuleRequired
         }
         ($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
             # When not provided, add required fields using existing policy settings
