@@ -10,6 +10,8 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
 #>
     [CmdletBinding(DefaultParameterSetName='/zero-trust-assessment/entities/audit/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.SignalProperties',
+        ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get')]
     param(
         [Parameter(ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -22,6 +24,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/zero-trust-assessment/entities/assessments/v1:get' { 'domain.SignalProperties' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
