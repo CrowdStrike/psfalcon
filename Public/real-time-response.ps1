@@ -19,6 +19,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconAdminCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/admin-command/v1:get',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.StatusResponse',
+        ParameterSetName='/real-time-response/entities/admin-command/v1:get')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:get',Position=1)]
         [Alias('sequence_id')]
@@ -35,6 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconAdminCommand
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cloud_request_id','sequence_id') }
+            Schema = 'domain.StatusResponse'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -59,6 +62,7 @@ Command request identifier
 https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/command/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.StatusResponse',ParameterSetName='/real-time-response/entities/command/v1:get')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/command/v1:get',Position=1)]
         [Alias('sequence_id')]
@@ -74,6 +78,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconCommand
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cloud_request_id','sequence_id') }
+            Schema = 'domain.StatusResponse'
         }
         if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['sequence_id'] = 0 }
     }
@@ -96,6 +101,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-get-command/v1:get',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.FileV2',ParameterSetName='/real-time-response/entities/file/v2:get')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/file/v2:get',Mandatory,
             ValueFromPipelineByPropertyName)]
@@ -115,6 +121,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Format = @{ Query = @('session_id','batch_get_cmd_req_id','timeout') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/entities/file/v2:get' { 'domain.FileV2' }
+            }
         }
     }
     process {
@@ -159,6 +168,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconResponderCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/active-responder-command/v1:get',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.StatusResponse',
+        ParameterSetName='/real-time-response/entities/active-responder-command/v1:get')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:get',Position=1)]
         [Alias('sequence_id')]
@@ -174,6 +185,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconResponderCommand
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('cloud_request_id','sequence_id') }
+            Schema = 'domain.StatusResponse'
         }
         if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['sequence_id'] = 0 }
     }
@@ -203,6 +215,7 @@ Script identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:patch',SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/real-time-response/entities/scripts/v1:patch')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -242,6 +255,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
                 Formdata = @('id','platform','permission_type','name','description','comments_for_audit_log',
                     'content')
             }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -272,6 +286,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/put-files/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.RemoteCommandPutFileV2',
+        ParameterSetName='/real-time-response/entities/put-files/v2:get')]
+    [OutputType([string],ParameterSetName='/real-time-response/queries/put-files/v1:get')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -300,6 +317,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/entities/put-files/v2:get' { 'domain.RemoteCommandPutFileV2' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -339,6 +359,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/scripts/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.RemoteCommandPutFileV2',
+        ParameterSetName='/real-time-response/entities/scripts/v2:get')]
+    [OutputType([string],ParameterSetName='/real-time-response/queries/scripts/v1:get')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -367,6 +390,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/entities/scripts/v2:get' { 'domain.RemoteCommandPutFileV2' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -413,6 +439,10 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/sessions/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.Session',ParameterSetName='/real-time-response/entities/sessions/GET/v1:post')]
+    [OutputType('PSFalcon.domain.QueuedSessionJob',
+        ParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post')]
+    [OutputType([string],ParameterSetName='/real-time-response/queries/sessions/v1:get')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -447,6 +477,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
             Format = @{
                 Query = @('sort','offset','limit','filter')
                 Body = @{ root = @('ids') }
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/entities/sessions/GET/v1:post' { 'domain.Session' }
+                '/real-time-response/entities/queued-sessions/GET/v1:post' { 'domain.QueuedSessionJob' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -490,6 +524,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.MultiCommandExecuteResponseWrapper',
+        ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post')]
+    [OutputType('PSFalcon.domain.CommandExecuteResponse',
+        ParameterSetName='/real-time-response/entities/admin-command/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Mandatory,
@@ -537,6 +575,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
             Format = @{
                 Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/combined/batch-admin-command/v1:post' {
+                    'domain.MultiCommandExecuteResponseWrapper'
+                }
+                '/real-time-response/entities/admin-command/v1:post' { 'domain.CommandExecuteResponse' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -621,6 +665,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-get-command/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.BatchGetCommandResponse',
+        ParameterSetName='/real-time-response/combined/batch-get-command/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Mandatory,Position=1)]
         [Alias('file_path')]
@@ -652,6 +698,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
                 Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('batch_id','file_path','optional_hosts') }
             }
+            Schema = 'domain.BatchGetCommandResponse'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -721,6 +768,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-command/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.MultiCommandExecuteResponseWrapper',
+        ParameterSetName='/real-time-response/combined/batch-command/v1:post')]
+    [OutputType('PSFalcon.domain.CommandExecuteResponse',
+        ParameterSetName='/real-time-response/entities/command/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-command/v1:post',Mandatory,Position=1)]
@@ -764,6 +815,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
             Format = @{
                 Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/combined/batch-command/v1:post' {
+                    'domain.MultiCommandExecuteResponseWrapper'
+                }
+                '/real-time-response/entities/command/v1:post' { 'domain.CommandExecuteResponse' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -838,6 +895,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.MultiCommandExecuteResponseWrapper',
+        ParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post')]
+    [OutputType('PSFalcon.domain.CommandExecuteResponse',
+        ParameterSetName='/real-time-response/entities/active-responder-command/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post',Mandatory,
             Position=1)]
@@ -889,6 +950,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
             Format = @{
                 Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/combined/batch-active-responder-command/v1:post' {
+                    'domain.MultiCommandExecuteResponseWrapper'
+                }
+                '/real-time-response/entities/active-responder-command/v1:post' {
+                    'domain.CommandExecuteResponse'
+                }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -1026,6 +1095,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',
+        ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -1043,6 +1114,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('session_id','cloud_request_id') }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -1065,6 +1137,7 @@ Real-time Response 'get' file identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete',SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/real-time-response/entities/file/v2:delete')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -1082,6 +1155,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('session_id','ids') }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -1099,6 +1173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/real-time-response/entities/put-files/v1:delete')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1111,6 +1186,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -1127,6 +1203,7 @@ Script identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete',SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/real-time-response/entities/scripts/v1:delete')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1139,6 +1216,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -1156,6 +1234,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/sessions/v1:delete',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/real-time-response/entities/sessions/v1:delete')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1168,6 +1247,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('session_id') }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -1190,6 +1270,7 @@ Path to local file
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/real-time-response/entities/put-files/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -1218,6 +1299,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ ContentType = 'multipart/form-data' }
             Format = @{ Formdata = @('file','name','description','comments_for_audit_log') }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -1244,6 +1326,7 @@ Path to local file or string-based script content
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/real-time-response/entities/scripts/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -1279,6 +1362,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
                 Formdata = @('platform','permission_type','name','description','comments_for_audit_log',
                     'content')
             }
+            Schema = 'msa.ReplyMetaOnly'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -1311,6 +1395,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/combined/batch-init-session/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.BatchInitSessionResponse',
+        ParameterSetName='/real-time-response/combined/batch-init-session/v1:post')]
+    [OutputType('PSFalcon.domain.InitResponse',ParameterSetName='/real-time-response/entities/sessions/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:post',Position=1)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=1)]
@@ -1342,6 +1429,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
             Format = @{
                 Query = @('timeout','host_timeout_duration')
                 Body = @{ root = @('existing_batch_id','host_ids','queue_offline','device_id') }
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/combined/batch-init-session/v1:post' { 'domain.BatchInitSessionResponse' }
+                '/real-time-response/entities/sessions/v1:post' { 'domain.InitResponse' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -1412,6 +1503,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
 #>
     [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/refresh-session/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.InitResponse',
+        ParameterSetName='/real-time-response/entities/refresh-session/v1:post')]
     param(
         [Parameter(ParameterSetName='/real-time-response/entities/refresh-session/v1:post',Position=1)]
         [Parameter(ParameterSetName='/real-time-response/combined/batch-refresh-session/v1:post',Position=1)]
@@ -1441,6 +1534,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
             Format = @{
                 Query = @('timeout')
                 Body = @{ root = @('queue_offline','device_id','batch_id','hosts_to_remove') }
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/real-time-response/entities/refresh-session/v1:post' { 'domain.InitResponse' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
