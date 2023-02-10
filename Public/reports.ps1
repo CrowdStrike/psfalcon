@@ -28,6 +28,10 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/queries/scheduled-reports/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.api.ReportExecutionV1',ParameterSetName='/reports/entities/report-executions/v1:get')]
+    [OutputType('PSFalcon.api.ScheduledReportV1',ParameterSetName='/reports/entities/scheduled-reports/v1:get')]
+    [OutputType([string],ParameterSetName='/reports/queries/report-executions/v1:get')]
+    [OutputType([string],ParameterSetName='/reports/queries/scheduled-reports/v1:get')]
     param(
         [Parameter(ParameterSetName='/reports/entities/scheduled-reports/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -75,6 +79,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','limit','ids','filter','offset','q') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/reports/entities/report-executions/v1:get' { 'api.ReportExecutionV1' }
+                '/reports/entities/scheduled-reports/v1:get' { 'api.ScheduledReportV1' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -109,6 +117,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.api.ReportExecutionV1',
+        ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post')]
     param(
         [Parameter(ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -120,6 +130,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconScheduledReport
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('raw_array') }}
+            Schema = 'api.ReportExecutionV1'
         }
     }
     process {
@@ -210,6 +221,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-retry/v1:post',
         SupportsShouldProcess)]
+    [OutputType('PSFalcon.api.ReportExecutionV1',
+        ParameterSetName='/reports/entities/report-executions-retry/v1:post')]
     param(
         [Parameter(ParameterSetName='/reports/entities/report-executions-retry/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -221,6 +234,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconScheduledReport
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('raw_array') }}
+            Schema = 'api.ReportExecutionV1'
         }
     }
     process {
