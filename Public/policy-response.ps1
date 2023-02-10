@@ -18,6 +18,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/entities/response/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -55,6 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
                     root = @('resources')
                 }
             }
+            Schema = 'responses.RTResponsePolicyV1'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -112,6 +114,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/response/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/combined/response/v1:get')]
+    [OutputType('PSFalcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/entities/response/v1:get')]
+    [OutputType([string],ParameterSetName='/policy/queries/response/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/response/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -154,6 +159,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/policy/entities/response/v1:get' { 'responses.RTResponsePolicyV1' }
+                '/policy/combined/response/v1:get' { 'responses.RTResponsePolicyV1' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -195,6 +204,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/response-members/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.device.Device',ParameterSetName='/policy/combined/response-members/v1:get')]
+    [OutputType([string],ParameterSetName='/policy/queries/response-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/response-members/v1:get',ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
@@ -229,6 +240,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicyMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','filter','id','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/policy/combined/response-members/v1:get' { 'device.Device' }
+            }
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -249,6 +263,8 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponsePolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response-actions/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.RTResponsePolicyV1',
+        ParameterSetName='/policy/entities/response-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
@@ -270,6 +286,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponsePolicyAction
                 Query = @('action_name')
                 Body = @{ root = @('ids','action_parameters') }
             }
+            Schema = 'responses.RTResponsePolicyV1'
         }
     }
     process {
@@ -307,6 +324,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/entities/response/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -346,6 +364,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
                     root = @('resources')
                 }
             }
+            Schema = 'responses.RTResponsePolicyV1'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
