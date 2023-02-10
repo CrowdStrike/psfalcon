@@ -24,6 +24,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScan
 #>
     [CmdletBinding(DefaultParameterSetName='/scanner/queries/scans/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.mlscanner.SamplesScanResult',ParameterSetName='/scanner/entities/scans/v1:get')]
+    [OutputType([string],ParameterSetName='/scanner/queries/scans/v1:get')]
     param(
         [Parameter(ParameterSetName='/scanner/entities/scans/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -52,6 +54,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScan
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/scanner/entities/scans/v1:get' { 'mlscanner.SamplesScanResult' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
