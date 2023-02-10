@@ -12,6 +12,7 @@ Customer identifier
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.CIDGroupMembers',ParameterSetName='/mssp/entities/cid-group-members/v1:post')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -29,6 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','cids') }}
+            Schema = 'domain.CIDGroupMembers'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -58,6 +60,7 @@ Role identifier
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupRole
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.MSSPRoles',ParameterSetName='/mssp/entities/mssp-roles/v1:post')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -79,6 +82,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupRole
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
+            Schema = 'domain.MSSPRoles'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -104,6 +108,7 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.UserGroupMembers',ParameterSetName='/mssp/entities/user-group-members/v1:post')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -121,6 +126,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconUserGroupMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('user_uuids','user_group_id') }}
+            Schema = 'domain.UserGroupMembers'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -148,6 +154,7 @@ CID group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:patch',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.CIDGroup',ParameterSetName='/mssp/entities/cid-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -166,6 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCidGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('description','cid_group_id','name') }}
+            Schema = 'domain.CIDGroup'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -186,6 +194,7 @@ User group description
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:patch',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.UserGroup',ParameterSetName='/mssp/entities/user-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -204,6 +213,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUserGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('description','name','user_group_id') }}
+            Schema = 'domain.UserGroup'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -234,6 +244,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.CIDGroup',ParameterSetName='/mssp/entities/cid-groups/v2:get')]
+    [OutputType([string],ParameterSetName='/mssp/queries/cid-groups/v1:get')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -263,6 +275,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit','name','sort') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/mssp/entities/cid-groups/v2:get' { 'domain.CIDGroup' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -298,6 +313,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.CIDGroupMembers',ParameterSetName='/mssp/entities/cid-group-members/v2:get')]
+    [OutputType([string],ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -329,6 +346,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit','sort','cid') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/mssp/entities/cid-group-members/v2:get' { 'domain.CIDGroupMembers' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -368,6 +388,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconGroupRole
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/mssp-roles/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.MSSPRoles',ParameterSetName='/mssp/entities/mssp-roles/v1:get')]
+    [OutputType([string],ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:get',Mandatory,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
@@ -404,6 +426,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconGroupRole
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','role_id','cid_group_id','sort','offset','user_group_id') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/mssp/entities/mssp-roles/v1:get' { 'domain.MSSPRoles' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -447,6 +472,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.ChildrenResponseV1',ParameterSetName='/mssp/entities/children/GET/v2:post')]
+    [OutputType([string],ParameterSetName='/mssp/queries/children/v1:get')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/children/GET/v2:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -475,6 +502,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
             Format = @{
                 Body = @{ root = @('ids') }
                 Query = @('sort','offset','limit')
+            }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/mssp/entities/children/GET/v2:post' { 'domain.ChildrenResponseV1' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -511,6 +541,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.UserGroup',ParameterSetName='/mssp/entities/user-groups/v2:get')]
+    [OutputType([string],ParameterSetName='/mssp/queries/user-groups/v1:get')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -540,6 +572,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','ids','limit','name') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/mssp/entities/user-groups/v2:get' { 'domain.UserGroup' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -575,6 +610,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.UserGroupMembers',ParameterSetName='/mssp/entities/user-group-members/v2:get')]
+    [OutputType([string],ParameterSetName='/mssp/queries/user-group-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -606,6 +643,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','ids','limit','user_uuid') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/mssp/entities/user-group-members/v2:get' { 'domain.UserGroupMembers' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -629,6 +669,7 @@ CID group description
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCidGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.CIDGroup',ParameterSetName='/mssp/entities/cid-groups/v1:post')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:post',Mandatory,Position=1)]
         [string]$Name,
@@ -640,6 +681,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCidGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('description','name') }}
+            Schema = 'domain.CIDGroup'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -658,6 +700,7 @@ User group description
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconUserGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.UserGroup',ParameterSetName='/mssp/entities/user-groups/v1:post')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:post',Mandatory,Position=1)]
         [string]$Name,
@@ -669,6 +712,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUserGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('description','name') }}
+            Schema = 'domain.UserGroup'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -722,6 +766,7 @@ Customer identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:delete',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.CIDGroupMembers',ParameterSetName='/mssp/entities/cid-group-members/v1:delete')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -739,6 +784,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','cids') }}
+            Schema = 'domain.CIDGroupMembers'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -766,6 +812,7 @@ Role identifier, or leave blank to remove user group/CID group association
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupRole
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.MSSPRoles',ParameterSetName='/mssp/entities/mssp-roles/v1:delete')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -787,6 +834,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupRole
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
+            Schema = 'domain.MSSPRoles'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -853,6 +901,7 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.UserGroupMembers',ParameterSetName='/mssp/entities/user-group-members/v1:delete')]
     param(
         [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -869,6 +918,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('user_uuids','user_group_id') }}
+            Schema = 'domain.UserGroupMembers'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
