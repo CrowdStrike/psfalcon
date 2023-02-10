@@ -18,6 +18,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:patch',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -55,6 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
                     root = @('resources')
                 }
             }
+            Schema = 'responses.PreventionPolicyV1'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -113,6 +115,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/combined/prevention/v1:get')]
+    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:get')]
+    [OutputType([string],ParameterSetName='/policy/queries/prevention/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -155,6 +160,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicy
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/policy/entities/prevention/v1:get' { 'responses.PreventionPolicyV1' }
+                '/policy/combined/prevention/v1:get' { 'responses.PreventionPolicyV1' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -196,6 +205,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention-members/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.device.Device',ParameterSetName='/policy/combined/prevention-members/v1:get')]
+    [OutputType([string],ParameterSetName='/policy/queries/prevention-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/prevention-members/v1:get',
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -230,6 +241,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicyMember
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','filter','id','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/policy/combined/prevention-members/v1:get' { 'device.Device' }
+            }
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -250,6 +264,8 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconPreventionPolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-actions/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.PreventionPolicyV1',
+        ParameterSetName='/policy/entities/prevention-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-host-group','add-rule-group','disable','enable','remove-host-group',
@@ -272,6 +288,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconPreventionPolicyAction
                 Query = @('action_name')
                 Body = @{ root = @('ids','action_parameters') }
             }
+            Schema = 'responses.PreventionPolicyV1'
         }
         $Message = $Param.Command,("$(if ($GroupId) { $Name,$GroupId -join ' ' } else { $Name })") -join ': '
     }
@@ -316,6 +333,7 @@ An array of policy settings
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:post')]
     param(
         [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -355,6 +373,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
                     root = @('resources')
                 }
             }
+            Schema = 'responses.PreventionPolicyV1'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
