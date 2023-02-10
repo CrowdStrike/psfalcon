@@ -10,6 +10,7 @@ Sha256 hash value
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post',SupportsShouldProcess)]
+    [OutputType([string],ParameterSetName='/samples/queries/samples/GET/v1:post')]
     param(
         [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -140,6 +141,7 @@ Path to local file
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
+    [OutputType('PSFalcon.client.SampleMetadataV2',ParameterSetName='/samples/entities/samples/v3:post')]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
         [Alias('is_confidential')]
@@ -171,6 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
                 Query = @('comment','file_name','is_confidential')
                 Body = @{ root = @('body') }
             }
+            Schema = 'client.SampleMetadataV2'
         }
     }
     process {
