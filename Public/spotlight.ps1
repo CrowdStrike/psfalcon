@@ -10,6 +10,7 @@ Remediation identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/entities/remediations/v2:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.APIRemediationV2',ParameterSetName='/spotlight/entities/remediations/v2:get')]
     param(
         [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -21,6 +22,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
+            Schema = 'domain.APIRemediationV2'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -75,6 +77,11 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.BaseAPIVulnerabilityV2',
+        ParameterSetName='/spotlight/combined/vulnerabilities/v1:get')]
+    [OutputType('PSFalcon.domain.APIVulnerabilityV2',
+        ParameterSetName='/spotlight/entities/vulnerabilities/v2:get')]
+    [OutputType([string],ParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
     param(
         [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -113,6 +120,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('after','sort','ids','filter','limit','facet') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/spotlight/entities/vulnerabilities/v2:get' { 'domain.APIVulnerabilityV2' }
+                '/spotlight/combined/vulnerabilities/v1:get' { 'domain.BaseAPIVulnerabilityV2' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -148,6 +159,11 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/evaluation-logic/v1:get',SupportsShouldProcess)]
+    [OutputType('PSFalcon.domain.APIEvaluationLogicV1',
+        ParameterSetName='/spotlight/combined/evaluation-logic/v1:get')]
+    [OutputType('PSFalcon.domain.APIEvaluationLogicV1',
+        ParameterSetName='/spotlight/entities/evaluation-logic/v1:get')]
+    [OutputType([string],ParameterSetName='/spotlight/queries/evaluation-logic/v1:get')]
     param(
         [Parameter(ParameterSetName='/spotlight/entities/evaluation-logic/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -178,6 +194,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('after','sort','ids','filter','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/spotlight/entities/evaluation-logic/v1:get' { 'domain.APIEvaluationLogicV1' }
+                '/spotlight/combined/evaluation-logic/v1:get' { 'domain.APIEvaluationLogicV1' }
+            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
