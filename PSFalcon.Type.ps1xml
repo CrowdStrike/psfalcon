@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Types>
  <Type>
-  <Name>PSFalcon.api.ActionV1</Name>
+  <Name>CrowdStrike.Falcon.api.ActionV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -19,7 +19,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.auditEventDetailsResourceV1</Name>
+  <Name>CrowdStrike.Falcon.api.auditEventDetailsResourceV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -40,7 +40,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.customerSettingsResourceV1</Name>
+  <Name>CrowdStrike.Falcon.api.customerSettingsResourceV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -57,7 +57,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.IndicatorV1</Name>
+  <Name>CrowdStrike.Falcon.api.IndicatorV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -94,7 +94,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.IOCDevicesCount</Name>
+  <Name>CrowdStrike.Falcon.api.IOCDevicesCount</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -114,7 +114,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.NotificationExposedDataRecordV1</Name>
+  <Name>CrowdStrike.Falcon.api.NotificationExposedDataRecordV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -164,7 +164,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.PatternV1</Name>
+  <Name>CrowdStrike.Falcon.api.PatternV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -181,7 +181,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.ProcessDetail</Name>
+  <Name>CrowdStrike.Falcon.api.ProcessDetail</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -205,7 +205,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.ReportExecutionV1</Name>
+  <Name>CrowdStrike.Falcon.api.ReportExecutionV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -240,7 +240,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.RuleGroupV1</Name>
+  <Name>CrowdStrike.Falcon.api.RuleGroupV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -271,7 +271,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.RuleTypeV1</Name>
+  <Name>CrowdStrike.Falcon.api.RuleTypeV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -294,7 +294,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.RuleV1</Name>
+  <Name>CrowdStrike.Falcon.api.RuleV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -332,7 +332,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.ScheduledReportV1</Name>
+  <Name>CrowdStrike.Falcon.api.ScheduledReportV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -369,7 +369,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.api.tokenDetailsResourceV1</Name>
+  <Name>CrowdStrike.Falcon.api.tokenDetailsResourceV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -393,7 +393,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.client.ArchiveWithFilesV1</Name>
+  <Name>CrowdStrike.Falcon.client.ArchiveWithFilesV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -416,7 +416,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.client.ExtractionFileResultV1</Name>
+  <Name>CrowdStrike.Falcon.client.ExtractionFileResultV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -436,7 +436,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.client.ExtractionWithFilesV1</Name>
+  <Name>CrowdStrike.Falcon.client.ExtractionWithFilesV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -456,7 +456,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.client.SampleMetadataV2</Name>
+  <Name>CrowdStrike.Falcon.client.SampleMetadataV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -473,7 +473,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.common.CIDComplianceResult</Name>
+  <Name>CrowdStrike.Falcon.common.CIDComplianceResult</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -492,7 +492,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.csdomain.Device</Name>
+  <Name>CrowdStrike.Falcon.csdomain.Device</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -562,7 +562,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.detects.Investigatable</Name>
+  <Name>CrowdStrike.Falcon.detects.Investigatable</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -610,7 +610,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.device.Device</Name>
+  <Name>CrowdStrike.Falcon.device.Device</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -696,7 +696,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.deviceapi.DeviceSwagger</Name>
+  <Name>CrowdStrike.Falcon.Host</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -781,7 +781,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.deviceapi.LoginDetailV1</Name>
+  <Name>CrowdStrike.Falcon.deviceapi.LoginDetailV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -798,7 +798,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.deviceapi.NetworkAddressHistoryV1</Name>
+  <Name>CrowdStrike.Falcon.deviceapi.NetworkAddressHistoryV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -816,7 +816,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.deviceapi.UpdateDeviceDetailsResponseV1</Name>
+  <Name>CrowdStrike.Falcon.deviceapi.UpdateDeviceDetailsResponseV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -835,7 +835,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.AccessTokenResponseV1</Name>
+  <Name>CrowdStrike.Falcon.domain.AccessTokenResponseV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -853,7 +853,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.AccountAccessResult</Name>
+  <Name>CrowdStrike.Falcon.domain.AccountAccessResult</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -871,7 +871,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ActionV1</Name>
+  <Name>CrowdStrike.Falcon.domain.ActionV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -898,7 +898,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ActorDocument</Name>
+  <Name>CrowdStrike.Falcon.domain.ActorDocument</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -940,7 +940,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.APIDetectionDocument</Name>
+  <Name>CrowdStrike.Falcon.domain.APIDetectionDocument</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -978,7 +978,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.APIEvaluationLogicV1</Name>
+  <Name>CrowdStrike.Falcon.domain.APIEvaluationLogicV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -999,7 +999,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.APIRemediationV2</Name>
+  <Name>CrowdStrike.Falcon.domain.APIRemediationV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1020,7 +1020,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.APIVulnerabilityV2</Name>
+  <Name>CrowdStrike.Falcon.domain.APIVulnerabilityV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1048,7 +1048,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.AWSAccountV2</Name>
+  <Name>CrowdStrike.Falcon.domain.AWSAccountV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1095,7 +1095,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.AWSConfiguration</Name>
+  <Name>CrowdStrike.Falcon.domain.AWSConfiguration</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1114,7 +1114,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.AzureAccountV1</Name>
+  <Name>CrowdStrike.Falcon.domain.AzureAccountV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1137,7 +1137,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.AzureClientServicePrincipalV1</Name>
+  <Name>CrowdStrike.Falcon.domain.AzureClientServicePrincipalV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1158,7 +1158,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.BaseAPIVulnerabilityV2</Name>
+  <Name>CrowdStrike.Falcon.domain.BaseAPIVulnerabilityV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1186,7 +1186,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.BatchGetCommandResponse</Name>
+  <Name>CrowdStrike.Falcon.domain.BatchGetCommandResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1205,7 +1205,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.BatchInitSessionResponse</Name>
+  <Name>CrowdStrike.Falcon.domain.BatchInitSessionResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1224,7 +1224,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Behavior</Name>
+  <Name>CrowdStrike.Falcon.domain.Behavior</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1262,7 +1262,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ChildrenResponseV1</Name>
+  <Name>CrowdStrike.Falcon.domain.ChildrenResponseV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1279,7 +1279,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.CIDGroup</Name>
+  <Name>CrowdStrike.Falcon.domain.CIDGroup</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1298,7 +1298,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.CIDGroupMembers</Name>
+  <Name>CrowdStrike.Falcon.domain.CIDGroupMembers</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1315,7 +1315,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.CIDPolicyAssignments</Name>
+  <Name>CrowdStrike.Falcon.domain.CIDPolicyAssignments</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1345,7 +1345,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.CommandExecuteResponse</Name>
+  <Name>CrowdStrike.Falcon.domain.CommandExecuteResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1363,7 +1363,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.DetailedNotificationV1</Name>
+  <Name>CrowdStrike.Falcon.domain.DetailedNotificationV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1382,7 +1382,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.DiscoverAPIAccount</Name>
+  <Name>CrowdStrike.Falcon.domain.DiscoverAPIAccount</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1416,7 +1416,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.DiscoverAPIApplication</Name>
+  <Name>CrowdStrike.Falcon.domain.DiscoverAPIApplication</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1454,7 +1454,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.DiscoverAPIHost</Name>
+  <Name>CrowdStrike.Falcon.domain.DiscoverAPIHost</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1561,7 +1561,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.DiscoverAPILogin</Name>
+  <Name>CrowdStrike.Falcon.domain.DiscoverAPILogin</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1599,7 +1599,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.EnvironmentScore</Name>
+  <Name>CrowdStrike.Falcon.domain.EnvironmentScore</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1617,7 +1617,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Event</Name>
+  <Name>CrowdStrike.Falcon.domain.Event</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1646,7 +1646,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ExportJobMetadataV1</Name>
+  <Name>CrowdStrike.Falcon.domain.ExportJobMetadataV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1665,7 +1665,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ExportJobV1</Name>
+  <Name>CrowdStrike.Falcon.domain.ExportJobV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1682,7 +1682,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.FieldValidation</Name>
+  <Name>CrowdStrike.Falcon.domain.FieldValidation</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1704,7 +1704,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.FileV2</Name>
+  <Name>CrowdStrike.Falcon.domain.FileV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1733,7 +1733,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.GCPAccountV1</Name>
+  <Name>CrowdStrike.Falcon.domain.GCPAccountV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1751,7 +1751,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Incident</Name>
+  <Name>CrowdStrike.Falcon.domain.Incident</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1791,7 +1791,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.InitResponse</Name>
+  <Name>CrowdStrike.Falcon.domain.InitResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1813,7 +1813,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.IOAUser</Name>
+  <Name>CrowdStrike.Falcon.domain.IOAUser</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1830,7 +1830,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.MaliciousFile</Name>
+  <Name>CrowdStrike.Falcon.domain.MaliciousFile</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1857,7 +1857,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.MSSPRoles</Name>
+  <Name>CrowdStrike.Falcon.domain.MSSPRoles</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1876,7 +1876,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.MultiCommandExecuteResponseWrapper</Name>
+  <Name>CrowdStrike.Falcon.domain.MultiCommandExecuteResponseWrapper</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1894,7 +1894,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.NewsDocument</Name>
+  <Name>CrowdStrike.Falcon.domain.NewsDocument</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1932,7 +1932,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.NotificationV1</Name>
+  <Name>CrowdStrike.Falcon.domain.NotificationV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1971,7 +1971,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Platform</Name>
+  <Name>CrowdStrike.Falcon.domain.Platform</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -1988,7 +1988,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.PolicyInfo</Name>
+  <Name>CrowdStrike.Falcon.domain.PolicyInfo</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2027,7 +2027,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.PublicIndicatorV3</Name>
+  <Name>CrowdStrike.Falcon.domain.PublicIndicatorV3</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2061,7 +2061,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.QueuedSessionJob</Name>
+  <Name>CrowdStrike.Falcon.domain.QueuedSessionJob</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2085,7 +2085,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.RemoteCommandPutFileV2</Name>
+  <Name>CrowdStrike.Falcon.domain.RemoteCommandPutFileV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2123,7 +2123,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Rule</Name>
+  <Name>CrowdStrike.Falcon.domain.Rule</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2146,7 +2146,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Scan</Name>
+  <Name>CrowdStrike.Falcon.domain.Scan</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2193,7 +2193,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ScanHostMetadata</Name>
+  <Name>CrowdStrike.Falcon.domain.ScanHostMetadata</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2220,7 +2220,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ScanProfile</Name>
+  <Name>CrowdStrike.Falcon.domain.ScanProfile</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2263,7 +2263,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.ScanScheduleDataV1</Name>
+  <Name>CrowdStrike.Falcon.domain.ScanScheduleDataV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2281,7 +2281,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.SensorInstallerV1</Name>
+  <Name>CrowdStrike.Falcon.domain.SensorInstallerV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2306,7 +2306,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Session</Name>
+  <Name>CrowdStrike.Falcon.domain.Session</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2341,7 +2341,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.SignalProperties</Name>
+  <Name>CrowdStrike.Falcon.domain.SignalProperties</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2365,7 +2365,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.StatusResponse</Name>
+  <Name>CrowdStrike.Falcon.domain.StatusResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2387,7 +2387,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.User</Name>
+  <Name>CrowdStrike.Falcon.domain.User</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2407,7 +2407,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.UserGrants</Name>
+  <Name>CrowdStrike.Falcon.domain.UserGrants</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2432,7 +2432,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.UserGroup</Name>
+  <Name>CrowdStrike.Falcon.domain.UserGroup</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2451,7 +2451,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.UserGroupMembers</Name>
+  <Name>CrowdStrike.Falcon.domain.UserGroupMembers</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2468,7 +2468,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.UserRole</Name>
+  <Name>CrowdStrike.Falcon.domain.UserRole</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2487,7 +2487,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.domain.Vulnerability</Name>
+  <Name>CrowdStrike.Falcon.domain.Vulnerability</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2515,7 +2515,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.external.Change</Name>
+  <Name>CrowdStrike.Falcon.external.Change</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2550,7 +2550,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.falconx.ReportV1</Name>
+  <Name>CrowdStrike.Falcon.falconx.ReportV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2587,7 +2587,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.falconx.SubmissionV1</Name>
+  <Name>CrowdStrike.Falcon.falconx.SubmissionV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2613,7 +2613,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.falconx.SummaryReportV1</Name>
+  <Name>CrowdStrike.Falcon.falconx.SummaryReportV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2647,7 +2647,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.api.FilepathTestResult</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.api.FilepathTestResult</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2665,7 +2665,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.api.FirewallFieldsV1</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.api.FirewallFieldsV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2684,7 +2684,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.api.NetworkLocationsV1</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.api.NetworkLocationsV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2718,7 +2718,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.api.RuleGroupV1</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.api.RuleGroupV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2747,7 +2747,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.domain.Platform</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.domain.Platform</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2764,7 +2764,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.firewall.MatchEventResponse</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.firewall.MatchEventResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2813,7 +2813,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.firewall.PolicyContainerV1</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.firewall.PolicyContainerV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2843,7 +2843,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.firewall.RuleV1</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.firewall.RuleV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2883,7 +2883,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.fwmgr.msa.ReplyMetaOnly</Name>
+  <Name>CrowdStrike.Falcon.fwmgr.msa.ReplyMetaOnly</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2903,7 +2903,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.k8sreg.APIKey</Name>
+  <Name>CrowdStrike.Falcon.k8sreg.APIKey</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2919,7 +2919,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.k8sreg.AWSAccountResp</Name>
+  <Name>CrowdStrike.Falcon.k8sreg.AWSAccountResp</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2946,7 +2946,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.k8sreg.AzureSubscriptionResp</Name>
+  <Name>CrowdStrike.Falcon.k8sreg.AzureSubscriptionResp</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2968,7 +2968,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.k8sreg.AzureTenantConfig</Name>
+  <Name>CrowdStrike.Falcon.k8sreg.AzureTenantConfig</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2986,7 +2986,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.k8sreg.ClusterResp</Name>
+  <Name>CrowdStrike.Falcon.k8sreg.ClusterResp</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3014,7 +3014,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.k8sreg.CreateAWSAccReq</Name>
+  <Name>CrowdStrike.Falcon.k8sreg.CreateAWSAccReq</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3030,7 +3030,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.k8sreg.LocationResp</Name>
+  <Name>CrowdStrike.Falcon.k8sreg.LocationResp</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3047,7 +3047,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.main.availableStreamV2</Name>
+  <Name>CrowdStrike.Falcon.main.availableStreamV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3066,7 +3066,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.malquery.ExternalResource</Name>
+  <Name>CrowdStrike.Falcon.malquery.ExternalResource</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3097,7 +3097,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.malquery.RateLimitsResponse</Name>
+  <Name>CrowdStrike.Falcon.malquery.RateLimitsResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3114,7 +3114,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.malquery.SampleMetadata</Name>
+  <Name>CrowdStrike.Falcon.malquery.SampleMetadata</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3137,7 +3137,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.messages.Activity</Name>
+  <Name>CrowdStrike.Falcon.messages.Activity</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3161,7 +3161,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.messages.Attachment</Name>
+  <Name>CrowdStrike.Falcon.messages.Attachment</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3182,7 +3182,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.messages.Case</Name>
+  <Name>CrowdStrike.Falcon.messages.Case</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3213,7 +3213,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.mlscanner.SamplesScanResult</Name>
+  <Name>CrowdStrike.Falcon.mlscanner.SamplesScanResult</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3233,7 +3233,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.models.AWSAccountV1</Name>
+  <Name>CrowdStrike.Falcon.models.AWSAccountV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3266,7 +3266,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.msa.AffectedEntity</Name>
+  <Name>CrowdStrike.Falcon.msa.AffectedEntity</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3283,7 +3283,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.msa.AggregationResult</Name>
+  <Name>CrowdStrike.Falcon.msa.AggregationResult</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3301,7 +3301,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.msa.BaseEntitiesResponse</Name>
+  <Name>CrowdStrike.Falcon.msa.BaseEntitiesResponse</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3318,7 +3318,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.msa.Facet</Name>
+  <Name>CrowdStrike.Falcon.msa.Facet</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3338,7 +3338,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.msa.MetaInfo</Name>
+  <Name>CrowdStrike.Falcon.msa.MetaInfo</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3358,7 +3358,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.msa.ReplyMetaOnly</Name>
+  <Name>CrowdStrike.Falcon.msa.ReplyMetaOnly</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3378,7 +3378,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.msaspec.ResponseFields</Name>
+  <Name>CrowdStrike.Falcon.msaspec.ResponseFields</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3395,7 +3395,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.quarantine.QuarantinedFile</Name>
+  <Name>CrowdStrike.Falcon.quarantine.QuarantinedFile</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3425,7 +3425,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.AWSAccountConsoleURL</Name>
+  <Name>CrowdStrike.Falcon.registration.AWSAccountConsoleURL</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3442,7 +3442,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.AWSAccountScript</Name>
+  <Name>CrowdStrike.Falcon.registration.AWSAccountScript</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3458,7 +3458,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.AzureKeyV1</Name>
+  <Name>CrowdStrike.Falcon.registration.AzureKeyV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3478,7 +3478,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.AzureUserScript</Name>
+  <Name>CrowdStrike.Falcon.registration.AzureUserScript</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3495,7 +3495,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.BaseResponseV1</Name>
+  <Name>CrowdStrike.Falcon.registration.BaseResponseV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3512,7 +3512,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.ExternalIOAResources</Name>
+  <Name>CrowdStrike.Falcon.registration.ExternalIOAResources</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3530,7 +3530,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.GCPUserScript</Name>
+  <Name>CrowdStrike.Falcon.registration.GCPUserScript</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3547,7 +3547,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.registration.IOMResources</Name>
+  <Name>CrowdStrike.Falcon.registration.IOMResources</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3563,7 +3563,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.DeviceControlPolicyV1</Name>
+  <Name>CrowdStrike.Falcon.responses.DeviceControlPolicyV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3590,7 +3590,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.FirewallPolicyV1</Name>
+  <Name>CrowdStrike.Falcon.responses.FirewallPolicyV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3618,7 +3618,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.HostGroupV1</Name>
+  <Name>CrowdStrike.Falcon.responses.HostGroupV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3642,7 +3642,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.IoaExclusionV1</Name>
+  <Name>CrowdStrike.Falcon.responses.IoaExclusionV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3671,7 +3671,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.MlExclusionV1</Name>
+  <Name>CrowdStrike.Falcon.responses.MlExclusionV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3697,7 +3697,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.PreventionPolicyV1</Name>
+  <Name>CrowdStrike.Falcon.responses.PreventionPolicyV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3725,7 +3725,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.RTResponsePolicyV1</Name>
+  <Name>CrowdStrike.Falcon.responses.RTResponsePolicyV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3752,7 +3752,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.SensorUpdateBuildV1</Name>
+  <Name>CrowdStrike.Falcon.responses.SensorUpdateBuildV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3770,7 +3770,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.SensorUpdateKernelV1</Name>
+  <Name>CrowdStrike.Falcon.responses.SensorUpdateKernelV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3798,7 +3798,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.SensorUpdatePolicyV1</Name>
+  <Name>CrowdStrike.Falcon.responses.SensorUpdatePolicyV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3825,7 +3825,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.SensorUpdatePolicyV2</Name>
+  <Name>CrowdStrike.Falcon.responses.SensorUpdatePolicyV2</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3852,7 +3852,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.SvExclusionV1</Name>
+  <Name>CrowdStrike.Falcon.responses.SvExclusionV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3877,7 +3877,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.responses.UninstallTokenV1</Name>
+  <Name>CrowdStrike.Falcon.responses.UninstallTokenV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3895,7 +3895,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.sadomain.Rule</Name>
+  <Name>CrowdStrike.Falcon.sadomain.Rule</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -3927,7 +3927,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>PSFalcon.state.OnlineStateResultV1</Name>
+  <Name>CrowdStrike.Falcon.state.OnlineStateResultV1</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
