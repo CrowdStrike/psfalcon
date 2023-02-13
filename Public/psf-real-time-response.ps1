@@ -220,15 +220,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
             'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
             'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
-        [Parameter(ParameterSetName='GroupId_File',Mandatory,ValueFromPipelineByPropertyName)]
-        [Parameter(ParameterSetName='GroupId_Archive',Mandatory,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName='GroupId_File',Mandatory)]
+        [Parameter(ParameterSetName='GroupId_Archive',Mandatory)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('id')]
         [string]$GroupId,
         [Parameter(ParameterSetName='HostId_File',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Parameter(ParameterSetName='HostId_Archive',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('HostIds','device_id','host_ids','aid')]
+        [Alias('device_id','host_ids','aid','id','HostIds')]
         [string[]]$HostId
     )
     begin {
@@ -551,7 +550,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         [string]$GroupId,
         [Parameter(ParameterSetName='HostId',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('device_id','host_ids','aid','HostIds')]
+        [Alias('device_id','host_ids','aid','id','HostIds')]
         [string[]]$HostId
     )
     begin {
