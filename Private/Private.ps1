@@ -1,14 +1,17 @@
 function Add-Schema ([object[]]$Object,[string]$String) {
     if ($String) {
         # Append schema to object output, when present
+        $String = 'CrowdStrike','Falcon',$String -join '.'
         $PSCmdlet.WriteVerbose(('[Add-Schema]',$String -join ' '))
-        @($Object).foreach{
-            $_.PSObject.TypeNames.Insert(0,('PSFalcon',$String -join '.'))
-            $_
+        if ($String -match '\.Id$') {
+            # Add '.Id' TypeName value to keep default [string] format
+            $Object | ForEach-Object { $_.PSObject.TypeNames.Add($String) }
+        } else {
+            # Insert TypeName to force custom format
+            $Object | ForEach-Object { $_.PSObject.TypeNames.Insert(0,$String) }
         }
-    } else {
-        $Object
     }
+    $Object
 }
 function Add-Include {
     [CmdletBinding()]
