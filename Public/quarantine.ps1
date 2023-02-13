@@ -26,7 +26,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.quarantine.QuarantinedFile',
+    [OutputType('CrowdStrike.Falcon.quarantine.QuarantinedFile',
         ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post')]
     [OutputType([string],ParameterSetName='/quarantine/queries/quarantined-files/v1:get')]
     param(
@@ -99,8 +99,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
-    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/queries/quarantined-files/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/queries/quarantined-files/v1:patch')]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory,Position=1)]

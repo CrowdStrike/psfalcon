@@ -12,7 +12,8 @@ Azure account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.AzureAccountV1',ParameterSetName='/cloud-connect-azure/entities/account/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.AzureAccountV1',
+        ParameterSetName='/cloud-connect-azure/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:get',Position=1)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
@@ -54,7 +55,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureCertificate
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.AzureKeyV1',
+    [OutputType('CrowdStrike.Falcon.registration.AzureKeyV1',
         ParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',Position=1)]
@@ -89,7 +90,8 @@ Azure tenant identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.AzureAccountV1',ParameterSetName='/cloud-connect-azure/entities/account/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.AzureAccountV1',
+        ParameterSetName='/cloud-connect-azure/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:post',
             ValueFromPipelineByPropertyName,Position=1)]
@@ -127,7 +129,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.AzureUserScript',
+    [OutputType('CrowdStrike.Falcon.registration.AzureUserScript',
         ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
@@ -172,7 +174,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.AzureClientServicePrincipalV1',
+    [OutputType('CrowdStrike.Falcon.domain.AzureClientServicePrincipalV1',
         ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Mandatory,

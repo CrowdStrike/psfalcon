@@ -10,7 +10,7 @@ Remediation identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/entities/remediations/v2:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.APIRemediationV2',ParameterSetName='/spotlight/entities/remediations/v2:get')]
+    [OutputType('CrowdStrike.Falcon.domain.APIRemediationV2',ParameterSetName='/spotlight/entities/remediations/v2:get')]
     param(
         [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -77,9 +77,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.BaseAPIVulnerabilityV2',
+    [OutputType('CrowdStrike.Falcon.domain.BaseAPIVulnerabilityV2',
         ParameterSetName='/spotlight/combined/vulnerabilities/v1:get')]
-    [OutputType('PSFalcon.domain.APIVulnerabilityV2',
+    [OutputType('CrowdStrike.Falcon.domain.APIVulnerabilityV2',
         ParameterSetName='/spotlight/entities/vulnerabilities/v2:get')]
     [OutputType([string],ParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
     param(
@@ -159,9 +159,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
 #>
     [CmdletBinding(DefaultParameterSetName='/spotlight/queries/evaluation-logic/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.APIEvaluationLogicV1',
+    [OutputType('CrowdStrike.Falcon.domain.APIEvaluationLogicV1',
         ParameterSetName='/spotlight/combined/evaluation-logic/v1:get')]
-    [OutputType('PSFalcon.domain.APIEvaluationLogicV1',
+    [OutputType('CrowdStrike.Falcon.domain.APIEvaluationLogicV1',
         ParameterSetName='/spotlight/entities/evaluation-logic/v1:get')]
     [OutputType([string],ParameterSetName='/spotlight/queries/evaluation-logic/v1:get')]
     param(

@@ -20,7 +20,7 @@ Action identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:patch')]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -94,7 +94,7 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.NotificationV1',ParameterSetName='/recon/entities/notifications/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.domain.NotificationV1',ParameterSetName='/recon/entities/notifications/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -177,7 +177,7 @@ Monitor for substring matches
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -282,7 +282,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/actions/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/actions/v1:get')]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -338,7 +338,7 @@ Recon export job identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconExport
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/exports/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ExportJobMetadataV1',ParameterSetName='/recon/entities/exports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.ExportJobMetadataV1',ParameterSetName='/recon/entities/exports/v1:get')]
     param(
         [Parameter(ParameterSetName='/recon/entities/exports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
@@ -396,12 +396,12 @@ Include raw intelligence content and translate to English
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.NotificationV1',ParameterSetName='/recon/entities/notifications/v1:get')]
-    [OutputType('PSFalcon.domain.DetailedNotificationV1',
+    [OutputType('CrowdStrike.Falcon.domain.NotificationV1',ParameterSetName='/recon/entities/notifications/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.DetailedNotificationV1',
         ParameterSetName='/recon/entities/notifications-detailed/v1:get')]
-    [OutputType('PSFalcon.domain.DetailedNotificationV1',
+    [OutputType('CrowdStrike.Falcon.domain.DetailedNotificationV1',
         ParameterSetName='/recon/entities/notifications-detailed-translated/v1:get')]
-    [OutputType('PSFalcon.domain.NotificationV1',
+    [OutputType('CrowdStrike.Falcon.domain.NotificationV1',
         ParameterSetName='/recon/entities/notifications-translated/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/notifications/v1:get')]
     param(
@@ -493,7 +493,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.NotificationExposedDataRecordV1',
+    [OutputType('CrowdStrike.Falcon.api.NotificationExposedDataRecordV1',
         ParameterSetName='/recon/entities/notifications-exposed-data-records/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
     param(
@@ -567,7 +567,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/rules/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:get')]
+    [OutputType('CrowdStrike.Falcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -666,7 +666,7 @@ Use property names that match the Falcon UI
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/exports/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ExportJobV1',ParameterSetName='/recon/entities/exports/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.ExportJobV1',ParameterSetName='/recon/entities/exports/v1:post')]
     param(
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=1)]
         [ValidateSet('notification-exposed-data-record',IgnoreCase=$false)]
@@ -736,7 +736,7 @@ Send email when no matches are found
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -819,7 +819,7 @@ Monitor for substring matches
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:post')]
+    [OutputType('CrowdStrike.Falcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({

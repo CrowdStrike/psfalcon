@@ -40,8 +40,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.SensorInstallerV1',ParameterSetName='/sensors/combined/installers/v1:get')]
-    [OutputType('PSFalcon.domain.SensorInstallerV1',ParameterSetName='/sensors/entities/installers/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.SensorInstallerV1',ParameterSetName='/sensors/combined/installers/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.SensorInstallerV1',ParameterSetName='/sensors/entities/installers/v1:get')]
     [OutputType([string],ParameterSetName='/sensors/queries/installers/v1:get')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,
@@ -103,7 +103,7 @@ Format for streaming events [default: json]
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed/v2:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.main.availableStreamV2',ParameterSetName='/sensors/entities/datafeed/v2:get')]
+    [OutputType('CrowdStrike.Falcon.main.availableStreamV2',ParameterSetName='/sensors/entities/datafeed/v2:get')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed/v2:get',Mandatory,Position=1)]
         [string]$AppId,
@@ -189,7 +189,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.ReplyMetaOnly',
+    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',
         ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',Mandatory,

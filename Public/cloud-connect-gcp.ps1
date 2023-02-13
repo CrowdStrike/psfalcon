@@ -12,7 +12,8 @@ GCP account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.GCPAccountV1',ParameterSetName='/cloud-connect-gcp/entities/account/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.GCPAccountV1',
+        ParameterSetName='/cloud-connect-gcp/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=1)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
@@ -54,7 +55,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.GCPAccountV1',ParameterSetName='/cloud-connect-gcp/entities/account/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.GCPAccountV1',
+        ParameterSetName='/cloud-connect-gcp/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -87,7 +89,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverGcpScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.GCPUserScript',
+    [OutputType('CrowdStrike.Falcon.registration.GCPUserScript',
         ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',Mandatory,

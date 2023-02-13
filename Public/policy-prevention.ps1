@@ -18,7 +18,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -115,8 +115,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/combined/prevention/v1:get')]
-    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.PreventionPolicyV1',ParameterSetName='/policy/combined/prevention/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/prevention/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -205,7 +205,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/prevention-members/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.device.Device',ParameterSetName='/policy/combined/prevention-members/v1:get')]
+    [OutputType('CrowdStrike.Falcon.device.Device',ParameterSetName='/policy/combined/prevention-members/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/prevention-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/prevention-members/v1:get',
@@ -264,7 +264,7 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconPreventionPolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.PreventionPolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.PreventionPolicyV1',
         ParameterSetName='/policy/entities/prevention-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/prevention-actions/v1:post',Mandatory,Position=1)]
@@ -333,7 +333,7 @@ An array of policy settings
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:post')]
+    [OutputType('CrowdStrike.Falcon.responses.PreventionPolicyV1',ParameterSetName='/policy/entities/prevention/v1:post')]
     param(
         [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
         [ValidateScript({

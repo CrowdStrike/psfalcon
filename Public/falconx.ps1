@@ -26,8 +26,10 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.falconx.SummaryReportV1',ParameterSetName='/falconx/entities/report-summaries/v1:get')]
-    [OutputType('PSFalcon.falconx.ReportV1',ParameterSetName='/falconx/entities/reports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.falconx.SummaryReportV1',
+        ParameterSetName='/falconx/entities/report-summaries/v1:get')]
+    [OutputType('CrowdStrike.Falcon.falconx.ReportV1',
+        ParameterSetName='/falconx/entities/reports/v1:get')]
     [OutputType([string],ParameterSetName='/falconx/queries/reports/v1:get')]
     param(
         [Parameter(ParameterSetName='/falconx/entities/reports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -100,7 +102,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.falconx.SubmissionV1',ParameterSetName='/falconx/entities/submissions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.falconx.SubmissionV1',
+        ParameterSetName='/falconx/entities/submissions/v1:get')]
     [OutputType([string],ParameterSetName='/falconx/queries/submissions/v1:get')]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,
@@ -199,7 +202,8 @@ Sha256 hash value
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.falconx.SubmissionV1',ParameterSetName='/falconx/entities/submissions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.falconx.SubmissionV1',
+        ParameterSetName='/falconx/entities/submissions/v1:post')]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Mandatory,Position=1)]
         [ValidateSet('android','macOS_10.15','ubuntu16_x64','win7_x64','win7_x86','win10_x64',IgnoreCase=$false)]

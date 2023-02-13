@@ -18,7 +18,7 @@ Detection identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/detects/entities/detects/v2:patch')]
+    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/detects/entities/detects/v2:patch')]
     param(
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=1)]
         [string]$Comment,
@@ -88,8 +88,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.APIDetectionDocument',ParameterSetName='/detects/entities/summaries/GET/v1:post')]
-    [OutputType([string],ParameterSetName='/detects/queries/detects/v1:gett')]
+    [OutputType('CrowdStrike.Falcon.domain.APIDetectionDocument',
+        ParameterSetName='/detects/entities/summaries/GET/v1:post')]
+    [OutputType([string],ParameterSetName='/detects/queries/detects/v1:get')]
     param(
         [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -176,7 +177,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.ExternalIOAResources',ParameterSetName='/detects/entities/ioa/v1:get')]
+    [OutputType('CrowdStrike.Falcon.registration.ExternalIOAResources',
+        ParameterSetName='/detects/entities/ioa/v1:get')]
     param(
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=1)]
         [ValidateSet('aws','azure',IgnoreCase=$false)]
@@ -285,7 +287,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/iom/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.IOMResources',ParameterSetName='/detects/entities/iom/v1:get')]
+    [OutputType('CrowdStrike.Falcon.registration.IOMResources',ParameterSetName='/detects/entities/iom/v1:get')]
     param(
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]

@@ -16,7 +16,7 @@ Case identifier
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-activity/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/message-center/entities/case-activity/v1:post')]
+    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/message-center/entities/case-activity/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
            Position=1)]
@@ -64,7 +64,7 @@ Case identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.AffectedEntity',ParameterSetName='/message-center/entities/case/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.msa.AffectedEntity',ParameterSetName='/message-center/entities/case/v1:patch')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Position=1)]
         [Alias('body')]
@@ -137,7 +137,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.messages.Activity',
+    [OutputType('CrowdStrike.Falcon.messages.Activity',
         ParameterSetName='/message-center/entities/case-activities/GET/v1:post')]
     [OutputType([string],ParameterSetName='/message-center/queries/case-activities/v1:get')]
     param(
@@ -213,7 +213,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.messages.Case',ParameterSetName='/message-center/entities/cases/GET/v1:post')]
+    [OutputType('CrowdStrike.Falcon.messages.Case',ParameterSetName='/message-center/entities/cases/GET/v1:post')]
     [OutputType([string],ParameterSetName='/message-center/queries/cases/v1:get')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,
@@ -282,7 +282,7 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.AffectedEntity',ParameterSetName='/message-center/entities/case/v1:post')]
+    [OutputType('CrowdStrike.Falcon.msa.AffectedEntity',ParameterSetName='/message-center/entities/case/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,Position=1)]
         [ValidateSet('fc:detection-support','fc:contact','fc:falcon-product-support','fc:incident-support',
@@ -417,7 +417,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.messages.Attachment',
+    [OutputType('CrowdStrike.Falcon.messages.Attachment',
         ParameterSetName='/message-center/entities/case-attachment/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]

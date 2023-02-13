@@ -30,8 +30,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ActorDocument',ParameterSetName='/intel/entities/actors/v1:get')]
-    [OutputType('PSFalcon.domain.ActorDocument',ParameterSetName='/intel/combined/actors/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.ActorDocument',ParameterSetName='/intel/entities/actors/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.ActorDocument',ParameterSetName='/intel/combined/actors/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/actors/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -182,7 +182,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.Vulnerability',ParameterSetName='/intel/entities/vulnerabilities/GET/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.Vulnerability',
+        ParameterSetName='/intel/entities/vulnerabilities/GET/v1:post')]
     [OutputType([string],ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/vulnerabilities/GET/v1:post',Mandatory,
@@ -259,8 +260,10 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/indicators/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.PublicIndicatorV3',ParameterSetName='/intel/entities/indicators/GET/v1:post')]
-    [OutputType('PSFalcon.domain.PublicIndicatorV3',ParameterSetName='/intel/combined/indicators/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.PublicIndicatorV3',
+        ParameterSetName='/intel/entities/indicators/GET/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.PublicIndicatorV3',
+        ParameterSetName='/intel/combined/indicators/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/indicators/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/indicators/GET/v1:post',Mandatory,
@@ -355,8 +358,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.NewsDocument',ParameterSetName='/intel/entities/reports/v1:get')]
-    [OutputType('PSFalcon.domain.NewsDocument',ParameterSetName='/intel/combined/reports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.NewsDocument',ParameterSetName='/intel/entities/reports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.NewsDocument',ParameterSetName='/intel/combined/reports/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/reports/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -451,7 +454,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.Rule',ParameterSetName='/intel/entities/rules/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.Rule',ParameterSetName='/intel/entities/rules/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,

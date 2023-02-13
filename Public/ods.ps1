@@ -60,7 +60,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/scans/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.Scan',ParameterSetName='/ods/entities/scans/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.Scan',ParameterSetName='/ods/entities/scans/v1:get')]
     [OutputType([string],ParameterSetName='/ods/queries/scans/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scans/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -135,7 +135,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/malicious-files/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.MaliciousFile',ParameterSetName='/ods/entities/malicious-files/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.MaliciousFile',ParameterSetName='/ods/entities/malicious-files/v1:get')]
     [OutputType([string],ParameterSetName='/ods/queries/malicious-files/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/malicious-files/v1:get',Mandatory,
@@ -206,7 +206,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanHost
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/scan-hosts/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ScanHostMetadata',ParameterSetName='/ods/entities/scan-hosts/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.ScanHostMetadata',ParameterSetName='/ods/entities/scan-hosts/v1:get')]
     [OutputType([string],ParameterSetName='/ods/queries/scan-hosts/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scan-hosts/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -288,7 +288,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/queries/scheduled-scans/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ScanProfile',ParameterSetName='/ods/entities/scheduled-scans/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.ScanProfile',ParameterSetName='/ods/entities/scheduled-scans/v1:get')]
     [OutputType([string],ParameterSetName='/ods/queries/scheduled-scans/v1:get')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:get',Mandatory,
@@ -375,7 +375,7 @@ Host group identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/entities/scheduled-scans/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ScanProfile',ParameterSetName='/ods/entities/scheduled-scans/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.ScanProfile',ParameterSetName='/ods/entities/scheduled-scans/v1:post')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Mandatory,Position=1)]
         [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$')]
@@ -538,7 +538,7 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Start-FalconScan
 #>
     [CmdletBinding(DefaultParameterSetName='/ods/entities/scans/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.Scan',ParameterSetName='/ods/entities/scans/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.Scan',ParameterSetName='/ods/entities/scans/v1:post')]
     param(
         [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Mandatory,Position=1)]
         [Alias('file_paths')]

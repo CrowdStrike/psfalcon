@@ -28,8 +28,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/queries/scheduled-reports/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.ReportExecutionV1',ParameterSetName='/reports/entities/report-executions/v1:get')]
-    [OutputType('PSFalcon.api.ScheduledReportV1',ParameterSetName='/reports/entities/scheduled-reports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.api.ReportExecutionV1',ParameterSetName='/reports/entities/report-executions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.api.ScheduledReportV1',ParameterSetName='/reports/entities/scheduled-reports/v1:get')]
     [OutputType([string],ParameterSetName='/reports/queries/report-executions/v1:get')]
     [OutputType([string],ParameterSetName='/reports/queries/scheduled-reports/v1:get')]
     param(
@@ -117,7 +117,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.ReportExecutionV1',
+    [OutputType('CrowdStrike.Falcon.api.ReportExecutionV1',
         ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post')]
     param(
         [Parameter(ParameterSetName='/reports/entities/scheduled-reports/execution/v1:post',Mandatory,
@@ -221,7 +221,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconScheduledReport
 #>
     [CmdletBinding(DefaultParameterSetName='/reports/entities/report-executions-retry/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.ReportExecutionV1',
+    [OutputType('CrowdStrike.Falcon.api.ReportExecutionV1',
         ParameterSetName='/reports/entities/report-executions-retry/v1:post')]
     param(
         [Parameter(ParameterSetName='/reports/entities/report-executions-retry/v1:post',Mandatory,

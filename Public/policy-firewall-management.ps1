@@ -16,7 +16,7 @@ Policy description
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.FirewallPolicyV1',ParameterSetName='/policy/entities/firewall/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.responses.FirewallPolicyV1',ParameterSetName='/policy/entities/firewall/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -103,8 +103,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.FirewallPolicyV1',ParameterSetName='/policy/combined/firewall/v1:get')]
-    [OutputType('PSFalcon.responses.FirewallPolicyV1',ParameterSetName='/policy/entities/firewall/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.FirewallPolicyV1',ParameterSetName='/policy/combined/firewall/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.FirewallPolicyV1',ParameterSetName='/policy/entities/firewall/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/firewall/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -197,7 +197,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/firewall-members/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.device.Device',ParameterSetName='/policy/combined/firewall-members/v1:get')]
+    [OutputType('CrowdStrike.Falcon.device.Device',ParameterSetName='/policy/combined/firewall-members/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/firewall-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',ValueFromPipelineByPropertyName,
@@ -256,7 +256,7 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFirewallPolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.FirewallPolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.FirewallPolicyV1',
         ParameterSetName='/policy/entities/firewall-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/firewall-actions/v1:post',Mandatory,Position=1)]
@@ -315,7 +315,7 @@ Policy description
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.FirewallPolicyV1',ParameterSetName='/policy/entities/firewall/v1:post')]
+    [OutputType('CrowdStrike.Falcon.responses.FirewallPolicyV1',ParameterSetName='/policy/entities/firewall/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({

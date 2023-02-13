@@ -18,7 +18,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.SensorUpdatePolicyV2',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdatePolicyV2',
         ParameterSetName='/policy/entities/sensor-update/v2:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
@@ -107,7 +107,7 @@ Operating system platform
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBuild
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-builds/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.SensorUpdateBuildV1',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdateBuildV1',
         ParameterSetName='/policy/combined/sensor-update-builds/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/combined/sensor-update-builds/v1:get')]
@@ -148,9 +148,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconKernel
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-kernels/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.SensorUpdateKernelV1',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdateKernelV1',
         ParameterSetName='/policy/combined/sensor-update-kernels/v1:get')]
-    [OutputType('PSFalcon.responses.SensorUpdateKernelV1',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdateKernelV1',
         ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{field}/v1:get',Mandatory,
@@ -224,9 +224,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.SensorUpdatePolicyV2',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdatePolicyV2',
         ParameterSetName='/policy/combined/sensor-update/v2:get')]
-    [OutputType('PSFalcon.responses.SensorUpdatePolicyV2',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdatePolicyV2',
         ParameterSetName='/policy/entities/sensor-update/v2:get')]
     [OutputType([string],ParameterSetName='/policy/queries/sensor-update/v1:get')]
     param(
@@ -316,7 +316,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sensor-update-members/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.device.Device',ParameterSetName='/policy/combined/sensor-update-members/v1:get')]
+    [OutputType('CrowdStrike.Falcon.device.Device',ParameterSetName='/policy/combined/sensor-update-members/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/sensor-update-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',ValueFromPipelineByPropertyName,
@@ -376,7 +376,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.UninstallTokenV1',
+    [OutputType('CrowdStrike.Falcon.responses.UninstallTokenV1',
         ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=1)]
@@ -431,7 +431,7 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconSensorUpdatePolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.SensorUpdatePolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdatePolicyV1',
         ParameterSetName='/policy/entities/sensor-update-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/sensor-update-actions/v1:post',Mandatory,Position=1)]
@@ -492,7 +492,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.SensorUpdatePolicyV2',
+    [OutputType('CrowdStrike.Falcon.responses.SensorUpdatePolicyV2',
         ParameterSetName='/policy/entities/sensor-update/v2:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]

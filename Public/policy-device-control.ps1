@@ -18,7 +18,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
         ParameterSetName='/policy/entities/device-control/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
@@ -117,9 +117,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
         ParameterSetName='/policy/combined/device-control/v1:get')]
-    [OutputType('PSFalcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
         ParameterSetName='/policy/entities/device-control/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/device-control/v1:get')]
     param(
@@ -209,7 +209,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.device.Device',ParameterSetName='/policy/combined/device-control-members/v1:get')]
+    [OutputType('CrowdStrike.Falcon.device.Device',ParameterSetName='/policy/combined/device-control-members/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/device-control-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',
@@ -269,7 +269,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAct
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
         ParameterSetName='/policy/entities/device-control-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,
@@ -331,7 +331,7 @@ Hashtable of policy settings
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
         ParameterSetName='/policy/entities/device-control/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]

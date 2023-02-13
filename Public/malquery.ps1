@@ -10,7 +10,7 @@ Request identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/requests/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.malquery.ExternalResource',ParameterSetName='/malquery/entities/requests/v1:get')]
+    [OutputType('CrowdStrike.Falcon.malquery.ExternalResource',ParameterSetName='/malquery/entities/requests/v1:get')]
     param(
         [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
@@ -60,7 +60,7 @@ Sha256 hash value
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/metadata/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.malquery.SampleMetadata',ParameterSetName='/malquery/entities/metadata/v1:get')]
+    [OutputType('CrowdStrike.Falcon.malquery.SampleMetadata',ParameterSetName='/malquery/entities/metadata/v1:get')]
     param(
         [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
@@ -98,7 +98,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Group-FalconMalQuerySample
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/entities/samples-multidownload/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.malquery.ExternalResource',
+    [OutputType('CrowdStrike.Falcon.malquery.ExternalResource',
         ParameterSetName='/malquery/entities/samples-multidownload/v1:post')]
     param(
         [Parameter(ParameterSetName='/malquery/entities/samples-multidownload/v1:post',Mandatory,
@@ -156,9 +156,9 @@ Search MalQuery quickly but with more potential for false positives
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMalQuery
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/queries/exact-search/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.malquery.ExternalResource',ParameterSetName='/malquery/queries/exact-search/v1:post')]
-    [OutputType('PSFalcon.malquery.ExternalResource',ParameterSetName='/malquery/queries/hunt/v1:post')]
-    [OutputType('PSFalcon.malquery.SampleMetadata',ParameterSetName='/malquery/combined/fuzzy-search/v1:post')]
+    [OutputType('CrowdStrike.Falcon.malquery.ExternalResource',ParameterSetName='/malquery/queries/exact-search/v1:post')]
+    [OutputType('CrowdStrike.Falcon.malquery.ExternalResource',ParameterSetName='/malquery/queries/hunt/v1:post')]
+    [OutputType('CrowdStrike.Falcon.malquery.SampleMetadata',ParameterSetName='/malquery/combined/fuzzy-search/v1:post')]
     param(
         [Parameter(ParameterSetName='/malquery/queries/hunt/v1:post',Mandatory,Position=1)]
         [Alias('yara_rule')]
@@ -312,7 +312,7 @@ Sha256 hash value
 https://github.com/crowdstrike/psfalcon/wiki/Search-FalconMalQueryHash
 #>
     [CmdletBinding(SupportsShouldProcess)]
-    [OutputType('PSFalcon.malquery.ExternalResource')]
+    [OutputType('CrowdStrike.Falcon.malquery.ExternalResource')]
     param(
         [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]

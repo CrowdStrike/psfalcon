@@ -30,7 +30,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.ExternalIOAResources',ParameterSetName='/ioa/entities/events/v1:get')]
+    [OutputType('CrowdStrike.Falcon.registration.ExternalIOAResources',ParameterSetName='/ioa/entities/events/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]
@@ -116,7 +116,7 @@ Event state
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
 #>
     [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.IOAUser',ParameterSetName='/ioa/entities/users/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.IOAUser',ParameterSetName='/ioa/entities/users/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]

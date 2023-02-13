@@ -12,7 +12,7 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupingTag
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.deviceapi.UpdateDeviceDetailsResponseV1',
+    [OutputType('CrowdStrike.Falcon.deviceapi.UpdateDeviceDetailsResponseV1',
         ParameterSetName='/devices/entities/devices/tags/v1:patch')]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,Position=1)]
@@ -68,7 +68,8 @@ Host group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.HostGroupV1',ParameterSetName='/devices/entities/host-groups/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.responses.HostGroupV1',
+        ParameterSetName='/devices/entities/host-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -131,15 +132,15 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.deviceapi.DeviceSwagger',ParameterSetName='/devices/entities/devices/v2:post')]
-    [OutputType('PSFalcon.deviceapi.LoginDetailV1',
+    [OutputType('CrowdStrike.Falcon.Host',ParameterSetName='/devices/entities/devices/v2:post')]
+    [OutputType('CrowdStrike.Falcon.deviceapi.LoginDetailV1',
         ParameterSetName='/devices/combined/devices/login-history/v1:post')]
-    [OutputType('PSFalcon.deviceapi.NetworkAddressHistoryV1',
+    [OutputType('CrowdStrike.Falcon.deviceapi.NetworkAddressHistoryV1',
         ParameterSetName='/devices/combined/devices/network-address-history/v1:post')]
-    [OutputType('PSFalcon.state.OnlineStateResultV1',ParameterSetName='/devices/entities/online-state/v1:get')]
-    [OutputType([string],ParameterSetName='/devices/queries/devices-hidden/v1:get')]
-    [OutputType([string],ParameterSetName='/devices/queries/devices-scroll/v1:get')]
-    
+    [OutputType('CrowdStrike.Falcon.state.OnlineStateResultV1',
+        ParameterSetName='/devices/entities/online-state/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Host.Id',ParameterSetName='/devices/queries/devices-hidden/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Host.Id',ParameterSetName='/devices/queries/devices-scroll/v1:get')]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -224,8 +225,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
             Schema = switch ($PSCmdlet.ParameterSetName) {
                 '/devices/combined/devices/login-history/v1:post' { 'deviceapi.LoginDetailV1' }
                 '/devices/combined/devices/network-address-history/v1:post' { 'deviceapi.NetworkAddressHistoryV1' }
-                '/devices/entities/devices/v2:post' { 'deviceapi.DeviceSwagger' }
+                '/devices/entities/devices/v2:post' { 'Host' }
                 '/devices/entities/online-state/v1:get' { 'state.OnlineStateResultV1' }
+                '/devices/queries/devices-hidden/v1:get' { 'Host.Id' }
+                '/devices/queries/devices-scroll/v1:get' { 'Host.Id' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -326,8 +329,10 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/host-groups/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.HostGroupV1',ParameterSetName='/devices/entities/host-groups/v1:get')]
-    [OutputType('PSFalcon.responses.HostGroupV1',ParameterSetName='/devices/combined/host-groups/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.HostGroupV1',
+        ParameterSetName='/devices/entities/host-groups/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.HostGroupV1',
+        ParameterSetName='/devices/combined/host-groups/v1:get')]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -414,7 +419,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroupMember
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/queries/host-group-members/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.csdomain.Device',ParameterSetName='/devices/combined/host-group-members/v1:get')]
+    [OutputType('CrowdStrike.Falcon.csdomain.Device',
+        ParameterSetName='/devices/combined/host-group-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get',ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
@@ -472,7 +478,8 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostAction
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/devices-actions/v2:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.AffectedEntity',ParameterSetName='/devices/entities/devices-actions/v2:post')]
+    [OutputType('CrowdStrike.Falcon.msa.AffectedEntity',
+        ParameterSetName='/devices/entities/devices-actions/v2:post')]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,Position=1)]
         [ValidateSet('contain','lift_containment','hide_host','unhide_host','detection_suppress',
@@ -536,7 +543,8 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostGroupAction
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-group-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.HostGroupV1',ParameterSetName='/devices/entities/host-group-actions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.responses.HostGroupV1',
+        ParameterSetName='/devices/entities/host-group-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add-hosts','remove-hosts',IgnoreCase=$false)]
@@ -598,7 +606,8 @@ Assignment rule for 'dynamic' host groups
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconHostGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.HostGroupV1',ParameterSetName='/devices/entities/host-groups/v1:post')]
+    [OutputType('CrowdStrike.Falcon.responses.HostGroupV1',
+        ParameterSetName='/devices/entities/host-groups/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -687,7 +696,7 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
 #>
     [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.deviceapi.UpdateDeviceDetailsResponseV1',
+    [OutputType('CrowdStrike.Falcon.deviceapi.UpdateDeviceDetailsResponseV1',
         ParameterSetName='/devices/entities/devices/tags/v1:patch')]
     param(
         [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,Position=1)]

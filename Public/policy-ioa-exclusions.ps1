@@ -79,7 +79,7 @@ Exclusion identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.IoaExclusionV1',ParameterSetName='/policy/entities/ioa-exclusions/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.responses.IoaExclusionV1',ParameterSetName='/policy/entities/ioa-exclusions/v1:patch')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -171,7 +171,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ioa-exclusions/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.IoaExclusionV1',ParameterSetName='/policy/entities/ioa-exclusions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.IoaExclusionV1',ParameterSetName='/policy/entities/ioa-exclusions/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,
@@ -246,7 +246,7 @@ Audit log comment
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.IoaExclusionV1',ParameterSetName='/policy/entities/ioa-exclusions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.responses.IoaExclusionV1',ParameterSetName='/policy/entities/ioa-exclusions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]

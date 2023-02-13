@@ -20,7 +20,7 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.CIDPolicyAssignments',ParameterSetName='/settings/entities/policy/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.domain.CIDPolicyAssignments',ParameterSetName='/settings/entities/policy/v1:patch')]
     param(
         [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -74,7 +74,7 @@ Next scan timestamp (RFC3339)
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonSchedule
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ScanScheduleDataV1',ParameterSetName='/settings/scan-schedule/v1:post')]
+    [OutputType('CrowdStrike.Falcon.domain.ScanScheduleDataV1',ParameterSetName='/settings/scan-schedule/v1:post')]
     param(
         [Parameter(ParameterSetName='/settings/scan-schedule/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -121,8 +121,8 @@ Retrieve detailed information
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.CIDPolicyAssignments',ParameterSetName='/settings/entities/policy/v1:get')]
-    [OutputType('PSFalcon.domain.PolicyInfo',ParameterSetName='/settings/entities/policy-details/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.CIDPolicyAssignments',ParameterSetName='/settings/entities/policy/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.PolicyInfo',ParameterSetName='/settings/entities/policy-details/v1:get')]
     param(
         [Parameter(ParameterSetName='/settings/entities/policy-details/v1:get',ValueFromPipelineByPropertyName,
             ValueFromPipeline,Mandatory)]
@@ -180,7 +180,7 @@ Cloud platform
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.ScanScheduleDataV1',ParameterSetName='/settings/scan-schedule/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.ScanScheduleDataV1',ParameterSetName='/settings/scan-schedule/v1:get')]
     param(
         [Parameter(ParameterSetName='/settings/scan-schedule/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]

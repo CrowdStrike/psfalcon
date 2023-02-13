@@ -141,7 +141,7 @@ Path to local file
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.client.SampleMetadataV2',ParameterSetName='/samples/entities/samples/v3:post')]
+    [OutputType('CrowdStrike.Falcon.client.SampleMetadataV2',ParameterSetName='/samples/entities/samples/v3:post')]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
         [Alias('is_confidential')]

@@ -26,7 +26,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.detects.Investigatable',ParameterSetName='/alerts/entities/alerts/v1:post')]
+    [OutputType('CrowdStrike.Falcon.detects.Investigatable',ParameterSetName='/alerts/entities/alerts/v1:post')]
     [OutputType([string],ParameterSetName='/alerts/queries/alerts/v1:get')]
     param(
         [Parameter(ParameterSetName='/alerts/entities/alerts/v1:post',Mandatory,ValueFromPipelineByPropertyName,
@@ -90,7 +90,7 @@ Alert identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v2:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.msaspec.ResponseFields',ParameterSetName='/alerts/entities/alerts/v2:patch')]
+    [OutputType('CrowdStrike.Falcon.msaspec.ResponseFields',ParameterSetName='/alerts/entities/alerts/v2:patch')]
     param(
         [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,Position=1)]
         [ValidateSet('add_tag','append_comment','assign_to_name','assign_to_user_id','assign_to_uuid',

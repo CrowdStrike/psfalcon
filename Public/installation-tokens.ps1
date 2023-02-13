@@ -111,7 +111,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.tokenDetailsResourceV1',
+    [OutputType('CrowdStrike.Falcon.api.tokenDetailsResourceV1',
         ParameterSetName='/installation-tokens/entities/tokens/v1:get')]
     [OutputType([string],ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
     param(
@@ -181,7 +181,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.auditEventDetailsResourceV1',
+    [OutputType('CrowdStrike.Falcon.api.auditEventDetailsResourceV1',
         ParameterSetName='/installation-tokens/entities/audit-events/v1:get')]
     [OutputType([string],ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
     param(
@@ -254,7 +254,7 @@ Installation token expiration time (RFC3339),or 'null'
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.tokenDetailsResourceV1',
+    [OutputType('CrowdStrike.Falcon.api.tokenDetailsResourceV1',
         ParameterSetName='/installation-tokens/entities/tokens/v1:post')]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=1)]
@@ -286,7 +286,8 @@ Installation token identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.ReplyMetaOnly',ParameterSetName='/installation-tokens/entities/tokens/v1:delete')]
+    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',
+        ParameterSetName='/installation-tokens/entities/tokens/v1:delete')]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

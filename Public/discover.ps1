@@ -32,11 +32,12 @@ Search for login events
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
 #>
     [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.DiscoverAPIAccount',ParameterSetName='/discover/entities/accounts/v1:get')]
-    [OutputType('PSFalcon.domain.DiscoverAPIApplication',
+    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPIAccount',
+        ParameterSetName='/discover/entities/accounts/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPIApplication',
         ParameterSetName='/discover/entities/applications/v1:get')]
-    [OutputType('PSFalcon.domain.DiscoverAPIHost',ParameterSetName='/discover/entities/hosts/v1:get')]
-    [OutputType('PSFalcon.domain.DiscoverAPILogin',ParameterSetName='/discover/entities/logins/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPIHost',ParameterSetName='/discover/entities/hosts/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPILogin',ParameterSetName='/discover/entities/logins/v1:get')]
     [OutputType([string],ParameterSetName='/discover/queries/accounts/v1:get')]
     [OutputType([string],ParameterSetName='/discover/queries/applications/v1:get')]
     [OutputType([string],ParameterSetName='/discover/queries/hosts/v1:get')]

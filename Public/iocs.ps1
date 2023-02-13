@@ -40,7 +40,7 @@ Indicator identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:patch')]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -156,8 +156,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/queries/indicators/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:get')]
-    [OutputType('PSFalcon.api.IndicatorV1',ParameterSetName='/iocs/combined/indicator/v1:get')]
+    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:get')]
+    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/combined/indicator/v1:get')]
     [OutputType([string],ParameterSetName='/iocs/queries/indicator/v1:get')]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -241,7 +241,7 @@ Repeat requests until all available results are retrieved
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocAction
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/queries/actions/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.ActionV1',ParameterSetName='/iocs/entities/actions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.api.ActionV1',ParameterSetName='/iocs/entities/actions/v1:get')]
     [OutputType([string],ParameterSetName='/iocs/queries/actions/v1:get')]
     param(
         [Parameter(ParameterSetName='/iocs/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -415,7 +415,7 @@ Ignore warnings and create all indicators
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:post')]
+    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({

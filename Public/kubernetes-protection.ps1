@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.BaseEntitiesResponse',
+    [OutputType('CrowdStrike.Falcon.msa.BaseEntitiesResponse',
         ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Position=1)]
@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.k8sreg.AzureTenantConfig',
+    [OutputType('CrowdStrike.Falcon.k8sreg.AzureTenantConfig',
         ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',Mandatory,
@@ -102,7 +102,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.k8sreg.AWSAccountResp',
+    [OutputType('CrowdStrike.Falcon.k8sreg.AWSAccountResp',
         ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
@@ -164,7 +164,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.k8sreg.AzureSubscriptionResp',
+    [OutputType('CrowdStrike.Falcon.k8sreg.AzureSubscriptionResp',
         ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',
@@ -219,7 +219,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCloud
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.k8sreg.LocationResp',
+    [OutputType('CrowdStrike.Falcon.k8sreg.LocationResp',
         ParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
@@ -274,7 +274,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.k8sreg.ClusterResp',
+    [OutputType('CrowdStrike.Falcon.k8sreg.ClusterResp',
         ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
@@ -330,7 +330,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContainerScan
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.BaseEntitiesResponse',
+    [OutputType('CrowdStrike.Falcon.msa.BaseEntitiesResponse',
         ParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',Mandatory,
@@ -363,7 +363,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.k8sreg.CreateAWSAccReq',
+    [OutputType('CrowdStrike.Falcon.k8sreg.CreateAWSAccReq',
         ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
@@ -400,7 +400,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.BaseEntitiesResponse',
+    [OutputType('CrowdStrike.Falcon.msa.BaseEntitiesResponse',
         ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',Position=1)]
@@ -501,7 +501,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.BaseEntitiesResponse',
+    [OutputType('CrowdStrike.Falcon.msa.BaseEntitiesResponse',
         ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',Mandatory,
@@ -540,7 +540,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.msa.BaseEntitiesResponse',
+    [OutputType('CrowdStrike.Falcon.msa.BaseEntitiesResponse',
         ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete')]
     param(
         [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',Mandatory,

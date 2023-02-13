@@ -63,7 +63,7 @@ Exclusion identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:patch')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -131,7 +131,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipelineByPropertyName,
@@ -197,7 +197,7 @@ Audit log comment
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:post',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -250,7 +250,7 @@ Exclusion identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:delete',SupportsShouldProcess)]
-    [OutputType('PSFalcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:delete')]
+    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:delete')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Position=1)]
         [string]$Comment,

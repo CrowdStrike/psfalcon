@@ -78,7 +78,7 @@ Repeat requests until all available results are retrieved
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
 #>
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/processes/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.api.ProcessDetail',ParameterSetName='/processes/entities/processes/v1:get')]
+    [OutputType('CrowdStrike.Falcon.api.ProcessDetail',ParameterSetName='/processes/entities/processes/v1:get')]
     [OutputType([string],ParameterSetName='/processes/queries/processes/v1:get')]
     param(
         [Parameter(ParameterSetName='/processes/entities/processes/v1:get',ValueFromPipeline,Mandatory)]

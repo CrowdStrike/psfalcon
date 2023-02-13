@@ -10,7 +10,7 @@ Host identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
 #>
     [CmdletBinding(DefaultParameterSetName='/zero-trust-assessment/entities/audit/v1:get',SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.SignalProperties',
+    [OutputType('CrowdStrike.Falcon.domain.SignalProperties',
         ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get')]
     param(
         [Parameter(ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get',Mandatory,

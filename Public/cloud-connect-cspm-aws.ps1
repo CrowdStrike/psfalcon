@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.AWSAccountV2',
+    [OutputType('CrowdStrike.Falcon.domain.AWSAccountV2',
         ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
@@ -67,7 +67,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.AWSAccountV2',ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
+    [OutputType('CrowdStrike.Falcon.domain.AWSAccountV2',
+        ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -150,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.domain.AWSAccountV2',
+    [OutputType('CrowdStrike.Falcon.domain.AWSAccountV2',
         ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,
@@ -193,7 +194,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.AWSAccountScript',
+    [OutputType('CrowdStrike.Falcon.registration.AWSAccountScript',
         ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
@@ -240,7 +241,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
         SupportsShouldProcess)]
-    [OutputType('PSFalcon.registration.BaseResponseV1',
+    [OutputType('CrowdStrike.Falcon.registration.BaseResponseV1',
         ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
