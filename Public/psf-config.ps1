@@ -520,7 +520,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 Invoke-CreateIoc $Pair
             } elseif ($Pair.Key -eq 'FirewallGroup') {
                 foreach ($Item in $Pair.Value.Import) {
-                    [object]$FwGroup = $Item | Select-Object name,enabled,description,comment,rule_ids
+                    [object]$FwGroup = $Item | Select-Object name,enabled,description,comment,rule_ids,platform
                     if ($FwGroup) {
                         if ($FwGroup.rule_ids) {
                             # Select FirewallRule from import using 'family' as 'id' value
