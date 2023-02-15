@@ -40,8 +40,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.SensorInstallerV1',ParameterSetName='/sensors/combined/installers/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.SensorInstallerV1',ParameterSetName='/sensors/entities/installers/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Installer',ParameterSetName='/sensors/combined/installers/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Installer',ParameterSetName='/sensors/entities/installers/v1:get')]
     [OutputType([string],ParameterSetName='/sensors/queries/installers/v1:get')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,
@@ -77,8 +77,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','limit','filter') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/sensors/entities/installers/v1:get' { 'domain.SensorInstallerV1' }
-                '/sensors/combined/installers/v1:get' { 'domain.SensorInstallerV1' }
+                '/sensors/entities/installers/v1:get' { 'Installer' }
+                '/sensors/combined/installers/v1:get' { 'Installer' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()

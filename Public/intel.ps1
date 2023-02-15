@@ -30,8 +30,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/actors/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.ActorDocument',ParameterSetName='/intel/entities/actors/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.ActorDocument',ParameterSetName='/intel/combined/actors/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Intel.Actor',ParameterSetName='/intel/entities/actors/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Intel.Actor',ParameterSetName='/intel/combined/actors/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/actors/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -81,8 +81,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','limit','ids','filter','offset','fields','q') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/intel/entities/actors/v1:get' { 'domain.ActorDocument' }
-                '/intel/combined/actors/v1:get' { 'domain.ActorDocument' }
+                '/intel/entities/actors/v1:get' { 'Intel.Actor' }
+                '/intel/combined/actors/v1:get' { 'Intel.Actor' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -182,7 +182,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/vulnerabilities/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.Vulnerability',
+    [OutputType('CrowdStrike.Falcon.Intel.Vulnerability',
         ParameterSetName='/intel/entities/vulnerabilities/GET/v1:post')]
     [OutputType([string],ParameterSetName='/intel/queries/vulnerabilities/v1:get')]
     param(
@@ -217,7 +217,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
                 Query = @('q','offset','sort','limit','filter')
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/intel/entities/vulnerabilities/GET/v1:post' { 'domain.Vulnerability' }
+                '/intel/entities/vulnerabilities/GET/v1:post' { 'Intel.Vulnerability' }
             }
         }
     [System.Collections.Generic.List[string]]$List = @()
@@ -260,9 +260,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/indicators/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.PublicIndicatorV3',
+    [OutputType('CrowdStrike.Falcon.Intel.Indicator',
         ParameterSetName='/intel/entities/indicators/GET/v1:post')]
-    [OutputType('CrowdStrike.Falcon.domain.PublicIndicatorV3',
+    [OutputType('CrowdStrike.Falcon.Intel.Indicator',
         ParameterSetName='/intel/combined/indicators/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/indicators/v1:get')]
     param(
@@ -316,8 +316,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
                 Body = @{ root = @('ids') }
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/intel/entities/indicators/GET/v1:post' { 'domain.PublicIndicatorV3' }
-                '/intel/combined/indicators/v1:get' { 'domain.PublicIndicatorV3' }
+                '/intel/entities/indicators/GET/v1:post' { 'Intel.Indicator' }
+                '/intel/combined/indicators/v1:get' { 'Intel.Indicator' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -358,8 +358,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/reports/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.NewsDocument',ParameterSetName='/intel/entities/reports/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.NewsDocument',ParameterSetName='/intel/combined/reports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Intel.Report',ParameterSetName='/intel/entities/reports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Intel.Report',ParameterSetName='/intel/combined/reports/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/reports/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -404,8 +404,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','limit','ids','filter','offset','fields','q') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/intel/entities/reports/v1:get' { 'domain.NewsDocument' }
-                '/intel/combined/reports/v1:get' { 'domain.NewsDocument' }
+                '/intel/entities/reports/v1:get' { 'Intel.Report' }
+                '/intel/combined/reports/v1:get' { 'Intel.Report' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -454,7 +454,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/intel/queries/rules/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.Rule',ParameterSetName='/intel/entities/rules/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Intel.Rule',ParameterSetName='/intel/entities/rules/v1:get')]
     [OutputType([string],ParameterSetName='/intel/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,

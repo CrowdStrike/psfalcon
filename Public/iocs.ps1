@@ -40,7 +40,7 @@ Indicator identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Ioc',ParameterSetName='/iocs/entities/indicators/v1:patch')]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -115,7 +115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
                         'metadata','host_groups','severity','platforms','mobile_action','from_parent')
                 }
             }
-            Schema = 'api.IndicatorV1'
+            Schema = 'Ioc'
         }
     }
     process {
@@ -156,8 +156,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/queries/indicators/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:get')]
-    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/combined/indicator/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Ioc',ParameterSetName='/iocs/entities/indicators/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Ioc',ParameterSetName='/iocs/combined/indicator/v1:get')]
     [OutputType([string],ParameterSetName='/iocs/queries/indicator/v1:get')]
     param(
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -209,8 +209,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','filter','offset','limit','sort','after','from_parent') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/iocs/entities/indicators/v1:get' { 'api.IndicatorV1' }
-                '/iocs/combined/indicator/v1:get' { 'api.IndicatorV1' }
+                '/iocs/entities/indicators/v1:get' { 'Ioc' }
+                '/iocs/combined/indicator/v1:get' { 'Ioc' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -241,7 +241,7 @@ Repeat requests until all available results are retrieved
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocAction
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/queries/actions/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.ActionV1',ParameterSetName='/iocs/entities/actions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Ioc.Action',ParameterSetName='/iocs/entities/actions/v1:get')]
     [OutputType([string],ParameterSetName='/iocs/queries/actions/v1:get')]
     param(
         [Parameter(ParameterSetName='/iocs/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -263,7 +263,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocAction
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('offset','limit','ids') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/iocs/entities/actions/v1:get' { 'api.ActionV1' }
+                '/iocs/entities/actions/v1:get' { 'Ioc.Action' }
             }
         }
     }
@@ -415,7 +415,7 @@ Ignore warnings and create all indicators
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.IndicatorV1',ParameterSetName='/iocs/entities/indicators/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Ioc',ParameterSetName='/iocs/entities/indicators/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -495,7 +495,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
                         'source','host_groups','severity','action','platforms','mobile_action')
                 }
             }
-            Schema = 'api.IndicatorV1'
+            Schema = 'Ioc'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }

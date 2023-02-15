@@ -32,12 +32,12 @@ Search for login events
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
 #>
     [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPIAccount',
+    [OutputType('CrowdStrike.Falcon.Discover.Account',
         ParameterSetName='/discover/entities/accounts/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPIApplication',
+    [OutputType('CrowdStrike.Falcon.Discover.Application',
         ParameterSetName='/discover/entities/applications/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPIHost',ParameterSetName='/discover/entities/hosts/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.DiscoverAPILogin',ParameterSetName='/discover/entities/logins/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Discover.Host',ParameterSetName='/discover/entities/hosts/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Discover.Login',ParameterSetName='/discover/entities/logins/v1:get')]
     [OutputType([string],ParameterSetName='/discover/queries/accounts/v1:get')]
     [OutputType([string],ParameterSetName='/discover/queries/applications/v1:get')]
     [OutputType([string],ParameterSetName='/discover/queries/hosts/v1:get')]
@@ -112,10 +112,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
             Format = @{ Query = @('filter','sort','limit','offset','ids') }
             Max = 100
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/discover/entities/accounts/v1:get' { 'domain.DiscoverAPIAccount' }
-                '/discover/entities/applications/v1:get' { 'domain.DiscoverAPIApplication' }
-                '/discover/entities/hosts/v1:get' { 'domain.DiscoverAPIHost' }
-                '/discover/entities/logins/v1:get' { 'domain.DiscoverAPILogin' }
+                '/discover/entities/accounts/v1:get' { 'Discover.Account' }
+                '/discover/entities/applications/v1:get' { 'Discover.Application' }
+                '/discover/entities/hosts/v1:get' { 'Discover.Host' }
+                '/discover/entities/logins/v1:get' { 'Discover.Login' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()

@@ -26,7 +26,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.detects.Investigatable',ParameterSetName='/alerts/entities/alerts/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Alert',ParameterSetName='/alerts/entities/alerts/v1:post')]
     [OutputType([string],ParameterSetName='/alerts/queries/alerts/v1:get')]
     param(
         [Parameter(ParameterSetName='/alerts/entities/alerts/v1:post',Mandatory,ValueFromPipelineByPropertyName,
@@ -63,7 +63,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
                 Query = @('filter','q','sort','limit','offset')
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/alerts/entities/alerts/v1:post' { 'detects.Investigatable' }
+                '/alerts/entities/alerts/v1:post' { 'Alert' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()

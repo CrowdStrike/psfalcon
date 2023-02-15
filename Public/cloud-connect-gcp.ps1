@@ -12,7 +12,7 @@ GCP account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.GCPAccountV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Gcp.Account',
         ParameterSetName='/cloud-connect-gcp/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=1)]
@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','scan-type') }
-            Schema = 'domain.GCPAccountV1'
+            Schema = 'Horizon.Gcp.Account'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -55,7 +55,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.GCPAccountV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Gcp.Account',
         ParameterSetName='/cloud-connect-gcp/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:post',Mandatory,
@@ -69,7 +69,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('parent_id') }}
-            Schema = 'domain.GCPAccountV1'
+            Schema = 'Horizon.Gcp.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

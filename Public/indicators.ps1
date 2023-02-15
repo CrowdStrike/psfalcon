@@ -78,7 +78,7 @@ Repeat requests until all available results are retrieved
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
 #>
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/processes/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.ProcessDetail',ParameterSetName='/processes/entities/processes/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Ioc.HostProcess',ParameterSetName='/processes/entities/processes/v1:get')]
     [OutputType([string],ParameterSetName='/processes/queries/processes/v1:get')]
     param(
         [Parameter(ParameterSetName='/processes/entities/processes/v1:get',ValueFromPipeline,Mandatory)]
@@ -111,7 +111,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','device_id','offset','type','value','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/processes/entities/processes/v1:get' { 'api.ProcessDetail' }
+                '/processes/entities/processes/v1:get' { 'Ioc.HostProcess' }
             }
         }
     }

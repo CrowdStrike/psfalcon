@@ -209,7 +209,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control-members/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.device.Device',ParameterSetName='/policy/combined/device-control-members/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Host',ParameterSetName='/policy/combined/device-control-members/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/device-control-members/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get',
@@ -246,7 +246,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','filter','id','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/policy/combined/device-control-members/v1:get' { 'device.Device' }
+                '/policy/combined/device-control-members/v1:get' { 'Host' }
             }
         }
     }

@@ -12,7 +12,7 @@ Azure account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.AzureAccountV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Azure.Account',
         ParameterSetName='/cloud-connect-azure/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:get',Position=1)]
@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','scan-type') }
-            Schema = 'domain.AzureAccountV1'
+            Schema = 'Horizon.Azure.Account'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -90,7 +90,7 @@ Azure tenant identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/account/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.AzureAccountV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Azure.Account',
         ParameterSetName='/cloud-connect-azure/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/account/v1:post',
@@ -109,7 +109,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('subscription_id','tenant_id') }}
-            Schema = 'domain.AzureAccountV1'
+            Schema = 'Horizon.Azure.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -174,7 +174,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.AzureClientServicePrincipalV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Azure.Account.Principal',
         ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Mandatory,
@@ -187,7 +187,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('id') }
-            Schema = 'domain.AzureClientServicePrincipalV1'
+            Schema = 'Horizon.Azure.Account.Principal'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

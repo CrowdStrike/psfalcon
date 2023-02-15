@@ -88,7 +88,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.APIDetectionDocument',
+    [OutputType('CrowdStrike.Falcon.Detection',
         ParameterSetName='/detects/entities/summaries/GET/v1:post')]
     [OutputType([string],ParameterSetName='/detects/queries/detects/v1:get')]
     param(
@@ -130,7 +130,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
             }
             Max = 1000
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/detects/entities/summaries/GET/v1:post' { 'domain.APIDetectionDocument' }
+                '/detects/entities/summaries/GET/v1:post' { 'Detection' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()

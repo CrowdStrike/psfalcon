@@ -20,7 +20,7 @@ Action identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Recon.Action',ParameterSetName='/recon/entities/actions/v1:patch')]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -58,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
             Format = @{
                 Body = @{ root = @('id','frequency','trigger_matchless','recipients','status','content_format') }
             }
-            Schema = 'domain.ActionV1'
+            Schema = 'Recon.Action'
         }
         [System.Collections.Generic.List[string]] $List = @()
     }
@@ -94,7 +94,7 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.NotificationV1',ParameterSetName='/recon/entities/notifications/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Recon.Notification',ParameterSetName='/recon/entities/notifications/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -127,7 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/recon/entities/notifications/v1:patch'
             Format = @{ Body = @{ root = @('assigned_to_uuid','id','status','raw_array') }}
-            Schema = 'domain.NotificationV1'
+            Schema = 'Recon.Notification'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -282,7 +282,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/actions/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Recon.Action',ParameterSetName='/recon/entities/actions/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/actions/v1:get')]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -315,7 +315,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/recon/entities/actions/v1:get' { 'domain.ActionV1' }
+                '/recon/entities/actions/v1:get' { 'Recon.Action' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -338,7 +338,7 @@ Recon export job identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconExport
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/exports/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.ExportJobMetadataV1',ParameterSetName='/recon/entities/exports/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Recon.Export',ParameterSetName='/recon/entities/exports/v1:get')]
     param(
         [Parameter(ParameterSetName='/recon/entities/exports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
@@ -350,7 +350,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconExport
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
-            Schema = 'domain.ExportJobMetadataV1'
+            Schema = 'Recon.Export'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -396,12 +396,12 @@ Include raw intelligence content and translate to English
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.NotificationV1',ParameterSetName='/recon/entities/notifications/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.DetailedNotificationV1',
+    [OutputType('CrowdStrike.Falcon.Recon.Notification',ParameterSetName='/recon/entities/notifications/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Recon.Notification.Detailed',
         ParameterSetName='/recon/entities/notifications-detailed/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.DetailedNotificationV1',
+    [OutputType('CrowdStrike.Falcon.Recon.Notification.Detailed',
         ParameterSetName='/recon/entities/notifications-detailed-translated/v1:get')]
-    [OutputType('CrowdStrike.Falcon.domain.NotificationV1',
+    [OutputType('CrowdStrike.Falcon.Recon.Notification',
         ParameterSetName='/recon/entities/notifications-translated/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/notifications/v1:get')]
     param(
@@ -450,10 +450,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/recon/entities/notifications/v1:get' { 'domain.NotificationV1' }
-                '/recon/entities/notifications-detailed/v1:get' { 'domain.DetailedNotificationV1' }
-                '/recon/entities/notifications-detailed-translated/v1:get' { 'domain.DetailedNotificationV1' }
-                '/recon/entities/notifications-translated/v1:get' { 'domain.NotificationV1' }
+                '/recon/entities/notifications/v1:get' { 'Recon.Notification' }
+                '/recon/entities/notifications-detailed/v1:get' { 'Recon.Notification.Detailed' }
+                '/recon/entities/notifications-detailed-translated/v1:get' { 'Recon.Notification.Detailed' }
+                '/recon/entities/notifications-translated/v1:get' { 'Recon.Notification' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -493,7 +493,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.NotificationExposedDataRecordV1',
+    [OutputType('CrowdStrike.Falcon.Recon.Record',
         ParameterSetName='/recon/entities/notifications-exposed-data-records/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get')]
     param(
@@ -527,7 +527,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
             Format = @{ Query = @('q','offset','sort','limit','filter','ids') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
                 '/recon/entities/notifications-exposed-data-records/v1:get' {
-                    'api.NotificationExposedDataRecordV1'
+                    'Recon.Record'
                 }
             }
         }
@@ -666,7 +666,7 @@ Use property names that match the Falcon UI
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/exports/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.ExportJobV1',ParameterSetName='/recon/entities/exports/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Recon.Export.Job',ParameterSetName='/recon/entities/exports/v1:post')]
     param(
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=1)]
         [ValidateSet('notification-exposed-data-record',IgnoreCase=$false)]
@@ -709,7 +709,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('filter','sort','entity','human_readable','export_type') }}
             BodyArray = $true
-            Schema = 'domain.ExportJobV1'
+            Schema = 'Recon.Export.Job'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -736,7 +736,7 @@ Send email when no matches are found
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/actions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.ActionV1',ParameterSetName='/recon/entities/actions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Recon.Action',ParameterSetName='/recon/entities/actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -779,7 +779,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
                     actions = @('type','trigger_matchless','recipients','frequency','content_format')
                 }
             }
-            Schema = 'domain.ActionV1'
+            Schema = 'Recon.Action'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

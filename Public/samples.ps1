@@ -141,7 +141,7 @@ Path to local file
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
 #>
     [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.client.SampleMetadataV2',ParameterSetName='/samples/entities/samples/v3:post')]
+    [OutputType('CrowdStrike.Falcon.Sample',ParameterSetName='/samples/entities/samples/v3:post')]
     param(
         [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
         [Alias('is_confidential')]
@@ -173,7 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
                 Query = @('comment','file_name','is_confidential')
                 Body = @{ root = @('body') }
             }
-            Schema = 'client.SampleMetadataV2'
+            Schema = 'Sample'
         }
     }
     process {

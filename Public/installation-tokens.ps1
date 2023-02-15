@@ -181,7 +181,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.auditEventDetailsResourceV1',
+    [OutputType('CrowdStrike.Falcon.InstallToken.Event',
         ParameterSetName='/installation-tokens/entities/audit-events/v1:get')]
     [OutputType([string],ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
     param(
@@ -212,7 +212,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','limit','filter') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/installation-tokens/entities/audit-events/v1:get' { 'api.auditEventDetailsResourceV1' }
+                '/installation-tokens/entities/audit-events/v1:get' { 'InstallToken.Event' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -237,8 +237,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
         SupportsShouldProcess)]
+    [OutputType('CrowdStrike.Falcon.InstallToken.Setting',
+            ParameterSetName='/installation-tokens/entities/audit-events/v1:get')]
     param()
-    process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+    process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -Schema 'InstallToken.Setting' }
 }
 function New-FalconInstallToken {
 <#

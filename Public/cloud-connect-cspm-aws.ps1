@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.AWSAccountV2',
+    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Account',
         ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('account_id','cloudtrail_region') }}
-            Schema = 'domain.AWSAccountV2'
+            Schema = 'Horizon.Aws.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.AWSAccountV2',
+    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Account',
         ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
@@ -107,7 +107,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
             Format = @{
                 Query = @('limit','ids','organization-ids','scan-type','offset','group_by','status')
             }
-            Schema = 'domain.AWSAccountV2'
+            Schema = 'Horizon.Aws.Account'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -151,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.AWSAccountV2',
+    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Account',
         ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,
@@ -174,7 +174,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cloudtrail_region','account_id','organization_id') }}
-            Schema = 'domain.AWSAccountV2'
+            Schema = 'Horizon.Aws.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

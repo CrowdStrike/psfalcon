@@ -24,7 +24,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.Behavior',ParameterSetName='/incidents/entities/behaviors/GET/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Behavior',ParameterSetName='/incidents/entities/behaviors/GET/v1:post')]
     [OutputType([string],ParameterSetName='/incidents/queries/behaviors/v1:get')]
     param(
         [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,
@@ -59,7 +59,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
                 Body = @{ root = @('ids') }
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/incidents/entities/behaviors/GET/v1:post' { 'domain.Behavior' }
+                '/incidents/entities/behaviors/GET/v1:post' { 'Behavior' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -96,7 +96,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.Incident',ParameterSetName='/incidents/entities/incidents/GET/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Incident',ParameterSetName='/incidents/entities/incidents/GET/v1:post')]
     [OutputType([string],ParameterSetName='/incidents/queries/incidents/v1:get')]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,
@@ -134,7 +134,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
                 Body = @{ root = @('ids') }
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/incidents/entities/incidents/GET/v1:post' { 'domain.Incident' }
+                '/incidents/entities/incidents/GET/v1:post' { 'Incident' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -167,7 +167,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.EnvironmentScore',
+    [OutputType('CrowdStrike.Falcon.CrowdScore',
         ParameterSetName='/incidents/combined/crowdscores/v1:get')]
     param(
         [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=1)]
@@ -191,7 +191,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','filter','limit') }
-            Schema = 'domain.EnvironmentScore'
+            Schema = 'CrowdScore'
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }

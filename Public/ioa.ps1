@@ -116,7 +116,7 @@ Event state
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
 #>
     [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.domain.IOAUser',ParameterSetName='/ioa/entities/users/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Horizon.Ioa.User',ParameterSetName='/ioa/entities/users/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]
@@ -150,7 +150,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
                 Query = @('cloud_provider','policy_id','azure_tenant_id','aws_account_id','state','account_id',
                     'azure_subscription_id')
             }
-            Schema = 'domain.IOAUser'
+            Schema = 'Horizon.Ioa.User'
         }
     }
     process {
