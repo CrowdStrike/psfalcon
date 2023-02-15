@@ -61,7 +61,7 @@ AWS account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.models.AWSAccountV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Account',
         ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
@@ -103,7 +103,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
                 Body = @{ resources = @('rate_limit_time','external_id','rate_limit_reqs',
                     'cloudtrail_bucket_region','iam_role_arn','id','cloudtrail_bucket_owner_id') }
             }
-            Schema = 'models.AWSAccountV1'
+            Schema = 'Horizon.Aws.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -195,7 +195,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.AWSAccountConsoleURL',
+    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Link',
         ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',Position=1)]
@@ -206,7 +206,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('region') }
-            Schema = 'registration.AWSAccountConsoleURL'
+            Schema = 'Horizon.Aws.Link'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -302,7 +302,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.AWSAccountScript',
+    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Script',
         ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
@@ -324,7 +324,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
                 Query = @('ids')
                 Outfile = 'path'
             }
-            Schema = 'registration.AWSAccountScript'
+            Schema = 'Horizon.Aws.Script'
         }
     }
     process {

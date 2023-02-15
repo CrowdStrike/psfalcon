@@ -103,7 +103,7 @@ Format for streaming events [default: json]
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed/v2:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.main.availableStreamV2',ParameterSetName='/sensors/entities/datafeed/v2:get')]
+    [OutputType('CrowdStrike.Falcon.Stream',ParameterSetName='/sensors/entities/datafeed/v2:get')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed/v2:get',Mandatory,Position=1)]
         [string]$AppId,
@@ -116,7 +116,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('format','appId') }
-            Schema = 'main.availableStreamV2'
+            Schema = 'Stream'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

@@ -26,9 +26,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/reports/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.falconx.SummaryReportV1',
+    [OutputType('CrowdStrike.Falcon.Intel.Sandbox.Summary',
         ParameterSetName='/falconx/entities/report-summaries/v1:get')]
-    [OutputType('CrowdStrike.Falcon.falconx.ReportV1',
+    [OutputType('CrowdStrike.Falcon.Intel.Sandbox.Report',
         ParameterSetName='/falconx/entities/reports/v1:get')]
     [OutputType([string],ParameterSetName='/falconx/queries/reports/v1:get')]
     param(
@@ -64,8 +64,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('filter','offset','sort','ids','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/falconx/entities/report-summaries/v1:get' { 'falconx.SummaryReportV1' }
-                '/falconx/entities/reports/v1:get' { 'falconx.ReportV1' }
+                '/falconx/entities/report-summaries/v1:get' { 'Intel.Sandbox.Summary' }
+                '/falconx/entities/reports/v1:get' { 'Intel.Sandbox.Report' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -102,7 +102,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.falconx.SubmissionV1',
+    [OutputType('CrowdStrike.Falcon.Intel.Sandbox.Submission',
         ParameterSetName='/falconx/entities/submissions/v1:get')]
     [OutputType([string],ParameterSetName='/falconx/queries/submissions/v1:get')]
     param(
@@ -134,7 +134,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('filter','offset','sort','ids','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/falconx/entities/submissions/v1:get' { 'falconx.SubmissionV1' }
+                '/falconx/entities/submissions/v1:get' { 'Intel.Sandbox.Submission' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -202,7 +202,7 @@ Sha256 hash value
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.falconx.SubmissionV1',
+    [OutputType('CrowdStrike.Falcon.Intel.Sandbox.Submission',
         ParameterSetName='/falconx/entities/submissions/v1:post')]
     param(
         [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Mandatory,Position=1)]
@@ -261,7 +261,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
                         'network_settings')
                 }
             }
-            Schema = 'falconx.SubmissionV1'
+            Schema = 'Intel.Sandbox.Submission'
         }
     }
     process {

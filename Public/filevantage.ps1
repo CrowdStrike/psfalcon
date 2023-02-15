@@ -24,7 +24,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFimChange
 #>
     [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v2:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.external.Change',ParameterSetName='/filevantage/entities/changes/v2:get')]
+    [OutputType('CrowdStrike.Falcon.FileVantage.Change',ParameterSetName='/filevantage/entities/changes/v2:get')]
     [OutputType([string],ParameterSetName='/filevantage/queries/changes/v2:get')]
     param(
         [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,
@@ -55,7 +55,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFimChange
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('filter','sort','limit','offset','ids') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/filevantage/entities/changes/v2:get' { 'external.Change' }
+                '/filevantage/entities/changes/v2:get' { 'FileVantage.Change' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()

@@ -177,7 +177,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.ExternalIOAResources',
+    [OutputType('CrowdStrike.Falcon.Horizon.Ioa',
         ParameterSetName='/detects/entities/ioa/v1:get')]
     param(
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=1)]
@@ -235,7 +235,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
                 Query = @('cloud_provider','limit','date_time_since','azure_tenant_id','next_token',
                     'severity','service','state','region','azure_subscription_id','aws_account_id')
             }
-            Schema = 'registration.ExternalIOAResources'
+            Schema = 'Horizon.Ioa'
         }
     }
     process {
@@ -287,7 +287,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/iom/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.IOMResources',ParameterSetName='/detects/entities/iom/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Horizon.Iom',ParameterSetName='/detects/entities/iom/v1:get')]
     param(
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=1)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
@@ -341,7 +341,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
                 Query = @('cloud_provider','limit','azure_tenant_id','next_token','severity','service',
                     'status','azure_subscription_id','region','aws_account_id')
             }
-            Schema = 'registration.IOMResources'
+            Schema = 'Horizon.Iom'
         }
     }
     process {

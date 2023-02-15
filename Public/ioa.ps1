@@ -30,7 +30,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.ExternalIOAResources',ParameterSetName='/ioa/entities/events/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Horizon.Ioa',ParameterSetName='/ioa/entities/events/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
            Position=1)]
@@ -76,7 +76,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
                 Query = @('cloud_provider','limit','aws_account_id','azure_subscription_id','policy_id','offset',
                     'azure_tenant_id','user_ids','state','account_id')
             }
-            Schema = 'registration.ExternalIOAResources'
+            Schema = 'Horizon.Ioa'
         }
     }
     process {

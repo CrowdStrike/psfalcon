@@ -194,7 +194,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.AWSAccountScript',
+    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Script',
         ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
@@ -209,7 +209,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ Accept = 'application/octet-stream' }
             Format = @{ Outfile = 'path' }
-            Schema = 'registration.AWSAccountScript'
+            Schema = 'Horizon.Aws.Script'
         }
     }
     process {
@@ -241,7 +241,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.BaseResponseV1',
+    [OutputType('CrowdStrike.Falcon.Meta.Response',
         ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
@@ -259,7 +259,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/cloud-connect-cspm-aws/entities/account/v1:delete'
             Format = @{ Query = @('ids','organization-ids') }
-            Schema = 'registration.BaseResponseV1'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

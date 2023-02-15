@@ -89,7 +89,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverGcpScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.GCPUserScript',
+    [OutputType('CrowdStrike.Falcon.Horizon.Gcp.Script',
         ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',Mandatory,
@@ -104,7 +104,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverGcpScript
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ Accept = 'application/octet-stream' }
             Format = @{ Outfile = 'path' }
-            Schema = 'registration.GCPUserScript'
+            Schema = 'Horizon.Gcp.Script'
         }
     }
     process {

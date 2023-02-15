@@ -127,7 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.AzureKeyV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Azure.Certificate',
         ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Position=1)]
@@ -143,7 +143,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('refresh','tenant_id') }
-            Schema = 'registration.AzureKeyV1'
+            Schema = 'Horizon.Azure.Certificate'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -204,7 +204,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.AzureUserScript',
+    [OutputType('CrowdStrike.Falcon.Horizon.Azure.Script',
         ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Mandatory,
@@ -227,7 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
                 Query = @('tenant-id')
                 Outfile = 'path'
             }
-            Schema = 'registration.AzureUserScript'
+            Schema = 'Horizon.Azure.Script'
         }
     }
     process {
@@ -257,7 +257,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.BaseResponseV1',
+    [OutputType('CrowdStrike.Falcon.Meta.Response',
         ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Mandatory,
@@ -271,7 +271,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
-            Schema = 'registration.BaseResponseV1'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

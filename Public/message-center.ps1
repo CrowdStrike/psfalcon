@@ -137,7 +137,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.messages.Activity',
+    [OutputType('CrowdStrike.Falcon.Message.Activity',
         ParameterSetName='/message-center/entities/case-activities/GET/v1:post')]
     [OutputType([string],ParameterSetName='/message-center/queries/case-activities/v1:get')]
     param(
@@ -176,7 +176,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
                 Query = @('case_id','filter','sort','limit','offset')
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/message-center/entities/case-activities/GET/v1:post' { 'messages.Activity' }
+                '/message-center/entities/case-activities/GET/v1:post' { 'Message.Activity' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -213,7 +213,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.messages.Case',ParameterSetName='/message-center/entities/cases/GET/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Message.Case',ParameterSetName='/message-center/entities/cases/GET/v1:post')]
     [OutputType([string],ParameterSetName='/message-center/queries/cases/v1:get')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,
@@ -249,7 +249,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
                 Query = @('filter','sort','limit','offset')
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/message-center/entities/cases/GET/v1:post' { 'messages.Case' }
+                '/message-center/entities/cases/GET/v1:post' { 'Message.Case' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -417,7 +417,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.messages.Attachment',
+    [OutputType('CrowdStrike.Falcon.Message.Attachment',
         ParameterSetName='/message-center/entities/case-attachment/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]
@@ -456,7 +456,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ ContentType = 'multipart/form-data' }
             Format = @{ Formdata = @('case_id','user_uuid','file') }
-            Schema = 'messages.Attachment'
+            Schema = 'Message.Attachment'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

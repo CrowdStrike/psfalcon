@@ -26,7 +26,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/queries/quarantined-files/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.quarantine.QuarantinedFile',
+    [OutputType('CrowdStrike.Falcon.Quarantine',
         ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post')]
     [OutputType([string],ParameterSetName='/quarantine/queries/quarantined-files/v1:get')]
     param(
@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
                 Body = @{ root = @('ids') }
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/quarantine/entities/quarantined-files/GET/v1:post' { 'quarantine.QuarantinedFile' }
+                '/quarantine/entities/quarantined-files/GET/v1:post' { 'Quarantine' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()

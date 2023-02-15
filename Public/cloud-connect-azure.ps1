@@ -55,7 +55,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureCertificate
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.AzureKeyV1',
+    [OutputType('CrowdStrike.Falcon.Horizon.Azure.Certificate',
         ParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/download-certificate/v1:get',Position=1)]
@@ -71,7 +71,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureCertificate
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('refresh','tenant_id') }
-            Schema = 'registration.AzureKeyV1'
+            Schema = 'Horizon.Azure.Certificate'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -129,7 +129,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.registration.AzureUserScript',
+    [OutputType('CrowdStrike.Falcon.Horizon.Azure.Script',
         ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
@@ -144,7 +144,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ Accept = 'application/octet-stream' }
             Format = @{ Outfile = 'path' }
-            Schema = 'registration.AzureUserScript'
+            Schema = 'Horizon.Azure.Script'
         }
     }
     process {
