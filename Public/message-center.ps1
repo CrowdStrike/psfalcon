@@ -16,7 +16,7 @@ Case identifier
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-activity/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/message-center/entities/case-activity/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/message-center/entities/case-activity/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
            Position=1)]
@@ -41,7 +41,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('case_id','user_uuid','type','body') }}
-            Schema = 'msa.ReplyMetaOnly'
+            Schema = 'Meta.Response'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -64,7 +64,7 @@ Case identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.AffectedEntity',ParameterSetName='/message-center/entities/case/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Response',ParameterSetName='/message-center/entities/case/v1:patch')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Position=1)]
         [Alias('body')]
@@ -88,7 +88,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('id','body','detections','incidents') }}
-            Schema = 'msa.AffectedEntity'
+            Schema = 'Response'
         }
         [System.Collections.Generic.List[hashtable]]$LdtList = @()
         [System.Collections.Generic.List[hashtable]]$IncList = @()
@@ -282,7 +282,7 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.AffectedEntity',ParameterSetName='/message-center/entities/case/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Response',ParameterSetName='/message-center/entities/case/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,Position=1)]
         [ValidateSet('fc:detection-support','fc:contact','fc:falcon-product-support','fc:incident-support',
@@ -330,7 +330,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
             Format = @{
                 Body = @{ root = @('body','detections','incidents','title','type','user_uuid') }
             }
-            Schema = 'msa.AffectedEntity'
+            Schema = 'Response'
         }
         [System.Collections.Generic.List[hashtable]]$LdtList = @()
         [System.Collections.Generic.List[hashtable]]$IncList = @()

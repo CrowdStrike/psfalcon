@@ -18,7 +18,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',
         ParameterSetName='/policy/entities/device-control/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
@@ -57,7 +57,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
                     root = @('resources')
                 }
             }
-            Schema = 'responses.DeviceControlPolicyV1'
+            Schema = 'Policy.DeviceControl'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -117,9 +117,9 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/device-control/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',
         ParameterSetName='/policy/combined/device-control/v1:get')]
-    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',
         ParameterSetName='/policy/entities/device-control/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/device-control/v1:get')]
     param(
@@ -165,8 +165,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/policy/entities/device-control/v1:get' { 'responses.DeviceControlPolicyV1' }
-                '/policy/combined/device-control/v1:get' { 'responses.DeviceControlPolicyV1' }
+                '/policy/entities/device-control/v1:get' { 'Policy.DeviceControl' }
+                '/policy/combined/device-control/v1:get' { 'Policy.DeviceControl' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -269,7 +269,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAct
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-actions/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',
         ParameterSetName='/policy/entities/device-control-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control-actions/v1:post',Mandatory,
@@ -293,7 +293,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAct
                 Query = @('action_name')
                 Body = @{ root = @('ids','action_parameters') }
             }
-            Schema = 'responses.DeviceControlPolicyV1'
+            Schema = 'Policy.DeviceControl'
         }
     }
     process {
@@ -331,7 +331,7 @@ Hashtable of policy settings
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.DeviceControlPolicyV1',
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',
         ParameterSetName='/policy/entities/device-control/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
@@ -372,7 +372,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
                     root = @('resources')
                 }
             }
-            Schema = 'responses.DeviceControlPolicyV1'
+            Schema = 'Policy.DeviceControl'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }

@@ -18,7 +18,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/entities/response/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Policy.Rtr',ParameterSetName='/policy/entities/response/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
                     root = @('resources')
                 }
             }
-            Schema = 'responses.RTResponsePolicyV1'
+            Schema = 'Policy.Rtr'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -114,8 +114,8 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/response/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/combined/response/v1:get')]
-    [OutputType('CrowdStrike.Falcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/entities/response/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Policy.Rtr',ParameterSetName='/policy/combined/response/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Policy.Rtr',ParameterSetName='/policy/entities/response/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/response/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/response/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -160,8 +160,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/policy/entities/response/v1:get' { 'responses.RTResponsePolicyV1' }
-                '/policy/combined/response/v1:get' { 'responses.RTResponsePolicyV1' }
+                '/policy/entities/response/v1:get' { 'Policy.Rtr' }
+                '/policy/combined/response/v1:get' { 'Policy.Rtr' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -263,7 +263,7 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponsePolicyAction
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.RTResponsePolicyV1',
+    [OutputType('CrowdStrike.Falcon.Policy.Rtr',
         ParameterSetName='/policy/entities/response-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/response-actions/v1:post',Mandatory,Position=1)]
@@ -286,7 +286,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponsePolicyAction
                 Query = @('action_name')
                 Body = @{ root = @('ids','action_parameters') }
             }
-            Schema = 'responses.RTResponsePolicyV1'
+            Schema = 'Policy.Rtr'
         }
     }
     process {
@@ -324,7 +324,7 @@ Policy settings
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.RTResponsePolicyV1',ParameterSetName='/policy/entities/response/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Policy.Rtr',ParameterSetName='/policy/entities/response/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -364,7 +364,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
                     root = @('resources')
                 }
             }
-            Schema = 'responses.RTResponsePolicyV1'
+            Schema = 'Policy.Rtr'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }

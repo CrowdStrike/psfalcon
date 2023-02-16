@@ -621,7 +621,7 @@ Rule group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/ioarules/entities/rule-groups/v1:delete')]
+    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/ioarules/entities/rule-groups/v1:delete')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Position=1)]
         [string]$Comment,
@@ -636,7 +636,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','comment') }
-            Schema = 'msa.ReplyMetaOnly'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -664,7 +664,7 @@ Rule identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/ioarules/entities/rules/v1:delete')]
+    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/ioarules/entities/rules/v1:delete')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Position=1)]
         [string]$Comment,
@@ -684,7 +684,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','rule_group_id','comment') }
-            Schema = 'msa.ReplyMetaOnly'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

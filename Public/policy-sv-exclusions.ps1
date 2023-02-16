@@ -16,7 +16,7 @@ Audit log comment
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.SvExclusionV1',ParameterSetName='/policy/entities/sv-exclusions/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Exclusion',ParameterSetName='/policy/entities/sv-exclusions/v1:patch')]
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('groups','id','value','comment') }}
-            Schema = 'responses.SvExclusionV1'
+            Schema = 'Exclusion'
         }
     }
     process {
@@ -84,7 +84,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/sv-exclusions/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.SvExclusionV1',ParameterSetName='/policy/entities/sv-exclusions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Exclusion',ParameterSetName='/policy/entities/sv-exclusions/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/sv-exclusions/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:get',Mandatory,
@@ -118,7 +118,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/policy/entities/sv-exclusions/v1:get' { 'responses.SvExclusionV1' }
+                '/policy/entities/sv-exclusions/v1:get' { 'Exclusion' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -145,7 +145,7 @@ Host group identifier or 'all' to apply to all hosts
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/sv-exclusions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/sv-exclusions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Exclusion',ParameterSetName='/policy/entities/sv-exclusions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -163,7 +163,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('groups','value','comment') }}
-            Schema = 'responses.MlExclusionV1'
+            Schema = 'Exclusion'
         }
     }
     process {

@@ -177,7 +177,7 @@ Monitor for substring matches
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Recon.Rule',ParameterSetName='/recon/entities/rules/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -227,7 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
                         'substring_matching_enabled')
                 }
             }
-            Schema = 'sadomain.Rule'
+            Schema = 'Recon.Rule'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -567,7 +567,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/queries/rules/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Recon.Rule',ParameterSetName='/recon/entities/rules/v1:get')]
     [OutputType([string],ParameterSetName='/recon/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -603,7 +603,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','q','sort','offset','filter') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/recon/entities/rules/v1:get' { 'sadomain.Rule' }
+                '/recon/entities/rules/v1:get' { 'Recon.Rule' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -819,7 +819,7 @@ Monitor for substring matches
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
     [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.sadomain.Rule',ParameterSetName='/recon/entities/rules/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Recon.Rule',ParameterSetName='/recon/entities/rules/v1:post')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -869,7 +869,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
                         'substring_matching_enabled','priority','raw_array')
                 }
             }
-            Schema = 'sadomain.Rule'
+            Schema = 'Recon.Rule'
         }
         [System.Collections.Generic.List[object]]$List = @()
     }

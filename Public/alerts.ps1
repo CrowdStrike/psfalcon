@@ -90,7 +90,7 @@ Alert identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v2:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msaspec.ResponseFields',ParameterSetName='/alerts/entities/alerts/v2:patch')]
+    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/alerts/entities/alerts/v2:patch')]
     param(
         [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,Position=1)]
         [ValidateSet('add_tag','append_comment','assign_to_name','assign_to_user_id','assign_to_uuid',
@@ -110,7 +110,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('ids','action_parameters') }}
-            Schema = 'msaspec.ResponseFields'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

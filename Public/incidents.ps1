@@ -216,7 +216,7 @@ Incident identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',
+    [OutputType('CrowdStrike.Falcon.Meta.Response',
         ParameterSetName='/incidents/entities/incident-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=1)]
@@ -247,7 +247,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
                     root = @('ids')
                     action_parameters = @('name','value')
                 }
-                Schema = 'msa.ReplyMetaOnly'
+                Schema = 'Meta.Response'
             }
             Max = 1000
         }

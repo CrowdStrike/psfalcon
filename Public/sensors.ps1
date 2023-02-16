@@ -189,7 +189,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',
+    [OutputType('CrowdStrike.Falcon.Meta.Response',
         ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',Mandatory,
@@ -204,7 +204,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Format = @{ Query = @('action_name','appId') }
-            Schema = 'msa.ReplyMetaOnly'
+            Schema = 'Meta.Response'
         }
     }
     process {

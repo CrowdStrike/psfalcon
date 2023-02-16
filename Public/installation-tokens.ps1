@@ -111,7 +111,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.tokenDetailsResourceV1',
+    [OutputType('CrowdStrike.Falcon.InstallToken',
         ParameterSetName='/installation-tokens/entities/tokens/v1:get')]
     [OutputType([string],ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
     param(
@@ -143,7 +143,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','limit','filter') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/installation-tokens/entities/tokens/v1:get' { 'api.tokenDetailsResourceV1' }
+                '/installation-tokens/entities/tokens/v1:get' { 'InstallToken' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -256,7 +256,7 @@ Installation token expiration time (RFC3339),or 'null'
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.api.tokenDetailsResourceV1',
+    [OutputType('CrowdStrike.Falcon.InstallToken',
         ParameterSetName='/installation-tokens/entities/tokens/v1:post')]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=1)]
@@ -271,7 +271,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconInstallToken
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('label','expires_timestamp') }}
-            Schema = 'api.tokenDetailsResourceV1'
+            Schema = 'InstallToken'
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
@@ -288,7 +288,7 @@ Installation token identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
 #>
     [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',
+    [OutputType('CrowdStrike.Falcon.Meta.Response',
         ParameterSetName='/installation-tokens/entities/tokens/v1:delete')]
     param(
         [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
@@ -302,7 +302,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
-            Schema = 'msa.ReplyMetaOnly'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

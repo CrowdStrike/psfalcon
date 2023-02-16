@@ -18,7 +18,7 @@ Detection identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/detects/entities/detects/v2:patch')]
+    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/detects/entities/detects/v2:patch')]
     param(
         [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=1)]
         [string]$Comment,
@@ -46,7 +46,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('show_in_ui','comment','assigned_to_uuid','status','ids') }}
             Max = 1000
-            Schema = 'msa.ReplyMetaOnly'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

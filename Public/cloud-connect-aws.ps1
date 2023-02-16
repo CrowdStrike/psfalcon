@@ -355,7 +355,7 @@ AWS account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.BaseEntitiesResponse',
+    [OutputType('CrowdStrike.Falcon.Meta.Response',
         ParameterSetName='/cloud-connect-aws/entities/account/v2:delete')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
@@ -374,7 +374,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','organization-ids') }
-            Schema = 'msa.BaseEntitiesResponse'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

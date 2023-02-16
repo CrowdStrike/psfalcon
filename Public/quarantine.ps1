@@ -99,8 +99,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
 #>
     [CmdletBinding(DefaultParameterSetName='/quarantine/entities/quarantined-files/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
-    [OutputType('CrowdStrike.Falcon.msa.ReplyMetaOnly',ParameterSetName='/quarantine/queries/quarantined-files/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/quarantine/entities/quarantined-files/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/quarantine/queries/quarantined-files/v1:patch')]
     param(
         [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory,Position=1)]
@@ -127,7 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('action','filter','ids','comment','q') }}
             Max = 500
-            Schema = 'msa.ReplyMetaOnly'
+            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

@@ -63,7 +63,7 @@ Exclusion identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Exclusion',ParameterSetName='/policy/entities/ml-exclusions/v1:patch')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -85,7 +85,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('groups','id','value','comment') }}
-            Schema = 'responses.MlExclusionV1'
+            Schema = 'Exclusion'
         }
     }
     process {
@@ -131,7 +131,7 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Exclusion',ParameterSetName='/policy/entities/ml-exclusions/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipelineByPropertyName,
@@ -165,7 +165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','filter','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/policy/entities/ml-exclusions/v1:get' { 'responses.MlExclusionV1' }
+                '/policy/entities/ml-exclusions/v1:get' { 'Exclusion' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -197,7 +197,7 @@ Audit log comment
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:post')]
+    [OutputType('CrowdStrike.Falcon.Exclusion',ParameterSetName='/policy/entities/ml-exclusions/v1:post')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -220,7 +220,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconMlExclusion
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('groups','value','comment','excluded_from') }}
-            Schema = 'responses.MlExclusionV1'
+            Schema = 'Exclusion'
         }
     }
     process {
@@ -250,7 +250,7 @@ Exclusion identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.responses.MlExclusionV1',ParameterSetName='/policy/entities/ml-exclusions/v1:delete')]
+    [OutputType('CrowdStrike.Falcon.Exclusion',ParameterSetName='/policy/entities/ml-exclusions/v1:delete')]
     param(
         [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Position=1)]
         [string]$Comment,
@@ -265,7 +265,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','comment') }
-            Schema = 'responses.MlExclusionV1'
+            Schema = 'Exclusion'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
