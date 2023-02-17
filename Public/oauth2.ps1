@@ -28,6 +28,7 @@ A hashtable containing 'Path', 'Token' and 'Enabled' properties for 'Register-Fa
 https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
 #>
     [CmdletBinding(DefaultParameterSetName='/oauth2/token:post',SupportsShouldProcess)]
+    [OutputType([void])]
     param(
         [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=1)]
         [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=1)]
@@ -159,17 +160,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                 $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
                 $Redirect = switch ($Region) {
                     # Update ApiClient hostname if redirected
-                    'us-1'     { 'https://api.crowdstrike.com' }
-                    'us-2'     { 'https://api.us-2.crowdstrike.com' }
+                    'us-1' { 'https://api.crowdstrike.com' }
+                    'us-2' { 'https://api.us-2.crowdstrike.com' }
                     'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
-                    'eu-1'     { 'https://api.eu-1.crowdstrike.com' }
+                    'eu-1' { 'https://api.eu-1.crowdstrike.com' }
                 }
                 if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
                     $PSCmdlet.WriteVerbose("[Request-FalconToken] Redirected to '$Region'")
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result $Request
-                if ($Result.access_token) {
+                $Result = Write-Result $Request 'AccessToken'
+                if ($Result.PSObject.TypeNames -contains 'CrowdStrike.Falcon.AccessToken') {
                     # Cache access token in ApiClient
                     [string]$Token = $Result.token_type,$Result.access_token -join ' '
                     if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
