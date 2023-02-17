@@ -19,6 +19,24 @@
   </Members>
  </Type>
  <Type>
+  <Name>CrowdStrike.Falcon.Aggregate</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>buckets</Name>
+       <Name>name</Name>
+       <Name>sum_other_doc_count</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
   <Name>CrowdStrike.Falcon.Alert</Name>
   <Members>
    <MemberSet>
@@ -98,6 +116,43 @@
        <Name>template_instance_id</Name>
        <Name>timestamp</Name>
        <Name>user_name</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.binservclient.RemoteCommandPutFile</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>bucket</Name>
+       <Name>cid</Name>
+       <Name>comments_for_audit_log</Name>
+       <Name>content</Name>
+       <Name>created_by</Name>
+       <Name>created_by_uuid</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>file_type</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_by_uuid</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
+       <Name>path</Name>
+       <Name>permission_type</Name>
+       <Name>platform</Name>
+       <Name>run_attempt_count</Name>
+       <Name>run_success_count</Name>
+       <Name>sha256</Name>
+       <Name>size</Name>
+       <Name>write_access</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -282,6 +337,7 @@
        <Name>behaviors_processed</Name>
        <Name>cid</Name>
        <Name>created_timestamp</Name>
+       <Name>date_updated</Name>
        <Name>detection_id</Name>
        <Name>device</Name>
        <Name>email_sent</Name>
@@ -297,6 +353,32 @@
        <Name>seconds_to_triaged</Name>
        <Name>show_in_ui</Name>
        <Name>status</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.deviceapi.GroupResponseV1</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>assignment_rule</Name>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>group_type</Name>
+       <Name>id</Name>
+       <Name>meta</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -514,6 +596,81 @@
        <Name>remote_ip</Name>
        <Name>user_sid</Name>
        <Name>username</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.domain.UserMetadata</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>customer</Name>
+       <Name>firstName</Name>
+       <Name>lastName</Name>
+       <Name>uid</Name>
+       <Name>uuid</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Exclusion</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>applied_globally</Name>
+       <Name>created_by</Name>
+       <Name>created_on</Name>
+       <Name>excluded_from</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>last_modified</Name>
+       <Name>modified_by</Name>
+       <Name>regexp_value</Name>
+       <Name>value</Name>
+       <Name>value_hash</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Exclusion.Ioa</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>applied_globally</Name>
+       <Name>cl_regex</Name>
+       <Name>created_by</Name>
+       <Name>created_on</Name>
+       <Name>description</Name>
+       <Name>detection_json</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>ifn_regex</Name>
+       <Name>last_modified</Name>
+       <Name>modified_by</Name>
+       <Name>name</Name>
+       <Name>pattern_id</Name>
+       <Name>pattern_name</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -900,6 +1057,49 @@
   </Members>
  </Type>
  <Type>
+  <Name>CrowdStrike.Falcon.fwmgr.api.NetworkLocationSummaryV1</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_on</Name>
+       <Name>description</Name>
+       <Name>enabled</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_on</Name>
+       <Name>name</Name>
+       <Name>rule_count</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.fwmgr.msa.AggregationResult</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>buckets</Name>
+       <Name>name</Name>
+       <Name>sum_other_doc_count</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
   <Name>CrowdStrike.Falcon.Horizon.Aws.Account</Name>
   <Members>
    <MemberSet>
@@ -930,8 +1130,8 @@
        <Name>eventbus_name</Name>
        <Name>external_id</Name>
        <Name>iam_role_arn</Name>
-       <Name>ID</Name>
        <Name>id</Name>
+       <Name>ID</Name>
        <Name>intermediate_role_arn</Name>
        <Name>is_custom_rolename</Name>
        <Name>is_master</Name>
@@ -1439,6 +1639,30 @@
        <Name>id</Name>
        <Name>last_seen</Name>
        <Name>state</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.HostGroup</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>assignment_rule</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>group_type</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -2131,6 +2355,64 @@
   </Members>
  </Type>
  <Type>
+  <Name>CrowdStrike.Falcon.k8sreg.AzureBashScript</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>script</Name>
+       <Name>service_account_public_keys</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.k8sreg.AzureTenantInfo</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>subscription_ids</Name>
+       <Name>tenant_id</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.k8sreg.ListClusterCloudItemResp</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>account_id</Name>
+       <Name>aws_meta</Name>
+       <Name>azure_meta</Name>
+       <Name>cloud_status</Name>
+       <Name>cluster_name</Name>
+       <Name>cluster_service</Name>
+       <Name>cluster_status</Name>
+       <Name>from_cspm</Name>
+       <Name>location</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
   <Name>CrowdStrike.Falcon.MalQuery</Name>
   <Members>
    <MemberSet>
@@ -2162,7 +2444,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>CrowdStrike.Falcon.MalQuery.Quota</Name>
+  <Name>CrowdStrike.Falcon.malquery.RateLimitsMeta</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
@@ -2170,8 +2452,16 @@
      <PropertySet>
       <Name>DefaultDisplayPropertySet</Name>
       <ReferencedProperties>
-       <Name>errors</Name>
-       <Name>meta</Name>
+       <Name>days_left</Name>
+       <Name>download_count</Name>
+       <Name>download_counts</Name>
+       <Name>download_limit</Name>
+       <Name>hunt_count</Name>
+       <Name>hunt_counts</Name>
+       <Name>hunt_limit</Name>
+       <Name>monitor_count</Name>
+       <Name>monitor_limit</Name>
+       <Name>refresh_time</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -2286,13 +2576,219 @@
      <PropertySet>
       <Name>DefaultDisplayPropertySet</Name>
       <ReferencedProperties>
-       <Name>errors</Name>
-       <Name>meta</Name>
        <Name>pagination</Name>
        <Name>powered_by</Name>
        <Name>query_time</Name>
        <Name>trace_id</Name>
        <Name>writes</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.model.File</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>cloud_request_id</Name>
+       <Name>created_at</Name>
+       <Name>deleted_at</Name>
+       <Name>id</Name>
+       <Name>name</Name>
+       <Name>session_id</Name>
+       <Name>sha256</Name>
+       <Name>size</Name>
+       <Name>updated_at</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.msa.Facet</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>by</Name>
+       <Name>count</Name>
+       <Name>facet</Name>
+       <Name>label</Name>
+       <Name>term</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Policy.DeviceControl</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>enabled</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
+       <Name>platform_name</Name>
+       <Name>settings</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Policy.DeviceControl.Default</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>enabled</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
+       <Name>platform_name</Name>
+       <Name>settings</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Policy.Firewall</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>channel_version</Name>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>enabled</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
+       <Name>platform_name</Name>
+       <Name>rule_set_id</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Policy.Prevention</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>enabled</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>ioa_rule_groups</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
+       <Name>platform_name</Name>
+       <Name>prevention_settings</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Policy.Rtr</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>enabled</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
+       <Name>platform_name</Name>
+       <Name>settings</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Policy.SensorUpdate</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>cid</Name>
+       <Name>created_by</Name>
+       <Name>created_timestamp</Name>
+       <Name>description</Name>
+       <Name>enabled</Name>
+       <Name>groups</Name>
+       <Name>id</Name>
+       <Name>modified_by</Name>
+       <Name>modified_timestamp</Name>
+       <Name>name</Name>
+       <Name>platform_name</Name>
+       <Name>settings</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -2501,6 +2997,38 @@
   </Members>
  </Type>
  <Type>
+  <Name>CrowdStrike.Falcon.Recon.Rule</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>breach_monitoring_enabled</Name>
+       <Name>cid</Name>
+       <Name>created_timestamp</Name>
+       <Name>filter</Name>
+       <Name>id</Name>
+       <Name>name</Name>
+       <Name>ownership_assets</Name>
+       <Name>permissions</Name>
+       <Name>priority</Name>
+       <Name>status</Name>
+       <Name>status_message</Name>
+       <Name>substring_matching_enabled</Name>
+       <Name>topic</Name>
+       <Name>updated_timestamp</Name>
+       <Name>user_id</Name>
+       <Name>user_name</Name>
+       <Name>user_uuid</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
   <Name>CrowdStrike.Falcon.Report</Name>
   <Members>
    <MemberSet>
@@ -2566,6 +3094,23 @@
        <Name>type</Name>
        <Name>user_id</Name>
        <Name>user_uuid</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Response</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>id</Name>
+       <Name>path</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -3041,6 +3586,52 @@
   </Members>
  </Type>
  <Type>
+  <Name>CrowdStrike.Falcon.Sensor.Build</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>build</Name>
+       <Name>platform</Name>
+       <Name>sensor_version</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Sensor.Kernel</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>architecture</Name>
+       <Name>base_package_supported_sensor_versions</Name>
+       <Name>created_timestamp</Name>
+       <Name>distro</Name>
+       <Name>distro_version</Name>
+       <Name>flavor</Name>
+       <Name>id</Name>
+       <Name>modified_timestamp</Name>
+       <Name>release</Name>
+       <Name>vendor</Name>
+       <Name>version</Name>
+       <Name>ztl_module_supported_sensor_versions</Name>
+       <Name>ztl_supported_sensor_versions</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
   <Name>CrowdStrike.Falcon.Spotlight.Logic</Name>
   <Members>
    <MemberSet>
@@ -3123,6 +3714,24 @@
        <Name>refreshActiveSessionInterval</Name>
        <Name>refreshActiveSessionURL</Name>
        <Name>sessionToken</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.UninstallToken</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>device_id</Name>
+       <Name>seed_id</Name>
+       <Name>uninstall_token</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
