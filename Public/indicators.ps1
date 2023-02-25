@@ -20,6 +20,7 @@ Display the total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocHost
 #>
     [CmdletBinding(DefaultParameterSetName='/indicators/queries/devices/v1:get',SupportsShouldProcess)]
+    [OutputType('CrowdStrike.Falcon.Ioc.HostCount',ParameterSetName='/indicators/aggregates/devices-count/v1:get')]
     [OutputType([string],ParameterSetName='/indicators/queries/devices/v1:get')]
     param(
         [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Mandatory,
