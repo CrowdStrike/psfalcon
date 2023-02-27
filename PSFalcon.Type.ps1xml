@@ -123,43 +123,6 @@
   </Members>
  </Type>
  <Type>
-  <Name>CrowdStrike.Falcon.binservclient.RemoteCommandPutFile</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>bucket</Name>
-       <Name>cid</Name>
-       <Name>comments_for_audit_log</Name>
-       <Name>content</Name>
-       <Name>created_by</Name>
-       <Name>created_by_uuid</Name>
-       <Name>created_timestamp</Name>
-       <Name>description</Name>
-       <Name>file_type</Name>
-       <Name>id</Name>
-       <Name>modified_by</Name>
-       <Name>modified_by_uuid</Name>
-       <Name>modified_timestamp</Name>
-       <Name>name</Name>
-       <Name>path</Name>
-       <Name>permission_type</Name>
-       <Name>platform</Name>
-       <Name>run_attempt_count</Name>
-       <Name>run_success_count</Name>
-       <Name>sha256</Name>
-       <Name>size</Name>
-       <Name>write_access</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
   <Name>CrowdStrike.Falcon.CrowdScore</Name>
   <Members>
    <MemberSet>
