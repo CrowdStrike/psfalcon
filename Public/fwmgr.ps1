@@ -220,6 +220,58 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocation
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
+function Edit-FalconFirewallLocationSetting {
+<#
+.SYNOPSIS
+Modify Falcon Firewall Management settings for all locations
+.DESCRIPTION
+Requires 'Firewall Management: Write'.
+.PARAMETER Cid
+Customer identifier
+.PARAMETER IcmpInterval
+Number of seconds between each ICMP request attempt
+.PARAMETER DnsInterval
+Number of seconds between each DNS request attempt
+.PARAMETER HttpsInterval
+Number of seconds between each HTTPS request attempt
+.PARAMETER Comment
+Audit log comment
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocationSetting
+#>
+    [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=1)]
+        [ValidatePattern('^[a-fA-F0-9]{32}$')]
+        [string]$Cid,
+        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=2)]
+        [Alias('icmp_request_targets_polling_interval')]
+        [int32]$IcmpInterval,
+        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=3)]
+        [Alias('dns_resolution_targets_polling_interval')]
+        [int32]$DnsInterval,
+        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=4)]
+        [Alias('https_reachable_hosts_polling_interval')]
+        [int32]$HttpsInterval,
+        [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=5)]
+        [string]$Comment
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Body = @{
+                    root = @('cid','icmp_request_targets_polling_interval',
+                        'dns_resolution_targets_polling_interval','https_reachable_hosts_polling_interval')
+                }
+                Query = @('comment')
+            }
+        }
+    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+}
 function Edit-FalconFirewallSetting {
 <#
 .SYNOPSIS
