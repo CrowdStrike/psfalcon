@@ -38,15 +38,16 @@ Requires 'MalQuery: Read'.
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQueryQuota
 #>
     [CmdletBinding(DefaultParameterSetName='/malquery/aggregates/quotas/v1:get',SupportsShouldProcess)]
+    [OutputType('CrowdStrike.Falcon.MalQuery.Quota',ParameterSetName='/malquery/aggregates/quotas/v1:get')]
     param()
-    process {
-        $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
-        if ($Request.Result.Content) {
-            (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta
-        } elseif ($Request) {
-            throw "Unable to retrieve MalQuery quota. Check client permissions."
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Schema = 'MalQuery.Quota'
         }
     }
+    process { Invoke-Falcon @Param }
 }
 function Get-FalconMalQuerySample {
 <#
