@@ -118,6 +118,7 @@
       # fwmgr
       'Edit-FalconFirewallGroup'
       'Edit-FalconFirewallLocation'
+      'Edit-FalconFirewallLocationSetting'
       'Edit-FalconFirewallSetting'
       'Get-FalconFirewallEvent'
       'Get-FalconFirewallField'
