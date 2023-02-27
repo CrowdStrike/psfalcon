@@ -117,7 +117,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
 function Edit-FalconFirewallLocation {
 <#
 .SYNOPSIS
-Updates the locations provided, and return the ID.
+Modify Falcon Firewall Management locations
 .DESCRIPTION
 Requires 'Firewall Management: Write'.
 .PARAMETER Id
