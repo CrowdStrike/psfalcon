@@ -323,32 +323,6 @@
   </Members>
  </Type>
  <Type>
-  <Name>CrowdStrike.Falcon.deviceapi.GroupResponseV1</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>assignment_rule</Name>
-       <Name>cid</Name>
-       <Name>created_by</Name>
-       <Name>created_timestamp</Name>
-       <Name>description</Name>
-       <Name>group_type</Name>
-       <Name>id</Name>
-       <Name>meta</Name>
-       <Name>modified_by</Name>
-       <Name>modified_timestamp</Name>
-       <Name>name</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
   <Name>CrowdStrike.Falcon.Discover.Account</Name>
   <Members>
    <MemberSet>
@@ -559,26 +533,6 @@
        <Name>remote_ip</Name>
        <Name>user_sid</Name>
        <Name>username</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.domain.UserMetadata</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>customer</Name>
-       <Name>firstName</Name>
-       <Name>lastName</Name>
-       <Name>uid</Name>
-       <Name>uuid</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -1013,49 +967,6 @@
       <ReferencedProperties>
        <Name>user_group_id</Name>
        <Name>user_uuids</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.fwmgr.api.NetworkLocationSummaryV1</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>cid</Name>
-       <Name>created_by</Name>
-       <Name>created_on</Name>
-       <Name>description</Name>
-       <Name>enabled</Name>
-       <Name>id</Name>
-       <Name>modified_by</Name>
-       <Name>modified_on</Name>
-       <Name>name</Name>
-       <Name>rule_count</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.fwmgr.msa.AggregationResult</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>buckets</Name>
-       <Name>name</Name>
-       <Name>sum_other_doc_count</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -2544,50 +2455,6 @@
        <Name>query_time</Name>
        <Name>trace_id</Name>
        <Name>writes</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.model.File</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>cloud_request_id</Name>
-       <Name>created_at</Name>
-       <Name>deleted_at</Name>
-       <Name>id</Name>
-       <Name>name</Name>
-       <Name>session_id</Name>
-       <Name>sha256</Name>
-       <Name>size</Name>
-       <Name>updated_at</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.msa.Facet</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>by</Name>
-       <Name>count</Name>
-       <Name>facet</Name>
-       <Name>label</Name>
-       <Name>term</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
