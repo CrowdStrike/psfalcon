@@ -117,15 +117,20 @@
 
       # fwmgr
       'Edit-FalconFirewallGroup'
+      'Edit-FalconFirewallLocation'
       'Edit-FalconFirewallSetting'
       'Get-FalconFirewallEvent'
       'Get-FalconFirewallField'
       'Get-FalconFirewallGroup'
+      'Get-FalconFirewallLocation'
       'Get-FalconFirewallPlatform'
       'Get-FalconFirewallRule'
       'Get-FalconFirewallSetting'
       'New-FalconFirewallGroup'
+      'New-FalconFirewallLocation'
       'Remove-FalconFirewallGroup'
+      'Remove-FalconFirewallLocation'
+      'Set-FalconFirewallLocationPrecedence'
       'Test-FalconFirewallPath'
 
       # identity-protection
