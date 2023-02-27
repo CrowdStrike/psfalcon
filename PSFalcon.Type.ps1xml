@@ -2444,7 +2444,7 @@
   </Members>
  </Type>
  <Type>
-  <Name>CrowdStrike.Falcon.malquery.RateLimitsMeta</Name>
+  <Name>CrowdStrike.Falcon.MalQuery.Quota</Name>
   <Members>
    <MemberSet>
     <Name>PSStandardMembers</Name>
