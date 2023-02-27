@@ -1097,7 +1097,7 @@ function Write-Result {
                 }) -join ', '
                 $PSCmdlet.WriteVerbose(('[Write-Result]',$Message -join ' '))
             }
-            if ($Schema -notmatch 'ReplyMetaOnly|Quota$') {
+            if ($Schema -notmatch 'Meta\.Response|Quota$') {
                 # Remove meta when it's not the intended output
                 [void]$Json.PSObject.Properties.Remove('meta')
             }
