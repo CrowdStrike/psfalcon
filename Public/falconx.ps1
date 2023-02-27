@@ -156,8 +156,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmissionQuota
 #>
     [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
     param()
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            RawOutput = $true
+        }
+    }
     process {
-        $Request = Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName -RawOutput -EA 0
+        $Request = Invoke-Falcon @Param -EA 0
         if ($Request.Result.Content) {
             (ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result).meta.quota
         } elseif ($Request) {
