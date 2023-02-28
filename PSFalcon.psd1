@@ -203,6 +203,7 @@
       'Edit-FalconContainerAzureAccount'
       'Get-FalconContainerAwsAccount'
       'Get-FalconContainerAzureAccount'
+      'Get-FalconContainerAzureConfig'
       'Get-FalconContainerCloud'
       'Get-FalconContainerCluster'
       'Invoke-FalconContainerScan'
