@@ -206,6 +206,62 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureAccount
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
+function Get-FalconContainerAzureConfig {
+<#
+.SYNOPSIS
+Retrieve Falcon Container Security Azure tenant configurations
+.DESCRIPTION
+Requires 'Kubernetes Protection: Read'.
+.PARAMETER Id
+Azure tenant identifier
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureConfig
+#>
+    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',
+        SupportsShouldProcess)]
+    [OutputType('CrowdStrike.Falcon.Cwp.Azure.TenantConfig',
+        ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
+    param(
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+        [Alias('ids')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',Position=2)]
+        [int]$Limit,
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
+        [int]$Offset,
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
+        [switch]$Total
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('offset','ids','limit') }
+            Schema = switch ($PSCmdlet.ParameterSetName) {
+                '/kubernetes-protection/entities/config/azure/v1:get' {
+                    'CrowdStrike.Falcon.Cwp.Azure.TenantConfig'
+                }
+            }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+}
 function Get-FalconContainerCloud {
 <#
 .SYNOPSIS
