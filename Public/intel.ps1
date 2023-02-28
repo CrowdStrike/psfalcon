@@ -516,6 +516,60 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
+function Receive-FalconAttck {
+<#
+.SYNOPSIS
+Download Mitre ATT&CK information for an actor
+.DESCRIPTION
+Requires 'Actors (Falcon Intelligence): Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Slug
+Actor identifier ('slug')
+.PARAMETER Format
+Export format
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
+#>
+    [CmdletBinding(DefaultParameterSetName='/intel/entities/mitre-reports/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=1)]
+        [string]$Path,
+        [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=2)]
+        [Alias('actor_id')]
+        [string]$Slug,
+        [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=3)]
+        [ValidateSet('csv','json',IgnoreCase=$false)]
+        [string]$Format,
+        [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get')]
+        [switch]$Force
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Query = @('actor_id','format')
+                Outfile = 'path'
+            }
+        }
+    }
+    process {
+        $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $Format
+        $OutPath = Test-OutFile $PSBoundParameters.Path
+        if ($OutPath.Category -eq 'ObjectNotFound') {
+            Write-Error @OutPath
+        } elseif ($PSBoundParameters.Path) {
+            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+                Write-Error @OutPath
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
+}
 function Receive-FalconIntel {
 <#
 .SYNOPSIS

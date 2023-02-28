@@ -157,6 +157,7 @@
       'Get-FalconIndicator'
       'Get-FalconIntel'
       'Get-FalconRule'
+      'Receive-FalconAttck'
       'Receive-FalconIntel'
       'Receive-FalconRule'
 
