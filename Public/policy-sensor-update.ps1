@@ -45,7 +45,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
         [string]$Description,
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Position=4)]
         [Alias('settings')]
-        [System.Object]$Setting
+        [object]$Setting
     )
     begin {
         $Param = @{
@@ -521,7 +521,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
         [string]$Description,
         [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Position=4)]
         [Alias('settings')]
-        [System.Object]$Setting
+        [object]$Setting
     )
     begin {
         $Param = @{
