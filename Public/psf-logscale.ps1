@@ -57,7 +57,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconEvent
     [OutputType([void])]
     param(
         [Parameter(Mandatory,ValueFromPipeline,Position=1)]
-        [System.Object]$Object
+        [object]$Object
     )
     begin {
         $OriginalProgress = $ProgressPreference
