@@ -282,7 +282,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                         if ($FileChoice -eq 0) {
                             Write-Host "[Invoke-FalconDeploy] Proceeding with CloudFile '$($CloudFile.id)'..."
                         } else {
-                            [System.Object]$RemovePut = $CloudFile.id | Remove-FalconPutFile
+                            [object]$RemovePut = $CloudFile.id | Remove-FalconPutFile
                             if ($RemovePut.writes.resources_affected -eq 1) {
                                 Write-Host "[Invoke-FalconDeploy] Removed CloudFile '$($CloudFile.id)'."
                             }
