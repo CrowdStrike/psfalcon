@@ -14,12 +14,25 @@ Policy name
 Policy description
 .PARAMETER Setting
 Policy settings
+.PARAMETER Default
+Modify the default Windows Device Control policy
+.PARAMETER Blocked
+Custom notification for blocked events
+.PARAMETER UseBlocked
+Enable custom notification for blocked events
+.PARAMETER Restricted
+Custom notification for restricted events
+.PARAMETER UseRestricted
+Enable custom notification for restricted events
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',ParameterSetName='array')]
     [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',
         ParameterSetName='/policy/entities/device-control/v1:patch')]
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl.Default',
+        ParameterSetName='/policy/entities/default-device-control/v1:patch')]
     param(
         [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
@@ -45,16 +58,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
         [string]$Description,
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Position=4)]
         [Alias('settings')]
-        [System.Object]$Setting
+        [object]$Setting,
+        [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Mandatory)]
+        [switch]$Default,
+        [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=1)]
+        [string]$Blocked,
+        [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=2)]
+        [boolean]$UseBlocked,
+        [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=3)]
+        [string]$Restricted,
+        [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=4)]
+        [boolean]$UseRestricted
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = '/policy/entities/device-control/v1:patch'
-            Format = @{
-                Body = @{
-                    resources = @('name','id','description','settings')
-                    root = @('resources')
+            Endpoint = if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
+                $PSCmdlet.ParameterSetName
+            } else {
+                '/policy/entities/device-control/v1:patch'
+            }
+            Format = if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
+                @{ Body = @{ root = @('custom_notifications') }}
+            } else {
+                @{
+                    Body = @{
+                        resources = @('name','id','description','settings')
+                        root = @('resources')
+                    }
                 }
             }
             Schema = 'Policy.DeviceControl'
@@ -70,13 +101,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
                         $_.PSObject.Properties.Remove('id')
                     }
                 }
-                # Select allowed fields, when populated
                 [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
+                    # Select allowed fields, when populated
                     if ($i.$_) { $_ }
                 }
                 $List.Add(($i | Select-Object $Select))
             }
         } else {
+            if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
+                $PSBoundParameters['custom_notifications'] = @{}
+                @('Blocked','Restricted').foreach{
+                    $Property = @{}
+                    if ($PSBoundParameters.$_) {
+                        # Add 'Blocked' or 'Restricted' as 'custom_message' and remove from input
+                        $Property['custom_message'] = $PSBoundParameters.$_
+                        [void]$PSBoundParameters.Remove($_)
+                    }
+                    if ($null -ne $PSBoundParameters."Use$_") {
+                        # Add 'Use' or 'UseRestricted' as 'use_custom' and remove from input
+                        $Property['use_custom'] = $PSBoundParameters."Use$_"
+                        [void]$PSBoundParameters.Remove("Use$_")
+                    }
+                    if ($Property.custom_message -or $null -ne $Property.use_custom) {
+                        # Add under 'custom_notifications'
+                        $PSBoundParameters.custom_notifications[($_.ToLower(),
+                            'notification' -join '_')] = $Property
+                    }
+                }
+            }
             Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
@@ -107,6 +159,8 @@ Maximum number of results per request
 Include additional properties
 .PARAMETER Offset
 Position to begin retrieving results
+.PARAMETER Default
+Retrieve default Device Control policy, including notification content
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -121,6 +175,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
         ParameterSetName='/policy/combined/device-control/v1:get')]
     [OutputType('CrowdStrike.Falcon.Policy.DeviceControl',
         ParameterSetName='/policy/entities/device-control/v1:get')]
+    [OutputType('CrowdStrike.Falcon.Policy.DeviceControl.Default',
+        ParameterSetName='/policy/entities/default-device-control/v1:get')]
     [OutputType([string],ParameterSetName='/policy/queries/device-control/v1:get')]
     param(
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,
@@ -151,6 +207,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
         [Parameter(ParameterSetName='/policy/combined/device-control/v1:get')]
         [Parameter(ParameterSetName='/policy/queries/device-control/v1:get')]
         [int32]$Offset,
+        [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:get',Mandatory)]
+        [switch]$Default,
         [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Mandatory)]
         [switch]$Detailed,
         [Parameter(ParameterSetName='/policy/combined/device-control/v1:get')]
@@ -360,7 +418,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
         [string]$Description,
         [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Position=4)]
         [Alias('settings')]
-        [System.Object]$Setting
+        [object]$Setting
     )
     begin {
         $Param = @{
