@@ -106,8 +106,18 @@ Role identifier
 User identifier
 .PARAMETER Cid
 Customer identifier
-.PARAMETER Detailed
-Retrieve detailed information
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
 #>
@@ -119,7 +129,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     param(
         [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [Alias('ids','roles')]
+        [Alias('ids','roles','role_id')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=1)]
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
@@ -145,8 +155,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=7)]
         [Alias('direct_only')]
         [boolean]$DirectOnly,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory)]
-        [switch]$Detailed
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+        [switch]$Total
     )
     begin {
         $Param = @{
@@ -196,12 +208,12 @@ Requires 'User Management: Read'.
 User identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Username
 Username
 .PARAMETER Include
