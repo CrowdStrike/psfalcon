@@ -1,5 +1,5 @@
 function Add-Schema ([object[]]$Object,[string]$String) {
-    if ($String) {
+    if ($String -and $Object) {
         # Append schema to object output, when present
         $String = 'CrowdStrike','Falcon',$String -join '.'
         $PSCmdlet.WriteVerbose(('[Add-Schema]',$String -join ' '))
