@@ -141,6 +141,30 @@
   </Members>
  </Type>
  <Type>
+  <Name>CrowdStrike.Falcon.Cwp.Account</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>account_id</Name>
+       <Name>aws_meta</Name>
+       <Name>azure_meta</Name>
+       <Name>cloud_status</Name>
+       <Name>cluster_name</Name>
+       <Name>cluster_service</Name>
+       <Name>cluster_status</Name>
+       <Name>from_cspm</Name>
+       <Name>location</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
   <Name>CrowdStrike.Falcon.Cwp.Aws.Account</Name>
   <Members>
    <MemberSet>
@@ -199,6 +223,40 @@
        <Name>subscription_id</Name>
        <Name>tenant_id</Name>
        <Name>updated_at</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Cwp.Azure.Script</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>script</Name>
+       <Name>service_account_public_keys</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Cwp.Azure.Tenant</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>subscription_ids</Name>
+       <Name>tenant_id</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -2222,64 +2280,6 @@
        <Name>start_timestamp_raw</Name>
        <Name>stop_timestamp</Name>
        <Name>stop_timestamp_raw</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.k8sreg.AzureBashScript</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>script</Name>
-       <Name>service_account_public_keys</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.k8sreg.AzureTenantInfo</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>subscription_ids</Name>
-       <Name>tenant_id</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
-  <Name>CrowdStrike.Falcon.k8sreg.ListClusterCloudItemResp</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>account_id</Name>
-       <Name>aws_meta</Name>
-       <Name>azure_meta</Name>
-       <Name>cloud_status</Name>
-       <Name>cluster_name</Name>
-       <Name>cluster_service</Name>
-       <Name>cluster_status</Name>
-       <Name>from_cspm</Name>
-       <Name>location</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
