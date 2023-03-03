@@ -47,27 +47,42 @@
       <ReferencedProperties>
        <Name>agent_id</Name>
        <Name>aggregate_id</Name>
+       <Name>alleged_filetype</Name>
        <Name>assigned_to_name</Name>
        <Name>assigned_to_uid</Name>
        <Name>assigned_to_uuid</Name>
        <Name>cid</Name>
+       <Name>cmdline</Name>
        <Name>composite_id</Name>
        <Name>confidence</Name>
+       <Name>context_timestamp</Name>
+       <Name>control_graph_id</Name>
        <Name>crawl_edge_ids</Name>
        <Name>crawl_traversal</Name>
        <Name>crawl_vertex_ids</Name>
+       <Name>crawled_timestamp</Name>
        <Name>created_timestamp</Name>
        <Name>description</Name>
+       <Name>device</Name>
        <Name>display_name</Name>
        <Name>email_sent</Name>
        <Name>external</Name>
+       <Name>filename</Name>
+       <Name>filepath</Name>
        <Name>id</Name>
+       <Name>ioc_description</Name>
+       <Name>local_process_id</Name>
        <Name>name</Name>
        <Name>objective</Name>
+       <Name>pattern_disposition</Name>
+       <Name>pattern_disposition_details</Name>
        <Name>pattern_id</Name>
+       <Name>platform</Name>
        <Name>product</Name>
+       <Name>quarantined_files</Name>
        <Name>scenario</Name>
        <Name>severity</Name>
+       <Name>sha256</Name>
        <Name>show_in_ui</Name>
        <Name>status</Name>
        <Name>tactic</Name>
@@ -76,8 +91,14 @@
        <Name>technique</Name>
        <Name>technique_id</Name>
        <Name>timestamp</Name>
+       <Name>tree_id</Name>
+       <Name>tree_root</Name>
+       <Name>triggering_process_graph_id</Name>
        <Name>type</Name>
        <Name>updated_timestamp</Name>
+       <Name>url</Name>
+       <Name>user_id</Name>
+       <Name>user_name</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -99,6 +120,7 @@
        <Name>cmdline</Name>
        <Name>compound_tto</Name>
        <Name>detection_id</Name>
+       <Name>detection_ids</Name>
        <Name>domain</Name>
        <Name>filepath</Name>
        <Name>incident_id</Name>
@@ -112,7 +134,9 @@
        <Name>pattern_id</Name>
        <Name>sha256</Name>
        <Name>tactic</Name>
+       <Name>tactic_id</Name>
        <Name>technique</Name>
+       <Name>technique_id</Name>
        <Name>template_instance_id</Name>
        <Name>timestamp</Name>
        <Name>user_name</Name>
@@ -670,15 +694,19 @@
        <Name>entity_path</Name>
        <Name>entity_path_new</Name>
        <Name>entity_type</Name>
+       <Name>grandparent_process_image_file_name</Name>
        <Name>host</Name>
        <Name>id</Name>
        <Name>ingestion_timestamp</Name>
        <Name>is_suppressed</Name>
+       <Name>parent_process_image_file_name</Name>
+       <Name>permissions</Name>
        <Name>platform_name</Name>
        <Name>policy</Name>
        <Name>process_id</Name>
        <Name>process_image_file_name</Name>
        <Name>severity</Name>
+       <Name>tags</Name>
        <Name>user_id</Name>
        <Name>user_name</Name>
       </ReferencedProperties>
@@ -1431,11 +1459,15 @@
        <Name>bios_manufacturer</Name>
        <Name>bios_version</Name>
        <Name>build_number</Name>
+       <Name>chassis_type</Name>
        <Name>cid</Name>
        <Name>config_id_base</Name>
        <Name>config_id_build</Name>
        <Name>config_id_platform</Name>
+       <Name>connection_ip</Name>
+       <Name>connection_mac_address</Name>
        <Name>cpu_signature</Name>
+       <Name>default_gateway_ip</Name>
        <Name>detection_suppression_status</Name>
        <Name>device_id</Name>
        <Name>device_policies</Name>
@@ -1464,6 +1496,7 @@
        <Name>modified_timestamp</Name>
        <Name>notes</Name>
        <Name>os_build</Name>
+       <Name>os_product_name</Name>
        <Name>os_version</Name>
        <Name>ou</Name>
        <Name>platform_id</Name>
@@ -1739,6 +1772,7 @@
       <ReferencedProperties>
        <Name>active</Name>
        <Name>actor_type</Name>
+       <Name>capabilities</Name>
        <Name>capability</Name>
        <Name>created_date</Name>
        <Name>description</Name>
@@ -1755,13 +1789,16 @@
        <Name>motivations</Name>
        <Name>name</Name>
        <Name>notify_users</Name>
+       <Name>objectives</Name>
        <Name>origins</Name>
        <Name>region</Name>
        <Name>rich_text_description</Name>
        <Name>short_description</Name>
        <Name>slug</Name>
+       <Name>status</Name>
        <Name>target_countries</Name>
        <Name>target_industries</Name>
+       <Name>target_regions</Name>
        <Name>thumbnail</Name>
        <Name>url</Name>
       </ReferencedProperties>
@@ -1885,6 +1922,30 @@
        <Name>topic</Name>
        <Name>type</Name>
        <Name>url</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Intel.Rule</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>created_date</Name>
+       <Name>description</Name>
+       <Name>id</Name>
+       <Name>last_modified_date</Name>
+       <Name>name</Name>
+       <Name>rich_text_description</Name>
+       <Name>short_description</Name>
+       <Name>tags</Name>
+       <Name>type</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
@@ -2791,6 +2852,7 @@
        <Name>company</Name>
        <Name>created_date</Name>
        <Name>display_name</Name>
+       <Name>domain</Name>
        <Name>email</Name>
        <Name>email_domain</Name>
        <Name>event_date</Name>
@@ -3578,6 +3640,7 @@
       <Name>DefaultDisplayPropertySet</Name>
       <ReferencedProperties>
        <Name>cid</Name>
+       <Name>created_at</Name>
        <Name>first_name</Name>
        <Name>last_name</Name>
        <Name>uid</Name>
