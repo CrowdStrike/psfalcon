@@ -1892,29 +1892,6 @@
   </Members>
  </Type>
  <Type>
-  <Name>CrowdStrike.Falcon.Intel.Rule</Name>
-  <Members>
-   <MemberSet>
-    <Name>PSStandardMembers</Name>
-    <Members>
-     <PropertySet>
-      <Name>DefaultDisplayPropertySet</Name>
-      <ReferencedProperties>
-       <Name>categories</Name>
-       <Name>created_date</Name>
-       <Name>customer_id</Name>
-       <Name>id</Name>
-       <Name>name</Name>
-       <Name>rule_type</Name>
-       <Name>updated_date</Name>
-       <Name>value</Name>
-      </ReferencedProperties>
-     </PropertySet>
-    </Members>
-   </MemberSet>
-  </Members>
- </Type>
- <Type>
   <Name>CrowdStrike.Falcon.Intel.Sandbox.Report</Name>
   <Members>
    <MemberSet>
@@ -2005,6 +1982,29 @@
        <Name>user_name</Name>
        <Name>user_tags</Name>
        <Name>verdict</Name>
+      </ReferencedProperties>
+     </PropertySet>
+    </Members>
+   </MemberSet>
+  </Members>
+ </Type>
+ <Type>
+  <Name>CrowdStrike.Falcon.Intel.Tailored.Rule</Name>
+  <Members>
+   <MemberSet>
+    <Name>PSStandardMembers</Name>
+    <Members>
+     <PropertySet>
+      <Name>DefaultDisplayPropertySet</Name>
+      <ReferencedProperties>
+       <Name>categories</Name>
+       <Name>created_date</Name>
+       <Name>customer_id</Name>
+       <Name>id</Name>
+       <Name>name</Name>
+       <Name>rule_type</Name>
+       <Name>updated_date</Name>
+       <Name>value</Name>
       </ReferencedProperties>
      </PropertySet>
     </Members>
