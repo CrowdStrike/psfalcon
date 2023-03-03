@@ -505,7 +505,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
                     'name','description','type','q')
             }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/intel/entities/rules/v1:get' { 'domain.Rule' }
+                '/intel/entities/rules/v1:get' { 'Intel.Rule' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
