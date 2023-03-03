@@ -264,7 +264,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
             Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/ioarules/entities/platforms/v1:get' { 'domain.Platform' }
+                '/ioarules/entities/platforms/v1:get' { 'Ioa.Platform' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
