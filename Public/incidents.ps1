@@ -24,8 +24,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/behaviors/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Behavior',ParameterSetName='/incidents/entities/behaviors/GET/v1:post')]
-    [OutputType([string],ParameterSetName='/incidents/queries/behaviors/v1:get')]
     param(
         [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -57,9 +55,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
             Format = @{
                 Query = @('sort','offset','filter','limit')
                 Body = @{ root = @('ids') }
-            }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/incidents/entities/behaviors/GET/v1:post' { 'Behavior' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -96,8 +91,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/queries/incidents/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Incident',ParameterSetName='/incidents/entities/incidents/GET/v1:post')]
-    [OutputType([string],ParameterSetName='/incidents/queries/incidents/v1:get')]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -133,9 +126,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
                 Query = @('sort','offset','filter','limit')
                 Body = @{ root = @('ids') }
             }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/incidents/entities/incidents/GET/v1:post' { 'Incident' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -167,8 +157,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.CrowdScore',
-        ParameterSetName='/incidents/combined/crowdscores/v1:get')]
     param(
         [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=1)]
         [ValidateScript({ Test-FqlStatement $_ })]
@@ -191,7 +179,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','offset','filter','limit') }
-            Schema = 'CrowdScore'
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
@@ -216,8 +203,6 @@ Incident identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
 #>
     [CmdletBinding(DefaultParameterSetName='/incidents/entities/incident-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',
-        ParameterSetName='/incidents/entities/incident-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('add_tag','delete_tag','unassign','update_description','update_name','update_status',
@@ -247,7 +232,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
                     root = @('ids')
                     action_parameters = @('name','value')
                 }
-                Schema = 'Meta.Response'
             }
             Max = 1000
         }

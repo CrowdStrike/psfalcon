@@ -26,8 +26,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Alert',ParameterSetName='/alerts/entities/alerts/v1:post')]
-    [OutputType([string],ParameterSetName='/alerts/queries/alerts/v1:get')]
     param(
         [Parameter(ParameterSetName='/alerts/entities/alerts/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -62,9 +60,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
                 Body = @{ root = @('ids') }
                 Query = @('filter','q','sort','limit','offset')
             }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/alerts/entities/alerts/v1:post' { 'Alert' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -90,7 +85,6 @@ Alert identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
 #>
     [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v2:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/alerts/entities/alerts/v2:patch')]
     param(
         [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,Position=1)]
         [ValidateSet('add_tag','append_comment','assign_to_name','assign_to_user_id','assign_to_uuid',
@@ -110,7 +104,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('ids','action_parameters') }}
-            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

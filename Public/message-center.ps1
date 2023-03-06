@@ -16,7 +16,6 @@ Case identifier
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-activity/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/message-center/entities/case-activity/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
            Position=1)]
@@ -41,7 +40,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('case_id','user_uuid','type','body') }}
-            Schema = 'Meta.Response'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -64,7 +62,6 @@ Case identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Response',ParameterSetName='/message-center/entities/case/v1:patch')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Position=1)]
         [Alias('body')]
@@ -88,7 +85,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('id','body','detections','incidents') }}
-            Schema = 'Response'
         }
         [System.Collections.Generic.List[hashtable]]$LdtList = @()
         [System.Collections.Generic.List[hashtable]]$IncList = @()
@@ -137,9 +133,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/case-activities/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Message.Activity',
-        ParameterSetName='/message-center/entities/case-activities/GET/v1:post')]
-    [OutputType([string],ParameterSetName='/message-center/queries/case-activities/v1:get')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-activities/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -174,9 +167,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
             Format = @{
                 Body = @{ root = @('ids') }
                 Query = @('case_id','filter','sort','limit','offset')
-            }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/message-center/entities/case-activities/GET/v1:post' { 'Message.Activity' }
             }
         }
         [System.Collections.Generic.List[string]]$List = @()
@@ -213,8 +203,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/queries/cases/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Message.Case',ParameterSetName='/message-center/entities/cases/GET/v1:post')]
-    [OutputType([string],ParameterSetName='/message-center/queries/cases/v1:get')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -248,9 +236,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
                 Body = @{ root = @('ids') }
                 Query = @('filter','sort','limit','offset')
             }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/message-center/entities/cases/GET/v1:post' { 'Message.Case' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -282,7 +267,6 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Response',ParameterSetName='/message-center/entities/case/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,Position=1)]
         [ValidateSet('fc:detection-support','fc:contact','fc:falcon-product-support','fc:incident-support',
@@ -330,7 +314,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
             Format = @{
                 Body = @{ root = @('body','detections','incidents','title','type','user_uuid') }
             }
-            Schema = 'Response'
         }
         [System.Collections.Generic.List[hashtable]]$LdtList = @()
         [System.Collections.Generic.List[hashtable]]$IncList = @()
@@ -417,8 +400,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
 #>
     [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Message.Attachment',
-        ParameterSetName='/message-center/entities/case-attachment/v1:post')]
     param(
         [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,Position=1)]
         [ValidatePattern('\.(bmp|csv|doc(x?)|gif|jp(e?)g|pdf|png|ppt(x?)|txt|xls(x?))$')]
@@ -456,7 +437,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ ContentType = 'multipart/form-data' }
             Format = @{ Formdata = @('case_id','user_uuid','file') }
-            Schema = 'Message.Attachment'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

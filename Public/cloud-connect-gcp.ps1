@@ -12,8 +12,6 @@ GCP account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Horizon.Gcp.Account',
-        ParameterSetName='/cloud-connect-gcp/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=1)]
         [ValidateSet('full','dry',IgnoreCase=$false)]
@@ -30,7 +28,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','scan-type') }
-            Schema = 'Horizon.Gcp.Account'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -55,8 +52,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Horizon.Gcp.Account',
-        ParameterSetName='/cloud-connect-gcp/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -69,7 +64,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('parent_id') }}
-            Schema = 'Horizon.Gcp.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -89,8 +83,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverGcpScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Horizon.Gcp.Script',
-        ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',Mandatory,
            Position=1)]
@@ -104,7 +96,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverGcpScript
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ Accept = 'application/octet-stream' }
             Format = @{ Outfile = 'path' }
-            Schema = 'Horizon.Gcp.Script'
         }
     }
     process {

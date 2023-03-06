@@ -21,7 +21,6 @@ Rule group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Group',ParameterSetName='/ioarules/entities/rule-groups/v1:patch')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
             Position=1)]
@@ -48,7 +47,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
             Format = @{
                 Body = @{ root = @('description','rulegroup_version','name','enabled','id','comment') }
             }
-            Schema = 'api.RuleGroupV1'
         }
     }
     process {
@@ -88,7 +86,6 @@ Rule group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Rule',ParameterSetName='/ioarules/entities/rules/v1:patch')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Position=1)]
         [string]$Comment,
@@ -107,7 +104,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('rulegroup_id','comment','rule_updates','rulegroup_version') }}
-            Schema = 'Ioa.Rule'
         }
     }
     process {
@@ -159,8 +155,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Group',ParameterSetName='/ioarules/entities/rule-groups/v1:get')]
-    [OutputType([string],ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -201,9 +195,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/ioarules/entities/rule-groups/v1:get' { 'api.RuleGroupV1' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -238,8 +229,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Platform',ParameterSetName='/ioarules/entities/platforms/v1:get')]
-    [OutputType([string],ParameterSetName='/ioarules/queries/platforms/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -263,9 +252,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/ioarules/entities/platforms/v1:get' { 'Ioa.Platform' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -303,8 +289,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Rule',ParameterSetName='/ioarules/entities/rules/GET/v1:post')]
-    [OutputType([string],ParameterSetName='/ioarules/queries/rules/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -348,9 +332,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
                 Body = @{ root = @('ids') }
                 Query = @('limit','sort','q','offset','filter')
             }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/ioarules/entities/rules/GET/v1:post' { 'Ioa.Rule' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -382,8 +363,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/pattern-severities/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Severity',ParameterSetName='/ioarules/entities/pattern-severities/v1:get')]
-    [OutputType([string],ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -407,9 +386,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/ioarules/entities/pattern-severities/v1:get' { 'Ioa.Severity' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -441,8 +417,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Type',ParameterSetName='/ioarules/entities/rule-types/v1:get')]
-    [OutputType([string],ParameterSetName='/ioarules/queries/rule-types/v1:get')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -466,9 +440,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/ioarules/entities/rule-types/v1:get' { 'Ioa.Type' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -496,7 +467,6 @@ Audit log comment
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Group',ParameterSetName='/ioarules/entities/rule-groups/v1:post')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -518,7 +488,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('description','platform','name','comment') }}
-            Schema = 'api.RuleGroupV1'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -552,7 +521,6 @@ Rule group identifier
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Rule',ParameterSetName='/ioarules/entities/rules/v1:post')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
             Position=1)]
@@ -596,7 +564,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
                         'ruletype_id','field_values','name')
                 }
             }
-            Schema = 'Ioa.Rule'
         }
     }
     process {
@@ -621,7 +588,6 @@ Rule group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/ioarules/entities/rule-groups/v1:delete')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Position=1)]
         [string]$Comment,
@@ -636,7 +602,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','comment') }
-            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -664,7 +629,6 @@ Rule identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/ioarules/entities/rules/v1:delete')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Position=1)]
         [string]$Comment,
@@ -684,7 +648,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','rule_group_id','comment') }
-            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -708,7 +671,6 @@ An array of rule properties
 https://github.com/crowdstrike/psfalcon/wiki/Test-FalconIoaRule
 #>
     [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/validate/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Ioa.Rule.Test',ParameterSetName='/ioarules/entities/rules/validate/v1:post')]
     param(
         [Parameter(ParameterSetName='/ioarules/entities/rules/validate/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -720,7 +682,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconIoaRule
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('fields') }}
-            Schema = 'Ioa.Rule.Test'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

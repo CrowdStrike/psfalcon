@@ -1,18 +1,3 @@
-function Add-Schema ([object[]]$Object,[string]$String) {
-    if ($String -and $Object) {
-        # Append schema to object output, when present
-        $String = 'CrowdStrike','Falcon',$String -join '.'
-        $PSCmdlet.WriteVerbose(('[Add-Schema]',$String -join ' '))
-        if ($String -match '\.Id$') {
-            # Add '.Id' TypeName value to keep default [string] format
-            $Object | ForEach-Object { $_.PSObject.TypeNames.Add($String) }
-        } else {
-            # Insert TypeName to force custom format
-            $Object | ForEach-Object { $_.PSObject.TypeNames.Insert(0,$String) }
-        }
-    }
-    $Object
-}
 function Add-Include {
     [CmdletBinding()]
     [OutputType([void])]
@@ -564,8 +549,7 @@ function Invoke-Falcon {
         [switch]$RawOutput,
         [int32]$Max,
         [string]$HostUrl,
-        [switch]$BodyArray,
-        [string]$Schema
+        [switch]$BodyArray
     )
     begin {
         function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
@@ -635,10 +619,10 @@ function Invoke-Falcon {
                 $false
             }
             if ($Splat.Detailed -eq $true -and $NoDetail -eq $false) {
-                $Output = Write-Result $Object $Schema
+                $Output = Write-Result $Object
                 if ($Output) { & $Command -Id $Output }
             } else {
-                Write-Result $Object $Schema
+                Write-Result $Object
             }
         }
         if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
@@ -646,7 +630,7 @@ function Invoke-Falcon {
             if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) { Request-FalconToken }
         }
         # Gather request parameters and split into groups
-        [string[]]$Exclude = 'BodyArray','Command','RawOutput','Schema'
+        [string[]]$Exclude = 'BodyArray','Command','RawOutput'
         $GetParam = @{}
         $PSBoundParameters.GetEnumerator().Where({ $Exclude -notcontains $_.Key }).foreach{
             $GetParam.Add($_.Key,$_.Value)
@@ -1070,7 +1054,7 @@ function Test-RegexValue {
 }
 function Write-Result {
     [CmdletBinding()]
-    param([object]$Request,[string]$Schema)
+    param([object]$Request)
     process {
         # Capture result content
         $Result = if ($Request.Result.Content) { ($Request.Result.Content).ReadAsStringAsync().Result }
@@ -1097,10 +1081,6 @@ function Write-Result {
                 }) -join ', '
                 $PSCmdlet.WriteVerbose(('[Write-Result]',$Message -join ' '))
             }
-            if ($Schema -notmatch 'Meta\.Response|Quota$') {
-                # Remove meta when it's not the intended output
-                [void]$Json.PSObject.Properties.Remove('meta')
-            }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
                 # Output 'errors' to error stream as Json string
                 $PSCmdlet.WriteError(
@@ -1113,11 +1093,16 @@ function Write-Result {
                 )
             }
             [void]$Json.PSObject.Properties.Remove('errors')
-            if (($Json.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                # Output single sub-property value
-                Add-Schema ($Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name) $Schema
+            if (($Json.PSObject.Properties.Where({ $_.Value }) | Measure-Object).Count -gt 1) {
+                # Remove 'meta' when other properties are populated
+                [void]$Json.PSObject.Properties.Remove('meta')
+            }
+            if (($Json.PSObject.Properties.Where({ $_.Value }) | Measure-Object).Count -eq 1) {
+                # Output single sub-property value from Json
+                $Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name
             } else {
-                Add-Schema $Json $Schema
+                # Output multiple values from Json
+                $Json
             }
         } else {
             # Output non-Json content

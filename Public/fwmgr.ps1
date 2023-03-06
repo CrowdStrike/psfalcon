@@ -150,7 +150,6 @@ Audit log comment
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocation
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations/v1:patch',SupportsShouldProcess)]
-    [OutputType([string],ParameterSetName='/fwmgr/entities/network-locations/v1:patch')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -303,7 +302,6 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v2:put',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/fwmgr/entities/policies/v2:put')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
            Position=1)]
@@ -352,7 +350,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
                         'default_inbound','rule_group_ids','local_logging')
                 }
             }
-            Schema = 'Meta.Response'
         }
     }
     process {
@@ -398,9 +395,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallEvent
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/events/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Event',
-        ParameterSetName='/fwmgr/entities/events/v1:get')]
-    [OutputType([string],ParameterSetName='/fwmgr/queries/events/v1:get')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -433,9 +427,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallEvent
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','after','filter') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/fwmgr/entities/events/v1:get' { 'Firewall.Event' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -469,9 +460,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallField
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/firewall-fields/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Field',
-        ParameterSetName='/fwmgr/entities/firewall-fields/v1:get')]
-    [OutputType([string],ParameterSetName='/fwmgr/queries/firewall-fields/v1:get')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/firewall-fields/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -498,9 +486,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallField
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit','platform_id') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/fwmgr/entities/firewall-fields/v1:get' { 'Firewall.Field' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -540,8 +525,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rule-groups/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Group',ParameterSetName='/fwmgr/entities/rule-groups/v1:get')]
-    [OutputType([string],ParameterSetName='/fwmgr/queries/rule-groups/v1:get')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -575,9 +558,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','ids','sort','q','offset','after','filter') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/fwmgr/entities/rule-groups/v1:get' { 'Firewall.Group' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -617,9 +597,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallLocation
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/network-locations/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Location',
-        ParameterSetName='/fwmgr/entities/network-locations-details/v1:get')]
-    [OutputType([string],ParameterSetName='/fwmgr/queries/network-locations-details/v1:get')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/network-locations-details/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -650,9 +627,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallLocation
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('filter','q','after','limit','sort','offset','ids') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/fwmgr/entities/network-locations-details/v1:get' { 'Firewall.Location' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -684,8 +658,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPlatform
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/platforms/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Platform',ParameterSetName='/fwmgr/entities/platforms/v1:get')]
-    [OutputType([string],ParameterSetName='/fwmgr/queries/platforms/v1:get')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/platforms/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -709,9 +681,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPlatform
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids','offset','limit') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/fwmgr/entities/platforms/v1:get' { 'Firewall.Platform' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -753,9 +722,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallRule
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/queries/rules/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Rule',ParameterSetName='/fwmgr/entities/rules/v1:get')]
-    [OutputType([string],ParameterSetName='/fwmgr/queries/rules/v1:get')]
-    [OutputType([string],ParameterSetName='/fwmgr/queries/policy-rules/v1:get')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -799,9 +765,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallRule
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('limit','sort','q','offset','after','filter','id') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/fwmgr/entities/rules/v1:get' { 'Firewall.Rule' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -838,8 +801,6 @@ Policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallSetting
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Setting',
-        ParameterSetName='/fwmgr/entities/policies/v1:get')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline,Position=1)]
@@ -852,7 +813,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallSetting
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('ids') }
-            Schema = 'Firewall.Setting'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -992,8 +952,6 @@ Audit log comment
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallLocation
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.Location',
-        ParameterSetName='/fwmgr/entities/network-locations/v1:post')]
     param(
         [Parameter(ParameterSetName='CloneId',Mandatory,ValueFromPipelineByPropertyName,Position=1)]
         [Alias('clone_id','id')]
@@ -1047,7 +1005,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallLocation
                 }
                 Query = @('clone_id','comment','add_fw_rules')
             }
-            Schema = 'Firewall.Location'
         }
     }
     process {
@@ -1195,8 +1152,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconFirewallPath
 #>
     [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/rules/validate-filepath/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Firewall.TestPath',
-        ParameterSetName='/fwmgr/entities/rules/validate-filepath/v1:post')]
     param(
         [Parameter(ParameterSetName='/fwmgr/entities/rules/validate-filepath/v1:post',Mandatory,Position=1)]
         [Alias('filepath_pattern')]
@@ -1210,7 +1165,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconFirewallPath
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('filepath_test_string','filepath_pattern') }}
-            Schema = 'Firewall.TestPath'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }

@@ -13,8 +13,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Account',
-        ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -31,7 +29,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('account_id','cloudtrail_region') }}
-            Schema = 'Horizon.Aws.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -67,8 +64,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Account',
-        ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -107,7 +102,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
             Format = @{
                 Query = @('limit','ids','organization-ids','scan-type','offset','group_by','status')
             }
-            Schema = 'Horizon.Aws.Account'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -151,8 +145,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Account',
-        ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -174,7 +166,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ resources = @('cloudtrail_region','account_id','organization_id') }}
-            Schema = 'Horizon.Aws.Account'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -194,8 +185,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Horizon.Aws.Script',
-        ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
             Position=1)]
@@ -209,7 +198,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
             Endpoint = $PSCmdlet.ParameterSetName
             Headers = @{ Accept = 'application/octet-stream' }
             Format = @{ Outfile = 'path' }
-            Schema = 'Horizon.Aws.Script'
         }
     }
     process {
@@ -241,8 +229,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
 #>
     [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',
-        ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete')]
     param(
         [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -259,7 +245,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
             Command = $MyInvocation.MyCommand.Name
             Endpoint = '/cloud-connect-cspm-aws/entities/account/v1:delete'
             Format = @{ Query = @('ids','organization-ids') }
-            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

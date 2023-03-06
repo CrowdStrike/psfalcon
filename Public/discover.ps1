@@ -32,16 +32,6 @@ Search for login events
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
 #>
     [CmdletBinding(DefaultParameterSetName='/discover/queries/hosts/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Discover.Account',
-        ParameterSetName='/discover/entities/accounts/v1:get')]
-    [OutputType('CrowdStrike.Falcon.Discover.Application',
-        ParameterSetName='/discover/entities/applications/v1:get')]
-    [OutputType('CrowdStrike.Falcon.Discover.Host',ParameterSetName='/discover/entities/hosts/v1:get')]
-    [OutputType('CrowdStrike.Falcon.Discover.Login',ParameterSetName='/discover/entities/logins/v1:get')]
-    [OutputType([string],ParameterSetName='/discover/queries/accounts/v1:get')]
-    [OutputType([string],ParameterSetName='/discover/queries/applications/v1:get')]
-    [OutputType([string],ParameterSetName='/discover/queries/hosts/v1:get')]
-    [OutputType([string],ParameterSetName='/discover/queries/logins/v1:get')]
     param(
         [Parameter(ParameterSetName='/discover/entities/hosts/v1:get',Mandatory,ValueFromPipelineByPropertyName,
             ValueFromPipeline)]
@@ -111,12 +101,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('filter','sort','limit','offset','ids') }
             Max = 100
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/discover/entities/accounts/v1:get' { 'Discover.Account' }
-                '/discover/entities/applications/v1:get' { 'Discover.Application' }
-                '/discover/entities/hosts/v1:get' { 'Discover.Host' }
-                '/discover/entities/logins/v1:get' { 'Discover.Login' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }

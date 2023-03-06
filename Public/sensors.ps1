@@ -10,7 +10,6 @@ Requires 'Sensor Download: Read'.
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCcid
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/ccid/v1:get',SupportsShouldProcess)]
-    [OutputType([string],ParameterSetName='/sensors/queries/installers/ccid/v1:get')]
     param()
     process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
@@ -40,9 +39,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Installer',ParameterSetName='/sensors/combined/installers/v1:get')]
-    [OutputType('CrowdStrike.Falcon.Installer',ParameterSetName='/sensors/entities/installers/v1:get')]
-    [OutputType([string],ParameterSetName='/sensors/queries/installers/v1:get')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -76,10 +72,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','ids','offset','limit','filter') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/sensors/entities/installers/v1:get' { 'Installer' }
-                '/sensors/combined/installers/v1:get' { 'Installer' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -103,7 +95,6 @@ Format for streaming events [default: json]
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed/v2:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Stream',ParameterSetName='/sensors/entities/datafeed/v2:get')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed/v2:get',Mandatory,Position=1)]
         [string]$AppId,
@@ -116,7 +107,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('format','appId') }
-            Schema = 'Stream'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -189,8 +179,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
 #>
     [CmdletBinding(DefaultParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',
-        ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post')]
     param(
         [Parameter(ParameterSetName='/sensors/entities/datafeed-actions/v1/{partition}:post',Mandatory,
             Position=1)]
@@ -204,7 +192,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Format = @{ Query = @('action_name','appId') }
-            Schema = 'Meta.Response'
         }
     }
     process {

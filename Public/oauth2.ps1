@@ -169,8 +169,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                     $PSCmdlet.WriteVerbose("[Request-FalconToken] Redirected to '$Region'")
                     $Script:Falcon.Hostname = $Redirect
                 }
-                $Result = Write-Result $Request 'AccessToken'
-                if ($Result.PSObject.TypeNames -contains 'CrowdStrike.Falcon.AccessToken') {
+                $Result = Write-Result $Request
+                if ($Result.token_type -and $Result.access_token -and $Result.expires_in) {
                     # Cache access token in ApiClient
                     [string]$Token = $Result.token_type,$Result.access_token -join ' '
                     if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {

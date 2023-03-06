@@ -15,8 +15,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',
-        ParameterSetName='/user-management/entities/user-role-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -35,7 +33,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -67,7 +64,6 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:patch',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.User',ParameterSetName='/user-management/entities/users/v1:patch')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Position=1)]
         [Alias('first_name')]
@@ -89,7 +85,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
                 Query = @('user_uuid')
                 Body = @{ root = @('first_name','last_name') }
             }
-            Schema = 'User'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -123,9 +118,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.User.Role',ParameterSetName='/user-management/combined/user-roles/v1:get')]
-    [OutputType('CrowdStrike.Falcon.User.Role',ParameterSetName='/user-management/entities/roles/v1:get')]
-    [OutputType([string],ParameterSetName='/user-management/queries/roles/v1:get')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -165,10 +157,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('sort','filter','user_uuid','limit','cid','direct_only','offset','ids') }
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/user-management/entities/roles/v1:get' { 'User.Role' }
-                '/user-management/combined/user-roles/v1:get' { 'User.Role' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -228,8 +216,6 @@ Display total result count instead of results
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/queries/users/v1:get',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.User',ParameterSetName='/user-management/entities/users/GET/v1:post')]
-    [OutputType([string],ParameterSetName='/user-management/queries/users/v1:get')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -275,9 +261,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
                 Query = @('filter','sort','limit','offset','uid')
             }
             Max = 100
-            Schema = switch ($PSCmdlet.ParameterSetName) {
-                '/user-management/entities/users/GET/v1:post' { 'User' }
-            }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -326,7 +309,6 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-actions/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/user-management/entities/user-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=1)]
         [ValidateSet('reset_password','reset_2fa',IgnoreCase=$false)]
@@ -342,7 +324,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('ids','action') }}
-            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -378,7 +359,6 @@ Validate if user is allowed but do not create them
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:post',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.User',ParameterSetName='/user-management/entities/users/v1:post')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/users/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -415,7 +395,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
                 Query = @('validate_only')
                 Body = @{ root = @('first_name','uid','last_name','cid','password') }
             }
-            Schema = 'User'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
@@ -437,8 +416,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
         SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',
-        ParameterSetName='/user-management/entities/user-role-actions/v1:post')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=1)]
@@ -457,7 +434,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-            Schema = 'Meta.Response'
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
@@ -485,7 +461,6 @@ User identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
 #>
     [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:delete',SupportsShouldProcess)]
-    [OutputType('CrowdStrike.Falcon.Meta.Response',ParameterSetName='/user-management/entities/users/v1:delete')]
     param(
         [Parameter(ParameterSetName='/user-management/entities/users/v1:delete',Mandatory,
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -498,7 +473,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{ Query = @('user_uuid') }
-            Schema = 'Meta.Response'
         }
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
