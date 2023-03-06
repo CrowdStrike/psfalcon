@@ -18,7 +18,9 @@ Requires 'Hosts: Read'.
 .PARAMETER Hosts
 Array of detailed Host results
 .PARAMETER Filter
-Property to determine duplicate Host in addition to 'Hostname'
+Property to determine duplicates, in addition to 'Hostname'
+.PARAMETER Platform
+Filter hosts by platform
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
 #>
@@ -29,7 +31,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
         [Parameter(Position=2)]
         [ValidateSet('external_ip','local_ip','mac_address','os_version','platform_name','serial_number',
             IgnoreCase=$false)]
-        [string[]]$Filter
+        [string[]]$Filter,
+        [Parameter(Position=3)]
+        [ValidateSet('Linux','Mac','Windows',IgnoreCase=$false)]
+        [string]$Platform
     )
     begin {
         function Group-Selection ($Object,$GroupBy) {
@@ -50,8 +55,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
     process {
         if ($PSCmdlet.ShouldProcess('Find-FalconDuplicate','Get-FalconHost')) {
             [object[]]$HostArray = if (!$PSBoundParameters.Hosts) {
-                # Retreive Host details
-                Get-FalconHost -Detailed -All -EA 0
+                # Retrieve Host details
+                $Param = @{
+                    Detailed = $true
+                    All = $true
+                    ErrorAction = 'SilentlyContinue'
+                }
+                if ($PSBoundParameters.Platform) {
+                    $Param['Filter'] = "platform_name:'$($PSBoundParameters.Platform)'"
+                }
+                Get-FalconHost @Param
             } else {
                 $PSBoundParameters.Hosts
             }
