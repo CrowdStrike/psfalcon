@@ -11,7 +11,7 @@ Policy enablement status
 .PARAMETER Region
 Cloud region
 .PARAMETER TagExcluded
-
+Tag exclusion flag
 .PARAMETER AccountId
 Account identifier
 .PARAMETER Id
