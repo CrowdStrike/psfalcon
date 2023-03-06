@@ -11,7 +11,7 @@ Account type, when registering AWS commercial account in a Gov environment
 .PARAMETER SingleAccount
 Provide static script for a single AWS account
 .PARAMETER Delete
-
+Generate a delete script
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsScript
 #>
