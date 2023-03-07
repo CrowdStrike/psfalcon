@@ -150,6 +150,8 @@ Name of a 'CloudFile' or path to a local archive (zip, tar, tar.gz, tgz) to uplo
 Name of the file to run once extracted from the target archive
 .PARAMETER Argument
 Arguments to include when running the target executable
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds [default: 60]
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
 .PARAMETER Include
@@ -211,11 +213,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         [Parameter(ParameterSetName='GroupId_File',Position=3)]
         [Parameter(ParameterSetName='HostId_Archive',Position=4)]
         [Parameter(ParameterSetName='GroupId_Archive',Position=4)]
-        [boolean]$QueueOffline,
+        [ValidateRange(30,600)]
+        [int32]$Timeout,
         [Parameter(ParameterSetName='HostId_File',Position=4)]
         [Parameter(ParameterSetName='GroupId_File',Position=4)]
         [Parameter(ParameterSetName='HostId_Archive',Position=5)]
         [Parameter(ParameterSetName='GroupId_Archive',Position=5)]
+        [boolean]$QueueOffline,
+        [Parameter(ParameterSetName='HostId_File',Position=5)]
+        [Parameter(ParameterSetName='GroupId_File',Position=5)]
+        [Parameter(ParameterSetName='HostId_Archive',Position=6)]
+        [Parameter(ParameterSetName='GroupId_Archive',Position=6)]
         [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
             'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
             'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
@@ -332,7 +340,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         }
         [System.Collections.Generic.List[object]]$HostList = @()
         [System.Collections.Generic.List[string]]$List = @()
-        $Timeout = 600
     }
     process {
         if ($GroupId) {
@@ -365,12 +372,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
             # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
             if (Test-Path $FilePath -PathType Leaf) { Update-CloudFile $PutFile $FilePath }
             try {
+                # Force a base timeout of 60
+                if (!$Timeout) { $Timeout = 60 }
                 for ($i = 0; $i -lt ($HostList | Measure-Object).Count; $i += 10000) {
                     # Start Real-time Response sessions in groups of 10,000 with 'HostTimeout' to force batch
                     $Param = @{
                         Id = @($HostList[$i..($i + 9999)].device_id)
-                        Timeout = 60
-                        HostTimeout = 55
+                        Timeout = $Timeout
+                        HostTimeout = [math]::Truncate($Timeout*.9)
                     }
                     if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
                     $Session = Start-FalconSession @Param
@@ -482,7 +491,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                         }
                                     }
                                     OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
-                                    Timeout = $Timeout
+                                    Timeout = if ($Timeout) { $Timeout } else { 60 }
                                 }
                                 if ($Param.OptionalHostId -and $Param.Argument) {
                                     # Issue command, output result to CSV and capture successful values
@@ -516,6 +525,8 @@ depending on 'Command' provided, plus related permission(s) for 'Include' select
 Real-time Response command
 .PARAMETER Argument
 Arguments to include with the command
+.PARAMETER Timeout
+Length of time to wait for a result, in seconds [default: 60]
 .PARAMETER QueueOffline
 Add non-responsive Hosts to the offline queue
 .PARAMETER Include
@@ -538,9 +549,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         [string]$Argument,
         [Parameter(ParameterSetName='HostId',Position=3)]
         [Parameter(ParameterSetName='GroupId',Position=3)]
-        [boolean]$QueueOffline,
+        [ValidateRange(30,600)]
+        [int32]$Timeout,
         [Parameter(ParameterSetName='HostId',Position=4)]
         [Parameter(ParameterSetName='GroupId',Position=4)]
+        [boolean]$QueueOffline,
+        [Parameter(ParameterSetName='HostId',Position=5)]
+        [Parameter(ParameterSetName='GroupId',Position=5)]
         [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
             'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
             'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
@@ -553,10 +568,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         [Alias('device_id','host_ids','aid','id','HostIds')]
         [string[]]$HostId
     )
-    begin {
-        [System.Collections.Generic.List[string]]$List = @()
-        $Timeout = 600
-    }
+    begin { [System.Collections.Generic.List[string]]$List = @() }
     process {
         if ($GroupId) {
             if ((Get-FalconHostGroupMember -Id $GroupId -Total) -gt 10000) {
@@ -586,11 +598,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                     }
                 }
             }
+            # Force a base timeout of 60 seconds
+            if (!$Timeout) { $Timeout = 60 }
+            if ($Command -eq 'runscript' -and $Argument -notmatch '-Timeout=\d+') {
+                # Add 60 minute timeout to 'Argument' for 'runscript', if not present
+                $Argument += " -Timeout=3600"
+            }
             for ($i = 0; $i -lt ($HostList | Measure-Object).Count; $i += 10000) {
                 try {
                     # Start Real-time Response session in groups of up to 10,000 hosts
                     [object[]]$Output = $HostList[$i..($i + 9999)]
-                    $Init = @{ Id = $Output.aid; Timeout = 30; QueueOffline = $QueueOffline }
+                    $Init = @{ Id = $Output.aid; Timeout = $Timeout; QueueOffline = $QueueOffline }
                     $InitReq = Start-FalconSession @Init
                     if ($InitReq.batch_id -or $InitReq.session_id) {
                         $JobId = Start-RtrUpdate $InitReq $Timeout
@@ -614,9 +632,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         }
                         # Determine PSFalcon command, execute and capture result
                         $Cmd = @{ Command = $Command }
+                        if ($Argument) { $Cmd['Argument'] = $Argument }
                         if (($Output | Measure-Object).Count -gt 1) { $Cmd['Timeout'] = $Timeout }
                         if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
-                        if ($Argument) { $Cmd['Argument'] = $Argument }
                         $Invoke = Get-RtrCommand $Command
                         $PSCmdlet.WriteVerbose(('[Invoke-FalconRtr]','Submitting',"'$($Command,
                             $Argument -join ' ')'" -join ' '))
