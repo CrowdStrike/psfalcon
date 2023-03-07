@@ -167,7 +167,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
         [int32]$Limit,
         [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=4)]
         [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=4)]
-        [ValidateSet('group_names','login_history','network_history','online_state',
+        [ValidateSet('group_names','login_history','network_history','online_state','policy_names',
             'zero_trust_assessment',IgnoreCase=$false)]
         [string[]]$Include,
         [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get')]
@@ -217,8 +217,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
             $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
             if ($Request) {
                 if (!$Request.device_id) {
-                    $Request = if ($Include -contains 'group_names') {
-                        & $MyInvocation.MyCommand.Name -Id $Request | Select-Object device_id,groups
+                    $Request = if ($Include) {
+                        [string[]]$Select = 'device_id'
+                        $Select += switch ($Include) {
+                            { $_ -contains 'group_names' } { 'groups' }
+                            { $_ -contains 'policy_names' } { 'device_policies' }
+                        }
+                        @(& $MyInvocation.MyCommand.Name -Id $Request | Select-Object $Select).foreach{
+                            $_
+                        }
                     } else {
                         @($Request).foreach{ ,[PSCustomObject]@{ device_id = $_ }}
                     }
@@ -259,6 +266,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
                             Value = $i
                         }
                         Set-Property @SetParam
+                    }
+                }
+                if ($Include -contains 'policy_names') {
+                    @('device_control','firewall','prevention','remote_response','sensor_update').foreach{
+                        foreach ($i in (& "Get-Falcon$($_ -replace '(remote)?_',$null)Policy" -Id (
+                        $Request.device_policies.$_.policy_id | Select-Object -Unique))) {
+                            @($Request.device_policies.$_).Where({ $_.policy_id -eq $i.id }).foreach{
+                                Set-Property $_ 'policy_name' $i.name
+                            }
+                        }
                     }
                 }
                 if ($Include -contains 'zero_trust_assessment') {
