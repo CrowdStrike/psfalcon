@@ -271,7 +271,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
                 if ($Include -contains 'policy_names') {
                     @('device_control','firewall','prevention','remote_response','sensor_update').foreach{
                         foreach ($i in (& "Get-Falcon$($_ -replace '(remote)?_',$null)Policy" -Id (
-                        $Request.device_policies.$_.policy_id | Select-Object -Unique))) {
+                        $Request.device_policies.$_.policy_id | Select-Object -Unique) -EA 0)) {
                             @($Request.device_policies.$_).Where({ $_.policy_id -eq $i.id }).foreach{
                                 Set-Property $_ 'policy_name' $i.name
                             }
