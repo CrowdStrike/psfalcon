@@ -598,12 +598,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                     }
                 }
             }
-            # Force a base timeout of 60 seconds
+            # Set timeout of 60 seconds for session/command and 60 minutes inside 'Argument' with 'runscript'
             if (!$Timeout) { $Timeout = 60 }
-            if ($Command -eq 'runscript' -and $Argument -notmatch '-Timeout=\d+') {
-                # Add 60 minute timeout to 'Argument' for 'runscript', if not present
-                $Argument += " -Timeout=3600"
-            }
+            if ($Command -eq 'runscript' -and $Argument -notmatch '-Timeout=\d+') { $Argument += " -Timeout=3600" }
             for ($i = 0; $i -lt ($HostList | Measure-Object).Count; $i += 10000) {
                 try {
                     # Start Real-time Response session in groups of up to 10,000 hosts
