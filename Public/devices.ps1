@@ -223,9 +223,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
                             { $_ -contains 'group_names' } { 'groups' }
                             { $_ -contains 'policy_names' } { 'device_policies' }
                         }
-                        @(& $MyInvocation.MyCommand.Name -Id $Request | Select-Object $Select).foreach{
-                            $_
-                        }
+                        & $MyInvocation.MyCommand.Name -Id $Request | Select-Object $Select
                     } else {
                         @($Request).foreach{ ,[PSCustomObject]@{ device_id = $_ }}
                     }
