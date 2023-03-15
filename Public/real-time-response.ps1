@@ -995,8 +995,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
     }
     process {
         if (!$PSBoundParameters.Path) {
-            # When 'Path' is not specified, use 'session_id' from a 'Confirm-FalconGetFile' result
-            $PSBoundParameters['Path'] = Join-Path (Get-Location).Path $PSBoundParameters.SessionId
+            # When 'Path' is not specified, use 'sha256' from a 'Confirm-FalconGetFile' result
+            $PSBoundParameters['Path'] = Join-Path (Get-Location).Path $PSBoundParameters.Sha256
         }
         $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path '7z'
         $OutPath = Test-OutFile $PSBoundParameters.Path
