@@ -3,13 +3,27 @@ function Export-FalconReport {
 .SYNOPSIS
 Format a response object and output to console or CSV
 .DESCRIPTION
-If providing a string, values will be exported with a single 'id' column.
+Each property within a response object is 'flattened' to a single field containing a CSV-compatible value--with
+each column having an appended 'prefix'--and then exported to the console or designated file path.
 
-PSFalcon response objects will exported with all available properties to ensure CSV compatibility.
+For instance, if the object contains a property called 'device_policies', and that contains other objects called
+'prevention' and 'sensor_update', the result will contain properties labelled 'device_policies.prevention' and
+'device_policies.sensor_update' with additional '.<field_name>' values for any sub-properties of those objects.
+
+When the result contains an array with similarly named properties, it will attempt to add each sub-property with
+an additional 'id' prefix based on the value of an existing 'id' or 'policy_id' property. For example,
+@{ hosts = @( @{ device_id = 123; hostname = 'abc' }, @{ device_id = 456; hostname = 'def' })} will be displayed
+under the columns 'hosts.123.hostname' and 'hosts.456.hostname'. The 'device_id' property is excluded as it
+becomes a column.
+
+There is potential for data loss due to object manipulation. Use 'ConvertTo-Json' to ensure all object properties
+are retained when integrity is a concern.
 .PARAMETER Path
 Destination path
 .PARAMETER Object
-Response object
+Response object to format
+.PARAMETER Force
+Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Export-FalconReport
 #>
@@ -22,29 +36,99 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconReport
         [object[]]$Object
     )
     begin {
-        if ($Path) { $Path = $Script:Falcon.Api.Path($Path) }
-        $OutPath = Test-OutFile $Path
-        if ($OutPath.Category -eq 'WriteError' -and !$Force) { Write-Error @OutPath }
-    }
-    process {
-        $Object | ForEach-Object {
-            [string[]]$Select = $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames
-            $Output = if ($Select) {
-                $_ | Select-Object $Select
-            } elseif ($_ -is [string]) {
-                [PSCustomObject]@{ id = $_ }
-            } else {
-                $_
-            }
-            if ($Path -and !$OutPath) {
-                $Output | Export-Csv $Path -NoTypeInformation -Append
-            } elseif (!$Path) {
-                $Output
+        function Get-Array ($Array,$Output,$Name) {
+            foreach ($Item in $Array) {
+                if ($Item.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+                    # Add sub-objects to output
+                    $IdField = $Item.PSObject.Properties.Name -match '^(id|(device|policy)_id)$'
+                    if ($IdField) {
+                        $ObjectParam = @{
+                            Object = $Item | Select-Object -ExcludeProperty $IdField
+                            Output = $Output
+                            Prefix = $Name,$Item.$IdField -join '.'
+                        }
+                        Get-PSObject @ObjectParam
+                    } else {
+                        $ObjectParam = @{
+                            Object = $Item
+                            Output = $Output
+                            Prefix = $Name
+                        }
+                        Get-PSObject @ObjectParam
+                    }
+                } else {
+                    # Add property to output as 'name'
+                    $SetParam = @{
+                        Object = $Output
+                        Name = $Name
+                        Value = $Array -join ','
+                    }
+                    Set-Property @SetParam
+                }
             }
         }
+        function Get-PSObject ($Object,$Output,$Prefix) {
+            foreach ($Item in ($Object.PSObject.Properties | Where-Object { $_.MemberType -eq 'NoteProperty' })) {
+                if ($Item.Value.PSObject.TypeNames -contains 'System.Object[]') {
+                    # Add array members to output with 'prefix.name'
+                    $ArrayParam = @{
+                        Array = $Item.Value
+                        Output = $Output
+                        Name = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
+                    }
+                    Get-Array @ArrayParam
+                } elseif ($Item.Value.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+                    # Add sub-objects to output with 'prefix.name'
+                    $ObjectParam = @{
+                        Object = $Item.Value
+                        Output = $Output
+                        Prefix = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
+                    }
+                    Get-PSObject @ObjectParam
+                } else {
+                    # Add property to output with 'prefix.name'
+                    $SetParam = @{
+                        Object = $Output
+                        Name = if ($Prefix) { $Prefix,$Item.Name -join '.' } else { $Item.Name }
+                        Value = $Item.Value
+                    }
+                    Set-Property @SetParam
+                }
+            }
+        }
+        if ($Path) { $Path = $Script:Falcon.Api.Path($Path) }
+        $List = [System.Collections.Generic.List[object]]@()
     }
+    process { if ($Object) { @($Object).foreach{ $List.Add($_) }}}
     end {
-        if ($Path -and (Test-Path $Path) -and !$OutPath) {
+        $OutPath = Test-OutFile $Path
+        if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+            Write-Error @OutPath
+        } elseif ($List) {
+            [object[]]$Output = @($List).foreach{
+                $i = [PSCustomObject]@{}
+                if ($_.PSObject.TypeNames -contains 'System.Management.Automation.PSCustomObject') {
+                    # Add sorted properties to output
+                    Get-PSObject $_ $i
+                } else {
+                    # Add strings to output as 'id'
+                    Set-Property $i id $_
+                }
+                $i
+            }
+            if ($Output) {
+                # Select all available property names
+                [string[]]$Select = @($Output).foreach{ $_.PSObject.Properties.Name } | Select-Object -Unique
+                if ($Path) {
+                    # Export to CSV, forcing all properties
+                    $Output | Select-Object $Select | Export-Csv $Path -NoTypeInformation -Append
+                } else {
+                    # Export to console, forcing all properties
+                    $Output | Select-Object $Select
+                }
+            }
+        }
+        if ($Path -and (Test-Path $Path)) {
             Get-ChildItem $Path | Select-Object FullName,Length,LastWriteTime
         }
     }
