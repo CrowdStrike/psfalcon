@@ -1052,66 +1052,6 @@ function Test-RegexValue {
         }
     }
 }
-function Write-Result {
-    [CmdletBinding()]
-    param([object]$Request)
-    process {
-        # Capture result content
-        $Result = if ($Request.Result.Content) { ($Request.Result.Content).ReadAsStringAsync().Result }
-        [string]$TraceId = if ($Request.Result.Headers) {
-            # Capture trace_id for error messages
-            $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
-        }
-        # Convert content from Json
-        $Json = if ($Result -and $Request.Result.Content.Headers.ContentType -eq 'application/json' -or
-        $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
-            ConvertFrom-Json $Result
-        }
-        if ($Json) {
-            if ($Json.meta) {
-                # Output 'meta' to verbose stream
-                $Message = (@($Json.meta.PSObject.Properties).foreach{
-                    if ($_.Name -eq 'pagination') {
-                        @($_.Value.PSObject.Properties).foreach{
-                            ('pagination',$_.Name -join '.'),$_.Value -join '='
-                        }
-                    } else {
-                        $_.Name,$_.Value -join '='
-                    }
-                }) -join ', '
-                $PSCmdlet.WriteVerbose(('[Write-Result]',$Message -join ' '))
-            }
-            @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                # Output 'errors' to error stream as Json string
-                $PSCmdlet.WriteError(
-                    [System.Management.Automation.ErrorRecord]::New(
-                        [Exception]::New((ConvertTo-Json $_.Value -Compress)),
-                        $TraceId,
-                        [System.Management.Automation.ErrorCategory]::InvalidResult,
-                        $Request
-                    )
-                )
-            }
-            [void]$Json.PSObject.Properties.Remove('errors')
-            if (($Json.PSObject.Properties.Where({ $null -ne $_.Value }) | Measure-Object).Count -gt 1) {
-                # Remove 'meta' when other properties are populated
-                [void]$Json.PSObject.Properties.Remove('meta')
-            }
-            if (($Json.PSObject.Properties.Where({ $null -ne $_.Value }) | Measure-Object).Count -eq 1) {
-                # Output single sub-property value from Json
-                $Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name
-            } else {
-                # Output multiple values from Json
-                $Json
-            }
-        } else {
-            # Output non-Json content
-            $Result
-        }
-        # Check for rate limiting
-        Wait-RetryAfter $Request
-    }
-}
 function Wait-RetryAfter {
     [CmdletBinding()]
     param([object]$Request)
@@ -1187,4 +1127,64 @@ function Wait-RtrGet {
         }
     }
     end { $Object }
+}
+function Write-Result {
+    [CmdletBinding()]
+    param([object]$Request)
+    process {
+        # Capture result content
+        $Result = if ($Request.Result.Content) { ($Request.Result.Content).ReadAsStringAsync().Result }
+        [string]$TraceId = if ($Request.Result.Headers) {
+            # Capture trace_id for error messages
+            $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
+        }
+        # Convert content from Json
+        $Json = if ($Result -and $Request.Result.Content.Headers.ContentType -eq 'application/json' -or
+        $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
+            ConvertFrom-Json $Result
+        }
+        if ($Json) {
+            if ($Json.meta) {
+                # Output 'meta' to verbose stream
+                $Message = (@($Json.meta.PSObject.Properties).foreach{
+                    if ($_.Name -eq 'pagination') {
+                        @($_.Value.PSObject.Properties).foreach{
+                            ('pagination',$_.Name -join '.'),$_.Value -join '='
+                        }
+                    } else {
+                        $_.Name,$_.Value -join '='
+                    }
+                }) -join ', '
+                $PSCmdlet.WriteVerbose(('[Write-Result]',$Message -join ' '))
+            }
+            @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+                # Output 'errors' to error stream as Json string
+                $PSCmdlet.WriteError(
+                    [System.Management.Automation.ErrorRecord]::New(
+                        [Exception]::New((ConvertTo-Json $_.Value -Compress)),
+                        $TraceId,
+                        [System.Management.Automation.ErrorCategory]::InvalidResult,
+                        $Request
+                    )
+                )
+            }
+            [void]$Json.PSObject.Properties.Remove('errors')
+            if (($Json.PSObject.Properties.Where({ $null -ne $_.Value }) | Measure-Object).Count -gt 1) {
+                # Remove 'meta' when other properties are populated
+                [void]$Json.PSObject.Properties.Remove('meta')
+            }
+            if (($Json.PSObject.Properties.Where({ $null -ne $_.Value }) | Measure-Object).Count -eq 1) {
+                # Output single sub-property value from Json
+                $Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name
+            } else {
+                # Output multiple values from Json
+                $Json
+            }
+        } else {
+            # Output non-Json content
+            $Result
+        }
+        # Check for rate limiting
+        Wait-RetryAfter $Request
+    }
 }
