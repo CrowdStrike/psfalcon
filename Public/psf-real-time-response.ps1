@@ -526,9 +526,9 @@ Real-time Response command
 .PARAMETER Argument
 Arguments to include with the command
 .PARAMETER Timeout
-Length of time to wait for a result, in seconds [default: 60]
+Length of time to wait for a result, in seconds [default: 600]
 .PARAMETER QueueOffline
-Add non-responsive Hosts to the offline queue
+Add non-responsive hosts to the offline queue
 .PARAMETER Include
 Include additional properties
 .PARAMETER GroupId
@@ -598,9 +598,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                     }
                 }
             }
-            # Set timeout of 60 seconds for session/command and 60 minutes inside 'Argument' with 'runscript'
-            if (!$Timeout) { $Timeout = 60 }
-            if ($Command -eq 'runscript' -and $Argument -notmatch '-Timeout=\d+') { $Argument += " -Timeout=3600" }
+            # Set default timeout of 600 seconds when not defined
+            if (!$Timeout) { $Timeout = 600 }
+            if ($Command -eq 'runscript' -and $Argument -notmatch '-Timeout=\d+') {
+                # Set 'runscript' timeout when not present in 'Argument'
+                $Argument += if (($HostList | Measure-Object).Count -gt 1) {
+                    # Just under $Timeout for batch session
+                    " -Timeout=$($Timeout-2)"
+                } else {
+                    # 3600 seconds for single-host session
+                    " -Timeout=3600"
+                }
+            }
             for ($i = 0; $i -lt ($HostList | Measure-Object).Count; $i += 10000) {
                 try {
                     # Start Real-time Response session in groups of up to 10,000 hosts
