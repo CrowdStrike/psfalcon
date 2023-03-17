@@ -98,14 +98,14 @@ Find hosts using a list of hostnames
 Perform hostname searches in groups of 100.
 
 Requires 'Hosts: Read'.
-.PARAMETER Array
-An array containing hostnames
+.PARAMETER Path
+Path to a plain text file containing hostnames
 .PARAMETER Include
 Include additional properties
 .PARAMETER Partial
 Perform a non-exact search
-.PARAMETER Path
-Path to a plain text file containing hostnames
+.PARAMETER Array
+An array containing hostnames
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
 #>
