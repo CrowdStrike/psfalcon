@@ -143,18 +143,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
     }
     process { if ($Array) { @($Array).foreach{ $List.Add($_) }}}
     end {
-        [string[]]$Hostnames = if ($List) {
-            $List | Select-Object -Unique
-        } else {
-            (Get-Content -Path $Path).Normalize() | Select-Object -Unique
-        }
-        for ($i = 0; $i -lt ($Hostnames | Measure-Object).Count; $i += 100) {
-            [string[]]$TempList = $Hostnames[$i..($i + 99)]
-            [string]$Filter = (@($TempList).foreach{
-                if (![string]::IsNullOrEmpty($_)) {
-                    if ($Partial) { "hostname:'$_'" } else { "hostname:['$_']" }
-                }
-            }) -join ','
+        [string[]]$HostList = if ($List) { $List } else { (Get-Content -Path $Path).Normalize() }
+        $HostList = $HostList | Where-Object { ![string]::IsNullOrEmpty($_) } | Select-Object -Unique
+        for ($i=0; $i -lt ($HostList | Measure-Object).Count; $i+=100) {
+            [string[]]$TempList = $HostList[$i..($i + 99)]
+            [string]$Filter = if ($Partial) {
+                (@($TempList).foreach{ "hostname:'$_'" }) -join ','
+            } else {
+                (@($TempList).foreach{ "hostname:['$_']" }) -join ','
+            }
             [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object $Select
             @($TempList).foreach{
                 if (($Partial -and $HostList.hostname -notlike "$_*") -or (!$Partial -and
