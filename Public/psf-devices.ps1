@@ -144,7 +144,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
     process { if ($Array) { @($Array).foreach{ $List.Add($_) }}}
     end {
         [string[]]$HostList = if ($List) { $List } else { (Get-Content -Path $Path).Normalize() }
-        $HostList = $HostList | Where-Object { ![string]::IsNullOrEmpty($_) } | Select-Object -Unique
+        $HostList = $HostList | Select-Object -Unique | Where-Object { ![string]::IsNullOrEmpty($_) }
         for ($i=0; $i -lt ($HostList | Measure-Object).Count; $i+=100) {
             [string[]]$TempList = $HostList[$i..($i + 99)]
             [string]$Filter = if ($Partial) {
