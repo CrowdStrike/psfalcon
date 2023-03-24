@@ -1,4 +1,6 @@
-# PSFalcon Support
+![CrowdStrike Falcon](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo.png) [![Twitter URL](https://img.shields.io/twitter/url?label=Follow%20%40CrowdStrike&style=social&url=https%3A%2F%2Ftwitter.com%2FCrowdStrike)](https://twitter.com/CrowdStrike)<br/>
+
+# Support
 
 PSFalcon is a community-driven, open source project designed to assist administrators in leveraging the power of
 CrowdStrike APIs within their organizations. While not a formal CrowdStrike product, PSFalcon is maintained by
@@ -15,7 +17,7 @@ CrowdStrike and supported in partnership with the open source community.
 Issues may be reported [here](https://github.com/CrowdStrike/psfalcon/issues/new/choose) and are used to track
 bugs, documentation and link updates, enhancement requests and security concerns.
 
-### Support Escalation
+### Escalation
 
 Generally, we endeavor to provide support for using PSFalcon here within the repository. This expands our online
 knowledge base, enables self-help for our community, and reduces the amount of time for you to receive answers.
