@@ -37,7 +37,7 @@ request are converted into discussions. Discussions that relate to potential err
 updates, security concerns or enhancement requests will result in the generation of an issue report.
 
 ## Discussions
-
+| | Category | Purpose |
 | :--: | :--- | :--- |
 | :speech_balloon: | [**General**](https://github.com/CrowdStrike/psfalcon/discussions/categories/general) | Catch all for general discussions. |
 | :bulb: | [**Ideas**](https://github.com/CrowdStrike/psfalcon/discussions/categories/ideas) | Have a suggestion for a feature request? Let us know here. |
