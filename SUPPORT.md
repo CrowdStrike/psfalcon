@@ -26,7 +26,7 @@ support should this occur.
 If you are a CrowdStrike customer and you would prefer to have your questions or issues handled directly with
 CrowdStrike Support, you are welcome to [contact the CrowdStrike technical support team](https://supportportal.crowdstrike.com/).
 
-### Questions
+## Questions
 
 Have a question you can't find answered in the [wiki](https://github.com/CrowdStrike/psfalcon/wiki) or [samples](https://github.com/CrowdStrike/psfalcon/tree/main/samples)?
 
