@@ -1,5 +1,11 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
+<#
+.SYNOPSIS
+Hide all detections involving a specific filename
+.PARAMETER Filename
+Filename, used to filter detections
+#>
 param(
     [Parameter(Mandatory)]
     [string]$Filename
