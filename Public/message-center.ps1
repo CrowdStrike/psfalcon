@@ -266,18 +266,18 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
 #>
-    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:post',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v2:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,Position=1)]
+        [Parameter(ParameterSetName='/message-center/entities/case/v2:post',Mandatory,Position=1)]
         [ValidateSet('fc:detection-support','fc:contact','fc:falcon-product-support','fc:incident-support',
             IgnoreCase=$false)]
         [string]$Type,
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,Position=2)]
+        [Parameter(ParameterSetName='/message-center/entities/case/v2:post',Mandatory,Position=2)]
         [string]$Title,
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,Position=3)]
+        [Parameter(ParameterSetName='/message-center/entities/case/v2:post',Mandatory,Position=3)]
         [Alias('body')]
         [string]$Content,
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
+        [Parameter(ParameterSetName='/message-center/entities/case/v2:post',ValueFromPipelineByPropertyName,
             Position=4)]
         [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
         [ValidateScript({
@@ -289,7 +289,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
         })]
         [Alias('detections','detection_id','DetectionIds')]
         [string[]]$DetectionId,
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',ValueFromPipelineByPropertyName,
+        [Parameter(ParameterSetName='/message-center/entities/case/v2:post',ValueFromPipelineByPropertyName,
             Position=5)]
         [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
         [ValidateScript({
@@ -301,7 +301,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
         })]
         [Alias('incidents','incident_id','IncidentIds')]
         [string[]]$IncidentId,
-        [Parameter(ParameterSetName='/message-center/entities/case/v1:post',Mandatory,
+        [Parameter(ParameterSetName='/message-center/entities/case/v2:post',Mandatory,
             ValueFromPipelineByPropertyName,Position=6)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('user_uuid','uuid')]
