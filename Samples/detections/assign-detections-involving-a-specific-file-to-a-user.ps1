@@ -1,4 +1,12 @@
 #Requires -Version 5.1
+<#
+.SYNOPSIS
+Assign all detections involving a specific filename to a user (by username)
+.PARAMETER Username
+User name, used for assignment of detections
+.PARAMETER Filename
+Filename, used to filter detections
+#>
 using module @{ModuleName='PSFalcon';ModuleVersion='2.2'}
 param(
     [Parameter(Mandatory,Position=1)]
