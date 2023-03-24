@@ -36,18 +36,13 @@ Issue reports that do not result in a bug finding, documentation or link update,
 request are converted into discussions. Discussions that relate to potential errors, documentation and link
 updates, security concerns or enhancement requests will result in the generation of an issue report.
 
-[GitHub issues](https://github.com/CrowdStrike/psfalcon/issues/new/choose)
-
 ## Discussions
 
-| | <img width=100> Category | <BR/> Purpose |
 | :--: | :--- | :--- |
 | :speech_balloon: | [**General**](https://github.com/CrowdStrike/psfalcon/discussions/categories/general) | Catch all for general discussions. |
 | :bulb: | [**Ideas**](https://github.com/CrowdStrike/psfalcon/discussions/categories/ideas) | Have a suggestion for a feature request? Let us know here. |
 | :pray: | [**Q&A**](https://github.com/CrowdStrike/psfalcon/discussions/categories/q-a) | Have a question about how to accomplish something? Submit them here! |
 | :raised_hands: | [**Show and Tell**](https://github.com/CrowdStrike/psfalcon/discussions/categories/show-and-tell) | Share with the community what you're up to! |
-
-[GitHub Discussions](https://github.com/CrowdStrike/psfalcon/discussions)
 
 ## Documentation
 
