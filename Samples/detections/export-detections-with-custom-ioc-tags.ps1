@@ -1,5 +1,9 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion='2.2'}
+<#
+.SYNOPSIS
+Create a Json output of detections involving a Custom IOC, and include the user-defined tags with those IOCs
+#>
 [string]$OutputFile = Join-Path (Get-Location).Path "custom_ioc_detections_$(Get-Date -Format FileDateTime).json"
 try {
     # Retrieve all 'CustomIOC' detections
