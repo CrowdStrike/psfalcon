@@ -1,5 +1,19 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion='2.2'}
+<#
+.SYNOPSIS
+Authenticate with each member CID, check for the presence of one or more host groups and output results to CSV
+.PARAMETER ClientId
+OAuth2 client identifier
+.PARAMETER ClientSecret
+OAuth2 client secret
+.PARAMETER Cloud
+CrowdStrike cloud [default: 'us-1']
+.PARAMETER MemberCid
+Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control')
+.PARAMETER GroupName
+Host group name
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory,Position=1)]
