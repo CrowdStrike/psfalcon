@@ -1,5 +1,11 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
+<#
+.SYNOPSIS
+Find a host matching a given hostname and contain it
+.PARAMETER Hostname
+Hostname for the target device, identical to how it is listed in the Falcon console
+#>
 param(
     [Parameter(Mandatory)]
     [string]$Hostname
