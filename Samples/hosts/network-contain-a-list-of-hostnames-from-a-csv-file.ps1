@@ -1,8 +1,13 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
-**NOTE**: This example requires a CSV with a column labeled `hostname`. It will create a new CSV with that
-includes `hostname`, `device_id` and `contain_requested` status.
+.SYNOPSIS
+Import a list of devices from CSV and contain them
+.PARAMETER Path
+Path to the CSV file containing a list of devices
+.NOTES
+This example requires a CSV with a column labeled 'hostname'. It will create a new CSV with that includes
+'hostname', 'device_id' and 'contain_requested' status.
 #>
 param(
     [Parameter(Mandatory)]
