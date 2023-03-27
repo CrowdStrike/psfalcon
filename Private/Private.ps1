@@ -1169,11 +1169,11 @@ function Write-Result {
                 )
             }
             [void]$Json.PSObject.Properties.Remove('errors')
-            if (($Json.PSObject.Properties.Where({ $null -ne $_.Value }) | Measure-Object).Count -gt 1) {
-                # Remove 'meta' when other properties are populated
+            if ($Json.PSObject.Properties.Where({ $_.Name -eq 'meta' -and $null -ne $_.Value })) {
+                # Remove 'meta' when other sub-properties are populated
                 [void]$Json.PSObject.Properties.Remove('meta')
             }
-            if (($Json.PSObject.Properties.Where({ $null -ne $_.Value }) | Measure-Object).Count -eq 1) {
+            if (($Json.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
                 # Output single sub-property value from Json
                 $Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name
             } else {
