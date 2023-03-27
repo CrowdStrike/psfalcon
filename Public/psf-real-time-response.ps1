@@ -668,4 +668,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
     }
 }
 Register-ArgumentCompleter -CommandName Invoke-FalconRtr -ParameterName Command -ScriptBlock {
-    Get-RtrCommand | Sort-Object }
+    @(Get-RtrCommand | Sort-Object).foreach{ if ($_ -match '\s') { "'$_'" } else { $_ }}
+}
