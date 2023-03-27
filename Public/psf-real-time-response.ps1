@@ -667,4 +667,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         }
     }
 }
-Register-ArgumentCompleter -CommandName Invoke-FalconRtr -ParameterName Command -ScriptBlock {Get-RtrCommand}
+Register-ArgumentCompleter -CommandName Invoke-FalconRtr -ParameterName Command -ScriptBlock {
+    Get-RtrCommand | Sort-Object }
