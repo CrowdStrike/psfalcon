@@ -1,8 +1,11 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
-This script will replace identifiers with the related `name` under each Host result. The fields to include can be
-defined under the `Field` variable. The output will be returned in the console.
+.SYNOPSIS
+Output host information, but replace identifiers with their relevant 'name' value
+.NOTES
+Fields in the output can be defined by updating the '$Field' variable. Output is returned to the console, but
+can be piped to a file.
 #>
 # Fields to include with the export to CSV (host group and policy data is automatically added)
 [string[]]$Field = 'device_id','hostname','last_seen','first_seen','local_ip','external_ip','agent_version'
