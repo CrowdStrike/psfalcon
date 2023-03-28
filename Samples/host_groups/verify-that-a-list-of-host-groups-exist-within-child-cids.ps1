@@ -10,7 +10,7 @@ OAuth2 client secret
 .PARAMETER Cloud
 CrowdStrike cloud [default: 'us-1']
 .PARAMETER MemberCid
-Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control')
+Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control') [default: all]
 .PARAMETER GroupName
 Host group name
 #>
