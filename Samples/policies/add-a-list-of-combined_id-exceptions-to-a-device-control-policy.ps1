@@ -1,9 +1,15 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
-**NOTE**: This script will create `FULL_ACCESS` exceptions for the `MASS_STORAGE` class within an existing
-policy. You can modify the hashtable created in the `Exception` variable to add key/value pairs like
-`vendor_name` or `product_name`.
+.SYNOPSIS
+Add a list of 'combined_id' values to an existing Device Control policy
+.PARAMETER PolicyId
+Device Control policy identifier
+.PARAMETER CombinedId
+One or more 'combined_id' values to add to the target policy
+.NOTES
+This script will create 'FULL_ACCESS' exceptions for the 'MASS_STORAGE' class within an existing policy. You can
+modify the hashtable created in '$Exception' to add key/value pairs like 'vendor_name' or 'product_name'.
 #>
 param(
     [Parameter(Mandatory,Position=1)]
