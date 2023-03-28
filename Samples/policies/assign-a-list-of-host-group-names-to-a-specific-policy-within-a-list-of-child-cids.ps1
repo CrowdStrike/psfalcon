@@ -1,5 +1,23 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
+<#
+.SYNOPSIS
+Assign one or more Host Groups to a specific policy within multiple member CIDs under Falcon Flight Control
+.PARAMETER ClientId
+OAuth2 client identifier
+.PARAMETER ClientSecret
+OAuth2 client secret
+.PARAMETER Cloud
+CrowdStrike cloud [default: 'us-1']
+.PARAMETER MemberCid
+Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control') [default: all]
+.PARAMETER GroupName
+One or more Host Group names
+.PARAMETER PolicyType
+Type of policy
+.PARAMETER PolicyId
+Policy identifier
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory,Position=1)]
