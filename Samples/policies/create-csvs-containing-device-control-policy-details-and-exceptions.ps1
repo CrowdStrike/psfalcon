@@ -1,8 +1,20 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
-This script will create a series of CSV files containing information about a given Device Control
-policy (settings, members, groups, exceptions, etc.).
+.SYNOPSIS
+Create a CSV containing Device Control policy info (settings, members, groups, exceptions) using id or name
+.PARAMETER ClientId
+OAuth2 client identifier
+.PARAMETER ClientSecret
+OAuth2 client secret
+.PARAMETER Cloud
+CrowdStrike cloud [default: 'us-1']
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Path
+Target directory for CSV output
 #>
 [CmdletBinding(DefaultParameterSetName='Id')]
 param(
