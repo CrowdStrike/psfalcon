@@ -1,5 +1,13 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
+<#
+.SYNOPSIS
+Change the build number assigned to a Sensor Update policy (by name)
+.PARAMETER Name
+Sensor Update policy name
+.PARAMETER Version
+Sensor version to assign
+#>
 param(
     [Parameter(Mandatory,Position=1)]
     [string]$Name,
