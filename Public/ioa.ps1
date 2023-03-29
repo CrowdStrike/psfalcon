@@ -78,7 +78,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
         }
     }
     process {
-        if (!$PSBoundParameters.CloudPlatform){
+        if (!$PSBoundParameters.CloudPlatform) {
             $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AwsAccountId) {
                 'aws'
             } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
@@ -150,7 +150,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
         }
     }
     process {
-        if (!$PSBoundParameters.CloudPlatform){
+        if (!$PSBoundParameters.CloudPlatform) {
             $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AwsAccountId) {
                 'aws'
             } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
