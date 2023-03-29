@@ -141,6 +141,8 @@ Search for Falcon Horizon Indicators of Attack
 Requires 'CSPM Registration: Read'.
 .PARAMETER CloudPlatform
 Cloud platform
+.PARAMETER AccountId
+Cloud account identifier
 .PARAMETER AwsAccountId
 AWS account identifier
 .PARAMETER AzureSubscriptionId
@@ -175,22 +177,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
         [Alias('cloud_provider','cloud_platform')]
         [string]$CloudPlatform,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('aws_account_id','account_id')]
-        [string]$AwsAccountId,
+        [Alias('account_id')]
+        [string]$AccountId,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=3)]
+        [ValidatePattern('^\d{12}$')]
+        [Alias('aws_account_id')]
+        [string]$AwsAccountId,
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=4)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('azure_subscription_id','subscription_id')]
         [string]$AzureSubscriptionId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=4)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=5)]
         [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
         [Alias('azure_tenant_id','tenant_id')]
         [string]$AzureTenantId,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=5)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=6)]
         [ValidateSet('High','Medium','Informational',IgnoreCase=$false)]
         [string]$Severity,
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=6)]
-        [string]$Region,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=7)]
         [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
             'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
@@ -222,29 +225,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('cloud_provider','limit','date_time_since','azure_tenant_id','next_token',
-                    'severity','service','state','region','azure_subscription_id','aws_account_id')
+                Query = @('account_id','cloud_provider','limit','date_time_since','azure_tenant_id','next_token',
+                    'severity','service','state','azure_subscription_id','aws_account_id')
             }
         }
     }
     process {
-        if (!$PSBoundParameters.CloudPlatform) {
-            $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AwsAccountId) {
-                'aws'
-            } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
-                'azure'
-            }
-        }
-        if (!$PSBoundParameters.CloudPlatform) {
-            throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
-                if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                    # Output single sub-property
-                    $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
-                } else {
-                    $_
-                }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+            if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
+                # Output single sub-property
+                $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
+            } else {
+                $_
             }
         }
     }
@@ -333,29 +325,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
-                Query = @('cloud_provider','limit','azure_tenant_id','next_token','severity','service',
-                    'status','azure_subscription_id','region','aws_account_id')
+                Query = @('cloud_provider','limit','azure_tenant_id','next_token','severity','service','status',
+                    'azure_subscription_id','region','account_id')
             }
         }
     }
     process {
-        if (!$PSBoundParameters.CloudPlatform) {
-            $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AccountId) {
-                if ($PSBoundParameters.AccountId -match '^\d{12}$') { 'aws' } else { 'gcp' }
-            } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
-                'azure'
-            }
-        }
-        if (!$PSBoundParameters.CloudPlatform) {
-            throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
-                if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                    # Output single sub-property
-                    $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
-                } else {
-                    $_
-                }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+            if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
+                # Output single sub-property
+                $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
+            } else {
+                $_
             }
         }
     }
