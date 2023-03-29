@@ -207,7 +207,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
         [Alias('date_time_since')]
         [string]$DateTimeSince,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=10)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,1000)]
         [int32]$Limit,
         [Parameter(ParameterSetName='/detects/entities/ioa/v1:get')]
         [Alias('next_token')]
@@ -228,7 +228,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
         }
     }
     process {
-        if (!$PSBoundParameters.CloudPlatform){
+        if (!$PSBoundParameters.CloudPlatform) {
             $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AwsAccountId) {
                 'aws'
             } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
@@ -238,7 +238,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
         if (!$PSBoundParameters.CloudPlatform) {
             throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+                if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
+                    # Output single sub-property
+                    $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
+                } else {
+                    $_
+                }
+            }
         }
     }
 }
@@ -311,7 +318,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
             'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase=$false)]
         [string]$Service,
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=9)]
-        [ValidateRange(1,5000)]
+        [ValidateRange(1,1000)]
         [int32]$Limit,
         [Parameter(ParameterSetName='/detects/entities/iom/v1:get')]
         [Alias('next_token')]
@@ -332,7 +339,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
         }
     }
     process {
-        if (!$PSBoundParameters.CloudPlatform){
+        if (!$PSBoundParameters.CloudPlatform) {
             $PSBoundParameters.CloudPlatform = if ($PSBoundParameters.AccountId) {
                 if ($PSBoundParameters.AccountId -match '^\d{12}$') { 'aws' } else { 'gcp' }
             } elseif ($PSBoundParameters.AzureSubscriptionId -or $PSBoundParameters.AzureTenantId) {
@@ -342,7 +349,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
         if (!$PSBoundParameters.CloudPlatform) {
             throw "'AwsAccountId', 'AzureSubscriptionId', 'AzureTenantId' or 'CloudPlatform' must be provided."
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
+                if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
+                    # Output single sub-property
+                    $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
+                } else {
+                    $_
+                }
+            }
         }
     }
 }
