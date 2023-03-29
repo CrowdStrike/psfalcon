@@ -565,21 +565,7 @@ function Invoke-Falcon {
                 }
                 if ($Next) {
                     # Clone parameters and make request
-                    $Clone = $Splat.Clone()
-                    $Clone.Endpoint = $Splat.Endpoint.Clone()
-                    $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match "$($Next[0])=\d{1,}") {
-                        # If offset was input, continue from that value
-                        $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
-                        $Next[1] += [int]$Current.Split('=')[-1]
-                        $Clone.Endpoint.Path -replace $Current,($Next -join '=')
-                    } elseif ($Clone.Endpoint.Path -match "$($Splat.Endpoint)^" -and
-                    $Clone.Endpoint.Path -notmatch '\?') {
-                        # Add pagination
-                        $Clone.Endpoint.Path,($Next -join '=') -join '?'
-                    } else {
-                        # Append pagination
-                        $Clone.Endpoint.Path,($Next -join '=') -join '&'
-                    }
+                    $Clone = Set-LoopParam $Splat $Next
                     if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) {
                         if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) {
                             # Refresh authorization token when required
@@ -608,6 +594,28 @@ function Invoke-Falcon {
                     }
                 }
             } while ( $Object.total -and $Int -lt $Object.total )
+        }
+        function Set-LoopParam ([hashtable]$Splat,[string[]]$Next) {
+            $Clone = $Splat.Clone()
+            $Clone.Endpoint = $Splat.Endpoint.Clone()
+            $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match "$($Next[0])=\d{1,}") {
+                # If offset was input, continue from that value
+                $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
+                $Next[1] += [int]$Current.Split('=')[-1]
+                $Clone.Endpoint.Path -replace $Current,($Next -join '=')
+            } elseif ($Clone.Endpoint.Path -match "$($Splat.Endpoint)^" -and
+            $Clone.Endpoint.Path -notmatch '\?') {
+                # Add pagination
+                $Clone.Endpoint.Path,($Next -join '=') -join '?'
+            } else {
+                # Append pagination
+                $Clone.Endpoint.Path,($Next -join '=') -join '&'
+            }
+            if ($Clone.Endpoint.Path -match '/detects/entities/iom/v1') {
+                # Remove 'cloud_provider'/relevant account identifier for 'Get-FalconHorizonIom'
+                $Clone.Endpoint.Path = $Clone.Endpoint.Path -replace 'cloud_provider=\w+(&)?',$null
+            }
+            $Clone
         }
         function Write-Request {
             [CmdletBinding()]
