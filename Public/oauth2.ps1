@@ -65,7 +65,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
         [System.Collections.Hashtable]$Collector
     )
     begin {
-        if ($PSBoundParameters.MemberCid -match '^[a-fA-F0-9]{32}-\w{2}$'){
+        if ($PSBoundParameters.MemberCid -match '^[a-fA-F0-9]{32}-\w{2}$') {
             $PSBoundParameters.MemberCid = $PSBoundParameters.MemberCid.Split('-')[0]
         }
         function Get-ApiCredential ($Inputs) {
