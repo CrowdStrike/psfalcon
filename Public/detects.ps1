@@ -172,7 +172,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
 #>
     [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Mandatory,Position=1)]
         [ValidateSet('aws','azure',IgnoreCase=$false)]
         [Alias('cloud_provider','cloud_platform')]
         [string]$CloudPlatform,
@@ -230,16 +230,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
             }
         }
     }
-    process {
-        Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
-            if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                # Output single sub-property
-                $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
-            } else {
-                $_
-            }
-        }
-    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
 function Get-FalconHorizonIom {
 <#
@@ -330,14 +321,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
             }
         }
     }
-    process {
-        Invoke-Falcon @Param -Inputs $PSBoundParameters | ForEach-Object {
-            if (($_.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                # Output single sub-property
-                $_ | Select-Object -ExpandProperty $_.PSObject.Properties.Name
-            } else {
-                $_
-            }
-        }
-    }
+    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
