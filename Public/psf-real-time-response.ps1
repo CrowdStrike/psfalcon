@@ -46,7 +46,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
         }
         # Set output filepath and base FQL query
         $Csv = Join-Path (Get-Location).Path "FalconQueue_$(Get-Date -Format FileDateTime).csv"
-        $BaseFql = "commands_queued:1+(deleted_at:null,created_at:>'now-$($Days)d')"
+        $BaseFql = "commands_queued:true+(deleted_at:null,created_at:>'now-$($Days)d')"
         [System.Collections.Generic.List[string]]$List = @()
     }
     process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
