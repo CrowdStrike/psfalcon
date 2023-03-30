@@ -69,3 +69,4 @@ $Select = @(
     @{label='Site Name';expression={$_.site_name}}
 )
 Get-FalconHost -Detailed -All | Select-Object $Select | Export-Csv -Path $Path -NoTypeInformation
+if (Test-Path $Path) { Get-ChildItem $Path | Select-Object FullName,Length,LastWriteTime }
