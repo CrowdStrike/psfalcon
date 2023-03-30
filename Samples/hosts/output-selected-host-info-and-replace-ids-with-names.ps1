@@ -75,7 +75,7 @@ if ($HostInfo) {
                 }
             } else {
                 # Replace policy identifiers with names and add as '<type>_policy'
-                if ($_.device_policies.$HostLabel.policy_id){
+                if ($_.device_policies.$HostLabel.policy_id) {
                     $Related.$ItemType.($_.device_policies.$HostLabel.policy_id)
                 }
             }
