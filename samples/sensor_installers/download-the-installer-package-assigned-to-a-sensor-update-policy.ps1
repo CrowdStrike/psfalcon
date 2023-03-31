@@ -2,9 +2,9 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
+Download the installer packaged assigned to a specific Sensor Update policy
+.PARAMETER PolicyId
+Sensor update policy identifier
 #>
 param(
     [Parameter(Mandatory)]
@@ -28,7 +28,8 @@ try {
         }
         if ($Match.sha256 -and $Match.name) {
             $Installer = Join-Path -Path (Get-Location).Path -ChildPath $Match.name
-            if ((Test-Path $Installer) -and ((Get-FileHash -Algorithm SHA256 -Path $Installer) -eq $Match.sha256)) {
+            if ((Test-Path $Installer) -and ((Get-FileHash -Algorithm SHA256 -Path $Installer) -eq
+            $Match.sha256)) {
                 # Abort if matching file already exists
                 throw "File exists with matching hash [$($Match.sha256)]"
             } elseif (Test-Path $Installer) {
