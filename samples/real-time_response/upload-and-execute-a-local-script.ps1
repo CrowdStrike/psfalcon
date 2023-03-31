@@ -9,6 +9,9 @@ Path to PowerShell script to encode and transmit
 One or more host identifiers
 .PARAMETER Argument
 Arguments to include with the script
+.NOTES
+You will receive no output from the execution of the encoded script unless you design the script to output results
+on the local host (or send them to another location) and check for them later.
 #>
 [CmdletBinding()]
 param(
