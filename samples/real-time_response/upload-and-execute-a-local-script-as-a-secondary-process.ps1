@@ -8,8 +8,6 @@ target hosts using Real-time Response
 Path to PowerShell script to encode and transmit
 .PARAMETER HostId
 One or more host identifiers
-.PARAMETER Argument
-Arguments to include with the script
 .NOTES
 You will receive no output from the execution of the encoded script unless you design the script to output results
 on the local host (or send them to another location) and check for them later.
@@ -21,9 +19,7 @@ param(
     [string]$Path,
     [Parameter(Mandatory,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [string[]]$HostId,
-    [Parameter(Position=3)]
-    [string]$Argument
+    [string[]]$HostId
 )
 begin {
     $EncodedScript = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes(
@@ -35,6 +31,5 @@ process {
         Argument = '-Raw=```Start-Process -FilePath powershell.exe -ArgumentList "-Enc ' + $EncodedScript + '"```'
         HostId = $HostId
     }
-    if ($Argument) { $Param.Argument = $Param.Argument,' -CommandLine=```',$Argument,'```' -join $null }
     Invoke-FalconRtr @Param
 }
