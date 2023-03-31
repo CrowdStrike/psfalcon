@@ -2,15 +2,17 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
-#>
-<#
-**NOTE**: Similar to the [other example](#upload-and-execute-a-local-script) this will run a script as a secondary
-PowerShell process on the target device, which helps when scripts are expected to exceed the Real-time Response
-timeout limit. The downside is that you will not be able to return results from the script unless you write them
-to a local file on the target host that you access later.
+Encode a local PowerShell script, then upload and run it as a secondary process (to avoid timeout limitations) on
+target hosts using Real-time Response
+.PARAMETER Path
+Path to PowerShell script to encode and transmit
+.PARAMETER HostId
+One or more host identifiers
+.PARAMETER Argument
+Arguments to include with the script
+.NOTES
+You will receive no output from the execution of the encoded script unless you design the script to output results
+on the local host (or send them to another location) and check for them later.
 #>
 [CmdletBinding()]
 param(
@@ -21,18 +23,18 @@ param(
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string[]]$HostId,
     [Parameter(Position=3)]
-    [int]$Timeout
+    [string]$Argument
 )
 begin {
-    $EncodedScript = [Convert]::ToBase64String(
-        [System.Text.Encoding]::Unicode.GetBytes((Get-Content -Path $Path -Raw)))
+    $EncodedScript = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes(
+        (Get-Content -Path $Path -Raw)))
 }
 process {
     $Param = @{
         Command = 'runscript'
-        Arguments = '-Raw=```Start-Process -FilePath powershell.exe -ArgumentList "-Enc ' + $EncodedScript + '"```'
+        Argument = '-Raw=```Start-Process -FilePath powershell.exe -ArgumentList "-Enc ' + $EncodedScript + '"```'
         HostId = $HostId
     }
-    if ($HostIds.count -gt 1 -and $Timeout) { $Param['Timeout'] = $Timeout }
+    if ($Argument) { $Param.Argument = $Param.Argument,' -CommandLine=```',$Argument,'```' -join $null }
     Invoke-FalconRtr @Param
 }
