@@ -2,13 +2,13 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
-#>
-<#
-**NOTE**: This will get the content of a script from the local administrator computer, encode it (to minimize
-potential errors due to quotation marks) and run it as a "Raw" script using `Invoke-FalconRtr`.
+Encode a local PowerShell script, then upload and run it on target hosts using Real-time Response
+.PARAMETER Path
+Path to PowerShell script to encode and transmit
+.PARAMETER HostId
+One or more host identifiers
+.PARAMETER Argument
+Arguments to include with the script
 #>
 [CmdletBinding()]
 param(
@@ -19,18 +19,18 @@ param(
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string[]]$HostId,
     [Parameter(Position=3)]
-    [int]$Timeout
+    [string]$Argument
 )
 begin {
-    $EncodedScript = [Convert]::ToBase64String(
-        [System.Text.Encoding]::Unicode.GetBytes((Get-Content -Path $Path -Raw)))
+    $EncodedScript = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes(
+        (Get-Content -Path $Path -Raw)))
 }
 process {
     $Param = @{
         Command = 'runscript'
-        Arguments = '-Raw=```powershell.exe -Enc ' + $EncodedScript + '```'
+        Argument = '-Raw=```powershell.exe -Enc ' + $EncodedScript + '```'
         HostId = $HostId
     }
-    if ($HostId.count -gt 1 -and $Timeout) { $Param['Timeout'] = $Timeout }
+    if ($Argument) { $Param.Argument = $Param.Argument,' -CommandLine=```',$Argument,'```' -join $null }
     Invoke-FalconRtr @Param
 }
