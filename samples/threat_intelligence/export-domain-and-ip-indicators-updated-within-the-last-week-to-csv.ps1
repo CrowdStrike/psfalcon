@@ -2,9 +2,10 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
+Create a CSV containing 'ip_address' and 'domain' indicators created by CrowdStrike Threat Intelligence within
+the last 7 days
+.NOTES
+The script will create 'indicators.csv' in your current directory
 #>
 $UnixDate = [DateTimeOffset]::Now.AddDays(-7).ToUnixTimeSeconds()
 $Param = @{
@@ -18,5 +19,5 @@ Get-FalconIndicator @Param | Select-Object indicator,type,malicious_confidence,l
         type = $_.type
         confidence = $_.malicious_confidence
         comment = "$(($_.Labels.name | Where-Object { $_ -notmatch 'MaliciousConfidence/*' }) -join ', ')"
-    } | Export-Csv -Path .\indicators.csv -NoTypeInformation -Append
+    } | Export-Csv -Path (Join-Path (Get-Location).Path 'indicators.csv') -NoTypeInformation -Append
 }
