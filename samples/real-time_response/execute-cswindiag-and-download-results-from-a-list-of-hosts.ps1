@@ -2,9 +2,9 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
+Using Real-time Response, run 'cswindiag' on a list of hosts, wait for results and download them
+.PARAMETER HostId
+One or more host identifiers
 #>
 [CmdletBinding()]
 param(
