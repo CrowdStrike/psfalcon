@@ -2,9 +2,16 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
+Search for a Host Group by name, execute a command on the members of the group using Real-time Response and output
+results to CSV
+.PARAMETER GroupName
+Host group name
+.PARAMETER Command
+Real-time Response command
+.PARAMETER Argument
+Arguments to include with the command
+.PARAMETER QueueOffline
+Add non-responsive hosts to the offline queue
 #>
 param(
     [Parameter(Mandatory,Position=1)]
@@ -12,35 +19,20 @@ param(
     [Parameter(Mandatory,Position=2)]
     [string]$Command,
     [Parameter(Position=3)]
-    [string]$Arguments,
+    [string]$Argument,
     [boolean]$QueueOffline
 )
 # Find group identifier using 'name' filter
 $GroupId = Get-FalconHostGroup -Filter "name:'$($GroupName.ToLower())'"
+if (!$GroupId) { throw "No host group found matching '$($GroupName.ToLower())'." }
 
-if ($GroupId) {
-    # Get host identifiers for members of $GroupId
-    $Members = Get-FalconHostGroupMember -Id $GroupId -All
-} else {
-    throw "No host group found matching '$GroupName'"
-}
-if ($Members) {
-    # Set filename for CSV export
-    $ExportName = Join-Path (Get-Location).Path "$('rtr',($Command -replace ' ','_'),$GroupId -join '_').csv"
+# Set CSV output file name and baseline Invoke-FalconRtr parameters
+$OutputFile = Join-Path (Get-Location).Path "$('rtr',($Command -replace ' ','_'),$GroupId -join '_').csv"
+$Param = @{ Command = $Command; GroupId = $GroupId }
 
-    # Set base parameters for Invoke-FalconRTR
-    $Param = @{ Command = $Command; HostId = $Members }
-    switch ($PSBoundParameters.Keys) {
-        # Append parameters from user input that match Invoke-FalconRTR
-        { $_ -ne 'GroupName' } { $Param[$_] = $PSBoundParameters.$_ }
-    }
-    # Issue command and export results to CSV
-    Invoke-FalconRtr @Param | Export-Csv -Path $ExportName
-    
-    if (Test-Path $ExportName) {
-        # Display CSV file
-        Get-ChildItem $ExportName
-    }
-} else {
-    throw "No members found in host group '$GroupName' [$GroupId]"
-}
+# Add additional Argument/QueueOffline status
+switch ($PSBoundParameters.Keys) {{ $_ -ne 'GroupName' } { $Param[$_] = $PSBoundParameters.$_ }}
+
+# Use 'Invoke-FalconRtr' and output result to CSV
+Invoke-FalconRtr @Param | Export-Csv -Path $OutputFile
+if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
