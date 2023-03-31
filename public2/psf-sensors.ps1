@@ -512,6 +512,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
                 'moval of the Falcon sensor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or zyp' +
                 'per must be present to begin removal"; fi'
             Mac = $null
+            <#
+            'sudo /Applications/Falcon.app/Contents/Resources/falconctl uninstall'
+            'sudo /Applications/Falcon.app/Contents/Resources/falconctl uninstall --maintenance-token $1'
+            #>
             Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
                 're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
                 'se { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $' +
@@ -528,18 +532,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
         try {
             [string[]]$Select = 'cid','device_id','platform_name','device_policies'
             if ($Include) { $Select += $Include }
-            $Hosts = Get-FalconHost -Id $Id | Select-Object $Select
-            if ($Hosts.platform_name -eq 'Mac') {
+            $HostList = Get-FalconHost -Id $Id | Select-Object $Select
+            if ($HostList.platform_name -eq 'Mac') {
                 throw 'Only Windows and Linux hosts are currently supported in PSFalcon.'
             }
             $Param = @{
                 Command = 'runscript'
-                Argument = '-Raw=```{0}```' -f $Scripts.($Hosts.platform_name)
+                Argument = '-Raw=```{0}```' -f $Scripts.($HostList.platform_name)
                 Timeout = 120
             }
             if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
-            [string]$IdValue = switch ($Hosts.device_policies.sensor_update.uninstall_protection) {
-                'ENABLED' { $Hosts.device_id }
+            [string]$IdValue = switch ($HostList.device_policies.sensor_update.uninstall_protection) {
+                'ENABLED' { $HostList.device_id }
                 'MAINTENANCE_MODE' { 'MAINTENANCE' }
             }
             if ($IdValue) {
@@ -547,11 +551,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
                     (Show-FalconModule).UserAgent)]")).uninstall_token
                 if ($Token) { $Param.Argument += " -CommandLine='$Token'" }
             }
-            $Request = $Hosts | Invoke-FalconRtr @Param
+            $Request = $HostList | Invoke-FalconRtr @Param
             if ($Request) {
                 [string[]]$Select = 'cid','device_id'
                 if ($Include) { $Select += $Include }
-                @($Hosts | Select-Object $Select).foreach{
+                @($HostList | Select-Object $Select).foreach{
                     $Status = if ($Request.stdout) {
                         ($Request.stdout).Trim()
                     } elseif (!$Request.stdout -and $QueueOffline -eq $true) {

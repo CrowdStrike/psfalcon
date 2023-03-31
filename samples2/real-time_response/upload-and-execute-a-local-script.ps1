@@ -1,10 +1,14 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
-**NOTE**: Similar to the [other example](#upload-and-execute-a-local-script) this will run a script as a secondary
-PowerShell process on the target device, which helps when scripts are expected to exceed the Real-time Response
-timeout limit. The downside is that you will not be able to return results from the script unless you write them
-to a local file on the target host that you access later.
+.SYNOPSIS
+
+.PARAMETER
+
+#>
+<#
+**NOTE**: This will get the content of a script from the local administrator computer, encode it (to minimize
+potential errors due to quotation marks) and run it as a "Raw" script using `Invoke-FalconRtr`.
 #>
 [CmdletBinding()]
 param(
@@ -24,9 +28,9 @@ begin {
 process {
     $Param = @{
         Command = 'runscript'
-        Arguments = '-Raw=```Start-Process -FilePath powershell.exe -ArgumentList "-Enc ' + $EncodedScript + '"```'
+        Arguments = '-Raw=```powershell.exe -Enc ' + $EncodedScript + '```'
         HostId = $HostId
     }
-    if ($HostIds.count -gt 1 -and $Timeout) { $Param['Timeout'] = $Timeout }
+    if ($HostId.count -gt 1 -and $Timeout) { $Param['Timeout'] = $Timeout }
     Invoke-FalconRtr @Param
 }

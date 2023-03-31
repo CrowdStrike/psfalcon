@@ -1,5 +1,11 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
+<#
+.SYNOPSIS
+
+.PARAMETER
+
+#>
 param(
     [Parameter(Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]

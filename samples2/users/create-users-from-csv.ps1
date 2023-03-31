@@ -1,5 +1,11 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
+<#
+.SYNOPSIS
+
+.PARAMETER
+
+#>
 param(
     [Parameter(Mandatory,Position=1)]
     [ValidateSet('https://api.crowdstrike.com','https://api.us-2.crowdstrike.com',

@@ -1,5 +1,11 @@
 #Requires -Version 5.1
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
+<#
+.SYNOPSIS
+
+.PARAMETER
+
+#>
 $UnixDate = [DateTimeOffset]::Now.AddDays(-7).ToUnixTimeSeconds()
 $Param = @{
     Filter = "(type:'ip_address',type:'domain')+last_updated:>$UnixDate"
