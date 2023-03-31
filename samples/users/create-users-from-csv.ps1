@@ -2,9 +2,20 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
+Create a list of users from CSV
+.PARAMETER BaseAddress
+Base API hostname
+.PARAMETER ClientId
+OAuth2 client identifier
+.PARAMETER ClientSecret
+OAuth2 client secret
+.PARAMETER MemberCid
+Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control') [default: all]
+.PARAMETER Path
+Path to CSV file containing 'email', 'firstname', 'lastname' and 'roles'
+.NOTES
+Multiple 'roles' values can be separated by commas. If no roles are present, the user will be assigned
+'falcon_console_guest'.
 #>
 param(
     [Parameter(Mandatory,Position=1)]
