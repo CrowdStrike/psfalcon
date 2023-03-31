@@ -2,9 +2,9 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
+Download the installer package assigned to your default Windows Sensor Update policy
+.PARAMETER Path
+Output directory
 #>
 [CmdletBinding()]
 param(
