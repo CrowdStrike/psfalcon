@@ -2,9 +2,9 @@
 using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
-
-.PARAMETER
-
+Using Real-time Response, check a list of devices for a CSWinDiag archive and download it
+.PARAMETER HostId
+One or more host identifiers
 #>
 [CmdletBinding()]
 param(
