@@ -36,7 +36,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconPreventionPhase
                 if ($PolicyList.platform_name) {
                     # Import json settings for allowed 'platform_name' values
                     $Compare = @{}
-                    [string]$JsonPath = Join-Path (Show-FalconModule).ModulePath Policy
+                    [string]$JsonPath = Join-Path (Show-FalconModule).ModulePath policy
                     $PolicyList.platform_name | Select-Object -Unique | Where-Object { $AllowedOS -contains $_ } |
                     ForEach-Object {
                         [string]$FilePath = (Join-Path $JsonPath "$($_.ToLower()).json")
