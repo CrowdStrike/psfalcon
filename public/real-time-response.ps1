@@ -574,8 +574,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
                     $PSBoundParameters.Command
                 }
                 foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
-                    if ($Request.resources) {
-                        $Request = @($Request.resources.PSObject.Properties.Value).foreach{
+                    if ($BatchId) {
+                        $Request = @($Request.PSObject.Properties.Value).foreach{
+                            # Append 'batch_id' to each command result
                             Set-Property $_ batch_id $BatchId
                             $_
                         }
@@ -790,8 +791,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
                 $PSBoundParameters.Command
             }
             foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
-                if ($Request.resources) {
-                    $Request = @($Request.resources.PSObject.Properties.Value).foreach{
+                if ($BatchId) {
+                    $Request = @($Request.PSObject.Properties.Value).foreach{
+                        # Append 'batch_id' to each command result
                         Set-Property $_ batch_id $BatchId
                         $_
                     }
@@ -926,8 +928,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
                     $PSBoundParameters.Command
                 }
                 foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters)) {
-                    if ($Request.resources) {
-                        $Request = @($Request.resources.PSObject.Properties.Value).foreach{
+                    if ($BatchId) {
+                        $Request = @($Request.PSObject.Properties.Value).foreach{
+                            # Append 'batch_id' to each command result
                             Set-Property $_ batch_id $BatchId
                             $_
                         }
