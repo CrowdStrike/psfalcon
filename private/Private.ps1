@@ -1181,12 +1181,26 @@ function Write-Result {
                 # Remove 'meta' when other sub-properties are populated
                 [void]$Json.PSObject.Properties.Remove('meta')
             }
-            if (($Json.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
-                # Output single sub-property value from Json
-                $Json | Select-Object -ExpandProperty $Json.PSObject.Properties.Name
-            } else {
-                # Output multiple values from Json
+            [string[]]$FieldList = @($Json.PSObject.Properties).Where({
+                # Select sub-properties in response not named 'extensions'
+                $_.Name -ne 'extensions' -and $null -ne $_.Value
+            }).foreach{ $_.Name }
+            if (($FieldList | Measure-Object).Count -gt 1) {
+                # Output full response when multiple sub-properties are present
                 $Json
+            } elseif (($FieldList | Measure-Object).Count -eq 1) {
+                if ($FieldList -eq 'combined' -and $Json.combined.PSObject.Properties.Name -eq 'resources' -and
+                ($Json.combined.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
+                    # Output 'combined.resources' values
+                    $Json.combined.resources
+                } elseif ($FieldList -eq 'resources' -and $Json.resources.PSObject.Properties.Name -eq
+                'events' -and ($Json.resources.PSObject.Properties.Name | Measure-Object).Count -eq 1) {
+                    # Output 'resources.events' values
+                    $Json.resources.events
+                } else {
+                    # Output value of single sub-property
+                    $Json.$FieldList
+                }
             }
         } else {
             # Output non-Json content
