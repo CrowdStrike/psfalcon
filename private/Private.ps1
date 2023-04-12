@@ -1025,14 +1025,14 @@ function Test-RegexValue {
     )
     begin {
         $RegEx = @{
-            md5    = [regex]'^[A-Fa-f0-9]{32}$'
+            md5 = [regex]'^[A-Fa-f0-9]{32}$'
             sha256 = [regex]'^[A-Fa-f0-9]{64}$'
-            ipv4   = [regex]('((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1' +
-                '}[0-9])')
-            ipv6   = [regex]'^[0-9a-fA-F]{1,4}:'
+            ipv4 = [regex]('((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}' +
+                '[0-9])')
+            ipv6 = [regex]'^[0-9a-fA-F]{1,4}:'
             domain = [regex]'^(https?://)?((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}$'
-            email  = [regex]"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"
-            tag    = [regex]'^[-\w\d_/]+$'
+            email = [regex]"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"
+            tag = [regex]'^[-\w\d_/]+$'
         }
     }
     process {
@@ -1171,7 +1171,7 @@ function Write-Result {
                 )
             }
             [void]$Json.PSObject.Properties.Remove('errors')
-            if ($Json.PSObject.Properties.Where({ $_.Name -eq 'meta' -and $null -ne $_.Value })) {
+            if ($Json.PSObject.Properties.Where({ $_.Name -ne 'meta' -and $null -ne $_.Value })) {
                 # Remove 'meta' when other sub-properties are populated
                 [void]$Json.PSObject.Properties.Remove('meta')
             }
