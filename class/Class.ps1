@@ -18,10 +18,10 @@ class ApiClient {
         return $Output
     }
     [System.Object] Invoke([System.Object]$Param) {
-        Write-Verbose "[ApiClient.Invoke] $($Param.Method.ToUpper()) $($Param.Path)"
+        $this.Verbose('ApiClient.Invoke',($Param.Method.ToUpper(),$Param.Path -join ' '))
         if ($Param.Headers) {
             [string]$Verbose = $Param.Headers.GetEnumerator().foreach{ "$($_.Key)=$($_.Value)" } -join ', '
-            if ($Verbose) { Write-Verbose "[ApiClient.Invoke] $Verbose" }
+            if ($Verbose) { $this.Verbose('ApiClient.Invoke',$Verbose) }
         }
         try {
             $Output = if ($Param.Outfile) {
@@ -29,7 +29,7 @@ class ApiClient {
                 $Request = $this.Client.GetByteArrayAsync($Param.Path)
                 if ($Request.Result) {
                     [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
-                    Write-Verbose "[ApiClient.Invoke] Output directed to '$($Param.Outfile)'."
+                    $this.Verbose('ApiClient.Invoke',"Output directed to '$($Param.Outfile)'.")
                 }
                 @($Param.Headers.Keys).foreach{
                     if ($this.Client.DefaultRequestHeaders.$_) { $this.Client.DefaultRequestHeaders.Remove($_) }
@@ -53,14 +53,14 @@ class ApiClient {
                             $Message.Content.Add([System.Net.Http.StringContent]::New($_.Value),$_.Key)
                             @($_.Key,$_.Value) -join '='
                         }
-                        Write-Verbose "[ApiClient.Invoke] $($Verbose -join ', ')"
+                        $this.Verbose('ApiClient.Invoke',($Verbose -join ', '))
                     }
                 } elseif ($Param.Body) {
                     $Message.Content = if ($Param.Body -is [string] -and $Param.Headers.ContentType) {
                         [System.Net.Http.StringContent]::New($Param.Body,[System.Text.Encoding]::UTF8,
                             $Param.Headers.ContentType)
                         if ($Param.Path -notmatch '/oauth2/token$') {
-                            Write-Verbose "[ApiClient.Invoke] $($Param.Body)"
+                            $this.Verbose('ApiClient.Invoke',$Param.Body)
                         }
                     } else {
                         $Param.Body
@@ -70,13 +70,13 @@ class ApiClient {
                 $this.Client.SendAsync($Message)
             }
             if ($Output.Result.StatusCode) {
-                Write-Verbose "[ApiClient.Invoke] $(@($Output.Result.StatusCode.GetHashCode(),
-                    $Output.Result.StatusCode) -join ': ')"
+                $this.Verbose('ApiClient.Invoke',($Output.Result.StatusCode.GetHashCode(),
+                    $Output.Result.StatusCode -join ': '))
             }
             if ($Output.Result.Headers) {
-                Write-Verbose "[ApiClient.Invoke] $($Output.Result.Headers.GetEnumerator().foreach{
-                    @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')"
-                ($Output.Result.Headers.GetEnumerator().Where({ $_.Key -match '^X-Api-Deprecation' })).foreach{
+                $this.Verbose('ApiClient.Invoke',"$($Output.Result.Headers.GetEnumerator().foreach{
+                    @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')")
+                @($Output.Result.Headers.GetEnumerator().Where({ $_.Key -match '^X-Api-Deprecation' })).foreach{
                     Write-Warning ([string]$_.Key,[string]$_.Value -join ': ')
                 }
             }
@@ -87,10 +87,7 @@ class ApiClient {
         return $Output
     }
     [void] Log([System.Object]$Object) {
-        $Item = @{
-            timestamp = Get-Date -Format o
-            attributes = @{ Headers = @{} }
-        }
+        $Item = @{ timestamp = Get-Date -Format o; attributes = @{ Headers = @{} }}
         if ($Object -is [System.Net.Http.HttpRequestMessage]) {
             @('RequestUri','Method').foreach{ $Item.Attributes[$_] = $Object.$_.ToString() }
             $Object.Headers.GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
@@ -134,9 +131,9 @@ class ApiClient {
             }
         }
         [void](Start-Job @Job)
-        Write-Verbose "[ApiClient.Log] Submitted job '$($Job.Name)'."
+        $this.Verbose('ApiClient.Log',"Submitted job '$($Job.Name)'.")
         @(Get-Job | Where-Object { $_.Name -match '^ApiClient_Log' -and $_.State -eq 'Completed' }).foreach{
-            Write-Verbose "[ApiClient.Log] Removed job '$($_.Name)'."
+            $this.Verbose('ApiClient.Log',"Removed job '$($_.Name)'.")
             Remove-Job -Id $_.Id
         }
     }
@@ -172,5 +169,8 @@ class ApiClient {
             }
         }
         return $Output
+    }
+    [void] Verbose([string]$Function,[string]$String) {
+        Write-Verbose ((Get-Date -Format 'HH:mm:ss'),"[$Function]",$String -join ' ')
     }
 }
