@@ -505,9 +505,9 @@ function Get-RtrResult {
             'size','status','stderr','stdout','task_id'
     }
     process {
-        foreach ($Result in ($Object | Select-Object $RtrFields)) {
+        foreach ($Result in $Object) {
             # Update 'Output' with populated result(s) from 'Object'
-            @($Result.PSObject.Properties).Where({ $_.Value -or $_.Value -is [boolean] }).foreach{
+            @($Result.PSObject.Properties).Where({ $RtrFields -contains $_.Name }).foreach{
                 $Name = if ($_.Name -eq 'task_id') {
                     # Rename 'task_id' to 'cloud_request_id'
                     'cloud_request_id'
@@ -529,9 +529,7 @@ function Get-RtrResult {
                 # Update 'Output' with result using 'aid' or 'session_id'
                 $Match = if ($Result.aid) { 'aid' } else { 'session_id' }
                 if ($Result.$Match) {
-                    @($Output).Where({ $Result.$Match -eq $_.$Match }).foreach{
-                        Set-Property $_ $Name $Value
-                    }
+                    @($Output).Where({ $Result.$Match -eq $_.$Match }).foreach{ Set-Property $_ $Name $Value }
                 }
             }
         }
