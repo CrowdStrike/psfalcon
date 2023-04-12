@@ -651,7 +651,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                                 if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
                                 if ($_.stdout -and $Command -eq 'runscript') {
                                     # Attempt to convert 'stdout' from Json for 'runscript'
-                                    [object[]]$StdOut = try { $_.stdout | ConvertFrom-Json } catch { $null }
+                                    [object[]]$StdOut = try { $_.stdout | ConvertFrom-Json -EA 0 } catch { $null }
                                     if ($StdOut) { $_.stdout = $StdOut }
                                 }
                                 $_
