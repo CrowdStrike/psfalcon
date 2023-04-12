@@ -251,12 +251,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         [string]$RunFile = if ($File) { $PutFile } else { $Run }
         function Update-CloudFile ([string]$FileName,[string]$FilePath) {
             # Fields to collect from 'Put' files list
-            $Fields = @('id','name','created_timestamp','modified_timestamp','sha256')
+            [string[]]$FieldList = 'id','name','created_timestamp','modified_timestamp','sha256'
             try {
                 # Compare 'CloudFile' and 'LocalFile'
                 Write-Host "[Invoke-FalconDeploy] Checking cloud for existing file..."
                 $CloudFile = @(Get-FalconPutFile -Filter "name:['$FileName']" -Detailed |
-                Select-Object $Fields).foreach{
+                Select-Object $FieldList).foreach{
                     [PSCustomObject]@{
                         id = $_.id
                         name = $_.name
@@ -319,9 +319,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         }
         function Write-RtrResult ([object[]]$Object,[string]$Step) {
             # Create output, append results and output specified fields to CSV, and return successful hosts
-            [string[]]$Fields = 'aid','batch_id','cloud_request_id','complete','deployment_step','errors',
+            [string[]]$FieldList = 'aid','batch_id','cloud_request_id','complete','deployment_step','errors',
                 'offline_queued','session_id','stderr','stdout'
-            if ($Include) { $Fields += $Include }
+            if ($Include) { $FieldList += $Include }
             $Output = @($Object).foreach{
                 $i = [PSCustomObject]@{ aid = $_.aid; deployment_step = $Step }
                 if ($Include) {
@@ -334,7 +334,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                 }
                 $i
             }
-            Get-RtrResult $Object $Output | Select-Object $Fields | Export-Csv $Csv -Append -NoTypeInformation
+            Get-RtrResult $Object $Output | Select-Object $FieldList | Export-Csv $Csv -Append -NoTypeInformation
             ($Object | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
                 $_.offline_queued -eq $true }).aid
         }
