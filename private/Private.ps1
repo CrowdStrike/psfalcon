@@ -386,7 +386,7 @@ function Get-ParamSet {
     }
     process {
         if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
-            $PSCmdlet.WriteVerbose("[Get-ParamSet] Creating groups of $Max query values")
+            Write-Log 'Get-ParamSet' "Creating groups of $Max query values"
             for ($i = 0; $i -lt ($Content.Query | Measure-Object).Count; $i += $Max) {
                 # Split 'Query' values into groups
                 $Split = $Switches.Clone()
@@ -403,7 +403,7 @@ function Get-ParamSet {
                 ,$Split
             }
         } elseif ($Content.Body -and $Field -and ($Content.Body.$Field | Measure-Object).Count -gt $Max) {
-            $PSCmdlet.WriteVerbose("[Get-ParamSet] Creating groups of $Max '$Field' values")
+            Write-Log 'Get-ParamSet' "Creating groups of $Max '$Field' values"
             for ($i = 0; $i -lt ($Content.Body.$Field | Measure-Object).Count; $i += $Max) {
                 # Split 'Body' content into groups using '$Field'
                 $Split = $Switches.Clone()
@@ -580,7 +580,7 @@ function Invoke-Falcon {
                                 Write-Request $Clone $_ -OutVariable Output
                                 [int]$Int += ($Output | Measure-Object).Count
                                 if ($Object.total) {
-                                    $PSCmdlet.WriteVerbose("[$Command] Retrieved $Int of $($Object.total)")
+                                    Write-Log $Command "Retrieved $Int of $($Object.total)"
                                 }
                             } elseif ($Object.total) {
                                 [string]$Message = "[$Command] Total results limited by API '$(
@@ -692,7 +692,7 @@ function Invoke-Falcon {
             if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
                 if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
                 try {
-                    $PSCmdlet.WriteVerbose("[$Command] $Endpoint")
+                    Write-Log $Command $Endpoint
                     $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
                     if ($_.Endpoint.Outfile -and (Test-Path $_.Endpoint.Outfile)) {
                         # Display 'Outfile'
@@ -713,8 +713,7 @@ function Invoke-Falcon {
                                 # Repeat request(s)
                                 [int]$Count = ($Result | Measure-Object).Count
                                 if ($Pagination.total -and $Count -lt $Pagination.total) {
-                                    $PSCmdlet.WriteVerbose("[$Command] Retrieved $Count of $(
-                                        $Pagination.total)")
+                                    Write-Log $Command "Retrieved $Count of $($Pagination.total)"
                                     Invoke-Loop $_ $Pagination $Count
                                 }
                             }
@@ -941,7 +940,7 @@ function Start-RtrUpdate {
         )
         $Output = Start-Job -Name $Name -ScriptBlock $ScriptBlock -ArgumentList $ArgList
         if ($Output) {
-            $PSCmdlet.WriteVerbose(('[Start-RtrUpdate]','Started job:',$Output.Name -join ' '))
+            Write-Log 'Start-RtrUpdate' "Started job: $($Output.Name)"
             $Output.Id
         }
     }
@@ -959,9 +958,9 @@ function Stop-RtrUpdate {
                 # Kill background job by id
                 Remove-Job -Id $Job.Id -Force
                 if (Get-Job -Id $Job.Id -EA 0) {
-                    $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Failed to terminate job:',$Job.Name -join ' '))
+                    Write-Log 'Stop-RtrUpdate' "Failed to terminate job: $($Job.Name)"
                 } else {
-                    $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Terminated job:',$Job.Name -join ' '))
+                    Write-Log 'Stop-RtrUpdate' "Terminated job: $($Job.Name)"
                 }
             }
         }
@@ -969,9 +968,9 @@ function Stop-RtrUpdate {
             # Remove 'Completed' background jobs
             Remove-Job -Id $_.Id
             if (Get-Job -Id $_.Id -EA 0) {
-                $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Failed to remove job:',$_.Name -join ' '))
+                Write-Log 'Stop-RtrUpdate' "Failed to remove job: $($_.Name)"
             } else {
-                $PSCmdlet.WriteVerbose(('[Stop-RtrUpdate]','Removed job:',$_.Name -join ' '))
+                Write-Log 'Stop-RtrUpdate' "Removed job: $($_.Name)"
             }
         }
     }
@@ -1051,7 +1050,7 @@ function Test-RegexValue {
     }
     end {
         if ($Output) {
-            $PSCmdlet.WriteVerbose("[Test-RegexValue] $(@((($Output | Out-String).Trim()),$String) -join ': ')")
+            Write-Log 'Test-RegexValue' (($Output | Out-String).Trim(),$String -join ': ')
             $Output
         }
     }
@@ -1065,7 +1064,7 @@ function Wait-RetryAfter {
             # Convert 'X-Ratelimit-Retryafter' value to seconds and wait
             $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(($Request.Result.Headers.GetEnumerator().Where({
                 $_.Key -eq 'X-Ratelimit-Retryafter' }).Value)).Second
-            $PSCmdlet.WriteVerbose("[Wait-RetryAfter] Rate limited for $Wait seconds...")
+            Write-Log 'Wait-RetryAfter' "Rate limited for $Wait seconds..."
             Start-Sleep -Seconds $Wait
         }
     }
@@ -1085,7 +1084,7 @@ function Wait-RtrCommand {
             # Wait for the result of single-host Real-time Response command
             $Object = @($Object | & $Confirm).foreach{
                 if ($_.task_id -and $_.complete -eq $false) {
-                    $PSCmdlet.WriteVerbose(("[$String]",'Waiting for task_id:',$_.task_id -join ' '))
+                    Write-Log $String "Waiting for task_id: $($_.task_id)"
                 }
                 $_
             }
@@ -1108,8 +1107,7 @@ function Wait-RtrGet {
                 # Wait for the result of multi-host Real-time Response 'get' command
                 $Request = $Object | Confirm-FalconGetFile
                 if (!$Request) {
-                    $PSCmdlet.WriteVerbose("[$String]",'Waiting for batch_get_cmd_req_id:',
-                        $Object.batch_get_cmd_req_id -join ' ')
+                    Write-Log $String "Waiting for batch_get_cmd_req_id: $($Object.batch_get_cmd_req_id)"
                     Start-Sleep -Seconds 20
                 }
             } until ($Request)
@@ -1121,8 +1119,8 @@ function Wait-RtrGet {
                     $_.cloud_request_id -eq $Object.cloud_request_id
                 }).foreach{
                     if (!$_.deleted_at -and $_.complete -eq $false) {
-                        $PSCmdlet.WriteVerbose(("[$String]",'Waiting for cloud_request_id:',$_.cloud_request_id,
-                            ('[{0} {1}]' -f ($_.stage),($_.progress/1).ToString("P")) -join ' '))
+                        Write-Log $String ('Waiting for cloud_request_id:',$_.cloud_request_id,
+                            ('[{0} {1}]' -f ($_.stage),($_.progress/1).ToString("P")) -join ' ')
                     }
                     $_
                 }
@@ -1159,7 +1157,7 @@ function Write-Result {
                         $_.Name,$_.Value -join '='
                     }
                 }) -join ', '
-                $PSCmdlet.WriteVerbose(('[Write-Result]',$Message -join ' '))
+                Write-Log 'Write-Result' ($Message -join ' ')
             }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
                 # Output 'errors' to error stream as Json string
@@ -1205,4 +1203,9 @@ function Write-Result {
         # Check for rate limiting
         Wait-RetryAfter $Request
     }
+}
+function Write-Log {
+    [CmdletBinding()]
+    param([string]$Command,[string]$String)
+    process { $PSCmdlet.WriteVerbose(((Get-Date -Format 'HH:mm:ss'),"[$Command]",$String -join ' ')) }
 }

@@ -122,7 +122,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                         }
                     }
                     if ($String) {
-                        $PSCmdlet.WriteVerbose(('[Request-FalconToken] Set TLS 1.2 via',$String -join ' '))
+                        Write-Log 'Request-FalconToken' "Set TLS 1.2 via $String"
                     }
                     $Script:Falcon.Api.Handler.AutomaticDecompression = [System.Net.DecompressionMethods]::Gzip,
                         [System.Net.DecompressionMethods]::Deflate
@@ -166,7 +166,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                     'eu-1' { 'https://api.eu-1.crowdstrike.com' }
                 }
                 if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
-                    $PSCmdlet.WriteVerbose("[Request-FalconToken] Redirected to '$Region'")
+                    Write-Log 'Request-FalconToken' "Redirected to '$Region'"
                     $Script:Falcon.Hostname = $Redirect
                 }
                 $Result = Write-Result $Request
@@ -179,7 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                         $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
                     }
                     $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
-                    $PSCmdlet.WriteVerbose("[Request-FalconToken] Authorized until: $($Script:Falcon.Expiration)")
+                    Write-Log 'Request-FalconToken' "Authorized until: $($Script:Falcon.Expiration)"
                 } elseif (@(308,429) -contains $Request.Result.StatusCode.GetHashCode()) {
                     # Retry token request when rate limited or unable to automatically follow redirection
                     & $MyInvocation.MyCommand.Name

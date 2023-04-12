@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
             $Script:Falcon.Api.Collector['Enable'] = $PSBoundParameters.Enable
             $Message += " for $(@($PSBoundParameters.Enable).foreach{ "'$_'" } -join ',')"
         }
-        $PSCmdlet.WriteVerbose("[Register-FalconEventCollector] $Message.")
+        Write-Log 'Register-FalconEventCollector' $Message
     }
 }
 function Send-FalconEvent {
@@ -124,8 +124,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Unregister-FalconEventCollector
     param()
     process {
         if ($Script:Falcon.Api.Collector) {
-            $PSCmdlet.WriteVerbose("[Unregister-FalconEventCollector] Removed '$(
-                $Script:Falcon.Api.Collector.Uri)'.")
+            Write-Log 'Unregister-FalconEventCollector' "Removed '$($Script:Falcon.Api.Collector.Uri)'"
             $Script:Falcon.Api.Collector = @{}
         }
     }

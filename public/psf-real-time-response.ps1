@@ -626,7 +626,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         } else {
                             'session_id:',$InitReq.session_id
                         }
-                        $PSCmdlet.WriteVerbose("[Invoke-FalconRtr] $($Message -join ' ')")
+                        Write-Log 'Invoke-FalconRtr' ($Message -join ' ')
                         [object[]]$Output = if ($InitReq.batch_id) {
                             @(Get-RtrResult $InitReq.hosts $Output).foreach{
                                 # Clear 'stdout' from batch initialization
@@ -642,8 +642,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
                         if (($Output | Measure-Object).Count -gt 1) { $Cmd['Timeout'] = $Timeout }
                         if ($QueueOffline -ne $true) { $Cmd['Wait'] = $true }
                         $Invoke = Get-RtrCommand $Command
-                        $PSCmdlet.WriteVerbose(('[Invoke-FalconRtr]','Submitting',"'$($Command,
-                            $Argument -join ' ')'" -join ' '))
+                        Write-Log 'Invoke-FalconRtr' "Submitting '$($Command,$Argument -join ' ')'"
                         $CmdReq = $InitReq | & $Invoke @Cmd
                         Stop-RtrUpdate $JobId
                         if ($CmdReq) {
