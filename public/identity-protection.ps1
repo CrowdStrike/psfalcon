@@ -6,7 +6,7 @@ Interact with Falcon Identity using GraphQL
 The 'All' parameter requires that your GraphQL statement contain an 'after' cursor variable definition and
 'pageInfo { hasNextPage endCursor }'.
 
-Requires 'Identity Protection GraphQL: Write'.
+Requires 'Identity Protection GraphQL: Write', and other 'Identity Protection' permission(s) depending on query.
 .PARAMETER String
 A complete GraphQL statement
 .PARAMETER Variable
