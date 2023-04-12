@@ -121,9 +121,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
                             '[Net.ServicePointManager]'
                         }
                     }
-                    if ($String) {
-                        Write-Log 'Request-FalconToken' "Set TLS 1.2 via $String"
-                    }
+                    if ($String) { Write-Log 'Request-FalconToken' "Set TLS 1.2 via $String" }
                     $Script:Falcon.Api.Handler.AutomaticDecompression = [System.Net.DecompressionMethods]::Gzip,
                         [System.Net.DecompressionMethods]::Deflate
                     $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd(
