@@ -623,8 +623,9 @@ function Invoke-Falcon {
                 $false
             }
             if ($Splat.Detailed -eq $true -and $NoDetail -eq $false) {
+                # Get 'Detailed' result
                 $Output = Write-Result $Object
-                if ($Output) { & $Command -Id $Output }
+                if ($Output.aid) { & $Command -Id $Output.aid } elseif ($Output) { & $Command -Id $Output }
             } else {
                 Write-Result $Object
             }
