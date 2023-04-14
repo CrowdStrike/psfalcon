@@ -6,6 +6,20 @@ Search for Zero Trust Assessment results
 Requires 'Zero Trust Assessment: Read'.
 .PARAMETER Id
 Host identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+The maximum records to return
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
 #>
@@ -15,21 +29,35 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
             ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('Ids','device_id','host_ids','aid')]
-        [string[]]$Id
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get',Mandatory,Position=1)]
+        [string]$Filter,
+        [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get',Position=2)]
+        [ValidateSet('score|desc','score|asc',IgnoreCase=$false)]
+        [string]$Sort,
+        [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get',Position=3)]
+        [ValidateRange(1,1000)]
+        [int]$Limit,
+        [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get')]
+        [string]$After,
+        [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get')]
+        [switch]$Detailed,
+        [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get')]
+        [switch]$Total
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
+            Format = @{ Query = @('ids','filter','sort','limit','after') }
         }
         [System.Collections.Generic.List[string]]$List = @()
     }
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
