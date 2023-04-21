@@ -253,7 +253,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverRule
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
-function Get-FalconDiscoverScanner {
+function Get-FalconDiscoverScan {
 <#
 .SYNOPSIS
 Search for Falcon Discover active discovery scans
