@@ -63,8 +63,12 @@
       'Receive-FalconDiscoverGcpScript'
 
       # container-security
+      'Edit-FalconContainerRegistry'
       'Get-FalconContainerAssessment'
+      'Get-FalconContainerRegistry'
       'Get-FalconContainerSensor'
+      'New-FalconContainerRegistry'
+      'Remove-FalconContainerRegistry'
       'Remove-FalconRegistryCredential'
       'Request-FalconRegistryCredential'
       'Remove-FalconContainerImage'

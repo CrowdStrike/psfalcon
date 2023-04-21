@@ -1,3 +1,53 @@
+function Edit-FalconContainerRegistry {
+<#
+.SYNOPSIS
+Modify a registry within Falcon Container Security
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER Name
+Falcon Container Security registry name
+.PARAMETER State
+Registry connection state
+.PARAMETER Credential
+A hashtable containing credentials to access the registry
+.PARAMETER Id
+Container registry identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerRegistry
+#>
+    [CmdletBinding(DefaultParameterSetName='/container-security/entities/registries/v1:patch',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:patch',Position=1)]
+        [Alias('user_defined_alias')]
+        [string]$Name,
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:patch',Position=2)]
+        [ValidateSet('pause','resume',IgnoreCase=$false)]
+        [string]$State,
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:patch',Position=3)]
+        [hashtable]$Credential,
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:patch',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+        [string]$Id
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{
+                Body = @{ root = @('credential','user_defined_alias','state') }
+                Query = @('id')
+            }
+        }
+    }
+    process {
+        if ($PSBoundParameters.Credential) {
+            $PSBoundParameters.Credential = @{ details = $PSBoundParameters.Credential }
+        }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+}
 function Get-FalconContainerAssessment {
 <#
 .SYNOPSIS
@@ -35,6 +85,63 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
         try { $Request | ConvertFrom-Json } catch { $Request }
     }
 }
+function Get-FalconContainerRegistry {
+<#
+.SYNOPSIS
+List Falcon Container Security registries
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Id
+Container registry identifier
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerRegistry
+#>
+    [CmdletBinding(DefaultParameterSetName='/container-security/queries/registries/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+        [Alias('ids')]
+        [string]$Id,
+        [Parameter(ParameterSetName='/container-security/queries/registries/v1:get',Position=1)]
+        [string]$Sort,
+        [Parameter(ParameterSetName='/container-security/queries/registries/v1:get',Position=2)]
+        [int]$Limit,
+        [Parameter(ParameterSetName='/container-security/queries/registries/v1:get')]
+        [int]$Offset,
+        [Parameter(ParameterSetName='/container-security/queries/registries/v1:get')]
+        [switch]$Detailed,
+        [Parameter(ParameterSetName='/container-security/queries/registries/v1:get')]
+        [switch]$All,
+        [Parameter(ParameterSetName='/container-security/queries/registries/v1:get')]
+        [switch]$Total
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('offset','sort','limit','ids') }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+}
 function Get-FalconContainerSensor {
 <#
 .SYNOPSIS
@@ -48,9 +155,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerSensor
 #>
     [CmdletBinding(DefaultParameterSetName='/v2/{sensortype}/{region}/release/falcon-sensor/tags/list:get',
         SupportsShouldProcess)]
-    param(
-        [switch]$LatestUrl
-    )
+    param([switch]$LatestUrl)
     process {
         if (!$Script:Falcon.Registry -or $Script:Falcon.Registry.Expiration -lt (Get-Date).AddSeconds(60)) {
             Request-FalconRegistryCredential
@@ -69,6 +174,57 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerSensor
         } else {
             $Result
         }
+    }
+}
+function New-FalconContainerRegistry {
+<#
+.SYNOPSIS
+Create a registry within Falcon Container Security
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER Name
+Desired registry name within Falcon Container Security
+.PARAMETER Type
+Registry type
+.PARAMETER Url
+URL used to log in to the registry
+.PARAMETER Credential
+A hashtable containing credentials to access the registry
+.PARAMETER UrlUniquenessKey
+Registry URL alias
+
+Available with Docker Hub, Google Artifact Registry, Google Container Registry, IBM Cloud, and Oracle
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerRegistry
+#>
+    [CmdletBinding(DefaultParameterSetName='/container-security/entities/registries/v1:post',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:post',Mandatory,Position=1)]
+        [Alias('user_defined_alias')]
+        [string]$Name,
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:post',Mandatory,Position=2)]
+        [ValidateSet('acr','artifactory','docker','dockerhub','ecr','gar','gcr','github','gitlab','harbor','icr',
+            'mirantis','nexus','openshift','oracle','quay.io',IgnoreCase=$false)]
+        [string]$Type,
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:post',Mandatory,Position=3)]
+        [string]$Url,
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:post',Mandatory,Position=4)]
+        [hashtable]$Credential,
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:post',Position=5)]
+        [Alias('url_uniqueness_key')]
+        [string]$UrlUniquenessKey
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Body = @{ root = @('credential','user_defined_alias','url','url_uniqueness_key','type') }}
+        }
+    }
+    process {
+        $PSBoundParameters.Credential = @{ details = $PSBoundParameters.Credential }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
 }
 function Remove-FalconContainerImage {
@@ -100,6 +256,42 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerImage
             $Endpoint = $PSCmdlet.ParameterSetName -replace '{id}',$PSBoundParameters.Id
             [void]$PSBoundParameters.Remove('Id')
             Invoke-Falcon @Param -Endpoint $Endpoint -Inputs $PSBoundParameters
+        }
+    }
+}
+function Remove-FalconContainerRegistry {
+<#
+.SYNOPSIS
+Remove a registry from Falcon Container Security
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER Id
+Container registry identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerRegistry
+#>
+    [CmdletBinding(DefaultParameterSetName='/container-security/entities/registries/v1:delete',
+        SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/container-security/entities/registries/v1:delete',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+        [Alias('ids')]
+        [string]$Id
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Format = @{ Query = @('ids') }
+        }
+        [System.Collections.Generic.List[string]]$List = @()
+    }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) {
+            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
 }
