@@ -94,6 +94,10 @@
 
       # discover
       'Get-FalconAsset'
+      'Get-FalconDiscoverNetwork'
+      'Get-FalconDiscoverRule'
+      'Get-FalconDiscoverScan'
+      'Get-FalconDiscoverScanner'
 
       # enrollments
       'Invoke-FalconMobileAction'
