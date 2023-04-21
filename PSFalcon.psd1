@@ -117,6 +117,7 @@
       'Get-FalconSubmissionQuota'
       'New-FalconSubmission'
       'Receive-FalconArtifact'
+      'Receive-FalconMemoryDump'
       'Remove-FalconReport'
 
       # filevantage

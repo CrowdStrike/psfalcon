@@ -322,6 +322,81 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconArtifact
         }
     }
 }
+function Receive-FalconMemoryDump {
+<#
+.SYNOPSIS
+Download a memory dump or extracted strings from a Falcon Intelligence Sandbox report
+.DESCRIPTION
+Requires 'Sandbox (Falcon Intelligence): Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER BinaryId
+Binary content dump identifier
+.PARAMETER ExtractId
+Extracted string identifier
+.PARAMETER HexId
+Hex dump identifier
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMemoryDump
+#>
+    [CmdletBinding(DefaultParameterSetName='/falconx/entities/memory-dump/v1:get',SupportsShouldProcess)]
+    param(
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/extracted-strings/v1:get',Position=1)]
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/hex-dump/v1:get',Position=1)]
+        [ValidatePattern('\.gzip$')]
+        [string]$Path,
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
+        [Alias('binary_content_id')]
+        [string]$BinaryId,
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/extracted-strings/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
+        [Alias('extracted_strings_id')]
+        [string]$ExtractId,
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/hex-dump/v1:get',Mandatory,
+            ValueFromPipelineByPropertyName,Position=2)]
+        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
+        [Alias('hex_dump_id')]
+        [string]$HexId,
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/v1:get')]
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/extracted-strings/v1:get')]
+        [Parameter(ParameterSetName='/falconx/entities/memory-dump/hex-dump/v1:get')]
+        [switch]$Force
+    )
+    begin {
+        $Param = @{
+            Command = $MyInvocation.MyCommand.Name
+            Endpoint = $PSCmdlet.ParameterSetName
+            Headers = @{ Accept = 'application/octet-stream'; 'Accept-Encoding' = 'gzip' }
+            Format = @{ Query = @('name','id') }
+        }
+        $PSBoundParameters['id'] = switch ($PSBoundParameters) {
+            { $_.BinaryId } { $PSBoundParameters.BinaryId }
+            { $_.ExtractId } { $PSBoundParameters.ExtractId }
+            { $_.HexId } { $PSBoundParameters.HexId }
+        }
+        @('BinaryId','ExtractId','HexId').foreach{
+            if ($PSBoundParameters.$_) { [void]$PSBoundParameters.Remove($_) }
+        }
+    }
+    process {
+        $OutPath = Test-OutFile $PSBoundParameters.Path
+        if ($OutPath.Category -eq 'ObjectNotFound') {
+            Write-Error @OutPath
+        } elseif ($PSBoundParameters.Path) {
+            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+                Write-Error @OutPath
+            } else {
+                Invoke-Falcon @Param -Inputs $PSBoundParameters
+            }
+        }
+    }
+}
 function Remove-FalconReport {
 <#
 .SYNOPSIS
