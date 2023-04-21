@@ -1160,6 +1160,10 @@ function Write-Result {
                 }) -join ', '
                 Write-Log 'Write-Result' ($Message -join ' ')
             }
+            if ($Json.PSObject.Properties.Where({ $_.Name -ne 'meta' -and $null -ne $_.Value })) {
+                # Remove 'meta' when other sub-properties are populated
+                [void]$Json.PSObject.Properties.Remove('meta')
+            }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
                 # Output 'errors' to error stream as Json string
                 $PSCmdlet.WriteError(
@@ -1172,10 +1176,6 @@ function Write-Result {
                 )
             }
             [void]$Json.PSObject.Properties.Remove('errors')
-            if ($Json.PSObject.Properties.Where({ $_.Name -ne 'meta' -and $null -ne $_.Value })) {
-                # Remove 'meta' when other sub-properties are populated
-                [void]$Json.PSObject.Properties.Remove('meta')
-            }
             [string[]]$FieldList = @($Json.PSObject.Properties).Where({
                 # Select sub-properties in response not named 'extensions'
                 $_.Name -ne 'extensions' -and $null -ne $_.Value
