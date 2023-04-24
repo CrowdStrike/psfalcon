@@ -119,6 +119,11 @@
       'Receive-FalconMemoryDump'
       'Remove-FalconReport'
 
+      # fdr
+      'Get-FalconReplicatorEvent'
+      'Get-FalconReplicatorField'
+      'Get-FalconReplicatorSchema'
+
       # filevantage
       'Get-FalconFimChange'
 
