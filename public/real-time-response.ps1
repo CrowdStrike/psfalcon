@@ -599,7 +599,7 @@ function Invoke-FalconBatchGet {
 Issue a Real-time Response batch 'get' command to an existing batch session
 .DESCRIPTION
 When a 'get' command has been issued, the 'batch_get_cmd_req_id' property will be returned. That value is used
-to verify the completion of the file transfer using 'Confirm-FalconBatchGet'.
+to verify the completion of the file transfer using 'Confirm-FalconGetFile'.
 
 The 'Wait' parameter will use 'Confirm-FalconGetFile' to check for command results every 20 seconds until complete
 or processing ends.
