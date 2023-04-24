@@ -10,7 +10,6 @@
     HelpInfoURI          = 'https://github.com/CrowdStrike/psfalcon/wiki'
     PowerShellVersion    = '5.1'
     RequiredAssemblies   = @('System.Net.Http')
-    ScriptsToProcess     = @('class/Class.ps1')
     FunctionsToExport    = @(
       # alerts
       'Get-FalconAlert'
