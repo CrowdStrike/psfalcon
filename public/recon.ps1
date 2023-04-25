@@ -473,6 +473,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
         [Alias('ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=2)]
         [Alias('q')]
@@ -631,6 +632,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
         [ValidateSet('notification-exposed-data-record',IgnoreCase=$false)]
         [string]$Entity,
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=2)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/recon/entities/exports/v1:post',Mandatory,Position=3)]
         [ValidateSet('author|asc','author|desc','author_id|asc','author_id|desc','cid|asc','cid|desc',

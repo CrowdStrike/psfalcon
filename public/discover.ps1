@@ -182,6 +182,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverNetwork
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/discover/queries/active-discovery-networks/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/discover/queries/active-discovery-networks/v1:get',Position=2)]
         [string]$Sort,
@@ -230,6 +231,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverRule
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/discover/queries/active-discovery-rules/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/discover/queries/active-discovery-rules/v1:get',Position=2)]
         [string]$Sort,
@@ -278,6 +280,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverScan
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/discover/queries/active-discovery-scans/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/discover/queries/active-discovery-scans/v1:get',Position=2)]
         [string]$Sort,
@@ -326,6 +329,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverScanner
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/discover/queries/active-discovery-scanners/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/discover/queries/active-discovery-scanners/v1:get',Position=2)]
         [string]$Sort,

@@ -155,6 +155,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
         [object[]]$Id,
         [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Mandatory,Position=1)]
         [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Mandatory,Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Position=2)]
         [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Position=2)]

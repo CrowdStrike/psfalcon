@@ -603,6 +603,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallLocation
         [Alias('ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get',Position=2)]
         [Alias('q')]

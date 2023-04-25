@@ -459,6 +459,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScheduledScan
         [Alias('ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='Filter',Mandatory)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter
     )
     begin {
