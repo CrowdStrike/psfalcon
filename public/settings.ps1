@@ -111,8 +111,6 @@ Policy identifier
 Cloud service type
 .PARAMETER CloudPlatform
 Cloud platform
-.PARAMETER Detailed
-Retrieve detailed information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
 #>
@@ -140,9 +138,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
         [Parameter(ParameterSetName='/settings/entities/policy/v1:get',Position=3)]
         [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
         [Alias('cloud-platform')]
-        [string]$CloudPlatform,
-        [Parameter(ParameterSetName='/settings/entities/policy/v1:get')]
-        [switch]$Detailed
+        [string]$CloudPlatform
     )
     begin {
         $Param = @{
