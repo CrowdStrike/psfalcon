@@ -14,8 +14,8 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Fields
-Specific fields, or a predefined collection name surrounded by two underscores [default: _basic_]
+.PARAMETER Field
+Specific fields, or a predefined collection name surrounded by two underscores [default: __basic__]
 .PARAMETER Include
 Include additional information
 .PARAMETER Offset
@@ -56,7 +56,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
         [int32]$Limit,
         [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=2)]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=5)]
-        [string[]]$Fields,
+        [Alias('Fields')]
+        [string[]]$Field,
         [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=5)]
         [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=6)]
         [ValidateSet('tactic_and_technique',IgnoreCase=$false)]
@@ -181,6 +182,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
         [Alias('ids')]
         [string[]]$Id,
         [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
         [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=2)]
         [Alias('q')]
@@ -322,8 +324,8 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Fields
-Specific fields,or a predefined collection name surrounded by two underscores [default: _basic_]
+.PARAMETER Field
+Specific fields, or a predefined collection name surrounded by two underscores [default: __basic__]
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -361,7 +363,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
         [int32]$Limit,
         [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Position=2)]
         [Parameter(ParameterSetName='/intel/combined/reports/v1:get',Position=5)]
-        [string[]]$Fields,
+        [Alias('Fields')]
+        [string[]]$Field,
         [Parameter(ParameterSetName='/intel/queries/reports/v1:get')]
         [Parameter(ParameterSetName='/intel/combined/reports/v1:get')]
         [int32]$Offset,
