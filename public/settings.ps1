@@ -118,7 +118,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
 #>
     [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/settings/entities/policy-details/v1:get',ValueFromPipelineByPropertyName,
+        [Parameter(ParameterSetName='/settings/entities/policy-details/v2:get',ValueFromPipelineByPropertyName,
             ValueFromPipeline,Mandatory)]
         [ValidatePattern('^\d+$')]
         [Alias('Ids','policy_id')]
