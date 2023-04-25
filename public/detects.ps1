@@ -138,7 +138,7 @@ function Get-FalconHorizonIoa {
 .SYNOPSIS
 Search for Falcon Horizon Indicators of Attack
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER CloudPlatform
 Cloud platform
 .PARAMETER AccountId
@@ -237,27 +237,19 @@ function Get-FalconHorizonIom {
 .SYNOPSIS
 Search for Falcon Horizon Indicators of Misconfiguration
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
-.PARAMETER CloudPlatform
-Cloud platform
-.PARAMETER AccountId
-AWS account or GCP Project identifier
-.PARAMETER AzureSubscriptionId
-Azure subscription identifier
-.PARAMETER AzureTenantId
-Azure tenant identifier
-.PARAMETER Status
-Indicator of Misconfiguration status
-.PARAMETER Region
-Cloud platform region
-.PARAMETER Severity
-Indicator of Misconfiguration severity
-.PARAMETER Service
-Cloud service
+Requires 'CSPM registration: Read'.
+.PARAMETER Id
+Horizon Indicator of Misconfiguration identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER NextToken
-Pagination token to retrieve the next set of results
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
 .PARAMETER All
 Repeat requests until all available results are retrieved
 .PARAMETER Total
@@ -265,61 +257,47 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
 #>
-    [CmdletBinding(DefaultParameterSetName='/detects/entities/iom/v1:get',SupportsShouldProcess)]
+    [CmdletBinding(DefaultParameterSetName='/detects/queries/iom/v2:get',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=1)]
-        [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
-        [Alias('cloud_provider','cloud_platform')]
-        [string]$CloudPlatform,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^(\d{12}|\w{6,30})$')]
-        [Alias('account_id','AwsAccountId')]
-        [string]$AccountId,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('azure_subscription_id')]
-        [string]$AzureSubscriptionId,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('azure_tenant_id')]
-        [string]$AzureTenantId,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=5)]
-        [ValidateSet('new','reoccurring','all',IgnoreCase=$false)]
-        [string]$Status,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=6)]
-        [string]$Region,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=7)]
-        [ValidateSet('High','Medium','Informational',IgnoreCase=$false)]
-        [string]$Severity,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=8)]
-        [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
-            'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
-            'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
-            'Elasticache','GuardDuty','IAM','Identity','KMS','KeyVault','Kinesis','Kubernetes','Lambda',
-            'LoadBalancer','Monitor','NLB/ALB','NetworkSecurityGroup','PostgreSQL','RDS','Redshift','S3','SES',
-            'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
-            'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase=$false)]
-        [string]$Service,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get',Position=9)]
+        [Parameter(ParameterSetName='/detects/entities/iom/v2:get',Mandatory,ValueFromPipelineByPropertyName,
+            ValueFromPipeline)]
+        [Alias('ids')]
+        [string[]]$Id,
+        [Parameter(ParameterSetName='/detects/queries/iom/v2:get',Position=1)]
+        [ValidateScript({ Test-FqlStatement $_ })]
+        [string]$Filter,
+        [Parameter(ParameterSetName='/detects/queries/iom/v2:get',Position=2)]
+        [ValidateSet('account_name.asc','account_name.desc','account_id.asc','account_id.desc','attack_types.asc',
+            'attack_types.desc','azure_subscription_id.asc','azure_subscription_id.desc','cloud_provider.asc',
+            'cloud_provider.desc','cloud_service_keyword.asc','cloud_service_keyword.desc','status.asc',
+            'status.desc','is_managed.asc','is_managed.desc','policy_id.asc','policy_id.desc','policy_type.asc',
+            'policy_type.desc','resource_id.asc','resource_id.desc','region.asc','region.desc','scan_time.asc',
+            'scan_time.desc','severity.asc','severity.desc','severity_string.asc','severity_string.desc',
+            'timestamp.asc','timestamp.desc',IgnoreCase=$false)]
+        [string]$Sort,
+        [Parameter(ParameterSetName='/detects/queries/iom/v2:get',Position=3)]
         [ValidateRange(1,1000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get')]
-        [Alias('next_token')]
-        [string]$NextToken,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get')]
+        [int]$Limit,
+        [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
+        [int]$Offset,
+        [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
+        [switch]$Detailed,
+        [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
         [switch]$All,
-        [Parameter(ParameterSetName='/detects/entities/iom/v1:get')]
+        [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
         [switch]$Total
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
             Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Query = @('cloud_provider','limit','azure_tenant_id','next_token','severity','service','status',
-                    'azure_subscription_id','region','account_id')
-            }
+            Format = @{ Query = @('filter','offset','sort','limit','ids') }
         }
+        [System.Collections.Generic.List[string]]$List = @()
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+    end {
+        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
 }
