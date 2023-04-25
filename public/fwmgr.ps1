@@ -909,8 +909,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallGroup
     process {
         if ($PSBoundParameters.Rule) {
             [object[]]$PSBoundParameters.Rule = Confirm-Property 'action','address_family','description',
-                'direction','enabled','fields','icmp','local_address','local_port','log','monitor','name',
-                'protocol','remote_address','remote_port','temp_id' $PSBoundParameters.Rule
+                'direction','enabled','fields','fqdn','fqdn_enabled','icmp','local_address','local_port','log',
+                'monitor','name','protocol','remote_address','remote_port','temp_id' $PSBoundParameters.Rule
         }
         Invoke-Falcon @Param -Inputs $PSBoundParameters
     }
