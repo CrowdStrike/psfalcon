@@ -3,7 +3,7 @@ function Edit-FalconResponsePolicy {
 .SYNOPSIS
 Modify Real-time Response policies
 .DESCRIPTION
-Requires 'Response Policies: Write'.
+Requires 'Response policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
 .PARAMETER Id
@@ -89,7 +89,7 @@ function Get-FalconResponsePolicy {
 .SYNOPSIS
 Search for Real-time Response policies
 .DESCRIPTION
-Requires 'Response Policies: Read'.
+Requires 'Response policies: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -174,7 +174,7 @@ function Get-FalconResponsePolicyMember {
 .SYNOPSIS
 Search for members of Real-time Response policies
 .DESCRIPTION
-Requires 'Response Policies: Read'.
+Requires 'Response policies: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -238,7 +238,7 @@ function Invoke-FalconResponsePolicyAction {
 .SYNOPSIS
 Perform actions on Real-time Response policies
 .DESCRIPTION
-Requires 'Response Policies: Write'.
+Requires 'Response policies: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER GroupId
@@ -292,7 +292,7 @@ function New-FalconResponsePolicy {
 .SYNOPSIS
 Create Real-time Response policies
 .DESCRIPTION
-Requires 'Response Policies: Write'.
+Requires 'Response policies: Write'.
 .PARAMETER Array
 An array of policies to create in a single request
 .PARAMETER Name
@@ -378,7 +378,7 @@ function Remove-FalconResponsePolicy {
 .SYNOPSIS
 Remove Real-time Response policies
 .DESCRIPTION
-Requires 'Response Policies: Write'.
+Requires 'Response policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -416,7 +416,7 @@ Set Real-time Response policy precedence
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
 
-Requires 'Response Policies: Write'.
+Requires 'Response policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

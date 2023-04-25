@@ -9,7 +9,7 @@ after commands can lead to unexpected results.
 
 A 'sequence_id' value of 0 is added if the parameter is not specified.
 
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER SequenceId
 Sequence identifier
 .PARAMETER CloudRequestId
@@ -50,7 +50,7 @@ to confirm after commands can lead to unexpected results.
 
 A 'sequence_id' value of 0 is added if the parameter is not specified.
 
-Requires 'Real Time Response: Read'.
+Requires 'Real time response: Read'.
 .PARAMETER SequenceId
 Sequence identifier
 .PARAMETER CloudRequestId
@@ -84,7 +84,7 @@ function Confirm-FalconGetFile {
 .SYNOPSIS
 Verify the status of a Real-time Response 'get' command
 .DESCRIPTION
-Requires 'Real Time Response: Write'.
+Requires 'Real time response: Write'.
 .PARAMETER SessionId
 Session identifier
 .PARAMETER Timeout
@@ -149,7 +149,7 @@ Failing to confirm after commands can lead to unexpected results.
 
 A 'sequence_id' value of 0 is added if the parameter is not specified.
 
-Requires 'Real Time Response: Write'.
+Requires 'Real time response: Write'.
 .PARAMETER SequenceId
 Sequence identifier
 .PARAMETER CloudRequestId
@@ -184,7 +184,7 @@ function Edit-FalconScript {
 .SYNOPSIS
 Modify a Real-time Response script
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Platform
 Operating system platform
 .PARAMETER PermissionType
@@ -251,7 +251,7 @@ function Get-FalconPutFile {
 .SYNOPSIS
 Search for Real-time Response 'put' files
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Id
 'Put' file identifier
 .PARAMETER Filter
@@ -318,7 +318,7 @@ function Get-FalconScript {
 .SYNOPSIS
 Search for custom Real-time Response scripts
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Id
 Script identifier
 .PARAMETER Filter
@@ -390,7 +390,7 @@ your OAuth2 API Client will be visible.
 
 'Get-FalconQueue' can be used to find and export information about sessions in the 'offline queue'.
 
-Requires 'Real Time Response: Read'.
+Requires 'Real time response: Read'.
 .PARAMETER Id
 Session identifier
 .PARAMETER Filter
@@ -468,7 +468,7 @@ or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parame
 The 'Wait' parameter will use 'Confirm-FalconAdminCommand' or 'Confirm-FalconGetFile' to check for command
 results every 20 seconds until complete or processing ends.
 
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
@@ -604,7 +604,7 @@ to verify the completion of the file transfer using 'Confirm-FalconGetFile'.
 The 'Wait' parameter will use 'Confirm-FalconGetFile' to check for command results every 20 seconds until complete
 or processing ends.
 
-Requires 'Real Time Response: Write'.
+Requires 'Real time response: Write'.
 .PARAMETER FilePath
 Path to file on target host
 .PARAMETER OptionalHostId
@@ -700,7 +700,7 @@ or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parame
 The 'Wait' parameter will use 'Confirm-FalconCommand' to check for command results every 20 seconds until complete
 or processing ends.
 
-Requires 'Real Time Response: Read'.
+Requires 'Real time response: Read'.
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
@@ -818,7 +818,7 @@ or 'batch_id' value which can be used with the '-SessionId' or '-BatchId' parame
 The 'Wait' parameter will use 'Confirm-FalconResponderCommand' or 'Confirm-FalconGetFile' to check for command
 results every 20 seconds until complete or processing ends.
 
-Requires 'Real Time Response: Write'.
+Requires 'Real time response: Write'.
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
@@ -956,7 +956,7 @@ Download a password protected .7z archive containing a Real-time Response 'get' 
 'Invoke-FalconAdminCommand' can be used to issue a 'get' command to a single-host, and 'Invoke-FalconBatchGet' can
 be used for multiple hosts within existing Real-time Response session.
 
-Requires 'Real Time Response: Write'.
+Requires 'Real time response: Write'.
 .PARAMETER Path
 Destination path
 .PARAMETER Sha256
@@ -1019,7 +1019,7 @@ function Remove-FalconCommand {
 .SYNOPSIS
 Remove a command from a queued Real-time Response session
 .DESCRIPTION
-Requires 'Real Time Response: Read'.
+Requires 'Real time response: Read'.
 .PARAMETER SessionId
 Session identifier
 .PARAMETER CloudRequestId
@@ -1059,7 +1059,7 @@ Delete files previously retrieved during a Real-time Response session. The requi
 are contained in the results of 'Start-FalconSession' and 'Invoke-FalconAdminCommand' or 'Invoke-FalconBatchGet'
 commands.
 
-Requires 'Real Time Response: Write'.
+Requires 'Real time response: Write'.
 .PARAMETER SessionId
 Session identifier
 .PARAMETER Id
@@ -1094,7 +1094,7 @@ function Remove-FalconPutFile {
 .SYNOPSIS
 Remove a Real-time Response 'put' file
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Id
 Real-time Response 'put' file identifier
 .LINK
@@ -1123,7 +1123,7 @@ function Remove-FalconScript {
 .SYNOPSIS
 Remove a custom Real-time Response script
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Id
 Script identifier
 .LINK
@@ -1151,7 +1151,7 @@ function Remove-FalconSession {
 .SYNOPSIS
 Remove a Real-time Response session
 .DESCRIPTION
-Requires 'Real Time Response: Read'.
+Requires 'Real time response: Read'.
 .PARAMETER Id
 Session identifier
 .LINK
@@ -1180,7 +1180,7 @@ function Send-FalconPutFile {
 .SYNOPSIS
 Upload a Real-time Response 'put' file
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Name
 File name
 .PARAMETER Description
@@ -1230,7 +1230,7 @@ function Send-FalconScript {
 .SYNOPSIS
 Upload a custom Real-time Response script
 .DESCRIPTION
-Requires 'Real Time Response (Admin): Write'.
+Requires 'Real time response (admin): Write'.
 .PARAMETER Platform
 Operating system platform
 .PARAMETER PermissionType
@@ -1298,7 +1298,7 @@ will be processed by the host(s) in the session.
 Commands can be issued using 'Invoke-FalconCommand', 'Invoke-FalconResponderCommand', 'Invoke-FalconAdminCommand'
 and 'Invoke-FalconBatchGet'.
 
-Requires 'Real Time Response: Read'.
+Requires 'Real time response: Read'.
 .PARAMETER QueueOffline
 Add non-responsive hosts to the offline queue
 .PARAMETER ExistingBatchId
@@ -1399,7 +1399,7 @@ Real-time Response sessions expire after 5 minutes by default. Any commands that
 take longer than 5 minutes will not return results without refreshing the session to keep it alive until the
 command process completes.
 
-Requires 'Real Time Response: Read'.
+Requires 'Real time response: Read'.
 .PARAMETER QueueOffline
 Add non-responsive hosts to the offline queue
 .PARAMETER HostToRemove

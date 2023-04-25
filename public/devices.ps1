@@ -52,7 +52,7 @@ function Edit-FalconHostGroup {
 .SYNOPSIS
 Modify a host group
 .DESCRIPTION
-Requires 'Host Groups: Write'.
+Requires 'Host groups: Write'.
 .PARAMETER Name
 Host group name
 .PARAMETER Description
@@ -298,7 +298,7 @@ function Get-FalconHostGroup {
 .SYNOPSIS
 Search for host groups
 .DESCRIPTION
-Requires 'Host Groups: Read'.
+Requires 'Host groups: Read'.
 .PARAMETER Id
 Host group identifier
 .PARAMETER Filter
@@ -382,7 +382,7 @@ function Get-FalconHostGroupMember {
 .SYNOPSIS
 Search for host group members
 .DESCRIPTION
-Requires 'Host Groups: Read'.
+Requires 'Host groups: Read'.
 .PARAMETER Id
 Host group identifier
 .PARAMETER Filter
@@ -508,7 +508,7 @@ Perform actions on host groups
 .DESCRIPTION
 Adds or removes hosts from host groups in batches of 500.
 
-Requires 'Host Groups: Write'.
+Requires 'Host groups: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER Id
@@ -564,7 +564,7 @@ function New-FalconHostGroup {
 .SYNOPSIS
 Create host groups
 .DESCRIPTION
-Requires 'Host Groups: Write'.
+Requires 'Host groups: Write'.
 .PARAMETER Array
 An array of host groups to create in a single request
 .PARAMETER GroupType
@@ -706,7 +706,7 @@ function Remove-FalconHostGroup {
 .SYNOPSIS
 Remove host groups
 .DESCRIPTION
-Requires 'Host Groups: Write'.
+Requires 'Host groups: Write'.
 .PARAMETER Id
 Host group identifier
 .LINK

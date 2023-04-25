@@ -3,7 +3,7 @@ function Get-FalconSample {
 .SYNOPSIS
 Retrieve detailed information about accessible sample files
 .DESCRIPTION
-Requires 'Sample Uploads: Read'.
+Requires 'Sample uploads: Read'.
 .PARAMETER Id
 Sha256 hash value
 .LINK
@@ -38,7 +38,7 @@ function Receive-FalconSample {
 .SYNOPSIS
 Download a sample
 .DESCRIPTION
-Requires 'Sample Uploads: Read'.
+Requires 'Sample uploads: Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER PasswordProtected
@@ -94,7 +94,7 @@ function Remove-FalconSample {
 .SYNOPSIS
 Remove a sample
 .DESCRIPTION
-Requires 'Sample Uploads: Write'.
+Requires 'Sample uploads: Write'.
 .PARAMETER Id
 Sha256 hash value
 .LINK
@@ -127,7 +127,7 @@ Falcon QuickScan.
 
 Maximum file size is 256MB. ZIP and 7z archives will automatically redirect to 'Send-FalconSampleArchive'.
 
-Requires 'Sample Uploads: Write'.
+Requires 'Sample uploads: Write'.
 .PARAMETER IsConfidential
 Prohibit sample from being displayed in MalQuery [default: True]
 .PARAMETER Comment

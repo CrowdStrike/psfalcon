@@ -3,7 +3,7 @@ function Get-FalconHorizonIoaEvent {
 .SYNOPSIS
 Retrieve Falcon Horizon Indicator of Attack events
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER CloudPlatform
 Cloud platform
 .PARAMETER PolicyId
@@ -97,7 +97,7 @@ function Get-FalconHorizonIoaUser {
 .SYNOPSIS
 Retrieve Falcon Horizon Indicator of Attack users
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER PolicyId
 Policy identifier
 .PARAMETER CloudPlatform

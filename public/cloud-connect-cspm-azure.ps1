@@ -3,7 +3,7 @@ function Edit-FalconHorizonAzureAccount {
 .SYNOPSIS
 Modify the default Falcon Horizon Azure client or subscription identifier
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER Id
 Azure client identifier
 .PARAMETER SubscriptionId
@@ -47,7 +47,7 @@ function Get-FalconHorizonAzureAccount {
 .SYNOPSIS
 Search for Falcon Horizon Azure accounts
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER Id
 Azure account identifier
 .PARAMETER ScanType
@@ -109,7 +109,7 @@ function Get-FalconHorizonAzureCertificate {
 .SYNOPSIS
 Retrieve the base64 encoded certificate for a Falcon Horizon Azure tenant
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER Refresh
 Refresh certificate [default: false]
 .PARAMETER TenantId
@@ -142,7 +142,7 @@ function New-FalconHorizonAzureAccount {
 .SYNOPSIS
 Provision a Falcon Horizon Azure account
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER SubscriptionId
 Azure subscription identifier
 .PARAMETER TenantId
@@ -178,7 +178,7 @@ function Receive-FalconHorizonAzureScript {
 .SYNOPSIS
 Download a Bash script which grants Falcon Horizon access using Azure Cloud Shell
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER TenantId
@@ -232,7 +232,7 @@ function Remove-FalconHorizonAzureAccount {
 .SYNOPSIS
 Remove Falcon Horizon Azure accounts
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER Id
 Azure account identifier
 .LINK

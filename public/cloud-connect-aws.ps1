@@ -3,7 +3,7 @@ function Confirm-FalconDiscoverAwsAccess {
 .SYNOPSIS
 Verify Falcon Discover for Cloud AWS account access
 .DESCRIPTION
-Requires 'AWS Accounts: Write'.
+Requires 'AWS accounts: Write'.
 .PARAMETER Id
 AWS account identifier
 .LINK
@@ -39,7 +39,7 @@ function Edit-FalconDiscoverAwsAccount {
 .SYNOPSIS
 Modify a Falcon Discover for Cloud AWS account
 .DESCRIPTION
-Requires 'AWS Accounts: Write'.
+Requires 'AWS accounts: Write'.
 .PARAMETER ExternalId
 AWS account identifier with cross-account IAM role access
 .PARAMETER IamRoleArn
@@ -107,7 +107,7 @@ function Get-FalconDiscoverAwsAccount {
 .SYNOPSIS
 Search for Falcon Discover for Cloud AWS accounts
 .DESCRIPTION
-Requires 'AWS Accounts: Read'.
+Requires 'AWS accounts: Read'.
 .PARAMETER Id
 AWS account identifier
 .PARAMETER OrganizationId
@@ -178,7 +178,7 @@ function Get-FalconDiscoverAwsLink {
 .SYNOPSIS
 Retrieve previously generated Falcon Discover AWS CloudFormation links
 .DESCRIPTION
-Requires 'AWS Accounts: Read'.
+Requires 'AWS accounts: Read'.
 .PARAMETER Region
 AWS region
 .LINK
@@ -204,7 +204,7 @@ function Get-FalconDiscoverAwsSetting {
 .SYNOPSIS
 Retrieve global settings for Cloud AWS accounts in Falcon Discover
 .DESCRIPTION
-Requires 'AWS Accounts: Read'.
+Requires 'AWS accounts: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
 #>
@@ -217,7 +217,7 @@ function New-FalconDiscoverAwsAccount {
 .SYNOPSIS
 Provision Falcon Discover for Cloud AWS Accounts
 .DESCRIPTION
-Requires 'AWS Accounts: Write'.
+Requires 'AWS accounts: Write'.
 .PARAMETER OrganizationId
 AWS organization identifier
 .PARAMETER AccountType
@@ -275,7 +275,7 @@ function Receive-FalconDiscoverAwsScript {
 .SYNOPSIS
 Download a Bash script which grants Falcon Discover access using the AWS CLI
 .DESCRIPTION
-Requires 'AWS Accounts: Read'.
+Requires 'AWS accounts: Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER Id
@@ -328,7 +328,7 @@ function Remove-FalconDiscoverAwsAccount {
 .SYNOPSIS
 Remove Falcon Discover for Cloud AWS accounts
 .DESCRIPTION
-Requires 'AWS Accounts: Write'.
+Requires 'AWS accounts: Write'.
 .PARAMETER OrganizationId
 AWS organization identifier
 .PARAMETER Id
@@ -370,7 +370,7 @@ function Update-FalconDiscoverAwsSetting {
 .SYNOPSIS
 Create or update global settings applicable to all newly-provisioned Falcon Discover for Cloud AWS accounts
 .DESCRIPTION
-Requires 'AWS Accounts: Write'.
+Requires 'AWS accounts: Write'.
 .PARAMETER CloudtrailBucketOwnerId
 AWS account identifier containing cloudtrail logs
 .PARAMETER StaticExternalId

@@ -3,7 +3,7 @@ function Get-FalconDiscoverGcpAccount {
 .SYNOPSIS
 Search for Falcon Discover for Cloud GCP accounts
 .DESCRIPTION
-Requires 'D4C Registration: Read'.
+Requires 'D4C registration: Read'.
 .PARAMETER ScanType
 Scan type
 .PARAMETER Id
@@ -44,7 +44,7 @@ function New-FalconDiscoverGcpAccount {
 .SYNOPSIS
 Provision Falcon Discover for Cloud GCP accounts
 .DESCRIPTION
-Requires 'D4C Registration: Write'.
+Requires 'D4C registration: Write'.
 .PARAMETER ParentId
 GCP project identifier
 .LINK
@@ -73,7 +73,7 @@ function Receive-FalconDiscoverGcpScript {
 .SYNOPSIS
 Download a Bash script to grant Falcon Discover for Cloud access using GCP CLI
 .DESCRIPTION
-Requires 'D4C Registration: Read'.
+Requires 'D4C registration: Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER Force

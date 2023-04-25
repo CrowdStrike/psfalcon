@@ -162,7 +162,7 @@ function Get-FalconDiscoverNetwork {
 .SYNOPSIS
 Search for Falcon Discover active discovery networks
 .DESCRIPTION
-Requires ''.
+Requires 'Falcon Discover IoT: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -211,7 +211,7 @@ function Get-FalconDiscoverRule {
 .SYNOPSIS
 Search for Falcon Discover active discovery rules
 .DESCRIPTION
-Requires ''.
+Requires 'Falcon Discover IoT: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -260,7 +260,7 @@ function Get-FalconDiscoverScan {
 .SYNOPSIS
 Search for Falcon Discover active discovery scans
 .DESCRIPTION
-Requires ''.
+Requires 'Falcon Discover IoT: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -309,7 +309,7 @@ function Get-FalconDiscoverScanner {
 .SYNOPSIS
 Search for Falcon Discover active discovery scanners
 .DESCRIPTION
-Requires ''.
+Requires 'Falcon Discover IoT: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort

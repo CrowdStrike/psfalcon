@@ -3,7 +3,7 @@ function Edit-FalconReconAction {
 .SYNOPSIS
 Modify a Falcon Intelligence Recon action
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Frequency
 Action frequency
 .PARAMETER Recipient
@@ -79,7 +79,7 @@ function Edit-FalconReconNotification {
 .SYNOPSIS
 Modify a Falcon Intelligence Recon notification
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Array
 An array of notifications to modify in a single request
 .PARAMETER Id
@@ -152,7 +152,7 @@ function Edit-FalconReconRule {
 .SYNOPSIS
 Modify a Falcon Intelligence Recon monitoring rule
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Array
 An array of monitoring rules to modify in a single request
 .PARAMETER Id
@@ -253,7 +253,7 @@ function Get-FalconReconAction {
 .SYNOPSIS
 Search for Falcon Intelligence Recon actions
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Id
 Action identifier
 .PARAMETER Filter
@@ -354,7 +354,7 @@ function Get-FalconReconNotification {
 .SYNOPSIS
 Search for Falcon Intelligence Recon notifications
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Id
 Notification identifier
 .PARAMETER Filter
@@ -510,7 +510,7 @@ function Get-FalconReconRule {
 .SYNOPSIS
 Search for Falcon Intelligence Recon monitoring rules
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Id
 Monitoring rule identifier
 .PARAMETER Filter
@@ -580,7 +580,7 @@ function Get-FalconReconRulePreview {
 .SYNOPSIS
 Preview Falcon Intelligence Recon monitoring rule notification count and distribution
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Read'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
 .PARAMETER Topic
 Monitoring rule topic
 .PARAMETER Filter
@@ -679,7 +679,7 @@ function New-FalconReconAction {
 .SYNOPSIS
 Create Falcon Intelligence Recon monitoring rule actions
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER RuleId
 Monitoring rule identifier
 .PARAMETER Type
@@ -756,7 +756,7 @@ function New-FalconReconRule {
 .SYNOPSIS
 Create Falcon Intelligence Recon monitoring rules
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Array
 An array of monitoring rules to create in a single request
 .PARAMETER Name
@@ -902,7 +902,7 @@ function Remove-FalconReconAction {
 .SYNOPSIS
 Remove an action from a Falcon Intelligence Recon monitoring rule
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Id
 Action identifier
 .LINK
@@ -963,7 +963,7 @@ function Remove-FalconReconNotification {
 .SYNOPSIS
 Remove Falcon Intelligence Recon notifications
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Id
 Notification identifier
 .LINK
@@ -998,7 +998,7 @@ function Remove-FalconReconRule {
 .SYNOPSIS
 Remove Falcon Intelligence Recon monitoring rules
 .DESCRIPTION
-Requires 'Monitoring Rules (Falcon Intelligence Recon): Write'.
+Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
 .PARAMETER Id
 Monitoring rule identifier
 .LINK

@@ -3,7 +3,7 @@ function Edit-FalconHorizonPolicy {
 .SYNOPSIS
 Modify a Falcon Horizon policy
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER Severity
 Severity level
 .PARAMETER Enabled
@@ -61,7 +61,7 @@ function Edit-FalconHorizonSchedule {
 .SYNOPSIS
 Modify Falcon Horizon scan schedules
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER ScanSchedule
 Scan interval
 .PARAMETER CloudPlatform
@@ -102,7 +102,7 @@ function Get-FalconHorizonPolicy {
 .SYNOPSIS
 Retrieve detailed information about Falcon Horizon policies
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER PolicyId
@@ -163,7 +163,7 @@ function Get-FalconHorizonSchedule {
 .SYNOPSIS
 Retrieve detailed information about Falcon Horizon schedules
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER CloudPlatform
 Cloud platform
 .LINK

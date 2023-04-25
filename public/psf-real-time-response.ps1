@@ -9,7 +9,7 @@ extend their expiration time.
 
 Additional host information can be appended to the results using the 'Include' parameter.
 
-Requires 'Real Time Response: Read', 'Real Time Response: Write' and 'Real Time Response (Admin): Write'.
+Requires 'Real time response: Read', 'Real time response: Write' and 'Real time response (admin): Write'.
 .PARAMETER Days
 Number of days worth of sessions to retrieve [default: 7]
 .PARAMETER Include
@@ -141,7 +141,7 @@ archive will be 'put' into that folder. If the target is an archive, it will be 
 
 Details of each step will be output to a CSV file in your current directory.
 
-Requires 'Hosts: Read', 'Real Time Response (Admin): Write'.
+Requires 'Hosts: Read', 'Real time response (admin): Write'.
 .PARAMETER File
 Name of a 'CloudFile' or path to a local executable to upload
 .PARAMETER Archive
@@ -519,7 +519,7 @@ function Invoke-FalconRtr {
 .SYNOPSIS
 Start a Real-time Response session, execute a command and output the result
 .DESCRIPTION
-Requires 'Real Time Response: Read', 'Real Time Response: Write' or 'Real Time Response (Admin): Write'
+Requires 'Real time response: Read', 'Real time response: Write' or 'Real time response (admin): Write'
 depending on 'Command' provided, plus related permission(s) for 'Include' selection(s).
 .PARAMETER Command
 Real-time Response command

@@ -3,7 +3,7 @@ function Edit-FalconHorizonAwsAccount {
 .SYNOPSIS
 Modify a Falcon Horizon AWS account
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER AccountId
 AWS account identifier
 .PARAMETER CloudtrailRegion
@@ -40,7 +40,7 @@ Search for Falcon Horizon AWS accounts
 .DESCRIPTION
 A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
 
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER Id
 AWS account identifier
 .PARAMETER OrganizationId
@@ -119,7 +119,7 @@ Retrieve a URL to grant Falcon Horizon access in AWS
 Once logging in to the provided link using your AWS administrator credentials, use the 'Create Stack' button to
 grant access.
 
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsLink
 #>
@@ -133,7 +133,7 @@ function New-FalconHorizonAwsAccount {
 .SYNOPSIS
 Provision a Falcon Horizon AWS account
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER OrganizationId
 AWS organization identifier
 .PARAMETER CloudtrailRegion
@@ -175,7 +175,7 @@ function Receive-FalconHorizonAwsScript {
 .SYNOPSIS
 Download a Bash script which grants Falcon Horizon access using the AWS CLI
 .DESCRIPTION
-Requires 'CSPM Registration: Read'.
+Requires 'CSPM registration: Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER Force
@@ -219,7 +219,7 @@ function Remove-FalconHorizonAwsAccount {
 .SYNOPSIS
 Remove Falcon Horizon AWS accounts
 .DESCRIPTION
-Requires 'CSPM Registration: Write'.
+Requires 'CSPM registration: Write'.
 .PARAMETER Id
 AWS account identifier
 .PARAMETER OrganizationId

@@ -3,7 +3,7 @@ function Get-FalconDiscoverAwsScript {
 .SYNOPSIS
 Generate a bulk registration script for Falcon Discover
 .DESCRIPTION
-Requires 'AWS Accounts: Read'.
+Requires 'AWS accounts: Read'.
 .PARAMETER OrganizationId
 AWS organization identifier
 .PARAMETER AccountType

@@ -463,7 +463,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                     Get-FalconBuild
                 } catch {
                     throw "Failed to retrieve available sensor builds for '$(
-                        $Pair.Key)' import. Verify 'Sensor Update Policies: Write' permission."
+                        $Pair.Key)' import. Verify 'Sensor update policies: Write' permission."
                 }
                 foreach ($Item in @($Pair.Value.Import + $Pair.Value.Modify)) {
                     # Update tagged builds with current tagged build versions

@@ -3,7 +3,7 @@ function Add-FalconRole {
 .SYNOPSIS
 Assign roles to users
 .DESCRIPTION
-Requires 'User Management: Write'.
+Requires 'User management: Write'.
 .PARAMETER UserId
 User identifier
 .PARAMETER Cid
@@ -53,7 +53,7 @@ function Edit-FalconUser {
 .SYNOPSIS
 Modify the name of a user
 .DESCRIPTION
-Requires 'User Management: Write'.
+Requires 'User management: Write'.
 .PARAMETER FirstName
 First name
 .PARAMETER LastName
@@ -94,7 +94,7 @@ function Get-FalconRole {
 .SYNOPSIS
 Search for user roles and assignments
 .DESCRIPTION
-Requires 'User Management: Read'.
+Requires 'User management: Read'.
 .PARAMETER Id
 Role identifier
 .PARAMETER UserId
@@ -192,7 +192,7 @@ function Get-FalconUser {
 .SYNOPSIS
 Search for users
 .DESCRIPTION
-Requires 'User Management: Read'.
+Requires 'User management: Read'.
 .PARAMETER Id
 User identifier
 .PARAMETER Filter
@@ -302,7 +302,7 @@ function Invoke-FalconUserAction {
 .SYNOPSIS
 Perform an action on a user
 .DESCRIPTION
-Requires 'User Management: Write'.
+Requires 'User management: Write'.
 .PARAMETER Name
 Action name
 .PARAMETER Id
@@ -344,7 +344,7 @@ function New-FalconUser {
 .SYNOPSIS
 Create a user
 .DESCRIPTION
-Requires 'User Management: Write'.
+Requires 'User management: Write'.
 .PARAMETER Username
 Username
 .PARAMETER Firstname
@@ -406,7 +406,7 @@ function Remove-FalconRole {
 .SYNOPSIS
 Remove roles from a user
 .DESCRIPTION
-Requires 'User Management: Write'.
+Requires 'User management: Write'.
 .PARAMETER UserId
 User identifier
 .PARAMETER Cid
@@ -456,7 +456,7 @@ function Remove-FalconUser {
 .SYNOPSIS
 Remove a user
 .DESCRIPTION
-Requires 'User Management: Write'.
+Requires 'User management: Write'.
 .PARAMETER Id
 User identifier
 .LINK

@@ -3,7 +3,7 @@ function Get-FalconDiscoverAzureAccount {
 .SYNOPSIS
 Search for Falcon Discover for Cloud Azure accounts
 .DESCRIPTION
-Requires 'D4C Registration: Read'.
+Requires 'D4C registration: Read'.
 .PARAMETER ScanType
 Scan type
 .PARAMETER Id
@@ -42,7 +42,7 @@ function Get-FalconDiscoverAzureCertificate {
 .SYNOPSIS
 Retrieve the base64 encoded certificate for a Falcon Discover Azure tenant
 .DESCRIPTION
-Requires 'D4C Registration: Read'.
+Requires 'D4C registration: Read'.
 .PARAMETER Refresh
 Refresh certificate [default: false]
 .PARAMETER TenantId
@@ -75,7 +75,7 @@ function New-FalconDiscoverAzureAccount {
 .SYNOPSIS
 Provision Falcon Discover for Cloud Azure accounts
 .DESCRIPTION
-Requires 'D4C Registration: Write'.
+Requires 'D4C registration: Write'.
 .PARAMETER SubscriptionId
 Azure subscription identifier
 .PARAMETER TenantId
@@ -110,7 +110,7 @@ function Receive-FalconDiscoverAzureScript {
 .SYNOPSIS
 Download a Bash script which grants Falcon Discover for Cloud access using Azure Cloud Shell
 .DESCRIPTION
-Requires 'D4C Registration: Read'.
+Requires 'D4C registration: Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER Force
@@ -154,7 +154,7 @@ function Update-FalconDiscoverAzureAccount {
 .SYNOPSIS
 Update the Azure Service Principal for Falcon Discover for Cloud
 .DESCRIPTION
-Requires 'D4C Registration: Write'.
+Requires 'D4C registration: Write'.
 .PARAMETER Id
 Azure client identifier for the associated Service Principal
 .LINK

@@ -3,7 +3,7 @@ function Edit-FalconDeviceControlPolicy {
 .SYNOPSIS
 Modify Falcon Device Control policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Device control policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
 .PARAMETER Id
@@ -140,7 +140,7 @@ function Get-FalconDeviceControlPolicy {
 .SYNOPSIS
 Search for Falcon Device Control policies
 .DESCRIPTION
-Requires 'Device Control Policies: Read'.
+Requires 'Device control policies: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -229,7 +229,7 @@ function Get-FalconDeviceControlPolicyMember {
 .SYNOPSIS
 Search for members of Falcon Device Control policies
 .DESCRIPTION
-Requires 'Device Control Policies: Read'.
+Requires 'Device control policies: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -293,7 +293,7 @@ function Invoke-FalconDeviceControlPolicyAction {
 .SYNOPSIS
 Perform actions on Falcon Device Control policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Device control policies: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER GroupId
@@ -349,7 +349,7 @@ function New-FalconDeviceControlPolicy {
 .SYNOPSIS
 Create Falcon Device Control policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Device control policies: Write'.
 .PARAMETER Array
 An array of policies to create in a single request
 .PARAMETER Name
@@ -437,7 +437,7 @@ function Remove-FalconDeviceControlPolicy {
 .SYNOPSIS
 Remove Falcon Device Control policies
 .DESCRIPTION
-Requires 'Device Control Policies: Write'.
+Requires 'Device control policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -475,7 +475,7 @@ Set Falcon Device Control policy precedence
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
 
-Requires 'Device Control Policies: Write'.
+Requires 'Device control policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

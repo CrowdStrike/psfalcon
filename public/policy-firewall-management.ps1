@@ -3,7 +3,7 @@ function Edit-FalconFirewallPolicy {
 .SYNOPSIS
 Modify Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
 .PARAMETER Id
@@ -78,7 +78,7 @@ function Get-FalconFirewallPolicy {
 .SYNOPSIS
 Search for Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -167,7 +167,7 @@ function Get-FalconFirewallPolicyMember {
 .SYNOPSIS
 Search for Falcon Firewall Management policy members
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -231,7 +231,7 @@ function Invoke-FalconFirewallPolicyAction {
 .SYNOPSIS
 Perform actions on Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER GroupId
@@ -285,7 +285,7 @@ function New-FalconFirewallPolicy {
 .SYNOPSIS
 Create Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Array
 An array of policies to create in a single request
 .PARAMETER Name
@@ -362,7 +362,7 @@ function Remove-FalconFirewallPolicy {
 .SYNOPSIS
 Remove Falcon Firewall Management policies
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -400,7 +400,7 @@ Set Falcon Firewall Management policy precedence
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
 
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id

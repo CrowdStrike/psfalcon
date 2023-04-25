@@ -86,7 +86,7 @@ function Get-FalconStream {
 .SYNOPSIS
 Retrieve event streams
 .DESCRIPTION
-Requires 'Events Streams: Read'.
+Requires 'Event streams: Read'.
 .PARAMETER AppId
 Connection label
 .PARAMETER Format
@@ -169,7 +169,7 @@ function Update-FalconStream {
 .SYNOPSIS
 Refresh an active event stream
 .DESCRIPTION
-Requires 'Events Streams: Read'.
+Requires 'Event streams: Read'.
 .PARAMETER AppId
 Connection label
 .PARAMETER Partition

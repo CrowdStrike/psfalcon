@@ -3,7 +3,7 @@ function Get-FalconRemediation {
 .SYNOPSIS
 Retrieve detail about remediations specified in a Falcon Spotlight vulnerability
 .DESCRIPTION
-Requires 'Spotlight Vulnerabilities: Read'.
+Requires 'Spotlight vulnerabilities: Read'.
 .PARAMETER Id
 Remediation identifier
 .LINK
@@ -52,7 +52,7 @@ function Get-FalconVulnerability {
 .SYNOPSIS
 Search for Falcon Spotlight vulnerabilities
 .DESCRIPTION
-Requires 'Spotlight Vulnerabilities: Read'.
+Requires 'Spotlight vulnerabilities: Read'.
 .PARAMETER Id
 Vulnerability identifier
 .PARAMETER Filter
@@ -127,7 +127,7 @@ function Get-FalconVulnerabilityLogic {
 .SYNOPSIS
 Search for Falcon Spotlight vulnerability evaluation logic
 .DESCRIPTION
-Requires 'Spotlight Vulnerabilities: Read'.
+Requires 'Spotlight vulnerabilities: Read'.
 .PARAMETER Id
 Vulnerability logic identifier
 .PARAMETER Filter

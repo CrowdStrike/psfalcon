@@ -6,7 +6,7 @@ Modify a custom Indicator of Attack rule group
 All fields (plus 'rulegroup_version') are required when making a rule group change. PSFalcon adds missing values
 automatically using data from your existing rule group.
 
-Requires 'Custom IOA Rules: Write'.
+Requires 'Custom IOA rules: Write'.
 .PARAMETER Name
 Rule group name
 .PARAMETER Enabled
@@ -75,7 +75,7 @@ If an existing rule is submitted within 'rule_updates', it will be filtered to t
 'description', 'disposition_id', 'enabled', 'field_values', 'instance_id', 'name', and 'pattern_severity')
 including those under 'field_values' ('name', 'label', 'type' and 'values').
 
-Requires 'Custom IOA Rules: Write'.
+Requires 'Custom IOA rules: Write'.
 .PARAMETER Comment
 Audit log comment
 .PARAMETER RuleUpdate
@@ -132,7 +132,7 @@ function Get-FalconIoaGroup {
 .SYNOPSIS
 Search for custom Indicator of Attack rule groups
 .DESCRIPTION
-Requires 'Custom IOA Rules: Read'.
+Requires 'Custom IOA rules: Read'.
 .PARAMETER Id
 Rule group identifier
 .PARAMETER Filter
@@ -212,7 +212,7 @@ function Get-FalconIoaPlatform {
 .SYNOPSIS
 Search for custom Indicator of Attack platforms
 .DESCRIPTION
-Requires 'Custom IOA Rules: Read'.
+Requires 'Custom IOA rules: Read'.
 .PARAMETER Id
 Platform
 .PARAMETER Limit
@@ -266,7 +266,7 @@ function Get-FalconIoaRule {
 .SYNOPSIS
 Search for custom Indicator of Attack rules
 .DESCRIPTION
-Requires 'Custom IOA Rules: Read'.
+Requires 'Custom IOA rules: Read'.
 .PARAMETER Id
 Rule identifier
 .PARAMETER Filter
@@ -346,7 +346,7 @@ function Get-FalconIoaSeverity {
 .SYNOPSIS
 Search for custom Indicator of Attack severity levels
 .DESCRIPTION
-Requires 'Custom IOA Rules: Read'.
+Requires 'Custom IOA rules: Read'.
 .PARAMETER Id
 Severity identifier
 .PARAMETER Limit
@@ -400,7 +400,7 @@ function Get-FalconIoaType {
 .SYNOPSIS
 Search for custom Indicator of Attack types
 .DESCRIPTION
-Requires 'Custom IOA Rules: Read'.
+Requires 'Custom IOA rules: Read'.
 .PARAMETER Id
 Type identifier
 .PARAMETER Limit
@@ -454,7 +454,7 @@ function New-FalconIoaGroup {
 .SYNOPSIS
 Create a custom Indicator of Attack rule group
 .DESCRIPTION
-Requires 'Custom IOA Rules: Write'.
+Requires 'Custom IOA rules: Write'.
 .PARAMETER Name
 Rule group name
 .PARAMETER Platform
@@ -500,7 +500,7 @@ Create a custom Indicator of Attack rule within a rule group
 'RuleTypeId' and 'DispositionId' values can be found using 'Get-FalconIoaType -Detailed' under the 'id' and
 'disposition_map' properties.
 
-Requires 'Custom IOA Rules: Write'.
+Requires 'Custom IOA rules: Write'.
 .PARAMETER Name
 Rule name
 .PARAMETER PatternSeverity
@@ -579,7 +579,7 @@ function Remove-FalconIoaGroup {
 .SYNOPSIS
 Remove custom Indicator of Attack rule groups
 .DESCRIPTION
-Requires 'Custom IOA Rules: Write'.
+Requires 'Custom IOA rules: Write'.
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -618,7 +618,7 @@ function Remove-FalconIoaRule {
 .SYNOPSIS
 Remove custom Indicator of Attack rules from rule groups
 .DESCRIPTION
-Requires 'Custom IOA Rules: Write'.
+Requires 'Custom IOA rules: Write'.
 .PARAMETER Comment
 Audit log comment
 .PARAMETER RuleGroupId
@@ -664,7 +664,7 @@ function Test-FalconIoaRule {
 .SYNOPSIS
 Validate fields and patterns of a custom Indicator of Attack rule
 .DESCRIPTION
-Requires 'Custom IOA Rules: Write'.
+Requires 'Custom IOA rules: Write'.
 .PARAMETER Field
 An array of rule properties
 .LINK

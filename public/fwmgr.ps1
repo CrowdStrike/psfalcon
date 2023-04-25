@@ -13,7 +13,7 @@ When adding a rule to a rule group,the required rule fields must be included alo
 rule properties and in precedence order within 'rule_ids') to establish proper placement of the rule within the
 rule group. Simlarly, the value 'null' must be placed within 'rule_versions' in precedence order.
 
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER DiffOperation
 An array of hashtables containing rule or rule group changes
 .PARAMETER Comment
@@ -119,7 +119,7 @@ function Edit-FalconFirewallLocation {
 .SYNOPSIS
 Modify Falcon Firewall Management locations
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Id
 Location identifier
 .PARAMETER Name
@@ -224,7 +224,7 @@ function Edit-FalconFirewallLocationSetting {
 .SYNOPSIS
 Modify Falcon Firewall Management settings for all locations
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Cid
 Customer identifier
 .PARAMETER IcmpInterval
@@ -281,7 +281,7 @@ your existing policy.
 
 If adding or removing rule groups, all rule groups must be supplied in precedence order.
 
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER PlatformId
 Operating System platform identifier
 .PARAMETER Enforce
@@ -370,7 +370,7 @@ function Get-FalconFirewallEvent {
 .SYNOPSIS
 Search for Falcon Firewall Management events
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Event identifier
 .PARAMETER Filter
@@ -441,7 +441,7 @@ function Get-FalconFirewallField {
 .SYNOPSIS
 Search for Falcon Firewall Management fields
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Field identifier
 .PARAMETER PlatformId
@@ -500,7 +500,7 @@ function Get-FalconFirewallGroup {
 .SYNOPSIS
 Search for Falcon Firewall Management rule groups
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Rule group identifier
 .PARAMETER Filter
@@ -572,7 +572,7 @@ function Get-FalconFirewallLocation {
 .SYNOPSIS
 Search for Falcon Firewall Management locations
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Location identifier
 .PARAMETER Filter
@@ -642,7 +642,7 @@ function Get-FalconFirewallPlatform {
 .SYNOPSIS
 Search for Falcon Firewall Management platforms
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Platform identifier
 .PARAMETER Limit
@@ -696,7 +696,7 @@ function Get-FalconFirewallRule {
 .SYNOPSIS
 Search for Falcon Firewall Management rules
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Rule identifier
 .PARAMETER PolicyId
@@ -795,7 +795,7 @@ function Get-FalconFirewallSetting {
 .SYNOPSIS
 Retrieve general settings for a Falcon Firewall Management policy
 .DESCRIPTION
-Requires 'Firewall Management: Read'.
+Requires 'Firewall management: Read'.
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -830,7 +830,7 @@ function New-FalconFirewallGroup {
 .SYNOPSIS
 Create Falcon Firewall Management rule groups
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Name
 Rule group name
 .PARAMETER Enabled
@@ -920,7 +920,7 @@ function New-FalconFirewallLocation {
 .SYNOPSIS
 Create Falcon Firewall Management locations
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER CloneId
 Clone an existing location
 .PARAMETER AddFwRule
@@ -1030,7 +1030,7 @@ function Remove-FalconFirewallGroup {
 .SYNOPSIS
 Remove Falcon Firewall Management rule groups
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -1069,7 +1069,7 @@ function Remove-FalconFirewallLocation {
 .SYNOPSIS
 Remove Falcon Firewall Management locations
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Id
 Location identifier
 .LINK
@@ -1104,7 +1104,7 @@ function Set-FalconFirewallLocationPrecedence {
 .SYNOPSIS
 Set Falcon Firewall Management location precedence
 .DESCRIPTION
-Requires 'Firewall Management: Write'.
+Requires 'Firewall management: Write'.
 .PARAMETER Cid
 Customer identifier
 .PARAMETER Comment

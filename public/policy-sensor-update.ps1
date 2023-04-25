@@ -3,7 +3,7 @@ function Edit-FalconSensorUpdatePolicy {
 .SYNOPSIS
 Modify Sensor Update policies
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
+Requires 'Sensor update policies: Write'.
 .PARAMETER Array
 An array of policies to modify in a single request
 .PARAMETER Id
@@ -97,7 +97,7 @@ function Get-FalconBuild {
 .SYNOPSIS
 Retrieve Falcon Sensor builds for assignment in Sensor Update policies
 .DESCRIPTION
-Requires 'Sensor Update Policies: Read'.
+Requires 'Sensor update policies: Read'.
 .PARAMETER Platform
 Operating system platform
 .LINK
@@ -123,7 +123,7 @@ function Get-FalconKernel {
 .SYNOPSIS
 Search for Falcon kernel compatibility information for Sensor builds
 .DESCRIPTION
-Requires 'Sensor Update Policies: Read'.
+Requires 'Sensor update policies: Read'.
 .PARAMETER Field
 Return values for a specific field
 .PARAMETER Filter
@@ -190,7 +190,7 @@ function Get-FalconSensorUpdatePolicy {
 .SYNOPSIS
 Search for Sensor Update policies
 .DESCRIPTION
-Requires 'Sensor Update Policies: Read'.
+Requires 'Sensor update policies: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -275,7 +275,7 @@ function Get-FalconSensorUpdatePolicyMember {
 .SYNOPSIS
 Search for members of Sensor Update policies
 .DESCRIPTION
-Requires 'Sensor Update Policies: Read'.
+Requires 'Sensor update policies: Read'.
 .PARAMETER Id
 Policy identifier
 .PARAMETER Filter
@@ -339,7 +339,7 @@ function Get-FalconUninstallToken {
 .SYNOPSIS
 Retrieve an uninstallation or maintenance token
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write', plus related permission(s) for 'Include' selection(s).
+Requires 'Sensor update policies: Write', plus related permission(s) for 'Include' selection(s).
 .PARAMETER AuditMessage
 Audit log comment
 .PARAMETER Include
@@ -392,7 +392,7 @@ function Invoke-FalconSensorUpdatePolicyAction {
 .SYNOPSIS
 Perform actions on Sensor Update policies
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
+Requires 'Sensor update policies: Write'.
 .PARAMETER Name
 Action to perform
 .PARAMETER GroupId
@@ -446,7 +446,7 @@ function New-FalconSensorUpdatePolicy {
 .SYNOPSIS
 Create Sensor Update policies
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
+Requires 'Sensor update policies: Write'.
 .PARAMETER Array
 An array of policies to create in a single request
 .PARAMETER PlatformName
@@ -542,7 +542,7 @@ function Remove-FalconSensorUpdatePolicy {
 .SYNOPSIS
 Remove Sensor Update policies
 .DESCRIPTION
-Requires 'Sensor Update Policies: Write'.
+Requires 'Sensor update policies: Write'.
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -580,7 +580,7 @@ Set Sensor Update policy precedence
 All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to define
 policy precedence.
 
-Requires 'Sensor Update Policies: Write'.
+Requires 'Sensor update policies: Write'.
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Id
