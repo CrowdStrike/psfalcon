@@ -1,7 +1,7 @@
 function Get-FalconHorizonIoaEvent {
 <#
 .SYNOPSIS
-Search for Falcon Horizon Indicator of Attack events
+Retrieve Falcon Horizon Indicator of Attack events
 .DESCRIPTION
 Requires 'CSPM Registration: Read'.
 .PARAMETER CloudPlatform
@@ -95,7 +95,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
 function Get-FalconHorizonIoaUser {
 <#
 .SYNOPSIS
-Search for Falcon Horizon Indicator of Attack users
+Retrieve Falcon Horizon Indicator of Attack users
 .DESCRIPTION
 Requires 'CSPM Registration: Read'.
 .PARAMETER PolicyId
