@@ -579,10 +579,10 @@ function Invoke-Falcon {
                                     $_.Result.Content).ReadAsStringAsync().Result).meta.pagination
                                 Write-Request $Clone $_ -OutVariable Output
                                 [int]$Int += ($Output | Measure-Object).Count
-                                if ($Object.total) {
+                                if ($null -ne $Object.total) {
                                     Write-Log $Command "Retrieved $Int of $($Object.total)"
                                 }
-                            } elseif ($Object.total) {
+                            } elseif ($null -ne $Object.total) {
                                 [string]$Message = "[$Command] Total results limited by API '$(
                                     ($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname,
                                     $null)' ($Int of $($Object.total))."
@@ -591,7 +591,7 @@ function Invoke-Falcon {
                         }
                     }
                 }
-            } while ( $Object.total -and $Int -lt $Object.total )
+            } while ($null -ne $Object.total -and $Int -lt $Object.total)
         }
         function Set-LoopParam ([hashtable]$Splat,[string[]]$Next) {
             $Clone = $Splat.Clone()
@@ -705,7 +705,7 @@ function Invoke-Falcon {
                         # Capture pagination for 'Total' and 'All'
                         $Pagination = (ConvertFrom-Json (
                             $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                        if ($Pagination.total -and $_.Total -eq $true) {
+                        if ($null -ne $Pagination.total -and $_.Total -eq $true) {
                             # Output 'Total'
                             $Pagination.total
                         } else {
