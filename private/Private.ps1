@@ -596,10 +596,7 @@ function Invoke-Falcon {
         function Set-LoopParam ([hashtable]$Splat,[string[]]$Next) {
             $Clone = $Splat.Clone()
             $Clone.Endpoint = $Splat.Endpoint.Clone()
-            $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match '/detects/entities/iom/v1') {
-                # Remove all query parameters and add 'next_token' for pagination of 'Get-FalconHorizonIom'
-                $Clone.Endpoint.Path -replace '\?.+$',"?$(($Next -join '='))"
-            } elseif ($Clone.Endpoint.Path -match "$($Next[0])=\d{1,}") {
+            $Clone.Endpoint.Path = if ($Clone.Endpoint.Path -match "$($Next[0])=\d{1,}") {
                 # If offset was input, continue from that value
                 $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
                 $Next[1] += [int]$Current.Split('=')[-1]
