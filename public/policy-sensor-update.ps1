@@ -509,11 +509,15 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
                 # Select allowed fields, when populated
                 [string[]]$Select = @('name','description','platform_name','settings').foreach{
                     if ($_ -eq 'settings') {
-                        # Filter 'settings'
+                        if ($i.settings.scheduler -and $i.settings.scheduler.enabled -eq $false) {
+                            # Remove 'scheduler' if disabled
+                            $i.settings.PSObject.Properties.Remove('scheduler')
+                        }
+                        # Filter 'settings' to remove empty values
                         $i.settings = $i.settings | Select-Object @($i.settings.PSObject.Properties |
                             Where-Object { $null -ne $_.Value -and $_.Value -ne '' }).Name
                         if ($i.settings.variants) {
-                            # Filter 'variants'
+                            # Filter 'variants' to remove empty values
                             $i.settings.variants = @($i.settings.variants).foreach{
                                 $_ | Select-Object @($_.PSObject.Properties | Where-Object {
                                     $null -ne $_.Value -and $_.Value -ne '' }).Name
