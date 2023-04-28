@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.2.4'
+    ModuleVersion        = '2.2.5'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -10,7 +10,6 @@
     HelpInfoURI          = 'https://github.com/CrowdStrike/psfalcon/wiki'
     PowerShellVersion    = '5.1'
     RequiredAssemblies   = @('System.Net.Http')
-    ScriptsToProcess     = @('Class/Class.ps1')
     FunctionsToExport    = @(
       # alerts
       'Get-FalconAlert'
@@ -63,8 +62,12 @@
       'Receive-FalconDiscoverGcpScript'
 
       # container-security
+      'Edit-FalconContainerRegistry'
       'Get-FalconContainerAssessment'
+      'Get-FalconContainerRegistry'
       'Get-FalconContainerSensor'
+      'New-FalconContainerRegistry'
+      'Remove-FalconContainerRegistry'
       'Remove-FalconRegistryCredential'
       'Request-FalconRegistryCredential'
       'Remove-FalconContainerImage'
@@ -90,6 +93,10 @@
 
       # discover
       'Get-FalconAsset'
+      'Get-FalconDiscoverNetwork'
+      'Get-FalconDiscoverRule'
+      'Get-FalconDiscoverScan'
+      'Get-FalconDiscoverScanner'
 
       # enrollments
       'Invoke-FalconMobileAction'
@@ -109,22 +116,34 @@
       'Get-FalconSubmissionQuota'
       'New-FalconSubmission'
       'Receive-FalconArtifact'
+      'Receive-FalconMemoryDump'
       'Remove-FalconReport'
+
+      # fdr
+      'Get-FalconReplicatorEvent'
+      'Get-FalconReplicatorField'
+      'Get-FalconReplicatorSchema'
 
       # filevantage
       'Get-FalconFimChange'
 
       # fwmgr
       'Edit-FalconFirewallGroup'
+      'Edit-FalconFirewallLocation'
+      'Edit-FalconFirewallLocationSetting'
       'Edit-FalconFirewallSetting'
       'Get-FalconFirewallEvent'
       'Get-FalconFirewallField'
       'Get-FalconFirewallGroup'
+      'Get-FalconFirewallLocation'
       'Get-FalconFirewallPlatform'
       'Get-FalconFirewallRule'
       'Get-FalconFirewallSetting'
       'New-FalconFirewallGroup'
+      'New-FalconFirewallLocation'
       'Remove-FalconFirewallGroup'
+      'Remove-FalconFirewallLocation'
+      'Set-FalconFirewallLocationPrecedence'
       'Test-FalconFirewallPath'
 
       # identity-protection
@@ -150,6 +169,7 @@
       'Get-FalconIndicator'
       'Get-FalconIntel'
       'Get-FalconRule'
+      'Receive-FalconAttck'
       'Receive-FalconIntel'
       'Receive-FalconRule'
 
@@ -193,10 +213,15 @@
       # kubernetes-protection
       'Edit-FalconContainerAwsAccount'
       'Edit-FalconContainerAzureAccount'
+      'Get-FalconContainerAccount'
       'Get-FalconContainerAwsAccount'
       'Get-FalconContainerAzureAccount'
+      'Get-FalconContainerAzureConfig'
+      'Get-FalconContainerAzureScript'
+      'Get-FalconContainerAzureTenant'
       'Get-FalconContainerCloud'
       'Get-FalconContainerCluster'
+      'Get-FalconContainerScript'
       'Invoke-FalconContainerScan'
       'New-FalconContainerAwsAccount'
       'New-FalconContainerAzureAccount'
@@ -486,7 +511,7 @@
             LicenseUri   = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
             ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
             IconUri      = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
-            ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.4'
+            ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.5'
         }
     }
 }
