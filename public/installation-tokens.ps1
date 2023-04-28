@@ -216,7 +216,7 @@ function Get-FalconInstallTokenSetting {
 .SYNOPSIS
 Retrieve installation token settings
 .DESCRIPTION
-Returns the maximum number of allowed installation tokens,and whether or not they are required for
+Returns the maximum number of allowed installation tokens, and whether or not they are required for
 installation of the Falcon sensor.
 
 Requires 'Installation tokens: Read'.
@@ -237,7 +237,7 @@ Requires 'Installation tokens: Write'.
 .PARAMETER Label
 Installation token label
 .PARAMETER ExpiresTimestamp
-Installation token expiration time (RFC3339),or 'null'
+Installation token expiration time (RFC3339), or 'null'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconInstallToken
 #>
