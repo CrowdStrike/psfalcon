@@ -512,10 +512,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
                 'moval of the Falcon sensor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or zyp' +
                 'per must be present to begin removal"; fi'
             Mac = $null
-            <#
-            'sudo /Applications/Falcon.app/Contents/Resources/falconctl uninstall'
-            'sudo /Applications/Falcon.app/Contents/Resources/falconctl uninstall --maintenance-token $1'
-            #>
             Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
                 're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
                 'se { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $' +
