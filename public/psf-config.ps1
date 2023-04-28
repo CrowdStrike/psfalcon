@@ -465,7 +465,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                     throw "Failed to retrieve available sensor builds for '$(
                         $Pair.Key)' import. Verify 'Sensor update policies: Write' permission."
                 }
-                foreach ($Item in @($Pair.Value.Import + $Pair.Value.Modify)) {
+                foreach ($Item in @(@($Pair.Value.Import) + @($Pair.Value.Modify))) {
                     # Update tagged builds with current tagged build versions
                     if ($Item.settings.build -match '^\d+\|') {
                         $Tag = ($Item.settings.build -split '\|',2)[-1]
