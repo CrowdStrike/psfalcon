@@ -156,16 +156,18 @@ function Get-FalconCve {
 Search for Falcon Intelligence CVE reports
 .DESCRIPTION
 Requires 'Vulnerabilities (Falcon Intelligence): Read'.
+.PARAMETER Id
+CVE identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
 .PARAMETER Query
 Perform a generic substring search across available fields
-.PARAMETER Offset
-Position to begin retrieving results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Filter
-Falcon Query Language expression to limit results
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
