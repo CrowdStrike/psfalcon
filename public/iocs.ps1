@@ -4,6 +4,8 @@ function Edit-FalconIoc {
 Modify custom indicators
 .DESCRIPTION
 Requires 'IOC Manager APIs: Write'.
+.PARAMETER Array
+An array of indicators to modify in a single request
 .PARAMETER Action
 Action to perform when a host observes the indicator
 .PARAMETER Platform
@@ -41,54 +43,58 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:patch',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
+        [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
+        [ValidateScript({
+            foreach ($Object in $_) {
+                $Param = @{
+                    Object = $Object
+                    Command = 'Edit-FalconIoc'
+                    Endpoint = '/iocs/entities/indicators/v1:patch'
+                    Required = @('id')
+                    Content = @('action','platforms','severity')
+                    Pattern = @('expiration','host_groups','id')
+                    Format = @{ host_groups = 'HostGroup' }
+                }
+                Confirm-Parameter @Param
+            }
+        })]
+        [Alias('indicators')]
+        [object[]]$Array,
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=1)]
         [string]$Action,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=2)]
         [Alias('Platforms')]
         [string[]]$Platform,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=3)]
         [ValidateRange(1,256)]
         [string]$Source,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=4)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=4)]
         [string]$Severity,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=5)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=5)]
         [string]$Description,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=6)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=6)]
         [Alias('metadata')]
         [string]$Filename,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=7)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=7)]
         [Alias('tags')]
         [string[]]$Tag,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=8)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=8)]
         [ValidateSet('no_action','allow','detect','prevent',IgnoreCase=$false)]
         [Alias('mobile_action')]
         [string]$MobileAction,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=9)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=9)]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [Alias('host_groups','HostGroups')]
         [string[]]$HostGroup,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=10)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=10)]
         [Alias('applied_globally')]
         [boolean]$AppliedGlobally,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=11)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=11)]
         [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
         [string]$Expiration,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=12)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=12)]
         [string]$Comment,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',ValueFromPipelineByPropertyName,
-            Position=13)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=13)]
         [Alias('from_parent')]
         [boolean]$FromParent,
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=14)]
@@ -97,31 +103,42 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
         [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=15)]
         [Alias('ignore_warnings','IgnoreWarnings')]
         [boolean]$IgnoreWarning,
-        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-            Position=15)]
+        [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Mandatory,Position=16)]
         [ValidatePattern('^[A-Fa-f0-9]{64}$')]
         [string]$Id
     )
     begin {
         $Param = @{
             Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
+            Endpoint = '/iocs/entities/indicators/v1:patch'
             Format = @{
                 Query = @('retrodetects','ignore_warnings')
                 Body = @{
-                    root = @('comment')
-                    indicators = @('id','tags','applied_globally','expiration','description','source','action',
-                        'metadata','host_groups','severity','platforms','mobile_action','from_parent')
+                    root = @('comment','indicators')
+                    indicators = @('action','applied_globally','description','expiration','from_parent',
+                        'host_groups','id','metadata','mobile_action','platforms','severity','source','tags')
                 }
             }
+            Max = 2000
         }
+        [System.Collections.Generic.List[object]]$List = @()
     }
     process {
-        if ($PSBoundParameters.Filename) {
-            $PSBoundParameters['metadata'] = @{ filename = $PSBoundParameters.Filename }
-            [void]$PSBoundParameters.Remove('Filename')
+        if ($Array) {
+            @($Array).foreach{ $List.Add($_) }
+        } else {
+            if ($PSBoundParameters.Filename) {
+                $PSBoundParameters['metadata'] = @{ filename = $PSBoundParameters.Filename }
+                [void]$PSBoundParameters.Remove('Filename')
+            }
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+    }
+    end {
+        if ($List) {
+            $PSBoundParameters['Array'] = @($List)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
+        }
     }
 }
 function Get-FalconIoc {
@@ -399,7 +416,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
 #>
     [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:post',SupportsShouldProcess)]
     param(
-        [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
+        [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
         [ValidateScript({
             foreach ($Object in $_) {
                 $Param = @{
@@ -477,6 +494,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
                         'source','host_groups','severity','action','platforms','mobile_action')
                 }
             }
+            Max = 2000
         }
         [System.Collections.Generic.List[object]]$List = @()
     }
@@ -495,10 +513,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
     }
     end {
         if ($List) {
-            for ($i = 0; $i -lt $List.Count; $i += 100) {
-                $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
-                Invoke-Falcon @Param -Inputs $PSBoundParameters
-            }
+            $PSBoundParameters['Array'] = @($List)
+            Invoke-Falcon @Param -Inputs $PSBoundParameters
         }
     }
 }
