@@ -19,17 +19,19 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
 #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post',
+        SupportsShouldProcess)]
     param(
-        [Parameter(Position=1)]
+        [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post',Position=1)]
         [int32]$Days,
-        [Parameter(Position=2)]
+        [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post',Position=2)]
         [ValidateSet('agent_version','cid','external_ip','first_seen','host_hidden_status','hostname',
             'last_seen','local_ip','mac_address','os_build','os_version','platform_name','product_type',
             'product_type_desc','reduced_functionality_mode','serial_number','system_manufacturer',
             'system_product_name','tags',IgnoreCase=$false)]
         [string[]]$Include,
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Position=3)]
+        [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post',
+            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
         [string[]]$HostId
     )
     begin {
