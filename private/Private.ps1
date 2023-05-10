@@ -946,9 +946,7 @@ function Start-RtrUpdate {
 function Stop-RtrUpdate {
     [CmdletBinding()]
     [OutputType([void])]
-    param(
-        [int32]$Int
-    )
+    param([int32]$Int)
     process {
         if ($Int) {
             $Job = Get-Job -Id $Int -EA 0
@@ -976,10 +974,7 @@ function Stop-RtrUpdate {
 function Test-FqlStatement {
     [CmdletBinding()]
     [OutputType([boolean])]
-    param(
-        [Parameter(Mandatory)]
-        [string]$String
-    )
+    param([Parameter(Mandatory)][string]$String)
     begin {
         $Pattern = [regex]("(?<FqlProperty>[\w\.]+):(?<FqlOperator>(!~?|~|(>|<)=?|\*)?)" +
             "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,'`":]+)")
@@ -1017,10 +1012,7 @@ function Test-OutFile {
 function Test-RegexValue {
     [CmdletBinding()]
     [OutputType([string])]
-    param(
-        [Parameter(Mandatory)]
-        [string]$String
-    )
+    param([Parameter(Mandatory)][string]$String)
     begin {
         $RegEx = @{
             md5 = [regex]'^[A-Fa-f0-9]{32}$'
@@ -1071,10 +1063,7 @@ function Wait-RetryAfter {
 function Wait-RtrCommand {
     [CmdletBinding()]
     [OutputType([object])]
-    param(
-        [object]$Object,
-        [string]$String
-    )
+    param([object]$Object,[string]$String)
     begin { $Confirm = $String -replace '^Invoke','Confirm' }
     process {
         Start-Sleep -Seconds 5
@@ -1094,10 +1083,7 @@ function Wait-RtrCommand {
 function Wait-RtrGet {
     [CmdletBinding()]
     [OutputType([object])]
-    param(
-        [object]$Object,
-        [string]$String
-    )
+    param([object]$Object,[string]$String)
     process {
         Start-Sleep -Seconds 5
         if ($Object.batch_get_cmd_req_id) {
