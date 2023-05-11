@@ -1,6 +1,6 @@
 @{
     RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.2.5'
+    ModuleVersion        = '2.2.6'
     CompatiblePSEditions = @('Desktop','Core')
     GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
     Author               = 'Brendan Kremian'
@@ -60,6 +60,9 @@
       'Get-FalconDiscoverGcpAccount'
       'New-FalconDiscoverGcpAccount'
       'Receive-FalconDiscoverGcpScript'
+
+      # configuration-assessment
+      'Get-FalconConfigAssessment'
 
       # container-security
       'Edit-FalconContainerRegistry'
