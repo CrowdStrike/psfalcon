@@ -59,10 +59,10 @@ Vulnerability identifier
 Falcon Query Language expression to limit results
 .PARAMETER Facet
 Include additional properties
-.PARAMETER Limit
-Maximum number of results per request
 .PARAMETER Sort
 Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
 .PARAMETER After
 Pagination token to retrieve the next set of results
 .PARAMETER Detailed
