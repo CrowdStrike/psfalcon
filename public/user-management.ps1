@@ -101,6 +101,8 @@ Role identifier
 User identifier
 .PARAMETER Cid
 Customer identifier
+.PARAMETER DirectOnly
+Display direct user role grants
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -120,19 +122,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
         SupportsShouldProcess)]
     param(
         [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+            ValueFromPipelineByPropertyName,ValueFromPipeline)]
         [Alias('ids','roles','role_id')]
         [string[]]$Id,
-        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=1)]
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory)]
+        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+        [Alias('user_uuid','uuid')]
+        [string]$UserId,
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=1)]
         [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Position=2)]
+        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
         [ValidatePattern('^[a-fA-F0-9]{32}$')]
         [string]$Cid,
-        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory,Position=1)]
-        [Alias('user_uuid','uuid')]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [string]$UserId,
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
+        [Alias('direct_only')]
+        [boolean]$DirectOnly,
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=3)]
         [ValidateScript({ Test-FqlStatement $_ })]
         [string]$Filter,
@@ -143,11 +147,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=5)]
         [ValidateRange(1,500)]
         [int]$Limit,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=6)]
+        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
         [string]$Offset,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=7)]
-        [Alias('direct_only')]
-        [boolean]$DirectOnly,
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
         [switch]$All,
         [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
@@ -164,16 +165,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     process {
         if ($Id) {
             @($Id).foreach{
-                if ($_ -match '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$') {
+                if ($_ -match '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$') {
                     Get-FalconRole -UserId $_
-                } elseif ($_ -match '^[a-fA-F0-9]{32}$') {
-                    Get-FalconRole -Cid $_
                 } else {
-                    if ($_ -notmatch '^\w+') {
-                        Write-Error "'$_' is not a valid user role."
-                    } else {
-                        $List.Add($_)
-                    }
+                    $List.Add($_)
                 }
             }
         } else {
@@ -233,7 +228,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
         [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=3)]
         [ValidateRange(1,500)]
         [int]$Limit,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=4)]
+        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
         [int]$Offset,
         [Parameter(ParameterSetName='Username',Mandatory)]
         [ValidateScript({
