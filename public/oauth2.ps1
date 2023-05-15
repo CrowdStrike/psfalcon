@@ -143,49 +143,54 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
             Register-FalconEventCollector @Collector
         }
         if ($Script:Falcon.ClientId -and $Script:Falcon.ClientSecret) {
-            $Param = @{
-                Path = $Script:Falcon.Hostname,'oauth2/token' -join '/'
-                Method = 'post'
-                Headers = @{
-                    Accept = 'application/json'
-                    ContentType = 'application/x-www-form-urlencoded'
-                }
-                Body = "client_id=$($Script:Falcon.ClientId)&client_secret=$($Script:Falcon.ClientSecret)"
-            }
-            if ($Script:Falcon.MemberCid) { $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)" }
-            $Request = $Script:Falcon.Api.Invoke($Param)
-            if ($Request.Result) {
-                $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
-                $Redirect = switch ($Region) {
-                    # Update ApiClient hostname if redirected
-                    'us-1' { 'https://api.crowdstrike.com' }
-                    'us-2' { 'https://api.us-2.crowdstrike.com' }
-                    'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
-                    'eu-1' { 'https://api.eu-1.crowdstrike.com' }
-                }
-                if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
-                    Write-Log 'Request-FalconToken' "Redirected to '$Region'"
-                    $Script:Falcon.Hostname = $Redirect
-                }
-                $Result = Write-Result $Request
-                if ($Result.token_type -and $Result.access_token -and $Result.expires_in) {
-                    # Cache access token in ApiClient
-                    [string]$Token = $Result.token_type,$Result.access_token -join ' '
-                    if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
-                        $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization',$Token)
-                    } else {
-                        $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
+            try {
+                $Param = @{
+                    Path = $Script:Falcon.Hostname,'oauth2/token' -join '/'
+                    Method = 'post'
+                    Headers = @{
+                        Accept = 'application/json'
+                        ContentType = 'application/x-www-form-urlencoded'
                     }
-                    $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
-                    Write-Log 'Request-FalconToken' "Authorized until: $($Script:Falcon.Expiration)"
-                } elseif (@(308,429) -contains $Request.Result.StatusCode.GetHashCode()) {
-                    # Retry token request when rate limited or unable to automatically follow redirection
-                    & $MyInvocation.MyCommand.Name
+                    Body = "client_id=$($Script:Falcon.ClientId)&client_secret=$($Script:Falcon.ClientSecret)"
                 }
-            } else {
+                if ($Script:Falcon.MemberCid) { $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)" }
+                $Request = $Script:Falcon.Api.Invoke($Param)
+                if ($Request.Result) {
+                    $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
+                    $Redirect = switch ($Region) {
+                        # Update ApiClient hostname if redirected
+                        'us-1' { 'https://api.crowdstrike.com' }
+                        'us-2' { 'https://api.us-2.crowdstrike.com' }
+                        'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+                        'eu-1' { 'https://api.eu-1.crowdstrike.com' }
+                    }
+                    if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
+                        Write-Log 'Request-FalconToken' "Redirected to '$Region'"
+                        $Script:Falcon.Hostname = $Redirect
+                    }
+                    if (@(308,429) -contains $Request.Result.StatusCode.GetHashCode()) {
+                        # Retry token request when rate limited or unable to automatically follow redirection
+                        & $MyInvocation.MyCommand.Name
+                    } else {
+                        $Result = Write-Result (ConvertFrom-Json (
+                            $Request.Result.Content).ReadAsStringAsync().Result)
+                        if ($Result.token_type -and $Result.access_token -and $Result.expires_in) {
+                            # Cache access token in ApiClient
+                            [string]$Token = $Result.token_type,$Result.access_token -join ' '
+                            if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization) {
+                                $Script:Falcon.Api.Client.DefaultRequestHeaders.Add('Authorization',$Token)
+                            } else {
+                                $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization = $Token
+                            }
+                            $Script:Falcon.Expiration = (Get-Date).AddSeconds($Result.expires_in)
+                            Write-Log 'Request-FalconToken' "Authorized until: $($Script:Falcon.Expiration)"
+                        }
+                    }
+                }
+            } catch {
                 @('ClientId','ClientSecret','MemberCid').foreach{ [void]$Script:Falcon.Remove($_) }
                 [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
-                throw 'Authorization token request failed.'
+                throw $_
             }
         } else {
             throw 'Missing required credentials.'
