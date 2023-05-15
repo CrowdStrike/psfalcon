@@ -573,20 +573,12 @@ function Invoke-Falcon {
                     [string]$Target = New-ShouldMessage $Clone.Endpoint
                     if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
                         $Script:Falcon.Api.Invoke($Clone.Endpoint) | ForEach-Object {
-                            if ($_.Result.Content) {
-                                # Output result, update pagination and received count
-                                $Object = (ConvertFrom-Json (
-                                    $_.Result.Content).ReadAsStringAsync().Result).meta.pagination
-                                Write-Request $Clone $_ -OutVariable Output
-                                [int]$Int += ($Output | Measure-Object).Count
-                                if ($null -ne $Object.total) {
-                                    Write-Log $Command "Retrieved $Int of $($Object.total)"
-                                }
-                            } elseif ($null -ne $Object.total) {
-                                [string]$Message = "[$Command] Total results limited by API '$(
-                                    ($Clone.Endpoint.Path).Split('?')[0] -replace $Script:Falcon.Hostname,
-                                    $null)' ($Int of $($Object.total))."
-                                $PSCmdlet.WriteError($Message)
+                            # Output result, update pagination and received count
+                            $Object = $_.meta.pagination
+                            Write-Request $Clone $_ -OutVariable Output
+                            [int]$Int += ($Output | Measure-Object).Count
+                            if ($null -ne $Object.total) {
+                                Write-Log $Command "Retrieved $Int of $($Object.total)"
                             }
                         }
                     }
@@ -698,10 +690,9 @@ function Invoke-Falcon {
                     } elseif ($Request -and $RawOutput) {
                         # Return result if 'RawOutput' is defined
                         $Request
-                    } elseif ($Request.Result.Content) {
+                    } elseif ($Request) {
                         # Capture pagination for 'Total' and 'All'
-                        $Pagination = (ConvertFrom-Json (
-                            $Request.Result.Content).ReadAsStringAsync().Result).meta.pagination
+                        $Pagination = $Request.meta.pagination
                         if ($null -ne $Pagination.total -and $_.Total -eq $true) {
                             # Output 'Total'
                             $Pagination.total
@@ -1116,22 +1107,11 @@ function Wait-RtrGet {
 }
 function Write-Result {
     [CmdletBinding()]
-    param([object]$Request)
+    param([object]$Json)
     process {
-        # Capture result content
-        $Result = if ($Request.Result.Content) { ($Request.Result.Content).ReadAsStringAsync().Result }
-        [string]$TraceId = if ($Request.Result.Headers) {
-            # Capture trace_id for error messages
-            $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Traceid' }).Value
-        }
-        # Convert content from Json
-        $Json = if ($Result -and $Request.Result.Content.Headers.ContentType -eq 'application/json' -or
-        $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
-            ConvertFrom-Json $Result
-        }
         if ($Json) {
             if ($Json.meta) {
-                # Output 'meta' to verbose stream
+                # Output 'meta' to verbose stream and capture 'trace_id'
                 $Message = (@($Json.meta.PSObject.Properties).foreach{
                     if ($_.Name -eq 'pagination') {
                         @($_.Value.PSObject.Properties).foreach{
@@ -1152,7 +1132,7 @@ function Write-Result {
                 $PSCmdlet.WriteError(
                     [System.Management.Automation.ErrorRecord]::New(
                         [Exception]::New((ConvertTo-Json $_.Value -Compress)),
-                        $TraceId,
+                        $Json.meta.trace_id,
                         [System.Management.Automation.ErrorCategory]::InvalidResult,
                         $Request
                     )
@@ -1180,12 +1160,7 @@ function Write-Result {
                     $Json.$FieldList
                 }
             }
-        } else {
-            # Output non-Json content
-            $Result
         }
-        # Check for rate limiting
-        Wait-RetryAfter $Request
     }
 }
 function Write-Log {
