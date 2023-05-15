@@ -102,6 +102,8 @@ class ApiClient {
             }
         } catch {
             throw $_
+        } finally {
+            $this.Wait($Request)
         }
         return $Output
     }
@@ -125,7 +127,7 @@ class ApiClient {
                     $Item.attributes[$_.Name] = $_.Value
                 }
             } elseif ($Object.Content) {
-                $Item.attributes['StringContent'] = $Object.Content.ReadAsStringAsync().Result
+                $Item.attributes['Content'] = $Object.Content.ReadAsStringAsync().Result
             }
         }
         $Job = @{
@@ -191,5 +193,18 @@ class ApiClient {
     }
     [void] Verbose([string]$Function,[string]$String) {
         Write-Verbose ((Get-Date -Format 'HH:mm:ss'),"[$Function]",$String -join ' ')
+    }
+    [void] Wait([System.Net.Http.HttpResponseMessage]$Object) {
+        if ($Object.Result -and $Object.Result.StatusCode -and $Object.Result.StatusCode.GetHashCode() -eq
+        429 -and $Object.Result.RequestMessage.RequestUri.AbsolutePath -ne '/oauth2/token') {
+            $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(
+                ($Object.Result.Headers.GetEnumerator().Where({
+                    $_.Key -eq 'X-Ratelimit-Retryafter'
+                }).Value)
+            ).Second
+            $this.Verbose('ApiClient.Invoke',"Rate limited for $Wait seconds...")
+            Start-Sleep -Seconds $Wait
+        }
+        if ($Object) { $Object.Dispose() }
     }
 }
