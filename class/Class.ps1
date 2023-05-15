@@ -103,7 +103,7 @@ class ApiClient {
         } catch {
             throw $_
         } finally {
-            $this.Wait($Request)
+            if ($Request) { $this.Wait($Request) }
         }
         return $Output
     }
