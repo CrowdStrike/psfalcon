@@ -1036,21 +1036,6 @@ function Test-RegexValue {
         }
     }
 }
-function Wait-RetryAfter {
-    [CmdletBinding()]
-    param([object]$Request)
-    process {
-        if ($Request.Result.StatusCode -and $Request.Result.StatusCode.GetHashCode() -eq 429 -and
-        $Request.Result.RequestMessage.RequestUri.AbsolutePath -ne '/oauth2/token') {
-            # Convert 'X-Ratelimit-Retryafter' value to seconds and wait
-            $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(($Request.Result.Headers.GetEnumerator().Where({
-                $_.Key -eq 'X-Ratelimit-Retryafter' }).Value)).Second
-            Write-Log 'Wait-RetryAfter' "Rate limited for $Wait seconds..."
-            Start-Sleep -Seconds $Wait
-        }
-    }
-    end { if ($Request) { $Request.Dispose() }}
-}
 function Wait-RtrCommand {
     [CmdletBinding()]
     [OutputType([object])]
