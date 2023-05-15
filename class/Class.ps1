@@ -23,64 +23,83 @@ class ApiClient {
             [string]$Verbose = $Param.Headers.GetEnumerator().foreach{ "$($_.Key)=$($_.Value)" } -join ', '
             if ($Verbose) { $this.Verbose('ApiClient.Invoke',$Verbose) }
         }
-        try {
-            $Output = if ($Param.Outfile) {
-                @($Param.Headers.Keys).foreach{ $this.Client.DefaultRequestHeaders.Add($_,$Param.Headers.$_) }
-                $Request = $this.Client.GetByteArrayAsync($Param.Path)
-                if ($Request.Result) {
-                    [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
-                    $this.Verbose('ApiClient.Invoke',"Output directed to '$($Param.Outfile)'.")
+        $Output = try {
+            $Message = [System.Net.Http.HttpRequestMessage]::New($Param.Method.ToUpper(),$Param.Path)
+            $Param.Headers.GetEnumerator().foreach{ $Message.Headers.Add($_.Key,$_.Value) }
+            if ($Param.Formdata) {
+                $Message.Content = [System.Net.Http.MultipartFormDataContent]::New()
+                $Param.Formdata.GetEnumerator().foreach{
+                    $Verbose = if ($_.Key -match '^(file|upfile)$') {
+                        $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),
+                            [System.IO.FileMode]::Open)
+                        $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
+                        $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
+                        $FileType = $this.StreamType($Filename)
+                        if ($FileType) { $StreamContent.Headers.ContentType = $FileType }
+                        $Message.Content.Add($StreamContent,$_.Key,$Filename)
+                        @($_.Key,'<StreamContent>') -join '='
+                    } else {
+                        $Message.Content.Add([System.Net.Http.StringContent]::New($_.Value),$_.Key)
+                        @($_.Key,$_.Value) -join '='
+                    }
+                    $this.Verbose('ApiClient.Invoke',($Verbose -join ', '))
                 }
-                @($Param.Headers.Keys).foreach{
-                    if ($this.Client.DefaultRequestHeaders.$_) { $this.Client.DefaultRequestHeaders.Remove($_) }
+            } elseif ($Param.Body) {
+                $Message.Content = if ($Param.Body -is [string] -and $Param.Headers.ContentType) {
+                    [System.Net.Http.StringContent]::New($Param.Body,[System.Text.Encoding]::UTF8,
+                        $Param.Headers.ContentType)
+                    if ($Param.Path -notmatch '/oauth2/token$') {
+                        $this.Verbose('ApiClient.Invoke',$Param.Body)
+                    }
+                } else {
+                    $Param.Body
+                }
+            }
+            if ($this.Collector.Enable -contains 'requests') { $this.Log($Message) }
+            $Request = if ($Param.Outfile) {
+                @($Param.Headers.Keys).foreach{ $this.Client.DefaultRequestHeaders.Add($_,$Param.Headers.$_) }
+                $this.Verbose('ApiClient.Invoke','Receiving ByteArray content...')
+                $this.Client.GetByteArrayAsync($Param.Path)
+            } else {
+                $this.Client.SendAsync($Message,[System.Net.Http.HttpCompletionOption]::ResponseHeadersRead)
+            }
+            if ($Request.Result.StatusCode) {
+                $this.Verbose('ApiClient.Invoke',($Request.Result.StatusCode.GetHashCode(),
+                    $Request.Result.StatusCode -join ': '))
+            }
+            if ($Request.Result.Headers) {
+                $this.Verbose('ApiClient.Invoke',"$($Request.Result.Headers.GetEnumerator().foreach{
+                    @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')")
+                @($Request.Result.Headers.GetEnumerator().Where({
+                    $_.Key -match '^X-Api-Deprecation'
+                })).foreach{ Write-Warning ([string]$_.Key,[string]$_.Value -join ': ') }
+            }
+            if ($Request.Result.Content -and $this.Collector.Enable -contains 'responses') {
+                $this.Log($Request.Result)
+            }
+            if ($Param.Outfile -and $Request.Result) {
+                try {
+                    $this.Verbose('ApiClient.Invoke',"Creating '$($Param.Outfile)'.")
+                    [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
+                } catch {
+                    throw $_
+                } finally {
+                    @($Param.Headers.Keys).foreach{
+                        if ($this.Client.DefaultRequestHeaders.$_) {
+                            $this.Client.DefaultRequestHeaders.Remove($_)
+                        }
+                    }
+                }
+            } elseif ($Request.Result.Content -and $Param.Path -notmatch '/oauth2/token$') {
+                if ($Request.Result.Content.Headers.ContentType -eq 'application/json' -or
+                $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
+                    ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
+                } else {
+                    ($Request.Result.Content).ReadAsStringAsync().Result
                 }
             } else {
-                $Message = [System.Net.Http.HttpRequestMessage]::New($Param.Method.ToUpper(),$Param.Path)
-                ($Param.Headers).GetEnumerator().foreach{ $Message.Headers.Add($_.Key,$_.Value) }
-                if ($Param.Formdata) {
-                    $Message.Content = [System.Net.Http.MultipartFormDataContent]::New()
-                    ($Param.Formdata).GetEnumerator().foreach{
-                        $Verbose = if ($_.Key -match '^(file|upfile)$') {
-                            $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),
-                                [System.IO.FileMode]::Open)
-                            $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
-                            $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
-                            $FileType = $this.StreamType($Filename)
-                            if ($FileType) { $StreamContent.Headers.ContentType = $FileType }
-                            $Message.Content.Add($StreamContent,$_.Key,$Filename)
-                            @($_.Key,'<StreamContent>') -join '='
-                        } else {
-                            $Message.Content.Add([System.Net.Http.StringContent]::New($_.Value),$_.Key)
-                            @($_.Key,$_.Value) -join '='
-                        }
-                        $this.Verbose('ApiClient.Invoke',($Verbose -join ', '))
-                    }
-                } elseif ($Param.Body) {
-                    $Message.Content = if ($Param.Body -is [string] -and $Param.Headers.ContentType) {
-                        [System.Net.Http.StringContent]::New($Param.Body,[System.Text.Encoding]::UTF8,
-                            $Param.Headers.ContentType)
-                        if ($Param.Path -notmatch '/oauth2/token$') {
-                            $this.Verbose('ApiClient.Invoke',$Param.Body)
-                        }
-                    } else {
-                        $Param.Body
-                    }
-                }
-                if ($this.Collector.Enable -contains 'requests') { $this.Log($Message) }
-                $this.Client.SendAsync($Message)
+                $Request
             }
-            if ($Output.Result.StatusCode) {
-                $this.Verbose('ApiClient.Invoke',($Output.Result.StatusCode.GetHashCode(),
-                    $Output.Result.StatusCode -join ': '))
-            }
-            if ($Output.Result.Headers) {
-                $this.Verbose('ApiClient.Invoke',"$($Output.Result.Headers.GetEnumerator().foreach{
-                    @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')")
-                @($Output.Result.Headers.GetEnumerator().Where({ $_.Key -match '^X-Api-Deprecation' })).foreach{
-                    Write-Warning ([string]$_.Key,[string]$_.Value -join ': ')
-                }
-            }
-            if ($Output.Result -and $this.Collector.Enable -contains 'responses') { $this.Log($Output.Result) }
         } catch {
             throw $_
         }
@@ -89,24 +108,24 @@ class ApiClient {
     [void] Log([System.Object]$Object) {
         $Item = @{ timestamp = Get-Date -Format o; attributes = @{ Headers = @{} }}
         if ($Object -is [System.Net.Http.HttpRequestMessage]) {
-            @('RequestUri','Method').foreach{ $Item.Attributes[$_] = $Object.$_.ToString() }
+            @('RequestUri','Method').foreach{ $Item.attributes[$_] = $Object.$_.ToString() }
             $Object.Headers.GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
-                $Item.Attributes.Headers[$_.Key] = $_.Value
+                $Item.attributes.Headers[$_.Key] = $_.Value
             }
-            if ($Object.Content -is [System.Net.Http.StringContent]) {
-                $Item.Attributes['StringContent'] = ($Object.Content.ReadAsStringAsync().Result -replace
-                    'client_secret=\w+&?','client_secret=redacted')
+            if ($Object.Content) {
+                $Item.attributes['Content'] = $Object.Content.ReadAsStringAsync().Result -replace
+                    'client_secret=\w+&?','client_secret=redacted'
             }
         } elseif ($Object -is [System.Net.Http.HttpResponseMessage]) {
-            $Object.Headers.GetEnumerator().foreach{ $Item.Attributes.Headers[$_.Key] = $_.Value }
+            $Object.Headers.GetEnumerator().foreach{ $Item.attributes.Headers[$_.Key] = $_.Value }
             if ($Object.Content -and ($Object.Content.Headers.ContentType -eq 'application/json' -or
             $Object.Content.Headers.ContentType.MediaType -eq 'application/json')) {
                 @(($Object.Content.ReadAsStringAsync().Result | ConvertFrom-Json).PSObject.Properties).Where({
                 $_.Name -ne 'access_token' }).foreach{
-                    $Item.Attributes[$_.Name] = $_.Value
+                    $Item.attributes[$_.Name] = $_.Value
                 }
             } elseif ($Object.Content) {
-                $Item.Attributes['StringContent'] = $Object.Content.ReadAsStringAsync().Result
+                $Item.attributes['StringContent'] = $Object.Content.ReadAsStringAsync().Result
             }
         }
         $Job = @{
