@@ -64,46 +64,60 @@ class ApiClient {
                 $this.Client.SendAsync($Message,[System.Net.Http.HttpCompletionOption]::ResponseHeadersRead)
             }
             if ($Request.Result.StatusCode) {
-                $this.Verbose('ApiClient.Invoke',($Request.Result.StatusCode.GetHashCode(),
-                    $Request.Result.StatusCode -join ': '))
-            }
-            if ($Request.Result.Headers) {
-                $this.Verbose('ApiClient.Invoke',"$($Request.Result.Headers.GetEnumerator().foreach{
-                    @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')")
-                @($Request.Result.Headers.GetEnumerator().Where({
-                    $_.Key -match '^X-Api-Deprecation'
-                })).foreach{ Write-Warning ([string]$_.Key,[string]$_.Value -join ': ') }
-            }
-            if ($Request.Result.Content -and $this.Collector.Enable -contains 'responses') {
-                $this.Log($Request.Result)
-            }
-            if ($Param.Outfile -and $Request.Result) {
-                try {
-                    $this.Verbose('ApiClient.Invoke',"Creating '$($Param.Outfile)'.")
-                    [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
-                } catch {
-                    throw $_
-                } finally {
-                    @($Param.Headers.Keys).foreach{
-                        if ($this.Client.DefaultRequestHeaders.$_) {
-                            $this.Client.DefaultRequestHeaders.Remove($_)
+                $HashCode = $Request.Result.StatusCode.GetHashCode()
+                $this.Verbose('ApiClient.Invoke',($HashCode,$Request.Result.StatusCode -join ': '))
+                if ($Request.Result.Headers) {
+                    $this.Verbose('ApiClient.Invoke',"$($Request.Result.Headers.GetEnumerator().foreach{
+                        @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')")
+                    @($Request.Result.Headers.GetEnumerator().Where({
+                        $_.Key -match '^X-Api-Deprecation'
+                    })).foreach{ Write-Warning ([string]$_.Key,[string]$_.Value -join ': ') }
+                }
+                if ($Request.Result.Content -and $this.Collector.Enable -contains 'responses') {
+                    $this.Log($Request.Result)
+                }
+                $RetryAfter = if ($HashCode -eq 429 -and $Param.Path -notmatch '/oauth2/token$') {
+                    $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Ratelimit-Retryafter' }).Value
+                }
+                if ($RetryAfter) {
+                    [int32]$Wait = (([System.DateTimeOffset]::FromUnixTimeSeconds($RetryAfter)).LocalDateTime -
+                        (Get-Date)).Seconds
+                    $Limit = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq
+                        'X-Ratelimit-Limit' }).Value
+                    $Remaining = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq
+                        'X-Ratelimit-Remaining' }).Value
+                    Write-Warning ('Rate limited for {0} second(s). [{1}, {2}]' -f $Wait,
+                        ('Limit',$Limit -join '='),('Remaining',$Remaining -join '='))
+                    Start-Sleep -Seconds $Wait
+                    $this.Invoke($Param)
+                } elseif ($Param.Outfile -and $Request.Result) {
+                    try {
+                        $this.Verbose('ApiClient.Invoke',"Creating '$($Param.Outfile)'.")
+                        [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
+                    } catch {
+                        throw $_
+                    } finally {
+                        @($Param.Headers.Keys).foreach{
+                            if ($this.Client.DefaultRequestHeaders.$_) {
+                                $this.Client.DefaultRequestHeaders.Remove($_)
+                            }
                         }
                     }
-                }
-            } elseif ($Request.Result.Content -and $Param.Path -notmatch '/oauth2/token$') {
-                if ($Request.Result.Content.Headers.ContentType -eq 'application/json' -or
-                $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
-                    ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
+                } elseif ($Request.Result.Content -and $Param.Path -notmatch '/oauth2/token$') {
+                    if ($Request.Result.Content.Headers.ContentType -eq 'application/json' -or
+                    $Request.Result.Content.Headers.ContentType.MediaType -eq 'application/json') {
+                        ConvertFrom-Json ($Request.Result.Content).ReadAsStringAsync().Result
+                    } else {
+                        ($Request.Result.Content).ReadAsStringAsync().Result
+                    }
                 } else {
-                    ($Request.Result.Content).ReadAsStringAsync().Result
+                    $Request
                 }
-            } else {
-                $Request
             }
         } catch {
             throw $_
         } finally {
-            if ($Request) { $this.Wait($Request) }
+            if ($Request) { $Request.Dispose() }
         }
         return $Output
     }
@@ -193,18 +207,5 @@ class ApiClient {
     }
     [void] Verbose([string]$Function,[string]$String) {
         Write-Verbose ((Get-Date -Format 'HH:mm:ss'),"[$Function]",$String -join ' ')
-    }
-    [void] Wait([System.Object]$Object) {
-        if ($Object.Result -and $Object.Result.StatusCode -and $Object.Result.StatusCode.GetHashCode() -eq
-        429 -and $Object.Result.RequestMessage.RequestUri.AbsolutePath -ne '/oauth2/token') {
-            $Wait = [System.DateTimeOffset]::FromUnixTimeSeconds(
-                ($Object.Result.Headers.GetEnumerator().Where({
-                    $_.Key -eq 'X-Ratelimit-Retryafter'
-                }).Value)
-            ).Second
-            $this.Verbose('ApiClient.Invoke',"Rate limited for $Wait seconds...")
-            Start-Sleep -Seconds $Wait
-        }
-        if ($Object) { $Object.Dispose() }
     }
 }
