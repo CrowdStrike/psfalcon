@@ -513,15 +513,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
                 'per must be present to begin removal"; fi'
             Mac = $null
             Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
-                're -eq "64-bit") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } el' +
-                'se { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $' +
-                'RegKey = Get-ChildItem $RegPath | Where-Object { $_.GetValue("DisplayName") -like "*CrowdStrike' +
-                ' Windows Sensor*" }; if ($RegKey) { $UninstallString = $RegKey.GetValue("QuietUninstallString")' +
-                '; $Arguments = @("/c",$UninstallString); if ($args) { $Arguments += "MAINTENANCE_TOKEN=$args" }' +
-                '; $ArgumentList = $Arguments -join " "; Start-Process -FilePath cmd.exe -ArgumentList $Argument' +
-                'List -PassThru | Select-Object Id,ProcessName | ForEach-Object { Write-Output "[$($_.Id)] $($_.' +
-                'ProcessName) started removal of the Falcon sensor" }}} else { Write-Error "Unable to locate $Re' +
-                'gPath" }'
+                're -match "64") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } els' +
+                'e { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $R' +
+                'egKey = Get-ChildItem $RegPath | Where-Object { $_.GetValue("DisplayName") -like "*CrowdStrike ' +
+                'Windows Sensor*" }; if ($RegKey) { $UninstallString = $RegKey.GetValue("QuietUninstallString");' +
+                ' $Arguments = @("/c",$UninstallString); if ($args) { $Arguments += "MAINTENANCE_TOKEN=$args" };' +
+                ' $ArgumentList = $Arguments -join " "; Start-Process -FilePath cmd.exe -ArgumentList $ArgumentL' +
+                'ist -PassThru | Select-Object Id,ProcessName | ForEach-Object { Write-Output "[$($_.Id)] $($_.P' +
+                'rocessName) started removal of the Falcon sensor" }}} else { Write-Error "Unable to locate $Reg' +
+                'Path" }'
         }
     }
     process {
