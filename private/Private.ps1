@@ -843,10 +843,7 @@ function Start-RtrUpdate {
             $Expiration = (Get-Date).AddSeconds($ExpiresIn)
             do {
 
-
                 ### add rate limits for 429 during token request/session refresh
-
-
 
                 Start-Sleep -Seconds ($Timeout - 10)
                 if ($Expiration -le (Get-Date).AddSeconds(60)) {
