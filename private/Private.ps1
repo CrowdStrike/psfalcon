@@ -244,16 +244,16 @@ function Confirm-Parameter {
         } elseif ($Object -is [PSCustomObject]) {
             $Object.PSObject.Members.Where({ $_.MemberType -eq 'NoteProperty' }).Name
         }
-        @($Required).foreach{
-            # Verify object contains required fields
-            if ($Keys -notcontains $_) { throw "Missing property '$_'. $ErrorObject" } else { $true }
+        if ($Required) {
+            @($Required).foreach{
+                # Verify object contains required fields
+                if ($Keys -notcontains $_) { throw "Missing property '$_'. $ErrorObject" } else { $true }
+            }
         }
-        @($Keys).foreach{
-            # Error if field is not in allowed list
-            if ($Allowed -and $Allowed -notcontains $_) {
-                throw "Unexpected property '$_'. $ErrorObject"
-            } else {
-                $true
+        if ($Allowed) {
+            @($Keys).foreach{
+                # Error if field is not in allowed list
+                if ($Allowed -notcontains $_) { throw "Unexpected property '$_'. $ErrorObject" } else { $true }
             }
         }
         if ($Content) {
