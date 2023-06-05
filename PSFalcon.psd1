@@ -36,6 +36,7 @@
       # cloud-connect-azure
       'Get-FalconDiscoverAzureAccount'
       'Get-FalconDiscoverAzureCertificate'
+      'Get-FalconDiscoverAzureTenant'
       'New-FalconDiscoverAzureAccount'
       'Receive-FalconDiscoverAzureScript'
       'Update-FalconDiscoverAzureAccount'

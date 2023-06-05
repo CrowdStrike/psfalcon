@@ -70,6 +70,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureCertificate
     }
     process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
 }
+function Get-FalconDiscoverAzureTenant {
+<#
+.SYNOPSIS
+List Falcon Discover for Cloud Azure tenants
+.DESCRIPTION
+Requires 'D4C registration: Read'.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureTenant
+#>
+    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/tenant-id/v1:get',SupportsShouldProcess)]
+    param()
+    process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
+}
 function New-FalconDiscoverAzureAccount {
 <#
 .SYNOPSIS
