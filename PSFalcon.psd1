@@ -62,9 +62,6 @@
       'New-FalconDiscoverGcpAccount'
       'Receive-FalconDiscoverGcpScript'
 
-      # configuration-assessment
-      'Get-FalconConfigAssessment'
-
       # container-security
       'Edit-FalconContainerRegistry'
       'Get-FalconContainerAssessment'
@@ -97,10 +94,6 @@
 
       # discover
       'Get-FalconAsset'
-      'Get-FalconDiscoverNetwork'
-      'Get-FalconDiscoverRule'
-      'Get-FalconDiscoverScan'
-      'Get-FalconDiscoverScanner'
 
       # enrollments
       'Invoke-FalconMobileAction'
