@@ -1110,15 +1110,17 @@ function Write-Result {
                 [void]$Json.PSObject.Properties.Remove('meta')
             }
             @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
-                # Output 'errors' to error stream as Json string
-                $PSCmdlet.WriteError(
-                    [System.Management.Automation.ErrorRecord]::New(
-                        [Exception]::New((ConvertTo-Json $_.Value -Compress)),
-                        $Json.meta.trace_id,
-                        [System.Management.Automation.ErrorCategory]::InvalidResult,
-                        $Request
+                @($_.Value).foreach{
+                    # Output 'errors' to error stream as Json string
+                    $PSCmdlet.WriteError(
+                        [System.Management.Automation.ErrorRecord]::New(
+                            [Exception]::New((ConvertTo-Json $_ -Compress)),
+                            $Json.meta.trace_id,
+                            [System.Management.Automation.ErrorCategory]::InvalidResult,
+                            $Request
+                        )
                     )
-                )
+                }
             }
             [void]$Json.PSObject.Properties.Remove('errors')
             [string[]]$FieldList = @($Json.PSObject.Properties).Where({
