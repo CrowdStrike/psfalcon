@@ -508,20 +508,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
         $Scripts = @{
             Linux = 'manager=("$(if [[ $(command -v apt) ]]; then echo "apt-get purge falcon-sensor -y"; elif [[' +
                 ' $(command -v yum) ]]; then echo "yum remove falcon-sensor -y"; elif [[ $(command -v zypper) ]]' +
-                '; then echo "zypper remove -y falcon-sensor"; fi)"); if [[ ${manager} ]]; then echo "Started Re' +
+                '; then echo "zypper remove -y falcon-sensor"; fi)"); if [[ ${manager} ]]; then echo "Started re' +
                 'moval of the Falcon sensor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or zyp' +
                 'per must be present to begin removal"; fi'
             Mac = $null
-            Windows = 'Start-Sleep -Seconds 5; $RegPath = if ((Get-WmiObject win32_operatingsystem).osarchitectu' +
-                're -match "64") { "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" } els' +
-                'e { "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" }; if (Test-Path $RegPath) { $R' +
-                'egKey = Get-ChildItem $RegPath | Where-Object { $_.GetValue("DisplayName") -like "*CrowdStrike ' +
-                'Windows Sensor*" }; if ($RegKey) { $UninstallString = $RegKey.GetValue("QuietUninstallString");' +
-                ' $Arguments = @("/c",$UninstallString); if ($args) { $Arguments += "MAINTENANCE_TOKEN=$args" };' +
-                ' $ArgumentList = $Arguments -join " "; Start-Process -FilePath cmd.exe -ArgumentList $ArgumentL' +
-                'ist -PassThru | Select-Object Id,ProcessName | ForEach-Object { Write-Output "[$($_.Id)] $($_.P' +
-                'rocessName) started removal of the Falcon sensor" }}} else { Write-Error "Unable to locate $Reg' +
-                'Path" }'
+            Windows = '$t=$args;$sp=Join-Path $env:ProgramFiles (Join-Path "CrowdStrike" "CSFalconService.exe");' +
+                'if(!(Test-Path $sp)){throw "Unable to locate $sp"};$bv=if((Get-CimInstance win32_operatingsyste' +
+                'm).OSArchitecture -match "64"){"WOW6432Node\"};$rp="HKLM:\SOFTWARE\$($bv)Microsoft\Windows\Curr' +
+                'entVersion\Uninstall";if(!(Test-Path $rp)){throw "Unable to locate $rp"};@(gci $rp).Where({$_.G' +
+                'etValue("DisplayName") -match "CrowdStrike(.+)?Sensor"}).foreach{if((gi $sp).VersionInfo.FileVe' +
+                'rsion -eq $_.GetValue("DisplayVersion")){$us=if($_.GetValue("QuietUninstallString")){$_.GetValu' +
+                'e("QuietUninstallString")}else{$_.GetValue("UninstallString")};if(!$us){throw "Failed to find U' +
+                'ninstallString value for $($_.GetValue("DisplayName"))"};$al=@("/c",$us);if($t){$al+="MAINTENAN' +
+                'CE_TOKEN=$t"};"Starting removal of the Falcon sensor";[void](start -FilePath cmd.exe -ArgumentL' +
+                'ist ($al -join " ") -PassThru)}}'
         }
     }
     process {
