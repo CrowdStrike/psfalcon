@@ -226,6 +226,8 @@ AWS account type
 AWS master account status
 .PARAMETER CloudtrailRegion
 AWS region where the account containing cloudtrail logs resides
+.PARAMETER IamRoleArn
+Full ARN of the IAM role for the AWS account
 .PARAMETER Id
 AWS account identifier
 .LINK
@@ -251,8 +253,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
             Position=4)]
         [Alias('cloudtrail_region')]
         [string]$CloudtrailRegion,
+        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+            Position=5)]
+        [Alias('iam_role_arn')]
+        [string]$IamRoleArn,
         [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=5)]
+            ValueFromPipelineByPropertyName,Position=6)]
         [ValidatePattern('^\d{12}$')]
         [Alias('account_id')]
         [string]$Id
@@ -263,7 +269,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
             Endpoint = $PSCmdlet.ParameterSetName
             Format = @{
                 Body = @{
-                    resources = @('account_id','account_type','cloudtrail_region','is_master','organization_id')
+                    resources = @('account_id','account_type','cloudtrail_region','iam_role_arn','is_master',
+                        'organization_id')
                 }
             }
         }
