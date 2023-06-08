@@ -493,7 +493,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                         }
                                     }
                                     OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
-                                    Timeout = if ($Timeout) { $Timeout } else { 60 }
+                                    Timeout = if ($Cmd -eq 'put') { 600 } else { $Timeout }
                                 }
                                 if ($Param.OptionalHostId -and $Param.Argument) {
                                     # Issue command, output result to CSV and capture successful values
