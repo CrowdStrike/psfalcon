@@ -75,7 +75,21 @@ class ApiClient {
                 # Send request
                 $this.Client.SendAsync($Message,[System.Net.Http.HttpCompletionOption]::ResponseHeadersRead)
             }
-            if ($Request.Result.StatusCode) {
+            if ($Param.Outfile -and $Request.Result) {
+                try {
+                    # When file download is complete, direct to 'Outfile'
+                    $this.Verbose('ApiClient.Invoke',"Creating '$($Param.Outfile)'.")
+                    [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
+                } catch {
+                    throw $_
+                } finally {
+                    @($Param.Headers.Keys).foreach{
+                        if ($this.Client.DefaultRequestHeaders.$_) {
+                            $this.Client.DefaultRequestHeaders.Remove($_)
+                        }
+                    }
+                }
+            } elseif ($Request.Result.StatusCode) {
                 # Output HTTP response code to verbose stream
                 $HashCode = $Request.Result.StatusCode.GetHashCode()
                 $this.Verbose('ApiClient.Invoke',($HashCode,$Request.Result.StatusCode -join ': '))
@@ -107,20 +121,6 @@ class ApiClient {
                         ('Limit',$Limit -join '='),('Remaining',$Remaining -join '='))
                     Start-Sleep -Seconds $Wait
                     $this.Invoke($Param)
-                } elseif ($Param.Outfile -and $Request.Result) {
-                    try {
-                        # When file download is complete, direct to 'Outfile'
-                        $this.Verbose('ApiClient.Invoke',"Creating '$($Param.Outfile)'.")
-                        [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
-                    } catch {
-                        throw $_
-                    } finally {
-                        @($Param.Headers.Keys).foreach{
-                            if ($this.Client.DefaultRequestHeaders.$_) {
-                                $this.Client.DefaultRequestHeaders.Remove($_)
-                            }
-                        }
-                    }
                 } elseif ($Request.Result.Content -and $Param.Path -notmatch '/oauth2/token$') {
                     # Convert from Json or output string content
                     if ($Request.Result.Content.Headers.ContentType -eq 'application/json' -or
