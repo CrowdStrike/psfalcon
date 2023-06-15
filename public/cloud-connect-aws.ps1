@@ -9,30 +9,30 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/verify-account-access/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -UserInput $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Edit-FalconDiscoverAwsAccount {
 <#
@@ -57,50 +57,50 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('external_id')]
-        [string]$ExternalId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
-            ValueFromPipelineByPropertyName,Position=2)]
-        [Alias('iam_role_arn')]
-        [string]$IamRoleArn,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
-            ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('cloudtrail_bucket_owner_id')]
-        [string]$CloudtrailBucketOwnerId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
-            ValueFromPipelineByPropertyName,Position=4)]
-        [Alias('cloudtrail_bucket_region')]
-        [string]$CloudtrailBucketRegion,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
-            ValueFromPipelineByPropertyName,Position=5)]
-        [Alias('rate_limit_time')]
-        [int64]$RateLimitTime,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
-            ValueFromPipelineByPropertyName,Position=6)]
-        [Alias('rate_limit_reqs','RateLimitReqs')]
-        [int32]$RateLimitReq,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=7)]
-        [ValidatePattern('^\d{12}$')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{ resources = @('rate_limit_time','external_id','rate_limit_reqs',
-                    'cloudtrail_bucket_region','iam_role_arn','id','cloudtrail_bucket_owner_id') }
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('external_id')]
+    [string]$ExternalId,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('iam_role_arn')]
+    [string]$IamRoleArn,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('cloudtrail_bucket_owner_id')]
+    [string]$CloudtrailBucketOwnerId,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('cloudtrail_bucket_region')]
+    [string]$CloudtrailBucketRegion,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [Alias('rate_limit_time')]
+    [int64]$RateLimitTime,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('rate_limit_reqs','RateLimitReqs')]
+    [int32]$RateLimitReq,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/accounts/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=7)]
+    [ValidatePattern('^\d{12}$')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ resources = @('rate_limit_time','external_id','rate_limit_reqs',
+          'cloudtrail_bucket_region','iam_role_arn','id','cloudtrail_bucket_owner_id') }
+      }
     }
-    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconDiscoverAwsAccount {
 <#
@@ -129,49 +129,49 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',ValueFromPipelineByPropertyName,
-            ValueFromPipeline)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=1)]
-        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
-        [Alias('organization-ids')]
-        [string[]]$OrganizationId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=2)]
-        [ValidateSet('full','dry',IgnoreCase=$false)]
-        [Alias('scan-type')]
-        [string]$ScanType,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=3)]
-        [ValidateSet('provisioned','operational',IgnoreCase=$false)]
-        [string]$Status,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=4)]
-        [boolean]$Migrated,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=5)]
-        [ValidateRange(1,500)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('migrated','ids','scan-type','status','limit','organization-ids','offset') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=1)]
+    [ValidatePattern('^o-[0-9a-z]{10,32}$')]
+    [Alias('organization-ids')]
+    [string[]]$OrganizationId,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=2)]
+    [ValidateSet('full','dry',IgnoreCase=$false)]
+    [Alias('scan-type')]
+    [string]$ScanType,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=3)]
+    [ValidateSet('provisioned','operational',IgnoreCase=$false)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=4)]
+    [boolean]$Migrated,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get',Position=5)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('migrated','ids','scan-type','status','limit','organization-ids','offset') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconDiscoverAwsLink {
 <#
@@ -184,20 +184,20 @@ AWS region
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',Position=1)]
-        [string]$Region
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('region') }
-        }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',Position=1)]
+    [string]$Region
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('region') }
     }
-    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconDiscoverAwsSetting {
 <#
@@ -208,9 +208,9 @@ Requires 'AWS accounts: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get',SupportsShouldProcess)]
-    param()
-    process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/combined/settings/v1:get',SupportsShouldProcess)]
+  param()
+  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
 function New-FalconDiscoverAwsAccount {
 <#
@@ -233,49 +233,49 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
-        [Alias('organization_id')]
-        [string]$OrganizationId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [ValidateSet('commercial','gov',IgnoreCase=$false)]
-        [Alias('account_type')]
-        [string]$AccountType,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('is_master')]
-        [boolean]$IsMaster,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
-            Position=4)]
-        [Alias('cloudtrail_region')]
-        [string]$CloudtrailRegion,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
-            Position=5)]
-        [Alias('iam_role_arn')]
-        [string]$IamRoleArn,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=6)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('account_id')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{
-                    resources = @('account_id','account_type','cloudtrail_region','iam_role_arn','is_master',
-                        'organization_id')
-                }
-            }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [ValidatePattern('^o-[0-9a-z]{10,32}$')]
+    [Alias('organization_id')]
+    [string]$OrganizationId,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [ValidateSet('commercial','gov',IgnoreCase=$false)]
+    [Alias('account_type')]
+    [string]$AccountType,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [Alias('is_master')]
+    [boolean]$IsMaster,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [Alias('cloudtrail_region')]
+    [string]$CloudtrailRegion,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('iam_role_arn')]
+    [string]$IamRoleArn,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=6)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('account_id')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('account_id','account_type','cloudtrail_region','iam_role_arn','is_master',
+            'organization_id')
         }
+      }
     }
-    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconDiscoverAwsScript {
 <#
@@ -292,43 +292,43 @@ Overwrite existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
-            Position=1)]
-        [string]$Path,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [Alias('ids','account_id')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get')]
-        [switch]$Force
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Headers = @{ Accept = 'application/octet-stream' }
-            Format = @{
-                Query = @('ids')
-                Outfile = 'path'
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
+      Position=1)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Alias('ids','account_id')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ Accept = 'application/octet-stream' }
+      Format = @{
+        Query = @('ids')
+        Outfile = 'path'
+      }
     }
-    process {
-        $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
-        $OutPath = Test-OutFile $PSBoundParameters.Path
-        if ($OutPath.Category -eq 'ObjectNotFound') {
-            Write-Error @OutPath
-        } elseif ($PSBoundParameters.Path) {
-            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
-                Write-Error @OutPath
-            } else {
-                Invoke-Falcon @Param -UserInput $PSBoundParameters
-            }
-        }
+  }
+  process {
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
     }
+  }
 }
 function Remove-FalconDiscoverAwsAccount {
 <#
@@ -343,34 +343,34 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^o-[0-9a-z]{10,32}$')]
-        [Alias('organization-ids')]
-        [string[]]$OrganizationId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','organization-ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/account/v2:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^o-[0-9a-z]{10,32}$')]
+    [Alias('organization-ids')]
+    [string[]]$OrganizationId,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/account/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','organization-ids') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_)}}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -UserInput $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_)}}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Update-FalconDiscoverAwsSetting {
 <#
@@ -385,25 +385,25 @@ Default external identifier to apply to AWS accounts
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/settings/v1:post',
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('cloudtrail_bucket_owner_id')]
-        [string]$CloudtrailBucketOwnerId,
-        [Parameter(ParameterSetName='/cloud-connect-aws/entities/settings/v1:post',
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('static_external_id')]
-        [string]$StaticExternalId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('cloudtrail_bucket_owner_id','static_external_id') }}
-        }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/settings/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/settings/v1:post',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('cloudtrail_bucket_owner_id')]
+    [string]$CloudtrailBucketOwnerId,
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/settings/v1:post',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('static_external_id')]
+    [string]$StaticExternalId
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('cloudtrail_bucket_owner_id','static_external_id') }}
     }
-    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
