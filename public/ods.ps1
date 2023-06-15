@@ -431,10 +431,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-      $Inputs = Set-ScanInteger $PSBoundParameters
-      $Inputs['Schedule'] = @{ start_timestamp = $Inputs.StartTime;  interval = $Inputs.Repeat }
-      @('StartTime','Repeat').foreach{ [void]$Inputs.Remove($_) }
-      Invoke-Falcon @Param -UserInput $Inputs
+      $UserInput = Set-ScanInteger $PSBoundParameters
+      $UserInput['Schedule'] = @{ start_timestamp = $UserInput.StartTime; interval = $UserInput.Repeat }
+      @('StartTime','Repeat').foreach{ [void]$UserInput.Remove($_) }
+      Invoke-Falcon @Param -UserInput $UserInput
     }
   }
 }
