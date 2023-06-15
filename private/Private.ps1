@@ -190,9 +190,9 @@ function Build-Content {
   }
   process {
     if ($Format) {
-      # Determine expected field values using 'Format'
       [System.Collections.Generic.List[string]]$Expected = @()
       @($Format.Values).foreach{
+        # Determine expected field values using 'Format'
         if ($_ -is [array]) {
           @($_).foreach{ $Expected.Add($_) }
         } elseif ($_.Keys) {
@@ -202,11 +202,13 @@ function Build-Content {
       if ($Expected) {
         @($UserInput.Keys).foreach{
           if ($Expected -notcontains $_) {
-            # Create duplicate parameter using 'Alias' and remove original when expected
-            $Alias = ((Get-Command $Command).Parameters.$_.Aliases)[0]
-            if ($Alias -and $Expected -contains $Alias) {
-              $UserInput[$Alias] = $UserInput.$_
-              [void]$UserInput.Remove($_)
+            if (((Get-Command $Command).Parameters.Keys -contains $_)) {
+              # Create duplicate parameter using 'Alias' and remove original when expected
+              $Alias = ((Get-Command $Command).Parameters.$_.Aliases)[0]
+              if ($Alias -and $Expected -contains $Alias) {
+                $UserInput[$Alias] = $UserInput.$_
+                [void]$UserInput.Remove($_)
+              }
             }
           }
         }
