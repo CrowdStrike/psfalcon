@@ -13,40 +13,40 @@ User role
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('uuid','user_uuid')]
-        [string]$UserId,
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [string]$Cid,
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
-        [Alias('role_ids','Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('uuid','user_uuid')]
+    [string]$UserId,
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Cid,
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
+    [Alias('role_ids','Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
-            $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
-            $PSBoundParameters['action'] = 'grant'
-            [void]$PSBoundParameters.Remove('Id')
-            [void]$PSBoundParameters.Remove('UserId')
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
+      $PSBoundParameters['action'] = 'grant'
+      [void]$PSBoundParameters.Remove('Id')
+      [void]$PSBoundParameters.Remove('UserId')
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Edit-FalconUser {
 <#
@@ -63,31 +63,31 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Position=1)]
-        [Alias('first_name')]
-        [string]$FirstName,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Position=2)]
-        [Alias('last_name')]
-        [string]$LastName,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('user_uuid','uuid')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Query = @('user_uuid')
-                Body = @{ root = @('first_name','last_name') }
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Position=1)]
+    [Alias('first_name')]
+    [string]$FirstName,
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Position=2)]
+    [Alias('last_name')]
+    [string]$LastName,
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('user_uuid','uuid')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Query = @('user_uuid')
+        Body = @{ root = @('first_name','last_name') }
+      }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconRole {
 <#
@@ -118,69 +118,69 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [Alias('ids','roles','role_id')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('user_uuid','uuid')]
-        [string]$UserId,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=1)]
-        [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [string]$Cid,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
-        [Alias('direct_only')]
-        [boolean]$DirectOnly,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=3)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=4)]
-        [ValidateSet('cid|asc','cid|desc','role_name|asc','role_name|desc','type|asc','type|desc',
-            IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=5)]
-        [ValidateRange(1,500)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
-        [string]$Offset,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','filter','user_uuid','limit','cid','direct_only','offset','ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Alias('ids','roles','role_id')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('user_uuid','uuid')]
+    [string]$UserId,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Cid,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
+    [Alias('direct_only')]
+    [boolean]$DirectOnly,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=3)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=4)]
+    [ValidateSet('cid|asc','cid|desc','role_name|asc','role_name|desc','type|asc','type|desc',
+      IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=5)]
+    [ValidateRange(1,500)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+    [string]$Offset,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('sort','filter','user_uuid','limit','cid','direct_only','offset','ids') }
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{
-                if ($_ -match '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$') {
-                    Get-FalconRole -UserId $_
-                } else {
-                    $List.Add($_)
-                }
-            }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) {
+      @($Id).foreach{
+        if ($_ -match '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$') {
+          Get-FalconRole -UserId $_
         } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+          $List.Add($_)
         }
+      }
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Get-FalconUser {
 <#
@@ -211,86 +211,86 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/queries/users/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('ids','uuid')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=2)]
-        [ValidateSet('first_name|asc','first_name|desc','last_name|asc','last_name|desc','name|asc','name|desc',
-            'uid|asc','uid|desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=3)]
-        [ValidateRange(1,500)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
-        [int]$Offset,
-        [Parameter(ParameterSetName='Username',Mandatory)]
-        [ValidateScript({
-            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
-        })]
-        [Alias('uid','Usernames')]
-        [string[]]$Username,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
-        [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post')]
-        [Parameter(ParameterSetName='Username')]
-        [ValidateSet('roles',IgnoreCase=$false)]
-        [string[]]$Include,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
-        [Parameter(ParameterSetName='Username')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{ root = @('ids') }
-                Query = @('filter','sort','limit','offset','uid')
-            }
-            Max = 100
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/user-management/queries/users/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('ids','uuid')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=2)]
+    [ValidateSet('first_name|asc','first_name|desc','last_name|asc','last_name|desc','name|asc','name|desc',
+      'uid|asc','uid|desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='Username',Mandatory)]
+    [ValidateScript({
+      if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
+    })]
+    [Alias('uid','Usernames')]
+    [string[]]$Username,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post')]
+    [Parameter(ParameterSetName='Username')]
+    [ValidateSet('roles',IgnoreCase=$false)]
+    [string[]]$Include,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [Parameter(ParameterSetName='Username')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','sort','limit','offset','uid')
+      }
+      Max = 100
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($Username) {
-            # Re-submit 'Username' values as filtered searches
-            $Username = @($Username | Select-Object -Unique)
-            for ($i = 0; $i -lt ($Username | Measure-Object).Count; $i += 100) {
-                [string]$Filter = ($Username[$i..($i + 99)] | ForEach-Object { "uid:*'$_'" }) -join ','
-                if ($Filter) {
-                    $Search = @{ Filter = $Filter }
-                    if ($Include) { $Search['Include'] = $Include }
-                    if ($Detailed) { $Search['Detailed'] = $Detailed }
-                    & $MyInvocation.MyCommand.Name @Search
-                }
-            }
-        } else {
-            if ($IdList) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-            if ($Include) {
-                $Request = Invoke-Falcon @Param -Inputs $PSBoundParameters
-                if ($Request -and !$Request.uuid) {
-                    $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}
-                }
-                if ($Include -contains 'roles') {
-                    @($Request).foreach{ Set-Property $_ roles @(Get-FalconRole -UserId $_.uuid) }
-                }
-                $Request
-            } else {
-                Invoke-Falcon @Param -Inputs $PSBoundParameters
-            }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($Username) {
+      # Re-submit 'Username' values as filtered searches
+      $Username = @($Username | Select-Object -Unique)
+      for ($i = 0; $i -lt ($Username | Measure-Object).Count; $i += 100) {
+        [string]$Filter = ($Username[$i..($i + 99)] | ForEach-Object { "uid:*'$_'" }) -join ','
+        if ($Filter) {
+          $Search = @{ Filter = $Filter }
+          if ($Include) { $Search['Include'] = $Include }
+          if ($Detailed) { $Search['Detailed'] = $Detailed }
+          & $MyInvocation.MyCommand.Name @Search
         }
+      }
+    } else {
+      if ($IdList) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+      if ($Include) {
+        $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
+        if ($Request -and !$Request.uuid) {
+          $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}
+        }
+        if ($Include -contains 'roles') {
+          @($Request).foreach{ Set-Property $_ roles @(Get-FalconRole -UserId $_.uuid) }
+        }
+        $Request
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
     }
+  }
 }
 function Invoke-FalconUserAction {
 <#
@@ -305,34 +305,34 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-actions/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=1)]
-        [ValidateSet('reset_password','reset_2fa',IgnoreCase=$false)]
-        [Alias('action_name')]
-        [string]$Name,
-        [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('ids','action') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-actions/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=1)]
+    [ValidateSet('reset_password','reset_2fa',IgnoreCase=$false)]
+    [Alias('action_name')]
+    [string]$Name,
+    [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids','action') }}
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            $PSBoundParameters['Action'] = @{ action_name = $PSBoundParameters.Name }
-            [void]$PSBoundParameters.Remove('Name')
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Action'] = @{ action_name = $PSBoundParameters.Name }
+      [void]$PSBoundParameters.Remove('Name')
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function New-FalconUser {
 <#
@@ -355,46 +355,46 @@ Validate if user is allowed but do not create them
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidateScript({
-            if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
-        })]
-        [Alias('uid')]
-        [string]$Username,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [Alias('first_name')]
-        [string]$FirstName,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('last_name')]
-        [string]$LastName,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
-            Position=4)]
-        [ValidatePattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{12,}$')]
-        [string]$Password,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
-            Position=5)]
-        [string]$Cid,
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
-            Position=6)]
-        [Alias('validate_only')]
-        [boolean]$ValidateOnly
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Query = @('validate_only')
-                Body = @{ root = @('first_name','uid','last_name','cid','password') }
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidateScript({
+      if ((Test-RegexValue $_) -eq 'email') { $true } else { throw "'$_' is not a valid email address." }
+    })]
+    [Alias('uid')]
+    [string]$Username,
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [Alias('first_name')]
+    [string]$FirstName,
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [Alias('last_name')]
+    [string]$LastName,
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [ValidatePattern('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{12,}$')]
+    [string]$Password,
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [string]$Cid,
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('validate_only')]
+    [boolean]$ValidateOnly
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Query = @('validate_only')
+        Body = @{ root = @('first_name','uid','last_name','cid','password') }
+      }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconRole {
 <#
@@ -411,40 +411,40 @@ User role
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('uuid','user_uuid')]
-        [string]$UserId,
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [string]$Cid,
-        [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
-        [Alias('role_ids','Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('uuid','user_uuid')]
+    [string]$UserId,
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Cid,
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
+    [Alias('role_ids','Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
-            $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
-            $PSBoundParameters['action'] = 'revoke'
-            [void]$PSBoundParameters.Remove('Id')
-            [void]$PSBoundParameters.Remove('UserId')
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
+      $PSBoundParameters['action'] = 'revoke'
+      [void]$PSBoundParameters.Remove('Id')
+      [void]$PSBoundParameters.Remove('UserId')
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Remove-FalconUser {
 <#
@@ -457,23 +457,23 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
 #>
-    [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/user-management/entities/users/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('user_uuid','uuid')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('user_uuid') }
-        }
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/users/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('user_uuid','uuid')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('user_uuid') }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 @('Add-FalconRole','Get-FalconRole','Remove-FalconRole').foreach{
-    Register-ArgumentCompleter -CommandName $_ -ParameterName 'Id' -ScriptBlock { Get-FalconRole -EA 0 }
+  Register-ArgumentCompleter -CommandName $_ -ParameterName 'Id' -ScriptBlock { Get-FalconRole -EA 0 }
 }

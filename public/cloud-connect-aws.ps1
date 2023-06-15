@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            Invoke-Falcon @Param -UserInput $PSBoundParameters
         }
     }
 }
@@ -100,7 +100,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconDiscoverAwsAccount {
 <#
@@ -170,7 +170,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
 }
 function Get-FalconDiscoverAwsLink {
@@ -197,7 +197,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
             Format = @{ Query = @('region') }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconDiscoverAwsSetting {
 <#
@@ -275,7 +275,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
             }
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconDiscoverAwsScript {
 <#
@@ -325,7 +325,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
             if ($OutPath.Category -eq 'WriteError' -and !$Force) {
                 Write-Error @OutPath
             } else {
-                Invoke-Falcon @Param -Inputs $PSBoundParameters
+                Invoke-Falcon @Param -UserInput $PSBoundParameters
             }
         }
     }
@@ -368,7 +368,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
     end {
         if ($List) {
             $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            Invoke-Falcon @Param -UserInput $PSBoundParameters
         }
     }
 }
@@ -405,5 +405,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
             Format = @{ Body = @{ resources = @('cloudtrail_bucket_owner_id','static_external_id') }}
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }

@@ -11,24 +11,24 @@ Maximum number of active installation tokens
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconInstallTokenSetting
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',Position=1)]
-        [Alias('tokens_required')]
-        [boolean]$TokenRequired,
-        [Parameter(ParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',Position=2)]
-        [Alias('max_active_tokens')]
-        [int]$MaxActiveToken
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('tokens_required','max_active_tokens') }}
-        }
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',Position=1)]
+    [Alias('tokens_required')]
+    [boolean]$TokenRequired,
+    [Parameter(ParameterSetName='/installation-tokens/entities/customer-settings/v1:patch',Position=2)]
+    [Alias('max_active_tokens')]
+    [int]$MaxActiveToken
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('tokens_required','max_active_tokens') }}
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconInstallToken {
 <#
@@ -47,43 +47,43 @@ Installation token identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconInstallToken
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
-            ValueFromPipelineByPropertyName,Position=1)]
-        [string]$Label,
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
-        [Alias('expires_timestamp')]
-        [string]$ExpiresTimestamp,
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
-            ValueFromPipelineByPropertyName,Position=3)]
-        [boolean]$Revoked,
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Query = @('ids')
-                Body = @{ root = @('label','revoked','expires_timestamp') }
-            }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Label,
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
+    [Alias('expires_timestamp')]
+    [string]$ExpiresTimestamp,
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [boolean]$Revoked,
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Query = @('ids')
+        Body = @{ root = @('label','revoked','expires_timestamp') }
+      }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Get-FalconInstallToken {
 <#
@@ -110,43 +110,43 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=2)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=3)]
-        [ValidateRange(1,1000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','ids','offset','limit','filter') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/tokens/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=3)]
+    [ValidateRange(1,1000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('sort','ids','offset','limit','filter') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconInstallTokenEvent {
 <#
@@ -173,43 +173,43 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/audit-events/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=2)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=3)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','ids','offset','limit','filter') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/queries/audit-events/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/installation-tokens/entities/audit-events/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('sort','ids','offset','limit','filter') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconInstallTokenSetting {
 <#
@@ -223,10 +223,10 @@ Requires 'Installation tokens: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenSetting
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
-        SupportsShouldProcess)]
-    param()
-    process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
+    SupportsShouldProcess)]
+  param()
+  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
 function New-FalconInstallToken {
 <#
@@ -241,23 +241,23 @@ Installation token expiration time (RFC3339), or 'null'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconInstallToken
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=1)]
-        [string]$Label,
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=2)]
-        [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
-        [Alias('expires_timestamp')]
-        [string]$ExpiresTimestamp
-    )
-    process {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('label','expires_timestamp') }}
-        }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=1)]
+    [string]$Label,
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:post',Mandatory,Position=2)]
+    [ValidatePattern('^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z|null)$')]
+    [Alias('expires_timestamp')]
+    [string]$ExpiresTimestamp
+  )
+  process {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('label','expires_timestamp') }}
     }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Remove-FalconInstallToken {
 <#
@@ -270,27 +270,27 @@ Installation token identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
 #>
-    [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }

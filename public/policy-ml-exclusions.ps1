@@ -7,7 +7,7 @@ Uses the 'behaviors' and 'device' properties of a detection to generate the nece
 Machine Learning exclusion. Specfically, it maps the following properties these fields:
 
 behaviors.filepath > value
-device.groups      > groups
+device.groups    > groups
 
 The 'value' field is stripped of any leading NT file path ('Device/HarddiskVolume').
 
@@ -19,31 +19,31 @@ Falcon detection content, including 'behaviors' and 'device'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
 #>
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory,ValueFromPipeline,Position=1)]
-        [object]$Detection
-    )
-    begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
-    process {
-        if ($Detection.behaviors -and $Detection.device) {
-            @($Detection.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
-                $Output.Add(([PSCustomObject]@{
-                    value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
-                    excluded_from = @('blocking')
-                    groups = if ($Detection.device.groups) { $Detection.device.groups } else { 'all' }
-                    comment = "Created from $($Detection.detection_id) by $((Show-FalconModule).UserAgent)."
-                }))
-            }
-        } else {
-            foreach ($Property in @('behaviors','device')) {
-                if (!$Detection.$Property) {
-                    throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
-                }
-            }
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory,ValueFromPipeline,Position=1)]
+    [object]$Detection
+  )
+  begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
+  process {
+    if ($Detection.behaviors -and $Detection.device) {
+      @($Detection.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
+        $Output.Add(([PSCustomObject]@{
+          value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
+          excluded_from = @('blocking')
+          groups = if ($Detection.device.groups) { $Detection.device.groups } else { 'all' }
+          comment = "Created from $($Detection.detection_id) by $((Show-FalconModule).UserAgent)."
+        }))
+      }
+    } else {
+      foreach ($Property in @('behaviors','device')) {
+        if (!$Detection.$Property) {
+          throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
         }
+      }
     }
-    end { if ($Output) { @($Output | Group-Object value).foreach{ $_.Group | Select-Object -First 1 }}}
+  }
+  end { if ($Output) { @($Output | Group-Object value).foreach{ $_.Group | Select-Object -First 1 }}}
 }
 function Edit-FalconMlExclusion {
 <#
@@ -62,46 +62,46 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Value,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [Alias('groups','GroupIds')]
-        [object[]]$GroupId,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=4)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('groups','id','value','comment') }}
-        }
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Value,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [Alias('groups','GroupIds')]
+    [object[]]$GroupId,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('groups','id','value','comment') }}
     }
-    process {
-        if ($PSCmdlet.ShouldProcess('Edit-FalconMlExclusion','Test-GroupId')) {
-            if ($PSBoundParameters.GroupId) {
-                if ($PSBoundParameters.GroupId.id) {
-                    # Filter to 'id' if supplied with 'detailed' objects
-                    [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-                }
-                @($PSBoundParameters.GroupId).foreach{
-                    if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
-                        throw "'$_' is not a valid Host Group identifier."
-                    }
-                }
-            }
+  }
+  process {
+    if ($PSCmdlet.ShouldProcess('Edit-FalconMlExclusion','Test-GroupId')) {
+      if ($PSBoundParameters.GroupId) {
+        if ($PSBoundParameters.GroupId.id) {
+          # Filter to 'id' if supplied with 'detailed' objects
+          [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        @($PSBoundParameters.GroupId).foreach{
+          if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
+            throw "'$_' is not a valid Host Group identifier."
+          }
+        }
+      }
     }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconMlExclusion {
 <#
@@ -128,46 +128,46 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipelineByPropertyName,
-            ValueFromPipeline,Mandatory)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=2)]
-        [ValidateSet('applied_globally.asc','applied_globally.desc','created_by.asc','created_by.desc',
-            'created_on.asc','created_on.desc','last_modified.asc','last_modified.desc','modified_by.asc',
-            'modified_by.desc','value.asc','value.desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=3)]
-        [ValidateRange(1,500)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','ids','offset','filter','limit') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/policy/queries/ml-exclusions/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Mandatory)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=2)]
+    [ValidateSet('applied_globally.asc','applied_globally.desc','created_by.asc','created_by.desc',
+      'created_on.asc','created_on.desc','last_modified.asc','last_modified.desc','modified_by.asc',
+      'modified_by.desc','value.asc','value.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('sort','ids','offset','filter','limit') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function New-FalconMlExclusion {
 <#
@@ -189,43 +189,43 @@ Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconMlExclusion
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [string]$Value,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidateSet('blocking','extraction',IgnoreCase=$false)]
-        [Alias('excluded_from')]
-        [string[]]$ExcludedFrom,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=3)]
-        [Alias('groups','GroupIds')]
-        [object[]]$GroupId,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',ValueFromPipelineByPropertyName,
-            Position=4)]
-        [string]$Comment
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('groups','value','comment','excluded_from') }}
-        }
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Value,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('blocking','extraction',IgnoreCase=$false)]
+    [Alias('excluded_from')]
+    [string[]]$ExcludedFrom,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('groups','GroupIds')]
+    [object[]]$GroupId,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [string]$Comment
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('groups','value','comment','excluded_from') }}
     }
-    process {
-        if ($PSBoundParameters.GroupId.id) {
-            # Filter to 'id' if supplied with 'detailed' objects
-            [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-        }
-        if ($PSBoundParameters.GroupId) {
-            @($PSBoundParameters.GroupId).foreach{
-                if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
-            }
-        }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+  }
+  process {
+    if ($PSBoundParameters.GroupId.id) {
+      # Filter to 'id' if supplied with 'detailed' objects
+      [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
     }
+    if ($PSBoundParameters.GroupId) {
+      @($PSBoundParameters.GroupId).foreach{
+        if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
+      }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Remove-FalconMlExclusion {
 <#
@@ -240,29 +240,29 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
 #>
-    [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Position=1)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','comment') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/ml-exclusions/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Position=1)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','comment') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }

@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
             Format = @{ Body = @{ resources = @('account_id','cloudtrail_region') }}
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconHorizonAwsAccount {
 <#
@@ -108,7 +108,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
 }
 function Get-FalconHorizonAwsLink {
@@ -168,7 +168,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
             Format = @{ Body = @{ resources = @('cloudtrail_region','account_id','organization_id') }}
         }
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconHorizonAwsScript {
 <#
@@ -209,7 +209,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
             if ($OutPath.Category -eq 'WriteError' -and !$Force) {
                 Write-Error @OutPath
             } else {
-                Invoke-Falcon @Param -Inputs $PSBoundParameters
+                Invoke-Falcon @Param -UserInput $PSBoundParameters
             }
         }
     }
@@ -251,6 +251,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
 }

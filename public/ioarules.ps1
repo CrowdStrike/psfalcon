@@ -20,48 +20,48 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [boolean]$Enabled,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=4)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=5)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('RulegroupId')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{ root = @('description','rulegroup_version','name','enabled','id','comment') }
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [boolean]$Enabled,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=5)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('RulegroupId')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('description','rulegroup_version','name','enabled','id','comment') }
+      }
     }
-    process {
-        ($Param.Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
-            # When not provided, add required fields using existing policy settings
-            if (!$PSBoundParameters.$_) {
-                if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.Id -EA 0 }
-                if ($Existing) {
-                    $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
-                    $PSBoundParameters[$_] = $Value
-                }
-            }
+  }
+  process {
+    ($Param.Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
+      # When not provided, add required fields using existing policy settings
+      if (!$PSBoundParameters.$_) {
+        if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.Id -EA 0 }
+        if ($Existing) {
+          $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
+          $PSBoundParameters[$_] = $Value
         }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+      }
     }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Edit-FalconIoaRule {
 <#
@@ -85,47 +85,47 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Position=1)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',ValueFromPipelineByPropertyName,
-           Position=2)]
-        [Alias('rule_updates','rules','RuleUpdates')]
-        [object[]]$RuleUpdate,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-            Position=3)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('rulegroup_id','id')]
-        [string]$RulegroupId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('rulegroup_id','comment','rule_updates','rulegroup_version') }}
-        }
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Position=1)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',ValueFromPipelineByPropertyName,
+       Position=2)]
+    [Alias('rule_updates','rules','RuleUpdates')]
+    [object[]]$RuleUpdate,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('rulegroup_id','id')]
+    [string]$RulegroupId
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('rulegroup_id','comment','rule_updates','rulegroup_version') }}
     }
-    process {
-        if ($RuleUpdate) {
-            # Filter 'rule_updates' to required fields
-            [object[]]$RuleRequired = 'instance_id','pattern_severity','enabled','disposition_id','name',
-                'description','comment',@{ label = 'field_values'; expression = { $_.field_values |
-                Select-Object name,label,type,values }}
-            [object[]]$RuleUpdate = $RuleUpdate | Select-Object $RuleRequired
-        }
-        ($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
-            # When not provided, add required fields using existing policy settings
-            if (!$PSBoundParameters.$_) {
-                if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.RulegroupId -EA 0 }
-                if ($Existing) {
-                    $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
-                    $PSBoundParameters[$_] = $Value
-                }
-            }
-        }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+  }
+  process {
+    if ($RuleUpdate) {
+      # Filter 'rule_updates' to required fields
+      [object[]]$RuleRequired = 'instance_id','pattern_severity','enabled','disposition_id','name',
+        'description','comment',@{ label = 'field_values'; expression = { $_.field_values |
+        Select-Object name,label,type,values }}
+      [object[]]$RuleUpdate = $RuleUpdate | Select-Object $RuleRequired
     }
+    ($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
+      # When not provided, add required fields using existing policy settings
+      if (!$PSBoundParameters.$_) {
+        if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.RulegroupId -EA 0 }
+        if ($Existing) {
+          $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
+          $PSBoundParameters[$_] = $Value
+        }
+      }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconIoaGroup {
 <#
@@ -154,58 +154,58 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=1)]
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=2)]
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=2)]
-        [Alias('q')]
-        [string]$Query,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=3)]
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=3)]
-        [ValidateSet('created_by.asc','created_by.desc','created_on.asc','created_on.desc','description.asc',
-            'description.desc','enabled.asc','enabled.desc','modified_by.asc','modified_by.desc',
-            'modified_on.asc','modified_on.desc','name.asc','name.desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=4)]
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=4)]
-        [ValidateRange(1,500)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Mandatory)]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=2)]
+    [Alias('q')]
+    [string]$Query,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=3)]
+    [ValidateSet('created_by.asc','created_by.desc','created_on.asc','created_on.desc','description.asc',
+      'description.desc','enabled.asc','enabled.desc','modified_by.asc','modified_by.desc',
+      'modified_on.asc','modified_on.desc','name.asc','name.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=4)]
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=4)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Mandatory)]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        @(Invoke-Falcon @Param -Inputs $PSBoundParameters).foreach{
-            if ($_.version -and $null -eq $_.version) { $_.version = 0 }
-            $_
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    @(Invoke-Falcon @Param -UserInput $PSBoundParameters).foreach{
+      if ($_.version -and $null -eq $_.version) { $_.version = 0 }
+      $_
     }
+  }
 }
 function Get-FalconIoaPlatform {
 <#
@@ -228,38 +228,38 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get',Position=1)]
-        [ValidateRange(1,500)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','offset','limit') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get',Position=1)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','offset','limit') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconIoaRule {
 <#
@@ -288,58 +288,58 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^\d+$')]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=1)]
-        [ValidateScript({ Test-FqlStatement $_ })]
-        [string]$Filter,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=2)]
-        [Alias('q')]
-        [string]$Query,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=3)]
-        [ValidateSet('rules.created_by.asc','rules.created_by.desc','rules.created_on.asc',
-            'rules.created_on.desc','rules.current_version.action_label.asc',
-            'rules.current_version.action_label.desc','rules.current_version.description.asc',
-            'rules.current_version.description.desc','rules.current_version.modified_by.asc',
-            'rules.current_version.modified_by.desc','rules.current_version.modified_on.asc',
-            'rules.current_version.modified_on.desc','rules.current_version.name.asc',
-            'rules.current_version.name.desc','rules.current_version.pattern_severity.asc',
-            'rules.current_version.pattern_severity.desc','rules.enabled.asc','rules.enabled.desc',
-            'rules.ruletype_name.asc','rules.ruletype_name.desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=4)]
-        [ValidateRange(1,500)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{ root = @('ids') }
-                Query = @('limit','sort','q','offset','filter')
-            }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^\d+$')]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=2)]
+    [Alias('q')]
+    [string]$Query,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=3)]
+    [ValidateSet('rules.created_by.asc','rules.created_by.desc','rules.created_on.asc',
+      'rules.created_on.desc','rules.current_version.action_label.asc',
+      'rules.current_version.action_label.desc','rules.current_version.description.asc',
+      'rules.current_version.description.desc','rules.current_version.modified_by.asc',
+      'rules.current_version.modified_by.desc','rules.current_version.modified_on.asc',
+      'rules.current_version.modified_on.desc','rules.current_version.name.asc',
+      'rules.current_version.name.desc','rules.current_version.pattern_severity.asc',
+      'rules.current_version.pattern_severity.desc','rules.enabled.asc','rules.enabled.desc',
+      'rules.ruletype_name.asc','rules.ruletype_name.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=4)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('limit','sort','q','offset','filter')
+      }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconIoaSeverity {
 <#
@@ -362,38 +362,38 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/pattern-severities/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
-        [Alias('Ids','pattern_severity')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get',Position=1)]
-        [ValidateRange(1,500)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','offset','limit') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/ioarules/queries/pattern-severities/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
+    [Alias('Ids','pattern_severity')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get',Position=1)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','offset','limit') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconIoaType {
 <#
@@ -416,38 +416,38 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^\d{1,2}$')]
-        [Alias('Ids','ruletype_id')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get',Position=1)]
-        [ValidateRange(1,500)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','offset','limit') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^\d{1,2}$')]
+    [Alias('Ids','ruletype_id')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get',Position=1)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','offset','limit') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function New-FalconIoaGroup {
 <#
@@ -466,31 +466,31 @@ Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
-        [Alias('platform_name')]
-        [string]$Platform,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
-            Position=4)]
-        [string]$Comment
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('description','platform','name','comment') }}
-        }
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
+    [Alias('platform_name')]
+    [string]$Platform,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [string]$Comment
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','platform','name','comment') }}
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconIoaRule {
 <#
@@ -520,59 +520,59 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
-        [Alias('pattern_severity')]
-        [string]$PatternSeverity,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=3)]
-        [ValidateSet(1,2,5,6,9,10,11,12)]
-        [Alias('ruletype_id')]
-        [string]$RuletypeId,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=4)]
-        [ValidateSet(10,20,30)]
-        [Alias('disposition_id')]
-        [int32]$DispositionId,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=5)]
-        [Alias('field_values','FieldValues')]
-        [object[]]$FieldValue,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName,Position=6)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName,Position=7)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
-            Position=8)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('rulegroup_id','id')]
-        [string]$RulegroupId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{
-                    root = @('rulegroup_id','disposition_id','comment','description','pattern_severity',
-                        'ruletype_id','field_values','name')
-                }
-            }
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
+    [Alias('pattern_severity')]
+    [string]$PatternSeverity,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidateSet(1,2,5,6,9,10,11,12)]
+    [Alias('ruletype_id')]
+    [string]$RuletypeId,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [ValidateSet(10,20,30)]
+    [Alias('disposition_id')]
+    [int32]$DispositionId,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=5)]
+    [Alias('field_values','FieldValues')]
+    [object[]]$FieldValue,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName,Position=6)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName,Position=7)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=8)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('rulegroup_id','id')]
+    [string]$RulegroupId
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('rulegroup_id','disposition_id','comment','description','pattern_severity',
+            'ruletype_id','field_values','name')
         }
+      }
     }
-    process {
-        if ($PSBoundParameters.FieldValue) {
-            # Filter 'field_values' to required fields
-            $PSBoundParameters.FieldValue = $PSBoundParameters.FieldValue | Select-Object name,label,type,values
-        }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+  }
+  process {
+    if ($PSBoundParameters.FieldValue) {
+      # Filter 'field_values' to required fields
+      $PSBoundParameters.FieldValue = $PSBoundParameters.FieldValue | Select-Object name,label,type,values
     }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Remove-FalconIoaGroup {
 <#
@@ -587,31 +587,31 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Position=1)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','comment') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Position=1)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','comment') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Remove-FalconIoaRule {
 <#
@@ -628,36 +628,36 @@ Rule identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Position=1)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
-            Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('rule_group_id','rulegroup_id','ioa_rule_groups')]
-        [string]$RuleGroupId,
-        [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
-            Position=3)]
-        [ValidatePattern('^\d+$')]
-        [Alias('Ids','rule_ids','instance_id')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','rule_group_id','comment') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Position=1)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
+      Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('rule_group_id','rulegroup_id','ioa_rule_groups')]
+    [string]$RuleGroupId,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidatePattern('^\d+$')]
+    [Alias('Ids','rule_ids','instance_id')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','rule_group_id','comment') }
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
 }
 function Test-FalconIoaRule {
 <#
@@ -670,19 +670,19 @@ An array of rule properties
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Test-FalconIoaRule
 #>
-    [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/validate/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/ioarules/entities/rules/validate/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [Alias('fields','field_values')]
-        [object[]]$Field
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('fields') }}
-        }
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/validate/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ioarules/entities/rules/validate/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('fields','field_values')]
+    [object[]]$Field
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('fields') }}
     }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }

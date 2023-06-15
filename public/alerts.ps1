@@ -66,7 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
     process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
     end {
         if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
 }
 function Invoke-FalconAlertAction {
@@ -115,7 +115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
             if ($PSBoundParameters.Value) { $Parameters['value'] = $PSBoundParameters.Value }
             $PSBoundParameters['action_parameters'] = @($Parameters)
             @('Name','Value').foreach{ [void]$PSBoundParameters.Remove($_) }
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
+            Invoke-Falcon @Param -UserInput $PSBoundParameters
         }
     }
 }
