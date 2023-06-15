@@ -193,22 +193,20 @@ function Build-Content {
       [System.Collections.Generic.List[string]]$Expected = @()
       @($Format.Values).foreach{
         # Determine expected field values using 'Format'
-        if ($_ -is [array]) {
-          @($_).foreach{ $Expected.Add($_) }
-        } elseif ($_.Keys) {
+        if ($_.Keys) {
           @($_.Values).foreach{ @($_).foreach{ $Expected.Add($_) }}
+        } else {
+          @($_).foreach{ $Expected.Add($_) }
         }
       }
       if ($Expected) {
         @($UserInput.Keys).foreach{
-          if ($Expected -notcontains $_) {
-            if (((Get-Command $Command).Parameters.Keys -contains $_)) {
-              # Create duplicate parameter using 'Alias' and remove original when expected
-              $Alias = ((Get-Command $Command).Parameters.$_.Aliases)[0]
-              if ($Alias -and $Expected -contains $Alias) {
-                $UserInput[$Alias] = $UserInput.$_
-                [void]$UserInput.Remove($_)
-              }
+          if ($Expected -notcontains $_ -and (Get-Command $Command).Parameters.Keys -contains $_) {
+            # Create duplicate parameter using 'Alias' and remove original when expected
+            $Alias = ((Get-Command $Command).Parameters.$_.Aliases)[0]
+            if ($Alias -and $Expected -contains $Alias) {
+              $UserInput[$Alias] = $UserInput.$_
+              [void]$UserInput.Remove($_)
             }
           }
         }
