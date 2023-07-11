@@ -357,14 +357,12 @@ function Get-ContainerUrl {
 }
 function Get-EndpointFormat {
   [CmdletBinding()]
-  param(
-    [Parameter(Mandatory)]
-    [string]$Endpoint
-  )
+  param([Parameter(Mandatory)][string]$Endpoint)
   begin { [hashtable]$Output = @{} }
   process {
     # Define endpoint payload/parameters using 'format.json'
-    @($Script:Falcon.Format.$Endpoint.PSObject.Properties).foreach{
+    [string[]]$Array = $Endpoint -split ':',2
+    @($Script:Falcon.Format.($Array[0]).($Array[1]).PSObject.Properties).foreach{
       $Output[$_.Name] = if ($_.Value -is [PSCustomObject]) {
         $Value = @{}
         @($_.Value.PSObject.Properties).foreach{ $Value[$_.Name] = $_.Value }
