@@ -19,11 +19,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconDiscoverAwsAccess
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -90,16 +86,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDiscoverAwsAccount
     [ValidatePattern('^\d{12}$')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ resources = @('rate_limit_time','external_id','rate_limit_reqs',
-          'cloudtrail_bucket_region','iam_role_arn','id','cloudtrail_bucket_owner_id') }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconDiscoverAwsAccount {
@@ -160,11 +147,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsAccount
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('migrated','ids','scan-type','status','limit','organization-ids','offset') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -190,13 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsLink
     [Parameter(ParameterSetName='/cloud-connect-aws/entities/console-setup-urls/v1:get',Position=1)]
     [string]$Region
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('region') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconDiscoverAwsSetting {
@@ -263,18 +240,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAwsAccount
     [Alias('account_id')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          resources = @('account_id','account_type','cloudtrail_region','iam_role_arn','is_master',
-            'organization_id')
-        }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconDiscoverAwsScript {
@@ -310,10 +276,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{
-        Query = @('ids')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('ids'); Outfile = 'path' }
     }
   }
   process {
@@ -357,11 +320,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDiscoverAwsAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','organization-ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_)}}}
@@ -398,12 +357,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAwsSetting
     [Alias('static_external_id')]
     [string]$StaticExternalId
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ resources = @('cloudtrail_bucket_owner_id','static_external_id') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
