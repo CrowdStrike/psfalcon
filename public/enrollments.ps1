@@ -31,14 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMobileAction
     [string[]]$Email
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('email_addresses','expires_at') }
-        Query = @('action_name')
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
     if (!$PSBoundParameters.ExpiresAt) { $PSBoundParameters.ExpiresAt = Convert-Rfc3339 720 }
   }

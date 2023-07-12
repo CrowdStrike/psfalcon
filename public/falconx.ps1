@@ -54,11 +54,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReport
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter','offset','sort','ids','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -117,11 +113,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter','offset','sort','ids','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -246,9 +238,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
       Format = @{
         Body = @{
           root = @('user_tags')
-          sandbox = @('submit_name','system_date','action_script','environment_id',
-            'command_line','system_time','url','document_password','enable_tor','sha256',
-            'network_settings')
+          sandbox = @('submit_name','system_date','action_script','environment_id','command_line','system_time',
+            'url','document_password','enable_tor','sha256','network_settings')
         }
       }
     }
@@ -258,12 +249,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
       throw "'Url' and 'Sha256' can not be combined in a submission."
     } else {
       $PSBoundParameters.EnvironmentId = switch ($PSBoundParameters.EnvironmentId) {
-        'android'    { 200 }
-        'macOS_10.15'  { 400 }
+        'android' { 200 }
+        'macOS_10.15' { 400 }
         'ubuntu16_x64' { 300 }
-        'win7_x64'   { 110 }
-        'win7_x86'   { 100 }
-        'win10_x64'  { 160 }
+        'win7_x64' { 110 }
+        'win7_x86' { 100 }
+        'win10_x64' { 160 }
       }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -303,10 +294,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconArtifact
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{
-        Outfile = 'path'
-        Query = @('name','id')
-      }
+      Format = @{ Outfile = 'path'; Query = @('id') }
     }
   }
   process {
@@ -380,9 +368,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMemoryDump
       { $_.ExtractId } { $PSBoundParameters.ExtractId }
       { $_.HexId } { $PSBoundParameters.HexId }
     }
-    @('BinaryId','ExtractId','HexId').foreach{
-      if ($PSBoundParameters.$_) { [void]$PSBoundParameters.Remove($_) }
-    }
+    @('BinaryId','ExtractId','HexId').foreach{ if ($PSBoundParameters.$_) { [void]$PSBoundParameters.Remove($_) }}
   }
   process {
     $OutPath = Test-OutFile $PSBoundParameters.Path
@@ -415,12 +401,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReport
     [Alias('Ids')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
