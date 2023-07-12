@@ -90,8 +90,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubmission
 #>
   [CmdletBinding(DefaultParameterSetName='/falconx/queries/submissions/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
     [Alias('Ids')]
     [string[]]$Id,
@@ -336,8 +336,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMemoryDump
     [Parameter(ParameterSetName='/falconx/entities/memory-dump/hex-dump/v1:get',Position=1)]
     [ValidatePattern('\.gzip$')]
     [string]$Path,
-    [Parameter(ParameterSetName='/falconx/entities/memory-dump/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Parameter(ParameterSetName='/falconx/entities/memory-dump/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=2)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
     [Alias('binary_content_id')]
     [string]$BinaryId,
@@ -396,8 +396,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReport
 #>
   [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=1)]
     [Alias('Ids')]
     [string]$Id
   )
