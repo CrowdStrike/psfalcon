@@ -24,11 +24,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','scan-type') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -59,13 +55,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverGcpAccount
     [Alias('parent_id')]
     [string]$ParentId
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ resources = @('parent_id') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconDiscoverGcpScript {

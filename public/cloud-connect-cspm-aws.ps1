@@ -24,13 +24,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
     [Alias('cloudtrail_region')]
     [string]$CloudtrailRegion
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ resources = @('account_id','cloudtrail_region') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconHorizonAwsAccount {
@@ -96,13 +90,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('limit','ids','organization-ids','scan-type','offset','group_by','status')
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -161,13 +149,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
     [Alias('cloudtrail_region')]
     [string]$CloudtrailRegion
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ resources = @('cloudtrail_region','account_id','organization_id') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconHorizonAwsScript {
