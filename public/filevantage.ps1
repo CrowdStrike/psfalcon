@@ -48,11 +48,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFimChange
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter','sort','limit','offset','ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
