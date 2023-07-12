@@ -361,18 +361,20 @@ function Get-EndpointFormat {
   begin { [hashtable]$Output = @{} }
   process {
     # Define endpoint payload/parameters using 'format.json'
-    [string[]]$Array = $Endpoint -split ':',2
-    @($Script:Falcon.Format.($Array[0]).($Array[1]).PSObject.Properties).foreach{
-      $Output[$_.Name] = if ($_.Value -is [PSCustomObject]) {
-        $Value = @{}
-        @($_.Value.PSObject.Properties).foreach{ $Value[$_.Name] = $_.Value }
-        $Value
-      } else {
-        $_.Value
+    [string[]]$Array = try { $Endpoint -split ':',2 } catch {}
+    if ($Array) {
+      @($Script:Falcon.Format.($Array[0]).($Array[1]).PSObject.Properties).Where({ $null -ne $_.Value }).foreach{
+        $Output[$_.Name] = if ($_.Value -is [PSCustomObject]) {
+          $Value = @{}
+          @($_.Value.PSObject.Properties).foreach{ $Value[$_.Name] = $_.Value }
+          $Value
+        } else {
+          $_.Value
+        }
       }
     }
   }
-  end { if ($Output) { $Output } }
+  end { if ($Output) { $Output }}
 }
 function Get-ParamSet {
   [CmdletBinding()]
