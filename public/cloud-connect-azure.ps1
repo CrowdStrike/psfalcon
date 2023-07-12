@@ -52,11 +52,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('tenant_ids','scan-type','ids','limit','status','offset') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -94,13 +90,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAzureCertificate
     [Alias('tenant_id')]
     [string[]]$TenantId
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('refresh','tenant_id','years_valid') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconDiscoverAzureTenant {
@@ -129,11 +119,11 @@ Azure tenant identifier
 .PARAMETER ClientId
 Azure client identifier
 .PARAMETER AccountType
-
+Account type
 .PARAMETER YearsValid
 Years the certificate should be valid
 .PARAMETER DefaultSubscription
-
+Default subscription
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAzureAccount
 #>
@@ -167,19 +157,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDiscoverAzureAccount
     [Alias('default_subscription')]
     [boolean]$DefaultSubscription
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-            Body = @{
-                    resources = @('account_type','client_id','default_subscription','subscription_id',
-                        'tenant_id','years_valid')
-                }
-            }
-        }
-    }
-    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconDiscoverAzureScript {
 <#
@@ -194,36 +173,36 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
-           Position=1)]
-        [string]$Path,
-        [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
-        [switch]$Force
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Headers = @{ Accept = 'application/octet-stream' }
-            Format = @{ Outfile = 'path' }
-        }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
+      Position=1)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ Accept = 'application/octet-stream' }
+      Format = @{ Outfile = 'path' }
     }
-    process {
-        $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
-        $OutPath = Test-OutFile $PSBoundParameters.Path
-        if ($OutPath.Category -eq 'ObjectNotFound') {
-            Write-Error @OutPath
-        } elseif ($PSBoundParameters.Path) {
-            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
-                Write-Error @OutPath
-            } else {
-                Invoke-Falcon @Param -UserInput $PSBoundParameters
-            }
-        }
+  }
+  process {
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
     }
+  }
 }
 function Update-FalconDiscoverAzureAccount {
 <#
@@ -240,28 +219,22 @@ Azure client identifier for the associated Service Principal
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Update-FalconDiscoverAzureAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('tenant-id')]
-        [string]$TenantId,
-        [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('object_id')]
-        [string]$ObjectId,
-        [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('tenant-id','object_id','id') }
-        }
-    }
-    process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant-id')]
+    [string]$TenantId,
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('object_id')]
+    [string]$ObjectId,
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/client-id/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
