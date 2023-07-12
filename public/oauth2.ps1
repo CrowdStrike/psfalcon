@@ -3,8 +3,8 @@ function Request-FalconToken {
 .SYNOPSIS
 Request an OAuth2 access token
 .DESCRIPTION
-If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and 'Cloud' or 'Hostname') and token are
-cached for re-use.
+If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and 'Cloud'/'CustomUrl'/'Hostname') and
+token are cached for re-use.
 
 If an active OAuth2 access token is due to expire in less than 60 seconds, a new token will automatically be
 requested using your cached credentials.
@@ -18,6 +18,8 @@ OAuth2 client identifier
 OAuth2 client secret
 .PARAMETER Cloud
 CrowdStrike cloud [default: 'us-1']
+.PARAMETER CustomUrl
+Custom API URL for module troubleshooting
 .PARAMETER Hostname
 CrowdStrike API hostname
 .PARAMETER MemberCid
@@ -31,11 +33,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
   [OutputType([void])]
   param(
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=1)]
+    [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=1)]
     [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=1)]
     [Alias('client_id')]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$ClientId,
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=2)]
+    [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=2)]
     [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=2)]
     [Alias('client_secret')]
     [ValidatePattern('^\w{40}$')]
@@ -43,16 +47,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('eu-1','us-gov-1','us-1','us-2',IgnoreCase=$false)]
     [string]$Cloud,
+    [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=3)]
+    [string]$CustomUrl,
     [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('https://api.crowdstrike.com','https://api.us-2.crowdstrike.com',
       'https://api.laggar.gcw.crowdstrike.com','https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
     [string]$Hostname,
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
+    [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=4)]
     [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=4)]
     [Alias('cid','member_cid')]
     [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$MemberCid,
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=5)]
+    [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=5)]
     [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=5)]
     [ValidateScript({
       @($_.Keys).foreach{
@@ -68,11 +76,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     if ($PSBoundParameters.MemberCid -match '^[a-fA-F0-9]{32}-\w{2}$') {
       $PSBoundParameters.MemberCid = $PSBoundParameters.MemberCid.Split('-')[0]
     }
-    function Get-ApiCredential ($Inputs) {
+    function Get-ApiCredential ($UserInput) {
       $Output = @{}
       @('ClientId','ClientSecret','Hostname','MemberCid').foreach{
         # Use input before existing ApiClient value
-        $Value = if ($Inputs.$_) { $Inputs.$_ } elseif ($null -ne $Script:Falcon.$_) { $Script:Falcon.$_ }
+        $Value = if ($UserInput.$_) { $UserInput.$_ } elseif ($null -ne $Script:Falcon.$_) { $Script:Falcon.$_ }
         if (!$Value -and $_ -match '^(ClientId|ClientSecret)$') {
           # Prompt for ClientId/ClientSecret and validate input
           $Value = Read-Host $_
@@ -83,7 +91,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
             $InvalidValue = $BaseError -f $_,$Value,$ValidPattern
             throw $InvalidValue
           }
-        } elseif (!$Value -and $_ -eq 'Hostname') {
+        } elseif (!$Value -and !$UserInput.CustomUrl -and $_ -eq 'Hostname') {
           # Default to 'us-1' cloud
           $Value = 'https://api.crowdstrike.com'
         }
@@ -93,7 +101,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     }
   }
   process {
-    if ($PSBoundParameters.Cloud) {
+    if ($PSBoundParameters.CustomUrl) {
+      # Override Hostname with CustomUrl
+      $PSBoundParameters['Hostname'] = $PSBoundParameters.CustomUrl
+      [void]$PSBoundParameters.Remove('CustomUrl')
+    } elseif ($PSBoundParameters.Cloud) {
       # Convert 'Cloud' to 'Hostname'
       $Value = switch ($PSBoundParameters.Cloud) {
         'eu-1' { 'https://api.eu-1.crowdstrike.com' }
