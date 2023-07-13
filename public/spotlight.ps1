@@ -17,11 +17,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
     [object[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -109,11 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('after','sort','ids','filter','limit','facet') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -175,11 +167,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('after','sort','ids','filter','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {

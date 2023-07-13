@@ -29,11 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -77,16 +73,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
     [Alias('user_uuid','uuid')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('user_uuid')
-        Body = @{ root = @('first_name','last_name') }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconRole {
@@ -155,11 +142,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','filter','user_uuid','limit','cid','direct_only','offset','ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -250,15 +233,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('ids') }
-        Query = @('filter','sort','limit','offset','uid')
-      }
-      Max = 100
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -279,9 +254,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
       if ($IdList) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
       if ($Include) {
         $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
-        if ($Request -and !$Request.uuid) {
-          $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}
-        }
+        if ($Request -and !$Request.uuid) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}}
         if ($Include -contains 'roles') {
           @($Request).foreach{ Set-Property $_ roles @(Get-FalconRole -UserId $_.uuid) }
         }
@@ -384,16 +357,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
     [Alias('validate_only')]
     [boolean]$ValidateOnly
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('validate_only')
-        Body = @{ root = @('first_name','uid','last_name','cid','password') }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconRole {
@@ -427,11 +391,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('cid','uuid','action','role_ids') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -465,13 +425,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
     [Alias('user_uuid','uuid')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('user_uuid') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 @('Add-FalconRole','Get-FalconRole','Remove-FalconRole').foreach{
