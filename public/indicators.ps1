@@ -42,13 +42,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocHost
     [Parameter(ParameterSetName='/indicators/aggregates/devices-count/v1:get',Mandatory)]
     [switch]$Total
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('type','offset','limit','value') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconIocProcess {
@@ -103,11 +97,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
     [switch]$All
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','device_id','offset','type','value','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {

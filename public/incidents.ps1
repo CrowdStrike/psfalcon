@@ -49,14 +49,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('sort','offset','filter','limit')
-        Body = @{ root = @('ids') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -119,14 +112,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('sort','offset','filter','limit')
-        Body = @{ root = @('ids') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -174,14 +160,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
     [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get')]
     [switch]$Total
   )
-  process {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','offset','filter','limit') }
-    }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconIncidentAction {
 <#
@@ -223,18 +203,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('update_detects','overwrite_detects')
-        Body = @{
-          root = @('ids')
-          action_parameters = @('name','value')
-        }
-      }
-      Max = 1000
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 1000 }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -246,10 +215,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
           throw "Valid values for 'update_status': 'closed', 'in_progress', 'new', 'reopened'."
         } else {
           $PSBoundParameters['Value'] = switch ($PSBoundParameters.Value) {
-            'new'     { '20' }
-            'reopened'  { '25' }
+            'new' { '20' }
+            'reopened' { '25' }
             'in_progress' { '30' }
-            'closed'    { '40' }
+            'closed' { '40' }
           }
         }
       }
