@@ -3,9 +3,9 @@ function Register-FalconEventCollector {
 .SYNOPSIS
 Define Falcon LogScale ingestion endpoint and token for logging
 .DESCRIPTION
-Once configured, the Falcon LogScale destination can be used by PSFalcon but the module will not send events to Falcon LogScale
-until 'Enable' options are chosen. 'Remove-FalconEventCollector' can be used to remove a configured destination
-and stop the transmission of events.
+Once configured, the Falcon LogScale destination can be used by PSFalcon but the module will not send events to
+Falcon LogScale until 'Enable' options are chosen. 'Remove-FalconEventCollector' can be used to remove a
+configured destination and stop the transmission of events.
 .PARAMETER Uri
 Falcon LogScale cloud
 .PARAMETER Token
