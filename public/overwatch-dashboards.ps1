@@ -17,13 +17,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchEvent
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconOverWatchDetection {
@@ -45,13 +39,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchDetection
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconOverWatchIncident {
@@ -73,12 +61,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchIncident
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }

@@ -76,12 +76,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
       Format = if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
         @{ Body = @{ root = @('custom_notifications') }}
       } else {
-        @{
-          Body = @{
-            resources = @('name','id','description','settings')
-            root = @('resources')
-          }
-        }
+        @{ Body = @{ resources = @('name','id','description','settings'); root = @('resources') }}
       }
     }
     [System.Collections.Generic.List[object]]$List = @()
@@ -90,15 +85,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
     if ($Array) {
       foreach ($i in $Array) {
         if ($i.settings.classes.exceptions) {
-          @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
-            # Remove exception 'id' values from 'settings' object
-            $_.PSObject.Properties.Remove('id')
-          }
+          # Remove exception 'id' values from 'settings' object
+          @($i.settings.classes.exceptions).Where({ $_.id }).foreach{ $_.PSObject.Properties.Remove('id') }
         }
-        [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
-          # Select allowed fields, when populated
-          if ($i.$_) { $_ }
-        }
+        # Select allowed fields, when populated
+        [string[]]$Select = @('id','name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
         $List.Add(($i | Select-Object $Select))
       }
     } else {
@@ -118,8 +109,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
           }
           if ($Property.custom_message -or $null -ne $Property.use_custom) {
             # Add under 'custom_notifications'
-            $PSBoundParameters.custom_notifications[($_.ToLower(),
-              'notification' -join '_')] = $Property
+            $PSBoundParameters.custom_notifications[($_.ToLower(),'notification' -join '_')] = $Property
           }
         }
       }
@@ -205,11 +195,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','ids','offset','filter','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -279,13 +265,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
     [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get')]
     [switch]$Total
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','offset','filter','id','limit') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconDeviceControlPolicyAction {
@@ -323,22 +303,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAct
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('action_name')
-        Body = @{ root = @('ids','action_parameters') }
-      }
+      Format = @{ Query = @('action_name'); Body = @{ root = @('ids','action_parameters') }}
     }
   }
   process {
     $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
     [void]$PSBoundParameters.Remove('Id')
     if ($PSBoundParameters.GroupId) {
-      $PSBoundParameters['action_parameters'] = @(
-        @{
-          name = 'group_id'
-          value = $PSBoundParameters.GroupId
-        }
-      )
+      $PSBoundParameters['action_parameters'] = @(@{ name = 'group_id'; value = $PSBoundParameters.GroupId })
       [void]$PSBoundParameters.Remove('GroupId')
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -398,10 +370,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/policy/entities/device-control/v1:post'
       Format = @{
-        Body = @{
-          resources = @('name','description','platform_name','settings')
-          root = @('resources')
-        }
+        Body = @{ resources = @('name','description','platform_name','settings'); root = @('resources') }
       }
     }
     [System.Collections.Generic.List[object]]$List = @()
@@ -452,11 +421,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -495,12 +460,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconDeviceControlPrecedence
     [Alias('Ids')]
     [string[]]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('platform_name','ids') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }

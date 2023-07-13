@@ -91,11 +91,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit','sort','filter','ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -157,11 +153,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit','sort','filter','ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -224,11 +216,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanHost
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit','sort','filter','ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -300,11 +288,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledScan
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit','sort','filter','ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -418,10 +402,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
         Body = @{
-          root = @('file_paths','host_groups','max_file_size','max_duration','pause_duration',
-            'cloud_ml_level_detection','cloud_ml_level_prevention','sensor_ml_level_detection',
-            'sensor_ml_level_prevention','cpu_priority','scan_exclusions','description',
-            'schedule','ignored_by_channel_file')
+          root = @('cloud_ml_level_detection','cloud_ml_level_prevention','cpu_priority','description',
+            'endpoint_notification','file_paths','host_groups','max_duration','max_file_size','pause_duration',
+            'quarantine','scan_exclusions','scan_inclusions','schedule','sensor_ml_level_detection',
+            'sensor_ml_level_prevention')
         }
       }
     }
@@ -573,18 +557,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconScan
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('description','host_groups','scan_exclusions','endpoint_notification','hosts',
-            'sensor_ml_level_prevention','max_duration','sensor_ml_level_detection',
-            'cloud_ml_level_detection','pause_duration','quarantine','initiated_from',
-            'cpu_priority','cloud_ml_level_prevention','file_paths','max_file_size')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -624,11 +597,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconScan
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('ids') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
