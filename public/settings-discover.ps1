@@ -33,12 +33,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsScript
     [Parameter(ParameterSetName='/settings-discover/entities/gen/scripts/v1:get',Position=4)]
     [boolean]$Delete
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('delete','organization-id','account_type','single_account') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }

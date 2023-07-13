@@ -68,11 +68,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','ids','offset','limit','filter') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -102,13 +98,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
     [ValidateSet('json','flatjson',IgnoreCase=$false)]
     [string]$Format
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('format','appId') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconInstaller {
@@ -145,10 +135,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconInstaller
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{
-        Query = @('id')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('id'); Outfile = 'path' }
     }
   }
   process {
@@ -188,16 +175,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
        Position=2)]
     [int32]$Partition
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Format = @{ Query = @('action_name','appId') }
-    }
-  }
   process {
     $Endpoint = $PSCmdlet.ParameterSetName -replace '{partition}',$PSBoundParameters.Partition
     [void]$PSBoundParameters.Remove('Partition')
     $PSBoundParameters['action_name'] = 'refresh_active_stream_session'
-    Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters
+    Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $Endpoint -UserInput $PSBoundParameters
   }
 }

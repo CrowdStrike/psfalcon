@@ -45,15 +45,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonPolicy
     [Alias('policy_id','PolicyId')]
     [int32]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ resources = @('enabled','policy_id','regions','account_id','severity','tag_excluded') }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconHorizonSchedule {
@@ -88,13 +80,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonSchedule
     [Alias('next_scan_timestamp')]
     [string]$NextScanTimestamp
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ resources = @('cloud_platform','scan_schedule','next_scan_timestamp') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconHorizonPolicy {
@@ -141,11 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
     [string]$CloudPlatform
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','service','policy-id','cloud-platform') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[int32]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -174,11 +156,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
     [string[]]$CloudPlatform
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('cloud-platform') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($CloudPlatform) { @($CloudPlatform).foreach{ $List.Add($_) }}}
