@@ -51,13 +51,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
     [string]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('id','frequency','trigger_matchless','recipients','status','content_format') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]] $List = @()
   }
   process {
@@ -230,9 +224,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
       foreach ($i in $Array) {
         # Select allowed fields, when populated
         [string[]]$Select = @('permissions','priority','name','filter','breach_monitoring_enabled',
-        'substring_match_enabled','id').foreach{
-          if ($null -ne $i.$_) { $_ }
-        }
+          'substring_match_enabled','id').foreach{ if ($null -ne $i.$_) { $_ }}
         $List.Add(($i | Select-Object $Select))
       }
     } else {
@@ -302,11 +294,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -334,11 +322,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconExport
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -424,11 +408,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
     [switch]$Combined
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -492,11 +472,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('q','offset','sort','limit','filter','ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -562,11 +538,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('limit','ids','q','sort','offset','filter') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -596,13 +568,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRulePreview
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('filter','topic') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconReconExport {
@@ -665,12 +631,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconReconExport
     [boolean]$HumanReadable
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('filter','sort','entity','human_readable','export_type') }}
-      BodyArray = $true
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; BodyArray = $true }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
@@ -729,21 +690,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
 
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('rule_id')
-          actions = @('type','trigger_matchless','recipients','frequency','content_format')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process {
-    if ($Recipient) { @($Recipient).foreach{ $List.Add($_) }}
-  }
+  process { if ($Recipient) { @($Recipient).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       $PSBoundParameters['Recipient'] = @($List | Select-Object -Unique)
@@ -822,8 +772,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
       Endpoint = '/recon/entities/rules/v1:post'
       Format = @{
         Body = @{
-          root = @('filter','permissions','topic','name','breach_monitoring_enabled',
-            'substring_matching_enabled','priority','raw_array')
+          root = @('filter','permissions','topic','name','breach_monitoring_enabled','substring_matching_enabled',
+            'priority','raw_array')
         }
       }
     }
@@ -834,9 +784,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
       foreach ($i in $Array) {
         # Select allowed fields, when populated
         [string[]]$Select = @('permissions','priority','name','filter','topic',
-        'breach_monitoring_enabled','substring_match_enabled').foreach{
-          if ($null -ne $i.$_) { $_ }
-        }
+          'breach_monitoring_enabled','substring_match_enabled').foreach{ if ($null -ne $i.$_) { $_ }}
         $List.Add(($i | Select-Object $Select))
       }
     } else {
@@ -877,10 +825,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconReconExport
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Outfile = 'path'
-        Query = @('id')
-      }
+      Format = @{ Outfile = 'path'; Query = @('id') }
       Headers = @{ Accept = 'application/octet-stream' }
     }
   }
@@ -915,13 +860,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconAction
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('id') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconReconExport {
@@ -943,11 +882,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconExport
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -978,11 +913,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconNotification
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1013,11 +944,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconRule
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}

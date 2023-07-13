@@ -30,12 +30,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconAdminCommand
     [string]$CloudRequestId
   )
   begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['SequenceId'] = 0 }
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('cloud_request_id','sequence_id') }
-    }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
@@ -70,11 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconCommand
     [string]$CloudRequestId
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('cloud_request_id','sequence_id') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['sequence_id'] = 0 }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -111,12 +103,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
     [Alias('batch_get_cmd_req_id')]
     [string]$BatchGetCmdReqId
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Format = @{ Query = @('session_id','batch_get_cmd_req_id','timeout') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name }}
   process {
     # Verify 'Endpoint' using SessionId/BatchGetCmdReqId
     $Endpoint = if ($PSBoundParameters.SessionId) {
@@ -170,11 +157,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconResponderCommand
     [string]$CloudRequestId
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('cloud_request_id','sequence_id') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     if (!$PSBoundParameters.SequenceId) { $PSBoundParameters['sequence_id'] = 0 }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -238,10 +221,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ ContentType = 'multipart/form-data' }
-      Format = @{
-        Formdata = @('id','platform','permission_type','name','description','comments_for_audit_log',
-          'content')
-      }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -296,11 +275,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','ids','offset','filter','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -363,11 +338,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','ids','offset','filter','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -441,14 +412,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('sort','offset','limit','filter')
-        Body = @{ root = @('ids') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -646,14 +610,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
     [switch]$Wait
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('timeout','host_timeout_duration')
-        Body = @{ root = @('batch_id','file_path','optional_hosts') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
@@ -760,13 +717,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
     [switch]$Wait
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Format = @{
-        Query = @('timeout','host_timeout_duration')
-        Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
@@ -886,13 +837,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
     [switch]$Wait
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Format = @{
-        Query = @('timeout','host_timeout_duration')
-        Body = @{ root = @('session_id','base_command','command_string','optional_hosts','batch_id') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
@@ -990,10 +935,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/x-7z-compressed' }
-      Format = @{
-        Query = @('session_id','sha256')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('session_id','sha256'); Outfile = 'path' }
     }
   }
   process {
@@ -1041,13 +983,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('session_id','cloud_request_id') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconGetFile {
@@ -1080,13 +1016,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
     [Alias('Ids')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('session_id','ids') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconPutFile {
@@ -1109,13 +1039,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
     [Alias('Ids')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconScript {
@@ -1137,13 +1061,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
     [Alias('Ids')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconSession {
@@ -1166,13 +1084,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
     [Alias('session_id')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('session_id') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconPutFile {
@@ -1220,7 +1132,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ ContentType = 'multipart/form-data' }
-      Format = @{ Formdata = @('file','name','description','comments_for_audit_log') }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -1278,10 +1189,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ ContentType = 'multipart/form-data' }
-      Format = @{
-        Formdata = @('platform','permission_type','name','description','comments_for_audit_log',
-          'content')
-      }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -1340,13 +1247,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Format = @{
-        Query = @('timeout','host_timeout_duration')
-        Body = @{ root = @('existing_batch_id','host_ids','queue_offline','device_id') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1439,13 +1340,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
     [string]$BatchId
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Format = @{
-        Query = @('timeout')
-        Body = @{ root = @('queue_offline','device_id','batch_id','hosts_to_remove') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($HostToRemove) { @($HostToRemove).foreach{ $List.Add($_) }}}
