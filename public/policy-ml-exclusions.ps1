@@ -37,9 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
       }
     } else {
       foreach ($Property in @('behaviors','device')) {
-        if (!$Detection.$Property) {
-          throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
-        }
+        if (!$Detection.$Property) { throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property." }
       }
     }
   }
@@ -79,24 +77,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('groups','id','value','comment') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process {
     if ($PSCmdlet.ShouldProcess('Edit-FalconMlExclusion','Test-GroupId')) {
       if ($PSBoundParameters.GroupId) {
-        if ($PSBoundParameters.GroupId.id) {
-          # Filter to 'id' if supplied with 'detailed' objects
-          [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-        }
+        # Filter to 'id' if supplied with 'detailed' objects
+        if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
         @($PSBoundParameters.GroupId).foreach{
-          if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
-            throw "'$_' is not a valid Host Group identifier."
-          }
+          if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
         }
       }
     }
@@ -156,11 +144,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','ids','offset','filter','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -207,18 +191,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconMlExclusion
       Position=4)]
     [string]$Comment
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('groups','value','comment','excluded_from') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process {
-    if ($PSBoundParameters.GroupId.id) {
-      # Filter to 'id' if supplied with 'detailed' objects
-      [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-    }
+    # Filter to 'id' if supplied with 'detailed' objects
+    if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
     if ($PSBoundParameters.GroupId) {
       @($PSBoundParameters.GroupId).foreach{
         if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
@@ -251,11 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','comment') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}

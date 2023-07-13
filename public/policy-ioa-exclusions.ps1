@@ -6,11 +6,11 @@ Output required fields to create an Indicator of Attack exclusion from a Falcon 
 Uses the 'behaviors' and 'device' properties of a detection to generate the necessary fields to create a new
 Indicator of Attack exclusion. Specfically, it maps the following properties these fields:
 
-behaviors.behavior_id  > pattern_id
+behaviors.behavior_id > pattern_id
 behaviors.display_name > pattern_name
-behaviors.cmdline    > cl_regex
-behaviors.filepath   > ifn_regex
-device.groups      > groups
+behaviors.cmdline > cl_regex
+behaviors.filepath > ifn_regex
+device.groups > groups
 
 The 'cl_regex' and 'ifn_regex' fields are escaped using the [regex]::Escape() PowerShell accelerator. The
 'ifn_regex' output also replaces the NT device path ('Device/HarddiskVolume') with a wildcard.
@@ -114,29 +114,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
     [ValidatePattern('^([a-fA-F0-9]{32}|all)$')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('cl_regex','ifn_regex','groups','name','id','description','comment','pattern_id',
-            'pattern_name')
-        }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process {
     if ($PSCmdlet.ShouldProcess('Edit-FalconIoaExclusion','Test-GroupId')) {
       if ($PSBoundParameters.GroupId) {
-        if ($PSBoundParameters.GroupId.id) {
-          # Filter to 'id' if supplied with 'detailed' objects
-          [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-        }
+        # Filter to 'id' if supplied with 'detailed' objects
+        if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
         @($PSBoundParameters.GroupId).foreach{
-          if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') {
-            throw "'$_' is not a valid Host Group identifier."
-          }
+          if ($_ -notmatch '^([a-fA-F0-9]{32}|all)$') { throw "'$_' is not a valid Host Group identifier." }
         }
       }
     }
@@ -197,11 +182,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','ids','offset','filter','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -271,23 +252,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
       Position=9)]
     [string]$Comment
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('cl_regex','ifn_regex','groups','name','pattern_id','pattern_name',
-            'description','comment')
-        }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process {
-    if ($PSBoundParameters.GroupId.id) {
-      # Filter to 'id' if supplied with 'detailed' objects
-      [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id
-    }
+    # Filter to 'id' if supplied with 'detailed' objects
+    if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
     if ($PSBoundParameters.GroupId -eq 'all') {
       # Remove 'all' from 'GroupId', and remove 'GroupId' if 'all' was the only value
       $PSBoundParameters.GroupId = @($PSBoundParameters.GroupId).Where({ $_ -ne 'all' })
@@ -325,11 +293,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','comment') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
