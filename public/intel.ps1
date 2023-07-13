@@ -74,11 +74,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','limit','ids','filter','offset','fields','q') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -123,15 +119,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAttck
     [string]$Slug
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = if ($PSCmdlet.ParameterSetName -eq '/intel/entities/mitre/v1:post') {
-        @{ Body = @{ root = @('ids') }}
-      } else {
-        @{ Query = @('id') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -203,14 +191,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('ids') }
-        Query = @('q','offset','sort','limit','filter')
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
   [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -294,14 +275,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('sort','limit','filter','offset','include_deleted','q','include_relations')
-        Body = @{ root = @('ids') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -379,11 +353,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','limit','ids','filter','offset','fields','q') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -471,14 +441,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('sort','limit','max_created_date','ids','offset','min_created_date','tags',
-          'name','description','type','q')
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -521,10 +484,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('actor_id','format')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('actor_id','format'); Outfile = 'path' }
     }
   }
   process {
@@ -574,10 +534,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/pdf' }
-      Format = @{
-        Query = @('id')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('id'); Outfile = 'path' }
     }
   }
   process {
@@ -638,10 +595,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = $Accept }
-      Format = @{
-        Query = @('format','id','type')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('format','id','type'); Outfile = 'path' }
     }
   }
   process {

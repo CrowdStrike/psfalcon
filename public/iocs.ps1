@@ -216,11 +216,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','filter','offset','limit','sort','after','from_parent') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -263,13 +259,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocAction
     [Parameter(ParameterSetName='/iocs/queries/actions/v1:get')]
     [switch]$All
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit','ids') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconIocPlatform {
@@ -296,13 +286,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocPlatform
     [Parameter(ParameterSetName='/iocs/queries/platforms/v1:get')]
     [switch]$All
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconIocSeverity {
@@ -329,13 +313,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocSeverity
     [Parameter(ParameterSetName='/iocs/queries/severities/v1:get')]
     [switch]$All
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconIocType {
@@ -362,13 +340,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocType
     [Parameter(ParameterSetName='/iocs/queries/ioc-types/v1:get')]
     [switch]$All
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('offset','limit') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconIoc {

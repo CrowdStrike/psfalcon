@@ -40,15 +40,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
     [Alias('RulegroupId')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('description','rulegroup_version','name','enabled','id','comment') }
-      }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process {
     ($Param.Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
       # When not provided, add required fields using existing policy settings
@@ -191,11 +183,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('limit','ids','sort','q','offset','filter') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -248,11 +236,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','offset','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -325,14 +309,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('ids') }
-        Query = @('limit','sort','q','offset','filter')
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -382,11 +359,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','offset','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -436,11 +409,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','offset','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -483,13 +452,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaGroup
       Position=4)]
     [string]$Comment
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('description','platform','name','comment') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconIoaRule {
@@ -598,11 +561,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','comment') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -644,11 +603,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','rule_group_id','comment') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
