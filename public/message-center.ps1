@@ -35,13 +35,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
     [Alias('case_id')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('case_id','user_uuid','type','body') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconCompleteCase {
@@ -161,14 +155,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('ids') }
-        Query = @('case_id','filter','sort','limit','offset')
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -229,14 +216,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('ids') }
-        Query = @('filter','sort','limit','offset')
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -311,9 +291,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{ root = @('body','detections','incidents','title','type','user_uuid') }
-      }
+      Format = @{ Body = @{ root = @('body','detections','incidents','title','type','user_uuid') }}
     }
     [System.Collections.Generic.List[hashtable]]$LdtList = @()
     [System.Collections.Generic.List[hashtable]]$IncList = @()
@@ -364,10 +342,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCompleteAttachment
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('id')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('id'); Outfile = 'path' }
     }
   }
   process {
@@ -436,7 +411,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ ContentType = 'multipart/form-data' }
-      Format = @{ Formdata = @('case_id','user_uuid','file') }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }

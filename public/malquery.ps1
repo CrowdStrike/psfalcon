@@ -17,13 +17,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
     [Alias('Ids')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconMalQueryQuota {
@@ -37,13 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQueryQuota
 #>
   [CmdletBinding(DefaultParameterSetName='/malquery/aggregates/quotas/v1:get',SupportsShouldProcess)]
   param()
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-    }
-  }
-  process { Invoke-Falcon @Param }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Get-FalconMalQuerySample {
 <#
@@ -65,11 +53,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -101,11 +85,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Group-FalconMalQuerySample
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('samples') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -201,12 +181,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMalQuery
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('yara_rule','options')
-          patterns = @('type','value')
-        }
-      }
+      Format = @{ Body = @{ root = @('yara_rule','options'); patterns = @('type','value') }}
     }
     $Aliases = (Get-Command $MyInvocation.MyCommand.Name).Parameters.GetEnumerator().Where({
       $_.Value.Attributes.ParameterSetName -eq $PSCmdlet.ParameterSetName })
@@ -263,7 +238,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalQuerySample
       } else {
         @{ Accept = 'application/zip' }
       }
-      Format = @{ Query = @('ids') }
     }
   }
   process {
