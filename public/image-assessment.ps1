@@ -53,7 +53,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('osversion','packages') }}
+      Format = @{ Body = @{ root = @('osversion','packages','applicationPackages') }}
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
