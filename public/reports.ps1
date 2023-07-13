@@ -71,11 +71,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','limit','ids','filter','offset','q') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -163,10 +159,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconScheduledReport
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{
-        Query = @('ids')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('ids'); Outfile = 'path' }
     }
   }
   process {

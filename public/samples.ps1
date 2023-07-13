@@ -18,11 +18,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSample
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('sha256s') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -70,10 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconSample
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{
-        Query = @('ids','password_protected')
-        Outfile = 'path'
-      }
+      Format = @{ Query = @('ids','password_protected'); Outfile = 'path' }
     }
   }
   process {
@@ -108,13 +101,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSample
     [Alias('Ids')]
     [string]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconSample {
@@ -167,10 +154,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ ContentType = 'application/octet-stream' }
-      Format = @{
-        Query = @('comment','file_name','is_confidential')
-        Body = @{ root = @('body') }
-      }
+      Format = @{ Query = @('comment','file_name','is_confidential'); Body = @{ root = @('body') }}
     }
   }
   process {
