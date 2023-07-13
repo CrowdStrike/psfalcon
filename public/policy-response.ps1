@@ -49,26 +49,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/policy/entities/response/v1:patch'
-      Format = @{
-        Body = @{
-          resources = @('name','id','description','settings')
-          root = @('resources')
-        }
-      }
+      Format = @{ Body = @{ resources = @('name','id','description','settings'); root = @('resources') }}
     }
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
     if ($Array) {
       foreach ($i in $Array) {
-        if ($i.settings.settings) {
-          # Select required values from 'settings' sub-object
-          $i.settings = $i.settings.settings | Select-Object id,value
-        }
+        # Select required values from 'settings' sub-object
+        if ($i.settings.settings) { $i.settings = $i.settings.settings | Select-Object id,value }
         # Select allowed fields, when populated
-        [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
-          if ($i.$_) { $_ }
-        }
+        [string[]]$Select = @('id','name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
         $List.Add(($i | Select-Object $Select))
       }
     } else {
@@ -150,11 +141,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
     [switch]$Total
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','ids','offset','filter','limit') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -224,13 +211,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicyMember
     [Parameter(ParameterSetName='/policy/queries/response-members/v1:get')]
     [switch]$Total
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('sort','offset','filter','id','limit') }
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconResponsePolicyAction {
@@ -266,22 +247,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponsePolicyAction
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Query = @('action_name')
-        Body = @{ root = @('ids','action_parameters') }
-      }
+      Format = @{ Query = @('action_name'); Body = @{ root = @('ids','action_parameters') }}
     }
   }
   process {
     $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
     [void]$PSBoundParameters.Remove('Id')
     if ($PSBoundParameters.GroupId) {
-      $PSBoundParameters['action_parameters'] = @(
-        @{
-          name = 'group_id'
-          value = $PSBoundParameters.GroupId
-        }
-      )
+      $PSBoundParameters['action_parameters'] = @(@{ name = 'group_id'; value = $PSBoundParameters.GroupId })
       [void]$PSBoundParameters.Remove('GroupId')
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -341,10 +314,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/policy/entities/response/v1:post'
       Format = @{
-        Body = @{
-          resources = @('description','platform_name','name','settings')
-          root = @('resources')
-        }
+        Body = @{ resources = @('description','platform_name','name','settings'); root = @('resources') }
       }
     }
     [System.Collections.Generic.List[object]]$List = @()
@@ -352,10 +322,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
   process {
     if ($Array) {
       foreach ($i in $Array) {
-        if ($i.settings.settings) {
-          # Select required values from 'settings' sub-object
-          $i.settings = $i.settings.settings | Select-Object id,value
-        }
+        # Select required values from 'settings' sub-object
+        if ($i.settings.settings) { $i.settings = $i.settings.settings | Select-Object id,value }
         # Select allowed fields, when populated
         [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
         $List.Add(($i | Select-Object $Select))
@@ -393,11 +361,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconResponsePolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -435,12 +399,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconResponsePrecedence
     [Alias('Ids')]
     [string[]]$Id
   )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('platform_name','ids') }}
-    }
-  }
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
