@@ -122,9 +122,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
     [string]$Path,
     [Parameter(ParameterSetName='Path',Position=2)]
     [Parameter(ParameterSetName='Array',Position=2)]
-    [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip',
-      'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
-      'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
+    [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip','mac_address',
+      'os_build','os_version','platform_name','product_type','product_type_desc','serial_number',
+      'system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
     [string[]]$Include,
     [Parameter(ParameterSetName='Path')]
     [Parameter(ParameterSetName='Array')]
