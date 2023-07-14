@@ -369,9 +369,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
       try {
         $Policy = Get-FalconSensorUpdatePolicy -Id $Id
         if ($Policy) {
-          @('Name','Description').foreach{
-            if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }
-          }
+          @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
           $Clone = $Policy | New-FalconSensorUpdatePolicy
           if ($Clone.id) {
             $Clone.settings = $Policy.settings
