@@ -3,9 +3,9 @@ function Export-FalconConfig {
 .SYNOPSIS
 Create an archive containing Falcon configuration files
 .DESCRIPTION
-Uses various PSFalcon commands to gather and export groups, policies and exclusions as a collection
-of Json files within a zip archive. The exported files can be used with 'Import-FalconConfig' to restore
-configurations to your existing CID or create them in another CID.
+Uses various PSFalcon commands to gather and export groups, policies and exclusions as a collection of Json files
+within a zip archive. The exported files can be used with 'Import-FalconConfig' to restore configurations to your
+existing CID or create them in another CID.
 .PARAMETER Select
 Selected items to export from your current CID, or leave unspecified to export all available items
 .PARAMETER Force
@@ -16,9 +16,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
   [CmdletBinding(DefaultParameterSetName='ExportItem',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='ExportItem',Position=1)]
-    [ValidateSet('HostGroup','IoaGroup','FirewallGroup','DeviceControlPolicy','FirewallPolicy',
-      'PreventionPolicy','ResponsePolicy','SensorUpdatePolicy','Ioc','IoaExclusion','MlExclusion',
-      'Script','SvExclusion')]
+    [ValidateSet('HostGroup','IoaGroup','FirewallGroup','DeviceControlPolicy','FirewallPolicy','PreventionPolicy',
+      'ResponsePolicy','SensorUpdatePolicy','Ioc','IoaExclusion','MlExclusion','Script','SvExclusion')]
     [Alias('Items')]
     [string[]]$Select,
     [Parameter(ParameterSetName='ExportItem')]
@@ -53,10 +52,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         $ConfigFile
       }
     }
-    # Get current location
+    # Get current location and set output archive path
     $Location = (Get-Location).Path
-    
-    # Set output archive path
     $ExportFile = Join-Path $Location "FalconConfig_$(Get-Date -Format FileDateTime).zip"
   }
   process {
@@ -67,9 +64,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       if (!$Select) {
         # Use items in 'ValidateSet' when not provided
         [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({ $_.Name -eq
-        'ExportItem' }).Parameters.Where({ $_.Name -eq 'Select' }).Attributes.ValidValues).foreach{
-          $_
-        }
+          'ExportItem' }).Parameters.Where({ $_.Name -eq 'Select' }).Attributes.ValidValues).foreach{ $_ }
       }
       if ($Select -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and $Select -notcontains 'HostGroup') {
         # Force 'HostGroup' when exporting Exclusions or IOCs
@@ -77,15 +72,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       }
       # Force 'FirewallRule' when exporting 'FirewallGroup'
       if ($Select -contains 'FirewallGroup') { [string[]]$Select = @($Select + 'FirewallRule') }
-      [string[]]$JsonFiles = foreach ($String in $Select) {
-        # Retrieve results, export to Json and capture file name
-        ,(Get-ItemContent $String)
-      }
+      # Retrieve results, export to Json and capture file name
+      [string[]]$JsonFiles = foreach ($String in $Select) { ,(Get-ItemContent $String) }
       if ($JsonFiles -and $PSCmdlet.ShouldProcess($ExportFile,'Compress-Archive')) {
         # Archive Json exports with content and remove them when complete
         $Param = @{
-          Path = (Get-ChildItem | Where-Object { $JsonFiles -contains $_.FullName -and
-            $_.Length -gt 0 }).FullName
+          Path = (Get-ChildItem | Where-Object { $JsonFiles -contains $_.FullName -and $_.Length -gt 0 }).FullName
           DestinationPath = $ExportFile
           Force = $Force
         }
@@ -137,8 +129,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     [string]$Path,
     [Alias('Force')]
     [switch]$AssignExisting,
-    [ValidateSet('DeviceControlPolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy',
-      'SensorUpdatePolicy')]
+    [ValidateSet('DeviceControlPolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy','SensorUpdatePolicy')]
     [string[]]$ModifyDefault,
     [ValidateSet('DeviceControlPolicy','FirewallGroup','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup',
       'Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
@@ -221,16 +212,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     function Compare-Setting ([object]$New,[object]$Old,[string]$Type,[string]$Property,[switch]$Result) {
       if ($Type -match 'Policy$') {
         # Compare modified policy settings
-        $NewArr = if ($New.prevention_settings) {
-          $New.prevention_settings
-        } else {
-          $New.settings
-        }
-        $OldArr = if ($Old.prevention_settings) {
-          $Old.prevention_settings
-        } else {
-          $Old.settings
-        }
+        $NewArr = if ($New.prevention_settings) { $New.prevention_settings } else { $New.settings }
+        $OldArr = if ($Old.prevention_settings) { $Old.prevention_settings } else { $Old.settings }
         if ($OldArr -or $Result) {
           foreach ($Item in $NewArr) {
             if ($Item.value.PSObject.Properties.Name -eq 'enabled') {
@@ -249,8 +232,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 if ($OldArr.Where({ $_.id -eq $Item.id }).value.$Name -ne $Item.value.$Name) {
                   if ($Result) {
                     # Capture modified result for sub-settings
-                    Add-Result Modified $New $Type ($Item.id,$Name -join ':') (($OldArr |
-                      Where-Object { $_.id -eq $Item.id }).value.$Name) $Item.value.$Name
+                    Add-Result Modified $New $Type ($Item.id,$Name -join ':') (($OldArr | Where-Object {
+                      $_.id -eq $Item.id }).value.$Name) $Item.value.$Name
                   } else {
                     # Output setting to be modified
                     $Item | Select-Object id,value
@@ -268,10 +251,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($Property -eq 'field_values') {
           foreach ($Name in $New.$Property.name) {
             # Track 'field_values' for IoaRule for each modified value
-            $OldValue = ($Old.$Property | Where-Object { $_.name -eq $Name }).values |
-              ConvertTo-Json -Compress
-            $NewValue = ($New.$Property | Where-Object { $_.name -eq $Name }).values |
-              ConvertTo-Json -Compress
+            $OldValue = ($Old.$Property | Where-Object { $_.name -eq $Name }).values | ConvertTo-Json -Compress
+            $NewValue = ($New.$Property | Where-Object { $_.name -eq $Name }).values | ConvertTo-Json -Compress
             if ($NewValue -ne $OldValue) { Add-Result Modified $New $Type $Name $OldValue $NewValue }
           }
         } elseif ($Property) {
@@ -291,8 +272,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         Set-Property $Object groups @('all')
       }
       if ($Object.prevention_settings.settings) {
-        [object[]]$Object.prevention_settings = $Object.prevention_settings.settings |
-          Select-Object id,value
+        [object[]]$Object.prevention_settings = $Object.prevention_settings.settings | Select-Object id,value
       }
       if ($Object.settings.settings) {
         [object[]]$Object.settings = $Object.settings.settings | Select-Object id,value
@@ -320,8 +300,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         $Item = ($FullName | Split-Path -Leaf).Split('.')[0]
         $Import = ConvertFrom-Json (New-Object System.IO.StreamReader($Filename.Open())).ReadToEnd()
         $Output[$Item] = @{
-          Import = ($Import | Select-Object -ExcludeProperty created_by,modified_by,
-            created_timestamp,modified_timestamp)
+          Import = ($Import | Select-Object -ExcludeProperty created_by,modified_by,created_timestamp,
+            modified_timestamp)
           Modify = [System.Collections.Generic.List[object]]@()
         }
         $Output.Ids[$Item] = [System.Collections.Generic.List[object]]@()
@@ -344,8 +324,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
         }
         # Remove created and failed Ioc from 'Import' using 'id' value
-        [string[]]$Remove = @($Object.Value.Import).Where({ $_.type -eq $i.type -and $_.value -eq
-          $i.value }).id
+        [string[]]$Remove = @($Object.Value.Import).Where({ $_.type -eq $i.type -and $_.value -eq $i.value }).id
         $Object.Value.Import = @($Object.Value.Import).Where({ $Remove -notcontains $_.id })
       }
       # Repeat until 'Import' is empty
@@ -372,16 +351,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       }
       if ($Req) {
-        Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') (
-          $Req[-1].$Property.id -join ',')
+        Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') ($Req[-1].$Property.id -join ',')
       }
     }
     function Update-Id ([object]$Item,[string]$Type) {
       if ($Config.Ids.$Type) {
         # Add 'new_id' to 'Ids'
-        [string[]]$Compare = @('platform_name','platform','type','value','name').foreach{
-          if ($Item.$_) { $_ }
-        }
+        [string[]]$Compare = @('platform_name','platform','type','value','name').foreach{ if ($Item.$_) { $_ }}
         [string]$Filter = (@($Compare).foreach{"`$_.$($_) -eq '$($Item.$_)'" }) -join ' -and '
         $FilterScript = [scriptblock]::Create($Filter)
         @($Config.Ids.$Type | Where-Object -FilterScript $FilterScript).foreach{
@@ -441,8 +417,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           # Track 'Ignored' items for final output
           [string]$Comment = if ($Item.deleted -eq $true) {
             'Deleted'
-          } elseif ($Item.type -and $Item.value -and ($Pair.Value.Cid | Where-Object { $_.type -eq
-          $Item.type -and $_.value -eq $Item.value })) {
+          } elseif ($Item.type -and $Item.value -and ($Pair.Value.Cid | Where-Object { $_.type -eq $Item.type -and
+          $_.value -eq $Item.value })) {
             'Exists'
           } elseif ($Item.value -and ($Pair.Value.Cid | Where-Object { $_.value -eq $Item.value })) {
             'Exists'
@@ -477,8 +453,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             # Update tagged 'variant' builds with current tagged build versions
             @($Item.settings.variants | Where-Object { $_.build -match '^\d+\|' }).foreach{
               $Tag = ($_.build -split '\|',2)[-1]
-              $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and
-                $_.platform -eq $Item.platform_name }).build
+              $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
+                $Item.platform_name }).build
               if ($_.build -ne $Current) { $_.build = $Current }
             }
           }
@@ -525,8 +501,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             if ($FwGroup.rule_ids) {
               # Select FirewallRule from import using 'family' as 'id' value
               [object[]]$Rules = foreach ($Id in $FwGroup.rule_ids) {
-                $Config.FirewallRule.Import | Where-Object { $_.family -eq $Id -and
-                  $_.deleted -eq $false }
+                $Config.FirewallRule.Import | Where-Object { $_.family -eq $Id -and $_.deleted -eq $false }
               }
               @($Rules).foreach{
                 # Trim rule names to 64 characters and use 'rules' as 'rule_ids'
@@ -559,9 +534,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 $Req = try { $Rule | New-FalconIoaRule } catch { Write-Error $_ }
                 if ($Req) {
                   Add-Result Created $Req IoaRule
-                  if ($Req.enabled -eq $false -and $Rule.enabled -eq $true) {
-                    $Req.enabled = $true
-                  }
+                  if ($Req.enabled -eq $false -and $Rule.enabled -eq $true) { $Req.enabled = $true }
                   $Req
                 }
               }
@@ -606,13 +579,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         'FirewallGroup' { 'name','enabled','rule_ids' }
         'HostGroup' { 'group_type','name','assignment_rule' }
         'IoaGroup' { 'enabled','name','platform','rules' }
-        'IoaExclusion' {
-          'name','pattern_id','pattern_name','cl_regex','ifn_regex','groups',
-            'applied_globally'
-        }
+        'IoaExclusion' { 'name','pattern_id','pattern_name','cl_regex','ifn_regex','groups','applied_globally' }
         'Ioc' {
-          'applied_globally','action','deleted','expiration','host_groups','mobile_action',
-            'platforms','severity','tags','type','value'
+          'applied_globally','action','deleted','expiration','host_groups','mobile_action','platforms','severity',
+          'tags','type','value'
         }
         'MlExclusion' { 'value','excluded_from','groups','applied_globally' }
         'Script' { 'platform','permission_type','name','content' }
@@ -633,9 +603,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 if ($Pair.Key -eq 'IoaGroup' -and $_ -eq 'rules') {
                   foreach ($Rule in $Item.$_) {
                     # Evaluate each IoaRule
-                    [object]$CidRule = $Cid.$_ | Where-Object { $_.ruletype_id -eq
-                      $Rule.ruletype_id -and $_.name -eq $Rule.name -and $Rule.deleted -ne
-                      $true }
+                    [object]$CidRule = $Cid.$_ | Where-Object { $_.ruletype_id -eq $Rule.ruletype_id -and
+                      $_.name -eq $Rule.name -and $Rule.deleted -ne $true }
                     [string[]]$RuleDiff = if ($CidRule) {
                       @('enabled','pattern_severity','action_label').foreach{
                         if (Compare-Object $Rule.$_ $CidRule.$_) { $_ }
@@ -643,13 +612,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                       foreach ($FieldValue in $Rule.field_values) {
                         # Evaluate 'field_value' as a Json string for each IoaRule
                         [object]$CidFieldValue = $CidRule.field_values | Where-Object {
-                          $_.name -eq $FieldValue.name -and $_.type -eq
-                          $FieldValue.type }
+                          $_.name -eq $FieldValue.name -and $_.type -eq $FieldValue.type }
                         if ($CidFieldValue) {
-                          if (Compare-Object ($FieldValue.values | ConvertTo-Json) (
-                          $CidFieldValue.values | ConvertTo-Json)) {
-                            'field_values'
-                          }
+                          if (Compare-Object ($FieldValue.values | ConvertTo-Json) ($CidFieldValue.values |
+                            ConvertTo-Json)) { 'field_values' }
                         }
                       }
                     }
@@ -657,12 +623,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                       # Copy existing rule and modify properties
                       [object]$RuleEdit = $CidRule.PSObject.Copy()
                       @($RuleDiff).foreach{ $RuleEdit.$_ = $Rule.$_ }
-                      @(Edit-FalconIoaRule -RuleUpdate $RuleEdit -RuleGroupId (
-                      $Item.id)).foreach{
-                        @($RuleDiff).foreach{
-                          # Capture result for each updated setting against original
-                          Compare-Setting $RuleEdit $CidRule IoaRule $_ -Result
-                        }
+                      @(Edit-FalconIoaRule -RuleUpdate $RuleEdit -RuleGroupId $Item.id).foreach{
+                        # Capture result for each updated setting against original
+                        @($RuleDiff).foreach{ Compare-Setting $RuleEdit $CidRule IoaRule $_ -Result }
                       }
                     }
                   }
@@ -683,10 +646,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                   Compare-Object $Item.$_ $Cid.$_
                 }
               }
-              if ($Diff -or ($null -ne $Item.$_ -and $null -eq $Cid.$_)) {
-                # Output properties that differ, or are not present in CID
-                $Modify.Add($_)
-              }
+              # Output properties that differ, or are not present in CID
+              if ($Diff -or ($null -ne $Item.$_ -and $null -eq $Cid.$_)) { $Modify.Add($_) }
             }
             # Output items with properties to be modified and remove from 'Modify' list
             if ($Modify.Count -gt 1) { $Item | Select-Object $Modify }
@@ -695,8 +656,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($EditList) {
           foreach ($Edit in $EditList) {
             # Update with current 'id' and 'comment' when appropriate
-            Set-Property $Edit id ($Config.Ids.($Pair.Key) | Where-Object { $_.old_id -eq
-              $Edit.id }).new_id
+            Set-Property $Edit id ($Config.Ids.($Pair.Key) | Where-Object { $_.old_id -eq $Edit.id }).new_id
             if ($Pair.Key -ne 'HostGroup') {
               Set-Property $Edit comment ($UserAgent,"Import-FalconConfig" -join ': ')
             }
@@ -704,9 +664,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           if ($Pair.Key -eq 'FirewallGroup') {
             [hashtable[]]$DiffOp = @($EditList).foreach{
               # Create 'DiffOperations' for FirewallGroup changes
-              if ($null -ne $_.enabled) {
-                @{ op = 'replace'; path = "/enabled"; value = $_.enabled }
-              }
+              if ($null -ne $_.enabled) { @{ op = 'replace'; path = "/enabled"; value = $_.enabled }}
             }
             if ($DiffOp) {
               # Modify FirewallGroup
@@ -719,8 +677,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           } else {
             foreach ($Item in ($EditList | & "Edit-Falcon$($Pair.Key)")) {
               foreach ($Result in ($EditList | Where-Object { $_.id -eq $Item.id })) {
-                @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne
-                'comment' }).foreach{
+                @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne 'comment' }).foreach{
                   # Modify item and capture result
                   Compare-Setting $Item ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
                     $Item.id }) $Pair.Key $_ -Result
@@ -778,14 +735,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         }
-        if ($Policy.ioa_rule_groups) {
-          # Assign IoaGroup
-          Submit-Group $Pair.Key ioa_rule_groups $Policy $Cid
-        }
-        if ($Policy.name -ne 'platform_default' -and $Policy.groups) {
-          # Assign HostGroup
-          Submit-Group $Pair.Key groups $Policy $Cid
-        }
+        # Assign IoaGroup
+        if ($Policy.ioa_rule_groups) { Submit-Group $Pair.Key ioa_rule_groups $Policy $Cid }
+        # Assign HostGroup
+        if ($Policy.name -ne 'platform_default' -and $Policy.groups) { Submit-Group $Pair.Key groups $Policy $Cid }
         if ($Policy.name -ne 'platform_default' -and $Cid.enabled -ne $Policy.enabled) {
           # Enable/disable non-default policies
           [string]$Action = if ($Policy.enabled -eq $true) { 'enable' } else { 'disable' }
@@ -799,8 +752,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
   end {
     if ($Config.Result | Where-Object { $_.action -ne 'Ignored' }) {
       # Output warning for existing policy precedence
-      foreach ($Item in ($Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match
-      'Policy$' } | Select-Object type,platform -Unique)) {
+      foreach ($Item in ($Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match 'Policy$' } |
+      Select-Object type,platform -Unique)) {
         if ($Config.($Item.type).Cid | Where-Object { $_.platform_name -eq $Item.platform -and $_.name -ne
         'platform_default' }) {
           $PSCmdlet.WriteWarning("[Import-FalconConfig] Existing $($Item.platform) $(
