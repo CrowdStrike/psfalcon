@@ -109,9 +109,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconEventCollector
   [CmdletBinding()]
   [OutputType([PSCustomObject])]
   param()
-  process {
-    if ($Script:Falcon.Api.Collector) { [PSCustomObject]$Script:Falcon.Api.Collector }
-  }
+  process { if ($Script:Falcon.Api.Collector) { [PSCustomObject]$Script:Falcon.Api.Collector }}
 }
 function Unregister-FalconEventCollector {
 <#
