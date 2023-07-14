@@ -29,7 +29,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
   param(
     [Parameter(ParameterSetName='/alerts/entities/alerts/v1:post',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{32}:(aggind|ind):[a-fA-F0-9]{32}:.+$')]
     [Alias('Ids','composite_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get',Position=1)]
