@@ -63,8 +63,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
         'IP6'
       } else {
         # Use unique value from 'TypeList' and default to 'IP4' when 'TypeList' is 'ANY'
-        [string]$Output = (($TypeList | Select-Object -Unique) -replace 'v',$null -replace 'ANY',
-          $null).ToUpper()
+        [string]$Output = (($TypeList | Select-Object -Unique) -replace 'v',$null -replace 'ANY',$null).ToUpper()
         if ($Output) { ($Output).Trim() } else { 'IP4' }
       }
     }
@@ -106,8 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
             # Use default for ipv4 address
             32 
           } else {
-            throw "Rule '$RuleName' contains an address that does not match IPv4 or IPv6 pattern. ['$(
-              $Address)']"
+            throw "Rule '$RuleName' contains an address that does not match IPv4 or IPv6 pattern. ['$($Address)']"
           }
           # Output object with address and netmask
           if ($Address -and $Integer) { [PSCustomObject]@{ address = $Address; netmask = $Integer }}
@@ -155,9 +153,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
             } else {
               # Error when 'local_address' or 'remote_address' does not match ipv4/ipv6
               [string]$Trim = ($_.Trim() -replace '/\d+$',$null)
-              if (!$Trim) {
-                throw "Rule '$($Rule.($Map.name))' missing value for required property '$Type'."
-              }
+              if (!$Trim) { throw "Rule '$($Rule.($Map.name))' missing value for required property '$Type'." }
               [string]$Test = Test-RegexValue $Trim
               if ($Test -match '^ipv(4|6)$') {
                 [string]($Test -replace 'v',$null).ToUpper()
@@ -183,8 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
               throw "Unable to determine $Name for rule '$($Rule.($Map.name))'."
             } elseif (($Name -eq 'action' -and $Value -cnotmatch '^(ALLOW|DENY)$') -or
             ($Name -eq 'direction' -and $Value -cnotmatch '^(BOTH|IN|OUT)$')) {
-              throw "Rule '$($Rule.($Map.name))' contains unexpected $Name '$(
-                $Rule.($Map.$Name))'."
+              throw "Rule '$($Rule.($Map.name))' contains unexpected $Name '$($Rule.($Map.$Name))'."
             } else {
               New-Variable -Name $Name -Value $Value
             }
@@ -199,8 +194,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
           foreach ($Name in ('image_name','service_name')) {
             # Add 'image_name' and 'service_name' to 'fields', when present
             if ($Rule.($Map.$Name) -and $Rule.($Map.$Name) -notmatch '^(any|\*)$') {
-              [string]$Value = if ($Name -eq 'image_name' -and $Rule.($Map.$Name) -notmatch
-              '\.\w+$') {
+              [string]$Value = if ($Name -eq 'image_name' -and $Rule.($Map.$Name) -notmatch '\.\w+$') {
                 # Convert directory paths to glob syntax with a single asterisk
                 [string]$Glob = $Rule.($Map.$Name) -replace '^\w:\\',$null
                 if ($Glob -match '\\$') { $Glob,'*' -join $null } else { $Glob,'*' -join '\' }
@@ -231,8 +225,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
             # Add 'local_port' and 'remote_port'
             New-Variable -Name $_ -Value ([PSCustomObject[]](New-RulePort $Rule.($Map.$_) $Join))
             if ((Get-Variable -Name $_).Value) {
-              $Output.PSObject.Properties.Add((New-Object PSNoteProperty($_,
-                (Get-Variable -Name $_).Value)))
+              $Output.PSObject.Properties.Add((New-Object PSNoteProperty($_,(Get-Variable -Name $_).Value)))
             }
           }
           $Output
