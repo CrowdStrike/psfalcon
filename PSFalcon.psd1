@@ -508,7 +508,7 @@
       LicenseUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
       ProjectUri = 'https://github.com/crowdstrike/psfalcon'
       IconUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
-      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.5'
+      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.6'
     }
   }
 }
