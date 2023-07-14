@@ -49,20 +49,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconReport
             }
             Get-PSObject @ObjectParam
           } else {
-            $ObjectParam = @{
-              Object = $Item
-              Output = $Output
-              Prefix = $Name
-            }
+            $ObjectParam = @{ Object = $Item; Output = $Output; Prefix = $Name }
             Get-PSObject @ObjectParam
           }
         } else {
           # Add property to output as 'name'
-          $SetParam = @{
-            Object = $Output
-            Name = $Name
-            Value = $Array -join ','
-          }
+          $SetParam = @{ Object = $Output; Name = $Name; Value = $Array -join ',' }
           Set-Property @SetParam
         }
       }
