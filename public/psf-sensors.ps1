@@ -38,28 +38,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
   )
   begin {
     $Scripts = @{
-      Linux = 'IFS=, read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping ta' +
-        'gs are not set//; s/^tags=//; s/.$//"),$1" && IFS=$"\n" uniq=($(printf "%s\n" ${tag[*]} | sort ' +
-        ' -u | xargs)) && uniq="$(echo ${uniq[*]} | tr " " ",")" && /opt/CrowdStrike/falconctl -d -f --t' +
-        'ags && /opt/CrowdStrike/falconctl -s --tags="$uniq" && /opt/CrowdStrike/falconctl -g --tags | s' +
-        'ed "s/^Sensor grouping tags are not set//; s/^tags=//; s/.$//"'
-      Mac = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s' +
-        '/^No grouping tags set//; s/^Grouping tags: //")) tag+=($1) && uniq=$(echo "${tag[@]}" | tr " "' +
-        ' "\n" | sort -u | tr "\n" "," | sed "s/,$//") && /Applications/Falcon.app/Contents/Resources/fa' +
-        'lconctl grouping-tags clear &> /dev/null && /Applications/Falcon.app/Contents/Resources/falconc' +
-        'tl grouping-tags set "$uniq" &> /dev/null && /Applications/Falcon.app/Contents/Resources/falcon' +
-        'ctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
+      Linux = 'IFS=, read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are' +
+        ' not set//; s/^tags=//; s/.$//"),$1" && IFS=$"\n" uniq=($(printf "%s\n" ${tag[*]} | sort -u | xargs)) &' +
+        '& uniq="$(echo ${uniq[*]} | tr " " ",")" && /opt/CrowdStrike/falconctl -d -f --tags && /opt/CrowdStrike' +
+        '/falconctl -s --tags="$uniq" && /opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are' +
+        ' not set//; s/^tags=//; s/.$//"'
+      Mac = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No g' +
+        'rouping tags set//; s/^Grouping tags: //")) tag+=($1) && uniq=$(echo "${tag[@]}" | tr " " "\n" | sort -' +
+        'u | tr "\n" "," | sed "s/,$//") && /Applications/Falcon.app/Contents/Resources/falconctl grouping-tags ' +
+        'clear &> /dev/null && /Applications/Falcon.app/Contents/Resources/falconctl grouping-tags set "$uniq" &' +
+        '> /dev/null && /Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No gro' +
+        'uping tags set//; s/^Grouping tags: //"'
       Windows = @{
-        Reg = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
-          '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags" | Wher' +
-          'e-Object { $_ }; $V = if ($T) { (($T -split "REG_SZ")[-1].Trim().Split(",") + $args.Split("' +
-          ',") | Select-Object -Unique) -join "," } else { $args }; [void](reg add $K /v GroupingTags ' +
-          '/d $V /f); "$((((reg query $K) -match "GroupingTags") -split "REG_SZ")[-1].Trim())"'
+        Reg = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-7058' +
+          '-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags" | Where-Object { $_ }; $' +
+          'V = if ($T) { (($T -split "REG_SZ")[-1].Trim().Split(",") + $args.Split(",") | Select-Object -Unique)' +
+          ' -join "," } else { $args }; [void](reg add $K /v GroupingTags /d $V /f); "$((((reg query $K) -match ' +
+          '"GroupingTags") -split "REG_SZ")[-1].Trim())"'
         Tool = @{
-          Token = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test' +
-            '-Path $E){echo {1} | & "$E" set --grouping-tags "$V"}else{throw "Not found: $E"}'
-          NoToken = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Te' +
-            'st-Path $E){& "$E" set --grouping-tags "$V"}else{throw "Not found: $E"}'
+          Token = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test-Path $E){' +
+            'echo {1} | & "$E" set --grouping-tags "$V"}else{throw "Not found: $E"}'
+          NoToken = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test-Path $E' +
+            '){& "$E" set --grouping-tags "$V"}else{throw "Not found: $E"}'
         }
       }
     }
@@ -86,16 +86,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
               [boolean]$TagMatch = $false
               [string[]]$Existing = ($i.tags | Where-Object {
                 $_ -match 'SensorGroupingTags/' }) -replace 'SensorGroupingTags/',$null
-              @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -notcontains $_) {
-                $TagMatch = $true }}
+              @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -notcontains $_) { $TagMatch = $true }}
               if ($TagMatch -eq $true) {
                 [string]$TagString = (@($Existing + $Tag) | Select-Object -Unique) -join ','
-                [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq
-                'ENABLED') {
+                [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
                   [string]$Token = ($i.device_id | Get-FalconUninstallToken -AuditMessage (
                     'Add-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
-                  $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString -replace
-                    '\{1\}',$Token
+                  $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString -replace '\{1\}',$Token
                 } else {
                   $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString
                 }
@@ -126,11 +123,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
                 }
               }
             }
-            if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt
-            6.42 }) {
+            if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt 6.42 }) {
               # Run registry modification script for devices older than 6.42
-              $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,
-                ($Tag -join ',')
+              $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,($Tag -join ',')
               $Param['HostId'] = ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
                 $_.agent_version -lt 6.42 }).device_id
               Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
@@ -160,13 +155,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
               [PSCustomObject]@{
                 cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
                 device_id = $_.aid
-                tags = if ($_.stdout) {
-                  ($_.stdout).Trim()
-                } elseif ($_.stderr) {
-                  $_.stderr
-                } else {
-                  $_.errors
-                }
+                tags = if ($_.stdout) { ($_.stdout).Trim() } elseif ($_.stderr) { $_.stderr } else { $_.errors }
               }
             }
           }
@@ -201,13 +190,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
   )
   begin {
     $Scripts = @{
-      Linux = '/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are not set.//; s/^tags' +
-        '=//; s/.$//"'
-      Mac = '/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping' +
-        ' tags set//; s/^Grouping tags: //"'
-      Windows = '$T = (reg query "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b' +
-        '88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($T) { "$(($T -' +
-        'split "REG_SZ")[-1].Trim())" }'
+      Linux = '/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are not set.//; s/^tags=//; s' +
+        '/.$//"'
+      Mac = '/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping tags ' +
+        'set//; s/^Grouping tags: //"'
+      Windows = '$T = (reg query "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{' +
+        '16e0423f-7058-48c9-a204-725362b67639}\Default") -match "GroupingTags"; if ($T) { "$(($T -split "REG_SZ"' +
+        ')[-1].Trim())" }'
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
@@ -235,11 +224,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
                   'SensorGroupingTags/',$null -join ','
               }
             }
-            if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt
-            6.42 }) {
+            if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt 6.42 }) {
               # Run registry modification script for devices older than 6.42
-              $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,
-                ($Tag -join ',')
+              $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,($Tag -join ',')
               $Param['HostId'] = ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
                 $_.agent_version -lt 6.42 }).device_id
               Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
@@ -247,13 +234,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
                 [PSCustomObject]@{
                   cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
                   device_id = $_.aid
-                  tags = if ($_.stdout) {
-                    ($_.stdout).Trim()
-                  } elseif ($_.stderr) {
-                    $_.stderr
-                  } else {
-                    $_.errors
-                  }
+                  tags = if ($_.stdout) { ($_.stdout).Trim() } elseif ($_.stderr) { $_.stderr } else { $_.errors }
                 }
               }
             }
@@ -269,13 +250,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
               [PSCustomObject]@{
                 cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
                 device_id = $_.aid
-                tags = if ($_.stdout) {
-                  ($_.stdout).Trim()
-                } elseif ($_.stderr) {
-                  $_.stderr
-                } else {
-                  $_.errors
-                }
+                tags = if ($_.stdout) { ($_.stdout).Trim() } elseif ($_.stderr) { $_.stderr } else { $_.errors }
               }
             }
           }
@@ -326,33 +301,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
   )
   begin {
     $Scripts = @{
-      Linux = 'IFS=, && read -ra del <<< "$1" && read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tags ' +
-        '| sed "s/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//")"; if [[ ${tag[@]} ]]; then ' +
-        '/opt/CrowdStrike/falconctl -d -f --tags && for i in ${del[@]}; do tag=(${tag[@]/$i}); done && I' +
-        'FS=$"\n" && val=($(printf "%s\n" ${tag[*]} | xargs)) && val="$(echo ${val[*]} | tr " " ",")" &&' +
-        ' /opt/CrowdStrike/falconctl -s --tags="$val"; fi; /opt/CrowdStrike/falconctl -g --tags | sed "s' +
-        '/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//"'
-      Mac = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s' +
-        '/^No grouping tags set//; s/^Grouping tags: //")) del=("${(@s/,/)1}") && for i in ${del[@]}; do' +
-        ' tag=("${tag[@]/$i}"); done && tag=$(echo "${tag[@]}" | xargs | tr " " "," | sed "s/,$//") && /' +
-        'Applications/Falcon.app/Contents/Resources/falconctl grouping-tags clear &> /dev/null && /Appli' +
-        'cations/Falcon.app/Contents/Resources/falconctl grouping-tags set "$tag" &> /dev/null && /Appli' +
-        'cations/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No grouping tags se' +
-        't//; s/^Grouping tags: //"'
+      Linux = 'IFS=, && read -ra del <<< "$1" && read -ra tag <<< "$(/opt/CrowdStrike/falconctl -g --tags | sed ' +
+        '"s/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//")"; if [[ ${tag[@]} ]]; then /opt/CrowdStri' +
+        'ke/falconctl -d -f --tags && for i in ${del[@]}; do tag=(${tag[@]/$i}); done && IFS=$"\n" && val=($(pri' +
+        'ntf "%s\n" ${tag[*]} | xargs)) && val="$(echo ${val[*]} | tr " " ",")" && /opt/CrowdStrike/falconctl -s' +
+        ' --tags="$val"; fi; /opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are not set.//;' +
+        ' s/^tags=//; s/.$//"'
+      Mac = 'IFS=, tag=($(/Applications/Falcon.app/Contents/Resources/falconctl grouping-tags get | sed "s/^No g' +
+        'rouping tags set//; s/^Grouping tags: //")) del=("${(@s/,/)1}") && for i in ${del[@]}; do tag=("${tag[@' +
+        ']/$i}"); done && tag=$(echo "${tag[@]}" | xargs | tr " " "," | sed "s/,$//") && /Applications/Falcon.ap' +
+        'p/Contents/Resources/falconctl grouping-tags clear &> /dev/null && /Applications/Falcon.app/Contents/Re' +
+        'sources/falconctl grouping-tags set "$tag" &> /dev/null && /Applications/Falcon.app/Contents/Resources/' +
+        'falconctl grouping-tags get | sed "s/^No grouping tags set//; s/^Grouping tags: //"'
       Windows = @{
-        Reg = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e04' +
-          '23f-7058-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags"; if ($' +
-          'T) {$D = $args.Split(","); $V = ($T -split "REG_SZ")[-1].Trim().Split(",").Where({ $D -notc' +
-          'ontains $_ }) -join ","; if ($V) { [void](reg add $K /v GroupingTags /d $V /f) } else { [vo' +
-          'id](reg delete $K /v GroupingTags /f) }}; $T = (reg query $K) -match "GroupingTags"; if ($T' +
-          ') { ($T -split "REG_SZ")[-1].Trim() }'
+        Reg = '$K = "HKEY_LOCAL_MACHINE\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-7058' +
+          '-48c9-a204-725362b67639}\Default"; $T = (reg query $K) -match "GroupingTags"; if ($T) {$D = $args.Spl' +
+          'it(","); $V = ($T -split "REG_SZ")[-1].Trim().Split(",").Where({ $D -notcontains $_ }) -join ","; if ' +
+          '($V) { [void](reg add $K /v GroupingTags /d $V /f) } else { [void](reg delete $K /v GroupingTags /f) ' +
+          '}}; $T = (reg query $K) -match "GroupingTags"; if ($T) { ($T -split "REG_SZ")[-1].Trim() }'
         Tool = @{
-          Token = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test' +
-            '-Path $E){if($V){echo {1} | & "$E" set --grouping-tags "$V"}else{echo {1} | & "$E" clea' +
-            'r --grouping-tags}}else{throw "Not found: $E"}'
-          NoToken = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Te' +
-            'st-Path $E){if($V){& "$E" set --grouping-tags "$V"}else{& "$E" clear --grouping-tags}}e' +
-            'lse{throw "Not found: $E"}'
+          Token = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test-Path $E){' +
+            'if($V){echo {1} | & "$E" set --grouping-tags "$V"}else{echo {1} | & "$E" clear --grouping-tags}}els' +
+            'e{throw "Not found: $E"}'
+          NoToken = '$V="{0}";$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";if (Test-Path $E' +
+            '){if($V){& "$E" set --grouping-tags "$V"}else{& "$E" clear --grouping-tags}}else{throw "Not found: ' +
+            '$E"}'
         }
       }
     }
@@ -379,23 +352,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
               [boolean]$TagMatch = $false
               [string[]]$Existing = ($i.tags | Where-Object {
                 $_ -match 'SensorGroupingTags/' }) -replace 'SensorGroupingTags/',$null
-              @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -contains $_) {
-                $TagMatch = $true }}
+              @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -contains $_) { $TagMatch = $true }}
               if ($TagMatch -eq $true) {
                 [string]$TagString = ($Existing | Where-Object { $Tag -notcontains $_ }) -join ','
-                [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq
-                'ENABLED') {
+                [string]$Script = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
                   [string]$Token = ($i.device_id | Get-FalconUninstallToken -AuditMessage (
                     'Remove-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
-                  $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString -replace
-                    '\{1\}',$Token
+                  $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString -replace '\{1\}',$Token
                 } else {
                   $Scripts.$Platform.Tool.Token -replace '\{0\}',$TagString
                 }
                 $Param['Argument'] = '-Raw=```{0}```' -f $Script
                 $Param['HostId'] = $i.device_id
-                Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors |
-                ForEach-Object {
+                Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
                   # Output device properties and 'tags' value after script
                   [PSCustomObject]@{
                     cid = $i.cid
@@ -419,11 +388,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
                 }
               }
             }
-            if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt
-            6.42 }) {
+            if ($Hosts | Where-Object { $_.platform_name -eq $Platform -and $_.agent_version -lt 6.42 }) {
               # Run registry modification script for devices older than 6.42
-              $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,
-                ($Tag -join ',')
+              $Param['Argument'] = '-Raw=```{0}``` -CommandLine="{1}"' -f $Scripts.$Platform.Reg,($Tag -join ',')
               $Param['HostId'] = ($Hosts | Where-Object { $_.platform_name -eq $Platform -and
                 $_.agent_version -lt 6.42 }).device_id
               Invoke-FalconRtr @Param | Select-Object aid,stdout,stderr,errors | ForEach-Object {
@@ -431,13 +398,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
                 [PSCustomObject]@{
                   cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
                   device_id = $_.aid
-                  tags = if ($_.stdout) {
-                    ($_.stdout).Trim()
-                  } elseif ($_.stderr) {
-                    $_.stderr
-                  } else {
-                    $_.errors
-                  }
+                  tags = if ($_.stdout) { ($_.stdout).Trim() } elseif ($_.stderr) { $_.stderr } else { $_.errors }
                 }
               }
             }
@@ -453,13 +414,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
               [PSCustomObject]@{
                 cid = ($Hosts | Where-Object device_id -eq $_.aid).cid
                 device_id = $_.aid
-                tags = if ($_.stdout) {
-                  ($_.stdout).Trim()
-                } elseif ($_.stderr) {
-                  $_.stderr
-                } else {
-                  $_.errors
-                }
+                tags = if ($_.stdout) { ($_.stdout).Trim() } elseif ($_.stderr) { $_.stderr } else { $_.errors }
               }
             }
           }
@@ -506,22 +461,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
   )
   begin {
     $Scripts = @{
-      Linux = 'manager=("$(if [[ $(command -v apt) ]]; then echo "apt-get purge falcon-sensor -y"; elif [[' +
-        ' $(command -v yum) ]]; then echo "yum remove falcon-sensor -y"; elif [[ $(command -v zypper) ]]' +
-        '; then echo "zypper remove -y falcon-sensor"; fi)"); if [[ ${manager} ]]; then echo "Started re' +
-        'moval of the Falcon sensor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or zyp' +
-        'per must be present to begin removal"; fi'
+      Linux = 'manager=("$(if [[ $(command -v apt) ]]; then echo "apt-get purge falcon-sensor -y"; elif [[ $(com' +
+        'mand -v yum) ]]; then echo "yum remove falcon-sensor -y"; elif [[ $(command -v zypper) ]]; then echo "z' +
+        'ypper remove -y falcon-sensor"; fi)"); if [[ ${manager} ]]; then echo "Started removal of the Falcon se' +
+        'nsor" && eval "sudo ${manager} &" &>/dev/null; else echo "apt, yum or zypper must be present to begin r' +
+        'emoval"; fi'
       Mac = $null
-      Windows = '$t=$args;$sp=Join-Path $env:ProgramFiles (Join-Path "CrowdStrike" "CSFalconService.exe");' +
-        'if(!(Test-Path $sp)){throw "Unable to locate $sp"};$bv=if((Get-CimInstance win32_operatingsyste' +
-        'm).OSArchitecture -match "64"){"WOW6432Node\"};$rp="HKLM:\SOFTWARE\$($bv)Microsoft\Windows\Curr' +
-        'entVersion\Uninstall";if(!(Test-Path $rp)){throw "Unable to locate $rp"};@(gci $rp).Where({$_.G' +
-        'etValue("DisplayName") -match "CrowdStrike(.+)?Sensor"}).foreach{if((gi $sp).VersionInfo.FileVe' +
-        'rsion -eq $_.GetValue("DisplayVersion")){$us=if($_.GetValue("QuietUninstallString")){$_.GetValu' +
-        'e("QuietUninstallString")}else{$_.GetValue("UninstallString")};if(!$us){throw "Failed to find U' +
-        'ninstallString value for $($_.GetValue("DisplayName"))"};$al=@("/c",$us);if($t){$al+="MAINTENAN' +
-        'CE_TOKEN=$t"};"Starting removal of the Falcon sensor";[void](start -FilePath cmd.exe -ArgumentL' +
-        'ist ($al -join " ") -PassThru)}}'
+      Windows = '$t=$args;$sp=Join-Path $env:ProgramFiles (Join-Path "CrowdStrike" "CSFalconService.exe");if(!(T' +
+        'est-Path $sp)){throw "Unable to locate $sp"};$bv=if((Get-CimInstance win32_operatingsystem).OSArchitect' +
+        'ure -match "64"){"WOW6432Node\"};$rp="HKLM:\SOFTWARE\$($bv)Microsoft\Windows\CurrentVersion\Uninstall";' +
+        'if(!(Test-Path $rp)){throw "Unable to locate $rp"};@(gci $rp).Where({$_.GetValue("DisplayName") -match ' +
+        '"CrowdStrike(.+)?Sensor"}).foreach{if((gi $sp).VersionInfo.FileVersion -eq $_.GetValue("DisplayVersion"' +
+        ')){$us=if($_.GetValue("QuietUninstallString")){$_.GetValue("QuietUninstallString")}else{$_.GetValue("Un' +
+        'installString")};if(!$us){throw "Failed to find UninstallString value for $($_.GetValue("DisplayName"))' +
+        '"};$al=@("/c",$us);if($t){$al+="MAINTENANCE_TOKEN=$t"};"Starting removal of the Falcon sensor";[void](s' +
+        'tart -FilePath cmd.exe -ArgumentList ($al -join " ") -PassThru)}}'
     }
   }
   process {
