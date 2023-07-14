@@ -87,7 +87,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
     [string]$Value,
     [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=3)]
-    [ValidatePattern('^[a-fA-F0-9]{32}:(aggind|ind):[a-fA-F0-9]{32}:.+$')]
     [Alias('Ids','composite_id')]
     [string[]]$Id
   )
