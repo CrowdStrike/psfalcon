@@ -85,10 +85,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
           }
           if ($Include -and $HostList) {
             @($HostList.Where({ $_.device_id -eq $BaseObj.aid })).foreach{
-              @($_.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{
-                # Append 'Include' properties to base output
-                $BaseObj[$_.Name] = $_.Value
-              }
+              # Append 'Include' properties to base output
+              @($_.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{ $BaseObj[$_.Name] = $_.Value }
             }
           }
           @($Session.commands).foreach{
@@ -106,10 +104,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
             if ($Obj.command_status -eq 'FINISHED') {
               [string]$ConfirmCmd = Get-RtrCommand $Obj.base_command -ConfirmCommand
               @($Obj.cloud_request_id | & $ConfirmCmd -EA 4 | Select-Object $Select.Command).foreach{
-                @($_.PSObject.Properties).foreach{
-                  # Append 'stdout','stderr','complete' for 'FINISHED' command(s)
-                  $Obj[('command',$_.Name -join '_')] = $_.Value
-                }
+                # Append 'stdout','stderr','complete' for 'FINISHED' command(s)
+                @($_.PSObject.Properties).foreach{ $Obj[('command',$_.Name -join '_')] = $_.Value }
               }
             } else {
               $Obj.command_complete = $false
@@ -244,11 +240,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
     # Define output file, temporary folder, file detail and archive expansion/chmod scripts
     [string]$DeployName = "FalconDeploy_$(Get-Date -Format FileDateTime)"
     [string]$Csv = Join-Path (Get-Location).Path "$DeployName.csv"
-    [string]$FilePath = if ($Archive) {
-      $Script:Falcon.Api.Path($Archive)
-    } else {
-      $Script:Falcon.Api.Path($File)
-    }
+    [string]$FilePath = if ($Archive) { $Script:Falcon.Api.Path($Archive) } else { $Script:Falcon.Api.Path($File) }
     [string]$PutFile = [System.IO.Path]::GetFileName($FilePath)
     [string]$RunFile = if ($File) { $PutFile } else { $Run }
     function Update-CloudFile ([string]$FileName,[string]$FilePath) {
@@ -281,11 +273,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
           } else {
             # Prompt for file choice and remove 'CloudFile' if 'LocalFile' is chosen
             Write-Host "[CloudFile]"
-            $CloudFile | Select-Object name,created_timestamp,modified_timestamp,sha256 |
-              Format-List | Out-Host
+            $CloudFile | Select-Object name,created_timestamp,modified_timestamp,sha256 | Format-List | Out-Host
             Write-Host "[LocalFile]"
-            $LocalFile | Select-Object name,created_timestamp,modified_timestamp,sha256 |
-              Format-List | Out-Host
+            $LocalFile | Select-Object name,created_timestamp,modified_timestamp,sha256 | Format-List | Out-Host
             $FileChoice = $host.UI.PromptForChoice(
               "[Invoke-FalconDeploy] '$FileName' exists in your 'Put' Files. Use existing version?",
               $null,[System.Management.Automation.Host.ChoiceDescription[]]@("&Yes","&No"),0)
@@ -337,8 +327,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         $i
       }
       Get-RtrResult $Object $Output | Select-Object $FieldList | Export-Csv $Csv -Append -NoTypeInformation
-      ($Object | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or
-        $_.offline_queued -eq $true }).aid
+      ($Object | Where-Object { ($_.complete -eq $true -and !$_.stderr) -or $_.offline_queued -eq $true }).aid
     }
     [System.Collections.Generic.List[object]]$HostList = @()
     [System.Collections.Generic.List[string]]$List = @()
@@ -366,9 +355,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
       # Use Host identifiers to also retrieve 'platform_name' and 'Include' fields
       [string[]]$Select = 'device_id','platform_name'
       if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
-      @($List | Select-Object -Unique | Get-FalconHost | Select-Object $Select).foreach{
-        $HostList.Add($_)
-      }
+      @($List | Select-Object -Unique | Get-FalconHost | Select-Object $Select).foreach{ $HostList.Add($_) }
     }
     if ($HostList) {
       # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
@@ -385,10 +372,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
           }
           if ($QueueOffline) { $Param['QueueOffline'] = $QueueOffline }
           $Session = Start-FalconSession @Param
-          [string[]]$SessionIds = if ($Session.batch_id) {
-            # Output result to CSV and return list of successful 'init' hosts
-            Write-RtrResult $Session.hosts init $Session.batch_id
-          }
+          # Output result to CSV and return list of successful 'init' hosts
+          [string[]]$SessionIds = if ($Session.batch_id) { Write-RtrResult $Session.hosts init $Session.batch_id }
           if ($SessionIds) {
             # Keep RTR session alive and Change to a 'temp' directory for each device by platform
             $JobId = Start-RtrUpdate $Session.batch_id $Timeout
@@ -412,25 +397,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
               $Runscript = @{
                 Linux = @{
                   Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
-                    "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
-                      " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,$RunFile -join
-                      '/'); exit 0"
+                    "if ! command -v tar &> /dev/null; then echo 'Missing application: tar'; exit 1; fi; tar -xf" +
+                      " $PutFile; chmod +x $($TempDir,$RunFile -join '/'); exit 0"
                   } else {
-                    "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
-                      "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
-                      '/'); exit 0"
+                    "if ! command -v unzip &> /dev/null; then echo 'Missing application: unzip'; exit 1; fi; unz" +
+                      "ip $PutFile; chmod +x $($TempDir,$RunFile -join '/'); exit 0"
                   }
                   File = "chmod +x $($TempDir,$PutFile -join '/')"
                 }
                 Mac = @{
                   Archive = if ($PutFile -match '\.(tar(.gz)?|tgz)$') {
-                    "if ! command -v tar &> /dev/null; then echo 'Missing application: tar';" +
-                      " exit 1; fi; tar -xf $PutFile; chmod +x $($TempDir,$RunFile -join
-                      '/'); exit 0"
+                    "if ! command -v tar &> /dev/null; then echo 'Missing application: tar'; exit 1; fi; tar -xf" +
+                    " $PutFile; chmod +x $($TempDir,$RunFile -join '/'); exit 0"
                   } else {
-                    "if ! command -v unzip &> /dev/null; then echo 'Missing application: unz" +
-                      "ip'; exit 1; fi; unzip $PutFile; chmod +x $($TempDir,$RunFile -join
-                      '/'); exit 0"
+                    "if ! command -v unzip &> /dev/null; then echo 'Missing application: unzip'; exit 1; fi; unz" +
+                    "ip $PutFile; chmod +x $($TempDir,$RunFile -join '/'); exit 0"
                   }
                 }
                 Windows = @{ Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir" }
@@ -458,8 +439,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                       if ($Pair.Key -eq 'Windows') {
                         # Use 'runscript' to start process and avoid timeout
                         [string]$String = if ($Argument) {
-                          "Set-Location $TempDir;$($TempDir,$RunFile -join $Join)",
-                            $Argument -join ' '
+                          "Set-Location $TempDir;$($TempDir,$RunFile -join $Join)",$Argument -join ' '
                         } else {
                           "Set-Location $TempDir;$($TempDir,$RunFile -join $Join)"
                         }
@@ -471,8 +451,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                         '-Raw=```Start-Process',$Executable,
                         "-RedirectStandardOutput '$($TempDir,'stdout.log' -join $Join)'",
                         "-RedirectStandardError '$($TempDir,'stderr.log' -join $Join)'",
-                        ('-PassThru | ForEach-Object { "The process was successfully sta' +
-                        'rted"'),'}```' -join ' '
+                        ('-PassThru | ForEach-Object { "The process was successfully started"'),'}```' -join ' '
                       } elseif ($Pair.Key -match '^(Linux|Mac)$') {
                         # Use 'runscript' to start background process and avoid timeout
                         [string]$String = if ($Argument) {
@@ -483,11 +462,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                         $String = "'$String > $($TempDir,'stdout.log' -join
                           $Join) 2> $($TempDir,'stderr.log' -join $Join) &'"
                         if ($Pair.Key -eq 'Linux') {
-                          ('-Raw=```(bash -c {0}); if [[ $? -eq 0 ]]; then echo "The p' +
-                            'rocess was successfully started"; fi```') -f $String
+                          ('-Raw=```(bash -c {0}); if [[ $? -eq 0 ]]; then echo "The process was successfully st' +
+                            'arted"; fi```') -f $String
                         } else {
-                          ('-Raw=```(zsh -c {0}); if [[ $? -eq 0 ]]; then echo "The pr' +
-                          'ocess was successfully started"; fi```') -f $String
+                          ('-Raw=```(zsh -c {0}); if [[ $? -eq 0 ]]; then echo "The process was successfully sta' +
+                            'rted"; fi```') -f $String
                         }
                       }
                     }
@@ -500,8 +479,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                   Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
                     Measure-Object).Count) $($Pair.Key) host(s)..."
                   [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
-                  [string[]]$Optional = Write-RtrResult (
-                    Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
+                  [string[]]$Optional = Write-RtrResult (Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
                 }
               }
             }
@@ -593,10 +571,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
       if ($Include) {
         foreach ($i in (Get-FalconHost -Id $HostList.aid | Select-Object @($Include + 'device_id'))) {
           foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
-            @($HostList).Where({ $_.aid -eq $i.device_id }).foreach{
-              # Append 'Include' fields to output
-              Set-Property $_ $p.Name $p.Value
-            }
+            # Append 'Include' fields to output
+            @($HostList).Where({ $_.aid -eq $i.device_id }).foreach{ Set-Property $_ $p.Name $p.Value }
           }
         }
       }
