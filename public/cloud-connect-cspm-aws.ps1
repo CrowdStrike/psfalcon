@@ -226,7 +226,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/cloud-connect-cspm-aws/entities/account/v1:delete'
-      Format = @{ Query = @('ids','organization-ids') }
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
