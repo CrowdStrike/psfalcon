@@ -365,6 +365,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
     # Convert 'Path' to absolute and set 'OutputFile'
     [string]$ArchivePath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
+    [string[]]$Allowed = (Get-Command Export-FalconConfig).Parameters.Select.Attributes.ValidValues
     [string]$OutputFile = Join-Path (Get-Location).Path "FalconConfig_$(Get-Date -Format FileDateTime).csv"
     [string]$UserAgent = (Show-FalconModule).UserAgent
   }
@@ -372,6 +373,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     # Import configuration files and capture id values for comparison
     if (!$ArchivePath) { throw "Failed to resolve '$($PSBoundParameters.Path)'." }
     $Config = Import-ConfigData $ArchivePath
+    @($Config.Keys).Where({ $_ -notmatch '^(Ids|FirewallRule|Result)$' }).foreach{
+      if ($Allowed -notcontains $_) {
+        throw "'$($_,'json' -join '.')' is not a valid Json file name. Ensure that all files within '$(
+          $ArchivePath)' correspond with output from 'Export-FalconConfig' [$(($Allowed | ForEach-Object {
+            "'$_'"
+          }) -join ',')]."
+      }
+    }
     foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import })) {
       foreach ($Import in $Pair.Value.Import) {
         $Import = Compress-Property $Import
@@ -630,7 +639,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                           $_.name -eq $FieldValue.name -and $_.type -eq $FieldValue.type }
                         if ($CidFieldValue) {
                           if (Compare-Object ($FieldValue.values | ConvertTo-Json) ($CidFieldValue.values |
-                            ConvertTo-Json)) { 'field_values' }
+                          ConvertTo-Json)) {
+                            'field_values'
+                          }
                         }
                       }
                     }
@@ -776,7 +787,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       }
     }
-    @($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
-    if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
+    if ($Config.Result) {
+      # Output results to CSV
+      @($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
+      if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
+    }
   }
 }
