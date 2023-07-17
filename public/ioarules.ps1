@@ -42,13 +42,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process {
-    ($Param.Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
-      # When not provided, add required fields using existing policy settings
-      if (!$PSBoundParameters.$_) {
-        if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.Id -EA 0 }
-        if ($Existing) {
-          $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
-          $PSBoundParameters[$_] = $Value
+    $Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+    if ($Format) {
+      ($Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
+        # When not provided, add required fields using existing policy settings
+        if (!$PSBoundParameters.$_) {
+          if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.Id -EA 0 }
+          if ($Existing) {
+            $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
+            $PSBoundParameters[$_] = $Value
+          }
         }
       }
     }
@@ -106,7 +109,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
         Select-Object name,label,type,values }}
       [object[]]$RuleUpdate = $RuleUpdate | Select-Object $RuleRequired
     }
-    ($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
+    @($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
       # When not provided, add required fields using existing policy settings
       if (!$PSBoundParameters.$_) {
         if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.RulegroupId -EA 0 }
