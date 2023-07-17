@@ -346,9 +346,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       # Assign group(s) to target object and capture result
       [string]$Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
       $Req = foreach ($Id in $Object.$Property) {
-        if ($Cid.$Property -notcontains $Id) {
-          @(Invoke-PolicyAction $Type $Invoke $Object.id $Id).foreach{ $_ }
-        }
+        if ($Cid.$Property -notcontains $Id) { @(Invoke-PolicyAction $Type $Invoke $Object.id $Id).foreach{ $_ }}
       }
       if ($Req) {
         Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') ($Req[-1].$Property.id -join ',')
@@ -358,7 +356,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       if ($Config.Ids.$Type) {
         # Add 'new_id' to 'Ids'
         [string[]]$Compare = @('platform_name','platform','type','value','name').foreach{ if ($Item.$_) { $_ }}
-        [string]$Filter = (@($Compare).foreach{"`$_.$($_) -eq '$($Item.$_)'" }) -join ' -and '
+        [string]$Filter = (@($Compare).foreach{ "`$_.$($_) -eq '$($Item.$_)'" }) -join ' -and '
         $FilterScript = [scriptblock]::Create($Filter)
         @($Config.Ids.$Type | Where-Object -FilterScript $FilterScript).foreach{
           $_.new_id = if ($Item.family) { $Item.family } else { $Item.id }
@@ -372,6 +370,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
   }
   process {
     # Import configuration files and capture id values for comparison
+    if (!$ArchivePath) { throw "Failed to resolve '$($PSBoundParameters.Path)'." }
     $Config = Import-ConfigData $ArchivePath
     foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import })) {
       foreach ($Import in $Pair.Value.Import) {
@@ -447,15 +446,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             $Tag = ($Item.settings.build -split '\|',2)[-1]
             $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
               $Item.platform_name }).build
-            if ($Item.settings.build -ne $Current) { $Item.settings.build = $Current }
+            if ($Current -and $Item.settings.build -ne $Current) {
+              $Item.settings.build = $Current
+              Write-Log 'Import-FalconConfig' "Updated build from '$($Item.settings.build)' to '$Current'"
+            } elseif (!$Current) {
+              Write-Log 'Import-FalconConfig' "Failed to match '$Tag' to current build for '$(
+                $Item.platform_name)'"
+            }
           }
           if ($Item.settings.variants) {
             # Update tagged 'variant' builds with current tagged build versions
-            @($Item.settings.variants | Where-Object { $_.build -match '^\d+\|' }).foreach{
-              $Tag = ($_.build -split '\|',2)[-1]
+            foreach ($Variant in @($Item.settings.variants | Where-Object { $_.build -match '^\d+\|' })) {
+              $Tag = ($Variant.build -split '\|',2)[-1]
               $Current = ($Builds | Where-Object { $_.build -like "*|$Tag" -and $_.platform -eq
-                $Item.platform_name }).build
-              if ($_.build -ne $Current) { $_.build = $Current }
+                $Variant.platform }).build
+              if ($Current -and $Variant.build -ne $Current) {
+                $Variant.build = $Current
+                Write-Log 'Import-FalconConfig' "Updated variant build from '$($Variant.build)' to '$Current'"
+              } elseif (!$Current) {
+                Write-Log 'Import-FalconConfig' "Failed to match '$Tag' to current build for variant '$(
+                  $Variant.platform)'"
+              }
             }
           }
         }
@@ -476,7 +487,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           @('groups','host_groups').foreach{
             foreach ($OldId in $Item.$_) {
               [string]$NewId = ($Config.Ids.HostGroup | Where-Object { $_.old_id -eq $OldId }).new_id
-              if ($NewId) { [string[]]$Item.$_ = $Item.$_ -replace $OldId,$NewId }
+              if ($NewId) {
+                [string[]]$Item.$_ = $Item.$_ -replace $OldId,$NewId
+                Write-Log 'Import-FalconConfig' ('Updated {0} "{1}" id "{2}" to "{3}"' -f $Pair.Key,$_,$OldId,
+                  $NewId)
+              }
             }
           }
         }
