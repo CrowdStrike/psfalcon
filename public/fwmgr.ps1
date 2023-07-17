@@ -87,22 +87,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
   }
   process {
     if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallGroup','Get-FalconFirewallGroup')) {
-      @($Param.Format.Body.root).Where({ $_ -notmatch '^(diff_operations|id)$' }).foreach{
-        if (!$PSBoundParameters.$_) {
-          # When not provided, add required fields using existing rule group
-          if (!$Group) {
-            $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {}
-          }
-          $PSBoundParameters[$_] = if ($_ -eq 'rulegroup_version') {
-            if ($Group.version) { $Group.version } else { 0 }
-          } elseif ($_ -eq 'rule_versions') {
-            if ($PSBoundParameters.RuleId) {
-              (Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version
+      $Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      if ($Format) {
+        @($Format.Body.root).Where({ $_ -notmatch '^(diff_operations|id)$' }).foreach{
+          if (!$PSBoundParameters.$_) {
+            # When not provided, add required fields using existing rule group
+            if (!$Group) { $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {}}
+            $PSBoundParameters[$_] = if ($_ -eq 'rulegroup_version') {
+              if ($Group.version) { $Group.version } else { 0 }
+            } elseif ($_ -eq 'rule_versions') {
+              if ($PSBoundParameters.RuleId) {
+                (Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version
+              } else {
+                (Get-FalconFirewallRule -Id $Group.rule_ids).version
+              }
             } else {
-              (Get-FalconFirewallRule -Id $Group.rule_ids).version
+              $Group.$_
             }
-          } else {
-            $Group.$_
           }
         }
       }
@@ -327,11 +328,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process {
     if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallSetting','Get-FalconFirewallPolicy')) {
-      ($Param.Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
-        # When not provided, add required fields using existing policy settings
-        if (!$PSBoundParameters.$_) {
-          if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
-          if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
+      $Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      if ($Format) {
+        ($Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
+          # When not provided, add required fields using existing policy settings
+          if (!$PSBoundParameters.$_) {
+            if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
+            if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
+          }
         }
       }
     }
