@@ -252,8 +252,7 @@ function Confirm-Parameter {
   )
   begin {
     # Retrieve parameters from target $Endpoint and create object string for error message
-    $ParamList = @((Get-Command $Command).Parameters.Values).Where({ $_.ParameterSets.Keys -contains
-      $Endpoint })
+    $ParamList = @((Get-Command $Command).Parameters.Values).Where({ $_.ParameterSets.Keys -contains $Endpoint })
     [string]$ErrorObject = ConvertTo-Json $Object -Depth 32 -Compress
   }
   process {
@@ -284,9 +283,7 @@ function Confirm-Parameter {
           if ($ValidValues) {
             if ($Object.$_ -is [array]) {
               foreach ($Item in $Object.$_) {
-                if ($ValidValues -notcontains $Item) {
-                  "'$Item' is not a valid '$_' value. $ErrorObject"
-                }
+                if ($ValidValues -notcontains $Item) { "'$Item' is not a valid '$_' value. $ErrorObject" }
               }
             } elseif ($ValidValues -notcontains $Object.$_) {
               throw "'$($Object.$_)' is not a valid '$_' value. $ErrorObject"
@@ -303,8 +300,9 @@ function Confirm-Parameter {
         [string]$Name = if ($Format -and $Format.$_) { $Format.$_ } else { $_ }
         if ($Object.$_) {
           # Verify provided value matches 'ValidPattern'
-          [string]$ValidPattern = @($ParamList).Where.({ $_.Name -eq $Name -or $_.Aliases -contains
-            $Name }).Attributes.RegexPattern
+          [string]$ValidPattern = @($ParamList).Where.({
+            $_.Name -eq $Name -or $_.Aliases -contains $Name
+          }).Attributes.RegexPattern
           if ($ValidPattern -and $Object.$_ -notmatch $ValidPattern) {
             throw "'$($Object.$_)' is not a valid '$_' value. $ErrorObject"
           } else {
@@ -881,18 +879,13 @@ function Start-RtrUpdate {
           # Refresh Real-time Response session before timeout
           $Param = @{
             Uri = if ($Id -match '^[a-fA-F0-9]{32}$') {
-              $BaseAddress,('real-time-response/entities/sessions/v1?timeout',
-                $Timeout -join '=') -join '/'
+              $BaseAddress,('real-time-response/entities/sessions/v1?timeout',$Timeout -join '=') -join '/'
             } else {
               $BaseAddress,('real-time-response/combined/batch-init-session/v1?timeout',
                 $Timeout -join '=') -join '/'
             }
             Method = 'post'
-            Headers = @{
-              Accept = 'application/json'
-              Authorization = $Token
-              'Content-Type' = 'application/json'
-            }
+            Headers = @{ Accept = 'application/json'; Authorization = $Token; 'Content-Type' = 'application/json' }
             Body = if ($Id -match '^[a-fA-F0-9]{32}$') {
               @{ device_id = $Id } | ConvertTo-Json -Compress
             } else {
@@ -977,8 +970,8 @@ function Test-FqlStatement {
   [OutputType([boolean])]
   param([Parameter(Mandatory)][string]$String)
   begin {
-    $Pattern = [regex]("(?<FqlProperty>[\w\.]+):(?<FqlOperator>(!~?|~|(>|<)=?|\*)?)" +
-      "(?<FqlValue>[\w\d\s\.\-\*\[\]\\,'`":]+)")
+    $Pattern = [regex]("(?<FqlProperty>[\w\.]+):(?<FqlOperator>(!~?|~|(>|<)=?|\*)?)(?<FqlValue>[\w\d\s\.\-\*\[\]" +
+      "\\,'`":]+)")
   }
   process {
     if ($String -notmatch $Pattern) {
@@ -1055,9 +1048,7 @@ function Wait-RtrCommand {
     do {
       # Wait for the result of single-host Real-time Response command
       $Object = @($Object | & $Confirm).foreach{
-        if ($_.task_id -and $_.complete -eq $false) {
-          Write-Log $String "Waiting for task_id: $($_.task_id)"
-        }
+        if ($_.task_id -and $_.complete -eq $false) { Write-Log $String "Waiting for task_id: $($_.task_id)" }
         $_
       }
       if ($Object -and $Object.complete -eq $false) { Start-Sleep -Seconds 20 }
@@ -1108,9 +1099,7 @@ function Write-Result {
         # Output 'meta' to verbose stream and capture 'trace_id'
         $Message = (@($Json.meta.PSObject.Properties).foreach{
           if ($_.Name -eq 'pagination') {
-            @($_.Value.PSObject.Properties).foreach{
-              ('pagination',$_.Name -join '.'),$_.Value -join '='
-            }
+            @($_.Value.PSObject.Properties).foreach{ ('pagination',$_.Name -join '.'),$_.Value -join '=' }
           } else {
             $_.Name,$_.Value -join '='
           }
