@@ -617,7 +617,7 @@ function Invoke-Falcon {
             }
           }
         }
-      } while ($null -ne $Object.total -and $Int -lt $Object.total)
+      } while ($null -ne $Object.total -and $null -ne $Next -and $Int -lt $Object.total)
     }
     function Set-LoopParam ([hashtable]$Splat,[string[]]$Next) {
       $Clone = $Splat.Clone()
