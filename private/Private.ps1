@@ -610,10 +610,12 @@ function Invoke-Falcon {
               Write-Request $Clone $_ -OutVariable Output
               [int]$Int += ($Output | Measure-Object).Count
               if ($null -ne $Object.total) {
-                Write-Log $Command "Retrieved $Int of $($Object.total)"
+                Write-Log $Command ("Retrieved {0} of {1}" -f $Int,$Object.total)
               }
             }
           }
+        } elseif ($Int -lt $Object.total) {
+          throw ("Aborted due to missing pagination token. [Retrieved {0} of {1}]" -f $Int,$Object.total)
         }
       } while ($null -ne $Object.total -and $null -ne $Next -and $Int -lt $Object.total)
     }
