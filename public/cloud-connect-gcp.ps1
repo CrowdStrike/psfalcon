@@ -4,30 +4,62 @@ function Get-FalconDiscoverGcpAccount {
 Search for Falcon Discover for Cloud GCP accounts
 .DESCRIPTION
 Requires 'D4C registration: Read'.
-.PARAMETER ScanType
-Scan type
 .PARAMETER Id
 GCP account identifier
+.PARAMETER ScanType
+Scan type
+.PARAMETER ParentType
+GCP hierarchy parent type
+.PARAMETER Status
+GCP account status
+.PARAMETER ScanType
+Scan type
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverGcpAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/account/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=1)]
-    [ValidateSet('full','dry',IgnoreCase=$false)]
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=1)]
+    [ValidatePattern('^\d{10,}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=2)]
+    [ValidateSet('Folder','Organization','Project',IgnoreCase=$false)]
+    [Alias('parent_type')]
+    [string]$ParentType,
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=3)]
+    [ValidateSet('dry','full',IgnoreCase=$false)]
     [Alias('scan-type')]
     [string]$ScanType,
-    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^\d{10,}$')]
-    [Alias('Ids')]
-    [string[]]$Id
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=4)]
+    [ValidateSet('operational','provisioned',IgnoreCase=$false)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=5)]
+    [ValidateRange(1,500)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get',Position=6)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/account/v1:get')]
+    [int]$Offset
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) {
+      @($Id).foreach{ $List.Add($_) }
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
