@@ -166,6 +166,12 @@ function Receive-FalconDiscoverAzureScript {
 Download a Bash script which grants Falcon Discover for Cloud access using Azure Cloud Shell
 .DESCRIPTION
 Requires 'D4C registration: Read'.
+.PARAMETER TenantId
+Azure tenant identifier
+.PARAMETER SubscriptionId
+Azure subscription identifier
+.PARAMETER Template
+Template to be rendered
 .PARAMETER Path
 Destination path
 .PARAMETER Force
@@ -176,8 +182,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
   param(
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant-id')]
+    [string[]]$TenantId,
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('subscription_ids')]
+    [string[]]$SubscriptionId,
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Position=3)]
+    [string]$Template,
     [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
-      Position=1)]
+      Position=4)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
     [switch]$Force
@@ -187,7 +203,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{ Outfile = 'path' }
+      Format = @{ Outfile = 'path'; Query = @('subscription_ids','template','tenant-id') }
     }
   }
   process {
