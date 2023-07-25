@@ -559,6 +559,10 @@ Download the most recent ruleset, or a specific ruleset
 Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Type
 Ruleset type, used to retrieve the latest ruleset
+.PARAMETER IfNoneMatch
+Download the latest rule set only if it doesn't a matching 'tags' value
+.PARAMETER IfModifiedSince
+Restrict results to those modified after a provided date (HTTP, ANSIC or RFC850 format)
 .PARAMETER Path
 Destination path
 .PARAMETER Id
@@ -571,11 +575,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
   [CmdletBinding(DefaultParameterSetName='/intel/entities/rules-files/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=1)]
-    [ValidateSet('snort-suricata-master','snort-suricata-update','snort-suricata-changelog','yara-master',
-      'yara-update','yara-changelog','common-event-format','netwitness',IgnoreCase=$false)]
+    [ValidateSet('common-event-format','netwitness','snort-suricata-changelog','snort-suricata-master',
+      'snort-suricata-update','yara-changelog','yara-master','yara-update',IgnoreCase=$false)]
     [string]$Type,
+    [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Position=2)]
+    [Alias('If-None-Match')]
+    [string]$IfNoneMatch,
+    [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Position=3)]
+    [Alias('If-Modified-Since')]
+    [string]$IfModifiedSince,
     [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,Position=1)]
-    [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=2)]
+    [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=4)]
     [ValidatePattern('\.(gz|gzip|zip)$')]
     [string]$Path,
     [Parameter(ParameterSetName='/intel/entities/rules-files/v1:get',Mandatory,ValueFromPipelineByPropertyName,
@@ -595,7 +605,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = $Accept }
-      Format = @{ Query = @('format','id','type'); Outfile = 'path' }
+      Format = @{ Query = @('format','id','If-None-Match','If-Modified-Since','type'); Outfile = 'path' }
     }
   }
   process {
