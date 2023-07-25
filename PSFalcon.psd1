@@ -62,6 +62,10 @@
     'New-FalconDiscoverGcpAccount'
     'Receive-FalconDiscoverGcpScript'
 
+    # configuration-assessment
+    'Get-FalconConfigAssessment'
+    'Get-FalconConfigAssessmentLogic'
+
     # container-security
     'Edit-FalconContainerRegistry'
     'Get-FalconContainerAssessment'
