@@ -43,7 +43,9 @@ Search for Falcon Horizon Azure accounts
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER Id
-Azure account identifier
+Azure subscription identifier
+.PARAMETER TenantId
+Azure tenant identifier
 .PARAMETER ScanType
 Scan type
 .PARAMETER Status
@@ -62,19 +64,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureAccount
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
-    [string[]]$Id,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant_ids')]
+    [string[]]$TenantId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=3)]
     [ValidateSet('full','dry',IgnoreCase=$false)]
     [Alias('scan-type')]
     [string]$ScanType,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=4)]
     [ValidateSet('provisioned','operational',IgnoreCase=$false)]
     [string]$Status,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=5)]
     [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
@@ -102,6 +107,8 @@ Retrieve the base64 encoded certificate for a Falcon Horizon Azure tenant
 Requires 'CSPM registration: Read'.
 .PARAMETER Refresh
 Refresh certificate [default: false]
+.PARAMETER YearsValid
+Years the certificate should be valid [when Refresh: true]
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
@@ -112,8 +119,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Position=1)]
     [boolean]$Refresh,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Position=2)]
+    [ValidatePattern('^[0-9]{1,2}$')]
+    [Alias('years_valid')]
+    [string]$YearsValid,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [Alias('tenant_id')]
     [string[]]$TenantId
@@ -157,10 +168,16 @@ function Receive-FalconHorizonAzureScript {
 Download a Bash script which grants Falcon Horizon access using Azure Cloud Shell
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
+.PARAMETER TenantId
+Azure tenant identifier [default: most recently registered]
+.PARAMETER SubscriptionId
+Azure subscription identifier [default: all]
+.PARAMETER Template
+Template to be rendered
+.PARAMETER AccountType
+Account type
 .PARAMETER Path
 Destination path
-.PARAMETER TenantId
-Azure tenant identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
@@ -169,14 +186,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Mandatory,
-      Position=1)]
-    [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [Alias('tenant-id','tenant_id')]
     [string]$TenantId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('subscription_ids')]
+    [string[]]$SubscriptionId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Position=3)]
+    [string]$Template,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Position=4)]
+    [ValidateSet('commercial','gov',IgnoreCase=$false)]
+    [Alias('account_type')]
+    [string]$AccountType,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Mandatory,
+      Position=5)]
+    [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get')]
     [switch]$Force
   )
@@ -185,7 +212,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{ Query = @('tenant-id'); Outfile = 'path' }
+      Format = @{ Outfile = 'path'; Query = @('account_type','subscription_ids','template','tenant-id') }
     }
   }
   process {
@@ -208,6 +235,10 @@ function Remove-FalconHorizonAzureAccount {
 Remove Falcon Horizon Azure accounts
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
+.PARAMETER TenantId
+Azure tenant identifier
+.PARAMETER RetainTenant
+Retain Azure tenant when removing an account
 .PARAMETER Id
 Azure account identifier
 .LINK
@@ -216,8 +247,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
     SupportsShouldProcess)]
   param(
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant_ids')]
+    [string[]]$TenantId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Position=2)]
+    [Alias('retain_tenant')]
+    [boolean]$RetainTenant,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [Alias('Ids')]
     [string[]]$Id
