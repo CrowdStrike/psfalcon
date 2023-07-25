@@ -96,3 +96,69 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
   }
   end { if ($Request -and $PSBoundParameters.All) { Invoke-GraphLoop $Request $Param $PSBoundParameters }}
 }
+function Get-FalconIdentityHost {
+<#
+.SYNOPSIS
+Search for Falcon Identity hosts
+.DESCRIPTION
+Requires 'Identity Protection Entities: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
+#>
+  [CmdletBinding(DefaultParameterSetName='/identity-protection/queries/devices/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/identity-protection/entities/devices/GET/v1:post',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Mandatory)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids','device_id','host_ids','aid')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get',Position=3)]
+    [ValidateRange(1,200)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) {
+      @($Id).foreach{ $List.Add($_) }
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+  end {
+    if ($List) {
+      $Param['Max'] = 5000
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
