@@ -149,6 +149,7 @@
 
     # identity-protection
     'Invoke-FalconIdentityGraph'
+    'Get-FalconIdentityHost'
 
     # image-assessment
     'Get-FalconContainerVulnerability'
