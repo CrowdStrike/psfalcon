@@ -105,8 +105,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
 #>
-  [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -128,8 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=4)]
-    [ValidateSet('cid|asc','cid|desc','role_name|asc','role_name|desc','type|asc','type|desc',
-      IgnoreCase=$false)]
+    [ValidateSet('cid|asc','cid|desc','role_name|asc','role_name|desc','type|asc','type|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=5)]
     [ValidateRange(1,500)]
