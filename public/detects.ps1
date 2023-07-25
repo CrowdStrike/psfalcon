@@ -136,6 +136,10 @@ AWS account identifier
 Azure subscription identifier
 .PARAMETER AzureTenantId
 Azure tenant identifier
+.PARAMETER ResourceId
+Resource identifier
+.PARAMETER ResourceUuid
+Resource UUID
 .PARAMETER Severity
 Indicator of Attack severity
 .PARAMETER Region
@@ -144,6 +148,8 @@ Cloud platform region
 Cloud service
 .PARAMETER State
 Indicator of Attack state
+.PARAMETER Since
+Filter events using a duration string (e.g. 24h)
 .PARAMETER DateTimeSince
 Include results that occur after a specific date and time (RFC3339)
 .PARAMETER Limit
@@ -179,9 +185,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
     [Alias('azure_tenant_id','tenant_id')]
     [string]$AzureTenantId,
     [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=6)]
+    [Alias('resource_id')]
+    [string[]]$ResourceId,
+    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=7)]
+    [Alias('resource_uuid')]
+    [string[]]$ResourceUuid,
+    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=8)]
     [ValidateSet('High','Medium','Informational',IgnoreCase=$false)]
     [string]$Severity,
-    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=7)]
+    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=9)]
     [ValidateSet('ACM','ACR','Any','App Engine','AppService','BigQuery','Cloud Load Balancing',
       'Cloud Logging','Cloud SQL','Cloud Storage','CloudFormation','CloudTrail','CloudWatch Logs',
       'Cloudfront','Compute Engine','Config','Disk','DynamoDB','EBS','EC2','ECR','EFS','EKS','ELB','EMR',
@@ -190,13 +202,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
       'SNS','SQLDatabase','SQLServer','SQS','SSM','Serverless Application Repository','StorageAccount',
       'Subscriptions','VPC','VirtualMachine','VirtualNetwork',IgnoreCase=$false)]
     [string]$Service,
-    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=8)]
+    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=10)]
     [ValidateSet('open','closed',IgnoreCase=$false)]
     [string]$State,
-    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=9)]
+    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=11)]
+    [string]$Since,
+    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=12)]
     [Alias('date_time_since')]
     [string]$DateTimeSince,
-    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=10)]
+    [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=13)]
     [ValidateRange(1,1000)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/detects/entities/ioa/v1:get')]
@@ -226,6 +240,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
+.PARAMETER NextToken
+Pagination token to retrieve the next set of results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -258,6 +274,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
     [int]$Limit,
     [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
     [int]$Offset,
+    [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
+    [Alias('next_token')]
+    [string]$NextToken,
     [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/detects/queries/iom/v2:get')]
