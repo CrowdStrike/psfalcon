@@ -45,6 +45,10 @@ Scan type
 AWS account status
 .PARAMETER GroupBy
 Field to group by
+.PARAMETER IamRoleArn
+AWS IAM role ARNs
+.PARAMETER Migrated
+Only return migrated Discover for Cloud accounts
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -80,6 +84,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     [Alias('group_by')]
     [string]$GroupBy,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=5)]
+    [Alias('iam_role_arns')]
+    [string[]]$IamRoleArn,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=6)]
+    [boolean]$Migrated,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=7)]
     [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
@@ -158,6 +167,8 @@ function Receive-FalconHorizonAwsScript {
 Download a Bash script which grants Falcon Horizon access using the AWS CLI
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
+.PARAMETER Id
+AWS account identifier
 .PARAMETER Path
 Destination path
 .PARAMETER Force
@@ -168,8 +179,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
   param(
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('ids')]
+    [string[]]$Id,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
-      Position=1)]
+      Position=2)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     [switch]$Force
@@ -179,7 +195,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{ Outfile = 'path' }
+      Format = @{ Outfile = 'path'; Query = @('ids') }
     }
   }
   process {
