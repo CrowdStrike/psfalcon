@@ -192,8 +192,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
     [string[]]$SubscriptionId,
     [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Position=3)]
     [string]$Template,
-    [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,
-      Position=4)]
+    [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get',Mandatory,Position=4)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-azure/entities/user-scripts-download/v1:get')]
     [switch]$Force
@@ -203,8 +202,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAzureScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{ Outfile = 'path'; Query = @('subscription_ids','template','tenant-id') }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
