@@ -159,8 +159,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconScheduledReport
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{ Query = @('ids'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     if ($PSBoundParameters.Id -and !$PSBoundParameters.Path) {
