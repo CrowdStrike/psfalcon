@@ -935,8 +935,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/x-7z-compressed' }
-      Format = @{ Query = @('session_id','sha256'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     if (!$PSBoundParameters.Path) {
