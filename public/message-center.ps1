@@ -327,8 +327,7 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCompleteAttachment
 #>
-  [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:get',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/message-center/entities/case-attachment/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:get',Mandatory,Position=1)]
     [string]$Path,
@@ -342,8 +341,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCompleteAttachment
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('id'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $OutPath = Test-OutFile $PSBoundParameters.Path
