@@ -70,7 +70,7 @@ class ApiClient {
         # Send request
         $this.Client.SendAsync($Message,[System.Net.Http.HttpCompletionOption]::ResponseHeadersRead)
       }
-      if ($Param.Outfile -and $Request.Result) {
+      if ($Param.Outfile -and $Request) {
         try {
           # When file download is complete, direct to 'Outfile'
           $this.Verbose('ApiClient.Invoke',"Creating '$($Param.Outfile)'.")
@@ -79,7 +79,7 @@ class ApiClient {
           throw $_
         } finally {
           @($Param.Headers.Keys).foreach{
-            if ($this.Client.DefaultRequestHeaders.$_) { $this.Client.DefaultRequestHeaders.Remove($_) }
+            if ($this.Client.DefaultRequestHeaders.$_) { [void]($this.Client.DefaultRequestHeaders.Remove($_)) }
           }
         }
       } elseif ($Request.Result.StatusCode) {
