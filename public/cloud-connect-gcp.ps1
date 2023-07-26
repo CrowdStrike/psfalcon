@@ -106,8 +106,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverGcpScript
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',Mandatory,
-       Position=1)]
+    [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get',Mandatory,Position=1)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-gcp/entities/user-scripts-download/v1:get')]
     [switch]$Force
