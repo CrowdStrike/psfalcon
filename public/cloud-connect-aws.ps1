@@ -192,7 +192,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDiscoverAwsSetting
 function New-FalconDiscoverAwsAccount {
 <#
 .SYNOPSIS
-Provision Falcon Discover for Cloud AWS Accounts
+Provision Falcon Discover for Cloud AWS accounts
 .DESCRIPTION
 Requires 'AWS accounts: Write'.
 .PARAMETER OrganizationId
@@ -252,7 +252,7 @@ Requires 'AWS accounts: Read'.
 .PARAMETER Path
 Destination path
 .PARAMETER Id
-AWS Account identifier
+AWS account identifier
 .PARAMETER Force
 Overwrite existing file when present
 .LINK
@@ -261,8 +261,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
-      Position=1)]
+    [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,Position=1)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-aws/entities/user-scripts-download/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
@@ -276,8 +275,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconDiscoverAwsScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{ Query = @('ids'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
