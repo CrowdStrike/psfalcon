@@ -825,9 +825,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconReconExport
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Outfile = 'path'; Query = @('id') }
       Headers = @{ Accept = 'application/octet-stream' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $OutPath = Test-OutFile $PSBoundParameters.Path
