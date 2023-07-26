@@ -212,8 +212,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = @{ Outfile = 'path'; Query = @('account_type','subscription_ids','template','tenant-id') }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
