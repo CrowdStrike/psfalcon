@@ -288,35 +288,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
 #>
   [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/policies/v2:put',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
-       Position=1)]
+    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,Position=1)]
     [ValidateSet('0','1')]
     [Alias('platform_id')]
     [string]$PlatformId,
-    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
-       Position=2)]
+    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,Position=2)]
     [boolean]$Enforce,
-    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
-       Position=3)]
+    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('rule_group_ids','RuleGroupIds')]
     [string[]]$RuleGroupId,
-    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
-       Position=4)]
+    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,Position=4)]
     [ValidateSet('ALLOW','DENY',IgnoreCase=$false)]
     [Alias('default_inbound')]
     [string]$DefaultInbound,
-    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
-       Position=5)]
+    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,Position=5)]
     [ValidateSet('ALLOW','DENY',IgnoreCase=$false)]
     [Alias('default_outbound')]
     [string]$DefaultOutbound,
-    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
-       Position=6)]
+    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,Position=6)]
     [Alias('test_mode')]
     [boolean]$MonitorMode,
-    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,
-       Position=7)]
+    [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',ValueFromPipelineByPropertyName,Position=7)]
     [Alias('local_logging')]
     [boolean]$LocalLogging,
     [Parameter(ParameterSetName='/fwmgr/entities/policies/v2:put',Mandatory,ValueFromPipelineByPropertyName,
