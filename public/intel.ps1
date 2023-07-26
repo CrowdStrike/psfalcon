@@ -484,8 +484,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('actor_id','format'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $Format
@@ -534,8 +535,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/pdf' }
-      Format = @{ Query = @('id'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'pdf'
@@ -605,8 +607,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = $Accept }
-      Format = @{ Query = @('format','id','If-None-Match','If-Modified-Since','type'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $OutPath = Test-OutFile $PSBoundParameters.Path
