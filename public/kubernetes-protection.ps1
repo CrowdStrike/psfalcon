@@ -96,6 +96,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAccount
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=2)]
+    [Alias('locations')]
     [string[]]$Location,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=3)]
     [ValidateSet('aks','eks',IgnoreCase=$false)]
@@ -134,6 +135,8 @@ Requires 'Kubernetes Protection: Read'.
 AWS account identifier
 .PARAMETER Status
 Filter by account status
+.PARAMETER IsHorizonAcct
+Restrict results to Falcon Horizon
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -157,6 +160,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
     [ValidateSet('provisioned','operational',IgnoreCase=$false)]
     [string]$Status,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=3)]
+    [ValidateSet('false','true',IgnoreCase=$false)]
+    [Alias('is_horizon_acct')]
+    [string]$IsHorizonAcct,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=4)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
     [int32]$Offset,
@@ -409,6 +416,8 @@ Cloud provider location
 Cluster name
 .PARAMETER ClusterService
 Cluster service
+.PARAMETER Status
+Cluster Status
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -428,7 +437,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
     [Alias('account_ids','Ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=2)]
-    [Alias('Locations')]
+    [Alias('locations')]
     [string[]]$Location,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=3)]
     [Alias('cluster_names','ClusterNames')]
@@ -438,6 +447,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
     [Alias('cluster_service')]
     [string]$ClusterService,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=5)]
+    [ValidateSet('Not Installed','Running','Stopped',IgnoreCase=$false)]
+    [string[]]$Status,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=6)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
     [int32]$Offset,
@@ -484,10 +496,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContainerScan
   [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',Mandatory,
-       Position=1)]
-    [ValidateSet('dry-run','full','cluster-refresh',IgnoreCase=$false)]
-    [Alias('scan-type')]
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',Mandatory,Position=1)]
+    [ValidateSet('cluster-refresh','dry-run','full',IgnoreCase=$false)]
+    [Alias('scan_type')]
     [string]$ScanType
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -509,8 +520,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAwsAccount
   [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
-       Position=1)]
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,Position=1)]
     [string]$Region,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
@@ -569,10 +579,12 @@ function Receive-FalconContainerYaml {
 Download a sample Helm values.yaml file
 .DESCRIPTION
 Requires 'Kubernetes Protection: Read'.
-.PARAMETER Path
-Destination path
 .PARAMETER ClusterName
 Cluster name
+.PARAMETER IsSelfManagedCluster
+Restrict results to clusters that are not managed by the cloud provider
+.PARAMETER Path
+Destination path
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
@@ -582,12 +594,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconContainerYaml
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,
-       Position=1)]
-    [string]$Path,
-    [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [Alias('cluster_name')]
     [string]$ClusterName,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Position=2)]
+    [Alias('is_self_managed_cluster')]
+    [boolean]$IsSelfManagedCluster,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,Position=3)]
+    [string]$Path,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get')]
     [switch]$Force
   )
@@ -596,8 +610,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconContainerYaml
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/yaml' }
-      Format = @{ Query = @('cluster_name','is_self_managed_cluster'); Outfile = 'path' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
+    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'yaml'
@@ -610,7 +625,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconContainerYaml
       } else {
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
-    }}
+    }
+  }
 }
 function Remove-FalconContainerAwsAccount {
 <#
