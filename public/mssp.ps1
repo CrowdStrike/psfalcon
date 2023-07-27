@@ -393,6 +393,8 @@ Search for Falcon Flight Control member CIDs
 Requires 'Flight Control: Read'.
 .PARAMETER Id
 Member CID identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
@@ -416,9 +418,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
     [Alias('Ids','child_cid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=2)]
     [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=3)]
     [ValidateRange(1,5000)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
@@ -652,14 +657,14 @@ Customer identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
 #>
-  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v2:delete',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
+    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('cid_group_id')]
     [string]$Id,
-    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
+    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('cids','child_cid')]
