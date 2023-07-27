@@ -441,28 +441,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                       [string]$Join = if ($Pair.Key -eq 'Windows') { '\' } else { '/' }
                       if ($Pair.Key -eq 'Windows') {
                         # Use 'runscript' to start process and avoid timeout
-                        [string]$String = if ($Argument) {
-                          "Set-Location $TempDir;$(Join-Path -Path $TempDir -ChildPath $RunFile)",
-                            $Argument -join ' '
+                        [string]$String = if ($RunFile -match '\.(bat|cmd)$') {
+                          ('/c cd /d {0} && {1}' -f $TempDir,($TempDir,$RunFile -join $Join))
                         } else {
-                          "Set-Location $TempDir;$(Join-Path -Path $TempDir -ChildPath $RunFile)"
+                          ('Set-Location {0};{1}' -f $TempDir,($TempDir,$RunFile -join $Join))
                         }
-                        [string]$Executable = if ( ($RunFile -match '\.cmd$') -or ($RunFile -match '\.bat$' )) {
-                          "cmd.exe /c cd /d `"$TempDir`" && `"$RunFile`" $Argument"
+                        if ($Argument) { $String = $String,$Argument -join ' ' }
+                        [string]$Executable = if ($RunFile -match '\.(bat|cmd)$') {
+                          'cmd.exe',"'$String'" -join ' '
                         } else {
-                          'powershell.exe',"' -NoProfile  -WindowStyle hidden -NoLogo -NonInteractive -ExecutionPolicy Bypass -c &{$String}'" -join ' '
+                          'powershell.exe',"'-c &{$String}'" -join ' '
                         }
                         '-Raw=```Start-Process',$Executable,
-                        "-RedirectStandardOutput '$(Join-Path -Path $TempDir -ChildPath stdout.log)'",
-                        "-RedirectStandardError '$(Join-Path -Path $TempDir -ChildPath stderr.log)'",
-                        ('-PassThru | ForEach-Object { "The process was successfully started"'),'}```' -join ' '
+                        "-RedirectStandardOutput $($TempDir,'stdout.log' -join $Join)",
+                        "-RedirectStandardError $($TempDir,'stderr.log' -join $Join)",
+                        '-PassThru | ForEach-Object {"The process was successfully started"}```' -join ' '
                       } elseif ($Pair.Key -match '^(Linux|Mac)$') {
                         # Use 'runscript' to start background process and avoid timeout
-                        [string]$String = if ($Argument) {
-                          ($TempDir,$RunFile -join $Join),$Argument -join ' '
-                        } else {
-                          $TempDir,$RunFile -join $Join
-                        }
+                        [string]$String = $TempDir,$RunFile -join $Join
+                        if ($Argument) { $String = $String,$Argument -join ' ' }
                         $String = "'$String > $($TempDir,'stdout.log' -join $Join) 2> $($TempDir,
                           'stderr.log' -join $Join) &'"
                         if ($Pair.Key -eq 'Linux') {
@@ -483,8 +480,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                   Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
                     Measure-Object).Count) $($Pair.Key) host(s)..."
                   [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
-                  [string[]]$Optional = Write-RtrResult (
-                    Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
+                  [string[]]$Optional = Write-RtrResult (Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
                 }
               }
             }
