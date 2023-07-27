@@ -95,14 +95,19 @@ Retrieve Falcon Sensor builds for assignment in Sensor Update policies
 Requires 'Sensor update policies: Read'.
 .PARAMETER Platform
 Operating system platform
+.PARAMETER Stage
+Sensor release stage
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBuild
 #>
   [CmdletBinding(DefaultParameterSetName='/policy/combined/sensor-update-builds/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/policy/combined/sensor-update-builds/v1:get')]
+    [Parameter(ParameterSetName='/policy/combined/sensor-update-builds/v1:get',Position=1)]
     [ValidateSet('linux','mac','windows',IgnoreCase=$false)]
-    [string]$Platform
+    [string]$Platform,
+    [Parameter(ParameterSetName='/policy/combined/sensor-update-builds/v1:get',Position=2)]
+    [ValidateSet('early_adopter','prod',IgnoreCase=$false)]
+    [string[]]$Stage
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
