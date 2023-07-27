@@ -454,21 +454,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                                             if ($Pair.Key -eq 'Windows') {
                                                 # Use 'runscript' to start process and avoid timeout
                                                 [string]$String = if ($Argument) {
-                                                    "Set-Location $TempDir;$($TempDir,$RunFile -join $Join)",
+                                                     "Set-Location $TempDir;$(Join-Path -Path $TempDir -ChildPath $RunFile)",
                                                         $Argument -join ' '
                                                 } else {
-                                                    "Set-Location $TempDir;$($TempDir,$RunFile -join $Join)"
+                                                     "Set-Location $TempDir;$(Join-Path -Path $TempDir -ChildPath $RunFile)"
                                                 }
-                                                [string]$Executable = if ($RunFile -match '\.cmd$') {
-                                                    'cmd',"'/c $String'" -join ' '
+                                                Write-verbose "$String"
+
+                                                [string]$Executable = if ( ($RunFile -match '\.cmd$') -or ($RunFile -match '\.bat$' )) {
+                                                    "cmd.exe /c cd /d `"$TempDir`" && `"$RunFile`" $Argument"
                                                 } else {
-                                                    'powershell.exe',"'-c &{$String}'" -join ' '
+                                                    'powershell.exe',"' -NoProfile  -WindowStyle hidden -NoLogo -NonInteractive -ExecutionPolicy Bypass -c &{$String}'" -join ' '
                                                 }
                                                 '-Raw=```Start-Process',$Executable,
-                                                "-RedirectStandardOutput '$($TempDir,'stdout.log' -join $Join)'",
-                                                "-RedirectStandardError '$($TempDir,'stderr.log' -join $Join)'",
-                                                ('-PassThru | ForEach-Object { "The process was successfully sta' +
-                                                'rted"'),'}```' -join ' '
+                                                "-RedirectStandardOutput '$(Join-Path -Path $TempDir -ChildPath stdout.log)'",
+                                                "-RedirectStandardError '$(Join-Path -Path $TempDir -ChildPath stderr.log)'",
+                                                ('-PassThru | ForEach-Object { "The process was successfully started"'),'}```' -join ' '
                                             } elseif ($Pair.Key -match '^(Linux|Mac)$') {
                                                 # Use 'runscript' to start background process and avoid timeout
                                                 [string]$String = if ($Argument) {
