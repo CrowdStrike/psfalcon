@@ -22,25 +22,6 @@
     'Remove-FalconSampleArchive'
     'Send-FalconSampleArchive'
 
-    # cloud-connect-aws
-    'Confirm-FalconDiscoverAwsAccess'
-    'Edit-FalconDiscoverAwsAccount'
-    'Get-FalconDiscoverAwsAccount'
-    'Get-FalconDiscoverAwsLink'
-    'Get-FalconDiscoverAwsSetting'
-    'New-FalconDiscoverAwsAccount'
-    'Receive-FalconDiscoverAwsScript'
-    'Remove-FalconDiscoverAwsAccount'
-    'Update-FalconDiscoverAwsSetting'
-
-    # cloud-connect-azure
-    'Get-FalconDiscoverAzureAccount'
-    'Get-FalconDiscoverAzureCertificate'
-    'Get-FalconDiscoverAzureTenant'
-    'New-FalconDiscoverAzureAccount'
-    'Receive-FalconDiscoverAzureScript'
-    'Update-FalconDiscoverAzureAccount'
-
     # cloud-connect-cspm-aws
     'Edit-FalconHorizonAwsAccount'
     'Get-FalconHorizonAwsAccount'
@@ -56,11 +37,6 @@
     'New-FalconHorizonAzureAccount'
     'Receive-FalconHorizonAzureScript'
     'Remove-FalconHorizonAzureAccount'
-
-    # cloud-connect-gcp
-    'Get-FalconDiscoverGcpAccount'
-    'New-FalconDiscoverGcpAccount'
-    'Receive-FalconDiscoverGcpScript'
 
     # configuration-assessment
     'Get-FalconConfigAssessment'
@@ -477,9 +453,6 @@
     'Edit-FalconHorizonSchedule'
     'Get-FalconHorizonPolicy'
     'Get-FalconHorizonSchedule'
-
-    # settings-discover
-    'Get-FalconDiscoverAwsScript'
 
     # spotlight
     'Get-FalconRemediation'
