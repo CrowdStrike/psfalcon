@@ -1,5 +1,5 @@
 param([string]$Tag,[string]$Token)
-$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe";
+$E=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe"
 if (Test-Path $E) {
   if ($Token -and $Tag) {
     echo "$Token" | & "$E" set --grouping-tags "$Tag"
