@@ -12,4 +12,4 @@ then
   val="$(echo ${val[*]} | tr " " ",")"
   /opt/CrowdStrike/falconctl -s --tags="$val"
 fi
-/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//"'
+/opt/CrowdStrike/falconctl -g --tags | sed "s/^Sensor grouping tags are not set.//; s/^tags=//; s/.$//"
