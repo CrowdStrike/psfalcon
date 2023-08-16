@@ -60,7 +60,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
                 'SensorGroupingTags/',$null
               @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -notcontains $_) { $TagMatch = $true } }
               if ($TagMatch -eq $true) {
-                [string]$Script = Get-Content (Join-Path $ScriptPath 'add_sensortag.ps1')
+                [string]$Script = Get-Content (Join-Path $ScriptPath 'add_sensortag.ps1') -Raw
                 [string]$TagString = (@($Existing + $Tag) | Select-Object -Unique) -join ','
                 [string]$CmdLine = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
                   '-Tag',$TagString,'-Token',($i.device_id | Get-FalconUninstallToken -AuditMessage (
@@ -100,7 +100,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
             }
           } else {
             [string]$Filename = if ($Platform -eq 'Linux') { 'add_sensortag.sh' } else { 'add_sensortag.zsh' }
-            [string]$Script = Get-Content (Join-Path $ScriptPath $Filename)
+            [string]$Script = Get-Content (Join-Path $ScriptPath $Filename) -Raw
             $Param = @{
               Command = 'runscript'
               Argument = '-Raw=```{0}``` -CommandLine=```{1}```' -f $Script,($Tag -join ',')
@@ -171,7 +171,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
             }
           } else {
             [string]$Filename = if ($Platform -eq 'Linux') { 'get_sensortag.sh' } else { 'get_sensortag.zsh' }
-            [string]$Script = Get-Content (Join-Path $ScriptPath $Filename)
+            [string]$Script = Get-Content (Join-Path $ScriptPath $Filename) -Raw
             $Param = @{
               Command = 'runscript'
               Argument = '-Raw=```{0}```' -f $Script
@@ -255,7 +255,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
                 'SensorGroupingTags/',$null
               @($Tag).foreach{ if ($TagMatch -eq $false -and $Existing -contains $_) { $TagMatch = $true }}
               if ($TagMatch -eq $true) {
-                [string]$Script = Get-Content (Join-Path $ScriptPath 'remove_sensortag.ps1')
+                [string]$Script = Get-Content (Join-Path $ScriptPath 'remove_sensortag.ps1') -Raw
                 [string]$TagString = (@($Existing + $Tag) | Select-Object -Unique) -join ','
                 [string]$CmdLine = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
                   '-Tag',$TagString,'-Token',($i.device_id | Get-FalconUninstallToken -AuditMessage (
@@ -299,7 +299,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
             } else {
               'remove_sensortag.zsh'
             }
-            [string]$Script = Get-Content (Join-Path $ScriptPath $Filename)
+            [string]$Script = Get-Content (Join-Path $ScriptPath $Filename) -Raw
             $Param = @{
               Command = 'runscript'
               Argument = '-Raw=```{0}```' -f $Script
@@ -369,7 +369,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
       } else {
         'uninstall_sensor.ps1'
       }
-      [string]$Script = Get-Content (Join-Path (Join-Path (Show-FalconModule).ModulePath 'script') $Filename)
+      [string]$Script = Get-Content (Join-Path (Join-Path (Show-FalconModule).ModulePath 'script') $Filename) -Raw
       $Param = @{
         Command = 'runscript'
         Argument = '-Raw=```{0}```' -f $Script
