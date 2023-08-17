@@ -18,7 +18,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($Request.resources) {
+      $Request.resources
+    } elseif ($Request.meta.reqid -and $Request.meta.reqtype -and $Request.meta.status) {
+      $Request.meta | Select-Object reqid,reqtype,status
+    } else {
+      $Request
+    }
+  }
 }
 function Get-FalconMalQueryQuota {
 <#
@@ -196,7 +205,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMalQuery
     }
     if ($Options) { $PSBoundParameters['options'] = $Options }
   }
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($Request.meta.reqid -and $Request.meta.status) {
+      $Request.meta | Select-Object reqid,status
+    } else {
+      $Request
+    }
+  }
 }
 function Receive-FalconMalQuerySample {
 <#
