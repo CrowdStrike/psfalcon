@@ -1109,7 +1109,7 @@ function Write-Result {
         Write-Log 'Write-Result' ($Message -join ' ')
       }
       if ($Json.PSObject.Properties.Where({ $_.Name -ne 'meta' -and $null -ne $_.Value }) -or
-      $Json.meta.pagination.total -eq 0) {
+      $Json.meta.pagination.total -eq 0 -and !$Json.meta.reqid) {
         # Remove 'meta' when other sub-properties are populated, or when pagination.total equals 0
         [void]$Json.PSObject.Properties.Remove('meta')
       }
