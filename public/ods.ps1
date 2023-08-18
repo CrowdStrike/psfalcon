@@ -319,6 +319,8 @@ Cloud-based machine-learning detection level
 Cloud-based machine-learning prevention level
 .PARAMETER ScanExclusion
 File path(s) to exclude, in glob syntax
+.PARAMETER ScanInclusion
+File path(s) to include, in glob syntax
 .PARAMETER Quarantine
 Quarantine malicious files
 .PARAMETER MaxFileSize
@@ -369,26 +371,29 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
     [Alias('scan_exclusions')]
     [string[]]$ScanExclusion,
     [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=9)]
-    [boolean]$Quarantine,
+    [Alias('scan_inclusions')]
+    [string[]]$ScanInclusion,
     [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=10)]
+    [boolean]$Quarantine,
+    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=11)]
     [Alias('max_file_size')]
     [int32]$MaxFileSize,
-    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=11)]
+    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=12)]
     [ValidateSet('up_to_1','up_to_25','up_to_50','up_to_75','up_to_100',IgnoreCase=$false)]
     [Alias('cpu_priority')]
     [string]$CpuPriority,
-    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=12)]
+    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=13)]
     [Alias('endpoint_notification')]
     [boolean]$Notification,
-    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=13)]
+    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=14)]
     [Alias('max_duration')]
     [ValidateRange(0,24)]
     [int]$MaxDuration,
-    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=14)]
+    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=15)]
     [Alias('pause_duration')]
     [ValidateRange(0,24)]
     [int]$PauseDuration,
-    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=15)]
+    [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Position=16)]
     [string]$Description,
     [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=16)]
@@ -479,6 +484,8 @@ Cloud-based machine-learning detection level
 Cloud-based machine-learning prevention level
 .PARAMETER ScanExclusion
 File path(s) to exclude, in glob syntax
+.PARAMETER ScanInclusion
+File path(s) to include, in glob syntax
 .PARAMETER Quarantine
 Quarantine malicious files
 .PARAMETER MaxFileSize
@@ -525,26 +532,29 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconScan
     [Alias('scan_exclusions')]
     [string[]]$ScanExclusion,
     [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=7)]
-    [boolean]$Quarantine,
+    [Alias('scan_inclusions')]
+    [string[]]$ScanInclusion,
     [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=8)]
+    [boolean]$Quarantine,
+    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=9)]
     [Alias('max_file_size')]
     [int32]$MaxFileSize,
-    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=10)]
     [ValidateSet('up_to_1','up_to_25','up_to_50','up_to_75','up_to_100',IgnoreCase=$false)]
     [Alias('cpu_priority')]
     [string]$CpuPriority,
-    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=10)]
+    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=11)]
     [Alias('endpoint_notification')]
     [boolean]$Notification,
-    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=11)]
+    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=12)]
     [ValidateRange(0,24)]
     [Alias('max_duration')]
     [int]$MaxDuration,
-    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=12)]
+    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=13)]
     [ValidateRange(0,24)]
     [Alias('pause_duration')]
     [int]$PauseDuration,
-    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=13)]
+    [Parameter(ParameterSetName='/ods/entities/scans/v1:post',Position=14)]
     [string]$Description,
     [Parameter(ParameterSetName='/ods/entities/scans/v1:post')]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
