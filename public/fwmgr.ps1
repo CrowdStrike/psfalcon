@@ -230,6 +230,8 @@ Number of seconds between each ICMP request attempt
 Number of seconds between each DNS request attempt
 .PARAMETER HttpsInterval
 Number of seconds between each HTTPS request attempt
+.PARAMETER LocationPrecedence
+Location identifiers in desired precedence order
 .PARAMETER Comment
 Audit log comment
 .LINK
@@ -251,6 +253,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocationSetting
     [Alias('https_reachable_hosts_polling_interval')]
     [int32]$HttpsInterval,
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=5)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('location_precedence')]
+    [string[]]$LocationPrecedence,
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=6)]
     [string]$Comment
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -558,6 +564,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallLocation
   param(
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations-details/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fwmgr/queries/network-locations/v1:get',Position=1)]
