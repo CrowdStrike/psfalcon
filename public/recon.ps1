@@ -82,6 +82,10 @@ Notification identifier
 Notification status
 .PARAMETER AssignedToUuid
 User identifier
+.PARAMETER IdpSendStatus
+
+.PARAMETER Message
+
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
 #>
@@ -107,17 +111,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
     [ValidatePattern('^\w{76}$')]
     [string]$Id,
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=2)]
+    [ValidateSet('new','in-progress','closed-false-positive','closed-true-positive',IgnoreCase=$false)]
     [string]$Status,
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [Alias('assigned_to_uuid')]
-    [string]$AssignedToUuid
+    [string]$AssignedToUuid,
+    [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Position=4)]
+    [string]$Message,
+    [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Position=5)]
+    [Alias('idp_send_status')]
+    [string]$IdpSendStatus
   )
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/recon/entities/notifications/v1:patch'
-      Format = @{ Body = @{ root = @('assigned_to_uuid','id','status','raw_array') }}
+      Format = @{ Body = @{ root = @('assigned_to_uuid','id','status','raw_array','idp_send_status','message') }}
     }
     [System.Collections.Generic.List[object]]$List = @()
   }
@@ -125,7 +135,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
     if ($Array) {
       foreach ($i in $Array) {
         # Select allowed fields, when populated
-        [string[]]$Select = @('id','assigned_to_uuid','status').foreach{ if ($i.$_) { $_ }}
+        [string[]]$Select = @('id','assigned_to_uuid','status','message','idp_send_status').foreach{
+          if ($i.$_) { $_ }
+        }
         $List.Add(($i | Select-Object $Select))
       }
     } else {
