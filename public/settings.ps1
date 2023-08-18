@@ -28,20 +28,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonPolicy
     [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
       Position=2)]
     [boolean]$Enabled,
-    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,
-      Position=3)]
+    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,Position=3)]
     [Alias('regions')]
     [string[]]$Region,
-    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,
-      Position=4)]
+    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,Position=4)]
     [Alias('tag_excluded')]
     [boolean]$TagExcluded,
-    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,
-      Position=5)]
-    [Alias('account_id')]
-    [string]$AccountId,
-    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName)]
+    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',ValueFromPipelineByPropertyName,Position=5)]
+    [Alias('account_ids')]
+    [string[]]$AccountId,
+    [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName)]
     [Alias('policy_id','PolicyId')]
     [int32]$Id
   )
