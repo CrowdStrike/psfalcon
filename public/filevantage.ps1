@@ -12,8 +12,8 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -23,28 +23,28 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFimChange
 #>
-  [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v2:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v3:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('Ids')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=1)]
+    [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
-    [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=2)]
+    [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=2)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get',Position=3)]
-    [ValidateRange(1,500)]
+    [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=3)]
+    [ValidateRange(1,5000)]
     [int32]$Limit,
-    [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get')]
-    [int32]$Offset,
-    [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get')]
+    [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get')]
+    [string]$After,
+    [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get')]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get')]
+    [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/filevantage/queries/changes/v2:get')]
+    [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get')]
     [switch]$Total
   )
   begin {
