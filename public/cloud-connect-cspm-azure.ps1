@@ -142,6 +142,14 @@ Requires 'CSPM registration: Write'.
 Azure subscription identifier
 .PARAMETER TenantId
 Azure tenant identifier
+.PARAMETER ClientId
+Azure client identifier
+.PARAMETER AccountType
+Azure account type
+.PARAMETER DefaultSubscription
+Account is the default Azure subscription
+.PARAMETER YearsValid
+Number of years valid
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAzureAccount
 #>
@@ -157,7 +165,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAzureAccount
       ValueFromPipelineByPropertyName,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [Alias('tenant_id')]
-    [string]$TenantId
+    [string]$TenantId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',Position=3)]
+    [Alias('client_id')]
+    [string]$ClientId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',Position=4)]
+    [Alias('account_type')]
+    [string]$AccountType,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',Position=5)]
+    [Alias('default_subscription')]
+    [boolean]$DefaultSubscription,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',Position=6)]
+    [Alias('years_valid')]
+    [int]$YearsValid
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
