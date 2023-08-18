@@ -79,6 +79,7 @@
     'Invoke-FalconMobileAction'
 
     # falcon-complete-dashboards
+    'Get-FalconCompleteAlert'
     'Get-FalconCompleteAllowlist'
     'Get-FalconCompleteBlocklist'
     'Get-FalconCompleteCollection'
