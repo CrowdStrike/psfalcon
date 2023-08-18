@@ -8,6 +8,16 @@ Requires 'CSPM registration: Write'.
 AWS account identifier
 .PARAMETER CloudtrailRegion
 AWS region where the account resides
+.PARAMETER IamRoleArn
+AWS IAM role ARNs
+.PARAMETER BehaviorAssessmentEnabled
+Enable behavior assessment for account
+.PARAMETER SensorManagementEnabled
+Enable sensor management for account
+.PARAMETER RemediationRegion
+Region where remediation occurs
+.PARAMETER RemediationTouAccepted
+Remediation terms-of-use acceptance date
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
 #>
@@ -21,8 +31,33 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
     [string]$AccountId,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
       ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('af-south-1','ap-east-1','ap-northeast-1','ap-northeast-2','ap-northeast-3','ap-south-1',
+      'ap-south-2','ap-southeast-1','ap-southeast-2','ap-southeast-3','ap-southeast-4','ca-central-1',
+      'cn-north-1','cn-northwest-1','eu-central-1','eu-central-2','eu-north-1','eu-south-1','eu-south-2',
+      'eu-west-1','eu-west-2','eu-west-3','il-central-1','me-central-1','me-south-1','sa-east-1','us-east-1',
+      'us-east-2','us-gov-east-1','us-gov-west-1','us-west-1','us-west-2',IgnoreCase=$false)]
     [Alias('cloudtrail_region')]
-    [string]$CloudtrailRegion
+    [string]$CloudtrailRegion,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('iam_role_arn')]
+    [string]$IamRoleArn,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('behavior_assessment_enabled')]
+    [boolean]$BehaviorAssessmentEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [Alias('sensor_management_enabled')]
+    [boolean]$SensorManagementEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('remediation_region')]
+    [string]$RemediationRegion,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=7)]
+    [Alias('remediation_tou_accepted')]
+    [string]$RemediationTouAccepted
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -131,32 +166,64 @@ function New-FalconHorizonAwsAccount {
 Provision a Falcon Horizon AWS account
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
-.PARAMETER OrganizationId
-AWS organization identifier
-.PARAMETER CloudtrailRegion
-AWS region where the account resides
 .PARAMETER AccountId
 AWS account identifier
+.PARAMETER CloudtrailRegion
+AWS region where the account resides
+.PARAMETER OrganizationId
+AWS organization identifier
+.PARAMETER AccountType
+AWS account type
+.PARAMETER IsMaster
+Master account
+.PARAMETER IamRoleArn
+AWS IAM role ARNs
+.PARAMETER UseExistingCloudtrail
+Use existing Cloudtrail log
+.PARAMETER BehaviorAssessmentEnabled
+Enable behavior assessment for account
+.PARAMETER SensorManagementEnabled
+Enable sensor management for account
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,Position=1)]
     [ValidatePattern('^\d{12}$')]
     [Alias('account_id')]
     [string]$AccountId,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
-      ValueFromPipelineByPropertyName,Position=2)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,Position=2)]
+    [ValidateSet('af-south-1','ap-east-1','ap-northeast-1','ap-northeast-2','ap-northeast-3','ap-south-1',
+      'ap-south-2','ap-southeast-1','ap-southeast-2','ap-southeast-3','ap-southeast-4','ca-central-1',
+      'cn-north-1','cn-northwest-1','eu-central-1','eu-central-2','eu-north-1','eu-south-1','eu-south-2',
+      'eu-west-1','eu-west-2','eu-west-3','il-central-1','me-central-1','me-south-1','sa-east-1','us-east-1',
+      'us-east-2','us-gov-east-1','us-gov-west-1','us-west-1','us-west-2',IgnoreCase=$false)]
+    [Alias('cloudtrail_region')]
+    [string]$CloudtrailRegion,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=3)]
     [ValidatePattern('^\d{12}$')]
     [Alias('organization_id')]
     [string]$OrganizationId,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
-      ValueFromPipelineByPropertyName,Position=3)]
-    [Alias('cloudtrail_region')]
-    [string]$CloudtrailRegion
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=4)]
+    [Alias('account_type')]
+    [string]$AccountType,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=5)]
+    [Alias('is_master')]
+    [boolean]$IsMaster,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=6)]
+    [Alias('iam_role_arn')]
+    [string]$IamRoleArn,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=7)]
+    [Alias('use_existing_cloudtrail')]
+    [boolean]$UseExistingCloudtrail,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=8)]
+    [Alias('behavior_assessment_enabled')]
+    [boolean]$BehaviorAssessmentEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=9)]
+    [Alias('sensor_management_enabled')]
+    [boolean]$SensorManagementEnabled
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
