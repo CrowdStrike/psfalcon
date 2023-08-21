@@ -302,7 +302,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
             [string]$Script = Get-Content (Join-Path $ScriptPath $Filename) -Raw
             $Param = @{
               Command = 'runscript'
-              Argument = '-Raw=```{0}```' -f $Script
+              Argument = '-Raw=```{0}``` -CommandLine=```{1}```' -f $Script,($Tag -join ',')
               HostId = ($HostList | Where-Object { $_.platform_name -eq $Platform }).device_id
               QueueOffline = if ($QueueOffline) { $QueueOffline } else { $false }
             }
