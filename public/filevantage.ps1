@@ -1,4 +1,4 @@
-function Get-FalconFimChange {
+function Get-FalconFileVantageChange {
 <#
 .SYNOPSIS
 Search for Falcon FileVantage changes
@@ -21,9 +21,10 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFimChange
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
 #>
   [CmdletBinding(DefaultParameterSetName='/filevantage/queries/changes/v3:get',SupportsShouldProcess)]
+  [Alias('Get-FalconFimChange')]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
