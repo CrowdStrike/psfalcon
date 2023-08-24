@@ -103,7 +103,7 @@
     'Get-FalconReplicatorSchema'
 
     # filevantage
-    'Get-FalconFimChange'
+    'Get-FalconFileVantageChange'
 
     # fwmgr
     'Edit-FalconFirewallGroup'
@@ -479,7 +479,7 @@
   )
   CmdletsToExport = @()
   VariablesToExport = '*'
-  AliasesToExport = @()
+  AliasesToExport = @('Get-FalconFimChange')
   PrivateData = @{
     PSData = @{
       Tags = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
