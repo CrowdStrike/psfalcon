@@ -1,3 +1,41 @@
+function Edit-FalconFileVantagePolicy {
+<#
+.SYNOPSIS
+Updates the general information of the provided policy.
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Id
+FileVantage policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Enabled
+Policy enablement status
+.PARAMETER Description
+Policy description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantagePolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [ValidateLength(1,100)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Enabled,
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [ValidateLength(1,500)]
+    [string]$Description
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconFileVantageChange {
 <#
 .SYNOPSIS
@@ -47,6 +85,264 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     [switch]$All,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get')]
     [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Get-FalconFileVantageExclusion {
+<#
+.SYNOPSIS
+List scheduled exclusions applied to a FileVantage policy
+.DESCRIPTION
+Requires 'Falcon FileVantage: Read'.
+.PARAMETER PolicyId
+FileVantage policy identifier
+.PARAMETER Id
+FileVantage scheduled exclusion identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageExclusion
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/queries/policy-scheduled-exclusions/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/queries/policy-scheduled-exclusions/v1:get',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:get',Mandatory,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('policy_id')]
+    [string]$PolicyId,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Get-FalconFileVantageGroup {
+<#
+.SYNOPSIS
+Retrieve the ids of all rule groups that are of the provided rule group type.
+.DESCRIPTION
+Requires 'Falcon FileVantage: Read'.
+.PARAMETER Id
+FileVantage rule group identifier
+.PARAMETER Type
+Rule group type
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/queries/rule-groups/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/filevantage/queries/rule-groups/v1:get',Mandatory,Position=1)]
+    [ValidateSet('LinuxFiles','MacFiles','WindowsFiles','WindowsRegistry',IgnoreCase=$false)]
+    [string]$Type,
+    [Parameter(ParameterSetName='/filevantage/queries/rule-groups/v1:get',Position=2)]
+    [ValidateSet('created_timestamp|asc','created_timestamp|desc','modified_timestamp|asc',
+      'modified_timestamp|desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/filevantage/queries/rule-groups/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/filevantage/queries/rule-groups/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='/filevantage/queries/rule-groups/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/filevantage/queries/rule-groups/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/filevantage/queries/rule-groups/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Get-FalconFileVantagePolicy {
+<#
+.SYNOPSIS
+Search for FileVantage policies
+.DESCRIPTION
+Requires 'Falcon FileVantage: Read'.
+.PARAMETER Id
+FileVantage policy identifier
+.PARAMETER Type
+Operating system type
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantagePolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/queries/policies/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get',Mandatory,Position=1)]
+    [ValidateSet('Linux','Mac','Windows',IgnoreCase=$false)]
+    [string]$Type,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get',Position=2)]
+    [ValidateSet('created_timestamp|asc','created_timestamp|desc','modified_timestamp|asc',
+      'modified_timestamp|desc','precedence|asc','precedence|desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function New-FalconFileVantagePolicy {
+<#
+.SYNOPSIS
+Create FileVantage policies
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Name
+Policy name
+.PARAMETER Platform
+Operating system platform
+.PARAMETER Description
+Policy description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantagePolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Mandatory,Position=1)]
+    [ValidateLength(1,100)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Position=2)]
+    [ValidateSet('Linux','Mac','Windows',IgnoreCase=$false)]
+    [string]$Platform,
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Position=3)]
+    [ValidateLength(1,500)]
+    [string]$Description
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Remove-FalconFileVantagePolicy {
+<#
+.SYNOPSIS
+Delete FileVantage policies
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Id
+FileVantage policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantagePolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Set-FalconFileVantagePrecedence {
+<#
+.SYNOPSIS
+Set FileVantage policy precedence
+.DESCRIPTION
+All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to
+define policy precedence.
+
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Type
+Operating system type
+.PARAMETER Id
+Policy identifiers in desired precedence order
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantagePrecedence
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies-precedence/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policies-precedence/v1:patch',Mandatory,Position=1)]
+    [ValidateSet('Linux','Mac','Windows',IgnoreCase=$false)]
+    [string]$Type,
+    [Parameter(ParameterSetName='/filevantage/entities/policies-precedence/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
