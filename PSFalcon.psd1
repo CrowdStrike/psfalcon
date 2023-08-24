@@ -103,7 +103,14 @@
     'Get-FalconReplicatorSchema'
 
     # filevantage
+    'Edit-FalconFileVantagePolicy'
     'Get-FalconFileVantageChange'
+    'Get-FalconFileVantageExclusion'
+    'Get-FalconFileVantageGroup'
+    'Get-FalconFileVantagePolicy'
+    'New-FalconFileVantagePolicy'
+    'Remove-FalconFileVantagePolicy'
+    'Set-FalconFileVantagePrecedence'
 
     # fwmgr
     'Edit-FalconFirewallGroup'
