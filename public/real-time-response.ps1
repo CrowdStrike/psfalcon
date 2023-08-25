@@ -356,12 +356,13 @@ function Get-FalconSession {
 .SYNOPSIS
 Search for Real-time Response sessions
 .DESCRIPTION
-Real-time Response sessions are segmented by permission,meaning that only sessions that were created using
-your OAuth2 API Client will be visible.
+Real-time Response sessions are segmented by permission, meaning that only sessions that were created using
+your OAuth2 API Client will be visible. Use the 'Cid' switch to enable viewing of sessions from your entire
+environment.
 
 'Get-FalconQueue' can be used to find and export information about sessions in the 'offline queue'.
 
-Requires 'Real time response: Read'.
+Requires 'Real time response: Read', and 'Real time response audit: Read' when using the 'Cid' switch.
 .PARAMETER Id
 Session identifier
 .PARAMETER Filter
@@ -370,8 +371,12 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER WithCommandInfo
+Include executed command detail when displaying all sessions in the environment
 .PARAMETER Offset
 Position to begin retrieving results
+.PARAMETER Cid
+Expand search to include all sessions created within your environment
 .PARAMETER Queue
 Restrict search to sessions that have been queued
 .PARAMETER Detailed
@@ -393,22 +398,33 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
     [Alias('Ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=2)]
     [string]$Sort,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=3)]
-    [ValidateRange(1,100)]
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=3)]
+    [ValidateRange(1,1000)]
     [int32]$Limit,
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=4)]
+    [Alias('with_command_info')]
+    [boolean]$CommandInfo,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get')]
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get')]
     [int32]$Offset,
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Mandatory)]
+    [switch]$Cid,
     [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/GET/v1:post',Mandatory)]
     [switch]$Queue,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get')]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get')]
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get')]
+    [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get')]
     [switch]$Total
   )
   begin {
