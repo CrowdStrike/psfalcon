@@ -103,14 +103,23 @@
     'Get-FalconReplicatorSchema'
 
     # filevantage
+    'Add-FalconFileVantageHostGroup'
+    'Add-FalconFileVantageRuleGroup'
     'Edit-FalconFileVantagePolicy'
     'Get-FalconFileVantageChange'
     'Get-FalconFileVantageExclusion'
-    'Get-FalconFileVantageGroup'
     'Get-FalconFileVantagePolicy'
+    'Get-FalconFileVantageRule'
+    'Get-FalconFileVantageRuleGroup'
     'New-FalconFileVantagePolicy'
+    'Remove-FalconFileVantageExclusion'
+    'Remove-FalconFileVantageHostGroup'
     'Remove-FalconFileVantagePolicy'
+    'Remove-FalconFileVantageRule'
+    'Remove-FalconFileVantageRuleGroup'
     'Set-FalconFileVantagePrecedence'
+    'Set-FalconFileVantageRulePrecedence'
+    'Set-FalconFileVantageRuleGroupPrecedence'
 
     # fwmgr
     'Edit-FalconFirewallGroup'
