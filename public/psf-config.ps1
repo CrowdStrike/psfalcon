@@ -16,8 +16,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
   [CmdletBinding(DefaultParameterSetName='ExportItem',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='ExportItem',Position=1)]
-    [ValidateSet('HostGroup','IoaGroup','FirewallGroup','DeviceControlPolicy','FirewallPolicy','PreventionPolicy',
-      'ResponsePolicy','SensorUpdatePolicy','Ioc','IoaExclusion','MlExclusion','Script','SvExclusion')]
+    [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup',
+      'FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy',
+      'ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
     [Alias('Items')]
     [string[]]$Select,
     [Parameter(ParameterSetName='ExportItem')]
@@ -28,22 +29,53 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       # Request content for provided 'Item'
       Write-Host "[Export-FalconConfig] Exporting '$String'..."
       $ConfigFile = Join-Path $Location "$String.json"
-      $Param = @{ Detailed = $true; All = $true}
-      $Config = if ($String -match '^(DeviceControl|Firewall|Prevention|Response|SensorUpdate)Policy$') {
-        # Create policy exports in 'platform_name' order to retain precedence
-        @('Windows','Mac','Linux').foreach{
-          & "Get-Falcon$String" @Param -Filter "platform_name:'$_'" 2>$null
+      $PolicyCmd = '^(DeviceControl|FileVantage|Firewall|Prevention|Response|SensorUpdate)Policy$'
+      $Config = if ($String -match $PolicyCmd) {
+        if ($String -eq 'FileVantagePolicy') {
+          @((Get-Command Get-FalconFileVantagePolicy).Parameters.Type.Attributes.ValidValues).foreach{
+            # Export FileVantagePolicy for each 'Type'
+            & "Get-Falcon$String" -Type $_ -Detailed -All 2>$null
+          }
+        } else {
+          @('Windows','Mac','Linux').foreach{
+            # Create policy exports in 'platform_name' order to retain precedence
+            & "Get-Falcon$String" -Filter "platform_name:'$_'" -Detailed -All 2>$null
+          }
+        }
+      } elseif ($String -eq 'FileVantageRuleGroup') {
+        @((Get-Command Get-FalconFileVantageRuleGroup).Parameters.Type.Attributes.ValidValues).foreach{
+          # Export FileVantageRuleGroup for each 'Type'
+          & "Get-Falcon$String" -Type $_ -Detailed -All 2>$null
         }
       } else {
-        & "Get-Falcon$String" @Param 2>$null
+        & "Get-Falcon$String" -Detailed -All 2>$null
       }
       if ($Config -and $String -eq 'FirewallPolicy') {
         # Export firewall settings
         Write-Host "[Export-FalconConfig] Exporting 'FirewallSetting'..."
         $Settings = Get-FalconFirewallSetting -Id $Config.id 2>$null
         foreach ($Result in $Settings) {
-          ($Config | Where-Object { $_.id -eq $Result.policy_id }).PSObject.Properties.Add(
-            (New-Object PSNoteProperty('settings',$Result)))
+          ($Config | Where-Object { $_.id -eq $Result.policy_id }).PSObject.Properties.Add((
+            New-Object PSNoteProperty('settings',$Result)
+          ))
+        }
+      } elseif ($Config -and $String -eq 'FileVantagePolicy') {
+        # Export FileVantage policy exclusions
+        Write-Host "[Export-FalconConfig] Exporting 'FileVantageExclusion'..."
+        foreach ($Id in $Config.id) {
+          $ExclusionId = Get-FalconFileVantageExclusion -PolicyId $Id
+          if ($ExclusionId) {
+            ($Config | Where-Object { $_.id -eq $Id }).PSObject.Properties.Add((New-Object PSNoteProperty(
+              'assigned_exclusions',(Get-FalconFileVantageExclusion -PolicyId $Id -Id $ExclusionId))
+            ))
+          }
+        }
+      } elseif ($Config -and $String -eq 'FileVantageRuleGroup') {
+        # Update 'assigned_rules' with rule content
+        Write-Host "[Export-FalconConfig] Exporting 'FileVantageRule'..."
+        foreach ($Group in $Config) {
+          $RuleId = $Group.assigned_rules.id | Where-Object { ![string]::IsNullOrEmpty($_) }
+          if ($RuleId) { $Group.assigned_rules = Get-FalconFileVantageRule -RuleGroupId $Group.id -Id $RuleId }
         }
       }
       if ($Config) {
