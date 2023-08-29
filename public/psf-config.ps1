@@ -66,7 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           $ExclusionId = Get-FalconFileVantageExclusion -PolicyId $Id
           if ($ExclusionId) {
             ($Config | Where-Object { $_.id -eq $Id }).PSObject.Properties.Add((New-Object PSNoteProperty(
-              'assigned_exclusions',(Get-FalconFileVantageExclusion -PolicyId $Id -Id $ExclusionId))
+              'exclusions',(Get-FalconFileVantageExclusion -PolicyId $Id -Id $ExclusionId))
             ))
           }
         }
@@ -161,10 +161,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     [string]$Path,
     [Alias('Force')]
     [switch]$AssignExisting,
-    [ValidateSet('DeviceControlPolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy','SensorUpdatePolicy')]
+    [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy',
+      'SensorUpdatePolicy')]
     [string[]]$ModifyDefault,
-    [ValidateSet('DeviceControlPolicy','FirewallGroup','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup',
-      'Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
+    [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup','FirewallPolicy',
+      'HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script',
+      'SensorUpdatePolicy','SvExclusion')]
     [string[]]$ModifyExisting
   )
   begin {
