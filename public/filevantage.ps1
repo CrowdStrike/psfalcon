@@ -76,10 +76,79 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageRuleGroup
     }
   }
 }
+function Edit-FalconFileVantageExclusion {
+<#
+.SYNOPSIS
+Modify scheduled exclusions within a FileVantage policy
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Id
+FileVantage scheduled exclusion identifier
+.PARAMETER PolicyId
+FileVantage policy identifier
+.PARAMETER Name
+Scheduled exclusion name
+.PARAMETER ScheduleStart
+Start of scheduled exclusion (RFC3339)
+.PARAMETER ScheduleEnd
+End of scheduled exclusion (RFC3339)
+.PARAMETER Process
+One or more process names in glob syntax, separated by commas
+.PARAMETER User
+One or more user names in glob syntax, separated by commas
+.PARAMETER Description
+Scheduled exclusion description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('policy_id')]
+    [string]$PolicyId,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidateLength(1,100)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+    [Alias('schedule_start')]
+    [string]$ScheduleStart,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+    [Alias('schedule_end')]
+    [string]$ScheduleEnd,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=6)]
+    [ValidateLength(0,500)]
+    [Alias('processes')]
+    [string]$Process,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=7)]
+    [ValidateLength(0,500)]
+    [Alias('users')]
+    [string]$User,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=8)]
+    [ValidateLength(0,500)]
+    [string]$Description
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Edit-FalconFileVantagePolicy {
 <#
 .SYNOPSIS
-Updates the general information of the provided policy.
+Modify FileVantage policies
 .DESCRIPTION
 Requires 'Falcon FileVantage: Write'.
 .PARAMETER Id
@@ -108,7 +177,227 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantagePolicy
     [string]$Enabled,
     [Parameter(ParameterSetName='/filevantage/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
       Position=4)]
-    [ValidateLength(1,500)]
+    [ValidateLength(0,500)]
+    [string]$Description
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Edit-FalconFileVantageRule {
+<#
+.SYNOPSIS
+Modify a rule within a FileVantage rule group
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Id
+Rule identifier
+.PARAMETER Path
+Path of the directory, file, or registry key to monitor
+.PARAMETER Depth
+Monitoring depth below the initial target directory/file/registry key
+.PARAMETER Severity
+Rule severity
+.PARAMETER Description
+Rule description
+.PARAMETER Include
+Directories, files, registry keys and/or registry values to monitor, separated by commas
+.PARAMETER Exclude
+Directories, files, registry keys and/or registry values to exclude, separated by commas
+.PARAMETER IncludeProcess
+Restrict monitoring to changes made by one or more processes
+.PARAMETER ExcludeProcess
+Exclude changes made by one or more processes
+.PARAMETER IncludeUser
+Restrict monitoring to changes made by one or more users
+.PARAMETER ExcludeUser
+Exclude changes made by one or more users
+.PARAMETER DirectoryAttribute
+Track directory attribute change events
+.PARAMETER DirectoryCreate
+Track directory create events
+.PARAMETER DirectoryDelete
+Track directory delete events
+.PARAMETER DirectoryPermission
+Track directory permission change events
+.PARAMETER DirectoryRename
+Track directory rename events
+.PARAMETER FileAttribute
+Track file attribute change events
+.PARAMETER FileChange
+Track file change events
+.PARAMETER FileDelete
+Track file delete events
+.PARAMETER FilePermission
+Track file permission change events
+.PARAMETER FileRename
+Track file rename events
+.PARAMETER FileWrite
+Track file write events
+.PARAMETER RegKeyCreate
+Track registry key create events
+.PARAMETER RegKeyDelete
+Track registry key delete events
+.PARAMETER RegKeyRename
+Track registry key rename events
+.PARAMETER RegKeySet
+Track registry key set events
+.PARAMETER RegValueCreate
+Track registry value create events
+.PARAMETER RegValueDelete
+Track registry value delete events
+.PARAMETER RuleGroupId
+FileVantage rule group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [ValidateLength(1,250)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidateSet('1','2','3','4','5','ANY',IgnoreCase=$false)]
+    [string]$Depth,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [ValidateSet('Low','Medium','High','Critical',IgnoreCase=$false)]
+    [string]$Severity,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [ValidateLength(0,500)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [string]$Include,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [string]$Exclude,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('include_processes')]
+    [string]$IncludeProcess,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=9)]
+    [Alias('exclude_processes')]
+    [string]$ExcludeProcess,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=10)]
+    [Alias('include_users')]
+    [string]$IncludeUser,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=11)]
+    [Alias('exclude_users')]
+    [string]$ExcludeUser,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=12)]
+    [Alias('watch_attributes_directory_changes')]
+    [boolean]$DirectoryAttribute,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=13)]
+    [Alias('watch_create_directory_changes')]
+    [boolean]$DirectoryCreate,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=14)]
+    [Alias('watch_delete_directory_changes')]
+    [boolean]$DirectoryDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=15)]
+    [Alias('watch_permissions_directory_changes')]
+    [boolean]$DirectoryPermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=16)]
+    [Alias('watch_rename_directory_changes')]
+    [boolean]$DirectoryRename,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=17)]
+    [Alias('watch_attributes_file_changes')]
+    [boolean]$FileAttribute,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=18)]
+    [Alias('watch_create_file_changes')]
+    [boolean]$FileChange,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=19)]
+    [Alias('watch_delete_file_changes')]
+    [boolean]$FileDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=20)]
+    [Alias('watch_permissions_file_changes')]
+    [boolean]$FilePermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=21)]
+    [Alias('watch_rename_file_changes')]
+    [boolean]$FileRename,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=22)]
+    [Alias('watch_write_file_changes')]
+    [boolean]$FileWrite,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=23)]
+    [Alias('watch_create_key_changes')]
+    [boolean]$RegKeyCreate,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=24)]
+    [Alias('watch_delete_key_changes')]
+    [boolean]$RegKeyDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=25)]
+    [Alias('watch_rename_key_changes')]
+    [boolean]$RegKeyRename,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=26)]
+    [Alias('watch_set_value_changes')]
+    [boolean]$RegKeySet,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=27)]
+    [Alias('watch_create_value_changes')]
+    [boolean]$RegValueCreate,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=28)]
+    [Alias('watch_delete_value_changes')]
+    [boolean]$RegValueDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('rule_group_id')]
+    [string]$RuleGroupId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Edit-FalconFileVantageRuleGroup {
+<#
+.SYNOPSIS
+Modify FileVantage rule groups
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Id
+FileVantage rule group identifier
+.PARAMETER Name
+Rule group name
+.PARAMETER Description
+Rule group description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRuleGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policies-host-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Position=2)]
+    [ValidateLength(1,100)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Position=3)]
+    [ValidateLength(0,500)]
     [string]$Description
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -370,6 +659,63 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRuleGroup
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
+function New-FalconFileVantageExclusion {
+<#
+.SYNOPSIS
+Create a scheduled exclusion within a FileVantage policy
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Name
+Scheduled exclusion name
+.PARAMETER ScheduleStart
+Start of scheduled exclusion (RFC3339)
+.PARAMETER ScheduleEnd
+End of scheduled exclusion (RFC3339)
+.PARAMETER Process
+One or more process names in glob syntax, separated by commas
+.PARAMETER User
+One or more user names in glob syntax, separated by commas
+.PARAMETER Description
+Scheduled exclusion description
+.PARAMETER PolicyId
+FileVantage policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,Position=1)]
+    [ValidateLength(1,100)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,Position=2)]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+    [Alias('schedule_start')]
+    [string]$ScheduleStart,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=3)]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+    [Alias('schedule_end')]
+    [string]$ScheduleEnd,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=4)]
+    [ValidateLength(0,500)]
+    [Alias('processes')]
+    [string]$Process,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=5)]
+    [ValidateLength(0,500)]
+    [Alias('users')]
+    [string]$User,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=6)]
+    [ValidateLength(0,500)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,
+      ValueFromPipeline,Position=7)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('policy_id')]
+    [string]$PolicyId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function New-FalconFileVantagePolicy {
 <#
 .SYNOPSIS
@@ -394,7 +740,192 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantagePolicy
     [ValidateSet('Linux','Mac','Windows',IgnoreCase=$false)]
     [string]$Platform,
     [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Position=3)]
-    [ValidateLength(1,500)]
+    [ValidateLength(0,500)]
+    [string]$Description
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function New-FalconFileVantageRule {
+<#
+.SYNOPSIS
+Create a rule within a FileVantage rule group
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Path
+Path of the directory, file, or registry key to monitor
+.PARAMETER Depth
+Monitoring depth below the initial target directory/file/registry key
+.PARAMETER Severity
+Rule severity
+.PARAMETER Description
+Rule description
+.PARAMETER Include
+Directories, files, registry keys and/or registry values to monitor, separated by commas
+.PARAMETER Exclude
+Directories, files, registry keys and/or registry values to exclude, separated by commas
+.PARAMETER IncludeProcess
+Restrict monitoring to changes made by one or more processes
+.PARAMETER ExcludeProcess
+Exclude changes made by one or more processes
+.PARAMETER IncludeUser
+Restrict monitoring to changes made by one or more users
+.PARAMETER ExcludeUser
+Exclude changes made by one or more users
+.PARAMETER DirectoryAttribute
+Track directory attribute change events
+.PARAMETER DirectoryCreate
+Track directory create events
+.PARAMETER DirectoryDelete
+Track directory delete events
+.PARAMETER DirectoryPermission
+Track directory permission change events
+.PARAMETER DirectoryRename
+Track directory rename events
+.PARAMETER FileAttribute
+Track file attribute change events
+.PARAMETER FileChange
+Track file change events
+.PARAMETER FileDelete
+Track file delete events
+.PARAMETER FilePermission
+Track file permission change events
+.PARAMETER FileRename
+Track file rename events
+.PARAMETER FileWrite
+Track file write events
+.PARAMETER RegKeyCreate
+Track registry key create events
+.PARAMETER RegKeyDelete
+Track registry key delete events
+.PARAMETER RegKeyRename
+Track registry key rename events
+.PARAMETER RegKeySet
+Track registry key set events
+.PARAMETER RegValueCreate
+Track registry value create events
+.PARAMETER RegValueDelete
+Track registry value delete events
+.PARAMETER RuleGroupId
+FileVantage rule group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,Position=1)]
+    [ValidateLength(1,250)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=2)]
+    [ValidateSet('1','2','3','4','5','ANY',IgnoreCase=$false)]
+    [string]$Depth,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=3)]
+    [ValidateSet('Low','Medium','High','Critical',IgnoreCase=$false)]
+    [string]$Severity,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=4)]
+    [ValidateLength(0,500)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=5)]
+    [string]$Include,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=6)]
+    [string]$Exclude,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=7)]
+    [Alias('include_processes')]
+    [string]$IncludeProcess,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=8)]
+    [Alias('exclude_processes')]
+    [string]$ExcludeProcess,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=9)]
+    [Alias('include_users')]
+    [string]$IncludeUser,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=10)]
+    [Alias('exclude_users')]
+    [string]$ExcludeUser,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=11)]
+    [Alias('watch_attributes_directory_changes')]
+    [boolean]$DirectoryAttribute,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=12)]
+    [Alias('watch_create_directory_changes')]
+    [boolean]$DirectoryCreate,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=13)]
+    [Alias('watch_delete_directory_changes')]
+    [boolean]$DirectoryDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=14)]
+    [Alias('watch_permissions_directory_changes')]
+    [boolean]$DirectoryPermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=15)]
+    [Alias('watch_rename_directory_changes')]
+    [boolean]$DirectoryRename,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=16)]
+    [Alias('watch_attributes_file_changes')]
+    [boolean]$FileAttribute,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=17)]
+    [Alias('watch_create_file_changes')]
+    [boolean]$FileChange,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=18)]
+    [Alias('watch_delete_file_changes')]
+    [boolean]$FileDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=19)]
+    [Alias('watch_permissions_file_changes')]
+    [boolean]$FilePermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=20)]
+    [Alias('watch_rename_file_changes')]
+    [boolean]$FileRename,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=21)]
+    [Alias('watch_write_file_changes')]
+    [boolean]$FileWrite,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=22)]
+    [Alias('watch_create_key_changes')]
+    [boolean]$RegKeyCreate,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=23)]
+    [Alias('watch_delete_key_changes')]
+    [boolean]$RegKeyDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=24)]
+    [Alias('watch_rename_key_changes')]
+    [boolean]$RegKeyRename,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=25)]
+    [Alias('watch_set_value_changes')]
+    [boolean]$RegKeySet,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=26)]
+    [Alias('watch_create_value_changes')]
+    [boolean]$RegValueCreate,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=27)]
+    [Alias('watch_delete_value_changes')]
+    [boolean]$RegValueDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('rule_group_id','id')]
+    [string]$RuleGroupId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function New-FalconFileVantageRuleGroup {
+<#
+.SYNOPSIS
+Create FileVantage rule groups
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Type
+Rule group type
+.PARAMETER Name
+Rule group name
+.PARAMETER Description
+Rule group description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRuleGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Mandatory,Position=1)]
+    [ValidateSet('LinuxFiles','MacFiles','WindowsFiles','WindowsRegistry',IgnoreCase=$false)]
+    [string]$Type,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Mandatory,Position=2)]
+    [ValidateLength(1,100)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Position=3)]
+    [ValidateLength(0,500)]
     [string]$Description
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
