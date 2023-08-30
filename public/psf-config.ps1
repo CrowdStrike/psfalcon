@@ -29,8 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       # Request content for provided 'Item'
       Write-Host "[Export-FalconConfig] Exporting '$String'..."
       $ConfigFile = Join-Path $Location "$String.json"
-      $PolicyCmd = '^(DeviceControl|FileVantage|Firewall|Prevention|Response|SensorUpdate)Policy$'
-      $Config = if ($String -match $PolicyCmd) {
+      $Config = if ($String -match 'Policy$') {
         if ($String -eq 'FileVantagePolicy') {
           @((Get-Command Get-FalconFileVantagePolicy).Parameters.Type.Attributes.ValidValues).foreach{
             # Export FileVantagePolicy for each 'Type'
@@ -99,11 +98,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           'ExportItem' }).Parameters.Where({ $_.Name -eq 'Select' }).Attributes.ValidValues).foreach{ $_ }
       }
       if ($Select -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and $Select -notcontains 'HostGroup') {
-        # Force 'HostGroup' when exporting Exclusions or IOCs
+        # Force 'HostGroup' when exporting exclusions or IOCs
         [string[]]$Select = @($Select + 'HostGroup')
       }
-      # Force 'FirewallRule' when exporting 'FirewallGroup'
-      if ($Select -contains 'FirewallGroup') { [string[]]$Select = @($Select + 'FirewallRule') }
+      if ($Select -contains 'FirewallGroup') {
+        # Force 'FirewallRule' when exporting 'FirewallGroup'
+        [string[]]$Select = @($Select + 'FirewallRule')
+      }
       # Retrieve results, export to Json and capture file name
       [string[]]$JsonFiles = foreach ($String in $Select) { ,(Get-ItemContent $String) }
       if ($JsonFiles -and $PSCmdlet.ShouldProcess($ExportFile,'Compress-Archive')) {
