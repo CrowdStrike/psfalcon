@@ -61,7 +61,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
 #>
   [CmdletBinding(DefaultParameterSetName='/ods/queries/scans/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ods/entities/scans/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/ods/entities/scans/v2:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
