@@ -33,7 +33,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         if ($String -eq 'FileVantagePolicy') {
           @((Get-Command Get-FalconFileVantagePolicy).Parameters.Type.Attributes.ValidValues).foreach{
             # Export FileVantagePolicy for each 'Type'
-            & "Get-Falcon$String" -Type $_ -Detailed -All 2>$null
+            & "Get-Falcon$String" -Type $_ -Detailed -All | Where-Object { $_.created_by -ne
+              'cs-cloud-provisioning' } 2>$null
           }
         } else {
           @('Windows','Mac','Linux').foreach{
@@ -44,7 +45,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       } elseif ($String -eq 'FileVantageRuleGroup') {
         @((Get-Command Get-FalconFileVantageRuleGroup).Parameters.Type.Attributes.ValidValues).foreach{
           # Export FileVantageRuleGroup for each 'Type'
-          & "Get-Falcon$String" -Type $_ -Detailed -All 2>$null
+          & "Get-Falcon$String" -Type $_ -Detailed -All | Where-Object { $_.created_by -ne 'internal' } 2>$null
         }
       } else {
         & "Get-Falcon$String" -Detailed -All 2>$null
@@ -162,8 +163,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     [string]$Path,
     [Alias('Force')]
     [switch]$AssignExisting,
-    [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy',
-      'SensorUpdatePolicy')]
+    [ValidateSet('DeviceControlPolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy','SensorUpdatePolicy')]
     [string[]]$ModifyDefault,
     [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup','FirewallPolicy',
       'HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script',
