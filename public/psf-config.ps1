@@ -32,7 +32,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       $Config = if ($String -match 'Policy$') {
         if ($String -eq 'FileVantagePolicy') {
           @((Get-Command Get-FalconFileVantagePolicy).Parameters.Type.Attributes.ValidValues).foreach{
-            # Export FileVantagePolicy for each 'Type'
+            # Export user-created FileVantagePolicy for each 'platform'
             & "Get-Falcon$String" -Type $_ -Detailed -All | Where-Object { $_.created_by -ne
               'cs-cloud-provisioning' } 2>$null
           }
@@ -44,7 +44,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         }
       } elseif ($String -eq 'FileVantageRuleGroup') {
         @((Get-Command Get-FalconFileVantageRuleGroup).Parameters.Type.Attributes.ValidValues).foreach{
-          # Export FileVantageRuleGroup for each 'Type'
+          # Export user-created FileVantageRuleGroup for each 'Type'
           & "Get-Falcon$String" -Type $_ -Detailed -All | Where-Object { $_.created_by -ne 'internal' } 2>$null
         }
       } else {
@@ -60,7 +60,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           ))
         }
       } elseif ($Config -and $String -eq 'FileVantagePolicy') {
-        # Export FileVantage policy exclusions
+        # Append exclusions onto FileVantage policies
         foreach ($i in $Config) {
           $ExclusionId = Get-FalconFileVantageExclusion -PolicyId $i.id
           if ($ExclusionId) {
@@ -71,7 +71,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           }
         }
       } elseif ($Config -and $String -eq 'FileVantageRuleGroup') {
-        # Update 'assigned_rules' with rule content
+        # Update 'assigned_rules' with rule content inside FileVantage rule groups
         foreach ($i in $Config) {
           $RuleId = $i.assigned_rules.id | Where-Object { ![string]::IsNullOrEmpty($_) }
           if ($RuleId) {
