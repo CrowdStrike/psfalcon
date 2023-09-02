@@ -187,7 +187,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       $Obj = [PSCustomObject]@{
         time = Get-Date -Format o
         api_client_id = $Script:Falcon.ClientId
-        type = $Type
+        type = if ($Type -eq 'FileVantageRuleGroup') { $Type,$Item.type -join ':' } else { $Type }
         id = if ($Action -eq 'Ignored') {
           $null
         } else {
