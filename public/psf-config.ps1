@@ -61,21 +61,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         }
       } elseif ($Config -and $String -eq 'FileVantagePolicy') {
         # Export FileVantage policy exclusions
-        Write-Host "[Export-FalconConfig] Exporting 'FileVantageExclusion'..."
-        foreach ($Id in $Config.id) {
-          $ExclusionId = Get-FalconFileVantageExclusion -PolicyId $Id
+        foreach ($i in $Config) {
+          $ExclusionId = Get-FalconFileVantageExclusion -PolicyId $i.id
           if ($ExclusionId) {
-            ($Config | Where-Object { $_.id -eq $Id }).PSObject.Properties.Add((New-Object PSNoteProperty(
-              'exclusions',(Get-FalconFileVantageExclusion -PolicyId $Id -Id $ExclusionId))
+            Write-Host "[Export-FalconConfig] Exporting exclusions for $($i.platform) policy '$($i.name)'..."
+            $i.PSObject.Properties.Add((New-Object PSNoteProperty('exclusions',
+              (Get-FalconFileVantageExclusion -PolicyId $i.id -Id $ExclusionId))
             ))
           }
         }
       } elseif ($Config -and $String -eq 'FileVantageRuleGroup') {
         # Update 'assigned_rules' with rule content
-        Write-Host "[Export-FalconConfig] Exporting 'FileVantageRule'..."
-        foreach ($Group in $Config) {
-          $RuleId = $Group.assigned_rules.id | Where-Object { ![string]::IsNullOrEmpty($_) }
-          if ($RuleId) { $Group.assigned_rules = Get-FalconFileVantageRule -RuleGroupId $Group.id -Id $RuleId }
+        foreach ($i in $Config) {
+          $RuleId = $i.assigned_rules.id | Where-Object { ![string]::IsNullOrEmpty($_) }
+          if ($RuleId) {
+            Write-Host "[Export-FalconConfig] Exporting rules for $($i.type) group '$($i.name)'..."
+            $i.assigned_rules = Get-FalconFileVantageRule -RuleGroupId $i.id -Id $RuleId }
         }
       }
       if ($Config) {
