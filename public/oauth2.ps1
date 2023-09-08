@@ -262,7 +262,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconToken
     if ($Script:Falcon) {
       [PSCustomObject]@{
         Token = if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -and
-          ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(60))) { $true } else { $false }
+          ($Script:Falcon.Expiration -gt (Get-Date).AddSeconds(240))) { $true } else { $false }
         Hostname = $Script:Falcon.Hostname
         ClientId = $Script:Falcon.ClientId
         MemberCid = $Script:Falcon.MemberCid

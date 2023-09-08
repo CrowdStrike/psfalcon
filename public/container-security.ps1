@@ -153,7 +153,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerSensor
     SupportsShouldProcess)]
   param([switch]$LatestUrl)
   process {
-    if (!$Script:Falcon.Registry -or $Script:Falcon.Registry.Expiration -lt (Get-Date).AddSeconds(60)) {
+    if (!$Script:Falcon.Registry -or $Script:Falcon.Registry.Expiration -lt (Get-Date).AddSeconds(240)) {
       Request-FalconRegistryCredential
     }
     $Param = @{
@@ -394,7 +394,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
       }
       [PSCustomObject]@{
         Token = if ($Script:Falcon.Registry.Token -and $Script:Falcon.Registry.Expiration -gt
-        (Get-Date).AddSeconds(60)) {
+        (Get-Date).AddSeconds(240)) {
           $true
         } else {
           $false

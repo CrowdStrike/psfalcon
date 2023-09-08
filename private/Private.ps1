@@ -596,7 +596,7 @@ function Invoke-Falcon {
         if ($Next) {
           # Clone parameters and make request
           $Clone = Set-LoopParam $Splat $Next
-          if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) {
+          if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(240)) {
             if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) {
               # Refresh authorization token when required
               Request-FalconToken
@@ -693,7 +693,7 @@ function Invoke-Falcon {
       }
       [string]$Target = New-ShouldMessage $_.Endpoint
       if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
-        if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(60)) { Request-FalconToken }
+        if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(240)) { Request-FalconToken }
         try {
           Write-Log $Command $Endpoint
           $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
@@ -859,7 +859,7 @@ function Start-RtrUpdate {
         ### add rate limits for 429 during token request/session refresh
 
         Start-Sleep -Seconds ($Timeout - 10)
-        if ($Expiration -le (Get-Date).AddSeconds(60)) {
+        if ($Expiration -le (Get-Date).AddSeconds(240)) {
           # Renew authorization token for background job
           $Param = @{
             Uri = $BaseAddress,'oauth2/token' -join '/'
