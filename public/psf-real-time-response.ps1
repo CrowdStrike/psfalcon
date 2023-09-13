@@ -337,16 +337,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
   }
   process {
     if ($GroupId) {
-      if ((Get-FalconHostGroupMember -Id $GroupId -Total) -gt 10000) {
-        # Stop if number of members exceeds API limit
-        throw "Group size exceeds maximum number of results. [10,000]"
-      } else {
-        # Retrieve Host Group member device_id and platform_name
-        [string[]]$Select = 'device_id','platform_name'
-        if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
-        @(Get-FalconHostGroupMember -Id $GroupId -Detailed -All | Select-Object $Select).foreach{
-          $HostList.Add($_)
-        }
+      # Retrieve Host Group member device_id and platform_name
+      [string[]]$Select = 'device_id','platform_name'
+      if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
+      @(Get-FalconHost -Filter "groups:['$GroupId']" -Detailed -All | Select-Object $Select).foreach{
+        $HostList.Add($_)
       }
     } elseif ($HostId) {
       # Use provided Host identifiers
@@ -552,13 +547,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
   begin { [System.Collections.Generic.List[string]]$List = @() }
   process {
     if ($GroupId) {
-      if ((Get-FalconHostGroupMember -Id $GroupId -Total) -gt 10000) {
-        # Stop if number of HostGroup members exceeds API limit
-        throw "Group size exceeds maximum number of results. [10,000]"
-      } else {
-        # Retrieve HostGroup members
-        @(Get-FalconHostGroupMember -Id $GroupId -All).foreach{ $List.Add($_) }
-      }
+        # Retrieve HostGroup members using a filtered search
+        @(Get-FalconHost -Filter "groups:['$GroupId']" -All).foreach{ $List.Add($_) }
     } elseif ($HostId) {
       # Use provided Host identifiers
       @($HostId).foreach{ $List.Add($_) }
