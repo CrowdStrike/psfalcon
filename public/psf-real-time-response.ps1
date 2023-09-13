@@ -583,9 +583,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
         try {
           # Start Real-time Response session in groups of up to 10,000 hosts
           [object[]]$Output = $HostList[$i..($i + 9999)]
-          $Init = @{ Id = $Output.aid; Timeout = $Timeout; QueueOffline = $QueueOffline }
+          $Init = @{ Id = $Output.aid; Timeout = 30; QueueOffline = $QueueOffline }
           $InitReq = Start-FalconSession @Init
-          if ($InitReq.batch_id -or $InitReq.session_id) {
+          if ($InitReq -and ($InitReq.batch_id -or $InitReq.session_id)) {
             $JobId = Start-RtrUpdate $InitReq $Timeout
             # Output verbose message with batch_id or session_id
             [string[]]$Message = if ($InitReq.batch_id) {
