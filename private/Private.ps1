@@ -19,10 +19,18 @@ function Add-Include {
               $SetParam = @{
                 Object = $i
                 Name = $_.Key
-                Value = if ($Detailed -eq $true) {
-                  & "$($_.Value)" -Id $i.id -Detailed -All -EA 0
+                Value = if ($_.Value -eq 'Get-FalconHostGroupMember') {
+                  if ($Detailed -eq $true) {
+                    Get-FalconHost -Filter "groups:['$($i.id)']" -Detailed -All -EA 0
+                  } else {
+                    Get-FalconHost -Filter "groups:['$($i.id)']" -All -EA 0
+                  }
                 } else {
-                  & "$($_.Value)" -Id $i.id -All -EA 0
+                  if ($Detailed -eq $true) {
+                    & "$($_.Value)" -Id $i.id -Detailed -All -EA 0
+                  } else {
+                    & "$($_.Value)" -Id $i.id -All -EA 0
+                  }
                 }
               }
               Set-Property @SetParam
