@@ -496,7 +496,7 @@ function Invoke-FalconRtr {
 Start a Real-time Response session, execute a command and output the result
 .DESCRIPTION
 Requires 'Real time response: Read', 'Real time response: Write' or 'Real time response (admin): Write' depending
-on 'Command' provided, plus related permission(s) for 'Include' selection(s).
+on 'Command' provided, plus 'Hosts: Read' if using 'Include' or 'GroupId'.
 .PARAMETER Command
 Real-time Response command
 .PARAMETER Argument
