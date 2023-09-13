@@ -21,22 +21,23 @@ function Add-Include {
                 Name = $_.Key
                 Value = if ($_.Value -eq 'Get-FalconHostGroupMember') {
                   if ($Detailed -eq $true) {
-                    Get-FalconHost -Filter "groups:['$($i.id)']" -Detailed -All -EA 0
+                    try { Get-FalconHost -Filter "groups:['$($i.id)']" -Detailed -All } catch { Write-Error $_ }
                   } else {
-                    Get-FalconHost -Filter "groups:['$($i.id)']" -All -EA 0
+                    try { Get-FalconHost -Filter "groups:['$($i.id)']" -All } catch { Write-Error $_ }
                   }
                 } else {
                   if ($Detailed -eq $true) {
-                    & "$($_.Value)" -Id $i.id -Detailed -All -EA 0
+                    try { & "$($_.Value)" -Id $i.id -Detailed -All } catch { Write-Error $_ }
                   } else {
-                    & "$($_.Value)" -Id $i.id -All -EA 0
+                    try { & "$($_.Value)" -Id $i.id -All } catch { Write-Error $_ }
                   }
                 }
               }
               Set-Property @SetParam
             }
           } else {
-            foreach ($i in (& "$($_.Value)" -Id $Object.id)) {
+            $Output = try { & "$($_.Value)" -Id $Object.id } catch { Write-Error $_ }
+            foreach ($i in $Output) {
               $SetParam = @{
                 Object = if ($i.policy_id) {
                   @($Object).Where({ $_.id -eq $i.policy_id })
@@ -52,7 +53,8 @@ function Add-Include {
         }
       }
     } elseif ($Command) {
-      foreach ($i in (& $Command -Id $Object.id)) {
+      $Output = try { & $Command -Id $Object.id } catch { Write-Error $_ }
+      foreach ($i in $Output) {
         @($UserInput.Include).foreach{
           # Append all properties from 'Include'
           $SetParam = @{
