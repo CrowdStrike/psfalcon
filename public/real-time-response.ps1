@@ -871,10 +871,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
     [Parameter(ParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
       Mandatory,Position=1)]
     [ValidateSet('cat','cd','clear','cp','csrutil','encrypt','env','eventlog backup','eventlog export',
-      'eventlog list','eventlog view','falconscript','filehash','get','getsid','help','history','ifconfig',
-      'ipconfig','kill','ls','map','memdump','mkdir','mount','mv','netstat','ps','reg delete','reg load',
-      'reg query','reg set','reg unload','restart','rm','runscript','shutdown','umount','unmap','update history',
-      'update install','update list','update install','users','xmemdump','zip',IgnoreCase=$false)]
+      'eventlog list','eventlog view','filehash','get','getsid','help','history','ifconfig','ipconfig','kill','ls',
+      'map','memdump','mkdir','mount','mv','netstat','ps','reg delete','reg load','reg query','reg set',
+      'reg unload','restart','rm','runscript','shutdown','umount','unmap','update history','update install',
+      'update list','update install','users','xmemdump','zip',IgnoreCase=$false)]
     [Alias('base_command')]
     [string]$Command,
     [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post',Position=2)]
