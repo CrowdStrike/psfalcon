@@ -410,6 +410,7 @@
     'Confirm-FalconGetFile'
     'Confirm-FalconResponderCommand'
     'Edit-FalconScript'
+    'Get-FalconLibraryScript'
     'Get-FalconPutFile'
     'Get-FalconScript'
     'Get-FalconSession'
