@@ -225,6 +225,64 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconLibraryScript {
+<#
+.SYNOPSIS
+Search for scripts in the 'falconscript' library
+.DESCRIPTION
+Requires 'Real time response (admin): Write'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconLibraryScript
+#>
+  [CmdletBinding(DefaultParameterSetName='/real-time-response/queries/falcon-scripts/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/real-time-response/entities/falcon-scripts/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get',Position=2)]
+    [ValidateSet('modified_timestamp.asc','modified_timestamp.desc','name.asc','name.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Get-FalconPutFile {
 <#
 .SYNOPSIS
