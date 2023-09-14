@@ -617,7 +617,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
               $Output = @(Get-RtrResult $CmdReq $Output).foreach{
                 # Clear 'stdout' for batch 'get' requests
                 if ($_.stdout -and $_.batch_get_cmd_req_id) { $_.stdout = $null }
-                if ($_.stdout -and $Command -eq 'runscript') {
+                if ($_.stdout -and $Command -match '^(falconscript|runscript)$') {
                   # Attempt to convert 'stdout' from Json for 'runscript'
                   [object[]]$StdOut = try { $_.stdout | ConvertFrom-Json -EA 0 } catch { $null }
                   if ($StdOut) { $_.stdout = $StdOut }
