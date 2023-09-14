@@ -1183,6 +1183,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',
       ValueFromPipelineByPropertyName,Position=1)]
+    [ValidateLength(1,32766)]
     [string]$Name,
     [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Position=2)]
     [string]$Description,
@@ -1245,6 +1246,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
     [string]$PermissionType,
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
       Position=3)]
+    [ValidateLength(1,32766)]
     [string]$Name,
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
       Position=4)]
