@@ -7,6 +7,19 @@ A script template to demonstrate the retrieval of API client credentials from Mi
 request an authorization token from the CrowdStrike Falcon APIs and run pre-determined code
 .PARAMETER SecretName
 Name of the secret stored in the SecretVault
+.NOTES
+Installation and configuration of the SecretStore module is described here:
+https://github.com/CrowdStrike/psfalcon/wiki/Authentication#securing-credentials
+
+A scheduled task designed to run this script will look something like this:
+[x] Run whether user is logged on or not
+[x] Do not store password. The task will only have access to local computer resources.
+
+Trigger:
+One time - At 08:00AM on 01/01/2024 - After triggered, repeat every 24 hours
+
+Action:
+Start a program - powershell.exe -c C:\path\to\dev09_scheduled_task_template.ps1 -SecretName MySecret
 .EXAMPLE
 .\dev09_scheduled_task_template.ps1 -SecretName MySecret
 #>
