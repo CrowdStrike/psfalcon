@@ -7,8 +7,8 @@ Requires 'Falcon Container CLI: Write'.
 .PARAMETER OsVersion
 Operating system version
 .PARAMETER Package
-Key and value pairs to filter packages. Accepted properties include: 'layerindex', 'packageprovider', 'layerhash',
-'packagehash', 'packagesource', 'softwarearchitecture', 'status', 'majorversion', 'product', and 'vendor'.
+Key and value pairs to filter packages. Accepted properties include: 'layerhash', 'layerindex', 'majorversion',
+'packagehash', 'packageprovider', 'packagesource', 'product', 'softwarearchitecture', 'status', and 'vendor'.
 .PARAMETER Application
 Key and value pairs to filter application packages. Accepted properties include: 'libraries' and 'type'.
 .LINK
