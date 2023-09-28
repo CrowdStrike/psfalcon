@@ -28,10 +28,10 @@ param(
   [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=3)]
   [ValidatePattern('^[a-fA-F0-9]{32}$')]
   [string]$MemberCid,
-  [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=3)]
+  [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
   [ValidateSet('eu-1','us-gov-1','us-1','us-2')]
   [string]$Cloud,
-  [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=3)]
+  [Parameter(ParameterSetName='Hostname',ValueFromPipelineByPropertyName,Position=4)]
   [ValidateSet('https://api.crowdstrike.com','https://api.us-2.crowdstrike.com',
     'https://api.laggar.gcw.crowdstrike.com','https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
   [string]$Hostname
