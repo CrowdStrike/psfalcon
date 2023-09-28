@@ -271,7 +271,7 @@ process {
   } catch {
     throw $_
   } finally {
-    if ((Test-FalconToken).Token -eq $true) { Revoke-FalconToken }
+    if ((Test-FalconToken).Token -eq $true) { [void](Revoke-FalconToken) }
   }
 }
 end {
