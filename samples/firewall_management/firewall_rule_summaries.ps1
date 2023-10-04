@@ -2,7 +2,7 @@
 using module @{ModuleName='PSFalcon';ModuleVersion='2.2'}
 <#
 .SYNOPSIS
-Create a series of CSVs containing the policies, rule groups and rules from Falcon Firewall Management
+Create a series of CSVs which replicate 'Rule Summaries' within Falcon Firewall Management
 .PARAMETER ClientId
 OAuth2 client identifier
 .PARAMETER ClientSecret
@@ -209,32 +209,24 @@ process {
           @{label='icmp_type';expression={$_.icmp.icmp_type}},
           @{label='icmp_code';expression={$_.icmp.icmp_code}},
           @{label='local_address';expression={
-            if (($_.local_address | Measure-Object).Count -eq 1 -and $_.local_address[0].address -eq '*') {
-              $_.local_address[0].address
-            } else {
-              $_.local_address
-            }
-          }},
-          @{label='remote_address';expression={
-            if (($_.remote_address | Measure-Object).Count -eq 1 -and $_.remote_address[0].address -eq '*') {
-              $_.remote_address[0].address
-            } else {
-              $_.remote_address
-            }
+            (@($_.local_address).foreach{
+              if ($_.netmask -eq 0) { $_.address } else { $_.address,$_.netmask -join '/' }
+            }) -join ','
           }},
           @{label='local_port';expression={
-            if (($_.local_port | Measure-Object).Count -eq 1 -and $_.local_port[0].end -eq 0) {
-              $_.local_port[0].start
-            } else {
-              $_.local_port
-            }
+            (@($_.local_port).foreach{
+              if ($_.end -eq 0) { $_.start } else { $_.start,$_.end -join '-'}
+            }) -join ','
+          }},
+          @{label='remote_address';expression={
+            (@($_.remote_address).foreach{
+              if ($_.netmask -eq 0) { $_.address } else { $_.address,$_.netmask -join '/' }
+            }) -join ','
           }},
           @{label='remote_port';expression={
-            if (($_.remote_port | Measure-Object).Count -eq 1 -and $_.remote_port[0].end -eq 0) {
-              $_.remote_port[0].start
-            } else {
-              $_.remote_port
-            }
+            (@($_.remote_port).foreach{
+              if ($_.end -eq 0) { $_.start } else { $_.start,$_.end -join '-'}
+            }) -join ','
           }},
           @{label='network_location';expression={
             ($_.fields | Where-Object { $_.name -eq 'network_location' }).values -join ','
@@ -282,6 +274,7 @@ process {
             } | Export-Csv @Param
           }
         }
+        if (Test-Path $Param.Path) { Get-ChildItem $Param.Path | Select-Object FullName,Length,LastWriteTime }
       }
     }
   } catch {
