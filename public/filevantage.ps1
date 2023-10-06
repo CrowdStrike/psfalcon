@@ -18,8 +18,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageHostGroup
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
-    [Parameter(ParameterSetName='/filevantage/entities/policies-host-groups/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies-host-groups/v1:patch',Mandatory,ValueFromPipeline,
+      Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -57,8 +57,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageRuleGroup
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
-    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,ValueFromPipeline,
+      Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -92,6 +92,10 @@ Scheduled exclusion name
 Start of scheduled exclusion (RFC3339)
 .PARAMETER ScheduleEnd
 End of scheduled exclusion (RFC3339)
+.PARAMETER Timezone
+Timezone for scheduled start/end time (TZ database format)
+.PARAMETER Repeated
+Object containing properties for repeating exclusion based on scheduled start/end time
 .PARAMETER Process
 One or more process names in glob syntax, separated by commas
 .PARAMETER User
@@ -129,16 +133,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
     [string]$ScheduleEnd,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
       ValueFromPipelineByPropertyName,Position=6)]
+    [string]$Timezone,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=7)]
+    [object]$Repeated,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=8)]
     [ValidateLength(0,500)]
     [Alias('processes')]
     [string]$Process,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
-      ValueFromPipelineByPropertyName,Position=7)]
+      ValueFromPipelineByPropertyName,Position=9)]
     [ValidateLength(0,500)]
     [Alias('users')]
     [string]$User,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
-      ValueFromPipelineByPropertyName,Position=8)]
+      ValueFromPipelineByPropertyName,Position=10)]
     [ValidateLength(0,500)]
     [string]$Description
   )
@@ -174,7 +184,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantagePolicy
     [string]$Name,
     [Parameter(ParameterSetName='/filevantage/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
       Position=3)]
-    [string]$Enabled,
+    [boolean]$Enabled,
     [Parameter(ParameterSetName='/filevantage/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
       Position=4)]
     [ValidateLength(0,500)]
@@ -245,6 +255,10 @@ Track registry key set events
 Track registry value create events
 .PARAMETER RegValueDelete
 Track registry value delete events
+.PARAMETER ContentFiles
+
+.PARAMETER EnableContentCapture
+
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -362,6 +376,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
       Position=28)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=29)]
+    [Alias('content_files')]
+    [string[]]$ContentFiles,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=30)]
+    [Alias('enable_content_capture')]
+    [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -513,6 +535,8 @@ Operating system type
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Include
+Include additional properties
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -541,6 +565,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantagePolicy
     [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get',Position=3)]
     [ValidateRange(1,500)]
     [int]$Limit,
+    [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get',Position=4)]
+    [ValidateSet('exclusions',IgnoreCase=$false)]
+    [string[]]$Include,
     [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get')]
     [int]$Offset,
     [Parameter(ParameterSetName='/filevantage/queries/policies/v1:get')]
@@ -557,7 +584,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantagePolicy
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($Include) {
+      $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
+      if ($Request -and $Include -contains 'exclusions') {
+        if (!$Request.id) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ id = $_ } }}
+        foreach ($i in $Request) {
+          $Exclusion = Get-FalconFileVantageExclusion -PolicyId $i.id -EA 0
+          if ($Exclusion -and $PSBoundParameters.Detailed) {
+            $Exclusion = $Exclusion | Get-FalconFileVantageExclusion -PolicyId $i.id
+          }
+          Set-Property $i exclusions $Exclusion
+        }
+      }
+      $Request
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFileVantageRule {
@@ -670,6 +712,10 @@ Scheduled exclusion name
 Start of scheduled exclusion (RFC3339)
 .PARAMETER ScheduleEnd
 End of scheduled exclusion (RFC3339)
+.PARAMETER Timezone
+Timezone for scheduled start/end time (TZ database format)
+.PARAMETER Repeated
+Object containing properties for repeating exclusion based on scheduled start/end time
 .PARAMETER Process
 One or more process names in glob syntax, separated by commas
 .PARAMETER User
@@ -684,30 +730,42 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
   [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
     [ValidateLength(1,100)]
     [string]$Name,
-    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,Position=2)]
-    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(-\d{2}:\d{2}|Z)?$')]
     [Alias('schedule_start')]
     [string]$ScheduleStart,
-    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=3)]
-    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(-\d{2}:\d{2}|Z)?$')]
     [Alias('schedule_end')]
     [string]$ScheduleEnd,
-    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [string]$Timezone,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [object]$Repeated,
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=6)]
     [ValidateLength(0,500)]
     [Alias('processes')]
     [string]$Process,
-    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=7)]
     [ValidateLength(0,500)]
     [Alias('users')]
     [string]$User,
-    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=8)]
     [ValidateLength(0,500)]
     [string]$Description,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,
-      ValueFromPipeline,Position=7)]
+      ValueFromPipelineByPropertyName,Position=9)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId
@@ -732,13 +790,16 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantagePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=1)]
     [ValidateLength(1,100)]
     [string]$Name,
-    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
     [ValidateSet('Linux','Mac','Windows',IgnoreCase=$false)]
     [string]$Platform,
-    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',Position=3)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
     [ValidateLength(0,500)]
     [string]$Description
   )
@@ -805,6 +866,10 @@ Track registry key set events
 Track registry value create events
 .PARAMETER RegValueDelete
 Track registry value delete events
+.PARAMETER ContentFiles
+
+.PARAMETER EnableContentCapture
+
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -891,6 +956,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=27)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=28)]
+    [Alias('content_files')]
+    [string[]]$ContentFiles,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=29)]
+    [Alias('enable_content_capture')]
+    [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -1059,8 +1130,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRule
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('rule_group_id')]
     [string]$RuleGroupId,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:delete',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:delete',Mandatory,ValueFromPipeline,
+      Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -1080,29 +1151,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRule
 function Remove-FalconFileVantageRuleGroup {
 <#
 .SYNOPSIS
-Remove or unassign FileVantage rule groups
+Remove FileVantage rule groups or unassign them from policies
 .DESCRIPTION
 Requires 'Falcon FileVantage: Write'.
-.PARAMETER PolicyId
-FileVantage policy identifier, used when unassigning rule groups from a policy
 .PARAMETER Id
 FileVantage rule group identifier
+.PARAMETER PolicyId
+FileVantage policy identifier, used when unassigning rule groups from a policy
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRuleGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups/v1:delete',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
-    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:delete',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
+      Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('ids')]
+    [Alias('ids','rule_groups')]
     [string[]]$Id
   )
   begin {
@@ -1140,8 +1209,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantagePrecedence
     [Parameter(ParameterSetName='/filevantage/entities/policies-precedence/v1:patch',Mandatory,Position=1)]
     [ValidateSet('Linux','Mac','Windows',IgnoreCase=$false)]
     [string]$Type,
-    [Parameter(ParameterSetName='/filevantage/entities/policies-precedence/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies-precedence/v1:patch',Mandatory,ValueFromPipeline,
+      Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -1179,7 +1248,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRulePrecedence
     [Alias('rule_group_id')]
     [string]$RuleGroupId,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rule-precedence/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+      ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -1216,8 +1285,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRuleGroupPrece
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
-    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,ValueFromPipeline,
+      Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
