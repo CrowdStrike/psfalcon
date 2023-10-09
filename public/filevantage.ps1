@@ -18,8 +18,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageHostGroup
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
-    [Parameter(ParameterSetName='/filevantage/entities/policies-host-groups/v1:patch',Mandatory,ValueFromPipeline,
-      Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies-host-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -57,8 +57,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageRuleGroup
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
-    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,ValueFromPipeline,
-      Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -812,6 +812,8 @@ function New-FalconFileVantageRule {
 Create a rule within a FileVantage rule group
 .DESCRIPTION
 Requires 'Falcon FileVantage: Write'.
+.PARAMETER Precedence
+Precendece for the new rule inside of the existing rule group
 .PARAMETER Path
 Path of the directory, file, or registry key to monitor
 .PARAMETER Depth
@@ -877,95 +879,127 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
 #>
   [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [int]$Precedence,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
     [ValidateLength(1,250)]
     [string]$Path,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
     [ValidateSet('1','2','3','4','5','ANY',IgnoreCase=$false)]
     [string]$Depth,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=3)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
     [ValidateSet('Low','Medium','High','Critical',IgnoreCase=$false)]
     [string]$Severity,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
     [ValidateLength(0,500)]
     [string]$Description,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
     [string]$Include,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=7)]
     [string]$Exclude,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=7)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=8)]
     [Alias('include_processes')]
     [string]$IncludeProcess,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=8)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=9)]
     [Alias('exclude_processes')]
     [string]$ExcludeProcess,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=10)]
     [Alias('include_users')]
     [string]$IncludeUser,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=10)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=11)]
     [Alias('exclude_users')]
     [string]$ExcludeUser,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=11)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=12)]
     [Alias('watch_attributes_directory_changes')]
     [boolean]$DirectoryAttribute,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=12)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=13)]
     [Alias('watch_create_directory_changes')]
     [boolean]$DirectoryCreate,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=13)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=14)]
     [Alias('watch_delete_directory_changes')]
     [boolean]$DirectoryDelete,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=14)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=15)]
     [Alias('watch_permissions_directory_changes')]
     [boolean]$DirectoryPermission,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=15)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=16)]
     [Alias('watch_rename_directory_changes')]
     [boolean]$DirectoryRename,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=16)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=17)]
     [Alias('watch_attributes_file_changes')]
     [boolean]$FileAttribute,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=17)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=18)]
     [Alias('watch_create_file_changes')]
     [boolean]$FileChange,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=18)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=19)]
     [Alias('watch_delete_file_changes')]
     [boolean]$FileDelete,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=19)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=20)]
     [Alias('watch_permissions_file_changes')]
     [boolean]$FilePermission,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=20)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=21)]
     [Alias('watch_rename_file_changes')]
     [boolean]$FileRename,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=21)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=22)]
     [Alias('watch_write_file_changes')]
     [boolean]$FileWrite,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=22)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=23)]
     [Alias('watch_create_key_changes')]
     [boolean]$RegKeyCreate,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=23)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=24)]
     [Alias('watch_delete_key_changes')]
     [boolean]$RegKeyDelete,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=24)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=25)]
     [Alias('watch_rename_key_changes')]
     [boolean]$RegKeyRename,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=25)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=26)]
     [Alias('watch_set_value_changes')]
     [boolean]$RegKeySet,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=26)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=27)]
     [Alias('watch_create_value_changes')]
     [boolean]$RegValueCreate,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=27)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=27)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=28)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=28)]
     [Alias('content_files')]
     [string[]]$ContentFiles,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Position=29)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=29)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+      ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('rule_group_id','id')]
+    [Alias('rule_group_id')]
     [string]$RuleGroupId
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -988,13 +1022,16 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRuleGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
     [ValidateSet('LinuxFiles','MacFiles','WindowsFiles','WindowsRegistry',IgnoreCase=$false)]
     [string]$Type,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Mandatory,Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
     [ValidateLength(1,100)]
     [string]$Name,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',Position=3)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:post',
+      ValueFromPipelineByPropertyName,Position=3)]
     [ValidateLength(0,500)]
     [string]$Description
   )
@@ -1130,8 +1167,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRule
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('rule_group_id')]
     [string]$RuleGroupId,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:delete',Mandatory,ValueFromPipeline,
-      Position=2)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -1168,8 +1205,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRuleGroup
     [Alias('policy_id')]
     [string]$PolicyId,
     [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,Position=2)]
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:delete',Mandatory,ValueFromPipeline,
-      Position=1)]
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids','rule_groups')]
     [string[]]$Id
