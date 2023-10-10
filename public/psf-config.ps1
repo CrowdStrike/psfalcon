@@ -212,9 +212,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         comment = if ($Comment) {
           $Comment
         } elseif ($Item.rule_group_id -and $Item.id) {
-          'RuleGroup',$Item.rule_group_id -join ' '
+          'rule_group_id',$Item.rule_group_id -join ':'
         } elseif ($Item.policy_id -and $Item.id) {
-          'Policy',$Item.policy_id -join ' '
+          'policy_id',$Item.policy_id -join ':'
         }
       }
       $Config.Result.Add($Obj)
@@ -227,7 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         $Notify.Add($Type)
         if ($Type -eq 'FileVantageRule') {
-          $Notify.Add("$($Obj.name) in FileVantageRuleGroup '$(($Config.Ids.FileVantageRuleGroup | Where-Object {
+          $Notify.Add("$($Obj.name) in '$(($Config.Ids.FileVantageRuleGroup | Where-Object {
             $_.new_id -eq $Item.rule_group_id }).name)'.")
         } else {
           $Notify.Add("'$($Obj.name)'.")
@@ -348,10 +348,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         $Filename = $ConfigArchive.GetEntry($FullName)
         $Item = ($FullName | Split-Path -Leaf).Split('.')[0]
         $Import = ConvertFrom-Json (New-Object System.IO.StreamReader($Filename.Open())).ReadToEnd()
-        $Output[$Item] = @{
-          Import = $Import
-          Modify = [System.Collections.Generic.List[object]]@()
-        }
+        $Output[$Item] = @{ Import = $Import; Modify = [System.Collections.Generic.List[object]]@() }
         $Output.Ids[$Item] = [System.Collections.Generic.List[object]]@()
         $Item
       }
@@ -405,8 +402,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         # Add 'new_id' to 'Ids'
         [string[]]$Compare = @('platform_name','platform','type','value','name').foreach{ if ($Item.$_) { $_ }}
         [string]$Filter = (@($Compare).foreach{ "`$_.$($_) -eq '$($Item.$_)'" }) -join ' -and '
-        $FilterScript = [scriptblock]::Create($Filter)
-        @($Config.Ids.$Type | Where-Object -FilterScript $FilterScript).foreach{
+        @($Config.Ids.$Type | Where-Object -FilterScript ([scriptblock]::Create($Filter))).foreach{
           $_.new_id = if ($Item.family) { $Item.family } else { $Item.id }
         }
       }
@@ -445,13 +441,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       $Pair.Value['Cid'] = try {
         if ($Pair.Key -match '^FileVantage(Policy|RuleGroup)$') {
           [string]$Property = if ($Pair.Key -eq 'FileVantagePolicy') { 'platform' } else { 'type' }
-          $FilterScript = if ($Pair.Key -eq 'FileVantagePolicy') {
+          [string]$Filter = if ($Pair.Key -eq 'FileVantagePolicy') {
             # Filter to user-created FileVantagePolicy
-            [scriptblock]::Create(('$_.created_by -ne "cs-cloud-provisioning" -and $_.name -notmatch "' +
-              "$PolicyDefault" + '"'))
+            '$_.created_by -ne "cs-cloud-provisioning" -and $_.name -notmatch "' + $PolicyDefault + '"'
           } else {
             # Filter to user-created FileVantageRuleGroup
-            [scriptblock]::Create('$_.created_by -ne "internal"')
+            '$_.created_by -ne "internal"'
           }
           $Param = @{ Detailed = $true; All = $true }
           if ($Pair.Key -eq 'FileVantagePolicy' -and $Config.($Pair.Key).Import.exclusions) {
@@ -459,9 +454,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             $Param['include'] = 'exclusions'
           }
           @($Pair.Value.Import.$Property | Select-Object -Unique).foreach{
-            # Retrieve user-created FileVantagePolicy/RuleGroup for each platform/type and update identifiers
+            # Retrieve FileVantagePolicy/RuleGroup for each platform/type and update identifiers
             Write-Host "[Import-FalconConfig] Retrieving $_ '$($Pair.Key)'..."
-            @(& "Get-Falcon$($Pair.Key)" @Param -Type $_ | Where-Object -FilterScript $FilterScript).foreach{
+            @(& "Get-Falcon$($Pair.Key)" @Param -Type $_ | Where-Object -FilterScript ([scriptblock]::Create(
+            $Filter))).foreach{
               Update-Id $_ $Pair.Key
               Compress-Property $_
             }
@@ -586,7 +582,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         foreach ($Item in $Pair.Value.$_) {
           @('groups','host_groups').foreach{
             foreach ($OldId in $Item.$_) {
-              [string]$NewId = ($Config.Ids.HostGroup | Where-Object { $_.old_id -eq $OldId }).new_id
+              [string]$NewId = @($Config.Ids.HostGroup).Where({ $_.old_id -eq $OldId }).new_id
               if ($NewId) {
                 [string[]]$Item.$_ = $Item.$_ -replace $OldId,$NewId
                 Write-Log 'Import-FalconConfig' ('Updated {0} "{1}" id "{2}" to "{3}"' -f $Pair.Key,$_,$OldId,
@@ -620,9 +616,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               $FvRule.rule_group_id = $Item.id
               @($FvRule | New-FalconFileVantageRule).foreach{ Add-Result Created $_ FileVantageRule }
             }
-          }
-          if ($Item.policy_assignments) {
-            ### IN_PROGRESS
           }
         }
       } elseif ($Pair.Key -eq 'FirewallGroup') {
@@ -709,8 +702,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
     foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch 'Policy$' -and $_.Value.Modify })) {
       [string[]]$Select = switch ($Pair.Key) {
-        # Select required properties for comparison
-        'FileVantageRuleGroup' { 'name','type','policy_assignments','assigned_rules' }
+        # Select required properties for comparison (other than 'id')
+        # 'FileVantageRuleGroup' { 'name','type','policy_assignments','assigned_rules' } ###
         'FirewallGroup' { 'name','enabled','rule_ids' }
         'HostGroup' { 'group_type','name','assignment_rule' }
         'IoaGroup' { 'enabled','name','platform','rules' }
@@ -874,10 +867,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         if ($Policy.name -notmatch $PolicyDefault) {
           if ($Pair.Key -eq 'FileVantagePolicy') {
-            # Assign HostGroup and FileVantageRuleGroup
-            if ($Policy.host_groups) { $Policy.host_groups | Add-FalconFileVantageHostGroup -PolicyId $Policy.id }
-            if ($Policy.rule_groups) { $Policy.rule_groups | Add-FalconFileVantageRuleGroup -PolicyId $Policy.id }
+            foreach ($OldId in $Policy.rule_groups) {
+              # Update rule_groups with new identifier
+              $Policy.rule_groups = $Policy.rule_groups -replace $OldId,
+                @($Config.Ids.FileVantageRuleGroup).Where({ $_.old_id -eq $OldId }).new_id
+            }
+            if ($Policy.rule_groups) {
+              # Assign rule_groups
+              @(Add-FalconFileVantageRuleGroup -PolicyId $Policy.id -Id $Policy.rule_groups).foreach{
+                Add-Result Modified $_ $Pair.Key rule_groups ($Cid.rule_groups.id -join ',') (
+                  $_.rule_groups.id -join ',')
+              }
+            }
+            foreach ($OldId in $Policy.host_groups) {
+              # Update host_groups with new identifier
+              $Policy.host_groups = $Policy.host_groups -replace $OldId,
+                @($Config.Ids.HostGroup).Where({ $_.old_id -eq $OldId }).new_id
+            }
+            if ($Policy.host_groups) {
+              # Assign host_groups
+              @(Add-FalconFileVantageHostGroup -PolicyId $Policy.id -Id $Policy.host_groups).foreach{
+                Add-Result Modified $_ $Pair.Key host_groups ($Cid.host_groups.id -join ',') (
+                  $_.host_groups.id -join ',')
+              }
+            }
             if ($Cid.enabled -ne $Policy.enabled) {
+              # Enable/disable FileVantagePolicy
               $Req = $Policy | Edit-FalconFileVantagePolicy
               if ($Req) { Add-Result Modified $Req $Pair.Key enabled $Cid.enabled $Policy.enabled }
             }
@@ -899,7 +914,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
   }
   end {
-    if ($PSBoundParameters.Debug) { $Config } else { ### IN_PROGRESS
     if ($Config.Result | Where-Object { $_.action -ne 'Ignored' }) {
       # Output warning for existing policy precedence
       foreach ($Item in ($Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match 'Policy$' } |
@@ -916,7 +930,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       @($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
       if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
-  } ###
-
   }
 }
