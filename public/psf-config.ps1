@@ -411,7 +411,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       }
     }
-    # Convert 'Path' to absolute and set 'OutputFile'
     [string[]]$Allowed = (Get-Command Export-FalconConfig).Parameters.Select.Attributes.ValidValues
     [string]$ArchivePath = $Script:Falcon.Api.Path($PSBoundParameters.Path)
     [string]$OutputFile = Join-Path (Get-Location).Path "FalconConfig_$(Get-Date -Format FileDateTime).csv"
@@ -420,7 +419,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     [string[]]$ValidModify = (Get-Command Import-FalconConfig).Parameters.ModifyExisting.Attributes.ValidValues
   }
   process {
-    # Import configuration files and capture id values for comparison
+    # Import configuration files and capture identifiers for comparison
     if (!$ArchivePath) { throw "Failed to resolve '$($PSBoundParameters.Path)'." }
     $Config = Import-ConfigData $ArchivePath
     @($Config.Keys).Where({ $_ -notmatch '^(Ids|FirewallRule|Result)$' }).foreach{
@@ -443,31 +442,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
     }
     foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(Ids|Result)$' })) {
-      # Retrieve existing items from CID and update their id values
       $Pair.Value['Cid'] = try {
-        if ($Pair.Key -eq 'FileVantagePolicy') {
-          @($Pair.Value.Import.platform | Select-Object -Unique).foreach{
-            $Param = @{ Type = $_; Detailed = $true; All = $true }
-            if ($Config.($Pair.Key).Import.exclusions) { $Param['include'] = 'exclusions' }
-            Write-Host "[Import-FalconConfig] Retrieving $($Param.Type) '$($Pair.Key)'..."
-            @(& "Get-Falcon$($Pair.Key)" @Param | Where-Object { $_.created_by -ne 'cs-cloud-provisioning' -and
-            $_.name -notmatch $PolicyDefault }).foreach{
-              # Export user-created FileVantagePolicy for each 'platform'
-              Update-Id $_ $Pair.Key
-              Compress-Property $_
-            }
+        if ($Pair.Key -match '^FileVantage(Policy|RuleGroup)$') {
+          [string]$Property = if ($Pair.Key -eq 'FileVantagePolicy') { 'platform' } else { 'type' }
+          $FilterScript = if ($Pair.Key -eq 'FileVantagePolicy') {
+            # Filter to user-created FileVantagePolicy
+            [scriptblock]::Create(('$_.created_by -ne "cs-cloud-provisioning" -and $_.name -notmatch "' +
+              "$PolicyDefault" + '"'))
+          } else {
+            # Filter to user-created FileVantageRuleGroup
+            [scriptblock]::Create('$_.created_by -ne "internal"')
           }
-        } elseif ($Pair.Key -eq 'FileVantageRuleGroup') {
-          @($Pair.Value.Import.type | Select-Object -Unique).foreach{
-            $Param = @{ Type = $_; Detailed = $true; All = $true }
-            Write-Host "[Import-FalconConfig] Retrieving $($Param.Type) '$($Pair.Key)'..."
-            @(& "Get-Falcon$($Pair.Key)" @Param | Where-Object { $_.created_by -ne 'internal' }).foreach{
-              # Export user-created FileVantageRuleGroup for each 'type'
+          $Param = @{ Detailed = $true; All = $true }
+          if ($Pair.Key -eq 'FileVantagePolicy' -and $Config.($Pair.Key).Import.exclusions) {
+            # Include 'exclusions' if present in imported policies
+            $Param['include'] = 'exclusions'
+          }
+          @($Pair.Value.Import.$Property | Select-Object -Unique).foreach{
+            # Retrieve user-created FileVantagePolicy/RuleGroup for each platform/type and update identifiers
+            Write-Host "[Import-FalconConfig] Retrieving $_ '$($Pair.Key)'..."
+            @(& "Get-Falcon$($Pair.Key)" @Param -Type $_ | Where-Object -FilterScript $FilterScript).foreach{
               Update-Id $_ $Pair.Key
               Compress-Property $_
             }
           }
         } else {
+          # Retrieve existing items from CID and update identifiers
           Write-Host "[Import-FalconConfig] Retrieving '$($Pair.Key)'..."
           @(& "Get-Falcon$($Pair.Key)" -Detailed -All).foreach{
             Update-Id $_ $Pair.Key
@@ -574,7 +574,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
     foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -eq 'HostGroup' -and $_.Value.Import })) {
       foreach ($HostGroup in ($Pair.Value.Import | & "New-Falcon$($Pair.Key)")) {
-        # Create HostGroup
+        # Create HostGroup to prepare for assignment
         Update-Id $HostGroup $Pair.Key
         Add-Result Created $HostGroup $Pair.Key
       }
