@@ -29,23 +29,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       # Request content for provided 'Item'
       Write-Host "[Export-FalconConfig] Exporting '$String'..."
       $ConfigFile = Join-Path $Location "$String.json"
-      $Config = if ($String -match 'Policy$') {
-        if ($String -eq 'FileVantagePolicy') {
-          @((Get-Command Get-FalconFileVantagePolicy).Parameters.Type.Attributes.ValidValues).foreach{
-            # Export user-created FileVantagePolicy for each 'platform', excluding defaults
-            & "Get-Falcon$String" -Type $_ -Detailed -All -Include exclusions | Where-Object { $_.created_by -ne
-              'cs-cloud-provisioning' -and $_.name -notmatch '^Default Policy \((Linux|Mac|Windows)\)$' } 2>$null
-          }
+      $Config = if ($String -match '^FileVantage(Policy|RuleGroup)$') {
+        [string]$Filter = if ($String -eq 'FileVantagePolicy') {
+          # Filter to user-created FileVantagePolicy
+          '$_.created_by -ne "cs-cloud-provisioning" -and $_.name -notmatch "^Default Policy \((Linux|Mac|' +
+            'Windows)\)$"'
         } else {
-          @('Windows','Mac','Linux').foreach{
-            # Create policy exports in 'platform_name' order to retain precedence
-            & "Get-Falcon$String" -Filter "platform_name:'$_'" -Detailed -All 2>$null
-          }
+          # Filter to user-created FileVantageRuleGroup
+          '$_.created_by -ne "internal"'
         }
-      } elseif ($String -eq 'FileVantageRuleGroup') {
-        @((Get-Command Get-FalconFileVantageRuleGroup).Parameters.Type.Attributes.ValidValues).foreach{
-          # Export user-created FileVantageRuleGroup for each 'Type', excluding defaults
-          & "Get-Falcon$String" -Type $_ -Detailed -All | Where-Object { $_.created_by -ne 'internal' } 2>$null
+        $Param = @{ Detailed = $true; All = $true }
+        if ($String -eq 'FileVantagePolicy' ) { $Param['include'] = 'exclusions' }
+        @((Get-Command "Get-Falcon$String").Parameters.Type.Attributes.ValidValues).foreach{
+          # Retrieve FileVantagePolicy/RuleGroup for each 'Type'
+          & "Get-Falcon$String" @Param -Type $_ 2>$null |
+            Where-Object -FilterScript ([scriptblock]::Create($Filter))
+        }
+      } elseif ($String -match 'Policy$') {
+        @('Windows','Mac','Linux').foreach{
+          # Create policy exports in 'platform_name' order to retain precedence
+          & "Get-Falcon$String" -Filter "platform_name:'$_'" -Detailed -All 2>$null
         }
       } else {
         & "Get-Falcon$String" -Detailed -All 2>$null
@@ -89,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({ $_.Name -eq
           'ExportItem' }).Parameters.Where({ $_.Name -eq 'Select' }).Attributes.ValidValues).foreach{ $_ }
       }
-      if ($Select -match '^((Ioa|Ml|Sv)Exclusion|Ioc)$' -and $Select -notcontains 'HostGroup') {
+      if ($Select -match '^((Ioa|Ml|Sv)Exclusion|FileVantagePolicy|Ioc)$' -and $Select -notcontains 'HostGroup') {
         # Force 'HostGroup' when exporting exclusions or IOCs
         [string[]]$Select = @($Select + 'HostGroup')
       }
@@ -454,7 +457,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             $Param['include'] = 'exclusions'
           }
           @($Pair.Value.Import.$Property | Select-Object -Unique).foreach{
-            # Retrieve FileVantagePolicy/RuleGroup for each platform/type and update identifiers
+            # Retrieve FileVantagePolicy/RuleGroup for each 'Type' and update identifiers
             Write-Host "[Import-FalconConfig] Retrieving $_ '$($Pair.Key)'..."
             @(& "Get-Falcon$($Pair.Key)" @Param -Type $_ | Where-Object -FilterScript ([scriptblock]::Create(
             $Filter))).foreach{
