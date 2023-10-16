@@ -138,7 +138,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
         [string]$Property = if ($Account) { 'account_id' } else { 'host_id' }
         for ($i = 0; $i -lt ($Request | Measure-Object).Count; $i += 100) {
           # In groups of 100, perform filtered search for login events
-          $Filter = @(($Request[$i..($i + 99)]).id).foreach{ $Property,"'$_'" -join ':' } -join ','
+          $Filter = @(@($Request.id)[$i..($i + 99)]).foreach{ $Property,"'$_'" -join ':' } -join ','
           $Content = & $MyInvocation.MyCommand.Name -Filter $Filter -Detailed -All -Login -EA 0
           foreach ($Value in @($Content.$Property | Select-Object -Unique)) {
             @($Request).Where({ $_.id -eq $Value }).foreach{
