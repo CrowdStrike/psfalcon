@@ -9,19 +9,19 @@ Path to a list of hostnames (one per line)
 Host group identifier
 #>
 param(
-    [Parameter(Mandatory,Position=1)]
-    [ValidatePattern('\.txt$')]
-    [ValidateScript({
-        if (Test-Path -Path $_ -PathType Leaf) {
-            $true
-        } else {
-            throw "Cannot find path '$_' because it does not exist or is a directory."
-        }
-    })]
-    [string]$Path,
-    [Parameter(Mandatory,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [string]$GroupId
+  [Parameter(Mandatory,Position=1)]
+  [ValidatePattern('\.txt$')]
+  [ValidateScript({
+    if (Test-Path -Path $_ -PathType Leaf) {
+      $true
+    } else {
+      throw "Cannot find path '$_' because it does not exist or is a directory."
+    }
+  })]
+  [string]$Path,
+  [Parameter(Mandatory,Position=2)]
+  [ValidatePattern('^[a-fA-F0-9]{32}$')]
+  [string]$GroupId
 )
 # Error if host group does not exist
 if (!(Get-FalconHostGroup -Id $GroupId)) { throw "No host group found matching '$GroupId'." }

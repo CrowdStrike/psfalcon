@@ -11,20 +11,20 @@ Name of host group to create
 Description of the host group to create
 #>
 param(
-    [Parameter(Mandatory,Position=1)]
-    [ValidatePattern('\.txt$')]
-    [ValidateScript({
-        if (Test-Path -Path $_ -PathType Leaf) {
-            $true
-        } else {
-            throw "Cannot find path '$_' because it does not exist or is a directory."
-        }
-    })]
-    [string]$Path,
-    [Parameter(Mandatory,Position=2)]
-    [string]$Name,
-    [Parameter(Position=3)]
-    [string]$Description
+  [Parameter(Mandatory,Position=1)]
+  [ValidatePattern('\.txt$')]
+  [ValidateScript({
+    if (Test-Path -Path $_ -PathType Leaf) {
+      $true
+    } else {
+      throw "Cannot find path '$_' because it does not exist or is a directory."
+    }
+  })]
+  [string]$Path,
+  [Parameter(Mandatory,Position=2)]
+  [string]$Name,
+  [Parameter(Position=3)]
+  [string]$Description
 )
 # Create host group
 $Param = @{ GroupType = 'static'; Name = $Name }

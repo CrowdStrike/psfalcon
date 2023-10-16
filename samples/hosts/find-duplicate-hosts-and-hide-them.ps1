@@ -17,7 +17,7 @@ with Falcon and can be restored from the trash using their 'device_id' value and
 # Use Find-FalconDuplicate to find duplicate hosts and hide them
 Find-FalconDuplicate -OutVariable Duplicate | Invoke-FalconHostAction -Name hide_host
 if ($Duplicate) {
-    # If duplicates were found, output to CSV and display file
-    $Duplicate | Export-Csv -Path $OutputFile -NoTypeInformation
-    if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
+  # If duplicates were found, output to CSV and display file
+  $Duplicate | Export-Csv -Path $OutputFile -NoTypeInformation
+  if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
 }

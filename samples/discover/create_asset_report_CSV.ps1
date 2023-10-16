@@ -99,6 +99,4 @@ process {
     }
   }
 }
-end {
-  if (Test-Path $Output) { Get-ChildItem $Output | Select-Object FullName,Length,LastWriteTime }
-}
+end { if (Test-Path $Output) { Get-ChildItem $Output | Select-Object FullName,Length,LastWriteTime }}

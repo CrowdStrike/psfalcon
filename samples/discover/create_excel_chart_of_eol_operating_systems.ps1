@@ -34,7 +34,7 @@ param(
 begin {
   $Token = @{}
   @('ClientId','ClientSecret','Hostname','Cloud').foreach{
-    if ($PSBoundParameters.$_) { $Token[$_] = $PSBoundParameters.$_ }
+  if ($PSBoundParameters.$_) { $Token[$_] = $PSBoundParameters.$_ }
   }
   Request-FalconToken @Token
 }
