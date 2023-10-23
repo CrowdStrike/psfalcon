@@ -92,13 +92,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({ $_.Name -eq
           'ExportItem' }).Parameters.Where({ $_.Name -eq 'Select' }).Attributes.ValidValues).foreach{ $_ }
       }
-      if ($Select -match '^((Ioa|Ml|Sv)Exclusion|FileVantagePolicy|Ioc)$' -and $Select -notcontains 'HostGroup') {
-        # Force 'HostGroup' when exporting exclusions or IOCs
-        [string[]]$Select = @($Select + 'HostGroup')
+      if ($Select -contains 'FileVantagePolicy' -and $Select -notcontains 'FileVantageRuleGroup') {
+        # Force 'FileVantageRuleGroup' when exporting 'FileVantagePolicy'
+        [string[]]$Select = @($Select + 'FileVantageRuleGroup')
       }
       if ($Select -contains 'FirewallGroup') {
         # Force 'FirewallRule' when exporting 'FirewallGroup'
         [string[]]$Select = @($Select + 'FirewallRule')
+      }
+      if ($Select -match '^((Ioa|Ml|Sv)Exclusion|FileVantagePolicy|Ioc)$' -and $Select -notcontains 'HostGroup') {
+        # Force 'HostGroup' when exporting exclusions or IOCs
+        [string[]]$Select = @($Select + 'HostGroup')
       }
       # Retrieve results, export to Json and capture file name
       [string[]]$JsonFiles = foreach ($String in $Select) { ,(Get-ItemContent $String) }
