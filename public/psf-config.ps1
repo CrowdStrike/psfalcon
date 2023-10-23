@@ -392,7 +392,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
     function Submit-Group ([string]$Type,[string]$Property,[object]$Object,[object]$Cid) {
       if ($Type -eq 'FileVantagePolicy') {
-        if ($Object.rule_groups) {
+        if ($Property -eq 'rule_groups' -and $Object.rule_groups) {
           # Assign missing 'rule_groups'
           foreach ($OldId in $Object.rule_groups) {
             # Update rule_groups with new identifier(s)
@@ -412,8 +412,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               
             }
           }
-        }
-        if ($Object.host_groups) {
+        } elseif ($Property -eq 'host_groups' -and $Object.host_groups) {
           # Filter to host_groups that are missing
           [string[]]$Add = @($Object.host_groups).Where({ $Cid.host_groups -notcontains $_ })
           if ($Add) {
@@ -907,7 +906,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($Policy.name -notmatch $PolicyDefault) {
           if ($Pair.Key -eq 'FileVantagePolicy') {
             # Assign rule_groups and host_groups
-            if ($Policy.rule_groups -or $Policy.host_groups) { Submit-Group $Pair.Key -Object $Policy -Cid $Cid }
+            if ($Policy.rule_groups) { Submit-Group $Pair.Key rule_groups $Policy $Cid }
+            if ($Policy.host_groups) { Submit-Group $Pair.Key host_groups $Policy $Cid }
             if ($Cid.enabled -ne $Policy.enabled) {
               # Enable/disable FileVantagePolicy
               $Req = $Policy | Edit-FalconFileVantagePolicy
