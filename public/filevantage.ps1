@@ -255,10 +255,10 @@ Track registry key set events
 Track registry value create events
 .PARAMETER RegValueDelete
 Track registry value delete events
-.PARAMETER ContentFiles
-
 .PARAMETER EnableContentCapture
-
+Enable the capture of file content during events
+.PARAMETER ContentFiles
+A specific list of files to monitor for content changes
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -378,12 +378,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
     [boolean]$RegValueDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
       Position=29)]
-    [Alias('content_files')]
-    [string[]]$ContentFiles,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=30)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=30)]
+    [Alias('content_files')]
+    [string[]]$ContentFiles,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -868,10 +868,10 @@ Track registry key set events
 Track registry value create events
 .PARAMETER RegValueDelete
 Track registry value delete events
-.PARAMETER ContentFiles
-
 .PARAMETER EnableContentCapture
-
+Enable the capture of file content during events
+.PARAMETER ContentFiles
+A specific list of files to monitor for content changes
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -990,12 +990,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
     [boolean]$RegValueDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
       Position=28)]
-    [Alias('content_files')]
-    [string[]]$ContentFiles,
-    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=29)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=29)]
+    [Alias('content_files')]
+    [string[]]$ContentFiles,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
