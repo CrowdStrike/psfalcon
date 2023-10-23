@@ -391,13 +391,49 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
     }
     function Submit-Group ([string]$Type,[string]$Property,[object]$Object,[object]$Cid) {
-      # Assign group(s) to target object and capture result
-      [string]$Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
-      $Req = foreach ($Id in $Object.$Property) {
-        if ($Cid.$Property -notcontains $Id) { @(Invoke-PolicyAction $Type $Invoke $Object.id $Id).foreach{ $_ }}
-      }
-      if ($Req) {
-        Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') ($Req[-1].$Property.id -join ',')
+      if ($Type -eq 'FileVantagePolicy') {
+        if ($Object.rule_groups) {
+          # Assign missing 'rule_groups'
+          foreach ($OldId in $Object.rule_groups) {
+            # Update rule_groups with new identifier(s)
+            $Object.rule_groups = $Object.rule_groups -replace $OldId,
+              @($Config.Ids.FileVantageRuleGroup).Where({ $_.old_id -eq $OldId }).new_id
+          }
+          if ($Object.rule_groups) {
+            # Filter to rule_groups that are missing
+            [string[]]$Add = @($Object.rule_groups).Where({ $Cid.rule_groups -notcontains $_ -and
+              ![string]::IsNullOrWhiteSpace($_) })
+            if ($Add) {
+              # Assign and capture result
+              @(Add-FalconFileVantageRuleGroup -PolicyId $Object.id -Id $Add).foreach{
+                Add-Result Modified $_ $Pair.Key rule_groups ($Cid.rule_groups -join ',') (
+                  $_.rule_groups.id -join ',')
+              }
+              
+            }
+          }
+        }
+        if ($Object.host_groups) {
+          # Filter to host_groups that are missing
+          [string[]]$Add = @($Object.host_groups).Where({ $Cid.host_groups -notcontains $_ })
+          if ($Add) {
+            # Assign and capture result
+            @(Add-FalconFileVantageHostGroup -PolicyId $Object.id -Id $Add).foreach{
+              Add-Result Modified $_ $Pair.Key host_groups ($Cid.host_groups -join ',') (
+                $_.host_groups.id -join ',')
+            }
+          }
+        }
+      } else {
+        # Assign group(s) to target object
+        [string]$Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
+        $Req = foreach ($Id in $Object.$Property) {
+          if ($Cid.$Property -notcontains $Id) { @(Invoke-PolicyAction $Type $Invoke $Object.id $Id).foreach{ $_ }}
+        }
+        if ($Req) {
+          # Capture result
+          Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') ($Req[-1].$Property.id -join ',')
+        }
       }
     }
     function Update-Id ([object]$Item,[string]$Type) {
@@ -870,30 +906,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         if ($Policy.name -notmatch $PolicyDefault) {
           if ($Pair.Key -eq 'FileVantagePolicy') {
-            foreach ($OldId in $Policy.rule_groups) {
-              # Update rule_groups with new identifier
-              $Policy.rule_groups = $Policy.rule_groups -replace $OldId,
-                @($Config.Ids.FileVantageRuleGroup).Where({ $_.old_id -eq $OldId }).new_id
-            }
-            if ($Policy.rule_groups) {
-              # Assign rule_groups
-              @(Add-FalconFileVantageRuleGroup -PolicyId $Policy.id -Id $Policy.rule_groups).foreach{
-                Add-Result Modified $_ $Pair.Key rule_groups ($Cid.rule_groups.id -join ',') (
-                  $_.rule_groups.id -join ',')
-              }
-            }
-            foreach ($OldId in $Policy.host_groups) {
-              # Update host_groups with new identifier
-              $Policy.host_groups = $Policy.host_groups -replace $OldId,
-                @($Config.Ids.HostGroup).Where({ $_.old_id -eq $OldId }).new_id
-            }
-            if ($Policy.host_groups) {
-              # Assign host_groups
-              @(Add-FalconFileVantageHostGroup -PolicyId $Policy.id -Id $Policy.host_groups).foreach{
-                Add-Result Modified $_ $Pair.Key host_groups ($Cid.host_groups.id -join ',') (
-                  $_.host_groups.id -join ',')
-              }
-            }
+            # Assign rule_groups and host_groups
+            if ($Policy.rule_groups -or $Policy.host_groups) { Submit-Group $Pair.Key -Object $Policy -Cid $Cid }
             if ($Cid.enabled -ne $Policy.enabled) {
               # Enable/disable FileVantagePolicy
               $Req = $Policy | Edit-FalconFileVantagePolicy
