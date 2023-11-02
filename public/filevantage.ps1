@@ -749,6 +749,17 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [string]$Timezone,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=5)]
+    [ValidateScript({
+      foreach ($Object in $_) {
+        $Param = @{
+          Object = $Object
+          Command = 'New-FalconFileVantageExclusion'
+          Endpoint = '/filevantage/entities/policy-scheduled-exclusions/v1:post'
+          Allowed = @('all_day','end_time','frequency','monthly_days','occurrence','start_time','weekly_days')
+        }
+        Confirm-Parameter @Param
+      }
+    })]
     [object]$Repeated,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=6)]
@@ -770,7 +781,18 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [Alias('policy_id')]
     [string]$PolicyId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('description','name','policy_id','processes','schedule_end','schedule_start','timezone',
+            'users','repeated')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconFileVantagePolicy {
