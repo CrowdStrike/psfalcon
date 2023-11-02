@@ -95,7 +95,8 @@ End of scheduled exclusion (RFC3339)
 .PARAMETER Timezone
 Timezone for scheduled start/end time (TZ database format)
 .PARAMETER Repeated
-Object containing properties for repeating exclusion based on scheduled start/end time
+Object containing properties for repeating exclusion based on scheduled start/end time ('all_day', 'end_time',
+'frequency', 'monthly_days', 'occurrence', 'start_time', and 'weekly_days')
 .PARAMETER Process
 One or more process names in glob syntax, separated by commas
 .PARAMETER User
@@ -737,7 +738,8 @@ End of scheduled exclusion (RFC3339)
 .PARAMETER Timezone
 Timezone for scheduled start/end time (TZ database format)
 .PARAMETER Repeated
-Object containing properties for repeating exclusion based on scheduled start/end time
+Object containing properties for repeating exclusion based on scheduled start/end time ('all_day', 'end_time',
+'frequency', 'monthly_days', 'occurrence', 'start_time', and 'weekly_days')
 .PARAMETER Process
 One or more process names in glob syntax, separated by commas
 .PARAMETER User
