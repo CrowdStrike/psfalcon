@@ -1275,8 +1275,7 @@ function Set-FalconFileVantagePrecedence {
 .SYNOPSIS
 Set FileVantage policy precedence
 .DESCRIPTION
-All policy identifiers must be supplied in order (with the exception of the 'platform_default' policy) to
-define policy precedence.
+All policy identifiers must be supplied in order (including the default policy) to define policy precedence.
 
 Requires 'Falcon FileVantage: Write'.
 .PARAMETER Type
