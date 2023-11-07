@@ -23,7 +23,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonPolicy
   param(
     [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
       Position=1)]
-    [ValidateSet('informational','medium','high',IgnoreCase=$false)]
+    [ValidateSet('informational','medium','high','critical',IgnoreCase=$false)]
     [string]$Severity,
     [Parameter(ParameterSetName='/settings/entities/policy/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
       Position=2)]
