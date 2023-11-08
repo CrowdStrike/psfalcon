@@ -327,7 +327,7 @@ Quarantine malicious files
 Maximum file size, in MB
 .PARAMETER CpuPriority
 Maximum CPU utilization
-.PARAMETER EndpointNotification
+.PARAMETER Notification
 Show notification to end user
 .PARAMETER MaxDuration
 Allowable scan duration, in hours
