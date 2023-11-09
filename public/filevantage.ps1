@@ -124,12 +124,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
     [string]$Name,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
     [Alias('schedule_start')]
     [string]$ScheduleStart,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
       ValueFromPipelineByPropertyName,Position=5)]
-    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
     [Alias('schedule_end')]
     [string]$ScheduleEnd,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
@@ -760,12 +758,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [string]$Name,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(-\d{2}:\d{2}|Z)?$')]
     [Alias('schedule_start')]
     [string]$ScheduleStart,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=3)]
-    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(-\d{2}:\d{2}|Z)?$')]
     [Alias('schedule_end')]
     [string]$ScheduleEnd,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
