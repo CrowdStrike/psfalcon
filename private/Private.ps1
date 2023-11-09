@@ -834,7 +834,7 @@ function Set-Property {
   [OutputType([void])]
   param([object]$Object,[string]$Name,[object]$Value)
   process {
-    if ($Object.$Name) {
+    if ($Object.PSObject.Properties.Item($Name)) {
       # Update existing property
       $Object.$Name = $Value
     } else {
