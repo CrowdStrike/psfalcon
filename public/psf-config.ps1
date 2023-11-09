@@ -187,12 +187,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         type = $Type
         id = if ($Action -eq 'Ignored') {
           $null
+        } elseif ($Item.instance_id) {
+          $Item.instance_id
         } else {
-          if ($Item.instance_id) {
-            $Item.instance_id
-          } else {
-            $Item.id
-          }
+          $Item.id
         }
         name = if ($Item.value) {
           if ($Item.type) { $Item.type,$Item.value -join ':' } else { $Item.value }
@@ -877,9 +875,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Modify })) {
       foreach ($Policy in $Pair.Value.Modify) {
         # Update policy with current id value and use CID value for comparison
-        [string]$Policy.id = ($Config.Ids.($Pair.Key) | Where-Object { $_.name -eq $Policy.name -and
+        [string]$Policy.id = @($Config.Ids.($Pair.Key)).Where({ $_.name -eq $Policy.name -and
           $_.platform_name -eq $Policy.platform_name }).new_id
-        [object]$Cid = $Config.($Pair.Key).cid | Where-Object { $_.id -eq $Policy.id }
+        [object]$Cid = @($Config.($Pair.Key).cid).Where({ $_.id -eq $Policy.id })
         if ($Pair.Key -eq 'FirewallPolicy') {
           if ($Policy.settings.policy_id) { $Policy.settings.policy_id = $Policy.id }
           foreach ($Id in $Policy.rule_group_ids) {
@@ -913,10 +911,40 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           if ($Pair.Key -eq 'FileVantagePolicy') {
             if ($Policy.exclusions) {
               foreach ($Exclusion in $Policy.exclusions) {
-                # Create exclusions
-                $Exclusion.policy_id = $Policy.id
-                $Req = $Exclusion | New-FalconFileVantageExclusion
-                if ($Req) { Add-Result Created $Req FileVantageExclusion }
+                # Check for existing matching exclusion
+                $Existing = @($Cid.exclusions).Where({ $_.name -eq $Exclusion.name })
+                if ($null -eq $Exclusion.repeated.PSObject.Properties.Name) {
+                  # Remove 'repeated' from exclusion when empty to prevent submission error
+                  $Exclusion.PSObject.Properties.Remove('repeated')
+                }
+                if ($Existing) {
+                  # Compare existing exclusion against import to find new or modified properties
+                  [string[]]$Modified = @($Exclusion.PSObject.Properties.Name).Where({ $_ -notmatch
+                  '^((policy_)?id|\w+_timestamp)$' }).foreach{
+                    if (!$Existing.$_ -or $Exclusion.$_ -ne $Existing.$_) { $_ }
+                  }
+                  if ($Modified) {
+                    # Update identifiers and modify exclusion
+                    @('id','policy_id').foreach{ $Exclusion.$_ = $Existing.$_ }
+                    $Req = $Exclusion | Edit-FalconFileVantageExclusion
+                    if ($Req) {
+                      @($Modified).foreach{
+                        if ($_ -eq 'repeated') {
+                          # Convert 'repeated' to a string for CSV output
+                          Add-Result Modified $Req FileVantageExclusion $_ ($Existing.$_ | Format-List |
+                            Out-String).Trim() ($Req.$_ | Format-List | Out-String).Trim()
+                        } else {
+                          Add-Result Modified $Req FileVantageExclusion $_ $Existing.$_ $Req.$_
+                        }
+                      }
+                    }
+                  }
+                } else {
+                  # Create exclusion
+                  $Exclusion.policy_id = $Policy.id
+                  $Req = $Exclusion | New-FalconFileVantageExclusion
+                  if ($Req) { Add-Result Created $Req FileVantageExclusion }
+                }
               }
             }
             # Assign rule_groups and host_groups
