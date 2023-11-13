@@ -99,7 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSample
     [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('Ids','sha256')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
