@@ -222,6 +222,8 @@ Modify a rule within a FileVantage rule group
 Requires 'Falcon FileVantage: Write'.
 .PARAMETER Id
 Rule identifier
+.PARAMETER Precedence
+Precedence of the rule inside of the existing rule group
 .PARAMETER Path
 Path of the directory, file, or registry key to monitor
 .PARAMETER Depth
@@ -291,118 +293,121 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [int32]$Precedence,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=2)]
+      Position=3)]
     [ValidateLength(1,250)]
     [string]$Path,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=3)]
+      Position=4)]
     [ValidateSet('1','2','3','4','5','ANY',IgnoreCase=$false)]
     [string]$Depth,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=4)]
+      Position=5)]
     [ValidateSet('Low','Medium','High','Critical',IgnoreCase=$false)]
     [string]$Severity,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=5)]
+      Position=6)]
     [ValidateLength(0,500)]
     [string]$Description,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=6)]
+      Position=7)]
     [string]$Include,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=7)]
+      Position=8)]
     [string]$Exclude,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=8)]
+      Position=9)]
     [Alias('include_processes')]
     [string]$IncludeProcess,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=9)]
+      Position=10)]
     [Alias('exclude_processes')]
     [string]$ExcludeProcess,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=10)]
+      Position=11)]
     [Alias('include_users')]
     [string]$IncludeUser,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=11)]
+      Position=12)]
     [Alias('exclude_users')]
     [string]$ExcludeUser,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=12)]
+      Position=13)]
     [Alias('watch_attributes_directory_changes')]
     [boolean]$DirectoryAttribute,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=13)]
+      Position=14)]
     [Alias('watch_create_directory_changes')]
     [boolean]$DirectoryCreate,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=14)]
+      Position=15)]
     [Alias('watch_delete_directory_changes')]
     [boolean]$DirectoryDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=15)]
+      Position=16)]
     [Alias('watch_permissions_directory_changes')]
     [boolean]$DirectoryPermission,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=16)]
+      Position=17)]
     [Alias('watch_rename_directory_changes')]
     [boolean]$DirectoryRename,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=17)]
+      Position=18)]
     [Alias('watch_attributes_file_changes')]
     [boolean]$FileAttribute,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=18)]
+      Position=19)]
     [Alias('watch_create_file_changes')]
     [boolean]$FileChange,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=19)]
+      Position=20)]
     [Alias('watch_delete_file_changes')]
     [boolean]$FileDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=20)]
+      Position=21)]
     [Alias('watch_permissions_file_changes')]
     [boolean]$FilePermission,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=21)]
+      Position=22)]
     [Alias('watch_rename_file_changes')]
     [boolean]$FileRename,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=22)]
+      Position=23)]
     [Alias('watch_write_file_changes')]
     [boolean]$FileWrite,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=23)]
+      Position=24)]
     [Alias('watch_create_key_changes')]
     [boolean]$RegKeyCreate,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=24)]
+      Position=25)]
     [Alias('watch_delete_key_changes')]
     [boolean]$RegKeyDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=25)]
+      Position=26)]
     [Alias('watch_rename_key_changes')]
     [boolean]$RegKeyRename,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=26)]
+      Position=27)]
     [Alias('watch_set_value_changes')]
     [boolean]$RegKeySet,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=27)]
+      Position=28)]
     [Alias('watch_create_value_changes')]
     [boolean]$RegValueCreate,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=28)]
+      Position=29)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=29)]
+      Position=30)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=30)]
+      Position=31)]
     [Alias('content_files')]
     [string[]]$ContentFiles,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',Mandatory,
@@ -855,7 +860,7 @@ Create a rule within a FileVantage rule group
 .DESCRIPTION
 Requires 'Falcon FileVantage: Write'.
 .PARAMETER Precedence
-Precendece for the new rule inside of the existing rule group
+Precedence for the new rule inside of the existing rule group
 .PARAMETER Path
 Path of the directory, file, or registry key to monitor
 .PARAMETER Depth
@@ -923,7 +928,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
   param(
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [int]$Precedence,
+    [int32]$Precedence,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
     [ValidateLength(1,250)]
