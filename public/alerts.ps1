@@ -27,9 +27,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
 #>
   [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/alerts/entities/alerts/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/alerts/entities/alerts/v2:post',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [Alias('Ids','composite_id')]
+    [Alias('composite_ids','composite_id','ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -76,25 +76,24 @@ Alert identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
 #>
-  [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v2:patch',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/alerts/entities/alerts/v3:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Mandatory,Position=1)]
     [ValidateSet('add_tag','append_comment','assign_to_name','assign_to_user_id','assign_to_uuid',
-      'new_behavior_processed','remove_tag','remove_tags_by_prefix','show_in_ui','update_status',
-      'unassign',IgnoreCase=$false)]
+      'remove_tag','remove_tags_by_prefix','show_in_ui','unassign','update_status',IgnoreCase=$false)]
     [string]$Name,
-    [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Position=2)]
+    [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Position=2)]
     [string]$Value,
-    [Parameter(ParameterSetName='/alerts/entities/alerts/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=3)]
-    [Alias('Ids','composite_id')]
+    [Alias('composite_ids','composite_id','ids')]
     [string[]]$Id
   )
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('ids','action_parameters') }}
+      Format = @{ Body = @{ root = @('composite_ids','action_parameters') }}
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
