@@ -119,7 +119,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
   param(
     [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory,
+    [Parameter(ParameterSetName='/devices/combined/devices/login-history/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Parameter(ParameterSetName='/devices/combined/devices/network-address-history/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -165,7 +165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
     [string]$Offset,
     [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Mandatory)]
     [switch]$Hidden,
-    [Parameter(ParameterSetName='/devices/combined/devices/login-history/v1:post',Mandatory)]
+    [Parameter(ParameterSetName='/devices/combined/devices/login-history/v2:post',Mandatory)]
     [switch]$Login,
     [Parameter(ParameterSetName='/devices/combined/devices/network-address-history/v1:post',Mandatory)]
     [switch]$Network,
@@ -189,6 +189,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
         5000
       } elseif ($PSCmdlet.ParameterSetName -eq '/devices/entities/online-state/v1:get') {
         100
+      } elseif ($PSCmdlet.ParameterSetName -eq '/devices/combined/devices/login-history/v2:post') {
+        10
       } else {
         500
       }
