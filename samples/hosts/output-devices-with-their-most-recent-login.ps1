@@ -13,15 +13,15 @@ if ($String) { $Param['Filter'] = "hostname:['$String']" } else { $Param['All'] 
 [object[]]$HostList = Get-FalconHost @Param | Select-Object $Select
 if (!$HostList) { throw "No host(s) found." }
 foreach ($i in $HostList) {
-    $Recent = if ($i.platform_name -eq 'Windows') {
-        [string[]]$Ignore = 'Font Driver Host','Window Manager','NT AUTHORITY'
-        $i.login_history | Where-Object { $Ignore -notcontains ($_.user_name -split '\\')[0] } |
-            Select-Object -First 1
-    } else {
-        $i.login_history | Select-Object -First 1
-    }
-    [void]($i.PSObject.Properties.Remove('login_history'))
-    $i.PSObject.Properties.Add((New-Object PSNoteProperty('last_login_user',$Recent.user_name)))
-    $i.PSObject.Properties.Add((New-Object PSNoteProperty('last_login_time',$Recent.login_time)))
-    $i
+  $Recent = if ($i.platform_name -eq 'Windows') {
+    [string[]]$Ignore = 'Font Driver Host','Window Manager','NT AUTHORITY'
+    $i.login_history | Where-Object { $Ignore -notcontains ($_.user_name -split '\\')[0] } |
+      Select-Object -First 1
+  } else {
+    $i.login_history | Select-Object -First 1
+  }
+  [void]($i.PSObject.Properties.Remove('login_history'))
+  $i.PSObject.Properties.Add((New-Object PSNoteProperty('last_login_user',$Recent.user_name)))
+  $i.PSObject.Properties.Add((New-Object PSNoteProperty('last_login_time',$Recent.login_time)))
+  $i
 }

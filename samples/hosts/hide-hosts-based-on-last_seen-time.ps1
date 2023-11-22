@@ -7,9 +7,9 @@ Hide hosts that have not been seen within a certain number of days
 Hide hosts last seen more than this many days ago
 #>
 param(
-    [Parameter(Mandatory)]
-    [ValidateRange(1,44)]
-    [int]$Days
+  [Parameter(Mandatory)]
+  [ValidateRange(1,44)]
+  [int]$Days
 )
 $Filter = ('last_seen:<{0}' -f "'now-$($Days)d'")
 Get-FalconHost -Filter $Filter -All -OutVariable HostList | Invoke-FalconHostAction -Name hide_host

@@ -11,32 +11,28 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Position=1)]
-        [string]$Region,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','region') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Position=1)]
+    [string]$Region,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Edit-FalconContainerAzureAccount {
 <#
@@ -51,27 +47,21 @@ Azure tenant identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAzureAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',Mandatory,
-            Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('client_id')]
-        [string]$ClientId,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('id','client_id') }
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',Mandatory,
+      Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('client_id')]
+    [string]$ClientId,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/service-principal/azure/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerAccount {
 <#
@@ -98,45 +88,42 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [Alias('ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=2)]
-        [string[]]$Location,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=3)]
-        [ValidateSet('aks','eks',IgnoreCase=$false)]
-        [Alias('cluster_service')]
-        [string[]]$ClusterService,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=4)]
-        [ValidateSet('Not Installed','Running','Stopped',IgnoreCase=$false)]
-        [Alias('cluster_status')]
-        [string[]]$ClusterStatus,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=5)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get')]
-        [int]$Offset,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('cluster_status','ids','locations','cluster_service','limit','offset') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=2)]
+    [Alias('locations')]
+    [string[]]$Location,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=3)]
+    [ValidateSet('aks','eks',IgnoreCase=$false)]
+    [Alias('cluster_service')]
+    [string[]]$ClusterService,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=4)]
+    [ValidateSet('Not Installed','Running','Stopped',IgnoreCase=$false)]
+    [Alias('cluster_status')]
+    [string[]]$ClusterStatus,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get',Position=5)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud_cluster/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconContainerAwsAccount {
 <#
@@ -148,6 +135,8 @@ Requires 'Kubernetes Protection: Read'.
 AWS account identifier
 .PARAMETER Status
 Filter by account status
+.PARAMETER IsHorizonAcct
+Restrict results to Falcon Horizon
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -159,39 +148,39 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=2)]
-        [ValidateSet('provisioned','operational',IgnoreCase=$false)]
-        [string]$Status,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=3)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','offset','limit','status') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=2)]
+    [ValidateSet('provisioned','operational',IgnoreCase=$false)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=3)]
+    [ValidateSet('false','true',IgnoreCase=$false)]
+    [Alias('is_horizon_acct')]
+    [string]$IsHorizonAcct,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=4)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconContainerAzureAccount {
 <#
@@ -218,46 +207,42 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('subscription_id')]
-        [string[]]$SubscriptionId,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=3)]
-        [ValidateSet('operational','provisioned',IgnoreCase=$false)]
-        [string]$Status,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=4)]
-        [Alias('is_horizon_acct')]
-        [boolean]$IsHorizonAcct,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=5)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
-        [int]$Offset,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','status','limit','is_horizon_acct','offset','subscription_id') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('subscription_id')]
+    [string[]]$SubscriptionId,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=3)]
+    [ValidateSet('operational','provisioned',IgnoreCase=$false)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=4)]
+    [Alias('is_horizon_acct')]
+    [boolean]$IsHorizonAcct,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=5)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconContainerAzureConfig {
 <#
@@ -278,35 +263,31 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureConfig
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [Alias('ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',Position=2)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
-        [int]$Offset,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('offset','ids','limit') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get',Position=2)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/config/azure/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconContainerAzureScript {
 <#
@@ -321,26 +302,20 @@ Azure subscription identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureScript
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/user-script/azure/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/user-script/azure/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [string]$Id,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/user-script/azure/v1:get',Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('subscription_id')]
-        [string[]]$SubscriptionId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('id','subscription_id') }
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/user-script/azure/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/user-script/azure/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/user-script/azure/v1:get',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('subscription_id')]
+    [string[]]$SubscriptionId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerAzureTenant {
 <#
@@ -363,39 +338,35 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureTenant
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',Position=2)]
-        [ValidateSet('Not Installed','Running','Stopped',IgnoreCase=$false)]
-        [string]$Status,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',Position=3)]
-        [int]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get')]
-        [int]$Offset,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','status','offset','limit') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',Position=2)]
+    [ValidateSet('Not Installed','Running','Stopped',IgnoreCase=$false)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get',Position=3)]
+    [int]$Limit,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get')]
+    [int]$Offset,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/tenants/azure/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconContainerCloud {
 <#
@@ -408,32 +379,28 @@ Cloud provider
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCloud
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
-        [Alias('clouds')]
-        [string[]]$Cloud
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('clouds') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/cloud-locations/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidateSet('aws','azure','gcp',IgnoreCase=$false)]
+    [Alias('clouds')]
+    [string[]]$Cloud
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Cloud) { @($Cloud).foreach{ $List.Add($_) }}
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Cloud'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process {
-        if ($Cloud) { @($Cloud).foreach{ $List.Add($_) }}
-    }
-    end {
-        if ($List) {
-            $PSBoundParameters['Cloud'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Get-FalconContainerCluster {
 <#
@@ -449,6 +416,8 @@ Cloud provider location
 Cluster name
 .PARAMETER ClusterService
 Cluster service
+.PARAMETER Status
+Cluster Status
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -460,45 +429,44 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [Alias('account_ids','Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=2)]
-        [Alias('Locations')]
-        [string[]]$Location,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=3)]
-        [Alias('cluster_names','ClusterNames')]
-        [string[]]$ClusterName,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=4)]
-        [ValidateSet('eks',IgnoreCase=$false)]
-        [Alias('cluster_service')]
-        [string]$ClusterService,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=5)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('limit','cluster_names','account_ids','offset','cluster_service','locations') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('account_ids','Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=2)]
+    [Alias('locations')]
+    [string[]]$Location,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=3)]
+    [Alias('cluster_names','ClusterNames')]
+    [string[]]$ClusterName,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=4)]
+    [ValidateSet('eks',IgnoreCase=$false)]
+    [Alias('cluster_service')]
+    [string]$ClusterService,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=5)]
+    [ValidateSet('Not Installed','Running','Stopped',IgnoreCase=$false)]
+    [string[]]$Status,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get',Position=6)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/kubernetes/clusters/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconContainerScript {
 <#
@@ -509,11 +477,10 @@ Requires 'Kubernetes Protection: Read'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerScript
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/gen/scripts/v1:get',
-        SupportsShouldProcess)]
-    param()
-    begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-    process { Invoke-Falcon @Param }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/gen/scripts/v1:get',
+    SupportsShouldProcess)]
+  param()
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Invoke-FalconContainerScan {
 <#
@@ -526,23 +493,16 @@ Scan type
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContainerScan
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',Mandatory,
-           Position=1)]
-        [ValidateSet('dry-run','full','cluster-refresh',IgnoreCase=$false)]
-        [Alias('scan-type')]
-        [string]$ScanType
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('scan_type') }
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/scan/trigger/v1:post',Mandatory,Position=1)]
+    [ValidateSet('cluster-refresh','dry-run','full',IgnoreCase=$false)]
+    [Alias('scan_type')]
+    [string]$ScanType
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerAwsAccount {
 <#
@@ -557,26 +517,19 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
-           Position=1)]
-        [string]$Region,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('account_id')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('account_id','region') }}
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,Position=1)]
+    [string]$Region,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('account_id')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerAzureAccount {
 <#
@@ -591,26 +544,20 @@ Azure tenant identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAzureAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('subscription_id')]
-        [string]$SubscriptionId,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('tenant_id')]
-        [string]$TenantId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('subscription_id','tenant_id') }}
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('subscription_id')]
+    [string]$SubscriptionId,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:post',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant_id')]
+    [string]$TenantId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerKey {
 <#
@@ -621,10 +568,10 @@ Requires 'Kubernetes Protection: Write'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerKey
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/api-key/v1:post',
-        SupportsShouldProcess)]
-    param()
-    process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/api-key/v1:post',
+    SupportsShouldProcess)]
+  param()
+  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Receive-FalconContainerYaml {
 <#
@@ -632,51 +579,54 @@ function Receive-FalconContainerYaml {
 Download a sample Helm values.yaml file
 .DESCRIPTION
 Requires 'Kubernetes Protection: Read'.
-.PARAMETER Path
-Destination path
 .PARAMETER ClusterName
 Cluster name
+.PARAMETER IsSelfManagedCluster
+Restrict results to clusters that are not managed by the cloud provider
+.PARAMETER Path
+Destination path
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconContainerYaml
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,
-           Position=1)]
-        [string]$Path,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [Alias('cluster_name')]
-        [string]$ClusterName,
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get')]
-        [switch]$Force
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Headers = @{ Accept = 'application/yaml' }
-            Format = @{
-                Query = @('cluster_name')
-                Outfile = 'path'
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('cluster_name')]
+    [string]$ClusterName,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Position=2)]
+    [Alias('is_self_managed_cluster')]
+    [boolean]$IsSelfManagedCluster,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get',Mandatory,Position=3)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/integration/agent/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ Accept = 'application/yaml' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
-    process {
-        $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'yaml'
-        $OutPath = Test-OutFile $PSBoundParameters.Path
-        if ($OutPath.Category -eq 'ObjectNotFound') {
-            Write-Error @OutPath
-        } elseif ($PSBoundParameters.Path) {
-            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
-                Write-Error @OutPath
-            } else {
-                Invoke-Falcon @Param -Inputs $PSBoundParameters
-            }
-        }}
+    $Param.Format['Outfile'] = 'path'
+  }
+  process {
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'yaml'
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
 }
 function Remove-FalconContainerAwsAccount {
 <#
@@ -689,30 +639,26 @@ AWS account identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAwsAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^\d{12}$')]
-        [Alias('Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^\d{12}$')]
+    [Alias('Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Remove-FalconContainerAzureAccount {
 <#
@@ -725,28 +671,24 @@ Azure subscription identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAzureAccount
 #>
-    [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',
-        SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }

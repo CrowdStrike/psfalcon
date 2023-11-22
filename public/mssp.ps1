@@ -11,36 +11,30 @@ Customer identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_id')]
-        [string]$Id,
-        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cids','child_cid')]
-        [string[]]$Cid
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('cid_group_id','cids') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cid_group_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cids','child_cid')]
+    [string[]]$Cid
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process {
-        if ($Cid) { @($Cid).foreach{ $List.Add($_) }}
-    }
-    end {
-        if ($List) {
-            $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Add-FalconGroupRole {
 <#
@@ -57,38 +51,34 @@ Role identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
-            Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_id')]
-        [string]$CidGroupId,
-        [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
-            Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_id')]
-        [string]$UserGroupId,
-        [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('role_ids','RoleIds')]
-        [string[]]$RoleId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cid_group_id')]
+    [string]$CidGroupId,
+    [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('user_group_id')]
+    [string]$UserGroupId,
+    [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=3)]
+    [Alias('role_ids','RoleIds')]
+    [string[]]$RoleId
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($RoleId) { @($RoleId).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($RoleId) { @($RoleId).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Add-FalconUserGroupMember {
 <#
@@ -103,34 +93,30 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconUserGroupMember
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_id')]
-        [string]$Id,
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('user_uuids','UserIds')]
-        [string[]]$UserId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('user_uuids','user_group_id') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('user_group_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('user_uuids','UserIds')]
+    [string[]]$UserId
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Edit-FalconCidGroup {
 <#
@@ -147,28 +133,22 @@ CID group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCidGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-            Position=3)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_id')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('description','cid_group_id','name') }}
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cid_group_id')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconUserGroup {
 <#
@@ -185,28 +165,22 @@ User group description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUserGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:patch',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',ValueFromPipelineByPropertyName,
-            Position=2)]
-        [string]$Description,
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',Mandatory,
-            ValueFromPipelineByPropertyName,Position=3)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_id')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('description','name','user_group_id') }}
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('user_group_id')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCidGroup {
 <#
@@ -233,44 +207,40 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
-            ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('ids','cid_group_id')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=2)]
-        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc','name.asc','name.desc',
-            IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=3)]
-        [ValidateRange(1,5000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','offset','limit','name','sort') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-groups/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/cid-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids','cid_group_id')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=2)]
+    [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc','name.asc','name.desc',
+      IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get',Position=3)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/mssp/queries/cid-groups/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconCidGroupMember {
 <#
@@ -297,46 +267,42 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('ids','cid_group_id')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('child_cid')]
-        [string]$Cid,
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=2)]
-        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=3)]
-        [ValidateRange(1,5000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids','offset','limit','sort','cid') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/mssp/queries/cid-group-members/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids','cid_group_id')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('child_cid')]
+    [string]$Cid,
+    [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=2)]
+    [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=3)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconGroupRole {
 <#
@@ -367,61 +333,57 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconGroupRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/mssp-roles/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:get',Mandatory,ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
-        [Alias('Ids')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_id')]
-        [string]$CidGroupId,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_id')]
-        [string]$UserGroupId,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=3)]
-        [Alias('role_id')]
-        [string]$RoleId,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',Position=4)]
-        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',Position=5)]
-        [ValidateRange(1,5000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('limit','ids','role_id','cid_group_id','sort','offset','user_group_id') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/queries/mssp-roles/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:get',Mandatory,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
+    [Alias('Ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cid_group_id')]
+    [string]$CidGroupId,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('user_group_id')]
+    [string]$UserGroupId,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('role_id')]
+    [string]$RoleId,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',Position=4)]
+    [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get',Position=5)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/mssp/queries/mssp-roles/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) {
+      @($Id).foreach{ $List.Add($_) }
+    } elseif (!$Id -and !$CidGroupId -and !$UserGroupId) {
+      throw "'CidGroupId' or 'UserGroupId' must be provided."
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process {
-        if ($Id) {
-            @($Id).foreach{ $List.Add($_) }
-        } elseif (!$Id -and !$CidGroupId -and !$UserGroupId) {
-            throw "'CidGroupId' or 'UserGroupId' must be provided."
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Get-FalconMemberCid {
 <#
@@ -431,6 +393,8 @@ Search for Falcon Flight Control member CIDs
 Requires 'Flight Control: Read'.
 .PARAMETER Id
 Member CID identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
@@ -446,44 +410,40 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/children/GET/v2:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('Ids','child_cid')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=1)]
-        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=2)]
-        [ValidateRange(1,5000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{
-                Body = @{ root = @('ids') }
-                Query = @('sort','offset','limit')
-            }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/mssp/queries/children/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/children/GET/v2:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('Ids','child_cid')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=2)]
+    [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=3)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/mssp/queries/children/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconUserGroup {
 <#
@@ -510,44 +470,40 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
-            ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('ids','user_group_id')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=2)]
-        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc','name.asc','name.desc',
-            IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=3)]
-        [ValidateRange(1,5000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','offset','ids','limit','name') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-groups/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/user-groups/v2:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids','user_group_id')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=2)]
+    [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc','name.asc','name.desc',
+      IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get',Position=3)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/mssp/queries/user-groups/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconUserGroupMember {
 <#
@@ -574,46 +530,42 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v2:get',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('ids','user_group_id')]
-        [string[]]$Id,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('user_uuid','uuid')]
-        [string]$UserId,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=2)]
-        [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
-        [string]$Sort,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=3)]
-        [ValidateRange(1,5000)]
-        [int32]$Limit,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
-        [int32]$Offset,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
-        [switch]$Detailed,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
-        [switch]$All,
-        [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
-        [switch]$Total
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('sort','offset','ids','limit','user_uuid') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
-    }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-        Invoke-Falcon @Param -Inputs $PSBoundParameters
-    }
+  [CmdletBinding(DefaultParameterSetName='/mssp/queries/user-group-members/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/user-group-members/v2:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids','user_group_id')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('user_uuid','uuid')]
+    [string]$UserId,
+    [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=2)]
+    [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=3)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function New-FalconCidGroup {
 <#
@@ -628,21 +580,15 @@ CID group description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCidGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:post',Mandatory,Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:post',Mandatory,Position=2)]
-        [string]$Description
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('description','name') }}
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:post',Mandatory,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:post',Mandatory,Position=2)]
+    [string]$Description
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconUserGroup {
 <#
@@ -657,21 +603,15 @@ User group description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconUserGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:post',Mandatory,Position=1)]
-        [string]$Name,
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:post',Mandatory,Position=2)]
-        [string]$Description
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('description','name') }}
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:post',Mandatory,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:post',Mandatory,Position=2)]
+    [string]$Description
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconCidGroup {
 <#
@@ -684,29 +624,25 @@ CID group
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_ids','cid_group_id','Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('cid_group_ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cid_group_ids','cid_group_id','Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Remove-FalconCidGroupMember {
 <#
@@ -721,34 +657,30 @@ Customer identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_id')]
-        [string]$Id,
-        [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cids','child_cid')]
-        [string[]]$Cid
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('cid_group_id','cids') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v2:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cid_group_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cids','child_cid')]
+    [string[]]$Cid
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Remove-FalconGroupRole {
 <#
@@ -765,44 +697,40 @@ Role identifier, or leave blank to remove user group/CID group association
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupRole
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('cid_group_id')]
-        [string]$CidGroupId,
-        [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_id')]
-        [string]$UserGroupId,
-        [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('role_ids','RoleIds')]
-        [string[]]$RoleId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('cid_group_id','user_group_id','role_ids') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('cid_group_id')]
+    [string]$CidGroupId,
+    [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('user_group_id')]
+    [string]$UserGroupId,
+    [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [Alias('role_ids','RoleIds')]
+    [string[]]$RoleId
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($RoleId) {
+      @($RoleId).foreach{ $List.Add($_) }
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process {
-        if ($RoleId) {
-            @($RoleId).foreach{ $List.Add($_) }
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    end {
-        if ($List) {
-            $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Remove-FalconUserGroup {
 <#
@@ -815,29 +743,25 @@ User group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroup
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_ids','user_group_id','Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('user_group_ids') }
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('user_group_ids','user_group_id','Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Remove-FalconUserGroupMember {
 <#
@@ -852,31 +776,27 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
 #>
-    [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,Position=1)]
-        [ValidatePattern('^[a-fA-F0-9]{32}$')]
-        [Alias('user_group_id')]
-        [string]$Id,
-        [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-        [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-        [Alias('user_uuids','uuid','UserIds')]
-        [string[]]$UserId
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ resources = @('user_uuids','user_group_id') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('user_group_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('user_uuids','uuid','UserIds')]
+    [string[]]$UserId
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }

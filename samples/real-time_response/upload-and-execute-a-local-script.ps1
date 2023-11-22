@@ -13,22 +13,22 @@ on the local host (or send them to another location) and check for them later.
 #>
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory,Position=1)]
-    [ValidateScript({ Test-Path $_ })]
-    [string]$Path,
-    [Parameter(Mandatory,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [string[]]$HostId
+  [Parameter(Mandatory,Position=1)]
+  [ValidateScript({ Test-Path $_ })]
+  [string]$Path,
+  [Parameter(Mandatory,Position=2)]
+  [ValidatePattern('^[a-fA-F0-9]{32}$')]
+  [string[]]$HostId
 )
 begin {
-    $EncodedScript = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes(
-        (Get-Content -Path $Path -Raw)))
+  $EncodedScript = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes(
+    (Get-Content -Path $Path -Raw)))
 }
 process {
-    $Param = @{
-        Command = 'runscript'
-        Argument = '-Raw=```powershell.exe -Enc ' + $EncodedScript + '```'
-        HostId = $HostId
-    }
-    Invoke-FalconRtr @Param
+  $Param = @{
+    Command = 'runscript'
+    Argument = '-Raw=```powershell.exe -Enc ' + $EncodedScript + '```'
+    HostId = $HostId
+  }
+  Invoke-FalconRtr @Param
 }

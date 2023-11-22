@@ -7,10 +7,10 @@ Add a host group to all Sensor Visibility Exclusions
 Group identifier
 #>
 param(
-    [Parameter(Mandatory,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [string]$GroupId
+  [Parameter(Mandatory,Position=1)]
+  [ValidatePattern('^[a-fA-F0-9]{32}$')]
+  [string]$GroupId
 )
 Get-FalconSvExclusion -Detailed -All | ForEach-Object {
-    Edit-FalconSvExclusion -Id $_.id -GroupId @($_.groups.id,$GroupId)
+  Edit-FalconSvExclusion -Id $_.id -GroupId @($_.groups.id,$GroupId)
 }

@@ -1,517 +1,516 @@
 @{
-    RootModule           = 'PSFalcon.psm1'
-    ModuleVersion        = '2.2.5'
-    CompatiblePSEditions = @('Desktop','Core')
-    GUID                 = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
-    Author               = 'Brendan Kremian'
-    CompanyName          = 'CrowdStrike'
-    Copyright            = '(c) CrowdStrike. All rights reserved.'
-    Description          = 'PowerShell for the CrowdStrike Falcon OAuth2 APIs'
-    HelpInfoURI          = 'https://github.com/CrowdStrike/psfalcon/wiki'
-    PowerShellVersion    = '5.1'
-    RequiredAssemblies   = @('System.Net.Http')
-    FunctionsToExport    = @(
-      # alerts
-      'Get-FalconAlert'
-      'Invoke-FalconAlertAction'
+  RootModule = 'PSFalcon.psm1'
+  ModuleVersion = '2.2.6'
+  CompatiblePSEditions = @('Desktop','Core')
+  GUID = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
+  Author = 'Brendan Kremian'
+  CompanyName = 'CrowdStrike'
+  Copyright = '(c) CrowdStrike. All rights reserved.'
+  Description = 'PowerShell for the CrowdStrike Falcon OAuth2 APIs'
+  HelpInfoURI = 'https://github.com/CrowdStrike/psfalcon/wiki'
+  PowerShellVersion = '5.1'
+  RequiredAssemblies = @('System.Net.Http')
+  FunctionsToExport = @(
+    # alerts
+    'Get-FalconAlert'
+    'Invoke-FalconAlertAction'
 
-      # archives
-      'Expand-FalconSampleArchive'
-      'Get-FalconSampleArchive'
-      'Get-FalconSampleExtraction'
-      'Remove-FalconSampleArchive'
-      'Send-FalconSampleArchive'
+    # archives
+    'Expand-FalconSampleArchive'
+    'Get-FalconSampleArchive'
+    'Get-FalconSampleExtraction'
+    'Remove-FalconSampleArchive'
+    'Send-FalconSampleArchive'
 
-      # cloud-connect-aws
-      'Confirm-FalconDiscoverAwsAccess'
-      'Edit-FalconDiscoverAwsAccount'
-      'Get-FalconDiscoverAwsAccount'
-      'Get-FalconDiscoverAwsLink'
-      'Get-FalconDiscoverAwsSetting'
-      'New-FalconDiscoverAwsAccount'
-      'Receive-FalconDiscoverAwsScript'
-      'Remove-FalconDiscoverAwsAccount'
-      'Update-FalconDiscoverAwsSetting'
+    # cloud-connect-cspm-aws
+    'Edit-FalconHorizonAwsAccount'
+    'Get-FalconHorizonAwsAccount'
+    'Get-FalconHorizonAwsLink'
+    'New-FalconHorizonAwsAccount'
+    'Receive-FalconHorizonAwsScript'
+    'Remove-FalconHorizonAwsAccount'
 
-      # cloud-connect-azure
-      'Get-FalconDiscoverAzureAccount'
-      'Get-FalconDiscoverAzureCertificate'
-      'New-FalconDiscoverAzureAccount'
-      'Receive-FalconDiscoverAzureScript'
-      'Update-FalconDiscoverAzureAccount'
+    # cloud-connect-cspm-azure
+    'Edit-FalconHorizonAzureAccount'
+    'Get-FalconHorizonAzureAccount'
+    'Get-FalconHorizonAzureCertificate'
+    'New-FalconHorizonAzureAccount'
+    'Receive-FalconHorizonAzureScript'
+    'Remove-FalconHorizonAzureAccount'
 
-      # cloud-connect-cspm-aws
-      'Edit-FalconHorizonAwsAccount'
-      'Get-FalconHorizonAwsAccount'
-      'Get-FalconHorizonAwsLink'
-      'New-FalconHorizonAwsAccount'
-      'Receive-FalconHorizonAwsScript'
-      'Remove-FalconHorizonAwsAccount'
+    # configuration-assessment
+    'Get-FalconConfigAssessment'
+    'Get-FalconConfigAssessmentLogic'
 
-      # cloud-connect-cspm-azure
-      'Edit-FalconHorizonAzureAccount'
-      'Get-FalconHorizonAzureAccount'
-      'Get-FalconHorizonAzureCertificate'
-      'New-FalconHorizonAzureAccount'
-      'Receive-FalconHorizonAzureScript'
-      'Remove-FalconHorizonAzureAccount'
+    # container-security
+    'Edit-FalconContainerRegistry'
+    'Get-FalconContainerAssessment'
+    'Get-FalconContainerRegistry'
+    'Get-FalconContainerSensor'
+    'New-FalconContainerRegistry'
+    'Remove-FalconContainerRegistry'
+    'Remove-FalconRegistryCredential'
+    'Request-FalconRegistryCredential'
+    'Remove-FalconContainerImage'
+    'Show-FalconRegistryCredential'
 
-      # cloud-connect-gcp
-      'Get-FalconDiscoverGcpAccount'
-      'New-FalconDiscoverGcpAccount'
-      'Receive-FalconDiscoverGcpScript'
+    # detects
+    'Edit-FalconDetection'
+    'Get-FalconDetection'
+    'Get-FalconHorizonIoa'
+    'Get-FalconHorizonIom'
 
-      # container-security
-      'Edit-FalconContainerRegistry'
-      'Get-FalconContainerAssessment'
-      'Get-FalconContainerRegistry'
-      'Get-FalconContainerSensor'
-      'New-FalconContainerRegistry'
-      'Remove-FalconContainerRegistry'
-      'Remove-FalconRegistryCredential'
-      'Request-FalconRegistryCredential'
-      'Remove-FalconContainerImage'
-      'Show-FalconRegistryCredential'
+    # devices
+    'Add-FalconGroupingTag'
+    'Edit-FalconHostGroup'
+    'Get-FalconHost'
+    'Get-FalconHostGroup'
+    'Get-FalconHostGroupMember'
+    'Invoke-FalconHostAction'
+    'Invoke-FalconHostGroupAction'
+    'New-FalconHostGroup'
+    'Remove-FalconGroupingTag'
+    'Remove-FalconHostGroup'
 
-      # detects
-      'Edit-FalconDetection'
-      'Get-FalconDetection'
-      'Get-FalconHorizonIoa'
-      'Get-FalconHorizonIom'
+    # discover
+    'Get-FalconAsset'
 
-      # devices
-      'Add-FalconGroupingTag'
-      'Edit-FalconHostGroup'
-      'Get-FalconHost'
-      'Get-FalconHostGroup'
-      'Get-FalconHostGroupMember'
-      'Invoke-FalconHostAction'
-      'Invoke-FalconHostGroupAction'
-      'New-FalconHostGroup'
-      'Remove-FalconGroupingTag'
-      'Remove-FalconHostGroup'
+    # enrollments
+    'Invoke-FalconMobileAction'
 
-      # discover
-      'Get-FalconAsset'
-      'Get-FalconDiscoverNetwork'
-      'Get-FalconDiscoverRule'
-      'Get-FalconDiscoverScan'
-      'Get-FalconDiscoverScanner'
+    # falcon-complete-dashboards
+    'Get-FalconCompleteAlert'
+    'Get-FalconCompleteAllowlist'
+    'Get-FalconCompleteBlocklist'
+    'Get-FalconCompleteCollection'
+    'Get-FalconCompleteDetection'
+    'Get-FalconCompleteEscalation'
+    'Get-FalconCompleteIncident'
+    'Get-FalconCompleteRemediation'
 
-      # enrollments
-      'Invoke-FalconMobileAction'
+    # falconx
+    'Get-FalconReport'
+    'Get-FalconSubmission'
+    'Get-FalconSubmissionQuota'
+    'New-FalconSubmission'
+    'Receive-FalconArtifact'
+    'Receive-FalconMemoryDump'
+    'Remove-FalconReport'
 
-      # falcon-complete-dashboards
-      'Get-FalconCompleteAllowlist'
-      'Get-FalconCompleteBlocklist'
-      'Get-FalconCompleteCollection'
-      'Get-FalconCompleteDetection'
-      'Get-FalconCompleteEscalation'
-      'Get-FalconCompleteIncident'
-      'Get-FalconCompleteRemediation'
+    # fdr
+    'Get-FalconReplicatorEvent'
+    'Get-FalconReplicatorField'
+    'Get-FalconReplicatorSchema'
 
-      # falconx
-      'Get-FalconReport'
-      'Get-FalconSubmission'
-      'Get-FalconSubmissionQuota'
-      'New-FalconSubmission'
-      'Receive-FalconArtifact'
-      'Receive-FalconMemoryDump'
-      'Remove-FalconReport'
+    # filevantage
+    'Add-FalconFileVantageHostGroup'
+    'Add-FalconFileVantageRuleGroup'
+    'Edit-FalconFileVantageExclusion'
+    'Edit-FalconFileVantagePolicy'
+    'Edit-FalconFileVantageRule'
+    'Edit-FalconFileVantageRuleGroup'
+    'Get-FalconFileVantageChange'
+    'Get-FalconFileVantageExclusion'
+    'Get-FalconFileVantagePolicy'
+    'Get-FalconFileVantageRule'
+    'Get-FalconFileVantageRuleGroup'
+    'New-FalconFileVantageExclusion'
+    'New-FalconFileVantagePolicy'
+    'New-FalconFileVantageRule'
+    'New-FalconFileVantageRuleGroup'
+    'Remove-FalconFileVantageExclusion'
+    'Remove-FalconFileVantageHostGroup'
+    'Remove-FalconFileVantagePolicy'
+    'Remove-FalconFileVantageRule'
+    'Remove-FalconFileVantageRuleGroup'
+    'Set-FalconFileVantagePrecedence'
+    'Set-FalconFileVantageRulePrecedence'
+    'Set-FalconFileVantageRuleGroupPrecedence'
 
-      # fdr
-      'Get-FalconReplicatorEvent'
-      'Get-FalconReplicatorField'
-      'Get-FalconReplicatorSchema'
+    # fwmgr
+    'Edit-FalconFirewallGroup'
+    'Edit-FalconFirewallLocation'
+    'Edit-FalconFirewallLocationSetting'
+    'Edit-FalconFirewallSetting'
+    'Get-FalconFirewallEvent'
+    'Get-FalconFirewallField'
+    'Get-FalconFirewallGroup'
+    'Get-FalconFirewallLocation'
+    'Get-FalconFirewallPlatform'
+    'Get-FalconFirewallRule'
+    'Get-FalconFirewallSetting'
+    'New-FalconFirewallGroup'
+    'New-FalconFirewallLocation'
+    'Remove-FalconFirewallGroup'
+    'Remove-FalconFirewallLocation'
+    'Set-FalconFirewallLocationPrecedence'
+    'Test-FalconFirewallPath'
 
-      # filevantage
-      'Get-FalconFimChange'
+    # identity-protection
+    'Invoke-FalconIdentityGraph'
+    'Get-FalconIdentityHost'
 
-      # fwmgr
-      'Edit-FalconFirewallGroup'
-      'Edit-FalconFirewallLocation'
-      'Edit-FalconFirewallLocationSetting'
-      'Edit-FalconFirewallSetting'
-      'Get-FalconFirewallEvent'
-      'Get-FalconFirewallField'
-      'Get-FalconFirewallGroup'
-      'Get-FalconFirewallLocation'
-      'Get-FalconFirewallPlatform'
-      'Get-FalconFirewallRule'
-      'Get-FalconFirewallSetting'
-      'New-FalconFirewallGroup'
-      'New-FalconFirewallLocation'
-      'Remove-FalconFirewallGroup'
-      'Remove-FalconFirewallLocation'
-      'Set-FalconFirewallLocationPrecedence'
-      'Test-FalconFirewallPath'
+    # image-assessment
+    'Get-FalconContainerVulnerability'
 
-      # identity-protection
-      'Invoke-FalconIdentityGraph'
+    # incidents
+    'Get-FalconBehavior'
+    'Get-FalconIncident'
+    'Get-FalconScore'
+    'Invoke-FalconIncidentAction'
 
-      # image-assessment
-      'Get-FalconContainerVulnerability'
+    # indicators
+    'Get-FalconIocHost'
+    'Get-FalconIocProcess'
 
-      # incidents
-      'Get-FalconBehavior'
-      'Get-FalconIncident'
-      'Get-FalconScore'
-      'Invoke-FalconIncidentAction'
+    # intel
+    'Get-FalconActor'
+    'Get-FalconAttck'
+    'Get-FalconCve'
+    'Get-FalconIndicator'
+    'Get-FalconIntel'
+    'Get-FalconRule'
+    'Receive-FalconAttck'
+    'Receive-FalconIntel'
+    'Receive-FalconRule'
 
-      # indicators
-      'Get-FalconIocHost'
-      'Get-FalconIocProcess'
+    # installation-tokens
+    'Edit-FalconInstallToken'
+    'Edit-FalconInstallTokenSetting'
+    'Get-FalconInstallToken'
+    'Get-FalconInstallTokenEvent'
+    'Get-FalconInstallTokenSetting'
+    'New-FalconInstallToken'
+    'Remove-FalconInstallToken'
 
-      # intel
-      'Get-FalconActor'
-      'Get-FalconAttck'
-      'Get-FalconCve'
-      'Get-FalconIndicator'
-      'Get-FalconIntel'
-      'Get-FalconRule'
-      'Receive-FalconAttck'
-      'Receive-FalconIntel'
-      'Receive-FalconRule'
+    # ioa
+    'Get-FalconHorizonIoaEvent'
+    'Get-FalconHorizonIoaUser'
 
-      # installation-tokens
-      'Edit-FalconInstallToken'
-      'Edit-FalconInstallTokenSetting'
-      'Get-FalconInstallToken'
-      'Get-FalconInstallTokenEvent'
-      'Get-FalconInstallTokenSetting'
-      'New-FalconInstallToken'
-      'Remove-FalconInstallToken'
+    # ioarules
+    'Edit-FalconIoaGroup'
+    'Edit-FalconIoaRule'
+    'Get-FalconIoaGroup'
+    'Get-FalconIoaPlatform'
+    'Get-FalconIoaRule'
+    'Get-FalconIoaSeverity'
+    'Get-FalconIoaType'
+    'New-FalconIoaGroup'
+    'New-FalconIoaRule'
+    'Remove-FalconIoaGroup'
+    'Remove-FalconIoaRule'
+    'Test-FalconIoaRule'
 
-      # ioa
-      'Get-FalconHorizonIoaEvent'
-      'Get-FalconHorizonIoaUser'
+    # iocs
+    'Edit-FalconIoc'
+    'Get-FalconIoc'
+    'Get-FalconIocAction'
+    'Get-FalconIocPlatform'
+    'Get-FalconIocSeverity'
+    'Get-FalconIocType'
+    'New-FalconIoc'
+    'Remove-FalconIoc'
 
-      # ioarules
-      'Edit-FalconIoaGroup'
-      'Edit-FalconIoaRule'
-      'Get-FalconIoaGroup'
-      'Get-FalconIoaPlatform'
-      'Get-FalconIoaRule'
-      'Get-FalconIoaSeverity'
-      'Get-FalconIoaType'
-      'New-FalconIoaGroup'
-      'New-FalconIoaRule'
-      'Remove-FalconIoaGroup'
-      'Remove-FalconIoaRule'
-      'Test-FalconIoaRule'
+    # kubernetes-protection
+    'Edit-FalconContainerAwsAccount'
+    'Edit-FalconContainerAzureAccount'
+    'Get-FalconContainerAccount'
+    'Get-FalconContainerAwsAccount'
+    'Get-FalconContainerAzureAccount'
+    'Get-FalconContainerAzureConfig'
+    'Get-FalconContainerAzureScript'
+    'Get-FalconContainerAzureTenant'
+    'Get-FalconContainerCloud'
+    'Get-FalconContainerCluster'
+    'Get-FalconContainerScript'
+    'Invoke-FalconContainerScan'
+    'New-FalconContainerAwsAccount'
+    'New-FalconContainerAzureAccount'
+    'New-FalconContainerKey'
+    'Receive-FalconContainerYaml'
+    'Remove-FalconContainerAwsAccount'
+    'Remove-FalconContainerAzureAccount'
 
-      # iocs
-      'Edit-FalconIoc'
-      'Get-FalconIoc'
-      'Get-FalconIocAction'
-      'Get-FalconIocPlatform'
-      'Get-FalconIocSeverity'
-      'Get-FalconIocType'
-      'New-FalconIoc'
-      'Remove-FalconIoc'
+    # malquery
+    'Get-FalconMalQuery'
+    'Get-FalconMalQueryQuota'
+    'Get-FalconMalQuerySample'
+    'Group-FalconMalQuerySample'
+    'Invoke-FalconMalQuery'
+    'Receive-FalconMalQuerySample'
+    'Search-FalconMalQueryHash'
 
-      # kubernetes-protection
-      'Edit-FalconContainerAwsAccount'
-      'Edit-FalconContainerAzureAccount'
-      'Get-FalconContainerAccount'
-      'Get-FalconContainerAwsAccount'
-      'Get-FalconContainerAzureAccount'
-      'Get-FalconContainerAzureConfig'
-      'Get-FalconContainerAzureScript'
-      'Get-FalconContainerAzureTenant'
-      'Get-FalconContainerCloud'
-      'Get-FalconContainerCluster'
-      'Get-FalconContainerScript'
-      'Invoke-FalconContainerScan'
-      'New-FalconContainerAwsAccount'
-      'New-FalconContainerAzureAccount'
-      'New-FalconContainerKey'
-      'Receive-FalconContainerYaml'
-      'Remove-FalconContainerAwsAccount'
-      'Remove-FalconContainerAzureAccount'
+    # message-center
+    'Add-FalconCompleteActivity'
+    'Edit-FalconCompleteCase'
+    'New-FalconCompleteCase'
+    'Get-FalconCompleteActivity'
+    'Get-FalconCompleteCase'
+    'Receive-FalconCompleteAttachment'
+    'Send-FalconCompleteAttachment'
 
-      # malquery
-      'Get-FalconMalQuery'
-      'Get-FalconMalQueryQuota'
-      'Get-FalconMalQuerySample'
-      'Group-FalconMalQuerySample'
-      'Invoke-FalconMalQuery'
-      'Receive-FalconMalQuerySample'
-      'Search-FalconMalQueryHash'
+    # mssp
+    'Add-FalconCidGroupMember'
+    'Add-FalconGroupRole'
+    'Add-FalconUserGroupMember'
+    'Edit-FalconCidGroup'
+    'Edit-FalconUserGroup'
+    'Get-FalconCidGroup'
+    'Get-FalconCidGroupMember'
+    'Get-FalconGroupRole'
+    'Get-FalconMemberCid'
+    'Get-FalconUserGroup'
+    'Get-FalconUserGroupMember'
+    'New-FalconCidGroup'
+    'New-FalconUserGroup'
+    'Remove-FalconCidGroup'
+    'Remove-FalconCidGroupMember'
+    'Remove-FalconGroupRole'
+    'Remove-FalconUserGroup'
+    'Remove-FalconUserGroupMember'
 
-      # message-center
-      'Add-FalconCompleteActivity'
-      'Edit-FalconCompleteCase'
-      'New-FalconCompleteCase'
-      'Get-FalconCompleteActivity'
-      'Get-FalconCompleteCase'
-      'Receive-FalconCompleteAttachment'
-      'Send-FalconCompleteAttachment'
+    # oauth2
+    'Request-FalconToken'
+    'Revoke-FalconToken'
+    'Test-FalconToken'
 
-      # mssp
-      'Add-FalconCidGroupMember'
-      'Add-FalconGroupRole'
-      'Add-FalconUserGroupMember'
-      'Edit-FalconCidGroup'
-      'Edit-FalconUserGroup'
-      'Get-FalconCidGroup'
-      'Get-FalconCidGroupMember'
-      'Get-FalconGroupRole'
-      'Get-FalconMemberCid'
-      'Get-FalconUserGroup'
-      'Get-FalconUserGroupMember'
-      'New-FalconCidGroup'
-      'New-FalconUserGroup'
-      'Remove-FalconCidGroup'
-      'Remove-FalconCidGroupMember'
-      'Remove-FalconGroupRole'
-      'Remove-FalconUserGroup'
-      'Remove-FalconUserGroupMember'
+    # ods
+    'Get-FalconScan'
+    'Get-FalconScanFile'
+    'Get-FalconScanHost'
+    'Get-FalconScheduledScan'
+    'New-FalconScheduledScan'
+    'Remove-FalconScheduledScan'
+    'Start-FalconScan'
+    'Stop-FalconScan'
 
-      # oauth2
-      'Request-FalconToken'
-      'Revoke-FalconToken'
-      'Test-FalconToken'
+    # overwatch-dashboards
+    'Get-FalconOverWatchEvent'
+    'Get-FalconOverWatchDetection'
+    'Get-FalconOverWatchIncident'
 
-      # ods
-      'Get-FalconScan'
-      'Get-FalconScanFile'
-      'Get-FalconScanHost'
-      'Get-FalconScheduledScan'
-      'New-FalconScheduledScan'
-      'Remove-FalconScheduledScan'
-      'Start-FalconScan'
-      'Stop-FalconScan'
+    # policy-device-control
+    'Edit-FalconDeviceControlPolicy'
+    'Get-FalconDeviceControlPolicy'
+    'Get-FalconDeviceControlPolicyMember'
+    'Invoke-FalconDeviceControlPolicyAction'
+    'New-FalconDeviceControlPolicy'
+    'Remove-FalconDeviceControlPolicy'
+    'Set-FalconDeviceControlPrecedence'
 
-      # overwatch-dashboards
-      'Get-FalconOverWatchEvent'
-      'Get-FalconOverWatchDetection'
-      'Get-FalconOverWatchIncident'
+    # policy-firewall-management
+    'Edit-FalconFirewallPolicy'
+    'Get-FalconFirewallPolicy'
+    'Get-FalconFirewallPolicyMember'
+    'Invoke-FalconFirewallPolicyAction'
+    'New-FalconFirewallPolicy'
+    'Remove-FalconFirewallPolicy'
+    'Set-FalconFirewallPrecedence'
 
-      # policy-device-control
-      'Edit-FalconDeviceControlPolicy'
-      'Get-FalconDeviceControlPolicy'
-      'Get-FalconDeviceControlPolicyMember'
-      'Invoke-FalconDeviceControlPolicyAction'
-      'New-FalconDeviceControlPolicy'
-      'Remove-FalconDeviceControlPolicy'
-      'Set-FalconDeviceControlPrecedence'
+    # policy-ioa-exclusions
+    'ConvertTo-FalconIoaExclusion'
+    'Edit-FalconIoaExclusion'
+    'Get-FalconIoaExclusion'
+    'New-FalconIoaExclusion'
+    'Remove-FalconIoaExclusion'
 
-      # policy-firewall-management
-      'Edit-FalconFirewallPolicy'
-      'Get-FalconFirewallPolicy'
-      'Get-FalconFirewallPolicyMember'
-      'Invoke-FalconFirewallPolicyAction'
-      'New-FalconFirewallPolicy'
-      'Remove-FalconFirewallPolicy'
-      'Set-FalconFirewallPrecedence'
+    # policy-ml-exclusions
+    'ConvertTo-FalconMlExclusion'
+    'Edit-FalconMlExclusion'
+    'Get-FalconMlExclusion'
+    'New-FalconMlExclusion'
+    'Remove-FalconMlExclusion'
 
-      # policy-ioa-exclusions
-      'ConvertTo-FalconIoaExclusion'
-      'Edit-FalconIoaExclusion'
-      'Get-FalconIoaExclusion'
-      'New-FalconIoaExclusion'
-      'Remove-FalconIoaExclusion'
+    # policy-prevention
+    'Edit-FalconPreventionPolicy'
+    'Get-FalconPreventionPolicy'
+    'Get-FalconPreventionPolicyMember'
+    'Invoke-FalconPreventionPolicyAction'
+    'New-FalconPreventionPolicy'
+    'Remove-FalconPreventionPolicy'
+    'Set-FalconPreventionPrecedence'
 
-      # policy-ml-exclusions
-      'ConvertTo-FalconMlExclusion'
-      'Edit-FalconMlExclusion'
-      'Get-FalconMlExclusion'
-      'New-FalconMlExclusion'
-      'Remove-FalconMlExclusion'
+    # policy-response
+    'Edit-FalconResponsePolicy'
+    'Get-FalconResponsePolicy'
+    'Get-FalconResponsePolicyMember'
+    'Invoke-FalconResponsePolicyAction'
+    'New-FalconResponsePolicy'
+    'Remove-FalconResponsePolicy'
+    'Set-FalconResponsePrecedence'
 
-      # policy-prevention
-      'Edit-FalconPreventionPolicy'
-      'Get-FalconPreventionPolicy'
-      'Get-FalconPreventionPolicyMember'
-      'Invoke-FalconPreventionPolicyAction'
-      'New-FalconPreventionPolicy'
-      'Remove-FalconPreventionPolicy'
-      'Set-FalconPreventionPrecedence'
+    # policy-sensor-update
+    'Edit-FalconSensorUpdatePolicy'
+    'Get-FalconBuild'
+    'Get-FalconKernel'
+    'Get-FalconSensorUpdatePolicy'
+    'Get-FalconSensorUpdatePolicyMember'
+    'Get-FalconUninstallToken'
+    'Invoke-FalconSensorUpdatePolicyAction'
+    'New-FalconSensorUpdatePolicy'
+    'Remove-FalconSensorUpdatePolicy'
+    'Set-FalconSensorUpdatePrecedence'
 
-      # policy-response
-      'Edit-FalconResponsePolicy'
-      'Get-FalconResponsePolicy'
-      'Get-FalconResponsePolicyMember'
-      'Invoke-FalconResponsePolicyAction'
-      'New-FalconResponsePolicy'
-      'Remove-FalconResponsePolicy'
-      'Set-FalconResponsePrecedence'
+    # policy-sv-exclusions
+    'Edit-FalconSvExclusion'
+    'Get-FalconSvExclusion'
+    'New-FalconSvExclusion'
+    'Remove-FalconSvExclusion'
 
-      # policy-sensor-update
-      'Edit-FalconSensorUpdatePolicy'
-      'Get-FalconBuild'
-      'Get-FalconKernel'
-      'Get-FalconSensorUpdatePolicy'
-      'Get-FalconSensorUpdatePolicyMember'
-      'Get-FalconUninstallToken'
-      'Invoke-FalconSensorUpdatePolicyAction'
-      'New-FalconSensorUpdatePolicy'
-      'Remove-FalconSensorUpdatePolicy'
-      'Set-FalconSensorUpdatePrecedence'
+    # psf-config
+    'Export-FalconConfig'
+    'Import-FalconConfig'
 
-      # policy-sv-exclusions
-      'Edit-FalconSvExclusion'
-      'Get-FalconSvExclusion'
-      'New-FalconSvExclusion'
-      'Remove-FalconSvExclusion'
+    # psf-devices
+    'Find-FalconDuplicate'
+    'Find-FalconHostname'
 
-      # psf-config
-      'Export-FalconConfig'
-      'Import-FalconConfig'
+    # psf-fwmgr
+    'ConvertTo-FalconFirewallRule'
 
-      # psf-devices
-      'Find-FalconDuplicate'
-      'Find-FalconHostname'
+    # psf-logscale
+    'Register-FalconEventCollector'
+    'Send-FalconEvent'
+    'Show-FalconEventCollector'
+    'Unregister-FalconEventCollector'
 
-      # psf-fwmgr
-      'ConvertTo-FalconFirewallRule'
+    # psf-output
+    'Export-FalconReport'
+    'Send-FalconWebhook'
+    'Show-FalconMap'
+    'Show-FalconModule'
 
-      # psf-logscale
-      'Register-FalconEventCollector'
-      'Send-FalconEvent'
-      'Show-FalconEventCollector'
-      'Unregister-FalconEventCollector'
+    # psf-policies
+    'Compare-FalconPreventionPhase'
+    'Copy-FalconDeviceControlPolicy'
+    'Copy-FalconFirewallPolicy'
+    'Copy-FalconPreventionPolicy'
+    'Copy-FalconResponsePolicy'
+    'Copy-FalconSensorUpdatePolicy'
 
-      # psf-output
-      'Export-FalconReport'
-      'Send-FalconWebhook'
-      'Show-FalconMap'
-      'Show-FalconModule'
+    # psf-sensors
+    'Add-FalconSensorTag'
+    'Get-FalconSensorTag'
+    'Remove-FalconSensorTag'
+    'Uninstall-FalconSensor'
 
-      # psf-policies
-      'Compare-FalconPreventionPhase'
-      'Copy-FalconDeviceControlPolicy'
-      'Copy-FalconFirewallPolicy'
-      'Copy-FalconPreventionPolicy'
-      'Copy-FalconResponsePolicy'
-      'Copy-FalconSensorUpdatePolicy'
+    # psf-real-time-response
+    'Get-FalconQueue'
+    'Invoke-FalconDeploy'
+    'Invoke-FalconRtr'
 
-      # psf-sensors
-      'Add-FalconSensorTag'
-      'Get-FalconSensorTag'
-      'Remove-FalconSensorTag'
-      'Uninstall-FalconSensor'
+    # quarantine
+    'Get-FalconQuarantine'
+    'Invoke-FalconQuarantineAction'
+    'Test-FalconQuarantineAction'
 
-      # psf-real-time-response
-      'Get-FalconQueue'
-      'Invoke-FalconDeploy'
-      'Invoke-FalconRtr'
+    # real-time-response
+    'Confirm-FalconAdminCommand'
+    'Confirm-FalconCommand'
+    'Confirm-FalconGetFile'
+    'Confirm-FalconResponderCommand'
+    'Edit-FalconScript'
+    'Get-FalconLibraryScript'
+    'Get-FalconPutFile'
+    'Get-FalconScript'
+    'Get-FalconSession'
+    'Invoke-FalconAdminCommand'
+    'Invoke-FalconBatchGet'
+    'Invoke-FalconCommand'
+    'Invoke-FalconResponderCommand'
+    'Receive-FalconGetFile'
+    'Remove-FalconCommand'
+    'Remove-FalconGetFile'
+    'Remove-FalconPutFile'
+    'Remove-FalconScript'
+    'Remove-FalconSession'
+    'Send-FalconPutFile'
+    'Send-FalconScript'
+    'Start-FalconSession'
+    'Update-FalconSession'
 
-      # quarantine
-      'Get-FalconQuarantine'
-      'Invoke-FalconQuarantineAction'
-      'Test-FalconQuarantineAction'
+    # recon
+    'Edit-FalconReconAction'
+    'Edit-FalconReconNotification'
+    'Edit-FalconReconRule'
+    'Get-FalconReconAction'
+    'Get-FalconReconExport'
+    'Get-FalconReconNotification'
+    'Get-FalconReconRecord'
+    'Get-FalconReconRule'
+    'Get-FalconReconRulePreview'
+    'Invoke-FalconReconExport'
+    'New-FalconReconAction'
+    'New-FalconReconRule'
+    'Receive-FalconReconExport'
+    'Remove-FalconReconAction'
+    'Remove-FalconReconExport'
+    'Remove-FalconReconRule'
+    'Remove-FalconReconNotification'
 
-      # real-time-response
-      'Confirm-FalconAdminCommand'
-      'Confirm-FalconCommand'
-      'Confirm-FalconGetFile'
-      'Confirm-FalconResponderCommand'
-      'Edit-FalconScript'
-      'Get-FalconPutFile'
-      'Get-FalconScript'
-      'Get-FalconSession'
-      'Invoke-FalconAdminCommand'
-      'Invoke-FalconBatchGet'
-      'Invoke-FalconCommand'
-      'Invoke-FalconResponderCommand'
-      'Receive-FalconGetFile'
-      'Remove-FalconCommand'
-      'Remove-FalconGetFile'
-      'Remove-FalconPutFile'
-      'Remove-FalconScript'
-      'Remove-FalconSession'
-      'Send-FalconPutFile'
-      'Send-FalconScript'
-      'Start-FalconSession'
-      'Update-FalconSession'
+    # reports
+    'Get-FalconScheduledReport'
+    'Invoke-FalconScheduledReport'
+    'Receive-FalconScheduledReport'
+    'Redo-FalconScheduledReport'
 
-      # recon
-      'Edit-FalconReconAction'
-      'Edit-FalconReconNotification'
-      'Edit-FalconReconRule'
-      'Get-FalconReconAction'
-      'Get-FalconReconExport'
-      'Get-FalconReconNotification'
-      'Get-FalconReconRecord'
-      'Get-FalconReconRule'
-      'Get-FalconReconRulePreview'
-      'Invoke-FalconReconExport'
-      'New-FalconReconAction'
-      'New-FalconReconRule'
-      'Receive-FalconReconExport'
-      'Remove-FalconReconAction'
-      'Remove-FalconReconExport'
-      'Remove-FalconReconRule'
-      'Remove-FalconReconNotification'
+    # samples
+    'Get-FalconSample'
+    'Send-FalconSample'
+    'Receive-FalconSample'
+    'Remove-FalconSample'
 
-      # reports
-      'Get-FalconScheduledReport'
-      'Invoke-FalconScheduledReport'
-      'Receive-FalconScheduledReport'
-      'Redo-FalconScheduledReport'
+    # scanner
+    'Get-FalconQuickScan'
+    'Get-FalconQuickScanQuota'
+    'New-FalconQuickScan'
 
-      # samples
-      'Get-FalconSample'
-      'Send-FalconSample'
-      'Receive-FalconSample'
-      'Remove-FalconSample'
+    # sensors
+    'Get-FalconCcid'
+    'Get-FalconInstaller'
+    'Get-FalconStream'
+    'Receive-FalconInstaller'
+    'Update-FalconStream'
 
-      # scanner
-      'Get-FalconQuickScan'
-      'Get-FalconQuickScanQuota'
-      'New-FalconQuickScan'
+    # settings
+    'Edit-FalconHorizonPolicy'
+    'Edit-FalconHorizonSchedule'
+    'Get-FalconHorizonPolicy'
+    'Get-FalconHorizonSchedule'
 
-      # sensors
-      'Get-FalconCcid'
-      'Get-FalconInstaller'
-      'Get-FalconStream'
-      'Receive-FalconInstaller'
-      'Update-FalconStream'
+    # spotlight
+    'Get-FalconRemediation'
+    'Get-FalconVulnerability'
+    'Get-FalconVulnerabilityLogic'
 
-      # settings
-      'Edit-FalconHorizonPolicy'
-      'Edit-FalconHorizonSchedule'
-      'Get-FalconHorizonPolicy'
-      'Get-FalconHorizonSchedule'
+    # ti
+    'Get-FalconTailoredEvent'
+    'Get-FalconTailoredRule'
 
-      # settings-discover
-      'Get-FalconDiscoverAwsScript'
+    # user-management
+    'Add-FalconRole'
+    'Edit-FalconUser'
+    'Get-FalconRole'
+    'Get-FalconUser'
+    'Invoke-FalconUserAction'
+    'New-FalconUser'
+    'Remove-FalconRole'
+    'Remove-FalconUser'
 
-      # spotlight
-      'Get-FalconRemediation'
-      'Get-FalconVulnerability'
-      'Get-FalconVulnerabilityLogic'
-
-      # ti
-      'Get-FalconTailoredEvent'
-      'Get-FalconTailoredRule'
-
-      # user-management
-      'Add-FalconRole'
-      'Edit-FalconUser'
-      'Get-FalconRole'
-      'Get-FalconUser'
-      'Invoke-FalconUserAction'
-      'New-FalconUser'
-      'Remove-FalconRole'
-      'Remove-FalconUser'
-
-      # zero-trust-assessment
-      'Get-FalconZta'
-    )
-    CmdletsToExport      = @()
-    VariablesToExport    = '*'
-    AliasesToExport      = @()
-    PrivateData          = @{
-        PSData = @{
-            Tags         = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
-                'Windows','Linux','MacOS')
-            LicenseUri   = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
-            ProjectUri   = 'https://github.com/crowdstrike/psfalcon'
-            IconUri      = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
-            ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.5'
-        }
+    # zero-trust-assessment
+    'Get-FalconZta'
+  )
+  CmdletsToExport = @()
+  VariablesToExport = '*'
+  AliasesToExport = @('Get-FalconFimChange')
+  PrivateData = @{
+    PSData = @{
+      Tags = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
+        'Windows','Linux','MacOS')
+      LicenseUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
+      ProjectUri = 'https://github.com/crowdstrike/psfalcon'
+      IconUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
+      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.6'
     }
+  }
 }

@@ -14,13 +14,13 @@ Arguments to include with the command
 Add non-responsive hosts to the offline queue
 #>
 param(
-    [Parameter(Mandatory,Position=1)]
-    [string]$GroupName,
-    [Parameter(Mandatory,Position=2)]
-    [string]$Command,
-    [Parameter(Position=3)]
-    [string]$Argument,
-    [boolean]$QueueOffline
+  [Parameter(Mandatory,Position=1)]
+  [string]$GroupName,
+  [Parameter(Mandatory,Position=2)]
+  [string]$Command,
+  [Parameter(Position=3)]
+  [string]$Argument,
+  [boolean]$QueueOffline
 )
 # Find group identifier using 'name' filter
 $GroupId = Get-FalconHostGroup -Filter "name:'$($GroupName.ToLower())'"
@@ -28,9 +28,9 @@ if (!$GroupId) { throw "No host group found matching '$($GroupName.ToLower())'."
 
 # Set CSV output file name and baseline Invoke-FalconRtr parameters
 $OutputFile = Join-Path (Get-Location).Path "$('rtr',($Command -replace ' ','_'),$GroupId -join '_').csv"
-$Param = @{ Command = $Command; GroupId = $GroupId }
+$Param = @{ GroupId = $GroupId }
 
-# Add additional Argument/QueueOffline status
+# Add Command/Argument/QueueOffline status
 switch ($PSBoundParameters.Keys) {{ $_ -ne 'GroupName' } { $Param[$_] = $PSBoundParameters.$_ }}
 
 # Use 'Invoke-FalconRtr' and output result to CSV

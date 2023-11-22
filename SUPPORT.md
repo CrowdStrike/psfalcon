@@ -1,7 +1,6 @@
 ![CrowdStrike Falcon](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo.png)
 
 # Support
-
 PSFalcon is a community-driven, open source project designed to assist administrators in leveraging the power of
 CrowdStrike APIs within their organizations. While not a formal CrowdStrike product, PSFalcon is maintained by
 CrowdStrike and supported in partnership with the open source community.
@@ -13,12 +12,10 @@ CrowdStrike and supported in partnership with the open source community.
 - [Contributing](#contributing)
 
 ## Issue Reporting
-
 Issues may be reported [here](https://github.com/CrowdStrike/psfalcon/issues/new/choose) and are used to track
 bugs, documentation and link updates, enhancement requests and security concerns.
 
 ### Escalation
-
 Generally, we endeavor to provide support for using PSFalcon here within the repository. This expands our online
 knowledge base, enables self-help for our community, and reduces the amount of time for you to receive answers.
 Depending on the root cause, there is a possibility that an identified issue exceeds the scope of the PSFalcon
@@ -29,7 +26,6 @@ If you are a CrowdStrike customer and you would prefer to have your questions or
 CrowdStrike Support, you are welcome to [contact the CrowdStrike technical support team](https://supportportal.crowdstrike.com/).
 
 ## Questions
-
 Have a question you can't find answered in the [wiki](https://github.com/CrowdStrike/psfalcon/wiki) or [samples](https://github.com/CrowdStrike/psfalcon/tree/main/samples)?
 
 Find out if anyone else in the community is experiencing the same issue on our [discussion board](https://github.com/CrowdStrike/psfalcon/discussions).
@@ -47,7 +43,6 @@ updates, security concerns or enhancement requests will result in the generation
 | :raised_hands: | [**Show and Tell**](https://github.com/CrowdStrike/psfalcon/discussions/categories/show-and-tell) | Share with the community what you're up to! |
 
 ## Documentation
-
 Extended documentation is available via the [wiki](https://github.com/CrowdStrike/psfalcon/wiki) for this
 repository. It is updated as part of our release cycle.
 

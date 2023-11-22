@@ -9,29 +9,25 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSample
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-        [Alias('sha256s','sha256','Ids')]
-        [string[]]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Body = @{ root = @('sha256s') }}
-        }
-        [System.Collections.Generic.List[string]]$List = @()
+  [CmdletBinding(DefaultParameterSetName='/samples/queries/samples/GET/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[A-Fa-f0-9]{64}$')]
+    [Alias('sha256s','sha256','Ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-    end {
-        if ($List) {
-            $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
-    }
+  }
 }
 function Receive-FalconSample {
 <#
@@ -50,44 +46,42 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconSample
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,Position=1)]
-        [string]$Path,
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Position=2)]
-        [Alias('password_protected')]
-        [boolean]$PasswordProtected,
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipelineByPropertyName,
-            ValueFromPipeline,Position=3)]
-        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-        [Alias('Ids')]
-        [string]$Id,
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:get')]
-        [switch]$Force
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Headers = @{ Accept = 'application/octet-stream' }
-            Format = @{
-                Query = @('ids','password_protected')
-                Outfile = 'path'
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,Position=1)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Position=2)]
+    [Alias('password_protected')]
+    [boolean]$PasswordProtected,
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=3)]
+    [ValidatePattern('^[A-Fa-f0-9]{64}$')]
+    [Alias('Ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ Accept = 'application/octet-stream' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     }
-    process {
-        $OutPath = Test-OutFile $PSBoundParameters.Path
-        if ($OutPath.Category -eq 'ObjectNotFound') {
-            Write-Error @OutPath
-        } elseif ($PSBoundParameters.Path) {
-            if ($OutPath.Category -eq 'WriteError' -and !$Force) {
-                Write-Error @OutPath
-            } else {
-                Invoke-Falcon @Param -Inputs $PSBoundParameters
-            }
-        }
+    $Param.Format['Outfile'] = 'path'
+  }
+  process {
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
     }
+  }
 }
 function Remove-FalconSample {
 <#
@@ -100,22 +94,16 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSample
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,
-            ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-        [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-        [Alias('Ids')]
-        [string]$Id
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Format = @{ Query = @('ids') }
-        }
-    }
-    process { Invoke-Falcon @Param -Inputs $PSBoundParameters }
+  [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[A-Fa-f0-9]{64}$')]
+    [Alias('Ids','sha256')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconSample {
 <#
@@ -139,48 +127,45 @@ Path to local file
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSample
 #>
-    [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
-    param(
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
-        [Alias('is_confidential')]
-        [boolean]$IsConfidential,
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=2)]
-        [string]$Comment,
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',ValueFromPipelineByPropertyName,
-            Position=3)]
-        [Alias('file_name','FileName')]
-        [string]$Name,
-        [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Mandatory,
-            ValueFromPipelineByPropertyName,Position=4)]
-        [ValidateScript({
-            if (Test-Path $_ -PathType Leaf) {
-                $true
-            } else {
-                throw "Cannot find path '$_' because it does not exist or is a directory."
-            }
-        })]
-        [Alias('body','FullName')]
-        [string]$Path
-    )
-    begin {
-        $Param = @{
-            Command = $MyInvocation.MyCommand.Name
-            Endpoint = $PSCmdlet.ParameterSetName
-            Headers = @{ ContentType = 'application/octet-stream' }
-            Format = @{
-                Query = @('comment','file_name','is_confidential')
-                Body = @{ root = @('body') }
-            }
-        }
+  [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=1)]
+    [Alias('is_confidential')]
+    [boolean]$IsConfidential,
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Position=2)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [Alias('file_name','FileName')]
+    [string]$Name,
+    [Parameter(ParameterSetName='/samples/entities/samples/v3:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [ValidateScript({
+      if (Test-Path $_ -PathType Leaf) {
+        $true
+      } else {
+        throw "Cannot find path '$_' because it does not exist or is a directory."
+      }
+    })]
+    [Alias('body','FullName')]
+    [string]$Path
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ ContentType = 'application/octet-stream' }
+      Format = @{ Query = @('comment','file_name','is_confidential'); Body = @{ root = @('body') }}
     }
-    process {
-        if (!$PSBoundParameters.Name) {
-            $PSBoundParameters['Name'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
-        }
-        if ($PSBoundParameters.Path -match '\.(7z|zip)$') {
-            Send-FalconSampleArchive @PSBoundParameters
-        } else {
-            Invoke-Falcon @Param -Inputs $PSBoundParameters
-        }
+  }
+  process {
+    if (!$PSBoundParameters.Name) {
+      $PSBoundParameters['Name'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
     }
+    if ($PSBoundParameters.Path -match '\.(7z|zip)$') {
+      Send-FalconSampleArchive @PSBoundParameters
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
 }
