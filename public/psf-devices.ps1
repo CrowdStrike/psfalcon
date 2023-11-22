@@ -133,33 +133,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
     [string[]]$Array
   )
   begin {
-    if ($Path) {
-      [string]$Path = $Script:Falcon.Api.Path($Path)
-    } else {
-      [System.Collections.Generic.List[string]]$List = @()
-    }
+    [System.Collections.Generic.List[string]]$List = @()
+    if ($Path) { [string]$Path = $Script:Falcon.Api.Path($Path) }
     [string[]]$Select = 'device_id','hostname'
     if ($Include) { $Select += $Include }
   }
-  process { if ($Array) { @($Array).foreach{ $List.Add($_) }}}
+  process {
+    if ($Path) {
+      $List.AddRange([string[]]((Get-Content -Path $Path).Normalize()).Where({
+        ![string]::IsNullOrWhiteSpace($_) }))
+    } elseif ($Array) {
+      $List.AddRange([string[]]@($Array).Where({ ![string]::IsNullOrWhiteSpace($_) }))
+    }
+  }
   end {
-    [string[]]$HostList = if ($List) { $List } else { (Get-Content -Path $Path).Normalize() }
-    $HostList = $HostList | Select-Object -Unique | Where-Object { ![string]::IsNullOrEmpty($_) }
-    for ($i=0; $i -lt ($HostList | Measure-Object).Count; $i+=100) {
-      [string[]]$TempList = $HostList[$i..($i + 99)]
-      [string]$Filter = if ($Partial) {
-        (@($TempList).foreach{ "hostname:'$_'" }) -join ','
-      } else {
-        (@($TempList).foreach{ "hostname:['$_']" }) -join ','
-      }
-      [object[]]$HostList = Get-FalconHost -Filter $Filter -Detailed | Select-Object $Select
-      @($TempList).foreach{
-        if (($Partial -and $HostList.hostname -notlike "$_*") -or (!$Partial -and
-        $HostList.hostname -notcontains $_)) {
-          $PSCmdlet.WriteWarning("[Find-FalconHostname] No match found for '$_'.")
+    if ($List) {
+      $List = $List | Select-Object -Unique
+      for ($i=0; $i -lt ($List | Measure-Object).Count; $i+=100) {
+        [string[]]$Group = $List[$i..($i+99)]
+        [string]$Filter = if ($Partial) {
+          (@($Group).foreach{ "hostname:'$_'" }) -join ','
+        } else {
+          (@($Group).foreach{ "hostname:['$_']" }) -join ','
         }
+        $Req = Get-FalconHost -Filter $Filter -Detailed | Select-Object $Select
+        @($Group).foreach{
+          if (($Partial -and $Req.hostname -notlike "$_*") -or (!$Partial -and $Req.hostname -notcontains $_)) {
+            $PSCmdlet.WriteWarning("[Find-FalconHostname] No match found for '$_'.")
+          }
+        }
+        if ($Req) { $Req }
       }
-      if ($HostList) { $HostList }
     }
   }
 }
