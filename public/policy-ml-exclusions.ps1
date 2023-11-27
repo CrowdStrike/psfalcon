@@ -7,7 +7,7 @@ Uses the 'behaviors' and 'device' properties of a detection to generate the nece
 Machine Learning exclusion. Specfically, it maps the following properties these fields:
 
 behaviors.filepath > value
-device.groups    > groups
+device.groups > groups
 
 The 'value' field is stripped of any leading NT file path ('Device/HarddiskVolume').
 
