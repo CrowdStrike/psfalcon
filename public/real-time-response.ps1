@@ -277,7 +277,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconLibraryScript
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { $List.AddRange([string[]]$Id) }}
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -489,7 +489,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { $List.AddRange([string[]]$Id) }}
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -1327,7 +1327,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
     $Param = @{ Command = $MyInvocation.MyCommand.Name }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { $List.AddRange([string[]]$Id) }}
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       # Verify 'Endpoint' using BatchId/SessionId and select hosts
