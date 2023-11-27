@@ -143,7 +143,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
       $List.AddRange([string[]]((Get-Content -Path $Path).Normalize()).Where({
         ![string]::IsNullOrWhiteSpace($_) }))
     } elseif ($Array) {
-      $List.AddRange([string[]]@($Array).Where({ ![string]::IsNullOrWhiteSpace($_) }))
+      @($Array).Where({ ![string]::IsNullOrWhiteSpace($_) }).foreach{ $List.Add($_) }
     }
   }
   end {
