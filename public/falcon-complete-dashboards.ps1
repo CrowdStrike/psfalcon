@@ -3,7 +3,7 @@ function Get-FalconCompleteAlert {
 .SYNOPSIS
 Search for Falcon Complete alerts
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -45,7 +45,7 @@ function Get-FalconCompleteAllowlist {
 .SYNOPSIS
 Search for Falcon Complete Allowlist tickets
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -87,7 +87,7 @@ function Get-FalconCompleteBlocklist {
 .SYNOPSIS
 Search for Falcon Complete Blocklist tickets
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -129,7 +129,7 @@ function Get-FalconCompleteCollection {
 .SYNOPSIS
 Search for Falcon Complete device collections
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -174,7 +174,7 @@ function Get-FalconCompleteDetection {
 .SYNOPSIS
 Search for Falcon Complete detections
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -216,7 +216,7 @@ function Get-FalconCompleteEscalation {
 .SYNOPSIS
 Search for Falcon Complete escalations
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -258,7 +258,7 @@ function Get-FalconCompleteIncident {
 .SYNOPSIS
 Search for Falcon Complete incidents
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -300,7 +300,7 @@ function Get-FalconCompleteRemediation {
 .SYNOPSIS
 Search for Falcon Complete remediations
 .DESCRIPTION
-Requires 'Falcon Complete dashboard: Read'.
+Requires 'Falcon Complete Dashboards: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
