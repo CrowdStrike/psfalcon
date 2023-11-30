@@ -602,7 +602,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
       if ($Endpoint) {
         if ($PSBoundParameters.HostTimeout) {
           # Add 's' to denote seconds for 'host_timeout_duration'
-          $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+          $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
         }
         $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
           # Join 'Command' and 'Argument' into 'command_string'
@@ -692,7 +692,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
     if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
     if ($PSBoundParameters.HostTimeout) {
       # Add 's' to denote seconds for 'host_timeout_duration'
-      $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+      $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
     }
     foreach ($Request in (Invoke-Falcon @Param -UserInput $PSBoundParameters)) {
       if ($Request.batch_get_cmd_req_id -and $Request.combined.resources) {
@@ -806,7 +806,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
     if ($Endpoint) {
       if ($PSBoundParameters.HostTimeout) {
         # Add 's' to denote seconds for 'host_timeout_duration'
-        $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+        $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
       }
       $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
         # Join 'Command' and 'Argument' into 'command_string'
@@ -937,7 +937,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
       if ($Endpoint) {
         if ($PSBoundParameters.HostTimeout) {
           # Add 's' to denote seconds for 'host_timeout_duration'
-          $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+          $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
         }
         $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
           # Join 'Command' and 'Argument' into 'command_string'
@@ -1338,7 +1338,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
       } else {
         if ($PSBoundParameters.HostTimeout) {
           # Add 's' to denote seconds for 'host_timeout_duration'
-          $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+          $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
         }
         $PSBoundParameters['host_ids'] = @($List | Select-Object -Unique)
         '/real-time-response/combined/batch-init-session/v1:post'
