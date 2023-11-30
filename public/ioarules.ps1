@@ -154,7 +154,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
     [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=1)]
     [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=1)]
@@ -224,7 +224,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
     [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ioarules/queries/platforms/v1:get',Position=1)]
     [ValidateRange(1,500)]
@@ -242,10 +242,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIoaRule {
@@ -280,7 +284,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
     [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^\d+$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -315,10 +319,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIoaSeverity {
@@ -347,7 +355,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
     [Parameter(ParameterSetName='/ioarules/entities/pattern-severities/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
-    [Alias('Ids','pattern_severity')]
+    [Alias('ids','pattern_severity')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ioarules/queries/pattern-severities/v1:get',Position=1)]
     [ValidateRange(1,500)]
@@ -365,10 +373,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIoaType {
@@ -397,7 +409,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
     [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^\d{1,2}$')]
-    [Alias('Ids','ruletype_id')]
+    [Alias('ids','ruletype_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ioarules/queries/rule-types/v1:get',Position=1)]
     [ValidateRange(1,500)]
@@ -415,10 +427,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconIoaGroup {
@@ -560,7 +576,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
     [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -602,7 +618,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       Position=3)]
     [ValidatePattern('^\d+$')]
-    [Alias('Ids','rule_ids','instance_id')]
+    [Alias('ids','rule_ids','instance_id')]
     [string[]]$Id
   )
   begin {
