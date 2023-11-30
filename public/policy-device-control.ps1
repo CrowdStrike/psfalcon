@@ -159,7 +159,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
     [Parameter(ParameterSetName='/policy/entities/device-control/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/device-control/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/device-control/v1:get',Position=1)]
@@ -307,7 +307,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeviceControlPolicyAct
     }
   }
   process {
-    $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+    $PSBoundParameters['ids'] = @($PSBoundParameters.Id)
     [void]$PSBoundParameters.Remove('Id')
     if ($PSBoundParameters.GroupId) {
       $PSBoundParameters['action_parameters'] = @(@{ name = 'group_id'; value = $PSBoundParameters.GroupId })
@@ -417,7 +417,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
     [Parameter(ParameterSetName='/policy/entities/device-control/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -457,7 +457,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconDeviceControlPrecedence
     [string]$PlatformName,
     [Parameter(ParameterSetName='/policy/entities/device-control-precedence/v1:post',Mandatory,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
