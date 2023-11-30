@@ -46,7 +46,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_\w+$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=1)]
