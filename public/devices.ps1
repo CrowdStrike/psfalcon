@@ -27,7 +27,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupingTag
     [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('device_ids','device_id','Ids')]
+    [Alias('device_ids','device_id','ids')]
     [string[]]$Id
   )
   begin {
@@ -126,7 +126,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
     [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id','host_ids','aid')]
+    [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=1)]
     [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=1)]
@@ -312,7 +312,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroup
     [Parameter(ParameterSetName='/devices/entities/host-groups/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/devices/queries/host-groups/v1:get',Position=1)]
     [Parameter(ParameterSetName='/devices/combined/host-groups/v1:get',Position=1)]
@@ -449,7 +449,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostAction
     [Parameter(ParameterSetName='/devices/entities/devices-actions/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id')]
+    [Alias('ids','device_id')]
     [string[]]$Id
   )
   begin {
@@ -507,7 +507,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostGroupAction
     [Parameter(ParameterSetName='/devices/entities/host-group-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id','HostIds')]
+    [Alias('ids','device_id','HostIds')]
     [string[]]$HostId
   )
   begin {
@@ -521,7 +521,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostGroupAction
   process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+      $PSBoundParameters['ids'] = @($PSBoundParameters.Id)
       [void]$PSBoundParameters.Remove('HostId')
       for ($i = 0; $i -lt $List.Count; $i += 500) {
         $IdString = (@($List[$i..($i + 499)]).foreach{ "'$_'" }) -join ','
@@ -650,7 +650,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
     [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('device_ids','device_id','Ids')]
+    [Alias('device_ids','device_id','ids')]
     [string[]]$Id
   )
   begin {
@@ -682,7 +682,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHostGroup
     [Parameter(ParameterSetName='/devices/entities/host-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
