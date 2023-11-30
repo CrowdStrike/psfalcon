@@ -374,7 +374,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallEvent
   param(
     [Parameter(ParameterSetName='/fwmgr/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fwmgr/queries/events/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -402,10 +402,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallEvent
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFirewallField {
@@ -435,7 +439,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallField
   param(
     [Parameter(ParameterSetName='/fwmgr/entities/firewall-fields/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fwmgr/queries/firewall-fields/v1:get',Position=1)]
     [ValidateSet('0','1')]
@@ -457,10 +461,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallField
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFirewallGroup {
@@ -497,7 +505,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
     [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fwmgr/queries/rule-groups/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -525,10 +533,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFirewallLocation {
@@ -592,10 +604,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallLocation
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFirewallPlatform {
@@ -624,7 +640,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPlatform
     [Parameter(ParameterSetName='/fwmgr/entities/platforms/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidateSet('0','1')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fwmgr/queries/platforms/v1:get',Position=1)]
     [ValidateRange(1,5000)]
@@ -642,10 +658,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPlatform
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFirewallRule {
@@ -683,7 +703,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallRule
   param(
     [Parameter(ParameterSetName='/fwmgr/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fwmgr/queries/policy-rules/v1:get',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -763,7 +783,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallSetting
     [Parameter(ParameterSetName='/fwmgr/entities/policies/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -994,7 +1014,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallGroup
     [Parameter(ParameterSetName='/fwmgr/entities/rule-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
