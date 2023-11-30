@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
   param(
     [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [object[]]$Id
   )
   begin {
@@ -75,7 +75,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Mandatory,Position=1)]
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Mandatory,Position=1)]
@@ -108,10 +108,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconVulnerabilityLogic {
@@ -143,7 +147,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
   param(
     [Parameter(ParameterSetName='/spotlight/entities/evaluation-logic/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [Alias('Ids','apps')]
+    [Alias('ids','apps')]
     [object[]]$Id,
     [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Mandatory,Position=1)]
     [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Mandatory,Position=1)]
