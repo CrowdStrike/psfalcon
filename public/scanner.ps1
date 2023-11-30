@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScan
     [Parameter(ParameterSetName='/scanner/entities/scans/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/scanner/queries/scans/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -51,10 +51,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuickScan
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconQuickScanQuota {
@@ -101,7 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconQuickScan
     [Parameter(ParameterSetName='/scanner/entities/scans/v1:post',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('samples','Ids','sha256')]
+    [Alias('samples','ids','sha256')]
     [string[]]$Id
   )
   begin {
