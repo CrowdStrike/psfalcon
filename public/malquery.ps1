@@ -14,7 +14,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
     [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -58,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
     [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -236,7 +236,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalQuerySample
     [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^([A-Fa-f0-9]{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id,
     [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get')]
     [switch]$Force
