@@ -24,19 +24,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
     [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=2)]
     [Alias('show_in_ui')]
     [boolean]$ShowInUi,
-    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
-      Position=3)]
+    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('new','in_progress','true_positive','false_positive','closed','reopened',IgnoreCase=$false)]
     [string]$Status,
-    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,
-       Position=4)]
+    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,Position=4)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [Alias('assigned_to_uuid','uuid')]
     [string]$AssignedToUuid,
     [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=5)]
     [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
-    [Alias('Ids','detection_id','detection_ids')]
+    [Alias('ids','detection_id','detection_ids')]
     [string[]]$Id
   )
   begin {
@@ -85,7 +83,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
     [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
-    [Alias('Ids','detection_id','detection_ids')]
+    [Alias('ids','detection_id','detection_ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -114,10 +112,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 1000 }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconHorizonIoa {
@@ -288,9 +290,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
