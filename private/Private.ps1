@@ -404,9 +404,9 @@ function Get-ParamSet {
     }
     $Base = @{
       Path = if ($HostUrl) {
-        $HostUrl,$Endpoint.Split(':',2)[0] -join $null
+        [string]::Concat($HostUrl,$Endpoint.Split(':',2)[0])
       } else {
-        $Script:Falcon.Hostname,$Endpoint.Split(':',2)[0] -join $null
+        [string]::Concat($Script:Falcon.Hostname,$Endpoint.Split(':',2)[0])
       }
       Method = $Endpoint.Split(':')[1]
       Headers = $Headers
