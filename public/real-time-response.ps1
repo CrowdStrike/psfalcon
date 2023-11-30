@@ -277,10 +277,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconLibraryScript
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconPutFile {
@@ -313,7 +317,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
     [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -376,7 +380,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -453,7 +457,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
     [Parameter(ParameterSetName='/real-time-response/entities/sessions/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=1)]
     [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=1)]
@@ -489,10 +493,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Invoke-FalconAdminCommand {
@@ -1088,7 +1096,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -1111,7 +1119,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
     [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -1133,7 +1141,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
