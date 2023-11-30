@@ -34,7 +34,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
     [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=1)]
     [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=1)]
@@ -149,7 +149,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconScheduledReport
     [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id,
     [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get')]
     [switch]$Force
