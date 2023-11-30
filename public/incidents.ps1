@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
     [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^ind:[a-fA-F0-9]{32}:(\d|\-)+$')]
-    [Alias('Ids','behavior_id')]
+    [Alias('ids','behavior_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -52,10 +52,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIncident {
@@ -88,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
     [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
-    [Alias('Ids','incident_id')]
+    [Alias('ids','incident_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -115,10 +119,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconScore {
@@ -199,7 +207,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
     [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
     [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
-    [Alias('Ids','incident_id')]
+    [Alias('ids','incident_id')]
     [string[]]$Id
   )
   begin {
