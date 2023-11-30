@@ -175,7 +175,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=1)]
     [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Position=1)]
@@ -219,10 +219,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIocAction {
@@ -522,7 +526,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoc
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:delete',ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=2)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
