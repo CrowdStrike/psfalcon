@@ -158,7 +158,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -185,10 +185,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconIoaExclusion {
@@ -289,7 +293,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
     [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
