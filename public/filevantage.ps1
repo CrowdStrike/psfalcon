@@ -481,7 +481,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -504,10 +504,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFileVantageExclusion {
@@ -541,10 +545,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageExclusion
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFileVantagePolicy {
@@ -720,10 +728,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRuleGroup
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconFileVantageExclusion {
