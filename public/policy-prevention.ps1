@@ -110,7 +110,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicy
     [Parameter(ParameterSetName='/policy/entities/prevention/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/prevention/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/prevention/v1:get',Position=1)]
@@ -257,7 +257,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconPreventionPolicyAction
   }
   process {
     if ($PSCmdlet.ShouldProcess($Id,$Message)) {
-      $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+      $PSBoundParameters['ids'] = @($PSBoundParameters.Id)
       [void]$PSBoundParameters.Remove('Id')
       if ($PSBoundParameters.GroupId) {
         $PSBoundParameters['action_parameters'] = @(
@@ -372,7 +372,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPreventionPolicy
     [Parameter(ParameterSetName='/policy/entities/prevention/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -411,7 +411,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconPreventionPrecedence
     [string]$PlatformName,
     [Parameter(ParameterSetName='/policy/entities/prevention-precedence/v1:post',Mandatory,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
