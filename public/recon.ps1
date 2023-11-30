@@ -284,7 +284,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
     [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/recon/queries/actions/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -309,10 +309,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconReconExport {
@@ -389,7 +393,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
     [Parameter(ParameterSetName='/recon/entities/notifications-detailed-translated/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^\w{76}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/recon/queries/notifications/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -423,10 +427,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconReconRecord {
@@ -487,10 +495,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconReconRule {
@@ -525,7 +537,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
     [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -553,10 +565,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconReconRulePreview {
@@ -922,7 +938,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconNotification
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^\w{76}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -958,7 +974,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconRule
     [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
