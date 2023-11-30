@@ -101,7 +101,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
     [Parameter(ParameterSetName='/settings/entities/policy-details/v2:get',ValueFromPipelineByPropertyName,
       ValueFromPipeline,Mandatory)]
     [ValidatePattern('^\d+$')]
-    [Alias('Ids','policy_id')]
+    [Alias('ids','policy_id')]
     [int32[]]$Id,
     [Parameter(ParameterSetName='/settings/entities/policy/v1:get',Position=1)]
     [ValidatePattern('^\d+$')]
@@ -126,10 +126,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[int32]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconHorizonSchedule {
