@@ -209,7 +209,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
     [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=1)]
@@ -400,7 +400,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconSensorUpdatePolicyActi
     }
   }
   process {
-    $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+    $PSBoundParameters['ids'] = @($PSBoundParameters.Id)
     [void]$PSBoundParameters.Remove('Id')
     if ($PSBoundParameters.GroupId) {
       $PSBoundParameters['action_parameters'] = @(@{ name = 'group_id'; value = $PSBoundParameters.GroupId })
@@ -522,7 +522,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorUpdatePolicy
     [Parameter(ParameterSetName='/policy/entities/sensor-update/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -562,7 +562,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorUpdatePrecedence
     [string]$PlatformName,
     [Parameter(ParameterSetName='/policy/entities/sensor-update-precedence/v1:post',Mandatory,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
