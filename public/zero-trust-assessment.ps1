@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
     [Parameter(ParameterSetName='/zero-trust-assessment/entities/assessments/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id','host_ids','aid')]
+    [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get',Mandatory,Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -52,9 +52,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
