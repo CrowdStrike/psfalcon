@@ -33,7 +33,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
     [boolean]$QueueOffline,
     [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id','host_ids','aid')]
+    [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id
   )
   begin {
@@ -142,7 +142,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
     [boolean]$QueueOffline,
     [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id','host_ids','aid')]
+    [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id
   )
   begin {
@@ -229,7 +229,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
     [boolean]$QueueOffline,
     [Parameter(Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id','host_ids','aid')]
+    [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id
   )
   begin {
