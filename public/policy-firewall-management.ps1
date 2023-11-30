@@ -100,7 +100,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicy
     [Parameter(ParameterSetName='/policy/entities/firewall/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=1)]
@@ -248,7 +248,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFirewallPolicyAction
     }
   }
   process {
-    $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+    $PSBoundParameters['ids'] = @($PSBoundParameters.Id)
     [void]$PSBoundParameters.Remove('Id')
     if ($PSBoundParameters.GroupId) {
       $PSBoundParameters['action_parameters'] = @(@{ name = 'group_id'; value = $PSBoundParameters.GroupId })
@@ -345,7 +345,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallPolicy
     [Parameter(ParameterSetName='/policy/entities/firewall/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -384,7 +384,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFirewallPrecedence
     [string]$PlatformName,
     [Parameter(ParameterSetName='/policy/entities/firewall-precedence/v1:post',Mandatory,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
