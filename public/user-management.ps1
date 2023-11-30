@@ -25,7 +25,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
       ValueFromPipelineByPropertyName,Position=2)]
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
-    [Alias('role_ids','Ids')]
+    [Alias('role_ids','ids')]
     [string[]]$Id
   )
   begin {
@@ -385,7 +385,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
       ValueFromPipelineByPropertyName,Position=2)]
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
-    [Alias('role_ids','Ids')]
+    [Alias('role_ids','ids')]
     [string[]]$Id
   )
   begin {
