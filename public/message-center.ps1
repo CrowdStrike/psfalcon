@@ -130,7 +130,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
   param(
     [Parameter(ParameterSetName='/message-center/entities/case-activities/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Mandatory,Position=1)]
     [Alias('case_id')]
@@ -158,10 +158,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconCompleteCase {
@@ -193,7 +197,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
   param(
     [Parameter(ParameterSetName='/message-center/entities/cases/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -219,10 +223,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconCompleteCase {
