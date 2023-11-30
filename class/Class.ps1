@@ -35,8 +35,7 @@ class ApiClient {
         $Param.Formdata.GetEnumerator().foreach{
           $Verbose = if ($_.Key -match '^(file|upfile)$') {
             # With 'file' or 'upfile', create StreamContent from key/value pair
-            $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),
-              [System.IO.FileMode]::Open)
+            $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),[System.IO.FileMode]::Open)
             $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
             $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
             $FileType = $this.StreamType($Filename)
