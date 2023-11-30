@@ -132,10 +132,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerRegistry
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconContainerSensor {
