@@ -41,6 +41,7 @@
     # configuration-assessment
     'Get-FalconConfigAssessment'
     'Get-FalconConfigAssessmentLogic'
+    'Get-FalconConfigAssessmentRule'
 
     # container-security
     'Edit-FalconContainerRegistry'
