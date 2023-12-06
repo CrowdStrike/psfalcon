@@ -213,7 +213,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenSetting
   [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
     SupportsShouldProcess)]
   param()
-  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function New-FalconInstallToken {
 <#

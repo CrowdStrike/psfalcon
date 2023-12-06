@@ -595,7 +595,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerKey
   [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/integration/api-key/v1:post',
     SupportsShouldProcess)]
   param()
-  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Receive-FalconContainerYaml {
 <#

@@ -162,7 +162,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsLink
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get',
     SupportsShouldProcess)]
   param()
-  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function New-FalconHorizonAwsAccount {
 <#
