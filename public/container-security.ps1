@@ -357,7 +357,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconRegistryCredential
         'us-2'    { 'us-2' }
         default     { 'us-1' }
       }
-      $PSBoundParameters['scope'] = 'repository:',"/$Region/release/",':pull' -join
+      $PSBoundParameters['scope'] = 'repository:',"/$Region/release/falcon-sensor:pull" -join
         $PSBoundParameters.SensorType
       $PSBoundParameters['service'] = 'registry.crowdstrike.com'
       [void]$PSBoundParameters.Remove('SensorType')
