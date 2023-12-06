@@ -586,7 +586,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
           $Init = @{ Id = $Output.aid; Timeout = 30; QueueOffline = $QueueOffline }
           $InitReq = Start-FalconSession @Init
           if ($InitReq -and ($InitReq.batch_id -or $InitReq.session_id)) {
-            $JobId = Start-RtrUpdate $InitReq $Timeout
+            $JobId = Start-RtrUpdate $InitReq 30
             # Output verbose message with batch_id or session_id
             [string[]]$Message = if ($InitReq.batch_id) {
               'batch_id:',$InitReq.batch_id,"[$(@($InitReq.hosts).Where({ $_.complete -eq $true -or
