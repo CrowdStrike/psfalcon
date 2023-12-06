@@ -160,19 +160,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerSensor
     if (!$Script:Falcon.Registry -or $Script:Falcon.Registry.Expiration -lt (Get-Date).AddSeconds(240)) {
       Request-FalconRegistryCredential
     }
-    $Param = @{
-      Endpoint = $PSCmdlet.ParameterSetName -replace '{sensortype}',
-        $Script:Falcon.Registry.SensorType -replace '{region}',$Script:Falcon.Registry.Region
-      Header = @{ Authorization = "Bearer $($Script:Falcon.Registry.Token)" }
-      HostUrl = Get-ContainerUrl -Registry
-    }
-    $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
-    $Result = try { $Request | ConvertFrom-Json } catch { $Request }
-    if ($LatestUrl) {
-      ($Param.HostUrl -replace 'https://',$null),$Script:Falcon.Registry.SensorType,
-        $Script:Falcon.Registry.Region,'release',"falcon-sensor:$($Result.tags[-1])" -join '/'
-    } else {
-      $Result
+    if ($Script:Falcon.Registry) {
+      $Param = @{
+        Command = $MyInvocation.MyCommand.Name
+        Endpoint = $PSCmdlet.ParameterSetName -replace '{sensortype}',
+          $Script:Falcon.Registry.SensorType -replace '{region}',$Script:Falcon.Registry.Region
+        Header = @{ Authorization = "Bearer $($Script:Falcon.Registry.Token)" }
+        HostUrl = Get-ContainerUrl -Registry
+      }
+      $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
+      $Result = try { $Request | ConvertFrom-Json } catch { $Request }
+      if ($LatestUrl) {
+        ($Param.HostUrl -replace 'https://',$null),$Script:Falcon.Registry.SensorType,
+          $Script:Falcon.Registry.Region,'release',"falcon-sensor:$($Result.tags[-1])" -join '/'
+      } else {
+        $Result
+      }
     }
   }
 }
@@ -197,8 +200,7 @@ Available with Docker Hub, Google Artifact Registry, Google Container Registry, 
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerRegistry
 #>
-  [CmdletBinding(DefaultParameterSetName='/container-security/entities/registries/v1:post',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/registries/v1:post',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/entities/registries/v1:post',Mandatory,Position=1)]
     [Alias('user_defined_alias')]
@@ -307,9 +309,9 @@ function Request-FalconRegistryCredential {
 .SYNOPSIS
 Request your Falcon container registry username, password and access token
 .DESCRIPTION
-If successful, you token and username are cached for re-use as you use Falcon container security related commands.
+If successful, you token and username are cached for re-use as you use Falcon Container Security related commands.
 
-If an active access token is due to expire in less than 15 seconds, a new token will automatically be requested.
+If an active access token is due to expire in less than 4 minutes, a new token will automatically be requested.
 
 Requires 'Falcon Container Image: Read' and 'Sensor Download: Read'.
 .PARAMETER SensorType
@@ -319,54 +321,64 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconRegistryCredential
 #>
   [CmdletBinding(SupportsShouldProcess)]
   param(
-    [Parameter(Mandatory,Position=1)]
+    [Parameter(Position=1)]
     [ValidateSet('falcon-sensor','falcon-container',IgnoreCase=$false)]
     [string]$SensorType
   )
   process {
-    [System.Collections.Hashtable]$Credential = @{}
-    $Credential['Username'] = if ($Script:Falcon.Registry.Username) {
-      $Script:Falcon.Registry.Username
-    } else {
-      try {
-        @(Get-FalconCcid -EA 0).foreach{ 'fc',$_.Split('-')[0].ToLower() -join '-' }
-      } catch {
-        throw "Failed to retrieve registry username. Verify 'Sensor Download: Read' permission."
+    [System.Collections.Hashtable]$Credential = @{
+      Username = if ($Script:Falcon.Registry.Username) {
+        $Script:Falcon.Registry.Username
+      } else {
+        try {
+          @(Get-FalconCcid -EA 0).foreach{ 'fc',$_.Split('-')[0].ToLower() -join '-' }
+        } catch {
+          throw "Failed to retrieve registry username. Verify 'Sensor Download: Read' permission."
+        }
       }
-    }
-    $Credential['Password'] = if ($Script:Falcon.Registry.Password) {
-      $Script:Falcon.Registry.Password
-    } else {
-      try {
-        (Invoke-Falcon -Endpoint (
-          '/container-security/entities/image-registry-credentials/v1:get')).Token
-      } catch {
-        throw "Failed to retrieve registry password. Verify 'Falcon Container Image: Read' permission."
+      Password = if ($Script:Falcon.Registry.Password) {
+        $Script:Falcon.Registry.Password
+      } else {
+        try {
+          (Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint (
+            '/container-security/entities/image-registry-credentials/v1:get')).Token
+        } catch {
+          throw "Failed to retrieve registry password. Verify 'Falcon Container Image: Read' permission."
+        }
       }
     }
     if ($Credential.Username -and $Credential.Password) {
       $Param = @{
+        Command = $MyInvocation.MyCommand.Name
         Endpoint = "/v2/token?=$($Credential.Username):get"
         Header = @{
-          Authorization = "Basic $([System.Convert]::ToBase64String(
-            [System.Text.Encoding]::ASCII.GetBytes("$($Credential.Username):$(
-              $Credential.Password)")))"
+          Authorization = "Basic $([System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes(
+            "$($Credential.Username):$($Credential.Password)")))"
         }
         Format = @{ Query = @('scope','service') }
         HostUrl = Get-ContainerUrl -Registry
       }
       [string]$Region = switch -Regex ($Script:Falcon.Hostname) {
-        'eu-1'    { 'eu-1' }
+        'eu-1' { 'eu-1' }
         'laggar\.gcw' { 'us-gov-1' }
-        'us-2'    { 'us-2' }
-        default     { 'us-1' }
+        'us-2' { 'us-2' }
+        default { 'us-1' }
       }
-      $PSBoundParameters['scope'] = 'repository:',"/$Region/release/",':pull' -join
+      $SensorType = if ($PSBoundParameters.SensorType) {
         $PSBoundParameters.SensorType
+      } elseif ($Script:Falcon.Registry.SensorType) {
+        $Script:Falcon.Registry.SensorType
+      } else {
+        Read-Host 'SensorType'
+      }
+      $PSBoundParameters['scope'] = 'repository:',"/$Region/release/",':pull' -join $SensorType
       $PSBoundParameters['service'] = 'registry.crowdstrike.com'
       [void]$PSBoundParameters.Remove('SensorType')
       $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
-      if ($Request) {
+      @('token','expires_in').foreach{
+        if (!$Request.$_) { throw "Token request failed. Missing expected '$_' property from response." }
+      }
+      if ($Request.token -and $Request.expires_in) {
         $Script:Falcon['Registry'] = @{
           Username = $Credential.Username
           Password = $Credential.Password
@@ -410,7 +422,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
         PullToken = $PullToken
       }
     } else {
-      Write-Error "No registry credential available. Try 'Request-FalconRegistryCredential'."
+      throw "No registry credential available. Try 'Request-FalconRegistryCredential'."
     }
   }
 }
