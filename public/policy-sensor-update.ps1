@@ -331,8 +331,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
 #>
-  [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=1)]
     [Alias('audit_message')]
@@ -348,18 +347,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
     [ValidatePattern('^([a-fA-F0-9]{32}|MAINTENANCE)$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process {
-    if ($Include) {
-      # Append properties from 'Include'
-      foreach ($Request in (Invoke-Falcon @Param -UserInput $PSBoundParameters)) {
-        @($Request | Get-FalconHost -EA 0 | Select-Object @($Include + 'device_id')).foreach{
-          @($_.PSObject.Properties).foreach{ Set-Property $Request $_.Name $_.Value }
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $Request = @($List | Select-Object -Unique).foreach{
+        $PSBoundParameters['Id'] = $_
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+      if ($Include) {
+        [string[]]$ReqProperty = @($Request[0].PSObject.Properties.Name).Where({ $_ -ne 'device_id' })
+        foreach ($i in ($Request.device_id | Get-FalconHost -EA 0 | Select-Object @($Include + 'device_id'))) {
+          @($ReqProperty).foreach{ Set-Property $i $_ @($Request).Where({ $_.device_id -eq $i.device_id }).$_ }
+          $i
         }
+      } else {
         $Request
       }
-    } else {
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
 }
