@@ -25,30 +25,30 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
 #>
-  [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v1:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/alerts/queries/alerts/v2:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/alerts/entities/alerts/v2:post',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [Alias('composite_ids','composite_id','ids')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=2)]
     [Alias('q')]
     [string]$Query,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=3)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get',Position=4)]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=4)]
     [ValidateRange(1,10000)]
     [int32]$Limit,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get')]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
     [int32]$Offset,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get')]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get')]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v1:get')]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
     [switch]$Total
   )
   begin {
