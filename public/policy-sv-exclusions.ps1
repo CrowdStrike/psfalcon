@@ -4,14 +4,16 @@ function Edit-FalconSvExclusion {
 Modify a Sensor Visibility exclusion
 .DESCRIPTION
 Requires 'Sensor Visibility Exclusions: Write'.
-.PARAMETER Id
-Exclusion identifier
 .PARAMETER Value
 RegEx pattern value
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
+.PARAMETER IsDescendantProcess
+
 .PARAMETER Comment
 Audit log comment
+.PARAMETER Id
+Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
 #>
@@ -26,6 +28,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
     [object[]]$GroupId,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=3)]
+    [Alias('is_descendant_process')]
+    [boolean]$IsDescendantProcess,
+    [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
@@ -120,10 +126,12 @@ Create a Sensor Visibility exclusion
 Requires 'Sensor Visibility Exclusions: Write'.
 .PARAMETER Value
 RegEx pattern value
-.PARAMETER Comment
-Audit log comment
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
+.PARAMETER IsDescendentProcess
+
+.PARAMETER Comment
+Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
 #>
@@ -138,6 +146,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
     [object[]]$GroupId,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
       Position=3)]
+    [Alias('is_descendant_process')]
+    [boolean]$IsDescendantProcess,
+    [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
     [string]$Comment
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
