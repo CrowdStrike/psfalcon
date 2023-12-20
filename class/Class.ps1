@@ -3,9 +3,10 @@ class ApiClient {
   [System.Net.Http.HttpClient]$Client
   [System.Collections.Hashtable]$Collector
   ApiClient() {
+    $this.Collector = $null
     $this.Handler = [System.Net.Http.HttpClientHandler]::New()
     $this.Client = [System.Net.Http.HttpClient]::New($this.Handler)
-    $this.Collector = $null
+    $this.Client.Timeout = [System.TimeSpan]::New(0,1,0)
   }
   [string] Path([string]$Path) {
     $Output = if (![IO.Path]::IsPathRooted($Path)) {
