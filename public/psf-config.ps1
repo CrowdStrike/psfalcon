@@ -74,8 +74,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           }
         }
         # Export results to json file and output created file name
-        ConvertTo-Json @($Config) -Depth 32 | Out-File $ConfigFile -Append
-        $ConfigFile
+        try {
+          ConvertTo-Json @($Config) -Depth 32 | Out-File $ConfigFile -Append
+          $ConfigFile
+        } catch {
+          throw "Unable to write to '$((Get-Location).Path)'. Try 'Export-FalconConfig' in a new location."
+        }
       }
     }
     # Get current location and set output archive path
