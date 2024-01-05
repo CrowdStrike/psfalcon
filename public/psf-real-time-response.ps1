@@ -475,6 +475,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                   Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
                     Measure-Object).Count) $($Pair.Key) host(s)..."
                   [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
+                  # Add delay when queueing to ensure commands are processed in correct order
+                  if ($Param.QueueOffline -eq $true) { Start-Sleep -Seconds 1 }
                   [string[]]$Optional = Write-RtrResult (Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
                 }
               }
