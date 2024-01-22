@@ -20,8 +20,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAzureAccount
       ValueFromPipelineByPropertyName,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [string]$Id,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',
-      Mandatory,ValueFromPipelineByPropertyName)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/default-subscription-id/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [Alias('subscription_id')]
     [string]$SubscriptionId,
@@ -50,6 +50,8 @@ Azure tenant identifier
 Scan type
 .PARAMETER Status
 Azure account status
+.PARAMETER CspmLite
+Only return CSPM Lite accounts
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -80,6 +82,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureAccount
     [ValidateSet('provisioned','operational',IgnoreCase=$false)]
     [string]$Status,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=5)]
+    [Alias('cspm_lite')]
+    [boolean]$CspmLite,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',Position=6)]
     [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get')]
