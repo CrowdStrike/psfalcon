@@ -221,6 +221,34 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAzureAccount
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function New-FalconHorizonAzureGroup {
+<#
+.SYNOPSIS
+Create a Falcon Horizon Azure management group
+.DESCRIPTION
+Requires 'CSPM registration: Write'.
+.PARAMETER DefaultSubscriptionId
+Default Azure subscription identifier
+.PARAMETER TenantId
+Azure tenant identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAzureGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:post',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('default_subscription_id')]
+    [string]$DefaultSubscriptionId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:post',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant_id')]
+    [string]$TenantId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Receive-FalconHorizonAzureScript {
 <#
 .SYNOPSIS
