@@ -34,6 +34,7 @@
     'Edit-FalconHorizonAzureAccount'
     'Get-FalconHorizonAzureAccount'
     'Get-FalconHorizonAzureCertificate'
+    'Get-FalconHorizonAzureGroup'
     'New-FalconHorizonAzureAccount'
     'Receive-FalconHorizonAzureScript'
     'Remove-FalconHorizonAzureAccount'
