@@ -84,6 +84,8 @@ Field to group by
 AWS IAM role ARNs
 .PARAMETER Migrated
 Only return migrated Discover for Cloud accounts
+.PARAMETER CspmLite
+Only return CSPM Lite accounts
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -95,11 +97,10 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
 #>
-  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [ValidatePattern('^\d{12}$')]
     [Alias('ids')]
     [string[]]$Id,
@@ -124,6 +125,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=6)]
     [boolean]$Migrated,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=7)]
+    [Alias('cspm_lite')]
+    [boolean]$CspmLite,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=8)]
     [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
