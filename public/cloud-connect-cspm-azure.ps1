@@ -141,6 +141,36 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureCertificate
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconHorizonAzureGroup {
+<#
+.SYNOPSIS
+Retrieve Falcon Horizon Azure management group registration
+.DESCRIPTION
+Requires 'CSPM registration: Read'.
+.PARAMETER TenantId
+Azure tenant identifier
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:get',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant_ids')]
+    [string[]]$TenantId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:get',Position=2)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:get')]
+    [int32]$Offset
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function New-FalconHorizonAzureAccount {
 <#
 .SYNOPSIS
