@@ -80,6 +80,8 @@ Requires 'Alerts: Write'.
 Action to perform
 .PARAMETER Value
 Value for the chosen action
+.PARAMETER IncludeHidden
+Include hidden alerts when performing action
 .PARAMETER Id
 Alert identifier
 .LINK
@@ -93,6 +95,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
     [string]$Name,
     [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Position=2)]
     [string]$Value,
+    [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Position=3)]
+    [Alias('include_hidden')]
+    [boolean]$IncludeHidden,
     [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=3)]
     [Alias('composite_ids','composite_id','ids')]
@@ -102,7 +107,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('composite_ids','action_parameters') }}
+      Format = @{ Body = @{ root = @('composite_ids','action_parameters') }; Query = @('include_hidden') }
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
