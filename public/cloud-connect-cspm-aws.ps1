@@ -18,6 +18,8 @@ Enable sensor management for account
 Region where remediation occurs
 .PARAMETER RemediationTouAccepted
 Remediation terms-of-use acceptance date
+.PARAMETER Environment
+
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
 #>
@@ -57,7 +59,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
       ValueFromPipelineByPropertyName,Position=7)]
     [Alias('remediation_tou_accepted')]
-    [string]$RemediationTouAccepted
+    [string]$RemediationTouAccepted,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=8)]
+    [string]$Environment
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
