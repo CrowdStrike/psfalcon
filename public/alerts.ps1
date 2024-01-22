@@ -6,6 +6,8 @@ Search for alerts
 Requires 'Alerts: Read'.
 .PARAMETER Id
 Alert identifier
+.PARAMETER IncludeHidden
+Include hidden alerts when retrieving results by identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Query
@@ -31,6 +33,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
       ValueFromPipeline)]
     [Alias('composite_ids','composite_id','ids')]
     [string[]]$Id,
+    [Parameter(ParameterSetName='/alerts/entities/alerts/v2:post',Position=1)]
+    [Alias('include_hidden')]
+    [boolean]$IncludeHidden,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
