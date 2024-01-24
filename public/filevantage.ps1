@@ -463,7 +463,7 @@ Search for Falcon FileVantage changes
 .DESCRIPTION
 Requires 'Falcon FileVantage: Read'.
 .PARAMETER Id
-Activity identifier
+FileVantage change identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
