@@ -493,6 +493,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=2)]
+    [ValidateSet('action_timestamp|asc','action_timestamp|desc','ingestion_timestamp|asc',
+      'ingestion_timestamp|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=3)]
     [ValidateRange(1,5000)]
