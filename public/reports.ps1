@@ -17,7 +17,7 @@ Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Execution
-Retrieve information about scheduled report execution
+Retrieve information about scheduled report execution(s)
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
