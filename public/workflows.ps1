@@ -70,7 +70,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
 function Receive-FalconWorkflow {
 <#
 .SYNOPSIS
-Download a Fusion workflow YAML file
+Download a Falcon Fusion workflow YAML
 .DESCRIPTION
 Requires 'Workflow: Read'.
 .PARAMETER Path
@@ -115,4 +115,48 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
       }
     }
   }
+}
+function Send-FalconWorkflow {
+<#
+.SYNOPSIS
+Upload a Fusion workflow YAML
+.DESCRIPTION
+Requires 'Workflow: Write'.
+.PARAMETER Name
+Workflow name
+.PARAMETER ValidateOnly
+Validate workflow without creating it
+.PARAMETER Path
+Path to Falcon Fusion workflow YAML
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/entities/definitions/import/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Position=2)]
+    [Alias('validate_only')]
+    [boolean]$ValidateOnly,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidatePattern('\.(yaml|yml)$')]
+    [ValidateScript({
+      if (Test-Path $_ -PathType Leaf) {
+        $true
+      } else {
+        throw "Cannot find path '$_' because it does not exist or is a directory."
+      }
+    })]
+    [Alias('data_file','FullName')]
+    [string]$Path
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ ContentType = 'multipart/form-data' }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
