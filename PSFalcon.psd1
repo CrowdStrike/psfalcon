@@ -503,6 +503,7 @@
     # workflows
     'Get-FalconWorkflow'
     'Receive-FalconWorkflow'
+    'Send-FalconWorkflow'
 
     # zero-trust-assessment
     'Get-FalconZta'
