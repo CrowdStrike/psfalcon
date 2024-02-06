@@ -67,3 +67,52 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
     }
   }
 }
+function Receive-FalconWorkflow {
+<#
+.SYNOPSIS
+Download a Fusion workflow YAML file
+.DESCRIPTION
+Requires 'Workflow: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Id
+Workflow identifier
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/entities/definitions/export/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,Position=1)]
+    [ValidatePattern('\.(yaml|yml)$')]
+    [string]$Path,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('execution_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Outfile = 'path'; Query = @('id') }
+      Headers = @{ Accept = 'application/yaml' }
+    }
+  }
+  process {
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
