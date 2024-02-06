@@ -34,7 +34,7 @@ class ApiClient {
         # Create Formdata message
         $Message.Content = [System.Net.Http.MultipartFormDataContent]::New()
         $Param.Formdata.GetEnumerator().foreach{
-          $Verbose = if ($_.Key -match '^(file|upfile)$') {
+          $Verbose = if ($_.Key -match '^((data_)?file|upfile)$') {
             # With 'file' or 'upfile', create StreamContent from key/value pair
             $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),[System.IO.FileMode]::Open)
             $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
@@ -193,6 +193,7 @@ class ApiClient {
       '^(bmp|gif|jp(e?)g|png)$' { "image/$_" }
       '^(pdf|zip)$' { "application/$_" }
       '^7z$' { 'application/x-7z-compressed' }
+      '^(yaml|yml)$' { 'application/yaml' }
       '^(csv|txt)$' { if ($_ -eq 'txt') { 'text/plain' } else { "text/$_" }}
       '^doc(x?)$' {
         if ($_ -match 'x$') {
