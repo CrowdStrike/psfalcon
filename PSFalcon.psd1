@@ -500,6 +500,9 @@
     'Remove-FalconRole'
     'Remove-FalconUser'
 
+    # workflows
+    'Get-FalconWorkflow'
+
     # zero-trust-assessment
     'Get-FalconZta'
   )
