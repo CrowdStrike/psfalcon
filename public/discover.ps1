@@ -16,6 +16,8 @@ Maximum number of results per request
 Include additional properties
 .PARAMETER Offset
 Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -51,20 +53,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=1)]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=2)]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=2)]
     [string]$Sort,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=3)]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=3)]
     [ValidateRange(1,100)]
     [int32]$Limit,
@@ -75,25 +77,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [int32]$Offset,
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
+    [string]$After,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get')]
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get')]
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get')]
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [switch]$Total,
     [Parameter(ParameterSetName='/discover/entities/accounts/v1:get',Mandatory)]
@@ -103,7 +106,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Mandatory)]
     [switch]$Application,
     [Parameter(ParameterSetName='/discover/entities/iot-hosts/v1:get',Mandatory)]
-    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v1:get',Mandatory)]
+    [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Mandatory)]
     [switch]$IoT,
     [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Mandatory)]
