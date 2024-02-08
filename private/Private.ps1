@@ -637,7 +637,7 @@ function Invoke-Falcon {
         $Current = [regex]::Match($Clone.Endpoint.Path,'offset=(\d+)(^&)?').Captures.Value
         $Next[1] += [int]$Current.Split('=')[-1]
         $Clone.Endpoint.Path -replace $Current,($Next -join '=')
-      } elseif ($Clone.Endpoint.Path -match "$($Splat.Endpoint)^" -and $Clone.Endpoint.Path -notmatch '\?') {
+      } elseif ($Clone.Endpoint.Path -eq $Splat.Endpoint.Path -and $Clone.Endpoint.Path -notmatch '\?') {
         # Add pagination
         $Clone.Endpoint.Path,($Next -join '=') -join '?'
       } else {
