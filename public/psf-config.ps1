@@ -1124,8 +1124,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
   }
   end {
-    $Config
-    <#
     if ($Config.Result | Where-Object { $_.action -ne 'Ignored' }) {
       # Output warning for existing policy precedence
       foreach ($Item in ($Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match 'Policy$' } |
@@ -1142,6 +1140,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       @($Config.Result).foreach{ try { $_ | Export-Csv $OutputFile -NoTypeInformation -Append } catch { $_ }}
       if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
     }
-    #>
   }
 }
