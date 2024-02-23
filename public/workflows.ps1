@@ -75,6 +75,8 @@ Download a Falcon Fusion workflow YAML
 Requires 'Workflow: Read'.
 .PARAMETER Path
 Destination path
+.PARAMETER Sanitize
+Remove potentially identifiable information before export
 .PARAMETER Id
 Workflow identifier
 .PARAMETER Force
@@ -87,8 +89,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
     [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,Position=1)]
     [ValidatePattern('\.(yaml|yml)$')]
     [string]$Path,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Position=2)]
+    [boolean]$Sanitize,
     [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('execution_id')]
     [string]$Id,
@@ -99,7 +103,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Outfile = 'path'; Query = @('id') }
+      Format = @{ Outfile = 'path'; Query = @('id','sanitize') }
       Headers = @{ Accept = 'application/yaml' }
     }
   }
