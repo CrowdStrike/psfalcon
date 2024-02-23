@@ -707,10 +707,7 @@ function Invoke-Falcon {
         try {
           Write-Log $Command $Endpoint
           $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
-          if ($_.Endpoint.Outfile -and (Test-Path $_.Endpoint.Outfile)) {
-            # Display 'Outfile'
-            Get-ChildItem $_.Endpoint.Outfile | Select-Object FullName,Length,LastWriteTime
-          } elseif ($Request -and $RawOutput) {
+          if ($Request -and $RawOutput) {
             # Return result if 'RawOutput' is defined
             $Request
           } elseif ($Request) {

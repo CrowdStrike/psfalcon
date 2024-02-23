@@ -72,9 +72,11 @@ class ApiClient {
       }
       if ($Param.Outfile -and $Request) {
         try {
-          # When file download is complete, direct to 'Outfile'
-          $this.Verbose('ApiClient.Invoke',"Creating '$($Param.Outfile)'.")
-          [System.IO.File]::WriteAllBytes($this.Path($Param.Outfile),$Request.Result)
+          # Download file to provided 'OutFile' path and display file information when successful
+          $LocalPath = $this.Path($Param.Outfile)
+          $this.Verbose('ApiClient.Invoke',"Creating '$LocalPath'.")
+          [System.IO.File]::WriteAllBytes($LocalPath,$Request.Result)
+          if (Test-Path $LocalPath) { Get-ChildItem $LocalPath | Select-Object FullName,Length,LastWriteTime }
         } catch {
           throw $_
         } finally {
