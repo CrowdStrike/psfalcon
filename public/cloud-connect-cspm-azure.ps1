@@ -263,6 +263,8 @@ Azure subscription identifier [default: all]
 Template to be rendered
 .PARAMETER AccountType
 Account type
+.PARAMETER AzureManagementGroup
+Use Azure Management Group
 .PARAMETER Path
 Destination path
 .PARAMETER Force
@@ -288,6 +290,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAzureScript
     [ValidateSet('commercial','gov',IgnoreCase=$false)]
     [Alias('account_type')]
     [string]$AccountType,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Position=5)]
+    [Alias('azure_management_group')]
+    [boolean]$AzureManagementGroup,
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',Mandatory,
       Position=5)]
     [string]$Path,
