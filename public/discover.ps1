@@ -47,7 +47,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{32}_\w+$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=1)]
