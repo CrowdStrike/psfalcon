@@ -395,6 +395,7 @@
     'Add-FalconSensorTag'
     'Get-FalconSensorTag'
     'Remove-FalconSensorTag'
+    'Set-FalconSensorTag'
     'Uninstall-FalconSensor'
 
     # psf-real-time-response
