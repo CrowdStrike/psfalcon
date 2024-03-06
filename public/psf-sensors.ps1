@@ -73,17 +73,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
             if ($TagString) {
               if ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and
               (Get-FalconHost -Id $i.device_id -State).state -eq 'online')) {
-                [string]$CmdLine = if ($i.platform_name -eq 'Windows') {
-                  if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
-                    # Retrieve uninstallation token and add to 'CommandLine' when Windows host is 'online'
-                    [string]$Token = (Get-FalconUninstallToken -Id $i.device_id -AuditMessage (
-                      'Add-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
-                    '-Token',$Token,'-Tag',('"{0}"' -f $TagString) -join ' '
-                  } else {
-                    '-Tag',('"{0}"' -f $TagString) -join ' '
-                  }
+                [string]$CmdLine = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
+                  # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
+                  [string]$Token = (Get-FalconUninstallToken -Id $i.device_id -AuditMessage (
+                    'Add-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
+                  ('"{0}"' -f $TagString),$Token -join ' '
                 } else {
-                  $TagString
+                  ('"{0}"' -f $TagString)
                 }
                 # Import RTR script content and run script via RTR
                 [string]$Extension = switch ($i.platform_name) {
@@ -249,21 +245,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
               $Output.status = 'TAG_NOT_PRESENT'
             } elseif ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and
             (Get-FalconHost -Id $i.device_id -State).state -eq 'online')) {
-              [string]$CmdLine = if ($i.platform_name -eq 'Windows') {
-                if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
-                  # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
-                  [string]$Token = (Get-FalconUninstallToken -Id $i.device_id -AuditMessage (
-                    'Remove-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
-                  if ($TagString) {
-                    '-Token',$Token,'-Tag',('"{0}"' -f $TagString) -join ' '
-                  } else {
-                    '-Token',$Token -join ' '
-                  }
-                } elseif ($TagString) {
-                  '-Tag',('"{0}"' -f $TagString) -join ' '
-                }
-              } elseif ($TagString) {
-                $TagString
+              [string]$CmdLine = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
+                # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
+                [string]$Token = (Get-FalconUninstallToken -Id $i.device_id -AuditMessage (
+                  'Remove-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
+                ('"{0}"' -f $TagString),$Token -join ' '
+              } else {
+                ('"{0}"' -f $TagString)
               }
               # Import RTR script content and run script via RTR
               [string]$Extension = switch ($i.platform_name) {
@@ -271,7 +259,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
                 'Mac' { 'zsh' }
                 'Windows' { 'ps1' }
               }
-              [string]$ScriptFile = (Join-Path $ScriptPath ('remove_sensortag',$Extension -join '.'))
+              [string]$ScriptName = if ($TagString) { 'remove_sensortag' } else { 'clear_sensortag' }
+              [string]$ScriptFile = (Join-Path $ScriptPath ($ScriptName,$Extension -join '.'))
               Write-Log 'Remove-FalconSensorTag' "Importing '$ScriptFile'..."
               $Script = Get-Content $ScriptFile -Raw
               $Param = @{
@@ -382,17 +371,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorTag
         [string]$TagString = ($Tag | Select-Object -Unique) -join ','
         if ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and
         (Get-FalconHost -Id $i.device_id -State).state -eq 'online')) {
-          [string]$CmdLine = if ($i.platform_name -eq 'Windows') {
-            if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
-              # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
-              [string]$Token = (Get-FalconUninstallToken -Id $i.device_id -AuditMessage (
-                'Set-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
-              '-Token',$Token,'-Tag',('"{0}"' -f $TagString) -join ' '
-            } else {
-              '-Tag',('"{0}"' -f $TagString) -join ' '
-            }
+          [string]$CmdLine = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
+            # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
+            [string]$Token = (Get-FalconUninstallToken -Id $i.device_id -AuditMessage (
+              'Set-FalconSensorTag',"[$UserAgent]" -join ' ')).uninstall_token
+            ('"{0}"' -f $TagString),$Token -join ' '
           } else {
-            $TagString
+            ('"{0}"' -f $TagString)
           }
           # Run script via RTR
           $Param = @{

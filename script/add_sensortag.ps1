@@ -1,4 +1,4 @@
-param([string]$Token,[string]$Tag)
+param([Parameter(Mandatory,Position=1)][string]$Tag,[Parameter(Position=2)][string]$Token)
 $ExePath=Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe"
 if (Test-Path $ExePath) {
   if ($Token) {
