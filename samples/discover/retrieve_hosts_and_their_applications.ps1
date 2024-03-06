@@ -59,7 +59,7 @@ process {
     [int32]$AppTotal = Get-FalconAsset -Filter $Filter -Application -Total
     if ($AppTotal -lt 10000) {
       # Request all 100 hosts if total application results are less than 10,000
-      Write-Host "[$i of $HostTotal] Requesting $AppTotal applications for hosts $($Group[0].device_id) to $(
+      Write-Host "[$i of $HostTotal] Requesting $AppTotal apps for hosts $($Group[0].device_id) to $(
         $Group[-1].device_id)..."
       Add-AppList $Group (Get-FalconAsset -Filter $Filter -Application -Detailed -All)
     } else {
@@ -68,7 +68,7 @@ process {
         [object[]]$SubGroup = @($Group)[$i2..($i2+19)]
         [string]$SubFilter = "host.aid:[$((@($SubGroup).foreach{ "'$($_.device_id)'" }) -join ',')]"
         [int32]$SubTotal = Get-FalconAsset -Filter $SubFilter -Application -Total
-        Write-Host "[$($i + $i2) of $HostTotal] Requesting $SubTotal applications for hosts $(
+        Write-Host "[$($i + $i2) of $HostTotal] Requesting $SubTotal apps for hosts $(
           $SubGroup[0].device_id) to $($SubGroup[-1].device_id)..."
         Add-AppList $SubGroup (Get-FalconAsset -Filter $SubFilter -Application -Detailed -All)
       }
