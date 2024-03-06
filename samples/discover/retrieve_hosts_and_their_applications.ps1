@@ -59,8 +59,8 @@ process {
     [int32]$AppTotal = Get-FalconAsset -Filter $Filter -Application -Total
     if ($AppTotal -lt 10000) {
       # Request all 100 hosts if total application results are less than 10,000
-      Write-Host "Requesting $AppTotal applications for hosts $($Group[0].device_id) to $(
-        $Group[-1].device_id) [$i of $HostTotal]"
+      Write-Host "[$i of $HostTotal] Requesting $AppTotal applications for hosts $($Group[0].device_id) to $(
+        $Group[-1].device_id)..."
       Add-AppList $Group (Get-FalconAsset -Filter $Filter -Application -Detailed -All)
     } else {
       for ($i2=0; $i2 -lt ($Group.device_id | Measure-Object).Count; $i2+=20) {
@@ -68,13 +68,13 @@ process {
         [object[]]$SubGroup = @($Group)[$i2..($i2+19)]
         [string]$SubFilter = "host.aid:[$((@($SubGroup).foreach{ "'$($_.device_id)'" }) -join ',')]"
         [int32]$SubTotal = Get-FalconAsset -Filter $SubFilter -Application -Total
-        Write-Host "Requesting $SubTotal applications for hosts $($SubGroup[0].device_id) to $(
-          $SubGroup[-1].device_id) [$($i + $i2) of $HostTotal]"
+        Write-Host "[$($i + $i2) of $HostTotal] Requesting $SubTotal applications for hosts $(
+          $SubGroup[0].device_id) to $($SubGroup[-1].device_id)..."
         Add-AppList $SubGroup (Get-FalconAsset -Filter $SubFilter -Application -Detailed -All)
       }
     }
   }
-  $Json | ConvertTo-Json -Depth 32 > $Output
+  $Output | ConvertTo-Json -Depth 32 > $Json
   Write-Host "End $(Get-Date -Format o)"
 }
 end { if (Test-Path $Json) { Get-ChildItem $Json | Select-Object FullName,Length,LastWriteTime }}
