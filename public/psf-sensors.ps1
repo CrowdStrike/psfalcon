@@ -82,10 +82,11 @@ function Invoke-TagScript {
           $Script = Get-Content $ScriptFile -Raw
           $Param = @{
             Command = 'runscript'
-            Argument = '-Raw=```{0}``` -CommandLine=```{1}```' -f $Script,$CmdLine
+            Argument = '-Raw=```{0}```' -f $Script
             HostId = $i.device_id
             QueueOffline = if ($QueueOffline) { $QueueOffline } else { $false }
           }
+          if ($CmdLine) { $Param.Argument += (' -CommandLine=```{0}```' -f $CmdLine) }
           @(Invoke-FalconRtr @Param).foreach{
             $Output.tags = if ($_.errors) {
               $_.errors
