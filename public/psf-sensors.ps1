@@ -26,6 +26,9 @@ function Invoke-TagScript {
       $Output.status = 'UNSUPPORTED_PLATFORM'
     } else {
       try {
+        # Determine if uninstallation token is required, if host is online, and current SensorTag values
+        [string]$Protection = $Object.device_policies.sensor_update.uninstall_protection
+        [string]$State = (Get-FalconHost -Id $Object.device_id -State).state
         [string[]]$Existing = @($Object.tags).Where({ $_ -match 'SensorGroupingTags/' }) -replace
           'SensorGroupingTags/',$null
         [string]$TagString = if ($Existing -and $Action -ne 'Set') {
@@ -46,25 +49,30 @@ function Invoke-TagScript {
           # Use new tag(s) when none are currently assigned, or when using 'Set-FalconSensorTag'
           ($Tag | Select-Object -Unique) -join ','
         }
-        if ((!$TagString -and $Tag) -or (!$Existing -and !$Tag)) {
-          # Output host properties and 'tags' value when no changes required
+        if ((!$TagString -and $Tag) -or (!$Existing -and !$Tag) -or ($Object.platform_name -ne 'Windows' -and
+        $Protection -eq 'ENABLED')) {
+          # Output host properties and 'tags' value when no changes are made
           $Output.tags = $Existing -join ','
-          $Output.status = if ($Action -eq 'Add' -and $Tag) {
+          $Output.status = if ($Object.platform_name -ne 'Windows' -and $Protection -eq 'ENABLED') {
+            # Abort when uninstallation token is required but 'platform_name' is not Windows
+            'NO_TOKEN_SUPPORT_FOR_OS'
+          } elseif ($Action -eq 'Add' -and $Tag) {
             'TAG_PRESENT'
           } elseif ($Action -eq 'Remove' -and !$Tag) {
             'NO_TAG_SET'
           } else {
             'TAG_NOT_PRESENT'
           }
-        } elseif ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and
-        (Get-FalconHost -Id $i.device_id -State).state -eq 'online')) {
-          [string]$CmdLine = if ($i.device_policies.sensor_update.uninstall_protection -eq 'ENABLED') {
+        } elseif ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and $State -eq 'online')) {
+          # Add quotes around tag value string for Windows script use
+          if ($Object.platform_name -eq 'Windows' -and $TagString) { $TagString = ('"{0}"' -f $TagString) }
+          [string]$CmdLine = if ($Protection -eq 'ENABLED') {
             # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
-            [string]$Token = (Get-FalconUninstallToken -Id $i.device_id -AuditMessage (($Action,
+            [string]$Token = (Get-FalconUninstallToken -Id $Object.device_id -AuditMessage (($Action,
               'FalconSensorTag' -join '-'),"[$((Show-FalconModule).UserAgent)]" -join ' ')).uninstall_token
-            if ($TagString) { ('"{0}"' -f $TagString),$Token -join ' ' } else { $Token }
+            if ($TagString) { $TagString,$Token -join ' ' } else { $Token }
           } elseif ($TagString) {
-            ('"{0}"' -f $TagString)
+            $TagString
           }
           # Import RTR script content and run script via RTR
           [string]$ScriptName = if ($Action -eq 'Remove' -and !$TagString) {
@@ -72,7 +80,7 @@ function Invoke-TagScript {
           } else {
             if ($Action -eq 'Set') { 'add_sensortag' } else { ($Action.ToLower(),'sensortag' -join '_') }
           }
-          [string]$Extension = switch ($i.platform_name) {
+          [string]$Extension = switch ($Object.platform_name) {
             'Linux' { 'sh' }
             'Mac' { 'zsh' }
             'Windows' { 'ps1' }
@@ -83,7 +91,7 @@ function Invoke-TagScript {
           $Param = @{
             Command = 'runscript'
             Argument = '-Raw=```{0}```' -f $Script
-            HostId = $i.device_id
+            HostId = $Object.device_id
             QueueOffline = if ($QueueOffline) { $QueueOffline } else { $false }
           }
           if ($CmdLine) { $Param.Argument += (' -CommandLine=```{0}```' -f $CmdLine) }
@@ -104,7 +112,7 @@ function Invoke-TagScript {
                 'TAG_SET'
               }
               $Result = ($_.stdout).Trim()
-              if ($Result -match 'Maintenance Token>') { $TagString } else { $Result }
+              if ($Result -match 'Maintenance Token>') { ($TagString).Trim('"') } else { $Result }
             }
             foreach ($Property in @('offline_queued','session_id','cloud_request_id')) {
               $Output.$Property = $_.$Property
