@@ -579,7 +579,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           $Param = @{ Detailed = $true; All = $true }
           if ($Pair.Key -eq 'FileVantagePolicy' -and $Config.($Pair.Key).Import.exclusions) {
             # Include 'exclusions' if present in imported policies
-            $Param['include'] = 'exclusions'
+            $Param['Include'] = 'exclusions'
           }
           @($Pair.Value.Import.$Property | Select-Object -Unique).foreach{
             # Retrieve FileVantagePolicy/RuleGroup for each 'Type' and update identifiers
@@ -602,7 +602,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         } else {
           # Retrieve existing items from CID and update identifiers
           Write-Host "[Import-FalconConfig] Retrieving '$($Pair.Key)'..."
-          @(& "Get-Falcon$($Pair.Key)" -Detailed -All).foreach{
+          $Param = @{ Detailed = $true; All = $true }
+          # Include 'settings' with 'FirewallPolicy'
+          if ($Pair.Key -eq 'FirewallPolicy') { $Param['Include'] = 'settings' }
+          @(& "Get-Falcon$($Pair.Key)" @Param).foreach{
             Update-Id $_ $Pair.Key
             Compress-Property $_
           }
@@ -1023,16 +1026,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         [object]$Cid = @($Config.($Pair.Key).cid).Where({ $_.id -eq $Policy.id })
         if ($Policy.id -and $Pair.Key -eq 'FirewallPolicy') {
           if ($Policy.settings.policy_id) { $Policy.settings.policy_id = $Policy.id }
-          foreach ($Id in $Policy.rule_group_ids) {
-            # Update 'rule_group_ids' with new id values
+          foreach ($Id in $Policy.settings.rule_group_ids) {
             [object]$Group = $Config.Ids.FirewallGroup | Where-Object { $_.old_id -eq $Id }
-            if ($Group -and $Policy.rule_group_ids -contains $Id) {
-              [string[]]$Policy.rule_group_ids = $Policy.rule_group_ids -replace $Id,$Group.new_id
+            [string[]]$Policy.settings.rule_group_ids = if ($Group -and $Policy.rule_group_ids -contains $Id) {
+              # Update 'rule_group_ids' with new id values
+              $Policy.settings.rule_group_ids -replace $Id,$Group.new_id
+            } else {
+              # Remove unmatched 'rule_group_ids' values
+              @($Policy.settings.rule_group_ids).Where({ $_ -ne $Id })
+            }
+            if (!$Policy.settings.rule_group_ids) {
+              # Remove empty 'rule_group_ids' value before submission of 'settings'
+              [void]$Policy.settings.PSObject.Properties.Remove('rule_group_ids')
             }
           }
           if ($Policy.settings) {
-            # Apply FirewallSetting
             @($Policy.settings | Edit-FalconFirewallSetting).foreach{
+              # Apply FirewallSetting
               Set-Property $Policy settings $Policy.settings
             }
           }
