@@ -833,8 +833,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         Invoke-CreateIoc $Pair
       } elseif ($Pair.Key -eq 'Script') {
         foreach ($Item in $Pair.Value.Import) {
-          # Create Script
           @($Item | & "Send-Falcon$($Pair.Key)").foreach{
+            # Create Script
             Add-Result Created ($Item | Select-Object name,platform) $Pair.Key
           }
         }
@@ -1028,12 +1028,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           if ($Policy.settings.policy_id) { $Policy.settings.policy_id = $Policy.id }
           foreach ($Id in $Policy.settings.rule_group_ids) {
             [object]$Group = $Config.Ids.FirewallGroup | Where-Object { $_.old_id -eq $Id }
-            [string[]]$Policy.settings.rule_group_ids = if ($Group -and $Policy.rule_group_ids -contains $Id) {
+            [string[]]$Policy.settings.rule_group_ids = if ($Group) {
               # Update 'rule_group_ids' with new id values
+              Write-Log 'Import-FalconConfig' ('Updated FirewallGroup "{0}" to "{1}" under FirewallPolicy "{2}"' -f
+                $Id,$Group.id,$Policy.id)
               $Policy.settings.rule_group_ids -replace $Id,$Group.new_id
             } else {
               # Remove unmatched 'rule_group_ids' values
-              @($Policy.settings.rule_group_ids).Where({ $_ -ne $Id })
+              Write-Log 'Import-FalconConfig' ('Removed unmatched FirewallGroup "{0}" from FirewallPolicy "{1}"' -f
+                $Id,$Policy.id)
+              $Policy.settings.rule_group_ids -replace $Id,$null
             }
             if (!$Policy.settings.rule_group_ids) {
               # Remove empty 'rule_group_ids' value before submission of 'settings'
@@ -1044,6 +1048,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             @($Policy.settings | Edit-FalconFirewallSetting).foreach{
               # Apply FirewallSetting
               Set-Property $Policy settings $Policy.settings
+              @('platform_id','default_inbound','default_outbound','enforce','test_mode','local_logging',
+              'rule_group_ids').foreach{
+                # Add individual setting values to output
+                Add-Result Modified $Policy $Pair.Key $_ $null $Policy.settings.$_
+              }
             }
           }
         } elseif ($Policy.id -and $Policy.prevention_settings -or $Policy.settings) {
