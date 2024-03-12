@@ -165,7 +165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     [string]$Path,
     [Alias('Force')]
     [switch]$AssignExisting,
-    [ValidateSet('DeviceControlPolicy','FirewallPolicy','PreventionPolicy','ResponsePolicy','SensorUpdatePolicy')]
+    [ValidateSet('DeviceControlPolicy','PreventionPolicy','ResponsePolicy','SensorUpdatePolicy')]
     [string[]]$ModifyDefault,
     [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup','FirewallPolicy',
       'HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script',
@@ -776,11 +776,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               [object[]]$Rules = foreach ($Id in $FwGroup.rule_ids) {
                 $Config.FirewallRule.Import | Where-Object { $_.family -eq $Id -and $_.deleted -eq $false }
               }
-              @($Rules).foreach{
-                # Trim rule names to 64 characters and use 'rules' as 'rule_ids'
-                if ($_.name.length -gt 64) { $_.name = ($_.name).SubString(0,63) }
-              }
               if ($Rules) {
+                @($Rules).foreach{
+                  # Trim rule names to 64 characters and use 'rules' as 'rule_ids'
+                  if ($_.name.length -gt 64) { $_.name = ($_.name).SubString(0,63) }
+                }
                 Set-Property $FwGroup rules $Rules
                 [void]$FwGroup.PSObject.Properties.Remove('rule_ids')
               }
@@ -916,18 +916,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 [object]$Diff = if ($null -ne $Item.$_ -and $null -ne $Cid.$_) {
                   # Compare properties that exist in both 'Modify' and CID
                   if ($Pair.Key -eq 'FirewallGroup' -and $_ -eq 'rule_ids') {
-                    <#
-                    if ($Item.rule_ids) {
+                  #  if ($Item.rule_ids) {
                       # Select FirewallRule from import using 'family' as 'id' value
-                      [object[]]$FwRule = foreach ($Rule in $Item.rule_ids) {
-                        $Config.FirewallRule.Import | Where-Object { $_.family -eq $Rule -and
-                          $_.deleted -eq $false }
-                      }
-                      if ($FwRule) {
+                  #   [object[]]$FwRule = foreach ($Rule in $Item.rule_ids) {
+                  #     $Config.FirewallRule.Import | Where-Object { $_.family -eq $Rule -and
+                  #       $_.deleted -eq $false }
+                  #   }
+                  #   if ($FwRule) {
                         # Evaluate rules for modification
-                      }
-                    }
-                    #>
+                  #   }
+                  #  }
                   } elseif ($Pair.Key -eq 'IoaGroup' -and $_ -eq 'rules') {
                     foreach ($Rule in $Item.$_) {
                       # Evaluate each IoaRule
@@ -1055,7 +1053,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
             }
           }
-        } elseif ($Policy.id -and $Policy.prevention_settings -or $Policy.settings) {
+        } elseif ($Policy.id -and ($Policy.prevention_settings -or $Policy.settings)) {
           # Compare Policy settings
           $Setting = Compare-Setting $Policy $Cid $Pair.Key
           if ($Setting) {
