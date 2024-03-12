@@ -252,56 +252,46 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
     function Compare-ImportData ([string]$Item) {
       if ($Config.$Item.Cid) {
+        # Determine if platform is defined for item
         $Platform = @{}
-        @('platform','platform_name').foreach{
-          if ($Config.$Item.Cid.$_) {
-            @($Config.$Item.Cid.$_ | Select-Object -Unique).foreach{ $Platform[$_] = @{} }
-          }
-        }
+        $Property = @('platform','platform_name').foreach{ if ($Config.$Item.Cid.$_) { $_ } }
+        @($Config.$Item.Cid.$Property | Select-Object -Unique).foreach{ $Platform[$_] = @{} }
         if ($Platform.Count -gt 0) {
           foreach ($Key in $Platform.Keys) {
             # Define properties for comparison between imported and existing items (by platform)
             @('Cid','Import').foreach{
-              $Platform.$Key[$_] = @($Config.$Item.$_).Where({
-                $_.platform -eq $Key -or $_.platform_name -eq $Key
-              })
+              $Platform.$Key[$_] = @($Config.$Item.$_).Where({ $_.$Property -eq $Key })
             }
             [string[]]$Available = ($Platform.$Key.Cid | Get-Member -MemberType NoteProperty |
               Select-Object -Unique).Name
             [string[]]$Compare = @('name','type','value').Where({ $Available -contains $_ })
             Write-Log 'Import-FalconConfig' "Evaluating $Key $Item using '$($Compare -join ',')'"
-            $FilterScript = [scriptblock]::Create(
-              (@($Compare).foreach{ "`$Platform.`$Key.Cid -notcontains `$_.$_" }) -join ' -and '
-            )
-            @($Platform.$Key.Import | Where-Object -FilterScript $FilterScript).foreach{
-              # Capture items for import (by platform)
-              Write-Log 'Import-FalconConfig' "Selecting '$(
-                if ($_.value) {
-                  if ($_.type) { $_.type,$_.value -join ':' } else { $_.value }
-                } elseif ($_.precedence -and $Item -eq 'FileVantageRule') {
-                  $_.precedence
-                } else {
-                  $_.name
-                }
-              )' for import"
-              $_
-            }
-            if ($ModifyExisting -contains $Item) {
-              # Capture (non-policy) items to modify
-              $FilterScript = [scriptblock]::Create(
-                (@($Compare).foreach{ "`$Platform.`$Key.Cid eq `$_.$_" }) -join ' -and '
-              )
-              @($Platform.$Key.Import | Where-Object -FilterScript $FilterScript).foreach{
+            $FilterScript = [scriptblock]::Create((@($Compare).foreach{ "`$_.$_ -eq `$i.$_" }) -join ' -and ')
+            foreach ($i in $Platform.$Key.Import) {
+              if (!@($Platform.$Key.Cid).Where({ $FilterScript })) {
+                # Capture import that doesn't exist
                 Write-Log 'Import-FalconConfig' "Selecting '$(
-                  if ($_.value) {
-                    if ($_.type) { $_.type,$_.value -join ':' } else { $_.value }
-                  } elseif ($_.precedence -and $Item -eq 'FileVantageRule') {
-                    $_.precedence
+                  if ($i.value) {
+                    if ($i.type) { $i.type,$i.value -join ':' } else { $i.value }
+                  } elseif ($i.precedence -and $Item -eq 'FileVantageRule') {
+                    $i.precedence
                   } else {
-                    $_.name
+                    $i.name
+                  }
+                )' for import"
+                $i
+              } elseif (@($Platform.$Key.Cid).Where({ $FilterScript }) -and $ModifyExisting -contains $Item) {
+                # Capture modification when 'ModifyExisting' is defined
+                Write-Log 'Import-FalconConfig' "Selecting '$(
+                  if ($i.value) {
+                    if ($i.type) { $i.type,$i.value -join ':' } else { $i.value }
+                  } elseif ($i.precedence -and $Item -eq 'FileVantageRule') {
+                    $i.precedence
+                  } else {
+                    $i.name
                   }
                 )' for modification"
-                $Config.$Item.Modify.Add($_)
+                $Config.$Item.Modify.Add($i)
               }
             }
           }
@@ -311,37 +301,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             Select-Object -Unique).Name
           [string[]]$Compare = @('name','type','value').Where({ $Available -contains $_ })
           Write-Log 'Import-FalconConfig' "Evaluating $Item using '$($Compare -join ',')'"
-          $FilterScript = [scriptblock]::Create(
-            (@($Compare).foreach{ "`$Config.$($Item).Cid.$_ -notcontains `$_.$_" }) -join ' -and '
-          )
-          @($Config.$Item.Import | Where-Object -FilterScript $FilterScript).foreach{
-            # Capture items for import
-            Write-Log 'Import-FalconConfig' "Selecting '$(
-              if ($_.value) {
-                if ($_.type) { $_.type,$_.value -join ':' } else { $_.value }
-              } elseif ($_.precedence -and $Item -eq 'FileVantageRule') {
-                $_.precedence
-              } else {
-                $_.name
-              }
-            )' for import"
-            $_
-          }
-          if ($ModifyExisting -contains $Item) {
-            # Capture (non-policy) items to modify
-            $FilterScript = [scriptblock]::Create((@($Compare).foreach{
-              "`$Config.$($Item).Cid.$($_) -eq `$_.$($_)" }) -join ' -and ')
-            @($Config.$Item.Import | Where-Object -FilterScript $FilterScript).foreach{
+          $FilterScript = [scriptblock]::Create((@($Compare).foreach{ "`$_.$_ -eq `$i.$_" }) -join ' -and ')
+          foreach ($i in $Config.$Item.Import) {
+            if (!@($Config.$Item.Cid).Where({ $FilterScript })) {
+              # Capture import that doesn't exist
               Write-Log 'Import-FalconConfig' "Selecting '$(
-                if ($_.value) {
-                  if ($_.type) { $_.type,$_.value -join ':' } else { $_.value }
-                } elseif ($_.precedence -and $Item -eq 'FileVantageRule') {
-                  $_.precedence
+                if ($i.value) {
+                  if ($i.type) { $i.type,$i.value -join ':' } else { $i.value }
+                } elseif ($i.precedence -and $Item -eq 'FileVantageRule') {
+                  $i.precedence
                 } else {
-                  $_.name
+                  $i.name
+                }
+              )' for import"
+              $i
+            } elseif (@($Config.$Item.Cid).Where({ $FilterScript }) -and $ModifyExisting -contains $Item) {
+              # Capture modification when 'ModifyExisting' is defined
+              Write-Log 'Import-FalconConfig' "Selecting '$(
+                if ($i.value) {
+                  if ($i.type) { $i.type,$i.value -join ':' } else { $i.value }
+                } elseif ($i.precedence -and $Item -eq 'FileVantageRule') {
+                  $i.precedence
+                } else {
+                  $i.name
                 }
               )' for modification"
-              $Config.$Item.Modify.Add($_)
+              $Config.$Item.Modify.Add($i)
             }
           }
         }
