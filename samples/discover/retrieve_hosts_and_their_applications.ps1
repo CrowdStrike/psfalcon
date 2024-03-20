@@ -9,8 +9,6 @@ Requires "Hosts: Read" and "Falcon Discover: Read"
 OAuth2 client identifier
 .PARAMETER ClientSecret
 OAuth2 client secret
-.PARAMETER Cloud
-CrowdStrike cloud [default: 'us-1']
 .PARAMETER Hostname
 CrowdStrike API hostname
 #>
