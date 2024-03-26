@@ -40,9 +40,9 @@ function Add-Include {
             foreach ($i in $Output) {
               $SetParam = @{
                 Object = if ($i.policy_id) {
-                  @($Object).Where({ $_.id -eq $i.policy_id })
+                  @($Object).Where({$_.id -eq $i.policy_id})
                 } else {
-                  @($Object).Where({ $_.id -eq $i.id })
+                  @($Object).Where({$_.id -eq $i.id})
                 }
                 Name = $_.Key
                 Value = $i
@@ -59,9 +59,9 @@ function Add-Include {
           # Append all properties from 'Include'
           $SetParam = @{
             Object = if ($i.device_id) {
-              @($Object).Where({ $_.id -eq $i.device_id })
+              @($Object).Where({$_.id -eq $i.device_id})
             } else {
-              @($Object).Where({ $_.id -eq $i.id })
+              @($Object).Where({$_.id -eq $i.id})
             }
             Name = $_
             Value = $i.$_
@@ -95,7 +95,7 @@ function Build-Content {
   begin {
     function Build-Body ($Format,$UserInput) {
       $Body = @{}
-      $UserInput.GetEnumerator().Where({ $Format.Body.Values -match $_.Key }).foreach{
+      $UserInput.GetEnumerator().Where({$Format.Body.Values -match $_.Key}).foreach{
         if ($_.Key -eq 'raw_array') {
           $RawArray = @($_.Value)
         } else {
@@ -122,7 +122,7 @@ function Build-Content {
           } else {
             if (!$Body) { $Body = @{} }
             if (($Value -is [array] -or $Value -is [string]) -and ($Value |
-            Get-Member -MemberType Method).Where({ $_.Name -eq 'Normalize' })) {
+            Get-Member -MemberType Method).Where({$_.Name -eq 'Normalize'})) {
               # Normalize values to avoid Json conversion errors when 'Get-Content' was used
               if ($Value -is [array]) {
                 $Value = [array] ($Value).Normalize()
@@ -130,7 +130,7 @@ function Build-Content {
                 $Value = ($Value).Normalize()
               }
             }
-            $Format.Body.GetEnumerator().Where({ $_.Value -eq $Field }).foreach{
+            $Format.Body.GetEnumerator().Where({$_.Value -eq $Field}).foreach{
               if ($_.Key -eq 'root') {
                 # Add key/value pair directly to 'Body'
                 $Body.Add($Field,$Value)
@@ -158,7 +158,7 @@ function Build-Content {
     }
     function Build-Formdata ($Format,$UserInput) {
       $Formdata = @{}
-      $UserInput.GetEnumerator().Where({ $Format.Formdata -contains $_.Key }).foreach{
+      $UserInput.GetEnumerator().Where({$Format.Formdata -contains $_.Key}).foreach{
         $Formdata[($_.Key).ToLower()] = if ($_.Key -eq 'content') {
           $Content = try {
             # Collect file content as a string
@@ -178,8 +178,8 @@ function Build-Content {
     function Build-Query ($Format,$UserInput) {
       # Regex pattern for matching 'last [int] days/hours'
       [regex]$Relative = '([Ll]ast (?<Int>\d{1,}) ([Dd]ay[s]?|[Hh]our[s]?))'
-      [array]$Query = foreach ($Field in $Format.Query.Where({ $UserInput.Keys -contains $_ })) {
-        foreach ($Value in ($UserInput.GetEnumerator().Where({ $_.Key -eq $Field }).Value)) {
+      [array]$Query = foreach ($Field in $Format.Query.Where({$UserInput.Keys -contains $_})) {
+        foreach ($Value in ($UserInput.GetEnumerator().Where({$_.Key -eq $Field}).Value)) {
           if ($Field -eq 'filter' -and $Value -match $Relative) {
             # Convert 'last [int] days/hours' to Rfc3339
             @($Value | Select-String $Relative -AllMatches).foreach{
@@ -228,7 +228,7 @@ function Build-Content {
         if ($Format.$_) {
           $Value = if ($_ -eq 'Outfile') {
             # Get absolute path for 'OutFile'
-            $Outfile = $UserInput.GetEnumerator().Where({ $Format.Outfile -eq $_.Key }).Value
+            $Outfile = $UserInput.GetEnumerator().Where({$Format.Outfile -eq $_.Key}).Value
             if ($Outfile) { $Script:Falcon.Api.Path($Outfile) }
           } else {
             # Get value(s) from each 'Build' function
@@ -275,7 +275,7 @@ function Confirm-Parameter {
         throw "Use [hashtable] or [PSCustomObject]."
       }
       if ($Keys) {
-        @($PmList.Where({ $_.attributes.Mandatory -eq $true }).foreach{ Get-ParameterName $_ }).foreach{
+        @($PmList.Where({$_.attributes.Mandatory -eq $true}).foreach{ Get-ParameterName $_ }).foreach{
           # Verify object contains required properties
           if ($Keys -notcontains $_) { throw "Missing required property '$_'. $ErrorObject" } else { $true }
         }
@@ -370,7 +370,7 @@ function Get-EndpointFormat {
     # Define endpoint payload/parameters using 'format.json'
     [string[]]$Array = try { $Endpoint -split ':',2 } catch {}
     if ($Array) {
-      @($Script:Falcon.Format.($Array[0]).($Array[1]).PSObject.Properties).Where({ $null -ne $_.Value }).foreach{
+      @($Script:Falcon.Format.($Array[0]).($Array[1]).PSObject.Properties).Where({$null -ne $_.Value}).foreach{
         $Output[$_.Name] = if ($_.Value -is [PSCustomObject]) {
           $Value = @{}
           @($_.Value.PSObject.Properties).foreach{ $Value[$_.Name] = $_.Value }
@@ -397,7 +397,7 @@ function Get-ParamSet {
     # Get baseline switch and endpoint parameters
     $Switches = @{}
     if ($UserInput) {
-      $UserInput.GetEnumerator().Where({ $_.Key -match '^(All|Detailed|Total)$' }).foreach{
+      $UserInput.GetEnumerator().Where({$_.Key -match '^(All|Detailed|Total)$'}).foreach{
         $Switches.Add($_.Key,$_.Value)
       }
     }
@@ -451,7 +451,7 @@ function Get-ParamSet {
         } else {
           "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
         }
-        $Content.GetEnumerator().Where({ $_.Key -ne 'Query' -and $_.Value }).foreach{
+        $Content.GetEnumerator().Where({$_.Key -ne 'Query' -and $_.Value}).foreach{
           # Add values other than 'Query'
           $Split.Endpoint.Add($_.Key,$_.Value)
         }
@@ -464,7 +464,7 @@ function Get-ParamSet {
         $Split = $Switches.Clone()
         $Split.Add('Endpoint',$Base.Clone())
         $Split.Endpoint.Add('Body',@{ $Field = $Content.Body.$Field[$i..($i + ($Max - 1))] })
-        $Content.GetEnumerator().Where({ $_.Value }).foreach{
+        $Content.GetEnumerator().Where({$_.Value}).foreach{
           # Add values other than 'Body.$Field'
           if ($_.Key -eq 'Query') {
             $Split.Endpoint.Path += if ($Split.Endpoint.Path -match '\?') {
@@ -473,7 +473,7 @@ function Get-ParamSet {
               "?$($_.Value -join '&')"
             }
           } elseif ($_.Key -eq 'Body') {
-            ($_.Value).GetEnumerator().Where({ $_.Key -ne $Field }).foreach{
+            ($_.Value).GetEnumerator().Where({$_.Key -ne $Field}).foreach{
               $Split.Endpoint.Body.Add($_.Key,$_.Value)
             }
           } else {
@@ -524,26 +524,25 @@ function Get-RtrCommand {
     @($null,'Responder','Admin').foreach{
       $Key = if ($_ -eq $null) { 'ReadOnly' } else { $_ }
       $Index[$Key] = (Get-Command "Invoke-Falcon$($_)Command").Parameters.GetEnumerator().Where({
-        $_.Key -eq 'Command' }).Value.Attributes.ValidValues
+        $_.Key -eq 'Command'}).Value.Attributes.ValidValues
     }
     # Filter 'Responder' and 'Admin' to unique command(s)
-    $Index.Responder = @($Index.Responder).Where({ $Index.ReadOnly -notcontains $_ })
-    $Index.Admin = @($Index.Admin).Where({ $Index.ReadOnly -notcontains $_ -and $Index.Responder -notcontains
-      $_ })
+    $Index.Responder = @($Index.Responder).Where({$Index.ReadOnly -notcontains $_})
+    $Index.Admin = @($Index.Admin).Where({$Index.ReadOnly -notcontains $_ -and $Index.Responder -notcontains $_})
     if ($Command) {
       # Determine command to invoke using $Command and permission level
       [string]$Result = if ($Command -eq 'runscript') {
         # Force 'Admin' for 'runscript' command
         'Invoke-FalconAdminCommand'
       } else {
-        $Index.GetEnumerator().Where({ $_.Value -contains $Command }).foreach{
+        $Index.GetEnumerator().Where({$_.Value -contains $Command}).foreach{
           if ($_.Key -eq 'ReadOnly') { 'Invoke-FalconCommand' } else { "Invoke-Falcon$($_.Key)Command" }
         }
       }
       if ($ConfirmCommand) { $Result -replace 'Invoke','Confirm' } else { $Result }
     } elseif ($Permission) {
       # Return available Real-time Response commands by permission
-      $Index.GetEnumerator().Where({ $Permission -contains $_.Key }).Value
+      $Index.GetEnumerator().Where({$Permission -contains $_.Key}).Value
     } else {
       # Return all available Real-time Response commands
       @($Index.Values).foreach{ $_ }
@@ -562,7 +561,7 @@ function Get-RtrResult {
   process {
     foreach ($Result in $Object) {
       # Update 'Output' with populated result(s) from 'Object'
-      @($Result.PSObject.Properties).Where({ $RtrFields -contains $_.Name }).foreach{
+      @($Result.PSObject.Properties).Where({$RtrFields -contains $_.Name}).foreach{
         $Name = if ($_.Name -eq 'task_id') {
           # Rename 'task_id' to 'cloud_request_id'
           'cloud_request_id'
@@ -584,7 +583,7 @@ function Get-RtrResult {
         # Update 'Output' with result using 'aid' or 'session_id'
         $Match = if ($Result.aid) { 'aid' } else { 'session_id' }
         if ($Result.$Match) {
-          @($Output).Where({ $Result.$Match -eq $_.$Match }).foreach{ Set-Property $_ $Name $Value }
+          @($Output).Where({$Result.$Match -eq $_.$Match}).foreach{ Set-Property $_ $Name $Value }
         }
       }
     }
@@ -685,7 +684,7 @@ function Invoke-Falcon {
     # Gather request parameters and split into groups
     [string[]]$Exclude = 'BodyArray','Command','RawOutput'
     $GetParam = @{}
-    $PSBoundParameters.GetEnumerator().Where({ $Exclude -notcontains $_.Key }).foreach{
+    $PSBoundParameters.GetEnumerator().Where({$Exclude -notcontains $_.Key}).foreach{
       $GetParam.Add($_.Key,$_.Value)
     }
     # Add 'Accept: application/json' when undefined
@@ -697,8 +696,8 @@ function Invoke-Falcon {
     }
     if ($UserInput.All -eq $true -and !$UserInput.Limit) {
       # Add maximum 'Limit' when not present and using 'All'
-      $Limit = (Get-Command $Command).ParameterSets.Where({
-        $_.Name -eq $Endpoint }).Parameters.Where({ $_.Name -eq 'Limit' }).Attributes.MaxRange
+      $Limit = (Get-Command $Command).ParameterSets.Where({$_.Name -eq $Endpoint}).Parameters.Where({
+        $_.Name -eq 'Limit'}).Attributes.MaxRange
       if ($Limit) { $UserInput.Add('Limit',$Limit) }
     }
   }
@@ -992,7 +991,7 @@ function Stop-RtrUpdate {
         }
       }
     }
-    @(Get-Job).Where({ $_.Name -match '^psfalcon-rtr_' -and $_.State -eq 'Completed' }).foreach{
+    @(Get-Job).Where({$_.Name -match '^psfalcon-rtr_' -and $_.State -eq 'Completed'}).foreach{
       # Remove 'Completed' background jobs
       Remove-Job -Id $_.Id
       if (Get-Job -Id $_.Id -EA 0) {
@@ -1122,8 +1121,8 @@ function Wait-RtrGet {
           }
           $_
         }
-        if ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false })) { Start-Sleep -Seconds 20 }
-      } while ($Object.Where({ !$_.deleted_at -and $_.complete -eq $false }))
+        if ($Object.Where({!$_.deleted_at -and $_.complete -eq $false})) { Start-Sleep -Seconds 20 }
+      } while ($Object.Where({!$_.deleted_at -and $_.complete -eq $false}))
     }
   }
   end { $Object }
@@ -1144,12 +1143,12 @@ function Write-Result {
         }) -join ', '
         Write-Log 'Write-Result' ($Message -join ' ')
       }
-      if ($Json.PSObject.Properties.Where({ $_.Name -ne 'meta' -and $null -ne $_.Value }) -or
+      if ($Json.PSObject.Properties.Where({$_.Name -ne 'meta' -and $null -ne $_.Value}) -or
       $Json.meta.pagination.total -eq 0 -and !$Json.meta.reqid) {
         # Remove 'meta' when other sub-properties are populated, or when pagination.total equals 0
         [void]$Json.PSObject.Properties.Remove('meta')
       }
-      @($Json.PSObject.Properties).Where({ $_.Name -eq 'errors' -and $_.Value }).foreach{
+      @($Json.PSObject.Properties).Where({$_.Name -eq 'errors' -and $_.Value}).foreach{
         @($_.Value).foreach{
           # Output 'errors' to error stream as Json string
           $PSCmdlet.WriteError(
