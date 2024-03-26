@@ -65,7 +65,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['composite_ids'] = @($List | Select-Object -Unique)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
