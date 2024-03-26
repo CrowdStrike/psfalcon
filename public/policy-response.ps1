@@ -4,8 +4,8 @@ function Edit-FalconResponsePolicy {
 Modify Real-time Response policies
 .DESCRIPTION
 Requires 'Response policies: Write'.
-.PARAMETER Array
-An array of policies to modify in a single request
+.PARAMETER InputObject
+One or more policies to modify in a single request
 .PARAMETER Id
 Policy identifier
 .PARAMETER Name
@@ -19,21 +19,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'Edit-FalconResponsePolicy'
-          Endpoint = '/policy/entities/response/v1:patch'
-          Required = @('id')
-          Pattern = @('id')
-        }
-        Confirm-Parameter @Param
-      }
-    })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({ Confirm-Parameter $_ 'Edit-FalconResponsePolicy' '/policy/entities/response/v1:patch' })]
+    [Alias('resources','Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/policy/entities/response/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id,
@@ -46,21 +35,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
     [object[]]$Setting
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/policy/entities/response/v1:patch'
-      Format = @{ Body = @{ resources = @('name','id','description','settings'); root = @('resources') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/response/v1:patch' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
-        # Select required values from 'settings' sub-object
-        if ($i.settings.settings) { $i.settings = $i.settings.settings | Select-Object id,value }
-        # Select allowed fields, when populated
-        [string[]]$Select = @('id','name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
-        $List.Add(($i | Select-Object $Select))
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties and modify 'settings' to contain required values
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
+        if ($i.settings.settings) { Set-Property $i settings ($i.settings.settings | Select-Object id,value) }
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -68,8 +53,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
+        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -266,8 +253,8 @@ function New-FalconResponsePolicy {
 Create Real-time Response policies
 .DESCRIPTION
 Requires 'Response policies: Write'.
-.PARAMETER Array
-An array of policies to create in a single request
+.PARAMETER InputObject
+One or more policies to create in a single request
 .PARAMETER Name
 Policy name
 .PARAMETER PlatformName
@@ -281,22 +268,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/policy/entities/response/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'New-FalconResponsePolicy'
-          Endpoint = '/policy/entities/response/v1:post'
-          Required = @('name','platform_name')
-          Content = @('platform_name')
-          Format = @{ platform_name = 'PlatformName' }
-        }
-        Confirm-Parameter @Param
-      }
-    })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({ Confirm-Parameter $_ 'New-FalconResponsePolicy' '/policy/entities/response/v1:post' })]
+    [Alias('resources','Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/policy/entities/response/v1:post',Mandatory,Position=1)]
     [string]$Name,
     [Parameter(ParameterSetName='/policy/entities/response/v1:post',Mandatory,Position=2)]
@@ -310,23 +285,17 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
     [object[]]$Setting
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/policy/entities/response/v1:post'
-      Format = @{
-        Body = @{ resources = @('description','platform_name','name','settings'); root = @('resources') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/response/v1:post' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
-        # Select required values from 'settings' sub-object
-        if ($i.settings.settings) { $i.settings = $i.settings.settings | Select-Object id,value }
-        # Select allowed fields, when populated
-        [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
-        $List.Add(($i | Select-Object $Select))
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties and modify 'settings' to contain required values
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
+        if ($i.settings.settings) { Set-Property $i settings ($i.settings.settings | Select-Object id,value) }
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -334,8 +303,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
+        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

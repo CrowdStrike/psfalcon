@@ -539,8 +539,8 @@ function New-FalconHostGroup {
 Create host groups
 .DESCRIPTION
 Requires 'Host groups: Write'.
-.PARAMETER Array
-An array of host groups to create in a single request
+.PARAMETER InputObject
+One or more host groups to create in a single request
 .PARAMETER GroupType
 Host group type
 .PARAMETER Name
@@ -554,22 +554,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHostGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'New-FalconHostGroup'
-          Endpoint = '/devices/entities/host-groups/v1:post'
-          Required = @('group_type','name')
-          Content = @('group_type')
-          Format = @{ group_type = 'GroupType' }
-        }
-        Confirm-Parameter @Param
-      }
-    })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({ Confirm-Parameter $_ 'New-FalconHostGroup' '/devices/entities/host-groups/v1:post' })]
+    [Alias('resources','Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/devices/entities/host-groups/v1:post',Mandatory,Position=1)]
     [ValidateSet('dynamic','static','staticByID',IgnoreCase=$false)]
     [Alias('group_type')]
@@ -590,21 +578,21 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHostGroup
     [string]$AssignmentRule
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/devices/entities/host-groups/v1:post'
-      Format = if ($PSCmdlet.ParameterSetName -eq 'array') { @{ Body = @{ root = @('resources') }}}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/devices/entities/host-groups/v1:post' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      @($Array).foreach{
-        if ($_.group_type -ne 'dynamic' -and $_.assignment_rule) {
-          # Remove 'assignment_rule' from non-dynamic groups
-          $_.PSObject.Properties.Remove('assignment_rule')
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined properties and remove empty values
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
+        if ($i.group_type -ne 'dynamic' -and $i.assignment_rule) {
+          # Remove 'assignment_rule' when 'group_type' is not 'dynamic'
+          [void]$i.PSObject.Properties.Remove('assignment_rule')
         }
-        $List.Add($_)
+        Remove-EmptyValue $i group_type,name
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -612,8 +600,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHostGroup
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format.Body = @{ root = @('resources') }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
+        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

@@ -135,17 +135,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
     [string]$Timezone,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
       ValueFromPipelineByPropertyName,Position=7)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'Edit-FalconFileVantageExclusion'
-          Endpoint = '/filevantage/entities/policy-scheduled-exclusions/v1:patch'
-          Allowed = @('all_day','end_time','frequency','monthly_days','occurrence','start_time','weekly_days')
-        }
-        Confirm-Parameter @Param
-      }
-    })]
     [object]$Repeated,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
       ValueFromPipelineByPropertyName,Position=8)]
@@ -163,18 +152,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
     [string]$Description
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('description','id','name','policy_id','processes','repeated','schedule_end','schedule_start',
-            'timezone','users')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param['Format'] = Get-EndpointFormat $Param.Format
   }
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Repeated) {
+      # Filter to defined 'repeated' properties and make sure 'repeated' is properly appended
+      $PSBoundParameters.Repeated = [PSCustomObject]$PSBoundParameters.Repeated |
+        Select-Object $Param.Format.Body.repeated
+      [void]$Param.Format.Body.Remove('repeated')
+      $Param.Format.Body.root += 'repeated'
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Edit-FalconFileVantagePolicy {
 <#
@@ -794,17 +784,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [string]$Timezone,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=5)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'New-FalconFileVantageExclusion'
-          Endpoint = '/filevantage/entities/policy-scheduled-exclusions/v1:post'
-          Allowed = @('all_day','end_time','frequency','monthly_days','occurrence','start_time','weekly_days')
-        }
-        Confirm-Parameter @Param
-      }
-    })]
     [object]$Repeated,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=6)]
@@ -827,18 +806,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [string]$PolicyId
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('description','name','policy_id','processes','repeated','schedule_end','schedule_start',
-            'timezone','users')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param['Format'] = Get-EndpointFormat $Param.Format
   }
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Repeated) {
+      # Filter to defined 'repeated' properties and make sure 'repeated' is properly appended
+      $PSBoundParameters.Repeated = [PSCustomObject]$PSBoundParameters.Repeated |
+        Select-Object $Param.Format.Body.repeated
+      [void]$Param.Format.Body.Remove('repeated')
+      $Param.Format.Body.root += 'repeated'
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function New-FalconFileVantagePolicy {
 <#

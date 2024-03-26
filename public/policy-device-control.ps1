@@ -4,8 +4,8 @@ function Edit-FalconDeviceControlPolicy {
 Modify Falcon Device Control policies
 .DESCRIPTION
 Requires 'Device control policies: Write'.
-.PARAMETER Array
-An array of policies to modify in a single request
+.PARAMETER InputObject
+One or more policies to modify in a single request
 .PARAMETER Id
 Policy identifier
 .PARAMETER Name
@@ -29,21 +29,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'Edit-FalconDeviceControlPolicy'
-          Endpoint = '/policy/entities/device-control/v1:patch'
-          Required = @('id')
-          Pattern = @('id')
-        }
-        Confirm-Parameter @Param
-      }
+      Confirm-Parameter $_ 'Edit-FalconDeviceControlPolicy' '/policy/entities/device-control/v1:patch'
     })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Alias('resources','Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/policy/entities/device-control/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id,
@@ -73,24 +64,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
       } else {
         '/policy/entities/device-control/v1:patch'
       }
-      Format = if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
-        @{ Body = @{ root = @('custom_notifications') }}
-      } else {
-        @{ Body = @{ resources = @('name','id','description','settings'); root = @('resources') }}
-      }
     }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
         if ($i.settings.classes.exceptions) {
           # Remove exception 'id' values from 'settings' object
-          @($i.settings.classes.exceptions).Where({ $_.id }).foreach{ $_.PSObject.Properties.Remove('id') }
+          @($i.settings.classes.exceptions).Where({$_.id}).foreach{ [void]$_.PSObject.Properties.Remove('id') }
         }
-        # Select allowed fields, when populated
-        [string[]]$Select = @('id','name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
-        $List.Add(($i | Select-Object $Select))
+        $List.Add($i)
       }
     } else {
       if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
@@ -118,8 +105,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
+        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -322,8 +311,8 @@ function New-FalconDeviceControlPolicy {
 Create Falcon Device Control policies
 .DESCRIPTION
 Requires 'Device control policies: Write'.
-.PARAMETER Array
-An array of policies to create in a single request
+.PARAMETER InputObject
+One or more policies to create in a single request
 .PARAMETER Name
 Policy name
 .PARAMETER PlatformName
@@ -337,22 +326,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'New-FalconDeviceControlPolicy'
-          Endpoint = '/policy/entities/device-control/v1:post'
-          Required = @('name','platform_name')
-          Content = @('platform_name')
-          Format = @{ platform_name = 'PlatformName' }
-        }
-        Confirm-Parameter @Param
-      }
+      Confirm-Parameter $_ 'New-FalconDeviceControlPolicy' '/policy/entities/device-control/v1:post'
     })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Alias('resources','Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=1)]
     [string]$Name,
     [Parameter(ParameterSetName='/policy/entities/device-control/v1:post',Mandatory,Position=2)]
@@ -366,27 +345,20 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
     [object]$Setting
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/policy/entities/device-control/v1:post'
-      Format = @{
-        Body = @{ resources = @('name','description','platform_name','settings'); root = @('resources') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/device-control/v1:post' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
         if ($i.settings.classes.exceptions) {
-          @($i.settings.classes.exceptions).Where({ $_.id }).foreach{
-            # Remove exception 'id' values from 'settings' object
-            $_.PSObject.Properties.Remove('id')
-          }
+          # Remove exception 'id' values from 'settings' object
+          @($i.settings.classes.exceptions).Where({$_.id}).foreach{ [void]$_.PSObject.Properties.Remove('id') }
         }
-        # Select allowed fields, when populated
-        [string[]]$Select = @('name','description','platform_name','settings').foreach{ if ($i.$_) { $_ }}
-        $List.Add(($i | Select-Object $Select))
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -394,8 +366,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
+        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

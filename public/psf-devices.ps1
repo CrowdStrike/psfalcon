@@ -98,19 +98,22 @@ Find hosts using a list of hostnames
 Perform hostname searches in groups of 100.
 
 Requires 'Hosts: Read'.
+.PARAMETER InputObject
+One or more hostnames to find
 .PARAMETER Path
 Path to a plain text file containing hostnames
 .PARAMETER Include
 Include additional properties
 .PARAMETER Partial
 Perform a non-exact search
-.PARAMETER Array
-An array containing hostnames
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
 #>
   [CmdletBinding(DefaultParameterSetName='Path',SupportsShouldProcess)]
   param(
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [Alias('Array')]
+    [string[]]$InputObject,
     [Parameter(ParameterSetName='Path',Mandatory,Position=1)]
     [ValidateScript({
       if (Test-Path $_ -PathType Leaf) {
@@ -121,16 +124,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
     })]
     [string]$Path,
     [Parameter(ParameterSetName='Path',Position=2)]
-    [Parameter(ParameterSetName='Array',Position=2)]
+    [Parameter(ParameterSetName='Pipeline',Position=2)]
     [ValidateSet('agent_version','cid','external_ip','first_seen','hostname','last_seen','local_ip','mac_address',
       'os_build','os_version','platform_name','product_type','product_type_desc','serial_number',
       'system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
     [string[]]$Include,
     [Parameter(ParameterSetName='Path')]
-    [Parameter(ParameterSetName='Array')]
-    [switch]$Partial,
-    [Parameter(ParameterSetName='Array',Mandatory,ValueFromPipeline)]
-    [string[]]$Array
+    [Parameter(ParameterSetName='Pipeline')]
+    [switch]$Partial
   )
   begin {
     [System.Collections.Generic.List[string]]$List = @()
@@ -141,9 +142,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
   process {
     if ($Path) {
       $List.AddRange([string[]]((Get-Content -Path $Path).Normalize()).Where({
-        ![string]::IsNullOrWhiteSpace($_) }))
-    } elseif ($Array) {
-      @($Array).Where({ ![string]::IsNullOrWhiteSpace($_) }).foreach{ $List.Add($_) }
+        ![string]::IsNullOrWhiteSpace($_)}))
+    } elseif ($InputObject) {
+      @($InputObject).Where({![string]::IsNullOrWhiteSpace($_)}).foreach{ $List.Add($_) }
     }
   }
   end {

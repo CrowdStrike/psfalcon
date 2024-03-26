@@ -44,7 +44,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
   process {
     $Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
     if ($Format) {
-      ($Format.Body.root | Where-Object { $_ -ne 'id' }).foreach{
+      @($Format.Body.root).Where({$_ -ne 'id'}).foreach{
         # When not provided, add required fields using existing policy settings
         if (!$PSBoundParameters.$_) {
           if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.Id -EA 0 }
@@ -63,8 +63,8 @@ function Edit-FalconIoaRule {
 .SYNOPSIS
 Modify custom Indicator of Attack rules within a rule group
 .DESCRIPTION
-All fields are required (plus 'rulegroup_version') when making a rule group change. PSFalcon adds missing values
-automatically using data from your existing rule group.
+All fields are required when making a rule group change. PSFalcon adds missing values automatically using data
+from your existing rule group.
 
 If an existing rule is submitted within 'rule_updates', it will be filtered to the required properties ('comment',
 'description', 'disposition_id', 'enabled', 'field_values', 'instance_id', 'name', and 'pattern_severity')
@@ -74,7 +74,7 @@ Requires 'Custom IOA rules: Write'.
 .PARAMETER Comment
 Audit log comment
 .PARAMETER RuleUpdate
-An array of rule properties
+One or more custom Indicator of Attack rules
 .PARAMETER RulegroupId
 Rule group identifier
 .LINK
@@ -82,10 +82,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
 #>
   [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Position=1)]
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+      Position=1)]
     [string]$Comment,
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',ValueFromPipelineByPropertyName,
-       Position=2)]
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+      Position=2)]
     [Alias('rule_updates','rules','RuleUpdates')]
     [object[]]$RuleUpdate,
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
@@ -95,30 +96,35 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
     [string]$RulegroupId
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('rulegroup_id','comment','rule_updates','rulegroup_version') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    [System.Collections.Generic.List[object]]$List = @()
   }
   process {
     if ($RuleUpdate) {
-      # Filter 'rule_updates' to required fields
-      [object[]]$RuleRequired = 'instance_id','pattern_severity','enabled','disposition_id','name',
-        'description','comment',@{ label = 'field_values'; expression = { $_.field_values |
-        Select-Object name,label,type,values }}
-      [object[]]$RuleUpdate = $RuleUpdate | Select-Object $RuleRequired
-    }
-    @($Param.Format.Body.root | Where-Object { $_ -ne 'rule_updates' }).foreach{
-      # When not provided, add required fields using existing policy settings
-      if (!$PSBoundParameters.$_) {
-        if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.RulegroupId -EA 0 }
-        if ($Existing) {
-          $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
-          $PSBoundParameters[$_] = $Value
+      foreach ($i in $RuleUpdate) {
+        if ($i.field_values) {
+          # Ensure that 'field_values' are submitted as an array with 'name', 'label', 'type' and 'values'
+          $i.field_values = [PSCustomObject[]]$i.field_values | Select-Object name,label,type,values
         }
+        # Select required properties defined by 'rule_updates' for endpoint
+        $i = [PSCustomObject]$i | Select-Object @($Param.Format.Body.rule_updates).Where({
+          $_ -ne 'rulegroup_version'})
+        $List.Add($i)
       }
     }
+  }
+  end {
+    # Add 'rulegroup_version' from existing IoaGroup
+    $PSBoundParameters['rulegroup_version'] = (Get-FalconIoaGroup -Id $RulegroupId -EA 0).version
+    if ($List) {
+      # Add 'rule_updates' as an array
+      [void]$PSBoundParameters.Remove('RuleUpdate')
+      $PSBoundParameters['rule_updates'] = @($List)
+    }
+    # Modify 'Format' to ensure 'rule_updates' is properly appended and make request
+    [void]$Param.Format.Body.Remove('rule_updates')
+    $Param.Format.Body.root += 'rule_updates'
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
@@ -492,7 +498,7 @@ Rule type
 .PARAMETER DispositionId
 Disposition identifier [10: Monitor, 20: Detect, 30: Block]
 .PARAMETER FieldValue
-An array of rule properties
+An array of custom Indicator of Attack properties
 .PARAMETER Description
 Rule description
 .PARAMETER Comment
@@ -507,23 +513,23 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
       Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=2)]
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=2)]
     [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
     [Alias('pattern_severity')]
     [string]$PatternSeverity,
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=3)]
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=3)]
     [ValidateSet(1,2,5,6,9,10,11,12)]
     [Alias('ruletype_id')]
     [string]$RuletypeId,
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=4)]
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=4)]
     [ValidateSet(10,20,30)]
     [Alias('disposition_id')]
     [int32]$DispositionId,
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=5)]
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=5)]
     [Alias('field_values','FieldValues')]
     [object[]]$FieldValue,
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',ValueFromPipelineByPropertyName,Position=6)]
@@ -537,22 +543,18 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
     [string]$RulegroupId
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('rulegroup_id','disposition_id','comment','description','pattern_severity',
-            'ruletype_id','field_values','name')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
   }
   process {
     if ($PSBoundParameters.FieldValue) {
       # Filter 'field_values' to required fields
-      $PSBoundParameters.FieldValue = $PSBoundParameters.FieldValue | Select-Object name,label,type,values
+      $PSBoundParameters.FieldValue = [PSCustomObject[]]$PSBoundParameters.FieldValue |
+        Select-Object name,label,type,values
     }
+    # Modify 'Format' to ensure 'field_values' is properly appended and make request
+    [void]$Param.Format.Body.Remove('field_values')
+    $Param.Format.Body.root += 'field_values'
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }

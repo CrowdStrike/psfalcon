@@ -74,8 +74,8 @@ function Edit-FalconReconNotification {
 Modify a Falcon Intelligence Recon notification
 .DESCRIPTION
 Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
-.PARAMETER Array
-An array of notifications to modify in a single request
+.PARAMETER InputObject
+One or more notifications to modify in a single request
 .PARAMETER Id
 Notification identifier
 .PARAMETER Status
@@ -91,22 +91,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
 #>
   [CmdletBinding(DefaultParameterSetName='/recon/entities/notifications/v1:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'Edit-FalconReconNotification'
-          Endpoint = '/recon/entities/notifications/v1:patch'
-          Required = @('id','assigned_to_uuid','status')
-          Pattern = @('id','assigned_to_uuid')
-          Format = @{ assigned_to_uuid = 'AssignedToUuid' }
-        }
-        Confirm-Parameter @Param
-      }
+      Confirm-Parameter $_ 'Edit-FalconReconNotification' '/recon/entities/notifications/v1:patch'
     })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Alias('Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^\w{76}$')]
     [string]$Id,
@@ -124,21 +114,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
     [string]$IdpSendStatus
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/recon/entities/notifications/v1:patch'
-      Format = @{ Body = @{ root = @('assigned_to_uuid','id','status','raw_array','idp_send_status','message') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/recon/entities/notifications/v1:patch' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
-        # Select allowed fields, when populated
-        [string[]]$Select = @('id','assigned_to_uuid','status','message','idp_send_status').foreach{
-          if ($i.$_) { $_ }
-        }
-        $List.Add(($i | Select-Object $Select))
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined properties
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.root
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -146,6 +131,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('raw_array') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
         $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -159,8 +146,8 @@ function Edit-FalconReconRule {
 Modify a Falcon Intelligence Recon monitoring rule
 .DESCRIPTION
 Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
-.PARAMETER Array
-An array of monitoring rules to modify in a single request
+.PARAMETER InputObject
+One or more monitoring rules to modify in a single request
 .PARAMETER Id
 Monitoring rule identifier
 .PARAMETER Name
@@ -180,22 +167,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
   [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'Edit-FalconReconRule'
-          Endpoint = '/recon/entities/rules/v1:patch'
-          Required = @('id','name','filter','priority','permissions')
-          Content = @('permissions','priority')
-          Pattern = @('id')
-        }
-        Confirm-Parameter @Param
-      }
-    })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({ Confirm-Parameter $_ 'Edit-FalconReconRule' '/recon/entities/rules/v1:patch' })]
+    [Alias('Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
     [string]$Id,
@@ -219,25 +194,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
     [boolean]$SubstringMatching
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/recon/entities/rules/v1:patch'
-      Format = @{
-        Body = @{
-          root = @('permissions','priority','name','id','filter','raw_array','breach_monitoring_enabled',
-            'substring_matching_enabled')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/recon/entities/rules/v1:patch' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
-        # Select allowed fields, when populated
-        [string[]]$Select = @('permissions','priority','name','filter','breach_monitoring_enabled',
-          'substring_match_enabled','id').foreach{ if ($null -ne $i.$_) { $_ }}
-        $List.Add(($i | Select-Object $Select))
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined properties
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.root
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -245,6 +211,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('raw_array') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
         $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -706,16 +674,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
     })]
     [Alias('Recipients','uid')]
     [string[]]$Recipient,
-    [Parameter(ParameterSetName='/recon/entities/actions/v1:post',ValueFromPipelineByPropertyName,
-      Position=5)]
+    [Parameter(ParameterSetName='/recon/entities/actions/v1:post',ValueFromPipelineByPropertyName,Position=5)]
     [ValidateSet('standard','enhanced',IgnoreCase=$false)]
     [Alias('content_format')]
     [string]$ContentFormat,
-    [Parameter(ParameterSetName='/recon/entities/actions/v1:post',ValueFromPipelineByPropertyName,
-      Position=6)]
+    [Parameter(ParameterSetName='/recon/entities/actions/v1:post',ValueFromPipelineByPropertyName,Position=6)]
     [Alias('trigger_matchless')]
     [boolean]$TriggerMatchless
-
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
@@ -735,8 +700,8 @@ function New-FalconReconRule {
 Create Falcon Intelligence Recon monitoring rules
 .DESCRIPTION
 Requires 'Monitoring rules (Falcon Intelligence Recon): Write'.
-.PARAMETER Array
-An array of monitoring rules to create in a single request
+.PARAMETER InputObject
+One or more monitoring rules to create in a single request
 .PARAMETER Name
 Monitoring rule name
 .PARAMETER Topic
@@ -756,21 +721,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
   [CmdletBinding(DefaultParameterSetName='/recon/entities/rules/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'New-FalconReconRule'
-          Endpoint = '/recon/entities/rules/v1:post'
-          Required = @('name','topic','filter','priority','permissions')
-          Content = @('permissions','priority','topic')
-          Format = @{}
-        }
-        Confirm-Parameter @Param
-      }
-    })]
-    [object[]]$Array,
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({ Confirm-Parameter $_ 'New-FalconReconRule' '/recon/entities/rules/v1:post' })]
+    [Alias('Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Mandatory,Position=1)]
     [string]$Name,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Mandatory,Position=2)]
@@ -795,25 +749,16 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [boolean]$SubstringMatching
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/recon/entities/rules/v1:post'
-      Format = @{
-        Body = @{
-          root = @('filter','permissions','topic','name','breach_monitoring_enabled','substring_matching_enabled',
-            'priority','raw_array')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/recon/entities/rules/v1:post' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
-        # Select allowed fields, when populated
-        [string[]]$Select = @('permissions','priority','name','filter','topic',
-          'breach_monitoring_enabled','substring_match_enabled').foreach{ if ($null -ne $i.$_) { $_ }}
-        $List.Add(($i | Select-Object $Select))
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined properties
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.root
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -821,6 +766,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('raw_array') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
         $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
