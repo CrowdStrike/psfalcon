@@ -160,8 +160,10 @@ Monitoring rule priority
 Permission level [public: 'All Intel users', private: 'Recon Admins']
 .PARAMETER BreachMonitoring
 Monitor for breach data
+.PARAMETER BreachMonitorOnly
+Monitor only for breach data.  Must be accompanied by BreachMonitoring: True.
 .PARAMETER SubstringMatching
-Monitor for substring matches
+Monitor for substring matches. Only available for the 'Typosquatting' topic.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
@@ -190,6 +192,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
     [Alias('breach_monitoring_enabled')]
     [boolean]$BreachMonitoring,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=7)]
+    [Alias('breach_monitor_only')]
+    [boolean]$BreachMonitorOnly,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=8)]
     [Alias('substring_matching_enabled')]
     [boolean]$SubstringMatching
   )
@@ -714,8 +719,10 @@ Monitoring rule priority
 Permission level [public: 'All Intel users', private: 'Recon Admins']
 .PARAMETER BreachMonitoring
 Monitor for breach data
+.PARAMETER BreachMonitorOnly
+Monitor only for breach data.  Must be accompanied by BreachMonitoring: True.
 .PARAMETER SubstringMatching
-Monitor for substring matches
+Monitor for substring matches. Only available for the 'Typosquatting' topic.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
@@ -745,6 +752,9 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [Alias('breach_monitoring_enabled')]
     [boolean]$BreachMonitoring,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=7)]
+    [Alias('breach_monitor_only')]
+    [boolean]$BreachMonitorOnly,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=8)]
     [Alias('substring_matching_enabled')]
     [boolean]$SubstringMatching
   )
