@@ -260,6 +260,8 @@ Track file write events
 Track registry key create events
 .PARAMETER RegKeyDelete
 Track registry key delete events
+.PARAMETER RegKeyPermission
+Track registry key permission change events
 .PARAMETER RegKeyRename
 Track registry key rename events
 .PARAMETER RegKeySet
@@ -380,30 +382,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
     [boolean]$RegKeyDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
       Position=26)]
+    [Alias('watch_permissions_key_changes')]
+    [boolean]$RegKeyPermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=27)]
     [Alias('watch_rename_key_changes')]
     [boolean]$RegKeyRename,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=27)]
+      Position=28)]
     [Alias('watch_set_value_changes')]
     [boolean]$RegKeySet,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=28)]
+      Position=29)]
     [Alias('watch_create_value_changes')]
     [boolean]$RegValueCreate,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=29)]
+      Position=30)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=30)]
+      Position=31)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=31)]
+      Position=32)]
     [Alias('content_files')]
     [string[]]$ContentFiles,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=32)]
+      Position=33)]
     [Alias('content_registry_values')]
     [string[]]$ContentRegistryValues,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',Mandatory,
@@ -907,6 +913,8 @@ Track file write events
 Track registry key create events
 .PARAMETER RegKeyDelete
 Track registry key delete events
+.PARAMETER RegKeyPermission
+Track registry key permission change events
 .PARAMETER RegKeyRename
 Track registry key rename events
 .PARAMETER RegKeySet
@@ -1023,30 +1031,34 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
     [boolean]$RegKeyDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
       Position=25)]
+    [Alias('watch_permissions_key_changes')]
+    [boolean]$RegKeyPermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=26)]
     [Alias('watch_rename_key_changes')]
     [boolean]$RegKeyRename,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=26)]
+      Position=27)]
     [Alias('watch_set_value_changes')]
     [boolean]$RegKeySet,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=27)]
+      Position=28)]
     [Alias('watch_create_value_changes')]
     [boolean]$RegValueCreate,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=27)]
+      Position=29)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=28)]
+      Position=30)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=29)]
+      Position=31)]
     [Alias('content_files')]
     [string[]]$ContentFiles,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=30)]
+      Position=32)]
     [Alias('content_registry_values')]
     [string[]]$ContentRegistryValues,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
