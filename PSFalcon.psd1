@@ -172,6 +172,7 @@
     'Get-FalconCve'
     'Get-FalconIndicator'
     'Get-FalconIntel'
+    'Get-FalconMalwareFamily'
     'Get-FalconRule'
     'Receive-FalconAttck'
     'Receive-FalconIntel'
