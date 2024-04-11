@@ -723,6 +723,8 @@ Monitor for breach data
 Monitor only for breach data.  Must be accompanied by BreachMonitoring: True.
 .PARAMETER SubstringMatching
 Monitor for substring matches. Only available for the 'Typosquatting' topic.
+.PARAMETER OriginatingTemplateId
+Identifier of originating rule template, if based on one
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
@@ -756,7 +758,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [boolean]$BreachMonitorOnly,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=8)]
     [Alias('substring_matching_enabled')]
-    [boolean]$SubstringMatching
+    [boolean]$SubstringMatching,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=9)]
+    [Alias('originating_template_id')]
+    [string]$OriginatingTemplateId
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/recon/entities/rules/v1:post' }
