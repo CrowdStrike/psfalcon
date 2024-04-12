@@ -125,7 +125,7 @@ function Build-Content {
             Get-Member -MemberType Method).Where({$_.Name -eq 'Normalize'})) {
               # Normalize values to avoid Json conversion errors when 'Get-Content' was used
               if ($Value -is [array]) {
-                $Value = [array] ($Value).Normalize()
+                $Value = [array]($Value).Normalize()
               } elseif ($Value -is [string]) {
                 $Value = ($Value).Normalize()
               }
@@ -601,7 +601,8 @@ function Invoke-Falcon {
     [switch]$RawOutput,
     [int32]$Max,
     [string]$HostUrl,
-    [switch]$BodyArray
+    [switch]$BodyArray,
+    [string]$JsonBody
   )
   begin {
     function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
@@ -682,7 +683,7 @@ function Invoke-Falcon {
     # Add 'Format' using 'format.json' when not supplied
     if (!$PSBoundParameters.Format) { $PSBoundParameters['Format'] = Get-EndpointFormat $Endpoint }
     # Gather request parameters and split into groups
-    [string[]]$Exclude = 'BodyArray','Command','RawOutput'
+    [string[]]$Exclude = 'BodyArray','Command','JsonBody','RawOutput'
     $GetParam = @{}
     $PSBoundParameters.GetEnumerator().Where({$Exclude -notcontains $_.Key}).foreach{
       $GetParam.Add($_.Key,$_.Value)
@@ -704,7 +705,11 @@ function Invoke-Falcon {
   process {
     Get-ParamSet @GetParam | ForEach-Object {
       [string]$Operation = $_.Endpoint.Method.ToUpper()
-      if ($_.Endpoint.Headers.ContentType -eq 'application/json' -and $_.Endpoint.Body) {
+      if ($JsonBody) {
+        # Add 'JsonBody' directly as the request body, when present
+        $_.Endpoint['Body'] = $JsonBody
+        if (!$_.Endpoint.Headers.ContentType) { $_.Endpoint.Headers.Add('ContentType','application/json') }
+      } elseif ($_.Endpoint.Headers.ContentType -eq 'application/json' -and $_.Endpoint.Body) {
         $_.Endpoint.Body = if ($BodyArray) {
           # Force Json array when 'BodyArray' is present
           ConvertTo-Json @($_.Endpoint.Body) -Depth 32 -Compress

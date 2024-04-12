@@ -67,6 +67,62 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
     }
   }
 }
+function Invoke-FalconWorkflow {
+<#
+.SYNOPSIS
+Execute an on-demand Falcon Fusion workflow
+.DESCRIPTION
+Requires 'Workflow: Write'.
+.PARAMETER Cid
+Target CID. Child CIDs are supported in Flight Control environments.
+.PARAMETER Key
+Optional UUID used to help de-duplicate executions
+.PARAMETER Depth
+Execution depth limit to help prevent execution loops from multiple workflow triggers
+.PARAMETER SourceEventUrl
+Optional source URL for auditing
+.PARAMETER Json
+Json string to define Workflow trigger key/value pairs
+.PARAMETER Name
+Workflow name
+.PARAMETER Id
+Workflow identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/entities/execute/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=1)]
+    [Parameter(ParameterSetName='Name',Position=1)]
+    [Alias('execution_cid')]
+    [string[]]$Cid,
+    [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=2)]
+    [Parameter(ParameterSetName='Name',Position=2)]
+    [string]$Key,
+    [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=3)]
+    [Parameter(ParameterSetName='Name',Position=3)]
+    [ValidateRange(1,4)]
+    [int32]$Depth,
+    [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=4)]
+    [Parameter(ParameterSetName='Name',Position=4)]
+    [Alias('source_event_url')]
+    [string]$SourceEventUrl,
+    [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Mandatory)]
+    [Parameter(ParameterSetName='Name',Mandatory)]
+    [string]$Json,
+    [Parameter(ParameterSetName='Name',ValueFromPipelineByPropertyName,Mandatory)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Mandatory)]
+    [Alias('definition_id')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/workflows/entities/execute/v1:post' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters -JsonBody $PSBoundParameters.Json }
+}
 function Receive-FalconWorkflow {
 <#
 .SYNOPSIS
@@ -74,7 +130,7 @@ Download a Falcon Fusion workflow YAML
 .DESCRIPTION
 Requires 'Workflow: Read'.
 .PARAMETER Path
-Destination path
+Destination path. If not provided, your Workflow identifier will be used to create a file in the local directory.
 .PARAMETER Sanitize
 Remove potentially identifiable information before export
 .PARAMETER Id
@@ -86,13 +142,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
 #>
   [CmdletBinding(DefaultParameterSetName='/workflows/entities/definitions/export/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Position=1)]
     [ValidatePattern('\.(yaml|yml)$')]
     [string]$Path,
     [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Position=2)]
     [boolean]$Sanitize,
     [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('execution_id')]
     [string]$Id,
@@ -103,11 +159,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Outfile = 'path'; Query = @('id','sanitize') }
       Headers = @{ Accept = 'application/yaml' }
     }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param.Format['Outfile'] = 'path'
   }
   process {
+    if (!$PSBoundParameters.Path) {
+      $PSBoundParameters['Path'] = Join-Path (Get-Location).Path ($PSBoundParameters.Id,'yaml' -join '.')
+    }
     $OutPath = Test-OutFile $PSBoundParameters.Path
     if ($OutPath.Category -eq 'ObjectNotFound') {
       Write-Error @OutPath
