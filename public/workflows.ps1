@@ -67,6 +67,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
     }
   }
 }
+function Get-FalconWorkflowInput {
+<#
+.SYNOPSIS
+Retrieve information about Falcon Fusion workflow human inputs
+.DESCRIPTION
+Requires 'Workflow: Read'.
+.PARAMETER Id
+Human input identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowInput
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/entities/human-inputs/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/entities/human-inputs/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Invoke-FalconWorkflow {
 <#
 .SYNOPSIS
@@ -114,6 +145,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
     [string]$Name,
     [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',ValueFromPipelineByPropertyName,
       ValueFromPipeline,Mandatory)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('definition_id')]
     [string[]]$Id
   )
@@ -195,6 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconWorkflow
   param(
     [Parameter(ParameterSetName='/workflows/entities/execution-actions/v1:post',ValueFromPipelineByPropertyName,
       ValueFromPipeline,Mandatory)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
