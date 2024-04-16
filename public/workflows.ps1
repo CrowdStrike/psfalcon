@@ -180,6 +180,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
     }
   }
 }
+function Redo-FalconWorkflow {
+<#
+.SYNOPSIS
+Resume or retry a failed Falcon Fusion workflow execution
+.DESCRIPTION
+Requires 'Workflow: Write'.
+.PARAMETER Id
+Workflow identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/entities/execution-actions/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/entities/execution-actions/v1:post',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Mandatory)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['action_name'] = 'resume'
+      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Send-FalconWorkflow {
 <#
 .SYNOPSIS

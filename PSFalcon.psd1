@@ -506,6 +506,7 @@
     'Get-FalconWorkflow'
     'Invoke-FalconWorkflow'
     'Receive-FalconWorkflow'
+    'Redo-FalconWorkflow'
     'Send-FalconWorkflow'
 
     # zero-trust-assessment
