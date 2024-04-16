@@ -504,6 +504,7 @@
 
     # workflows
     'Get-FalconWorkflow'
+    'Get-FalconWorkflowInput'
     'Invoke-FalconWorkflow'
     'Receive-FalconWorkflow'
     'Redo-FalconWorkflow'
