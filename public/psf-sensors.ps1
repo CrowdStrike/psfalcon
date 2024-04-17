@@ -133,14 +133,14 @@ function Invoke-TagScript {
 function Add-FalconSensorTag {
 <#
 .SYNOPSIS
-Use Real-time Response to add FalconSensorTags to a host
+Use Real-time Response to add SensorGroupingTags to a host
 .DESCRIPTION
-Provided FalconSensorTag values will be appended to any existing tags. If no new tag values are supplied, a list
+Provided SensorGroupingTag values will be appended to any existing tags. If no new tag values are supplied, a list
 of the current tags will be output for the target host. To overwrite existing values, use 'Set-FalconSensorTag'.
 
 Requires 'Hosts: Read', 'Sensor update policies: Write' and 'Real time response (admin): Write'.
 .PARAMETER Tag
-FalconSensorTag value ['FalconSensorTags/<string>']
+SensorGroupingTag value ['SensorGroupingTags/<string>']
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .PARAMETER Id
@@ -183,9 +183,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
 function Get-FalconSensorTag {
 <#
 .SYNOPSIS
-Display FalconSensorTags assigned to hosts
+Display SensorGroupingTags assigned to hosts
 .DESCRIPTION
-Returns 'cid', 'device_id', and any FalconSensorTags listed under 'tags' within a 'Get-FalconHost' result.
+Returns 'cid', 'device_id', and any SensorGroupingTags listed under 'tags' within a 'Get-FalconHost' result.
 
 Requires 'Hosts: Read'.
 .PARAMETER Id
@@ -218,14 +218,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
 function Remove-FalconSensorTag {
 <#
 .SYNOPSIS
-Use Real-time Response to remove FalconSensorTags from a host
+Use Real-time Response to remove SensorGroupingTags from a host
 .DESCRIPTION
-When provided, FalconSensorTag values will be removed from list of existing tags and others will be left
+When provided, SensorGroupingTag values will be removed from list of existing tags and others will be left
 unmodified. If no tags are provided, all existing tags will be removed.
 
 Requires 'Hosts: Read', 'Sensor update policies: Write' and 'Real time response (admin): Write'.
 .PARAMETER Tag
-FalconSensorTag value ['FalconSensorTags/<string>']
+SensorGroupingTag value ['SensorGroupingTags/<string>']
 .PARAMETER Id
 Host identifier
 .PARAMETER QueueOffline
@@ -269,14 +269,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
 function Set-FalconSensorTag {
 <#
 .SYNOPSIS
-Use Real-time Response to set FalconSensorTags on a host
+Use Real-time Response to set SensorGroupingTags on a host
 .DESCRIPTION
-Provided FalconSensorTag values will overwrite any existing tags. To append to existing values, use
+Provided SensorGroupingTag values will overwrite any existing tags. To append to existing values, use
 'Add-FalconSensorTag'.
 
 Requires 'Hosts: Read', 'Sensor update policies: Write' and 'Real time response (admin): Write'.
 .PARAMETER Tag
-FalconSensorTag value ['FalconSensorTags/<string>']
+SensorGroupingTag value ['FalconSensorTags/<string>']
 .PARAMETER QueueOffline
 Add command request to the offline queue
 .PARAMETER Id
