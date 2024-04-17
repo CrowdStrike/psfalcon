@@ -276,6 +276,8 @@ Enable the capture of file content during events
 A specific list of files to monitor for content changes
 .PARAMETER ContentRegistryValues
 A specific list of registry paths to monitor for content changes (matching Include/Exclude)
+.PARAMETER HashCapture
+Track file hash
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -412,6 +414,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
       Position=33)]
     [Alias('content_registry_values')]
     [string[]]$ContentRegistryValues,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=34)]
+    [Alias('enable_hash_capture')]
+    [boolean]$HashCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -929,6 +935,8 @@ Enable the capture of file content during events
 A specific list of files to monitor for content changes
 .PARAMETER ContentRegistryValues
 A specific list of registry paths to monitor for content changes (matching Include/Exclude)
+.PARAMETER HashCapture
+Track file hash
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -1061,6 +1069,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
       Position=32)]
     [Alias('content_registry_values')]
     [string[]]$ContentRegistryValues,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=33)]
+    [Alias('enable_hash_capture')]
+    [boolean]$HashCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
