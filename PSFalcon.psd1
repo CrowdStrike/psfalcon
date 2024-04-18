@@ -503,12 +503,12 @@
     'Remove-FalconUser'
 
     # workflows
+    'Export-FalconWorkflow'
     'Get-FalconWorkflow'
     'Get-FalconWorkflowInput'
+    'Import-FalconWorkflow'
     'Invoke-FalconWorkflow'
-    'Receive-FalconWorkflow'
     'Redo-FalconWorkflow'
-    'Send-FalconWorkflow'
 
     # zero-trust-assessment
     'Get-FalconZta'

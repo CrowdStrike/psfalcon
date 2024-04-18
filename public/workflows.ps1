@@ -1,3 +1,60 @@
+function Export-FalconWorkflow {
+<#
+.SYNOPSIS
+Export a Falcon Fusion workflow YAML
+.DESCRIPTION
+Requires 'Workflow: Read'.
+.PARAMETER Sanitize
+Remove potentially identifiable information before export
+.PARAMETER Path
+Destination path. If not provided, a file will be created in the local directory using the workflow identifier.
+.PARAMETER Id
+Workflow identifier
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Export-FalconWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/entities/definitions/export/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Position=1)]
+    [boolean]$Sanitize,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Position=2)]
+    [ValidatePattern('\.(yaml|yml)$')]
+    [string]$Path,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('execution_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ Accept = 'application/yaml' }
+    }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param.Format['Outfile'] = 'path'
+  }
+  process {
+    if (!$PSBoundParameters.Path) {
+      $PSBoundParameters['Path'] = Join-Path (Get-Location).Path ($PSBoundParameters.Id,'yaml' -join '.')
+    }
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
 function Get-FalconWorkflow {
 <#
 .SYNOPSIS
@@ -39,7 +96,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
     [string]$Sort,
     [Parameter(ParameterSetName='/workflows/combined/definitions/v1:get',Position=3)]
     [Parameter(ParameterSetName='/workflows/combined/executions/v1:get',Position=3)]
-    [int]$Limit,
+    [ValidateRange(1,500)]
+    [int32]$Limit,
     [Parameter(ParameterSetName='/workflows/combined/definitions/v1:get')]
     [Parameter(ParameterSetName='/workflows/combined/executions/v1:get')]
     [string]$Offset,
@@ -98,6 +156,50 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowInput
     }
   }
 }
+function Import-FalconWorkflow {
+<#
+.SYNOPSIS
+Import a Falcon Fusion workflow YAML
+.DESCRIPTION
+Requires 'Workflow: Write'.
+.PARAMETER Name
+Workflow name
+.PARAMETER ValidateOnly
+Validate workflow without creating it
+.PARAMETER Path
+Path to Falcon Fusion workflow YAML
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Import-FalconWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/entities/definitions/import/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Position=2)]
+    [Alias('validate_only')]
+    [boolean]$ValidateOnly,
+    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidatePattern('\.(yaml|yml)$')]
+    [ValidateScript({
+      if (Test-Path $_ -PathType Leaf) {
+        $true
+      } else {
+        throw "Cannot find path '$_' because it does not exist or is a directory."
+      }
+    })]
+    [Alias('data_file','FullName')]
+    [string]$Path
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ ContentType = 'multipart/form-data' }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Invoke-FalconWorkflow {
 <#
 .SYNOPSIS
@@ -113,7 +215,7 @@ Execution depth limit to help prevent execution loops from multiple workflow tri
 .PARAMETER SourceEventUrl
 Optional source URL for auditing
 .PARAMETER Json
-Json string to define Workflow trigger key/value pairs
+Json string to define workflow trigger key/value pairs
 .PARAMETER Name
 Workflow name
 .PARAMETER Id
@@ -125,6 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
   param(
     [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=1)]
     [Parameter(ParameterSetName='Name',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('execution_cid')]
     [string[]]$Cid,
     [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=2)]
@@ -154,63 +257,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters -JsonBody $PSBoundParameters.Json }
-}
-function Receive-FalconWorkflow {
-<#
-.SYNOPSIS
-Download a Falcon Fusion workflow YAML
-.DESCRIPTION
-Requires 'Workflow: Read'.
-.PARAMETER Path
-Destination path. If not provided, your Workflow identifier will be used to create a file in the local directory.
-.PARAMETER Sanitize
-Remove potentially identifiable information before export
-.PARAMETER Id
-Workflow identifier
-.PARAMETER Force
-Overwrite an existing file when present
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconWorkflow
-#>
-  [CmdletBinding(DefaultParameterSetName='/workflows/entities/definitions/export/v1:get',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Position=1)]
-    [ValidatePattern('\.(yaml|yml)$')]
-    [string]$Path,
-    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Position=2)]
-    [boolean]$Sanitize,
-    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('execution_id')]
-    [string]$Id,
-    [Parameter(ParameterSetName='/workflows/entities/definitions/export/v1:get')]
-    [switch]$Force
-  )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Headers = @{ Accept = 'application/yaml' }
-    }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    $Param.Format['Outfile'] = 'path'
-  }
-  process {
-    if (!$PSBoundParameters.Path) {
-      $PSBoundParameters['Path'] = Join-Path (Get-Location).Path ($PSBoundParameters.Id,'yaml' -join '.')
-    }
-    $OutPath = Test-OutFile $PSBoundParameters.Path
-    if ($OutPath.Category -eq 'ObjectNotFound') {
-      Write-Error @OutPath
-    } elseif ($PSBoundParameters.Path) {
-      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
-        Write-Error @OutPath
-      } else {
-        Invoke-Falcon @Param -UserInput $PSBoundParameters
-      }
-    }
-  }
 }
 function Redo-FalconWorkflow {
 <#
@@ -243,48 +289,4 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconWorkflow
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
-}
-function Send-FalconWorkflow {
-<#
-.SYNOPSIS
-Upload a Fusion workflow YAML
-.DESCRIPTION
-Requires 'Workflow: Write'.
-.PARAMETER Name
-Workflow name
-.PARAMETER ValidateOnly
-Validate workflow without creating it
-.PARAMETER Path
-Path to Falcon Fusion workflow YAML
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Send-FalconWorkflow
-#>
-  [CmdletBinding(DefaultParameterSetName='/workflows/entities/definitions/import/v1:post',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Position=1)]
-    [string]$Name,
-    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Position=2)]
-    [Alias('validate_only')]
-    [boolean]$ValidateOnly,
-    [Parameter(ParameterSetName='/workflows/entities/definitions/import/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=3)]
-    [ValidatePattern('\.(yaml|yml)$')]
-    [ValidateScript({
-      if (Test-Path $_ -PathType Leaf) {
-        $true
-      } else {
-        throw "Cannot find path '$_' because it does not exist or is a directory."
-      }
-    })]
-    [Alias('data_file','FullName')]
-    [string]$Path
-  )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Headers = @{ ContentType = 'multipart/form-data' }
-    }
-  }
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
