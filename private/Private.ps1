@@ -1007,6 +1007,36 @@ function Stop-RtrUpdate {
     }
   }
 }
+function Test-ActionParameter {
+  [CmdletBinding()]
+  [OutputType([hashtable])]
+  param(
+    [hashtable]$Hashtable,
+    [string[]]$String,
+    [switch]$Incident
+  )
+  if ($Hashtable) {
+    $Hashtable.GetEnumerator().foreach{
+      if ($String -and $String -notcontains $_.Key) {
+        # Verify that each 'Action' is using a valid 'name'
+        throw ('"{0}" is not a valid action name.' -f $_.Key)
+      } elseif ($_.Key -eq 'update_status') {
+        if ($Incident -and $_.Value -match '^(20|new|25|reopened|30|in_progress|40|closed)$') {
+          # Verify that 'update_status' is using a proper string value when working with incidents
+          $_.Value = switch -Regex ($_.Value) {
+            '20|new' { '20' }
+            '25|reopened' { '25' }
+            '30|in_progress' { '30' }
+            '40|closed' { '40' }
+          }
+        } elseif ($_.Value -notmatch '^(new|reopened|in_progress|closed)$') {
+          throw "Valid values for 'update_status': 'closed', 'in_progress', 'new', 'reopened'."
+        }
+      }
+      return @{ name = $_.Key; value = $_.Value }
+    }
+  }
+}
 function Test-FqlStatement {
   [CmdletBinding()]
   [OutputType([boolean])]

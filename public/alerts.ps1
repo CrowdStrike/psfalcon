@@ -80,8 +80,10 @@ Requires 'Alerts: Write'.
 Action to perform
 .PARAMETER Value
 Value for the chosen action
+.PARAMETER Action
+One or more hashtables defining multiple name/value pairs
 .PARAMETER IncludeHidden
-Include hidden alerts when performing action
+Include hidden alerts when performing action [default: $true]
 .PARAMETER Id
 Alert identifier
 .LINK
@@ -95,10 +97,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
     [string]$Name,
     [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Position=2)]
     [string]$Value,
+    [Parameter(ParameterSetName='action_parameters',Mandatory,Position=1)]
+    [Alias('action_parameters')]
+    [hashtable[]]$Action,
     [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Position=3)]
+    [Parameter(ParameterSetName='action_parameters',Position=2)]
     [Alias('include_hidden')]
     [boolean]$IncludeHidden,
     [Parameter(ParameterSetName='/alerts/entities/alerts/v3:patch',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=3)]
+    [Parameter(ParameterSetName='action_parameters',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=3)]
     [Alias('composite_ids','composite_id','ids')]
     [string[]]$Id
@@ -106,19 +114,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('composite_ids','action_parameters') }; Query = @('include_hidden') }
+      Endpoint = '/alerts/entities/alerts/v3:patch'
+      Max = 1000
     }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-      [hashtable]$Parameters = @{ name = $PSBoundParameters.name }
-      if ($PSBoundParameters.Value) { $Parameters['value'] = $PSBoundParameters.Value }
-      $PSBoundParameters['action_parameters'] = @($Parameters)
-      @('Name','Value').foreach{ [void]$PSBoundParameters.Remove($_) }
+      if ($PSBoundParameters.Action) {
+        # Verify valid 'Action' key/value pairs and update formatting before request
+        $Valid = (Get-Command $Param.Command).Parameters.Name.Attributes.ValidValues
+        [hashtable[]]$PSBoundParameters.Action = @($PSBoundParameters.Action).foreach{
+          Test-ActionParameter $_ $Valid
+        }
+        $Param.Format.Body.root = @('composite_ids','action_parameters')
+        [void]$Param.Format.Body.Remove('action_parameters')
+      }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
