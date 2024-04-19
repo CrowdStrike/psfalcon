@@ -105,7 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
       foreach ($i in $RuleUpdate) {
         if ($i.field_values) {
           # Ensure that 'field_values' are submitted as an array with 'name', 'label', 'type' and 'values'
-          $i.field_values = [PSCustomObject[]]$i.field_values | Select-Object name,label,type,values
+          [PSCustomObject[]]$i.field_values = $i.field_values | Select-Object name,label,type,values
         }
         # Select required properties defined by 'rule_updates' for endpoint
         $i = [PSCustomObject]$i | Select-Object @($Param.Format.Body.rule_updates).Where({
@@ -549,8 +549,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
   process {
     if ($PSBoundParameters.FieldValue) {
       # Filter 'field_values' to required fields
-      $PSBoundParameters.FieldValue = [PSCustomObject[]]$PSBoundParameters.FieldValue |
-        Select-Object name,label,type,values
+      [PSCustomObject[]]$PSBoundParameters.FieldValue = $PSBoundParameters.FieldValue | Select-Object name,label,
+        type,values
     }
     # Modify 'Format' to ensure 'field_values' is properly appended and make request
     [void]$Param.Format.Body.Remove('field_values')
