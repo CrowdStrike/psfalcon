@@ -157,8 +157,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-groups/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
@@ -227,8 +227,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
 #>
   [CmdletBinding(DefaultParameterSetName='/ioarules/queries/platforms/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Parameter(ParameterSetName='/ioarules/entities/platforms/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
     [Alias('ids')]
     [string[]]$Id,
@@ -287,8 +287,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
 #>
   [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rules/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Parameter(ParameterSetName='/ioarules/entities/rules/GET/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [ValidatePattern('^\d+$')]
     [Alias('ids')]
     [string[]]$Id,
@@ -299,15 +299,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
     [Alias('q')]
     [string]$Query,
     [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=3)]
-    [ValidateSet('rules.created_by.asc','rules.created_by.desc','rules.created_on.asc',
-      'rules.created_on.desc','rules.current_version.action_label.asc',
-      'rules.current_version.action_label.desc','rules.current_version.description.asc',
-      'rules.current_version.description.desc','rules.current_version.modified_by.asc',
-      'rules.current_version.modified_by.desc','rules.current_version.modified_on.asc',
-      'rules.current_version.modified_on.desc','rules.current_version.name.asc',
-      'rules.current_version.name.desc','rules.current_version.pattern_severity.asc',
-      'rules.current_version.pattern_severity.desc','rules.enabled.asc','rules.enabled.desc',
-      'rules.ruletype_name.asc','rules.ruletype_name.desc',IgnoreCase=$false)]
+    [ValidateSet('rules.created_by.asc','rules.created_by.desc','rules.created_on.asc','rules.created_on.desc',
+      'rules.current_version.action_label.asc','rules.current_version.action_label.desc',
+      'rules.current_version.description.asc','rules.current_version.description.desc',
+      'rules.current_version.modified_by.asc','rules.current_version.modified_by.desc',
+      'rules.current_version.modified_on.asc','rules.current_version.modified_on.desc',
+      'rules.current_version.name.asc','rules.current_version.name.desc',
+      'rules.current_version.pattern_severity.asc','rules.current_version.pattern_severity.desc',
+      'rules.enabled.asc','rules.enabled.desc','rules.ruletype_name.asc','rules.ruletype_name.desc',
+      IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=4)]
     [ValidateRange(1,500)]
@@ -412,8 +412,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
 #>
   [CmdletBinding(DefaultParameterSetName='/ioarules/queries/rule-types/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Parameter(ParameterSetName='/ioarules/entities/rule-types/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [ValidatePattern('^\d{1,2}$')]
     [Alias('ids','ruletype_id')]
     [string[]]$Id,
@@ -462,11 +462,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=2)]
+    [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=2)]
     [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
     [Alias('platform_name')]
     [string]$Platform,
