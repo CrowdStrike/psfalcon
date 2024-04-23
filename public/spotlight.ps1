@@ -91,7 +91,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     [string]$Sort,
     [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Position=4)]
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=4)]
-    [ValidateRange(1,400)]
+    [ValidateRange(1,5000)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get')]
@@ -107,6 +107,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
+    if ($Param.Endpoint -match 'queries' -and $PSBoundParameters.Limit -gt 400) { $PSBoundParameters.Limit = 400 }
   }
   process {
     if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
