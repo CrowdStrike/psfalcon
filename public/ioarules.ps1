@@ -80,16 +80,16 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
 #>
-  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:patch',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v2:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
       Position=1)]
     [string]$Comment,
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
       Position=2)]
     [Alias('rule_updates','rules','RuleUpdates')]
     [object[]]$RuleUpdate,
-    [Parameter(ParameterSetName='/ioarules/entities/rules/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/ioarules/entities/rules/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
       Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('rulegroup_id','id')]
