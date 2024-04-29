@@ -1,4 +1,4 @@
-��function New-CommandName {
+function New-CommandName {
 <#
 .SYNOPSIS
 Lists available repositories and views
