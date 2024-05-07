@@ -28,6 +28,8 @@ Display total result count instead of results
 Search for user account assets
 .PARAMETER Application
 Search for applications
+.PARAMETER External
+Search for external assets
 .PARAMETER IoT
 Search for IoT assets
 .PARAMETER Login
@@ -47,6 +49,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Parameter(ParameterSetName='/discover/entities/logins/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
+    [Parameter(ParameterSetName='/fem/entities/external-assets/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=1)]
@@ -54,6 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=2)]
@@ -61,12 +66,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Position=2)]
     [string]$Sort,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Position=3)]
     [ValidateRange(1,100)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get',Position=4)]
@@ -77,6 +84,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [string]$After,
@@ -85,18 +93,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
     [switch]$Total,
     [Parameter(ParameterSetName='/discover/entities/accounts/v1:get',Mandatory)]
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Mandatory)]
@@ -104,6 +115,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/entities/applications/v1:get',Mandatory)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Mandatory)]
     [switch]$Application,
+    [Parameter(ParameterSetName='/fem/entities/external-assets/v1:get',Mandatory)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Mandatory)]
+    [switch]$External,
     [Parameter(ParameterSetName='/discover/entities/iot-hosts/v1:get',Mandatory)]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Mandatory)]
     [switch]$IoT,
@@ -118,13 +132,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    $Request = if ($Detailed -and ($Account -or $Application -or $IoT -or $Login)) {
+    $Request = if ($Detailed -and ($Account -or $Application -or $External -or $IoT -or $Login)) {
       [void]$PSBoundParameters.Remove('Detailed')
       $IdList = Invoke-Falcon @Param -UserInput $PSBoundParameters
       if ($IdList -and $Account) {
         $IdList | & $MyInvocation.MyCommand.Name -Account
       } elseif ($IdList -and $Application) {
         $IdList | & $MyInvocation.MyCommand.Name -Application
+      } elseif ($IdList -and $External) {
+        $IdList | & $MyInvocation.MyCommand.Name -External
       } elseif ($IdList -and $IoT) {
         $IdList | & $MyInvocation.MyCommand.Name -IoT
       } elseif ($IdList -and $Login) {
