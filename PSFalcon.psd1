@@ -235,6 +235,10 @@
     'Remove-FalconContainerAwsAccount'
     'Remove-FalconContainerAzureAccount'
 
+    # loggingapi
+    'Get-FalconFoundryRepository'
+    'Get-FalconFoundryView'
+
     # malquery
     'Get-FalconMalQuery'
     'Get-FalconMalQueryQuota'

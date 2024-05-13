@@ -1,17 +1,37 @@
-function New-CommandName {
+function Get-FalconFoundryRepository {
 <#
 .SYNOPSIS
-Lists available repositories and views
+List available Falcon Foundry repositories
 .DESCRIPTION
 Requires 'App Logs: Read'.
 .PARAMETER CheckTestData
 Include whether test data is present in the application repository
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-CommandName
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundryRepository
 #>
   [CmdletBinding(DefaultParameterSetName='/loggingapi/combined/repos/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/loggingapi/combined/repos/v1:get',Position=0)]
+    [Parameter(ParameterSetName='/loggingapi/combined/repos/v1:get',Position=1)]
+    [Alias('check_test_data')]
+    [boolean]$CheckTestData
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconFoundryView {
+<#
+.SYNOPSIS
+List available Falcon Foundry views
+.DESCRIPTION
+Requires 'App Logs: Read'.
+.PARAMETER CheckTestData
+Include whether test data is present in the application repository
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundryView
+#>
+  [CmdletBinding(DefaultParameterSetName='/loggingapi/entities/views/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/loggingapi/entities/views/v1:get',Position=1)]
     [Alias('check_test_data')]
     [boolean]$CheckTestData
   )
@@ -670,26 +690,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-CommandName
     [ValidateSet('json','csv',IgnoreCase=$false)]
     [Alias('result_format')]
     [string]$ResultFormat
-  )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
-}
-function New-CommandName {
-<#
-.SYNOPSIS
-List views
-.DESCRIPTION
-Requires 'App Logs: Read'.
-.PARAMETER CheckTestData
-Include whether test data is present in the application repository
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-CommandName
-#>
-  [CmdletBinding(DefaultParameterSetName='/loggingapi/entities/views/v1:get',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/loggingapi/entities/views/v1:get',Position=0)]
-    [Alias('check_test_data')]
-    [boolean]$CheckTestData
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
