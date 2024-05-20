@@ -182,38 +182,34 @@ https://github.com/crowdstrike/psfalcon/wiki/New-CommandName
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function New-CommandName {
+function Get-FalconFoundrySearch {
 <#
 .SYNOPSIS
 Get the results of a saved search
 .DESCRIPTION
 Requires 'App Logs: Read'.
-.PARAMETER JobId
-Job ID for a previously executed async query
+.PARAMETER Id
+Search identifier
 .PARAMETER AppId
-Application ID.
+Foundry application identifier
 .PARAMETER InferJsonTypes
 Whether to try to infer data types in json event response instead of returning map[string]string
 .PARAMETER Limit
 Maximum number of results per request
-
-Maximum number of records to return.
 .PARAMETER MatchResponseSchema
 Whether to validate search results against their schema
 .PARAMETER Metadata
 Whether to include metadata in the response
 .PARAMETER Offset
 Position to begin retrieving results
-
-Starting pagination offset of records to return.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-CommandName
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundrySearch
 #>
   [CmdletBinding(DefaultParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Mandatory,Position=0)]
     [Alias('job_id')]
-    [string]$JobId,
+    [string]$Id,
     [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=0)]
     [Alias('app_id')]
     [string]$AppId,

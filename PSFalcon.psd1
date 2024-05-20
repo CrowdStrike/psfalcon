@@ -100,6 +100,9 @@
     'Receive-FalconMemoryDump'
     'Remove-FalconReport'
 
+    # fem
+    'Edit-FalconAsset'
+
     # fdr
     'Get-FalconReplicatorEvent'
     'Get-FalconReplicatorField'
@@ -237,6 +240,7 @@
 
     # loggingapi
     'Get-FalconFoundryRepository'
+    'Get-FalconFoundrySearch'
     'Get-FalconFoundryView'
 
     # malquery
