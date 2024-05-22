@@ -23,6 +23,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
     [string]$UserId,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
     [Alias('role_ids','ids')]
@@ -35,6 +36,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
+      if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
       $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
       $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
       $PSBoundParameters['action'] = 'grant'
@@ -118,7 +120,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=1)]
     [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Position=2)]
     [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
     [Alias('direct_only')]
@@ -153,11 +155,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
         }
       }
     } else {
+      if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
   end {
     if ($List) {
+      if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
       $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -349,6 +353,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
     [string]$Password,
     [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
       Position=5)]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/entities/users/v1:post',ValueFromPipelineByPropertyName,
       Position=6)]
@@ -356,7 +361,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
     [boolean]$ValidateOnly
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Remove-FalconRole {
 <#
@@ -383,6 +391,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
     [string]$UserId,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
     [Alias('role_ids','ids')]
@@ -395,6 +404,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
+      if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
       $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
       $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
       $PSBoundParameters['action'] = 'revoke'

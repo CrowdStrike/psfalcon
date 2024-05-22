@@ -234,7 +234,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocationSetting
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=2)]
     [Alias('icmp_request_targets_polling_interval')]
@@ -253,7 +253,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocationSetting
     [string]$Comment
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Edit-FalconFirewallSetting {
 <#
@@ -1076,6 +1079,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFirewallLocationPrecedenc
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations-precedence/v1:post',Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations-precedence/v1:post',Position=2)]
     [string]$Comment,
@@ -1085,7 +1089,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFirewallLocationPrecedenc
     [string[]]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Test-FalconFirewallPath {
 <#

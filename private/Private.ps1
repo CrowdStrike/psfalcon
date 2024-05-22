@@ -244,6 +244,17 @@ function Build-Content {
     if (($Content.Keys | Measure-Object).Count -gt 0) { $Content }
   }
 }
+function Confirm-CidValue ([string]$String) {
+  if ($String -match '^[a-fA-F0-9]{32}-\w{2}$') {
+    # If input matches CID with checksum, strip checksum
+    ($String.Split('-')[0]).ToLower()
+  } elseif ($String -match '^[a-fA-F0-9]{32}$') {
+    # If input matches CID, return CID
+    $String.ToLower()
+  } else {
+    throw "'$String' is not a valid customer identifier value."
+  }
+}
 function Confirm-Parameter {
   [CmdletBinding()]
   [OutputType([boolean])]

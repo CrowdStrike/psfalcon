@@ -20,7 +20,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
     [string]$Id,
     [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [Alias('cids','child_cid')]
     [string[]]$Cid
   )
@@ -28,7 +28,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
+  process {
+    if ($Cid) {
+      @($Cid).foreach{
+        $Value = Confirm-CidValue $_
+        if ($Value) { $List.Add($Value) }
+      }
+    }
+  }
   end {
     if ($List) {
       $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
@@ -254,8 +261,8 @@ Search for Falcon Flight Control CID group members
 Requires 'Flight Control: Read'.
 .PARAMETER Id
 CID group identifier
-.PARAMETER CID
-CID
+.PARAMETER Cid
+Customer identifier
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
@@ -280,7 +287,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
     [string[]]$Id,
     [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [Alias('child_cid')]
     [string]$Cid,
     [Parameter(ParameterSetName='/mssp/queries/cid-group-members/v1:get',Position=2)]
@@ -303,10 +310,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
-    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+    if ($Id) {
+      @($Id).foreach{ $List.Add($_) }
+    } else {
+      if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
   end {
     if ($List) {
+      if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
       $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -686,7 +699,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
     [string]$Id,
     [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [Alias('cids','child_cid')]
     [string[]]$Cid
   )
@@ -694,7 +707,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Cid) { @($Cid).foreach{ $List.Add($_) }}}
+  process {
+    if ($Cid) {
+      @($Cid).foreach{
+        $Value = Confirm-CidValue $_
+        if ($Value) { $List.Add($Value) }
+      }
+    }
+  }
   end {
     if ($List) {
       $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)

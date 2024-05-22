@@ -73,9 +73,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     [System.Collections.Hashtable]$Collector
   )
   begin {
-    if ($PSBoundParameters.MemberCid -match '^[a-fA-F0-9]{32}-\w{2}$') {
-      $PSBoundParameters.MemberCid = $PSBoundParameters.MemberCid.Split('-')[0]
-    }
     function Get-ApiCredential ($UserInput) {
       $Output = @{}
       @('ClientId','ClientSecret','Hostname','MemberCid').foreach{
@@ -101,6 +98,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     }
   }
   process {
+    if ($PSBoundParameters.MemberCid) {
+      # Validate MemberCid value
+      $PSBoundParameters.MemberCid = Confirm-CidValue $PSBoundParameters.MemberCid
+    }
     if ($PSBoundParameters.CustomUrl) {
       # Override Hostname with CustomUrl
       $PSBoundParameters['Hostname'] = $PSBoundParameters.CustomUrl

@@ -227,7 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
   param(
     [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=1)]
     [Parameter(ParameterSetName='Name',Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [Alias('execution_cid')]
     [string[]]$Cid,
     [Parameter(ParameterSetName='/workflows/entities/execute/v1:post',Position=2)]
@@ -256,7 +256,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/workflows/entities/execute/v1:post' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
   }
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters -JsonBody $PSBoundParameters.Json }
+  process {
+    if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters -JsonBody $PSBoundParameters.Json
+  }
 }
 function Redo-FalconWorkflow {
 <#
