@@ -41,6 +41,10 @@
     'Remove-FalconHorizonAzureAccount'
     'Remove-FalconHorizonAzureGroup'
 
+    # cloud-connect-cspm-gcp
+    'Get-FalconHorizonGcpAccount'
+    'Remove-FalconHorizonGcpAccount'
+
     # configuration-assessment
     'Get-FalconConfigAssessment'
     'Get-FalconConfigAssessmentLogic'
