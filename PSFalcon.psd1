@@ -39,6 +39,7 @@
     'New-FalconHorizonAzureGroup'
     'Receive-FalconHorizonAzureScript'
     'Remove-FalconHorizonAzureAccount'
+    'Remove-FalconHorizonAzureGroup'
 
     # configuration-assessment
     'Get-FalconConfigAssessment'
@@ -531,7 +532,7 @@
       LicenseUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
       ProjectUri = 'https://github.com/crowdstrike/psfalcon'
       IconUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
-      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.6'
+      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.7'
     }
   }
 }

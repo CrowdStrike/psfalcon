@@ -365,3 +365,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
     }
   }
 }
+function Remove-FalconHorizonAzureGroup {
+<#
+.SYNOPSIS
+Remove Falcon Horizon Azure management groups
+.DESCRIPTION
+Requires 'CSPM registration: Write'.
+.PARAMETER TenantId
+Azure tenant identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:delete',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [Alias('tenant_ids')]
+    [string[]]$TenantId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
