@@ -268,6 +268,22 @@ Download a Bash script which grants Falcon Horizon access using the AWS CLI
 Requires 'CSPM registration: Read'.
 .PARAMETER Id
 AWS account identifier
+.PARAMETER OrganizationId
+AWS organization identifier
+.PARAMETER Template
+Template to be rendered
+.PARAMETER Account
+List of AWS accounts to register
+.PARAMETER AwsProfile
+AWS profile to use during registration
+.PARAMETER CustomRole
+Custom IAM role to be use during registration
+.PARAMETER BehaviorAssessment
+Enable behavior assessment
+.PARAMETER SensorManagement
+Enable sensor management
+.PARAMETER ExistingCloudtrail
+Use existing Cloudtraile
 .PARAMETER Path
 Destination path
 .PARAMETER Force
@@ -283,8 +299,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
     [ValidatePattern('^\d{12}$')]
     [Alias('ids')]
     [string[]]$Id,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=2)]
+    [Alias('organization_id')]
+    [string]$OrganizationId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=3)]
+    [ValidateSet('aws-bash','aws-terraform',IgnoreCase=$false)]
+    [string]$Template,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=4)]
+    [Alias('accounts')]
+    [string[]]$Account,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=5)]
+    [Alias('aws_profile')]
+    [string]$AwsProfile,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=6)]
+    [Alias('custom_role_name')]
+    [string]$CustomRole,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=7)]
+    [Alias('behavior_assessment_enabled')]
+    [boolean]$BehaviorAssessment,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=8)]
+    [Alias('sensor_management_enabled')]
+    [boolean]$SensorManagement,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=9)]
+    [Alias('use_existing_cloudtrail')]
+    [boolean]$ExistingCloudtrail,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
-      Position=2)]
+      Position=10)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     [switch]$Force
