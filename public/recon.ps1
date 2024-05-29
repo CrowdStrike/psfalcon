@@ -63,7 +63,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
   }
   end {
     if ($List) {
-      $PSBoundParameters['Recipient'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Recipient'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -694,7 +694,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
   process { if ($Recipient) { @($Recipient).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Recipient'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Recipient'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

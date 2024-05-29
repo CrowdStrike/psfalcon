@@ -173,8 +173,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      foreach ($i in @(Get-FalconHost -Id @($List | Select-Object -Unique) | Select-Object cid,device_id,
-      platform_name,device_policies,tags)) {
+      foreach ($i in @(Get-FalconHost -Id $List | Select-Object cid,device_id,platform_name,device_policies,
+      tags)) {
         Invoke-TagScript $i 'Add' $QueueOffline $Tag
       }
     }
@@ -204,12 +204,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      @(Get-FalconHost -Id @($List | Select-Object -Unique) | Select-Object cid,device_id,tags).foreach{
+      @(Get-FalconHost -Id $List | Select-Object cid,device_id,tags).foreach{
         [PSCustomObject]@{
           cid = $_.cid
           device_id = $_.device_id
-          tags = @($_.tags).Where({ $_ -match 'SensorGroupingTags/' }) -replace
-            'SensorGroupingTags/',$null -join ','
+          tags = @($_.tags).Where({ $_ -match 'SensorGroupingTags/' }) -replace 'SensorGroupingTags/',
+            $null -join ','
         }
       }
     }
@@ -259,8 +259,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      foreach ($i in @(Get-FalconHost -Id @($List | Select-Object -Unique) | Select-Object cid,device_id,
-      platform_name,device_policies,tags)) {
+      foreach ($i in @(Get-FalconHost -Id $List | Select-Object cid,device_id,platform_name,device_policies,
+      tags)) {
         Invoke-TagScript $i 'Remove' $QueueOffline $Tag
       }
     }
@@ -310,8 +310,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorTag
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      foreach ($i in @(Get-FalconHost -Id @($List | Select-Object -Unique) | Select-Object cid,device_id,
-      platform_name,device_policies,tags)) {
+      foreach ($i in @(Get-FalconHost -Id $List | Select-Object cid,device_id,platform_name,device_policies,
+      tags)) {
         Invoke-TagScript $i 'Set' $QueueOffline $Tag
       }
     }

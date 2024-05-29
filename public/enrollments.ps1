@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMobileAction
   process { if ($Email) { @($Email).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Email'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Email'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

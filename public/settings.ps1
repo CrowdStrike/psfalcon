@@ -162,7 +162,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
   process { if ($CloudPlatform) { @($CloudPlatform).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['CloudPlatform'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['CloudPlatform'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

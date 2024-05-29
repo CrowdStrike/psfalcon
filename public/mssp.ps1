@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
   }
   end {
     if ($List) {
-      $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Cid'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -82,7 +82,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupRole
   process { if ($RoleId) { @($RoleId).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['RoleId'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -120,7 +120,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconUserGroupMember
   process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['UserId'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -717,7 +717,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
   }
   end {
     if ($List) {
-      $PSBoundParameters['Cid'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Cid'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -767,7 +767,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupRole
   }
   end {
     if ($List) {
-      $PSBoundParameters['RoleId'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['RoleId'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -835,7 +835,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
   process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['UserId'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['UserId'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

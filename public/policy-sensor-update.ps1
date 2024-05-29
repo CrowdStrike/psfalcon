@@ -330,7 +330,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $Request = @($List | Select-Object -Unique).foreach{
+      $Request = @($List).foreach{
         $PSBoundParameters['Id'] = $_
         Invoke-Falcon @Param -UserInput $PSBoundParameters -EA 1
       }

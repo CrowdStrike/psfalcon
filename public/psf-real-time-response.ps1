@@ -53,7 +53,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
   process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
   end {
     [string[]]$Filter = if ($List) {
-      $List = $List | Where-Object { ![string]::IsNullOrEmpty($_) } | Select-Object -Unique
+      $List = $List | Where-Object { ![string]::IsNullOrEmpty($_) }
       for ($i = 0; $i -lt $List.Count; $i += 17) {
         # Create individual filter statements for groups of host identifiers
         [string]$IdList = "($((@($List[$i..($i + 16)]).foreach{ "aid:'$_'" }) -join ','))"
@@ -353,7 +353,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
       # Use Host identifiers to also retrieve 'platform_name' and 'Include' fields
       [string[]]$Select = 'device_id','platform_name'
       if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
-      @($List | Select-Object -Unique | Get-FalconHost | Select-Object $Select).foreach{ $HostList.Add($_) }
+      @($List | Get-FalconHost | Select-Object $Select).foreach{ $HostList.Add($_) }
     }
     if ($HostList) {
       # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
@@ -559,7 +559,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
   end {
     if ($List) {
       # Gather list of unique host identifiers and append 'GroupId' when present
-      [object[]]$HostList = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
+      [object[]]$HostList = @($List).foreach{ [PSCustomObject]@{ aid = $_ }}
       if ($GroupId) { @($HostList).foreach{ Set-Property $_ 'group_id' $GroupId }}
       if ($Include) {
         foreach ($i in (Get-FalconHost -Id $HostList.aid | Select-Object @($Include + 'device_id'))) {

@@ -412,12 +412,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCloud
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process {
-    if ($Cloud) { @($Cloud).foreach{ $List.Add($_) }}
-  }
+  process { if ($Cloud) { @($Cloud).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Cloud'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Cloud'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

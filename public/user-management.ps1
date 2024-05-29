@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
   end {
     if ($List) {
       if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
-      $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['role_ids'] = $List
       $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
       $PSBoundParameters['action'] = 'grant'
       [void]$PSBoundParameters.Remove('Id')
@@ -242,7 +242,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
   end {
     if ($Username) {
       # Re-submit 'Username' values as filtered searches
-      $Username = @($Username | Select-Object -Unique)
       for ($i = 0; $i -lt ($Username | Measure-Object).Count; $i += 100) {
         [string]$Filter = ($Username[$i..($i + 99)] | ForEach-Object { "uid:*'$_'" }) -join ','
         if ($Filter) {
@@ -405,7 +404,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
   end {
     if ($List) {
       if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
-      $PSBoundParameters['role_ids'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['role_ids'] = $List
       $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
       $PSBoundParameters['action'] = 'revoke'
       [void]$PSBoundParameters.Remove('Id')
