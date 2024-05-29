@@ -99,7 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -165,7 +165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -238,7 +238,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanHost
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -304,7 +304,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledScan
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -431,7 +431,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       $UserInput = Set-ScanInteger $PSBoundParameters
       $UserInput['Schedule'] = @{ start_timestamp = $UserInput.StartTime; interval = $UserInput.Repeat }
       @('StartTime','Repeat').foreach{ [void]$UserInput.Remove($_) }
@@ -474,7 +474,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScheduledScan
   process {
     if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
@@ -593,7 +593,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconScan
   }
   end {
     if ($List -or $PSBoundParameters.GroupId) {
-      if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+      if ($List) { $PSBoundParameters['Id'] = $List }
       Invoke-Falcon @Param -UserInput (Set-ScanInteger $PSBoundParameters)
     }
   }
@@ -625,7 +625,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconScan
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

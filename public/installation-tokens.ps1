@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconInstallToken
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -130,7 +130,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -193,7 +193,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -266,7 +266,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

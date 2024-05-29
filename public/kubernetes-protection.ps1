@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAwsAccount
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -124,7 +124,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAccount
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -185,7 +185,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -251,7 +251,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureAccount
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -300,7 +300,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureConfig
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -383,7 +383,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureTenant
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -487,7 +487,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -679,7 +679,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAwsAccount
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -711,7 +711,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAzureAccount
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

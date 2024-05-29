@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageHostGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       $PSBoundParameters['action'] = 'assign'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -70,7 +70,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageRuleGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       $PSBoundParameters['action'] = 'assign'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -519,7 +519,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -560,7 +560,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageExclusion
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -627,7 +627,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantagePolicy
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     if ($Include) {
       $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
       if ($Request -and $Include -contains 'exclusions') {
@@ -678,7 +678,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRule
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -743,7 +743,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRuleGroup
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1149,7 +1149,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageExclusion
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1187,7 +1187,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageHostGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       $PSBoundParameters['action'] = 'unassign'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -1219,7 +1219,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantagePolicy
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1257,7 +1257,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRule
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1295,7 +1295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRuleGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       if ($PSCmdlet.ParameterSetName -match 'patch$') { $PSBoundParameters['action'] = 'unassign' }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -1335,7 +1335,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantagePrecedence
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1373,7 +1373,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRulePrecedence
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1411,7 +1411,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRuleGroupPrece
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       $PSBoundParameters['action'] = 'precedence'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }

@@ -163,7 +163,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -228,7 +228,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

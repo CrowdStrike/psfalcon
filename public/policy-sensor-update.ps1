@@ -224,7 +224,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     if ($Include) {
       Invoke-Falcon @Param -UserInput $PSBoundParameters | ForEach-Object {
         Add-Include $_ $PSBoundParameters @{ members = 'Get-FalconSensorUpdatePolicyMember' }
@@ -488,7 +488,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorUpdatePolicy
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

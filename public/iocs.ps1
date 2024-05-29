@@ -214,7 +214,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -524,7 +524,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoc
     if (!$Id -and !$Filter) {
       throw "'Filter' or 'Id' must be provided."
     } elseif ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

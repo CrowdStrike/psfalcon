@@ -46,7 +46,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
     if ($PSBoundParameters.Comment -and !$PSBoundParameters.Status) {
       throw "A 'status' value must be supplied when adding a comment."
     } elseif ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -117,7 +117,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

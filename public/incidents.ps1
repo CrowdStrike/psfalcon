@@ -57,7 +57,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -124,7 +124,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -231,7 +231,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       if ($PSBoundParameters.Action) {
         # Verify valid 'Action' key/value pairs and update formatting before request
         $Valid = (Get-Command $Param.Command).Parameters.Name.Attributes.ValidValues

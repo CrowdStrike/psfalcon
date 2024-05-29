@@ -197,7 +197,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     @(Invoke-Falcon @Param -UserInput $PSBoundParameters).foreach{
       if ($_.version -and $null -eq $_.version) { $_.version = 0 }
       $_
@@ -253,7 +253,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaPlatform
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -330,7 +330,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -384,7 +384,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaSeverity
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -438,7 +438,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaType
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -588,7 +588,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -630,7 +630,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

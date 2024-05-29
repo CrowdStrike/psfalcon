@@ -282,7 +282,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconLibraryScript
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -345,7 +345,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -408,7 +408,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -498,7 +498,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

@@ -131,7 +131,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     $Request = if ($Detailed -and ($Account -or $Application -or $External -or $IoT -or $Login)) {
       [void]$PSBoundParameters.Remove('Detailed')
       $IdList = Invoke-Falcon @Param -UserInput $PSBoundParameters

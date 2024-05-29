@@ -64,7 +64,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -119,7 +119,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

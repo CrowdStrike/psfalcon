@@ -87,7 +87,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

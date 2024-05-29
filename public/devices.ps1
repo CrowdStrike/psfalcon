@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupingTag
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -199,7 +199,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     if ($Include) {
       $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
       if ($Request) {
@@ -350,7 +350,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroup
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     if ($Include) {
       Invoke-Falcon @Param -UserInput $PSBoundParameters | ForEach-Object {
         Add-Include $_ $PSBoundParameters @{ members = 'Get-FalconHostGroupMember' }
@@ -467,7 +467,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostAction
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       if ($Include) {
         Invoke-Falcon @Param -UserInput $PSBoundParameters | ForEach-Object {
           Add-Include $_ $PSBoundParameters -Command 'Get-FalconHost'
@@ -651,7 +651,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -682,7 +682,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHostGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

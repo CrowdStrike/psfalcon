@@ -79,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = $List }
     if ($Include) {
       $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
       if (!$Request.slug) { $Request = $Request | & $MyInvocation.MyCommand.Name | Select-Object id,slug }
@@ -133,7 +133,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAttck
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -199,7 +199,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -287,7 +287,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -369,7 +369,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -442,7 +442,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalwareFamily
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -534,7 +534,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = $List
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
