@@ -501,6 +501,11 @@
     'Get-FalconVulnerability'
     'Get-FalconVulnerabilityLogic'
 
+    # threatgraph
+    'Get-FalconThreatGraphEdge'
+    'Get-FalconThreatGraphIndicator'
+    'Get-FalconThreatGraphVertex'
+
     # ti
     'Get-FalconTailoredEvent'
     'Get-FalconTailoredRule'
