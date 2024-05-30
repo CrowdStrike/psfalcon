@@ -43,6 +43,7 @@
 
     # cloud-connect-cspm-gcp
     'Get-FalconHorizonGcpAccount'
+    'Receive-FalconHorizonGcpScript'
     'Remove-FalconHorizonGcpAccount'
 
     # configuration-assessment
