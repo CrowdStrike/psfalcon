@@ -163,6 +163,7 @@
     'Get-FalconIdentityHost'
 
     # idp-entities-explorer
+    'Edit-FalconIdentityEntity'
     'Get-FalconIdentityEntity'
 
     # image-assessment
