@@ -53,7 +53,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
   process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
   end {
     [string[]]$Filter = if ($List) {
-      $List = $List | Where-Object { ![string]::IsNullOrEmpty($_) }
+      $List = @($List) | Where-Object { ![string]::IsNullOrEmpty($_) }
       for ($i = 0; $i -lt $List.Count; $i += 17) {
         # Create individual filter statements for groups of host identifiers
         [string]$IdList = "($((@($List[$i..($i + 16)]).foreach{ "aid:'$_'" }) -join ','))"

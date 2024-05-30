@@ -403,7 +403,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallEvent
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -462,7 +462,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallField
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -534,7 +534,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -605,7 +605,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallLocation
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -659,7 +659,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPlatform
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -746,7 +746,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallRule
   end {
     if ($List) {
       $Param['Format'] = @{ Query = @('ids') }
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
     }
     $Request = @(Invoke-Falcon @Param -UserInput $PSBoundParameters).foreach{
       if ($_.version -and $null -eq $_.version) { $_.version = 0 }
@@ -789,7 +789,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallSetting
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1024,7 +1024,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1055,7 +1055,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallLocation
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

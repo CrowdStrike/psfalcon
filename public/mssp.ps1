@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCidGroupMember
   }
   end {
     if ($List) {
-      $PSBoundParameters['Cid'] = $List
+      $PSBoundParameters['Cid'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -82,7 +82,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupRole
   process { if ($RoleId) { @($RoleId).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['RoleId'] = $List
+      $PSBoundParameters['RoleId'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -120,7 +120,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconUserGroupMember
   process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['UserId'] = $List
+      $PSBoundParameters['UserId'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -248,7 +248,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroup
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -320,7 +320,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCidGroupMember
   end {
     if ($List) {
       if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -401,7 +401,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconGroupRole
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -465,7 +465,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -529,7 +529,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroup
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -595,7 +595,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -672,7 +672,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -717,7 +717,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
   }
   end {
     if ($List) {
-      $PSBoundParameters['Cid'] = $List
+      $PSBoundParameters['Cid'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -767,7 +767,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupRole
   }
   end {
     if ($List) {
-      $PSBoundParameters['RoleId'] = $List
+      $PSBoundParameters['RoleId'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -798,7 +798,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -835,7 +835,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
   process { if ($UserId) { @($UserId).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['UserId'] = $List
+      $PSBoundParameters['UserId'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

@@ -131,7 +131,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonPolicy
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -162,7 +162,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonSchedule
   process { if ($CloudPlatform) { @($CloudPlatform).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['CloudPlatform'] = $List
+      $PSBoundParameters['CloudPlatform'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

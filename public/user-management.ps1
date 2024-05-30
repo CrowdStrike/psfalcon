@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
   end {
     if ($List) {
       if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
-      $PSBoundParameters['role_ids'] = $List
+      $PSBoundParameters['role_ids'] = @($List)
       $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
       $PSBoundParameters['action'] = 'grant'
       [void]$PSBoundParameters.Remove('Id')
@@ -162,7 +162,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
   end {
     if ($List) {
       if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -252,7 +252,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
         }
       }
     } else {
-      if ($IdList) { $PSBoundParameters['Id'] = $List }
+      if ($IdList) { $PSBoundParameters['Id'] = @($List) }
       if ($Include) {
         $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
         if ($Request -and !$Request.uuid) { $Request = @($Request).foreach{ ,[PSCustomObject]@{ uuid = $_ }}}
@@ -301,7 +301,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       $PSBoundParameters['Action'] = @{ action_name = $PSBoundParameters.Name }
       [void]$PSBoundParameters.Remove('Name')
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -404,7 +404,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
   end {
     if ($List) {
       if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
-      $PSBoundParameters['role_ids'] = $List
+      $PSBoundParameters['role_ids'] = @($List)
       $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
       $PSBoundParameters['action'] = 'revoke'
       [void]$PSBoundParameters.Remove('Id')

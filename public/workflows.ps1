@@ -120,7 +120,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters -Max 500
     }
   }
@@ -151,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowInput
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -288,7 +288,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconWorkflow
   end {
     if ($List) {
       $PSBoundParameters['action_name'] = 'resume'
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

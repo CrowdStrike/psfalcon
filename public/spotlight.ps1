@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -114,7 +114,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -195,7 +195,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

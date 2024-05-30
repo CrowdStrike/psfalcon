@@ -63,7 +63,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
   }
   end {
     if ($List) {
-      $PSBoundParameters['Recipient'] = $List
+      $PSBoundParameters['Recipient'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -287,7 +287,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -317,7 +317,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconExport
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -405,7 +405,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -473,7 +473,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -543,7 +543,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -694,7 +694,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
   process { if ($Recipient) { @($Recipient).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Recipient'] = $List
+      $PSBoundParameters['Recipient'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -879,7 +879,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconExport
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -910,7 +910,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconNotification
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -946,7 +946,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconRule
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

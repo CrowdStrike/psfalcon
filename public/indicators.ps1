@@ -105,7 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

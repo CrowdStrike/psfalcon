@@ -149,9 +149,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
   }
   end {
     if ($List) {
-      $List = $List | Select-Object -Unique
+      $List = @($List) | Select-Object -Unique
       for ($i=0; $i -lt ($List | Measure-Object).Count; $i+=100) {
-        [string[]]$Group = $List[$i..($i+99)]
+        [string[]]$Group = @($List)[$i..($i+99)]
         [string]$Filter = if ($Partial) {
           (@($Group).foreach{ "hostname:'$_'" }) -join ','
         } else {

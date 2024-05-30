@@ -137,7 +137,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicy
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = $List }
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
     if ($Include) {
       Invoke-Falcon @Param -UserInput $PSBoundParameters | ForEach-Object {
         Add-Include $_ $PSBoundParameters @{ members = 'Get-FalconPreventionPolicyMember' }
@@ -355,7 +355,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPreventionPolicy
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

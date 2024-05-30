@@ -103,7 +103,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAzureAccount
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -360,7 +360,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAzureAccount
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

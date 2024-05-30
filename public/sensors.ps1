@@ -76,7 +76,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

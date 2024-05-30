@@ -127,7 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicy
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = $List }
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
     if ($Include) {
       Invoke-Falcon @Param -UserInput $PSBoundParameters | ForEach-Object {
         $Request = Add-Include $_ $PSBoundParameters @{
@@ -330,7 +330,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallPolicy
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

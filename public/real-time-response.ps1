@@ -282,7 +282,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconLibraryScript
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -345,7 +345,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -408,7 +408,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -498,7 +498,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -597,12 +597,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
         Wait = $PSBoundParameters.Wait
       }
       if ($Timeout) { $GetParam['Timeout'] = $PSBoundParameters.Timeout }
-      if ($List) { $GetParam['OptionalHostId'] = $List }
+      if ($List) { $GetParam['OptionalHostId'] = @($List) }
       Invoke-FalconBatchGet @GetParam
     } else {
       # Verify 'Endpoint' using BatchId/SessionId
       [string]$Endpoint = if ($PSBoundParameters.BatchId) {
-        if ($List) { $PSBoundParameters['OptionalHostId'] = $List }
+        if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
         '/real-time-response/combined/batch-admin-command/v1:post'
       } elseif ($PSBoundParameters.SessionId) {
         '/real-time-response/entities/admin-command/v1:post'
@@ -697,7 +697,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
   }
   process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['OptionalHostId'] = $List }
+    if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
     if ($PSBoundParameters.HostTimeout) {
       # Add 's' to denote seconds for 'host_timeout_duration'
       $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
@@ -806,7 +806,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
   end {
     # Verify 'Endpoint' using BatchId/SessionId
     $Endpoint = if ($PSBoundParameters.BatchId) {
-      if ($List) { $PSBoundParameters['OptionalHostId'] = $List }
+      if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
       '/real-time-response/combined/batch-command/v1:post'
     } else {
       '/real-time-response/entities/command/v1:post'
@@ -932,12 +932,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
         Wait = $PSBoundParameters.Wait
       }
       if ($Timeout) { $GetParam['Timeout'] = $PSBoundParameters.Timeout }
-      if ($List) { $GetParam['OptionalHostId'] = $List }
+      if ($List) { $GetParam['OptionalHostId'] = @($List) }
       Invoke-FalconBatchGet @GetParam
     } else {
       # Verify 'Endpoint' using BatchId/SessionId
       $Endpoint = if ($PSBoundParameters.BatchId) {
-        if ($List) { $PSBoundParameters['OptionalHostId'] = $List }
+        if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
         '/real-time-response/combined/batch-active-responder-command/v1:post'
       } elseif ($PSBoundParameters.SessionId) {
         '/real-time-response/entities/active-responder-command/v1:post'
@@ -1341,14 +1341,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
       # Verify 'Endpoint' using BatchId/SessionId and select hosts
       [void]$PSBoundParameters.Remove('Id')
       $Endpoint = if ($List.Count -eq 1 -and !$HostTimeout -and !$ExistingBatchId) {
-        $PSBoundParameters['device_id'] = $List[0]
+        $PSBoundParameters['device_id'] = @($List)[0]
         '/real-time-response/entities/sessions/v1:post'
       } else {
         if ($PSBoundParameters.HostTimeout) {
           # Add 's' to denote seconds for 'host_timeout_duration'
           $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
         }
-        $PSBoundParameters['host_ids'] = $List
+        $PSBoundParameters['host_ids'] = @($List)
         '/real-time-response/combined/batch-init-session/v1:post'
       }
       @(Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters).foreach{
@@ -1434,7 +1434,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
     [string]$Endpoint = if ($PSBoundParameters.HostId) {
       '/real-time-response/entities/refresh-session/v1:post'
     } elseif ($PSBoundParameters.BatchId) {
-      if ($List) { $PSBoundParameters['HostToRemove'] = $List }
+      if ($List) { $PSBoundParameters['HostToRemove'] = @($List) }
       '/real-time-response/combined/batch-refresh-session/v1:post'
     }
     @(Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters).foreach{

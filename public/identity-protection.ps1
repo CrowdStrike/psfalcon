@@ -157,7 +157,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
   end {
     if ($List) {
       $Param['Max'] = 5000
-      $PSBoundParameters['Id'] = $List
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
