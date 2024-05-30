@@ -1,7 +1,7 @@
 function Invoke-FalconMobileAction {
 <#
 .SYNOPSIS
-Trigger on-boarding process for a mobile device
+Trigger on-boarding process for a device in Falcon for Mobile
 .DESCRIPTION
 Requires 'Mobile Enrollment: Write'.
 .PARAMETER Name
