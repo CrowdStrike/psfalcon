@@ -147,18 +147,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process {
-    if ($Id) {
-      @($Id).foreach{ $List.Add($_) }
-    } else {
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
-  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       $Param['Max'] = 5000
       $PSBoundParameters['Id'] = @($List)
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
