@@ -68,18 +68,18 @@ process {
       if ((Test-FalconToken).Token -eq $true) {
         Write-Host "Authorized with '$($Cid.name)'. Collecting policies..."
         try {
-          Get-FalconPreventionPolicy -Detailed -All | Select-Object @{l='cid';e={$Cid.child_cid}},@{l='type';
-            e={'prevention_policy'}},id,platform_name,name,enabled,@{l='assigned_groups';e={
-            $_.groups.id -join ','}},@{l='total_members';e={Get-FalconPreventionPolicyMember -Id $_.id -Total}} |
-            Export-Csv $OutputFile -NoTypeInformation -Append
+          Get-FalconPreventionPolicy -Detailed -All | Select-Object @{l='cid';e={$Cid.child_cid}},@{l='cid_name';
+            e={$Cid.name}}@{l='type';e={'prevention_policy'}},id,platform_name,name,enabled,
+            @{l='assigned_groups';e={$_.groups.id -join ','}},@{l='total_members';e={
+            Get-FalconPreventionPolicyMember -Id $_.id -Total}} | Export-Csv $OutputFile -NoTypeInformation -Append
         } catch {
           Write-Error "Failed to collect prevention policies from '$($Cid.name)'."
         }
         try {
-          Get-FalconHostGroup -Detailed -All | Select-Object @{l='cid';e={$Cid.child_cid}},@{l='type';e={
-            'host_group',$_.group_type -join ':'}},id,@{l='platform_name';e={''}},name,@{l='enabled';e={''}},
-            @{l='assigned_groups';e={''}},@{l='total_members';e={Get-FalconHostGroupMember -Id $_.id -Total}} |
-            Export-Csv $OutputFile -NoTypeInformation -Append
+          Get-FalconHostGroup -Detailed -All | Select-Object @{l='cid';e={$Cid.child_cid}},@{l='cid_name';
+            e={$Cid.name}},@{l='type';e={'host_group',$_.group_type -join ':'}},id,@{l='platform_name';e={''}},
+            name,@{l='enabled';e={''}},@{l='assigned_groups';e={''}},@{l='total_members';e={
+            Get-FalconHostGroupMember -Id $_.id -Total}} | Export-Csv $OutputFile -NoTypeInformation -Append
         } catch {
           Write-Error "Failed to collect host groups from '$($Cid.name)'."
         }
