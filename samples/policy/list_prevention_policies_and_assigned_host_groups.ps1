@@ -77,7 +77,7 @@ process {
         }
         try {
           Get-FalconHostGroup -Detailed -All | Select-Object @{l='cid';e={$Cid.child_cid}},@{l='type';e={
-            'host_group',$_.type -join ':'}},id,@{l='platform_name';e={''}},name,@{l='enabled';e={''}},
+            'host_group',$_.group_type -join ':'}},id,@{l='platform_name';e={''}},name,@{l='enabled';e={''}},
             @{l='assigned_groups';e={''}},@{l='total_members';e={Get-FalconHostGroupMember -Id $_.id -Total}} |
             Export-Csv $OutputFile -NoTypeInformation -Append
         } catch {
