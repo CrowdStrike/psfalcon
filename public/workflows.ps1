@@ -125,6 +125,46 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
     }
   }
 }
+function Get-FalconWorkflowAction {
+<#
+.SYNOPSIS
+Search for Falcon Fusion workflow actions
+.DESCRIPTION
+Requires 'Workflow: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowAction
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/combined/activities/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/combined/activities/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/workflows/combined/activities/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/workflows/combined/activities/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/workflows/combined/activities/v1:get')]
+    [string]$Offset,
+    [Parameter(ParameterSetName='/workflows/combined/activities/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/workflows/combined/activities/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconWorkflowInput {
 <#
 .SYNOPSIS
@@ -155,6 +195,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowInput
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
+}
+function Get-FalconWorkflowTrigger {
+<#
+.SYNOPSIS
+Search for Falcon Fusion workflow triggers
+.DESCRIPTION
+Requires 'Workflow: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowTrigger
+#>
+  [CmdletBinding(DefaultParameterSetName='/workflows/combined/triggers/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/workflows/combined/triggers/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Import-FalconWorkflow {
 <#

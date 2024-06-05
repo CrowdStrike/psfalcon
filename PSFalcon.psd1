@@ -535,7 +535,9 @@
     # workflows
     'Export-FalconWorkflow'
     'Get-FalconWorkflow'
+    'Get-FalconWorkflowAction'
     'Get-FalconWorkflowInput'
+    'Get-FalconWorkflowTrigger'
     'Import-FalconWorkflow'
     'Invoke-FalconWorkflow'
     'Redo-FalconWorkflow'
