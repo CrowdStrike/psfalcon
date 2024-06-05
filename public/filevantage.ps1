@@ -605,10 +605,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageContent
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process {
-    $PSBoundParameters['Accept-Encoding'] = 'gzip'
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
-  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconFileVantageExclusion {
 <#
