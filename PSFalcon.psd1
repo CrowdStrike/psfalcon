@@ -315,6 +315,9 @@
     'Get-FalconOverWatchDetection'
     'Get-FalconOverWatchIncident'
 
+    # plugins
+    'Get-FalconWorkflowIntegration'
+
     # policy-device-control
     'Edit-FalconDeviceControlPolicy'
     'Get-FalconDeviceControlPolicy'
