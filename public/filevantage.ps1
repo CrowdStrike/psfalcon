@@ -458,6 +458,69 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRuleGroup
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconFileVantageAction {
+<#
+.SYNOPSIS
+Search for Falcon FileVantage actions
+.DESCRIPTION
+Requires 'Falcon FileVantage: Read'.
+.PARAMETER Id
+FileVantage action identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageAction
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/queries/actions/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) } } else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Get-FalconFileVantageChange {
 <#
 .SYNOPSIS
@@ -522,6 +585,29 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
       $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
+  }
+}
+function Get-FalconFileVantageContent {
+<#
+.SYNOPSIS
+Retrieve content recorded in a Falcon FileVantage change
+.DESCRIPTION
+Requires 'Falcon FileVantage Content: Read'.
+.PARAMETER Id
+FileVantage change identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageContent
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/change-content/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/change-content/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process {
+    $PSBoundParameters['Accept-Encoding'] = 'gzip'
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
 function Get-FalconFileVantageExclusion {
@@ -741,6 +827,76 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRuleGroup
   process {
     if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
   }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Invoke-FalconFileVantageAction {
+<#
+.SYNOPSIS
+Perform actions on Falcon FileVantage changes
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Name
+Action to perform
+.PARAMETER Comment
+Audit log comment
+.PARAMETER Id
+FileVantage change identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFileVantageAction
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/actions/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:post',Mandatory,Position=1)]
+    [ValidateSet('suppress','unsuppress','purge',IgnoreCase=$false)]
+    [Alias('operation')]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:post',Position=2)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:post',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=3)]
+    [Alias('change_ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Invoke-FalconFileVantageWorkflow {
+<#
+.SYNOPSIS
+Execute an on-demand Falcon Fusion workflow for Falcon FileVantage changes
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Id
+FileVantage change identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFileVantageWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/workflow/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/workflow/v1:post',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Mandatory,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List)
