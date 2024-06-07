@@ -55,7 +55,9 @@
 
     # container-security
     'Edit-FalconContainerRegistry'
+    'Get-FalconContainer'
     'Get-FalconContainerAssessment'
+    'Get-FalconContainerCount'
     'Get-FalconContainerRegistry'
     'Get-FalconContainerSensor'
     'New-FalconContainerRegistry'

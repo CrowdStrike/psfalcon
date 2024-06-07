@@ -85,6 +85,119 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
     try { $Request | ConvertFrom-Json } catch { $Request }
   }
 }
+function Get-FalconContainer {
+<#
+.SYNOPSIS
+Search for containers in Falcon Cloud Security by runtime version
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainer
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/aggregates/containers/find-by-runtimeversion/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/aggregates/containers/find-by-runtimeversion/v1:get',
+      Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/aggregates/containers/find-by-runtimeversion/v1:get',
+      Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/aggregates/containers/find-by-runtimeversion/v1:get',
+      Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/aggregates/containers/find-by-runtimeversion/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/aggregates/containers/find-by-runtimeversion/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/aggregates/containers/find-by-runtimeversion/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconContainerCount {
+<#
+.SYNOPSIS
+Return resource counts from Falcon Cloud Security
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Resource
+Falcon Cloud Security resource to count [default: containers]
+.PARAMETER Type
+Retrieve specific counts by type [default: count]
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=2)]
+    [string]$Resource,
+    [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=3)]
+    [string]$Type
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName } }
+  process {
+    if (!$PSBoundParameters.Resource) { $PSBoundParameters['Resource'] = 'containers' }
+    if (!$PSBoundParameters.Type) { $PSBoundParameters['Type'] = 'count' }
+    if ($Script:Falcon.Format) {
+      # Determine valid 'Resource' and 'Type' values using 'Format.json'
+      [string[]]$ExcludeType = 'find-by-runtimeversion'
+      [string[]]$ValidResource = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
+        $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
+      }).foreach{
+        @($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[0]
+      } | Select-Object -Unique | Sort-Object
+      if ($ValidResource -and $ValidResource -notcontains $PSBoundParameters.Resource) {
+        # Error if 'Resource' is not in ValidResource list
+        throw 'Invalid "Resource" value. [Accepted: {1}]' -f $PSBoundParameters.Resource,
+          ($ValidResource -join ', ')
+      }
+      [string[]]$ValidType = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
+        $_ -match ('/container-security/aggregates/{0}/[\w-]+/v1' -f $PSBoundParameters.Resource)
+      }).foreach{
+        @($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[1]
+      } | Where-Object { $ExcludeType -notcontains $_ } | Sort-Object
+      if ($ValidType -and $ValidType -notcontains $PSBoundParameters.Type) {
+        # Error if 'Type' is not in ValidType list
+        throw 'Invalid "Type" value for "{0}". [Accepted: {1}]' -f $PSBoundParameters.Resource,
+          ($ValidType -join ', ')
+      }
+    }
+    @('resource','type').foreach{
+      # Update target API endpoint using 'Resource' and 'Type'
+      $Param.Endpoint = $Param.Endpoint -replace "{$_}",$PSBoundParameters.$_
+      [void]$PSBoundParameters.Remove($_)
+    }
+    $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($Request -and $Request.buckets) {
+      $Request.buckets
+    } elseif ($Request -and $null -ne $Request.count) {
+      $Request.count
+    } else {
+      $Request
+    }
+  }
+}
 function Get-FalconContainerRegistry {
 <#
 .SYNOPSIS
@@ -424,5 +537,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
     } else {
       throw "No registry credential available. Try 'Request-FalconRegistryCredential'."
     }
+  }
+}
+Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Resource -ScriptBlock {
+  if ($Script:Falcon.Format) {
+    # Add 'Resource' to using 'Format.json'
+    @($Script:Falcon.Format.PSObject.Properties.Name).Where({
+      $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
+    }).foreach{
+      ($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[0]
+    } | Select-Object -Unique | Sort-Object
+  }
+}
+Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Type -ScriptBlock {
+  if ($Script:Falcon.Format) {
+    # Add 'Type' to using 'Format.json'
+    [string[]]$ExcludeType = 'find-by-runtimeversion'
+    @($Format.PSObject.Properties.Name).Where({
+      $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
+    }).foreach{
+      ($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[1]
+    } | Select-Object -Unique | Where-Object { $ExcludeType -notcontains $_ } | Sort-Object
   }
 }
