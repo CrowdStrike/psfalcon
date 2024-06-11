@@ -25,7 +25,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconAdminCommand
     [int32]$SequenceId,
     [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -61,7 +61,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconCommand
     [int32]$SequenceId,
     [Parameter(ParameterSetName='/real-time-response/entities/command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -91,7 +91,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:get',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:get',Position=1)]
@@ -99,7 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
     [int32]$Timeout,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_get_cmd_req_id')]
     [string]$BatchGetCmdReqId
   )
@@ -152,7 +152,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconResponderCommand
     [int32]$SequenceId,
     [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -456,7 +456,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Parameter(ParameterSetName='/real-time-response/entities/sessions/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=1)]
@@ -565,12 +565,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post')]
@@ -685,7 +685,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post')]
@@ -786,12 +786,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post')]
@@ -906,12 +906,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
       Mandatory,ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post')]
@@ -1006,7 +1006,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
     [string]$Sha256,
     [Parameter(ParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=3)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get')]
@@ -1057,12 +1057,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -1090,12 +1090,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string]$Id
   )
@@ -1163,7 +1163,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$Id
   )
@@ -1312,7 +1312,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
     [Alias('queue_offline')]
     [boolean]$QueueOffline,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('existing_batch_id')]
     [string]$ExistingBatchId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=3)]
@@ -1420,7 +1420,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
     [string]$HostId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-refresh-session/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId
   )

@@ -27,7 +27,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
     [string]$Content,
     [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=3)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId,
     [Parameter(ParameterSetName='/message-center/entities/case-activity/v1:post',Mandatory,
@@ -291,7 +291,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
     [string[]]$IncidentId,
     [Parameter(ParameterSetName='/message-center/entities/case/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=6)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId
   )
@@ -406,7 +406,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconCompleteAttachment
     [string]$Path,
     [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId,
     [Parameter(ParameterSetName='/message-center/entities/case-attachment/v1:post',Mandatory,

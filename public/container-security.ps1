@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerRegistry
     [hashtable]$Credential,
     [Parameter(ParameterSetName='/container-security/entities/registries/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
   begin {
@@ -225,7 +225,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerRegistry
   param(
     [Parameter(ParameterSetName='/container-security/entities/registries/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string]$Id,
     [Parameter(ParameterSetName='/container-security/queries/registries/v1:get',Position=1)]
@@ -390,7 +390,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerRegistry
   param(
     [Parameter(ParameterSetName='/container-security/entities/registries/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string]$Id
   )

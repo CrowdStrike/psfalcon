@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
     [ValidateSet('new','in_progress','true_positive','false_positive','closed','reopened',IgnoreCase=$false)]
     [string]$Status,
     [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('assigned_to_uuid','uuid')]
     [string]$AssignedToUuid,
     [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
@@ -179,11 +179,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
     [Alias('aws_account_id')]
     [string]$AwsAccountId,
     [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_subscription_id','subscription_id')]
     [string]$AzureSubscriptionId,
     [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',ValueFromPipelineByPropertyName,Position=5)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_tenant_id','tenant_id')]
     [string]$AzureTenantId,
     [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Position=6)]

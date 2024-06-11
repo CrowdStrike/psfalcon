@@ -109,7 +109,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconUserGroupMember
     [string]$Id,
     [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuids','UserIds')]
     [string[]]$UserId
   )
@@ -568,7 +568,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserGroupMember
     [string[]]$Id,
     [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId,
     [Parameter(ParameterSetName='/mssp/queries/user-group-members/v1:get',Position=2)]
@@ -824,7 +824,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
     [string]$Id,
     [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuids','uuid','UserIds')]
     [string[]]$UserId
   )

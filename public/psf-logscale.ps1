@@ -21,7 +21,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
     [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=1)]
     [System.Uri]$Uri,
     [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^([a-fA-F0-9]{32}|[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12})$')]
     [string]$Token,
     [Parameter(ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('responses','requests')]
@@ -30,7 +30,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
   process {
     if (!$Script:Falcon.Api) { throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'." }
     $Script:Falcon.Api.Collector = @{
-      Uri = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
+      Uri = if ($Uri -match 'https://ingest\.(eu-1|us-2\.)?crowdstrike\.com/api/ingest/') {
+        $PSBoundParameters.Uri.ToString()
+      } else {
+        $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
+      }
       Token = $PSBoundParameters.Token
     }
     [string]$Message = "Added '$($Script:Falcon.Api.Collector.Uri)'"

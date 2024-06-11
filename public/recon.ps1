@@ -47,7 +47,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconAction
     [boolean]$TriggerMatchless,
     [Parameter(ParameterSetName='/recon/entities/actions/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
       Position=6)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
   begin {
@@ -104,7 +104,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
     [ValidateSet('new','in-progress','closed-false-positive','closed-true-positive',IgnoreCase=$false)]
     [string]$Status,
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=3)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('assigned_to_uuid')]
     [string]$AssignedToUuid,
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Position=4)]
@@ -174,7 +174,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
     [Alias('Array')]
     [object[]]$InputObject,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Mandatory,Position=2)]
     [string]$Name,
@@ -256,7 +256,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconAction
   param(
     [Parameter(ParameterSetName='/recon/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/recon/queries/actions/v1:get',Position=1)]
@@ -509,7 +509,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
   param(
     [Parameter(ParameterSetName='/recon/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=1)]
@@ -661,7 +661,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconAction
   param(
     [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
       Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('rule_id')]
     [string]$RuleId,
     [Parameter(ParameterSetName='/recon/entities/actions/v1:post',Mandatory,ValueFromPipelineByPropertyName,
@@ -848,7 +848,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconAction
   param(
     [Parameter(ParameterSetName='/recon/entities/actions/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -935,7 +935,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconRule
     [boolean]$DeleteNotification,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string[]]$Id
   )

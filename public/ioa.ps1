@@ -45,11 +45,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
     [Alias('aws_account_id','account_id','AccountId')]
     [string]$AwsAccountId,
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_subscription_id')]
     [string]$AzureSubscriptionId,
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',ValueFromPipelineByPropertyName,Position=5)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_tenant_id')]
     [string]$AzureTenantId,
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=6)]
@@ -129,11 +129,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
     [Alias('aws_account_id','account_id','AccountId')]
     [string]$AwsAccountId,
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_subscription_id')]
     [string]$AzureSubscriptionId,
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=5)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_tenant_id')]
     [string]$AzureTenantId,
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Position=6)]

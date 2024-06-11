@@ -18,7 +18,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
   param(
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('uuid','user_uuid')]
     [string]$UserId,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
@@ -71,7 +71,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
     [string]$LastName,
     [Parameter(ParameterSetName='/user-management/entities/users/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$Id
   )
@@ -114,7 +114,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [Alias('ids','roles','role_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=1)]
@@ -148,7 +148,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
   process {
     if ($Id) {
       @($Id).foreach{
-        if ($_ -match '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$') {
+        if ($_ -match '^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$') {
           Get-FalconRole -UserId $_
         } else {
           $List.Add($_)
@@ -200,7 +200,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
   param(
     [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids','uuid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=1)]
@@ -286,7 +286,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
     [Alias('action_name')]
     [string]$Name,
     [Parameter(ParameterSetName='/user-management/entities/user-actions/v1:post',Mandatory,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -385,7 +385,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
   param(
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('uuid','user_uuid')]
     [string]$UserId,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
@@ -428,7 +428,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
   param(
     [Parameter(ParameterSetName='/user-management/entities/users/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$Id
   )
