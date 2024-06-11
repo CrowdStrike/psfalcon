@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconModule
         ModulePath = Split-Path $ManifestPath -Parent
         UserModulePath = $env:PSModulePath
         UserHome = $HOME
-        UserAgent = 'crowdstrike-psfalcon',$ModuleData.ModuleVersion -join '/'
+        UserAgent = $Script:Falcon.Api.UserAgent
       }
     } else {
       throw "Unable to locate '$ManifestPath'."

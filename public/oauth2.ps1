@@ -137,7 +137,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
           if ($String) { Write-Log 'Request-FalconToken' "Set TLS 1.2 via $String." }
           $Script:Falcon.Api.Handler.AutomaticDecompression = [System.Net.DecompressionMethods]::Gzip,
             [System.Net.DecompressionMethods]::Deflate
-          $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("$((Show-FalconModule).UserAgent)")
+          $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd($Script:Falcon.Api.UserAgent)
         } else {
           $PSCmdlet.WriteError('Unable to initialize [ApiClient] object.')
         }

@@ -29,13 +29,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
   )
   process {
     if (!$Script:Falcon.Api) { throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'." }
-    $Script:Falcon.Api.Collector = @{
-      Uri = if ($Token -match '^[a-fA-F0-9]{32}$') {
-        $PSBoundParameters.Uri.ToString()
-      } else {
-        $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
-      }
-      Token = $PSBoundParameters.Token
+    $Script:Falcon.Api.Collector = @{ Uri = $PSBoundParameters.Uri.ToString(); Token = $PSBoundParameters.Token }
+    if ($Token -match '^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$') {
+      $Script:Falcon.Api.Collector.Uri += 'api/v1/ingest/humio-structured/'
     }
     [string]$Message = "Added '$($Script:Falcon.Api.Collector.Uri)'"
     if ($PSBoundParameters.Enable) {
@@ -72,6 +68,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconEvent
     if ($Script:Falcon.Api.Collector.Token -and $Script:Falcon.Api.Collector.Token -match '^[a-fA-F0-9]{32}$') {
       # Force object into [PSCustomObject] type and send to Falcon NGSIEM
       [PSCustomObject]$Object = if ($Object -is [string]) { @{ string = $Object } } else { $Object }
+      Set-Property $Object '@timestamp' ([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())
+      Set-Property $Object '@sourcetype' $Script:Falcon.Api.UserAgent
       $Param = @{
         Uri = $Script:Falcon.Api.Collector.Uri
         Method = 'POST'

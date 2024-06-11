@@ -2,11 +2,13 @@ class ApiClient {
   [System.Net.Http.HttpClientHandler]$Handler
   [System.Net.Http.HttpClient]$Client
   [System.Collections.Hashtable]$Collector
+  [string]$UserAgent
   ApiClient() {
     $this.Collector = $null
     $this.Handler = [System.Net.Http.HttpClientHandler]::New()
     $this.Client = [System.Net.Http.HttpClient]::New($this.Handler)
     $this.Client.Timeout = [System.TimeSpan]::New(0,1,0)
+    $this.UserAgent = 'crowdstrike-psfalcon/2.2.7'
   }
   [string] Path([string]$Path) {
     $Output = if (![IO.Path]::IsPathRooted($Path)) {
@@ -135,49 +137,98 @@ class ApiClient {
     return $Output
   }
   [void] Log([System.Object]$Object) {
-    # Create LogScale message payload from 'HttpRequestMessage' or 'HttpResponseMessage'
-    $Item = @{ timestamp = Get-Date -Format o; attributes = @{ Headers = @{} }}
-    if ($Object -is [System.Net.Http.HttpRequestMessage]) {
-      @('RequestUri','Method').foreach{ $Item.attributes[$_] = $Object.$_.ToString() }
-      $Object.Headers.GetEnumerator().Where({ $_.Key -ne 'Authorization' }).foreach{
-        $Item.attributes.Headers[$_.Key] = $_.Value
-      }
-      if ($Object.Content) {
-        # Redact 'client_secret' from request
-        $Item.attributes['Content'] = $Object.Content.ReadAsStringAsync().Result -replace 'client_secret=\w+&?',
-          'client_secret=redacted'
-      }
-    } elseif ($Object -is [System.Net.Http.HttpResponseMessage]) {
-      $Object.Headers.GetEnumerator().foreach{ $Item.attributes.Headers[$_.Key] = $_.Value }
-      if ($Object.Content -and ($Object.Content.Headers.ContentType -eq 'application/json' -or
-      $Object.Content.Headers.ContentType.MediaType -eq 'application/json')) {
-        @(($Object.Content.ReadAsStringAsync().Result | ConvertFrom-Json).PSObject.Properties).Where({
-        $_.Name -ne 'access_token' }).foreach{
-          # Add content, but exclude 'access_token'
-          $Item.attributes[$_.Name] = $_.Value
+    # Create Falcon LogScale/NGSIEM message payload from 'HttpRequestMessage' or 'HttpResponseMessage'
+    $Timestamp = if ($this.Collector.Token -match '^[a-fA-F0-9]{32}$') {
+      [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+    } else {
+      Get-Date -Format o
+    }
+    if ($this.Collector.Token -match '^[a-fA-F0-9]{32}$') {
+      $Item = @{
+        event = @{
+          '@timestamp' = $Timestamp
+          '@sourcetype' = $this.UserAgent
+          '#ecs.version' = '8.11.0'
+          '#Cps.version' = '1.0.0'
+          'Parser.version' = '1.0.0'
         }
-      } elseif ($Object.Content) {
-        # Add content as a string when unable to determine if 'HttpRequestMessage' or 'HttpResponseMessage'
-        $Item.attributes['Content'] = $Object.Content.ReadAsStringAsync().Result
+      }
+      if ($Object -is [System.Net.Http.HttpRequestMessage]) {
+        # Add request URI, method and headers (without 'authorization')
+        $Item.event['url.full'] = $Object.RequestUri.ToString()
+        $Item.event['http.request.method'] = $Object.Method.ToString()
+        $Item.event['http.request.headers'] = @{}
+        $Object.Headers.GetEnumerator().Where({$_.Key -ne 'Authorization'}).foreach{
+          $Item.event.'http.request.headers'[$_.Key] = $_.Value
+        }
+        if ($Object.Content) {
+          # Redact 'client_secret' from request
+          $Item.event['http.request.body.content'] =
+            $Object.Content.ReadAsStringAsync().Result -replace 'client_secret=\w+&?','client_secret=redacted'
+        }
+      } elseif ($Object -is [System.Net.Http.HttpResponseMessage]) {
+        $Item.event['http.response.headers'] = @{}
+        $Object.Headers.GetEnumerator().foreach{ $Item.event.'http.response.headers'[$_.Key] = $_.Value }
+        if ($Object.Content -and ($Object.Content.Headers.ContentType -eq 'application/json' -or
+        $Object.Content.Headers.ContentType.MediaType -eq 'application/json')) {
+          # Add response content (excluding 'access_token')
+          $Content = @{}
+          @(($Object.Content.ReadAsStringAsync().Result | ConvertFrom-Json).PSObject.Properties).Where({
+          $_.Name -ne 'access_token'}).foreach{ $Content[$_.Name] = $_.Value }
+          $Item.event['http.response.body.content'] = $Content
+        } elseif ($Object.Content) {
+          # Add content as a string when unable to determine if 'HttpRequestMessage' or 'HttpResponseMessage'
+          $Item.event['http.response.body.content'] = $Object.Content.ReadAsStringAsync().Result
+        }
+      }
+    } else {
+      $Item = @{ timestamp = $Timestamp; attributes = @{ Headers = @{} }}
+      if ($Object -is [System.Net.Http.HttpRequestMessage]) {
+        @('RequestUri','Method').foreach{ $Item.attributes[$_] = $Object.$_.ToString() }
+        $Object.Headers.GetEnumerator().Where({$_.Key -ne 'Authorization'}).foreach{
+          $Item.attributes.Headers[$_.Key] = $_.Value
+        }
+        if ($Object.Content) {
+          # Redact 'client_secret' from request
+          $Item.attributes['Content'] = $Object.Content.ReadAsStringAsync().Result -replace 'client_secret=\w+&?',
+            'client_secret=redacted'
+        }
+      } elseif ($Object -is [System.Net.Http.HttpResponseMessage]) {
+        $Object.Headers.GetEnumerator().foreach{ $Item.attributes.Headers[$_.Key] = $_.Value }
+        if ($Object.Content -and ($Object.Content.Headers.ContentType -eq 'application/json' -or
+        $Object.Content.Headers.ContentType.MediaType -eq 'application/json')) {
+          @(($Object.Content.ReadAsStringAsync().Result | ConvertFrom-Json).PSObject.Properties).Where({
+          $_.Name -ne 'access_token'}).foreach{
+            # Add content, but exclude 'access_token'
+            $Item.attributes[$_.Name] = $_.Value
+          }
+        } elseif ($Object.Content) {
+          # Add content as a string when unable to determine if 'HttpRequestMessage' or 'HttpResponseMessage'
+          $Item.attributes['Content'] = $Object.Content.ReadAsStringAsync().Result
+        }
       }
     }
-    # Use Invoke-RestMethod to send to LogScale within a background job
+    # Use Invoke-RestMethod to send to Falcon LogScale/NGSIEM within a background job
     $Job = @{
-      Name = 'ApiClient_Log',$Item.timestamp -join '.'
+      Name = 'ApiClient_Log',$Timestamp -join '.'
       ScriptBlock = { $Param = $args[0]; Invoke-RestMethod @Param }
       ArgumentList = @{
         Uri = $this.Collector.Uri
         Method = 'post'
         Headers = @{ Authorization = 'Bearer',$this.Collector.Token -join ' '; ContentType = 'application/json' }
-        Body = ConvertTo-Json @(
-          @{
-            tags = @{
-              host = [System.Net.Dns]::GetHostName()
-              source = $this.Client.DefaultRequestHeaders.UserAgent.ToString()
+        Body = if ($this.Collector.Token -match '^[a-fA-F0-9]{32}') {
+          ConvertTo-Json $Item -Depth 32 -Compress
+        } else {
+          ConvertTo-Json @(
+            @{
+              tags = @{
+                host = [System.Net.Dns]::GetHostName()
+                source = $this.Client.DefaultRequestHeaders.UserAgent.ToString()
+              }
+              events = @(,$Item)
             }
-            events = @(,$Item)
-          }
-        ) -Depth 32 -Compress
+          ) -Depth 32 -Compress
+        }
       }
     }
     [void](Start-Job @Job)
