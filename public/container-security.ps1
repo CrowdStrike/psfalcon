@@ -1,3 +1,4 @@
+[string[]]$ExcludeCountType = 'find-by-runtimeversion'
 function Edit-FalconContainerRegistry {
 <#
 .SYNOPSIS
@@ -161,7 +162,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     if (!$PSBoundParameters.Type) { $PSBoundParameters['Type'] = 'count' }
     if ($Script:Falcon.Format) {
       # Determine valid 'Resource' and 'Type' values using 'Format.json'
-      [string[]]$ExcludeType = 'find-by-runtimeversion'
       [string[]]$ValidResource = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
         $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
       }).foreach{
@@ -176,7 +176,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
         $_ -match ('/container-security/aggregates/{0}/[\w-]+/v1' -f $PSBoundParameters.Resource)
       }).foreach{
         @($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[1]
-      } | Where-Object { $ExcludeType -notcontains $_ } | Sort-Object
+      } | Where-Object { $ExcludeCountType -notcontains $_ } | Sort-Object
       if ($ValidType -and $ValidType -notcontains $PSBoundParameters.Type) {
         # Error if 'Type' is not in ValidType list
         throw 'Invalid "Type" value for "{0}". [Accepted: {1}]' -f $PSBoundParameters.Resource,
@@ -552,11 +552,10 @@ Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName 
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Type -ScriptBlock {
   if ($Script:Falcon.Format) {
     # Add 'Type' to using 'Format.json'
-    [string[]]$ExcludeType = 'find-by-runtimeversion'
     @($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
     }).foreach{
       ($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[1]
-    } | Select-Object -Unique | Where-Object { $ExcludeType -notcontains $_ } | Sort-Object
+    } | Select-Object -Unique | Where-Object { $ExcludeCountType -notcontains $_ } | Sort-Object
   }
 }
