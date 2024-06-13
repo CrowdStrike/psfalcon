@@ -541,7 +541,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
 }
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Resource -ScriptBlock {
   if ($Script:Falcon.Format) {
-    # Add 'Resource' to using 'Format.json'
+    # Add 'Resource' to Get-FalconContainerCount using 'Format.json'
     @($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
     }).foreach{
@@ -551,7 +551,7 @@ Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName 
 }
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Type -ScriptBlock {
   if ($Script:Falcon.Format) {
-    # Add 'Type' to using 'Format.json'
+    # Add 'Type' to Get-FalconContainerCount using 'Format.json'
     @($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
     }).foreach{
