@@ -553,7 +553,7 @@ Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName 
   if ($Script:Falcon.Format) {
     # Add 'Type' to using 'Format.json'
     [string[]]$ExcludeType = 'find-by-runtimeversion'
-    @($Format.PSObject.Properties.Name).Where({
+    @($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
     }).foreach{
       ($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[1]
