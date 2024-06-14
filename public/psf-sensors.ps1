@@ -138,7 +138,8 @@ Use Real-time Response to add SensorGroupingTags to a host
 Provided SensorGroupingTag values will be appended to any existing tags. If no new tag values are supplied, a list
 of the current tags will be output for the target host. To overwrite existing values, use 'Set-FalconSensorTag'.
 
-Requires 'Hosts: Read', 'Sensor update policies: Write' and 'Real time response (admin): Write'.
+Requires 'Hosts: Read', 'Sensor update policies: Write', 'Real time response: Read', and
+'Real time response (admin): Write'.
 .PARAMETER Tag
 SensorGroupingTag value ['SensorGroupingTags/<string>']
 .PARAMETER QueueOffline
@@ -223,7 +224,8 @@ Use Real-time Response to remove SensorGroupingTags from a host
 When provided, SensorGroupingTag values will be removed from list of existing tags and others will be left
 unmodified. If no tags are provided, all existing tags will be removed.
 
-Requires 'Hosts: Read', 'Sensor update policies: Write' and 'Real time response (admin): Write'.
+Requires 'Hosts: Read', 'Sensor update policies: Write', 'Real time response: Read', and
+'Real time response (admin): Write'.
 .PARAMETER Tag
 SensorGroupingTag value ['SensorGroupingTags/<string>']
 .PARAMETER Id
@@ -274,7 +276,8 @@ Use Real-time Response to set SensorGroupingTags on a host
 Provided SensorGroupingTag values will overwrite any existing tags. To append to existing values, use
 'Add-FalconSensorTag'.
 
-Requires 'Hosts: Read', 'Sensor update policies: Write' and 'Real time response (admin): Write'.
+Requires 'Hosts: Read', 'Sensor update policies: Write', 'Real time response: Read', and
+'Real time response (admin): Write'.
 .PARAMETER Tag
 SensorGroupingTag value ['FalconSensorTags/<string>']
 .PARAMETER QueueOffline
