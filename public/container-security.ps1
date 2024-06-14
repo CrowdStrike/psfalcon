@@ -190,10 +190,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     }
     $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
     if ($Request -and $Request.buckets) {
+      # Output 'buckets' sub-object
       $Request.buckets
     } elseif ($Request -and $null -ne $Request.count) {
+      # Output 'count' sub-object
       $Request.count
     } else {
+      # Output entire result when 'buckets' or 'count' were not provided
       $Request
     }
   }
