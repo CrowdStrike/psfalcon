@@ -166,6 +166,9 @@
     'Set-FalconFirewallLocationPrecedence'
     'Test-FalconFirewallPath'
 
+    # host-migration
+    'Get-FalconMigration'
+
     # identity-protection
     'Invoke-FalconIdentityGraph'
     'Get-FalconIdentityHost'
