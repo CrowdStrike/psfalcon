@@ -223,7 +223,7 @@ class ApiClient {
             @{
               tags = @{
                 host = [System.Net.Dns]::GetHostName()
-                source = $this.Client.DefaultRequestHeaders.UserAgent.ToString()
+                source = $this.UserAgent
               }
               events = @(,$Item)
             }
