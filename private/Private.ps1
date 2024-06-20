@@ -178,7 +178,7 @@ function Build-Content {
     function Build-Query ($Format,$UserInput) {
       # Regex pattern for matching 'last [int] days/hours'
       [regex]$Relative = '([Ll]ast (?<Int>\d{1,}) ([Dd]ay[s]?|[Hh]our[s]?))'
-      [array]$Query = foreach ($Field in $Format.Query.Where({$UserInput.Keys -contains $_})) {
+      [string[]]$Query = foreach ($Field in $Format.Query.Where({$UserInput.Keys -contains $_})) {
         foreach ($Value in ($UserInput.GetEnumerator().Where({$_.Key -eq $Field}).Value)) {
           if ($Field -eq 'filter' -and $Value -match $Relative) {
             # Convert 'last [int] days/hours' to Rfc3339
@@ -190,11 +190,11 @@ function Build-Content {
               }
             }
           }
-          # Output array of strings to append to 'Path' and HTML-encode '+'
-          ,"$($Field)=$($Value -replace '\+','%2B')"
+          # Output array of [string] with URL-encoded values to append to 'Path'
+          ,($Field,([System.Uri]::EscapeDataString($Value)) -join '=')
         }
       }
-      # Return 'Query' array
+      # Return 'Query'
       if ($Query) { $Query }
     }
   }
