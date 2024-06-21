@@ -100,6 +100,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
 .PARAMETER All
 Repeat requests until all available results are retrieved
 .PARAMETER Total
@@ -134,6 +136,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=5)]
     [ValidateRange(1,500)]
     [int]$Limit,
+    [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
+    [switch]$Detailed,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
     [string]$Offset,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
