@@ -274,6 +274,8 @@ AWS organization identifier
 Template to be rendered
 .PARAMETER Account
 List of AWS accounts to register
+.PARAMETER AccountType
+Type of account
 .PARAMETER AwsProfile
 AWS profile to use during registration
 .PARAMETER CustomRole
@@ -309,22 +311,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
     [Alias('accounts')]
     [string[]]$Account,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=5)]
+    [ValidateSet('commercial','gov',IgnoreCase=$false)]
+    [Alias('account_type')]
+    [string]$AccountType,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=6)]
     [Alias('aws_profile')]
     [string]$AwsProfile,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=6)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=7)]
     [Alias('custom_role_name')]
     [string]$CustomRole,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=7)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=8)]
     [Alias('behavior_assessment_enabled')]
     [boolean]$BehaviorAssessment,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=8)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=9)]
     [Alias('sensor_management_enabled')]
     [boolean]$SensorManagement,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=9)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=10)]
     [Alias('use_existing_cloudtrail')]
     [boolean]$ExistingCloudtrail,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
-      Position=10)]
+      Position=11)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     [switch]$Force
