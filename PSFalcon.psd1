@@ -42,11 +42,15 @@
     'Remove-FalconHorizonAzureGroup'
 
     # cloud-connect-cspm-gcp
+    'Edit-FalconHorizonGcpAccount'
+    'Edit-FalconHorizonGcpServiceAccount'
     'Get-FalconHorizonGcpAccount'
     'Get-FalconHorizonGcpServiceAccount'
     'Invoke-FalconHorizonGcpHealthCheck'
+    'New-FalconHorizonGcpAccount'
     'Receive-FalconHorizonGcpScript'
     'Remove-FalconHorizonGcpAccount'
+    'Test-FalconHorizonGcpServiceAccount'
 
     # configuration-assessment
     'Get-FalconConfigAssessment'
