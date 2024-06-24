@@ -563,9 +563,6 @@
     'Edit-FalconHorizonAzureAccount','Get-FalconHorizonAzureAccount','Get-FalconHorizonAzureCertificate',
     'Get-FalconHorizonAzureGroup','New-FalconHorizonAzureAccount','New-FalconHorizonAzureGroup',
     'Receive-FalconHorizonAzureScript','Remove-FalconHorizonAzureAccount','Remove-FalconHorizonAzureGroup',
-    'Edit-FalconHorizonGcpAccount','Edit-FalconHorizonGcpServiceAccount','Get-FalconHorizonGcpAccount',
-    'Get-FalconHorizonGcpServiceAccount','Invoke-FalconHorizonGcpHealthCheck','New-FalconHorizonGcpAccount',
-    'Receive-FalconHorizonGcpScript','Remove-FalconHorizonGcpAccount','Test-FalconHorizonGcpServiceAccount',
     'Get-FalconHorizonIoa','Get-FalconHorizonIom','Get-FalconHorizonIoaEvent','Get-FalconHorizonIoaUser',
     'Edit-FalconHorizonPolicy','Edit-FalconHorizonSchedule','Get-FalconFimChange','Get-FalconHorizonSchedule',
     'Get-FalconHorizonPolicy')
