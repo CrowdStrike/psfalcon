@@ -3,16 +3,25 @@ using module @{ModuleName='PSFalcon';ModuleVersion ='2.2'}
 <#
 .SYNOPSIS
 Output host information, but replace identifiers with their relevant 'name' value
+.PARAMETER Hostname
+Export a specific device by hostname
 .NOTES
 Fields in the output can be defined by updating the '$Field' variable. Output is returned to the console, but
 can be piped to a file.
 #>
+param(
+  [string]$Hostname
+)
 # Fields to include with the export to CSV (host group and policy data is automatically added)
 [string[]]$Field = 'device_id','hostname','last_seen','first_seen','local_ip','external_ip','agent_version'
 $Field += 'device_policies','groups'
 
 # Retrieve all host information and filter to selected fields
-$HostInfo = Get-FalconHost -Detailed -All | Select-Object $Field
+$HostInfo = if ($Hostname) {
+  Get-FalconHost -Filter "hostname:'$Hostname'" -Detailed | Select-Object $Field
+} else {
+  Get-FalconHost -Detailed -All | Select-Object $Field
+}
 if ($HostInfo) {
   # Create hashtable to store object detail for hosts
   $Related = @{
