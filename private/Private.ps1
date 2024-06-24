@@ -763,6 +763,72 @@ function Invoke-Falcon {
     }
   }
 }
+function Invoke-UpdateCheck {
+  param(
+    [Parameter(Mandatory,Position=1)]
+    [string]$BasePath
+  )
+  function Write-UpdateJson {
+    param(
+      [Parameter(Mandatory,Position=1)]
+      [string]$Path,
+      [Parameter(Mandatory,Position=2)]
+      [boolean]$Connection,
+      [Parameter(Mandatory,Position=3)]
+      [int64]$Timestamp,
+      [Parameter(Mandatory,Position=4)]
+      [string]$Version
+    )
+    # Create Json with update check information
+    [PSCustomObject]@{
+      psgallery_connection = $Connection
+      timestamp = $Timestamp
+      version = $Version
+    } | ConvertTo-Json -Compress > $Path
+    Write-Log 'Invoke-UpdateCheck' ('Created "{0}"' -f $Path)
+  }
+  function Write-VersionWarning ([string]$String) {
+    # Write warning message notifying that a new release is available
+    Write-Warning ('PSFalcon is out of date. Release v{0} is available on the PowerShell Gallery.' -f $String)
+  }
+  # Check for available module update
+  $Current = try { (Show-FalconModule).ModuleVersion.Split(' ',2)[0] -replace '^v',$null } catch { $null }
+  if ($Current) {
+    # Check if module was installed using the PSGallery
+    $Connection = try {
+      if (Get-Command Get-InstalledModule -EA 0) {
+        if ((Get-InstalledModule -Name PSFalcon).Repository -eq 'PSGallery') { $true } else { $false }
+      }
+    } catch {
+      $false
+    }
+    $JsonPath = Join-Path $BasePath update_check.json
+    $WeekAgo = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - 604800000
+    if (!(Test-Path -Path $JsonPath)) {
+      # Create baseline Json
+      Write-UpdateJson $JsonPath $Connection $WeekAgo $Current
+    }
+    # Import update_check.json
+    $Json = try { Get-Content -Path $JsonPath -EA 0 | ConvertFrom-Json -EA 0 } catch { $null }
+    if ($Json -and $Json.psgallery_connection -eq $true -and $Json.timestamp -and $Json.version) {
+      if ($Current -lt $Json.version) {
+        # Notify that a new release is available
+        Write-VersionWarning $Json.version
+      } elseif ($WeekAgo -lt $Json.timestamp) {
+        # Check PowerShell Gallery every 7 days
+        $Gallery = try { Find-Module -Name PSFalcon -Repository PSGallery -EA 0 } catch { $null }
+        $Timestamp = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+        if (!$Gallery) {
+          # Create new Json when PowerShell Gallery connection fails
+          Write-UpdateJson $JsonPath $false $Timestamp $Current
+        } elseif ($Gallery -and $Gallery.Version) {
+          # Create new Json with PowerShell Gallery version information
+          Write-UpdateJson $JsonPath $true $Timestamp $Gallery.Version.ToString()
+        }
+      }
+    }
+  }
+}
 function New-ShouldMessage {
   [CmdletBinding()]
   [OutputType([string[]])]
