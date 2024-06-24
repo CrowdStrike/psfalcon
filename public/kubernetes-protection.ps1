@@ -139,7 +139,7 @@ Requires 'Kubernetes Protection: Read'.
 AWS account identifier
 .PARAMETER Status
 Filter by account status
-.PARAMETER IsHorizonAcct
+.PARAMETER IsFcsAcct
 Restrict results to Falcon Cloud Security
 .PARAMETER Limit
 Maximum number of results per request
@@ -165,8 +165,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
     [string]$Status,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=3)]
     [ValidateSet('false','true',IgnoreCase=$false)]
-    [Alias('is_horizon_acct')]
-    [string]$IsHorizonAcct,
+    [Alias('is_horizon_acct','IsHorizonAcct')]
+    [string]$IsFcsAcct,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get',Position=4)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:get')]
@@ -202,8 +202,8 @@ Azure tenant identifier
 Azure subscription identifier
 .PARAMETER Status
 Filter by account status
-.PARAMETER IsHorizonAcct
-Filter by whether an account originates from Horizon or not
+.PARAMETER IsFcsAcct
+Restrict results to Falcon Cloud Security
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -231,8 +231,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureAccount
     [ValidateSet('operational','provisioned',IgnoreCase=$false)]
     [string]$Status,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=4)]
-    [Alias('is_horizon_acct')]
-    [boolean]$IsHorizonAcct,
+    [Alias('is_horizon_acct','IsHorizonAcct')]
+    [boolean]$IsFcsAcct,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get',Position=5)]
     [int]$Limit,
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:get')]
