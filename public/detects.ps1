@@ -234,7 +234,7 @@ Search for Falcon Cloud Security Indicators of Misconfiguration
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER Id
-Horizon Indicator of Misconfiguration identifier
+Falcon Cloud Security Indicator of Misconfiguration identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
