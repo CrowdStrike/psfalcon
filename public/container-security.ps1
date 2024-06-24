@@ -640,11 +640,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
       }
       [PSCustomObject]@{
         Token = if ($Script:Falcon.Registry.Token -and $Script:Falcon.Registry.Expiration -gt
-        (Get-Date).AddSeconds(240)) {
-          $true
-        } else {
-          $false
-        }
+          (Get-Date).AddSeconds(240)) { $true } else { $false }
         Username = $Script:Falcon.Registry.Username
         Password = $Script:Falcon.Registry.Password
         Region = $Script:Falcon.Registry.Region
@@ -658,7 +654,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
 }
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Resource -ScriptBlock {
   if ($Script:Falcon.Format) {
-    # Add 'Resource' to Get-FalconContainerCount using 'Format.json'
+    # Add 'Resource' to Get-FalconContainerCount using 'format.json'
     @($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
     }).foreach{
