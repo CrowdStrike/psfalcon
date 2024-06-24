@@ -2,11 +2,11 @@
 function Edit-FalconContainerRegistry {
 <#
 .SYNOPSIS
-Modify a registry within Falcon Container Security
+Modify a registry within Falcon Cloud Security
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Name
-Falcon Container Security registry name
+Falcon Cloud Security registry name
 .PARAMETER State
 Registry connection state
 .PARAMETER Credential
@@ -85,6 +85,54 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
     $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
     try { $Request | ConvertFrom-Json } catch { $Request }
   }
+}
+function Get-FalconContainerAssessmentDetection {
+<#
+.SYNOPSIS
+Search for Falcon Cloud Security image assessment detections
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessmentDetection
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/queries/detections/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/detections/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/container-security/queries/detections/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/detections/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/detections/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/container-security/queries/detections/v1:get',Position=2)]
+    [ValidateRange(1,100)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/detections/v1:get')]
+    [Parameter(ParameterSetName='/container-security/queries/detections/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/detections/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/container-security/queries/detections/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/queries/detections/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainer {
 <#
@@ -201,10 +249,76 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     }
   }
 }
+function Get-FalconContainerDriftIndicator {
+<#
+.SYNOPSIS
+Retrieve all drift indicators that match the given query
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Id
+Falcon Cloud Security drift indicator
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDriftIndicator
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/queries/drift-indicators/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/entities/drift-indicators/v1:get',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Mandatory)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/container-security/combined/drift-indicators/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/drift-indicators/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/drift-indicators/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/drift-indicators/v1:get')]
+    [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/drift-indicators/v1:get',Mandatory)]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Get-FalconContainerRegistry {
 <#
 .SYNOPSIS
-List Falcon Container Security registries
+List Falcon Cloud Security registries
 .DESCRIPTION
 Requires 'Falcon Container Image: Read'.
 .PARAMETER Id
@@ -298,11 +412,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerSensor
 function New-FalconContainerRegistry {
 <#
 .SYNOPSIS
-Create a registry within Falcon Container Security
+Create a registry within Falcon Cloud Security
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Name
-Desired registry name within Falcon Container Security
+Desired registry name within Falcon Cloud Security
 .PARAMETER Type
 Registry type
 .PARAMETER Url
@@ -380,7 +494,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerImage
 function Remove-FalconContainerRegistry {
 <#
 .SYNOPSIS
-Remove a registry from Falcon Container Security
+Remove a registry from Falcon Cloud Security
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Id
@@ -425,7 +539,7 @@ function Request-FalconRegistryCredential {
 .SYNOPSIS
 Request your Falcon container registry username, password and access token
 .DESCRIPTION
-If successful, you token and username are cached for re-use as you use Falcon Container Security related commands.
+If successful, you token and username are cached for re-use as you use Falcon Cloud Security related commands.
 
 If an active access token is due to expire in less than 4 minutes, a new token will automatically be requested.
 
