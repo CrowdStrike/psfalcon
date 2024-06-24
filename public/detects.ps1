@@ -122,10 +122,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
     }
   }
 }
-function Get-FalconHorizonIoa {
+function Get-FalconCloudSecurityIoa {
 <#
 .SYNOPSIS
-Search for Falcon Horizon Indicators of Attack
+Search for Falcon Cloud Security Indicators of Attack
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER CloudPlatform
@@ -163,9 +163,10 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoa
 #>
   [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonIoa')]
   param(
     [Parameter(ParameterSetName='/detects/entities/ioa/v1:get',Mandatory,Position=1)]
     [ValidateSet('aws','azure',IgnoreCase=$false)]
@@ -226,10 +227,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoa
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconHorizonIom {
+function Get-FalconCloudSecurityIom {
 <#
 .SYNOPSIS
-Search for Falcon Horizon Indicators of Misconfiguration
+Search for Falcon Cloud Security Indicators of Misconfiguration
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER Id
@@ -251,9 +252,10 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIom
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIom
 #>
   [CmdletBinding(DefaultParameterSetName='/detects/queries/iom/v2:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonIom')]
   param(
     [Parameter(ParameterSetName='/detects/entities/iom/v2:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]

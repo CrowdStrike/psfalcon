@@ -23,34 +23,34 @@
     'Send-FalconSampleArchive'
 
     # cloud-connect-cspm-aws
-    'Edit-FalconHorizonAwsAccount'
-    'Get-FalconHorizonAwsAccount'
-    'Get-FalconHorizonAwsLink'
-    'New-FalconHorizonAwsAccount'
-    'Receive-FalconHorizonAwsScript'
-    'Remove-FalconHorizonAwsAccount'
+    'Edit-FalconCloudSecurityAwsAccount'
+    'Get-FalconCloudSecurityAwsAccount'
+    'Get-FalconCloudSecurityAwsLink'
+    'New-FalconCloudSecurityAwsAccount'
+    'Receive-FalconCloudSecurityAwsScript'
+    'Remove-FalconCloudSecurityAwsAccount'
 
     # cloud-connect-cspm-azure
-    'Edit-FalconHorizonAzureAccount'
-    'Get-FalconHorizonAzureAccount'
-    'Get-FalconHorizonAzureCertificate'
-    'Get-FalconHorizonAzureGroup'
-    'New-FalconHorizonAzureAccount'
-    'New-FalconHorizonAzureGroup'
-    'Receive-FalconHorizonAzureScript'
-    'Remove-FalconHorizonAzureAccount'
-    'Remove-FalconHorizonAzureGroup'
+    'Edit-FalconCloudSecurityAzureAccount'
+    'Get-FalconCloudSecurityAzureAccount'
+    'Get-FalconCloudSecurityAzureCertificate'
+    'Get-FalconCloudSecurityAzureGroup'
+    'New-FalconCloudSecurityAzureAccount'
+    'New-FalconCloudSecurityAzureGroup'
+    'Receive-FalconCloudSecurityAzureScript'
+    'Remove-FalconCloudSecurityAzureAccount'
+    'Remove-FalconCloudSecurityAzureGroup'
 
     # cloud-connect-cspm-gcp
-    'Edit-FalconHorizonGcpAccount'
-    'Edit-FalconHorizonGcpServiceAccount'
-    'Get-FalconHorizonGcpAccount'
-    'Get-FalconHorizonGcpServiceAccount'
-    'Invoke-FalconHorizonGcpHealthCheck'
-    'New-FalconHorizonGcpAccount'
-    'Receive-FalconHorizonGcpScript'
-    'Remove-FalconHorizonGcpAccount'
-    'Test-FalconHorizonGcpServiceAccount'
+    'Edit-FalconCloudSecurityGcpAccount'
+    'Edit-FalconCloudSecurityGcpServiceAccount'
+    'Get-FalconCloudSecurityGcpAccount'
+    'Get-FalconCloudSecurityGcpServiceAccount'
+    'Invoke-FalconCloudSecurityGcpHealthCheck'
+    'New-FalconCloudSecurityGcpAccount'
+    'Receive-FalconCloudSecurityGcpScript'
+    'Remove-FalconCloudSecurityGcpAccount'
+    'Test-FalconCloudSecurityGcpServiceAccount'
 
     # configuration-assessment
     'Get-FalconConfigAssessment'
@@ -74,8 +74,8 @@
     # detects
     'Edit-FalconDetection'
     'Get-FalconDetection'
-    'Get-FalconHorizonIoa'
-    'Get-FalconHorizonIom'
+    'Get-FalconCloudSecurityIoa'
+    'Get-FalconCloudSecurityIom'
 
     # devices
     'Add-FalconGroupingTag'
@@ -216,8 +216,8 @@
     'Remove-FalconInstallToken'
 
     # ioa
-    'Get-FalconHorizonIoaEvent'
-    'Get-FalconHorizonIoaUser'
+    'Get-FalconCloudSecurityIoaEvent'
+    'Get-FalconCloudSecurityIoaUser'
 
     # ioarules
     'Edit-FalconIoaGroup'
@@ -514,10 +514,10 @@
     'Update-FalconStream'
 
     # settings
-    'Edit-FalconHorizonPolicy'
-    'Edit-FalconHorizonSchedule'
-    'Get-FalconHorizonPolicy'
-    'Get-FalconHorizonSchedule'
+    'Edit-FalconCloudSecurityPolicy'
+    'Edit-FalconCloudSecuritySchedule'
+    'Get-FalconCloudSecurityPolicy'
+    'Get-FalconCloudSecuritySchedule'
 
     # spotlight
     'Get-FalconRemediation'
@@ -558,7 +558,17 @@
   )
   CmdletsToExport = @()
   VariablesToExport = '*'
-  AliasesToExport = @('Get-FalconFimChange')
+  AliasesToExport = @('Edit-FalconHorizonAwsAccount','Get-FalconHorizonAwsAccount','Get-FalconHorizonAwsLink',
+    'New-FalconHorizonAwsAccount','Receive-FalconHorizonAwsScript','Remove-FalconHorizonAwsAccount',
+    'Edit-FalconHorizonAzureAccount','Get-FalconHorizonAzureAccount','Get-FalconHorizonAzureCertificate',
+    'Get-FalconHorizonAzureGroup','New-FalconHorizonAzureAccount','New-FalconHorizonAzureGroup',
+    'Receive-FalconHorizonAzureScript','Remove-FalconHorizonAzureAccount','Remove-FalconHorizonAzureGroup',
+    'Edit-FalconHorizonGcpAccount','Edit-FalconHorizonGcpServiceAccount','Get-FalconHorizonGcpAccount',
+    'Get-FalconHorizonGcpServiceAccount','Invoke-FalconHorizonGcpHealthCheck','New-FalconHorizonGcpAccount',
+    'Receive-FalconHorizonGcpScript','Remove-FalconHorizonGcpAccount','Test-FalconHorizonGcpServiceAccount',
+    'Get-FalconHorizonIoa','Get-FalconHorizonIom','Get-FalconHorizonIoaEvent','Get-FalconHorizonIoaUser',
+    'Edit-FalconHorizonPolicy','Edit-FalconHorizonSchedule','Get-FalconFimChange','Get-FalconHorizonSchedule',
+    'Get-FalconHorizonPolicy')
   PrivateData = @{
     PSData = @{
       Tags = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',

@@ -1,7 +1,7 @@
-function Get-FalconHorizonIoaEvent {
+function Get-FalconCloudSecurityIoaEvent {
 <#
 .SYNOPSIS
-Retrieve Falcon Horizon Indicator of Attack events
+Retrieve Falcon Cloud Security Indicator of Attack events
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER CloudPlatform
@@ -27,9 +27,10 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoaEvent
 #>
   [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonIoaEvent')]
   param(
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
        Position=1)]
@@ -92,10 +93,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
     }
   }
 }
-function Get-FalconHorizonIoaUser {
+function Get-FalconCloudSecurityIoaUser {
 <#
 .SYNOPSIS
-Retrieve Falcon Horizon Indicator of Attack users
+Retrieve Falcon Cloud Security Indicator of Attack users
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER PolicyId
@@ -111,9 +112,10 @@ Azure tenant identifier
 .PARAMETER State
 Event state
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoaUser
 #>
   [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonIoaUser')]
   param(
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Mandatory,ValueFromPipelineByPropertyName,
        Position=1)]

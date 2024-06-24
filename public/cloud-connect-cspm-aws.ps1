@@ -1,7 +1,7 @@
-function Edit-FalconHorizonAwsAccount {
+function Edit-FalconCloudSecurityAwsAccount {
 <#
 .SYNOPSIS
-Modify a Falcon Horizon AWS account
+Modify a Falcon Cloud Security AWS account
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
 .PARAMETER AccountId
@@ -23,10 +23,11 @@ Remediation terms-of-use acceptance date
 .PARAMETER TargetOu
 
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
     SupportsShouldProcess)]
+  [Alias('Edit-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -73,10 +74,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconHorizonAwsAccount {
+function Get-FalconCloudSecurityAwsAccount {
 <#
 .SYNOPSIS
-Search for Falcon Horizon AWS accounts
+Search for Falcon Cloud Security AWS accounts
 .DESCRIPTION
 A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
 
@@ -106,9 +107,10 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
@@ -162,27 +164,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     }
   }
 }
-function Get-FalconHorizonAwsLink {
+function Get-FalconCloudSecurityAwsLink {
 <#
 .SYNOPSIS
-Retrieve a URL to grant Falcon Horizon access in AWS
+Retrieve a URL to grant Falcon Cloud Security access in AWS
 .DESCRIPTION
 Once logging in to the provided link using your AWS administrator credentials, use the 'Create Stack' button to
 grant access.
 
 Requires 'CSPM registration: Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsLink
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAwsLink
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get',
     SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonAwsLink')]
   param()
   process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
-function New-FalconHorizonAwsAccount {
+function New-FalconCloudSecurityAwsAccount {
 <#
 .SYNOPSIS
-Provision a Falcon Horizon AWS account
+Provision a Falcon Cloud Security AWS account
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
 .PARAMETER AccountId
@@ -206,10 +209,11 @@ Enable sensor management for account
 .PARAMETER TargetOu
 
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
     SupportsShouldProcess)]
+  [Alias('New-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,Position=1)]
     [ValidatePattern('^\d{12}$')]
@@ -260,10 +264,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Receive-FalconHorizonAwsScript {
+function Receive-FalconCloudSecurityAwsScript {
 <#
 .SYNOPSIS
-Download a Bash script which grants Falcon Horizon access using the AWS CLI
+Download a Bash script which grants Falcon Cloud Security access using the AWS CLI
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER Id
@@ -291,10 +295,11 @@ Destination path
 .PARAMETER Force
 Overwrite existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudSecurityAwsScript
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
+  [Alias('Receive-FalconHorizonAwsScript')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -358,10 +363,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
     }
   }
 }
-function Remove-FalconHorizonAwsAccount {
+function Remove-FalconCloudSecurityAwsAccount {
 <#
 .SYNOPSIS
-Remove Falcon Horizon AWS accounts
+Remove Falcon Cloud Security AWS accounts
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
 .PARAMETER Id
@@ -369,10 +374,11 @@ AWS account identifier
 .PARAMETER OrganizationId
 AWS organization identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudSecurityAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
     SupportsShouldProcess)]
+  [Alias('Remove-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
