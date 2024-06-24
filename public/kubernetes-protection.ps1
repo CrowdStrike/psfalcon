@@ -140,7 +140,7 @@ AWS account identifier
 .PARAMETER Status
 Filter by account status
 .PARAMETER IsHorizonAcct
-Restrict results to Falcon Horizon
+Restrict results to Falcon Cloud Security
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
