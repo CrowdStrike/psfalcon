@@ -794,21 +794,18 @@ function Invoke-UpdateCheck {
   # Check for available module update
   $Current = try { (Show-FalconModule).ModuleVersion.Split(' ',2)[0] -replace '^v',$null } catch { $null }
   if ($Current) {
-    # Check if module was installed using the PSGallery
-    $Connection = try {
-      if (Get-Command Get-InstalledModule -EA 0) {
-        if ((Get-InstalledModule -Name PSFalcon).Repository -eq 'PSGallery') { $true } else { $false }
-      }
-    } catch {
-      $false
-    }
+    # Create 'update_check.json' if it doesn't exist, then import 'update_check.json'
     $JsonPath = Join-Path $BasePath update_check.json
     $WeekAgo = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - 604800000
     if (!(Test-Path -Path $JsonPath)) {
-      # Create baseline Json
+      # Determine if PowerShell Gallery was used for initial installation
+      $Connection = if (Get-Command -Name Get-InstalledModule -EA 0) {
+        if ((Get-InstalledModule -Name PSFalcon -EA 0).Repository -eq 'PSGallery') { $true } else { $false }
+      } else {
+        $false
+      }
       Write-UpdateJson $JsonPath $Connection $WeekAgo $Current
     }
-    # Import update_check.json
     $Json = try { Get-Content -Path $JsonPath -EA 0 | ConvertFrom-Json -EA 0 } catch { $null }
     if ($Json -and $Json.psgallery_connection -eq $true -and $Json.timestamp -and $Json.version) {
       if ($Current -lt $Json.version) {
