@@ -22,6 +22,10 @@ Remediation terms-of-use acceptance date
 
 .PARAMETER TargetOu
 
+.PARAMETER DspmEnabled
+
+.PARAMETER DspmRole
+
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityAwsAccount
 #>
@@ -69,7 +73,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
       ValueFromPipelineByPropertyName,Position=10)]
     [Alias('target_ous')]
-    [string[]]$TargetOu
+    [string[]]$TargetOu,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=11)]
+    [Alias('dspm_enabled')]
+    [boolean]$DspmEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=12)]
+    [Alias('dspm_role')]
+    [string]$DspmRole
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -208,6 +220,10 @@ Enable behavior assessment for account
 Enable sensor management for account
 .PARAMETER TargetOu
 
+.PARAMETER DspmEnabled
+
+.PARAMETER DspmRole
+
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAwsAccount
 #>
@@ -259,7 +275,15 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
       Position=10)]
     [Alias('target_ous')]
-    [string[]]$TargetOu
+    [string[]]$TargetOu,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=11)]
+    [Alias('dspm_enabled')]
+    [boolean]$DspmEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=12)]
+    [Alias('dspm_role')]
+    [string]$DspmRole
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }

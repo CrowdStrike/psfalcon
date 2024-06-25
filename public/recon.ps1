@@ -492,6 +492,8 @@ Falcon Query Language expression to limit results
 Perform a generic substring search across available fields
 .PARAMETER Sort
 Property and direction to sort results
+.PARAMETER SecondarySort
+Secondary property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -523,6 +525,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRule
       'last_updated_timestamp|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=4)]
+    [ValidateSet('created_timestamp|asc','created_timestamp|desc','last_updated_timestamp|asc',
+      'last_updated_timestamp|desc',IgnoreCase=$false)]
+    [string]$SecondarySort,
+    [Parameter(ParameterSetName='/recon/queries/rules/v1:get',Position=5)]
     [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/recon/queries/rules/v1:get')]
