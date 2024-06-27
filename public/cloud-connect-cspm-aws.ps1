@@ -1,4 +1,4 @@
-function Edit-FalconCloudSecurityAwsAccount {
+function Edit-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
 Modify a Falcon Cloud Security AWS account
@@ -27,7 +27,7 @@ Remediation terms-of-use acceptance date
 .PARAMETER DspmRole
 
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
     SupportsShouldProcess)]
@@ -86,7 +86,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityAwsAccount
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconCloudSecurityAwsAccount {
+function Get-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
 Search for Falcon Cloud Security AWS accounts
@@ -119,7 +119,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',SupportsShouldProcess)]
   [Alias('Get-FalconHorizonAwsAccount')]
@@ -176,7 +176,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAwsAccount
     }
   }
 }
-function Get-FalconCloudSecurityAwsLink {
+function Get-FalconCloudAwsLink {
 <#
 .SYNOPSIS
 Retrieve a URL to grant Falcon Cloud Security access in AWS
@@ -186,7 +186,7 @@ grant access.
 
 Requires 'CSPM registration: Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAwsLink
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAwsLink
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get',
     SupportsShouldProcess)]
@@ -194,7 +194,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAwsLink
   param()
   process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
-function New-FalconCloudSecurityAwsAccount {
+function New-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
 Provision a Falcon Cloud Security AWS account
@@ -225,7 +225,7 @@ Enable sensor management for account
 .PARAMETER DspmRole
 
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
     SupportsShouldProcess)]
@@ -288,7 +288,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAwsAccount
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Receive-FalconCloudSecurityAwsScript {
+function Receive-FalconCloudAwsScript {
 <#
 .SYNOPSIS
 Download a Bash script which grants Falcon Cloud Security access using the AWS CLI
@@ -319,7 +319,7 @@ Destination path
 .PARAMETER Force
 Overwrite existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudSecurityAwsScript
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAwsScript
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
@@ -387,7 +387,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudSecurityAwsScrip
     }
   }
 }
-function Remove-FalconCloudSecurityAwsAccount {
+function Remove-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
 Remove Falcon Cloud Security AWS accounts
@@ -398,7 +398,7 @@ AWS account identifier
 .PARAMETER OrganizationId
 AWS organization identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudSecurityAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
     SupportsShouldProcess)]

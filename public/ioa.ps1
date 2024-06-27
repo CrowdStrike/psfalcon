@@ -1,4 +1,4 @@
-function Get-FalconCloudSecurityIoaEvent {
+function Get-FalconCloudIoaEvent {
 <#
 .SYNOPSIS
 Retrieve Falcon Cloud Security Indicator of Attack events
@@ -27,7 +27,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoaEvent
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIoaEvent
 #>
   [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get',SupportsShouldProcess)]
   [Alias('Get-FalconHorizonIoaEvent')]
@@ -93,7 +93,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoaEvent
     }
   }
 }
-function Get-FalconCloudSecurityIoaUser {
+function Get-FalconCloudIoaUser {
 <#
 .SYNOPSIS
 Retrieve Falcon Cloud Security Indicator of Attack users
@@ -112,7 +112,7 @@ Azure tenant identifier
 .PARAMETER State
 Event state
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoaUser
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIoaUser
 #>
   [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get',SupportsShouldProcess)]
   [Alias('Get-FalconHorizonIoaUser')]

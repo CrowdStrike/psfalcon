@@ -1,4 +1,4 @@
-function Edit-FalconCloudSecurityAzureAccount {
+function Edit-FalconCloudAzureAccount {
 <#
 .SYNOPSIS
 Modify the default Falcon Cloud Security Azure client or subscription identifier
@@ -11,7 +11,7 @@ Azure subscription identifier
 .PARAMETER TenantId
 Azure tenant identifier, required when multiple tenants have been registered
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityAzureAccount
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAzureAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/client-id/v1:patch',
     SupportsShouldProcess)]
@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityAzureAccoun
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconCloudSecurityAzureAccount {
+function Get-FalconCloudAzureAccount {
 <#
 .SYNOPSIS
 Search for Falcon Cloud Security Azure accounts
@@ -62,7 +62,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAzureAccount
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAzureAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:get',
     SupportsShouldProcess)]
@@ -110,7 +110,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAzureAccount
     }
   }
 }
-function Get-FalconCloudSecurityAzureCertificate {
+function Get-FalconCloudAzureCertificate {
 <#
 .SYNOPSIS
 Retrieve the base64 encoded certificate for a Falcon Cloud Security Azure tenant
@@ -123,7 +123,7 @@ Years the certificate should be valid [when Refresh: true]
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAzureCertificate
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAzureCertificate
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/download-certificate/v1:get',
     SupportsShouldProcess)]
@@ -144,7 +144,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAzureCertifi
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconCloudSecurityAzureGroup {
+function Get-FalconCloudAzureGroup {
 <#
 .SYNOPSIS
 Retrieve Falcon Cloud Security Azure management group registration
@@ -157,7 +157,7 @@ Maximum number of results per request [default: 100]
 .PARAMETER Offset
 Position to begin retrieving results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAzureGroup
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAzureGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:get',
     SupportsShouldProcess)]
@@ -174,7 +174,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityAzureGroup
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function New-FalconCloudSecurityAzureAccount {
+function New-FalconCloudAzureAccount {
 <#
 .SYNOPSIS
 Provision a Falcon Cloud Security Azure account
@@ -193,7 +193,7 @@ Account is the default Azure subscription
 .PARAMETER YearsValid
 Number of years valid
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAzureAccount
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAzureAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:post',
     SupportsShouldProcess)]
@@ -225,7 +225,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAzureAccount
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function New-FalconCloudSecurityAzureGroup {
+function New-FalconCloudAzureGroup {
 <#
 .SYNOPSIS
 Create a Falcon Cloud Security Azure management group
@@ -236,7 +236,7 @@ Default Azure subscription identifier
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAzureGroup
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAzureGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:post',
     SupportsShouldProcess)]
@@ -253,7 +253,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudSecurityAzureGroup
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Receive-FalconCloudSecurityAzureScript {
+function Receive-FalconCloudAzureScript {
 <#
 .SYNOPSIS
 Download a Bash script which grants Falcon Cloud Security access using Azure Cloud Shell
@@ -274,7 +274,7 @@ Destination path
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudSecurityAzureScript
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAzureScript
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
@@ -327,7 +327,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudSecurityAzureScr
     }
   }
 }
-function Remove-FalconCloudSecurityAzureAccount {
+function Remove-FalconCloudAzureAccount {
 <#
 .SYNOPSIS
 Remove Falcon Cloud Security Azure accounts
@@ -340,7 +340,7 @@ Retain Azure tenant when removing an account
 .PARAMETER Id
 Azure account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudSecurityAzureAccount
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAzureAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
     SupportsShouldProcess)]
@@ -371,7 +371,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudSecurityAzureAcco
     }
   }
 }
-function Remove-FalconCloudSecurityAzureGroup {
+function Remove-FalconCloudAzureGroup {
 <#
 .SYNOPSIS
 Remove Falcon Cloud Security Azure management groups
@@ -380,7 +380,7 @@ Requires 'CSPM registration: Write'.
 .PARAMETER TenantId
 Azure tenant identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudSecurityAzureGroup
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAzureGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:delete',
     SupportsShouldProcess)]

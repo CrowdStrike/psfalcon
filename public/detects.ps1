@@ -122,7 +122,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
     }
   }
 }
-function Get-FalconCloudSecurityIoa {
+function Get-FalconCloudIoa {
 <#
 .SYNOPSIS
 Search for Falcon Cloud Security Indicators of Attack
@@ -163,7 +163,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoa
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIoa
 #>
   [CmdletBinding(DefaultParameterSetName='/detects/entities/ioa/v1:get',SupportsShouldProcess)]
   [Alias('Get-FalconHorizonIoa')]
@@ -227,7 +227,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIoa
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconCloudSecurityIom {
+function Get-FalconCloudIom {
 <#
 .SYNOPSIS
 Search for Falcon Cloud Security Indicators of Misconfiguration
@@ -252,7 +252,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityIom
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIom
 #>
   [CmdletBinding(DefaultParameterSetName='/detects/queries/iom/v2:get',SupportsShouldProcess)]
   [Alias('Get-FalconHorizonIom')]

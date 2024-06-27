@@ -1,5 +1,6 @@
-function Get-FalconContainerVulnerability {
 <#
+function Get-FalconContainerVulnerability {
+#
 .SYNOPSIS
 Retrieve known vulnerabilities for the provided image
 .DESCRIPTION
@@ -13,7 +14,7 @@ Key and value pairs to filter packages. Accepted properties include: 'layerhash'
 Key and value pairs to filter application packages. Accepted properties include: 'libraries' and 'type'.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
-#>
+#
   [CmdletBinding(DefaultParameterSetName='/image-assessment/combined/vulnerability-lookups/v1:post',
     SupportsShouldProcess)]
   param(
@@ -66,3 +67,4 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
+#>

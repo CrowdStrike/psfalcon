@@ -1,4 +1,4 @@
-function Edit-FalconCloudSecurityPolicy {
+function Edit-FalconCloudPolicy {
 <#
 .SYNOPSIS
 Modify a Falcon Cloud Security policy
@@ -17,7 +17,7 @@ Account identifier
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:patch',SupportsShouldProcess)]
   [Alias('Edit-FalconHorizonPolicy')]
@@ -45,7 +45,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecurityPolicy
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Edit-FalconCloudSecuritySchedule {
+function Edit-FalconCloudSchedule {
 <#
 .SYNOPSIS
 Modify Falcon Cloud Security scan schedules
@@ -58,7 +58,7 @@ Cloud platform
 .PARAMETER NextScanTimestamp
 Next scan timestamp (RFC3339)
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecuritySchedule
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSchedule
 #>
   [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:post',SupportsShouldProcess)]
   [Alias('Edit-FalconHorizonSchedule')]
@@ -81,7 +81,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudSecuritySchedule
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconCloudSecurityPolicy {
+function Get-FalconCloudPolicy {
 <#
 .SYNOPSIS
 Retrieve detailed information about Falcon Cloud Security policies
@@ -96,7 +96,7 @@ Cloud service type
 .PARAMETER CloudPlatform
 Cloud platform
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/settings/entities/policy/v1:get',SupportsShouldProcess)]
   [Alias('Get-FalconHorizonPolicy')]
@@ -139,7 +139,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecurityPolicy
     }
   }
 }
-function Get-FalconCloudSecuritySchedule {
+function Get-FalconCloudSchedule {
 <#
 .SYNOPSIS
 Retrieve detailed information about Falcon Cloud Security schedules
@@ -148,7 +148,7 @@ Requires 'CSPM registration: Read'.
 .PARAMETER CloudPlatform
 Cloud platform
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSecuritySchedule
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudSchedule
 #>
   [CmdletBinding(DefaultParameterSetName='/settings/scan-schedule/v1:get',SupportsShouldProcess)]
   [Alias('Get-FalconHorizonSchedule')]

@@ -23,34 +23,34 @@
     'Send-FalconSampleArchive'
 
     # cloud-connect-cspm-aws
-    'Edit-FalconCloudSecurityAwsAccount'
-    'Get-FalconCloudSecurityAwsAccount'
-    'Get-FalconCloudSecurityAwsLink'
-    'New-FalconCloudSecurityAwsAccount'
-    'Receive-FalconCloudSecurityAwsScript'
-    'Remove-FalconCloudSecurityAwsAccount'
+    'Edit-FalconCloudAwsAccount'
+    'Get-FalconCloudAwsAccount'
+    'Get-FalconCloudAwsLink'
+    'New-FalconCloudAwsAccount'
+    'Receive-FalconCloudAwsScript'
+    'Remove-FalconCloudAwsAccount'
 
     # cloud-connect-cspm-azure
-    'Edit-FalconCloudSecurityAzureAccount'
-    'Get-FalconCloudSecurityAzureAccount'
-    'Get-FalconCloudSecurityAzureCertificate'
-    'Get-FalconCloudSecurityAzureGroup'
-    'New-FalconCloudSecurityAzureAccount'
-    'New-FalconCloudSecurityAzureGroup'
-    'Receive-FalconCloudSecurityAzureScript'
-    'Remove-FalconCloudSecurityAzureAccount'
-    'Remove-FalconCloudSecurityAzureGroup'
+    'Edit-FalconCloudAzureAccount'
+    'Get-FalconCloudAzureAccount'
+    'Get-FalconCloudAzureCertificate'
+    'Get-FalconCloudAzureGroup'
+    'New-FalconCloudAzureAccount'
+    'New-FalconCloudAzureGroup'
+    'Receive-FalconCloudAzureScript'
+    'Remove-FalconCloudAzureAccount'
+    'Remove-FalconCloudAzureGroup'
 
     # cloud-connect-cspm-gcp
-    'Edit-FalconCloudSecurityGcpAccount'
-    'Edit-FalconCloudSecurityGcpServiceAccount'
-    'Get-FalconCloudSecurityGcpAccount'
-    'Get-FalconCloudSecurityGcpServiceAccount'
-    'Invoke-FalconCloudSecurityGcpHealthCheck'
-    'New-FalconCloudSecurityGcpAccount'
-    'Receive-FalconCloudSecurityGcpScript'
-    'Remove-FalconCloudSecurityGcpAccount'
-    'Test-FalconCloudSecurityGcpServiceAccount'
+    'Edit-FalconCloudGcpAccount'
+    'Edit-FalconCloudGcpServiceAccount'
+    'Get-FalconCloudGcpAccount'
+    'Get-FalconCloudGcpServiceAccount'
+    'Invoke-FalconCloudGcpHealthCheck'
+    'New-FalconCloudGcpAccount'
+    'Receive-FalconCloudGcpScript'
+    'Remove-FalconCloudGcpAccount'
+    'Test-FalconCloudGcpServiceAccount'
 
     # configuration-assessment
     'Get-FalconConfigAssessment'
@@ -58,16 +58,22 @@
     'Get-FalconConfigAssessmentRule'
 
     # container-security
+    'Edit-FalconContainerPolicy'
     'Edit-FalconContainerRegistry'
     'Get-FalconContainer'
     'Get-FalconContainerAssessment'
-    'Get-FalconContainerAssessmentDetection'
+    'Get-FalconContainerDetection'
     'Get-FalconContainerCount'
     'Get-FalconContainerDriftIndicator'
+    'Get-FalconContainerIom'
+    'Get-FalconContainerPolicy'
     'Get-FalconContainerRegistry'
     'Get-FalconContainerSensor'
+    'Get-FalconContainerVulnerability'
+    'New-FalconContainerPolicy'
     'New-FalconContainerRegistry'
     'Remove-FalconContainerRegistry'
+    'Remove-FalconContainerPolicy'
     'Remove-FalconRegistryCredential'
     'Request-FalconRegistryCredential'
     'Remove-FalconContainerImage'
@@ -76,8 +82,8 @@
     # detects
     'Edit-FalconDetection'
     'Get-FalconDetection'
-    'Get-FalconCloudSecurityIoa'
-    'Get-FalconCloudSecurityIom'
+    'Get-FalconCloudIoa'
+    'Get-FalconCloudIom'
 
     # devices
     'Add-FalconGroupingTag'
@@ -96,6 +102,13 @@
 
     # enrollments
     'Invoke-FalconMobileAction'
+
+    # exclusions
+    'Edit-FalconCertificateExclusion'
+    'Get-FalconCertificate'
+    'Get-FalconCertificateExclusion'
+    'New-FalconCertificateExclusion'
+    'Remove-FalconCertificateExclusion'
 
     # falcon-complete-dashboards
     'Get-FalconCompleteAlert'
@@ -218,8 +231,8 @@
     'Remove-FalconInstallToken'
 
     # ioa
-    'Get-FalconCloudSecurityIoaEvent'
-    'Get-FalconCloudSecurityIoaUser'
+    'Get-FalconCloudIoaEvent'
+    'Get-FalconCloudIoaUser'
 
     # ioarules
     'Edit-FalconIoaGroup'
@@ -516,10 +529,10 @@
     'Update-FalconStream'
 
     # settings
-    'Edit-FalconCloudSecurityPolicy'
-    'Edit-FalconCloudSecuritySchedule'
-    'Get-FalconCloudSecurityPolicy'
-    'Get-FalconCloudSecuritySchedule'
+    'Edit-FalconCloudPolicy'
+    'Edit-FalconCloudSchedule'
+    'Get-FalconCloudPolicy'
+    'Get-FalconCloudSchedule'
 
     # spotlight
     'Get-FalconRemediation'
