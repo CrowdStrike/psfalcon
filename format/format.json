@@ -1,30 +1,30 @@
 {
   "/alerts/entities/alerts/v2": {
     "post": {
+      "query": [
+        "include_hidden"
+      ],
       "body": {
         "root": [
           "composite_ids"
         ]
-      },
-      "query": [
-        "include_hidden"
-      ]
+      }
     }
   },
   "/alerts/entities/alerts/v3": {
     "patch": {
+      "query": [
+        "include_hidden"
+      ],
       "body": {
+        "root": [
+          "composite_ids"
+        ],
         "action_parameters": [
           "name",
           "value"
-        ],
-        "root": [
-          "composite_ids"
         ]
-      },
-      "query": [
-        "include_hidden"
-      ]
+      }
     }
   },
   "/alerts/queries/alerts/v2": {
@@ -90,14 +90,14 @@
     },
     "post": {
       "body": {
-        "root": [
-          "extract_all",
-          "sha256"
-        ],
         "files": [
           "comment",
           "is_confidential",
           "name"
+        ],
+        "root": [
+          "extract_all",
+          "sha256"
         ]
       }
     }
@@ -827,19 +827,19 @@
     },
     "get": {},
     "patch": {
+      "query": [
+        "id"
+      ],
       "body": {
+        "policy_data": [
+          "rules"
+        ],
         "root": [
           "description",
           "is_enabled",
           "name"
-        ],
-        "policy_data": [
-          "rules"
         ]
-      },
-      "query": [
-        "id"
-      ]
+      }
     },
     "post": {
       "body": {
@@ -882,6 +882,9 @@
       ]
     },
     "patch": {
+      "query": [
+        "id"
+      ],
       "body": {
         "credential": [
           "details",
@@ -891,10 +894,7 @@
           "state",
           "user_defined_alias"
         ]
-      },
-      "query": [
-        "id"
-      ]
+      }
     }
   },
   "/container-security/queries/detections/v1": {
@@ -1048,18 +1048,18 @@
   },
   "/devices/entities/devices-actions/v2": {
     "post": {
+      "query": [
+        "action_name"
+      ],
       "body": {
+        "root": [
+          "ids"
+        ],
         "action_parameters": [
           "name",
           "value"
-        ],
-        "root": [
-          "ids"
         ]
-      },
-      "query": [
-        "action_name"
-      ]
+      }
     }
   },
   "/devices/entities/devices/tags/v1": {
@@ -1084,19 +1084,19 @@
   },
   "/devices/entities/host-group-actions/v1": {
     "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
       "query": [
         "action_name",
         "disable_hostname_check"
-      ]
+      ],
+      "body": {
+        "root": [
+          "ids"
+        ],
+        "action_parameters": [
+          "name",
+          "value"
+        ]
+      }
     }
   },
   "/devices/entities/host-groups/v1": {
@@ -1266,17 +1266,17 @@
   },
   "/enrollments/entities/details/v4": {
     "post": {
+      "query": [
+        "action_name",
+        "filter"
+      ],
       "body": {
         "root": [
           "email_addresses",
           "enrollment_type",
           "expires_at"
         ]
-      },
-      "query": [
-        "action_name",
-        "filter"
-      ]
+      }
     }
   },
   "/exclusions/entities/cert-based-exclusions/v1": {
@@ -1489,10 +1489,6 @@
     },
     "post": {
       "body": {
-        "root": [
-          "send_email_notification",
-          "user_tags"
-        ],
         "sandbox": [
           "action_script",
           "browser",
@@ -1507,6 +1503,10 @@
           "system_date",
           "system_time",
           "url"
+        ],
+        "root": [
+          "send_email_notification",
+          "user_tags"
         ]
       }
     }
@@ -1693,6 +1693,15 @@
     },
     "post": {
       "body": {
+        "repeated": [
+          "all_day",
+          "end_time",
+          "frequency",
+          "monthly_days",
+          "occurrence",
+          "start_time",
+          "weekly_days"
+        ],
         "root": [
           "description",
           "name",
@@ -1702,15 +1711,6 @@
           "schedule_start",
           "timezone",
           "users"
-        ],
-        "repeated": [
-          "all_day",
-          "end_time",
-          "frequency",
-          "monthly_days",
-          "occurrence",
-          "start_time",
-          "weekly_days"
         ]
       }
     },
@@ -1722,6 +1722,15 @@
     },
     "patch": {
       "body": {
+        "repeated": [
+          "all_day",
+          "end_time",
+          "frequency",
+          "monthly_days",
+          "occurrence",
+          "start_time",
+          "weekly_days"
+        ],
         "root": [
           "description",
           "id",
@@ -1732,15 +1741,6 @@
           "schedule_start",
           "timezone",
           "users"
-        ],
-        "repeated": [
-          "all_day",
-          "end_time",
-          "frequency",
-          "monthly_days",
-          "occurrence",
-          "start_time",
-          "weekly_days"
         ]
       }
     }
@@ -1962,6 +1962,9 @@
   },
   "/fwmgr/entities/network-locations-metadata/v1": {
     "post": {
+      "query": [
+        "comment"
+      ],
       "body": {
         "root": [
           "cid",
@@ -1970,36 +1973,35 @@
           "icmp_request_targets_polling_interval",
           "location_precedence"
         ]
-      },
-      "query": [
-        "comment"
-      ]
+      }
     }
   },
   "/fwmgr/entities/network-locations-precedence/v1": {
     "post": {
+      "query": [
+        "comment"
+      ],
       "body": {
         "root": [
           "cid",
           "location_precedence"
         ]
-      },
-      "query": [
-        "comment"
-      ]
+      }
     }
   },
   "/fwmgr/entities/network-locations/v1": {
     "post": {
+      "query": [
+        "clone_id",
+        "add_fw_rules",
+        "comment"
+      ],
       "body": {
-        "https_reachable_hosts": [
-          "hostnames"
-        ],
         "connection_types": [
           "wired",
           "wireless"
         ],
-        "dns_resolution_targets": [
+        "icmp_request_targets": [
           "targets"
         ],
         "root": [
@@ -2011,15 +2013,13 @@
           "host_addresses",
           "name"
         ],
-        "icmp_request_targets": [
+        "dns_resolution_targets": [
           "targets"
+        ],
+        "https_reachable_hosts": [
+          "hostnames"
         ]
-      },
-      "query": [
-        "clone_id",
-        "add_fw_rules",
-        "comment"
-      ]
+      }
     },
     "delete": {
       "query": [
@@ -2027,15 +2027,15 @@
       ]
     },
     "patch": {
+      "query": [
+        "comment"
+      ],
       "body": {
-        "https_reachable_hosts": [
-          "hostnames"
-        ],
         "connection_types": [
           "wired",
           "wireless"
         ],
-        "dns_resolution_targets": [
+        "icmp_request_targets": [
           "targets"
         ],
         "root": [
@@ -2052,13 +2052,13 @@
           "modified_on",
           "name"
         ],
-        "icmp_request_targets": [
+        "dns_resolution_targets": [
           "targets"
+        ],
+        "https_reachable_hosts": [
+          "hostnames"
         ]
-      },
-      "query": [
-        "comment"
-      ]
+      }
     }
   },
   "/fwmgr/entities/platforms/v1": {
@@ -2100,13 +2100,12 @@
       ]
     },
     "post": {
+      "query": [
+        "clone_id",
+        "library",
+        "comment"
+      ],
       "body": {
-        "root": [
-          "description",
-          "enabled",
-          "name",
-          "platform"
-        ],
         "rules": [
           "action",
           "address_family",
@@ -2126,13 +2125,14 @@
           "remote_address",
           "remote_port",
           "temp_id"
+        ],
+        "root": [
+          "description",
+          "enabled",
+          "name",
+          "platform"
         ]
-      },
-      "query": [
-        "clone_id",
-        "library",
-        "comment"
-      ]
+      }
     },
     "delete": {
       "query": [
@@ -2141,35 +2141,34 @@
       ]
     },
     "patch": {
+      "query": [
+        "comment"
+      ],
       "body": {
+        "diff_operations": [
+          "from",
+          "op",
+          "path",
+          "value"
+        ],
         "root": [
           "diff_type",
           "id",
           "rule_ids",
           "rule_versions",
           "tracking"
-        ],
-        "diff_operations": [
-          "from",
-          "op",
-          "path",
-          "value"
         ]
-      },
-      "query": [
-        "comment"
-      ]
+      }
     }
   },
   "/fwmgr/entities/rule-groups/validation/v1": {
     "post": {
+      "query": [
+        "clone_id",
+        "library",
+        "comment"
+      ],
       "body": {
-        "root": [
-          "description",
-          "enabled",
-          "name",
-          "platform"
-        ],
         "rules": [
           "action",
           "address_family",
@@ -2189,33 +2188,34 @@
           "remote_address",
           "remote_port",
           "temp_id"
+        ],
+        "root": [
+          "description",
+          "enabled",
+          "name",
+          "platform"
         ]
-      },
-      "query": [
-        "clone_id",
-        "library",
-        "comment"
-      ]
+      }
     },
     "patch": {
+      "query": [
+        "comment"
+      ],
       "body": {
+        "diff_operations": [
+          "from",
+          "op",
+          "path",
+          "value"
+        ],
         "root": [
           "diff_type",
           "id",
           "rule_ids",
           "rule_versions",
           "tracking"
-        ],
-        "diff_operations": [
-          "from",
-          "op",
-          "path",
-          "value"
         ]
-      },
-      "query": [
-        "comment"
-      ]
+      }
     }
   },
   "/fwmgr/entities/rules/v1": {
@@ -2380,6 +2380,9 @@
   "/image-assessment/combined/vulnerability-lookups/v1": {
     "post": {
       "body": {
+        "root": [
+          "osversion"
+        ],
         "packages": [
           "LayerHash",
           "LayerIndex",
@@ -2395,9 +2398,6 @@
         "applicationPackages": [
           "libraries",
           "type"
-        ],
-        "root": [
-          "osversion"
         ]
       }
     }
@@ -2423,19 +2423,19 @@
   },
   "/incidents/entities/incident-actions/v1": {
     "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
       "query": [
         "update_detects",
         "overwrite_detects"
-      ]
+      ],
+      "body": {
+        "root": [
+          "ids"
+        ],
+        "action_parameters": [
+          "name",
+          "value"
+        ]
+      }
     }
   },
   "/incidents/entities/incidents/GET/v1": {
@@ -2534,16 +2534,16 @@
       ]
     },
     "patch": {
+      "query": [
+        "ids"
+      ],
       "body": {
         "root": [
           "expires_timestamp",
           "label",
           "revoked"
         ]
-      },
-      "query": [
-        "ids"
-      ]
+      }
     }
   },
   "/installation-tokens/queries/audit-events/v1": {
@@ -2852,6 +2852,14 @@
   "/ioarules/entities/rules/v1": {
     "post": {
       "body": {
+        "field_values": [
+          "final_value",
+          "label",
+          "name",
+          "type",
+          "value",
+          "values"
+        ],
         "root": [
           "comment",
           "description",
@@ -2860,14 +2868,6 @@
           "pattern_severity",
           "rulegroup_id",
           "ruletype_id"
-        ],
-        "field_values": [
-          "final_value",
-          "label",
-          "name",
-          "type",
-          "value",
-          "values"
         ]
       }
     },
@@ -2880,11 +2880,6 @@
     },
     "patch": {
       "body": {
-        "root": [
-          "comment",
-          "rulegroup_id",
-          "rulegroup_version"
-        ],
         "rule_updates": [
           "description",
           "disposition_id",
@@ -2893,6 +2888,11 @@
           "instance_id",
           "name",
           "pattern_severity",
+          "rulegroup_version"
+        ],
+        "root": [
+          "comment",
+          "rulegroup_id",
           "rulegroup_version"
         ]
       }
@@ -3001,10 +3001,11 @@
       ]
     },
     "post": {
+      "query": [
+        "retrodetects",
+        "ignore_warnings"
+      ],
       "body": {
-        "root": [
-          "comment"
-        ],
         "indicators": [
           "action",
           "applied_globally",
@@ -3019,12 +3020,11 @@
           "tags",
           "type",
           "value"
+        ],
+        "root": [
+          "comment"
         ]
-      },
-      "query": [
-        "retrodetects",
-        "ignore_warnings"
-      ]
+      }
     },
     "delete": {
       "query": [
@@ -3035,21 +3035,11 @@
       ]
     },
     "patch": {
+      "query": [
+        "retrodetects",
+        "ignore_warnings"
+      ],
       "body": {
-        "indicators": [
-          "action",
-          "applied_globally",
-          "description",
-          "expiration",
-          "host_groups",
-          "id",
-          "metadata",
-          "mobile_action",
-          "platforms",
-          "severity",
-          "source",
-          "tags"
-        ],
         "root": [
           "comment"
         ],
@@ -3067,12 +3057,22 @@
           "severity",
           "source",
           "tags"
+        ],
+        "indicators": [
+          "action",
+          "applied_globally",
+          "description",
+          "expiration",
+          "host_groups",
+          "id",
+          "metadata",
+          "mobile_action",
+          "platforms",
+          "severity",
+          "source",
+          "tags"
         ]
-      },
-      "query": [
-        "retrodetects",
-        "ignore_warnings"
-      ]
+      }
     }
   },
   "/iocs/queries/actions/v1": {
@@ -3292,13 +3292,13 @@
   "/malquery/combined/fuzzy-search/v1": {
     "post": {
       "body": {
-        "options": [
-          "filter_meta",
-          "limit"
-        ],
         "patterns": [
           "type",
           "value"
+        ],
+        "options": [
+          "filter_meta",
+          "limit"
         ]
       }
     }
@@ -3336,6 +3336,10 @@
   "/malquery/queries/exact-search/v1": {
     "post": {
       "body": {
+        "patterns": [
+          "type",
+          "value"
+        ],
         "options": [
           "filter_filetypes",
           "filter_meta",
@@ -3344,10 +3348,6 @@
           "max_size",
           "min_date",
           "min_size"
-        ],
-        "patterns": [
-          "type",
-          "value"
         ]
       }
     }
@@ -3408,20 +3408,20 @@
   "/message-center/entities/case/v2": {
     "post": {
       "body": {
-        "detections": [
-          "id",
-          "product",
-          "url"
-        ],
-        "incidents": [
-          "id",
-          "url"
-        ],
         "root": [
           "body",
           "title",
           "type",
           "user_uuid"
+        ],
+        "incidents": [
+          "id",
+          "url"
+        ],
+        "detections": [
+          "id",
+          "product",
+          "url"
         ]
       }
     }
@@ -3737,6 +3737,11 @@
     },
     "post": {
       "body": {
+        "schedule": [
+          "ignored_by_channelfile",
+          "interval",
+          "start_timestamp"
+        ],
         "root": [
           "cloud_ml_level_detection",
           "cloud_ml_level_prevention",
@@ -3754,11 +3759,6 @@
           "scan_inclusions",
           "sensor_ml_level_detection",
           "sensor_ml_level_prevention"
-        ],
-        "schedule": [
-          "ignored_by_channelfile",
-          "interval",
-          "start_timestamp"
         ]
       }
     },
@@ -3985,18 +3985,18 @@
   },
   "/policy/entities/device-control-actions/v1": {
     "post": {
+      "query": [
+        "action_name"
+      ],
       "body": {
+        "root": [
+          "ids"
+        ],
         "action_parameters": [
           "name",
           "value"
-        ],
-        "root": [
-          "ids"
         ]
-      },
-      "query": [
-        "action_name"
-      ]
+      }
     }
   },
   "/policy/entities/device-control-precedence/v1": {
@@ -4044,18 +4044,18 @@
   },
   "/policy/entities/firewall-actions/v1": {
     "post": {
+      "query": [
+        "action_name"
+      ],
       "body": {
+        "root": [
+          "ids"
+        ],
         "action_parameters": [
           "name",
           "value"
-        ],
-        "root": [
-          "ids"
         ]
-      },
-      "query": [
-        "action_name"
-      ]
+      }
     }
   },
   "/policy/entities/firewall-precedence/v1": {
@@ -4075,6 +4075,9 @@
       ]
     },
     "post": {
+      "query": [
+        "clone_id"
+      ],
       "body": {
         "resources": [
           "clone_id",
@@ -4082,10 +4085,7 @@
           "name",
           "platform_name"
         ]
-      },
-      "query": [
-        "clone_id"
-      ]
+      }
     },
     "delete": {
       "query": [
@@ -4182,18 +4182,18 @@
   },
   "/policy/entities/prevention-actions/v1": {
     "post": {
+      "query": [
+        "action_name"
+      ],
       "body": {
+        "root": [
+          "ids"
+        ],
         "action_parameters": [
           "name",
           "value"
-        ],
-        "root": [
-          "ids"
         ]
-      },
-      "query": [
-        "action_name"
-      ]
+      }
     }
   },
   "/policy/entities/prevention-precedence/v1": {
@@ -4241,18 +4241,18 @@
   },
   "/policy/entities/response-actions/v1": {
     "post": {
+      "query": [
+        "action_name"
+      ],
       "body": {
+        "root": [
+          "ids"
+        ],
         "action_parameters": [
           "name",
           "value"
-        ],
-        "root": [
-          "ids"
         ]
-      },
-      "query": [
-        "action_name"
-      ]
+      }
     }
   },
   "/policy/entities/response-precedence/v1": {
@@ -4300,18 +4300,18 @@
   },
   "/policy/entities/sensor-update-actions/v1": {
     "post": {
+      "query": [
+        "action_name"
+      ],
       "body": {
+        "root": [
+          "ids"
+        ],
         "action_parameters": [
           "name",
           "value"
-        ],
-        "root": [
-          "ids"
         ]
-      },
-      "query": [
-        "action_name"
-      ]
+      }
     }
   },
   "/policy/entities/sensor-update-precedence/v1": {
@@ -4605,6 +4605,11 @@
   },
   "/real-time-response/combined/batch-active-responder-command/v1": {
     "post": {
+      "query": [
+        "timeout",
+        "timeout_duration",
+        "host_timeout_duration"
+      ],
       "body": {
         "root": [
           "base_command",
@@ -4613,16 +4618,16 @@
           "optional_hosts",
           "persist_all"
         ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration",
-        "host_timeout_duration"
-      ]
+      }
     }
   },
   "/real-time-response/combined/batch-admin-command/v1": {
     "post": {
+      "query": [
+        "timeout",
+        "timeout_duration",
+        "host_timeout_duration"
+      ],
       "body": {
         "root": [
           "base_command",
@@ -4631,16 +4636,16 @@
           "optional_hosts",
           "persist_all"
         ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration",
-        "host_timeout_duration"
-      ]
+      }
     }
   },
   "/real-time-response/combined/batch-command/v1": {
     "post": {
+      "query": [
+        "timeout",
+        "timeout_duration",
+        "host_timeout_duration"
+      ],
       "body": {
         "root": [
           "base_command",
@@ -4649,12 +4654,7 @@
           "optional_hosts",
           "persist_all"
         ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration",
-        "host_timeout_duration"
-      ]
+      }
     }
   },
   "/real-time-response/combined/batch-get-command/v1": {
@@ -4666,48 +4666,48 @@
       ]
     },
     "post": {
+      "query": [
+        "timeout",
+        "timeout_duration",
+        "host_timeout_duration"
+      ],
       "body": {
         "root": [
           "batch_id",
           "file_path",
           "optional_hosts"
         ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration",
-        "host_timeout_duration"
-      ]
+      }
     }
   },
   "/real-time-response/combined/batch-init-session/v1": {
     "post": {
+      "query": [
+        "timeout",
+        "timeout_duration",
+        "host_timeout_duration"
+      ],
       "body": {
         "root": [
           "existing_batch_id",
           "host_ids",
           "queue_offline"
         ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration",
-        "host_timeout_duration"
-      ]
+      }
     }
   },
   "/real-time-response/combined/batch-refresh-session/v1": {
     "post": {
+      "query": [
+        "timeout",
+        "timeout_duration"
+      ],
       "body": {
         "root": [
           "batch_id",
           "hosts_to_remove"
         ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration"
-      ]
+      }
     }
   },
   "/real-time-response/entities/active-responder-command/v1": {
@@ -4897,17 +4897,17 @@
   },
   "/real-time-response/entities/sessions/v1": {
     "post": {
+      "query": [
+        "timeout",
+        "timeout_duration"
+      ],
       "body": {
         "root": [
           "device_id",
           "origin",
           "queue_offline"
         ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration"
-      ]
+      }
     },
     "delete": {
       "query": [
@@ -5562,12 +5562,12 @@
   "/user-management/entities/user-actions/v1": {
     "post": {
       "body": {
-        "root": [
-          "ids"
-        ],
         "action": [
           "action_name",
           "action_value"
+        ],
+        "root": [
+          "ids"
         ]
       }
     }
@@ -5595,6 +5595,9 @@
   },
   "/user-management/entities/users/v1": {
     "post": {
+      "query": [
+        "validate_only"
+      ],
       "body": {
         "root": [
           "cid",
@@ -5603,10 +5606,7 @@
           "password",
           "uid"
         ]
-      },
-      "query": [
-        "validate_only"
-      ]
+      }
     },
     "delete": {
       "query": [
@@ -5614,15 +5614,15 @@
       ]
     },
     "patch": {
+      "query": [
+        "user_uuid"
+      ],
       "body": {
         "root": [
           "first_name",
           "last_name"
         ]
-      },
-      "query": [
-        "user_uuid"
-      ]
+      }
     }
   },
   "/user-management/queries/roles/v1": {
@@ -5700,11 +5700,6 @@
   },
   "/workflows/entities/execute/v1": {
     "post": {
-      "body": {
-        "root": [
-          ""
-        ]
-      },
       "query": [
         "execution_cid",
         "definition_id",
@@ -5712,19 +5707,24 @@
         "key",
         "depth",
         "source_event_url"
-      ]
+      ],
+      "body": {
+        "root": [
+          ""
+        ]
+      }
     }
   },
   "/workflows/entities/execution-actions/v1": {
     "post": {
+      "query": [
+        "action_name"
+      ],
       "body": {
         "root": [
           "ids"
         ]
-      },
-      "query": [
-        "action_name"
-      ]
+      }
     }
   },
   "/workflows/entities/execution-results/v1": {
