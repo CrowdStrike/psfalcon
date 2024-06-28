@@ -324,6 +324,46 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     }
   }
 }
+function Get-FalconContainerDeployment {
+<#
+.SYNOPSIS
+Search for Falcon Cloud Security Kubernetes deployments
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDeployment
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/combined/deployments/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconContainerDetection {
 <#
 .SYNOPSIS
@@ -504,6 +544,133 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerIom
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
+}
+function Get-FalconContainerNode {
+<#
+.SYNOPSIS
+Search for Falcon Cloud Security Kubernetes nodes
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerNode
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/combined/nodes/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconContainerPackage {
+<#
+.SYNOPSIS
+Search for Falcon Cloud Security container packages
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER OnlyZeroDayAffected
+Only return packages with zero days [default: false]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPackage
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/combined/packages/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/packages/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/packages/v1:get',Position=2)]
+    [ValidateSet('license.asc','license.desc','package_name_version.asc','package_name_version.desc','type.asc',
+      'type.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/packages/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/packages/v1:get',Position=4)]
+    [Alias('only_zero_day_affected')]
+    [boolean]$OnlyZeroDayAffected,
+    [Parameter(ParameterSetName='/container-security/combined/packages/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/packages/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/combined/packages/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconContainerPod {
+<#
+.SYNOPSIS
+Search for Falcon Cloud Security Kubernetes pods
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPod
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/combined/pods/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/pods/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/pods/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/pods/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/pods/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/pods/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/combined/pods/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerPolicy {
 <#

@@ -753,6 +753,16 @@
       ]
     }
   },
+  "/container-security/combined/deployments/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
   "/container-security/combined/detections/v1": {
     "get": {
       "query": [
@@ -784,6 +794,37 @@
     }
   },
   "/container-security/combined/kubernetes-ioms/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
+  "/container-security/combined/nodes/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
+  "/container-security/combined/packages/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "only_zero_day_affected",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
+  "/container-security/combined/pods/v1": {
     "get": {
       "query": [
         "filter",
