@@ -850,6 +850,53 @@
       }
     }
   },
+  "/container-security/entities/image-assessment-policy-exclusions/v1": {
+    "get": {},
+    "post": {
+      "body": {
+        "conditions": [
+          "description",
+          "prop",
+          "ttl",
+          "value"
+        ]
+      }
+    }
+  },
+  "/container-security/entities/image-assessment-policy-groups/v1": {
+    "delete": {
+      "query": [
+        "id"
+      ]
+    },
+    "get": {},
+    "patch": {
+      "query": [
+        "id"
+      ],
+      "body": {
+        "policy_group_data": [
+          "conditions"
+        ],
+        "root": [
+          "description",
+          "name"
+        ]
+      }
+    },
+    "post": {
+      "body": {
+        "policy_group_data": [
+          "conditions"
+        ],
+        "root": [
+          "description",
+          "name",
+          "policy_id"
+        ]
+      }
+    }
+  },
   "/container-security/entities/kubernetes-ioms/v1": {
     "get": {
       "query": [
