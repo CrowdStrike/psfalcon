@@ -345,6 +345,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
   }
   end {
     if ($List) {
+      $Param['Max'] = 200
       $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
