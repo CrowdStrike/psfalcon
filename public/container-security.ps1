@@ -40,6 +40,43 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicy
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Edit-FalconContainerPolicyGroup {
+<#
+.SYNOPSIS
+Modify Falcon Cloud Security container policy image groups
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER Id
+Image group identifier
+.PARAMETER Name
+Image group name
+.PARAMETER Description
+Image group description
+.PARAMETER PolicyGroupData
+
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicyGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Id,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('policy_group_data')]
+    [object]$PolicyGroupData
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Edit-FalconContainerRegistry {
 <#
 .SYNOPSIS
@@ -171,6 +208,46 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
     [Parameter(ParameterSetName='/container-security/combined/image-assessment/images/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/container-security/combined/image-assessment/images/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconContainerCluster {
+<#
+.SYNOPSIS
+Search for Falcon Cloud Security Kubernetes clusters
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/combined/clusters/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get')]
     [switch]$Total
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -443,6 +520,36 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPolicy
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconContainerPolicyExclusion {
+<#
+.SYNOPSIS
+List Falcon Cloud Security container policy exclusions
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPolicyExclusion
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:get',
+    SupportsShouldProcess)]
+  param()
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconContainerPolicyGroup {
+<#
+.SYNOPSIS
+List Falcon Cloud Security container policy image groups
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPolicyGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:get',
+    SupportsShouldProcess)]
+  param()
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconContainerRegistry {
 <#
 .SYNOPSIS
@@ -613,6 +720,79 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicy
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function New-FalconContainerPolicyExclusion {
+<#
+.SYNOPSIS
+Create Falcon Cloud Security container policy exclusions
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER Prop
+
+.PARAMETER Value
+
+.PARAMETER Description
+
+.PARAMETER Ttl
+
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicyExclusion
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
+      Mandatory,Position=1)]
+    [string]$Prop,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
+      Mandatory,Position=2)]
+    [string[]]$Value,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
+      Position=4)]
+    [double]$Ttl
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function New-FalconContainerPolicyGroup {
+<#
+.SYNOPSIS
+Create Falcon Cloud Security container policy image groups
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER PolicyId
+Container image policy identifier
+.PARAMETER Name
+Image group name
+.PARAMETER Description
+Image group description
+.PARAMETER PolicyGroupData
+
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicyGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Position=1)]
+    [Alias('policy_id')]
+    [string]$PolicyId,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Mandatory,
+      Position=2)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Mandatory,
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',
+      Position=4)]
+    [Alias('policy_group_data')]
+    [object]$PolicyGroupData
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function New-FalconContainerRegistry {
 <#
 .SYNOPSIS
@@ -710,6 +890,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicy
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Remove-FalconContainerPolicyGroup {
+<#
+.SYNOPSIS
+Remove Falcon Cloud Security container policy image groups
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER Id
+Image group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicyGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [string]$Id
   )
