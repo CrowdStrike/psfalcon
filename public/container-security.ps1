@@ -2,7 +2,7 @@
 function Edit-FalconContainerPolicy {
 <#
 .SYNOPSIS
-Update Image Assessment Policy entities
+Modify a Falcon Cloud Security container policy
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Id
@@ -98,14 +98,6 @@ Search for containers in Falcon Cloud Security
 Requires 'Falcon Container Image: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
-
-Search Kubernetes containers using a query in Falcon Query Language (FQL). Supported filters:
-agent_id,agent_type,allow_privilege_escalation,cid,cloud_account_id,cloud_name,cloud_region,cluster_id,
-cluster_name,container_id,container_name,cve_id,detection_name,first_seen,image_detection_count,image_digest,
-image_has_been_assessed,image_id,image_registry,image_repository,image_tag,image_vulnerability_count,
-insecure_mount_source,insecure_mount_type,insecure_propagation_mode,interactive_mode,ipv4,ipv6,labels,last_seen,
-namespace,node_name,node_uid,package_name_version,pod_id,pod_name,port,privileged,root_write_access,
-run_as_root_group,run_as_root_user,running_status
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
@@ -138,45 +130,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainer
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-<#
-function Get-FalconContainerAssessment {
-#
-.SYNOPSIS
-Retrieve Falcon container image assessment reports
-.DESCRIPTION
-Requires 'Falcon Container Image: Write'.
-.PARAMETER Registry
-Container registry
-.PARAMETER Repository
-Container repository
-.PARAMETER Tag
-Container tag
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
-#
-  [CmdletBinding(DefaultParameterSetName='/reports:get',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/reports:get',Mandatory,Position=1)]
-    [string]$Registry,
-    [Parameter(ParameterSetName='/reports:get',Mandatory,Position=2)]
-    [string]$Repository,
-    [Parameter(ParameterSetName='/reports:get',Mandatory,Position=3)]
-    [string]$Tag
-  )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('registry','repository','tag') }
-      HostUrl = Get-ContainerUrl
-    }
-  }
-  process {
-    $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
-    try { $Request | ConvertFrom-Json } catch { $Request }
-  }
-}
-#>
 function Get-FalconContainerAssessment {
 <#
 .SYNOPSIS
@@ -185,15 +138,8 @@ Search for Falcon Container Security image assessment results
 Requires 'Falcon Container Image: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
-
-Filter images using a query in Falcon Query Language (FQL). Supported filters:
-container_id, container_running_status, cve_id, detection_name, detection_severity, first_seen, image_digest,
-image_id, registry, repository, tag, vulnerability_severity
 .PARAMETER Sort
 Property and direction to sort results
-
-The fields to sort the records on. Supported columns:
-first_seen highest_detection_severity highest_vulnerability_severity image_digest image_id registry repository tag
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -212,6 +158,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/image-assessment/images/v1:get',Position=2)]
+    [ValidateSet('first_seen.asc','first_seen.desc','highest_detection_severity.asc',
+      'highest_detection_severity.desc','highest_vulnerability_severity.asc','highest_vulnerability_severity.desc',
+      'image_digest.asc','image_digest.desc','image_id.asc','image_id.desc','registry.asc','registry.desc',
+      'repository.asc','repository.desc','tag.asc','tag.desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/container-security/combined/image-assessment/images/v1:get',Position=3)]
     [ValidateRange(1,100)]
@@ -229,7 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
 function Get-FalconContainerCount {
 <#
 .SYNOPSIS
-Return resource counts from Falcon Cloud Security
+List resource counts from Falcon Cloud Security
 .DESCRIPTION
 Requires 'Falcon Container Image: Read'.
 .PARAMETER Filter
@@ -348,7 +298,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDetection
 function Get-FalconContainerDriftIndicator {
 <#
 .SYNOPSIS
-Retrieve all drift indicators that match the given query
+Search for Falcon Container Security container drift indicators
 .DESCRIPTION
 Requires 'Falcon Container Image: Read'.
 .PARAMETER Id
@@ -421,10 +371,6 @@ Requires 'Falcon Container Image: Read'.
 Falcon Cloud Security Kubernetes IOM identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
-
-Search Kubernetes IOMs using a query in Falcon Query Language (FQL). Supported filters:
-cid,cis_id,cluster_id,cluster_name,containers_impacted_count,containers_impacted_ids,detection_type,name,namespace,
-prevented,resource_id,resource_name,resource_type,severity
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
@@ -485,7 +431,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerIom
 function Get-FalconContainerPolicy {
 <#
 .SYNOPSIS
-Get all Image Assessment policies
+List Falcon Cloud Security container policies
 .DESCRIPTION
 Requires 'Falcon Container Image: Read'.
 .LINK
@@ -601,20 +547,12 @@ Requires 'Falcon Container Image: Read'.
 CVE identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
-
-Filter vulnerabilities using a query in Falcon Query Language (FQL). Supported filters:
-base_os,cid,container_id,container_running_status,containers_impacted_range,cps_rating,cve_id,cvss_score,
-description,exploited_status,exploited_status_name,fix_status,image_digest,image_id,images_impacted_range,
-package_name_version,registry,repository,severity,tag
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Sort
 Property and direction to sort results
-
-The fields to sort the records on. Supported columns:
-cps_current_rating cve_id cvss_score description images_impacted packages_impacted severity
 .PARAMETER All
 Repeat requests until all available results are retrieved
 .PARAMETER Total
@@ -633,6 +571,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/vulnerabilities/v1:get',Position=2)]
+    [ValidateSet('cps_current_rating.asc','cps_current_rating.desc','cve_id.asc','cve_id.desc','cvss_score.asc',
+      'cvss_score.desc','description.asc','description.desc','images_impacted.asc','images_impacted.desc',
+      'packages_impacted.asc','packages_impacted.desc','severity.asc','severity.desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/container-security/combined/vulnerabilities/v1:get',Position=3)]
     [int32]$Limit,
@@ -649,13 +590,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
 function New-FalconContainerPolicy {
 <#
 .SYNOPSIS
-Create Image Assessment policies
+Create a Falcon Cloud Security container policy
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Name
-
+Policy name
 .PARAMETER Description
-
+Policy description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicy
 #>
@@ -663,10 +604,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicy
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:post',Mandatory,
-      Position=0)]
+      Position=1)]
     [string]$Name,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:post',Mandatory,
-      Position=0)]
+      Position=2)]
     [string]$Description
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
