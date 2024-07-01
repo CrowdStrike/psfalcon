@@ -50,6 +50,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
+.PARAMETER Include
+Include additional properties
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -81,6 +83,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
     [string]$Sort,
     [Parameter(ParameterSetName='/ods/queries/scans/v1:get',Position=3)]
     [int32]$Limit,
+    [Parameter(ParameterSetName='/ods/queries/scans/v1:get',Position=4)]
+    [ValidateSet('scan_file',IgnoreCase=$false)]
+    [string[]]$Include,
     [Parameter(ParameterSetName='/ods/queries/scans/v1:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/ods/queries/scans/v1:get')]
@@ -94,12 +99,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process {
-    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
-  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    } elseif ($Include -and $Include -contains 'scan_file') {
+      $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
+      @($Request).foreach{
+        if ($_.id) {
+          if ($_.filecount.malicious -or $_.filecount.quarantined) {
+            # Append 'scan_file' when 'malicious' or 'quarantined' values are present under 'filecount'
+            Set-Property $_ scan_file @(Get-FalconScanFile -ScanId $_.id -Detailed -All -EA 0)
+          }
+          $_
+        } else {
+          # Check for 'scan_file' for all identifiers when not returning 'Detailed' result
+          [PSCustomObject]@{ id = $_; scan_file = @(Get-FalconScanFile -ScanId $_ -All -EA 0) }
+        }
+      }
+    } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -112,6 +131,8 @@ Search for files found by on-demand or scheduled scans
 Requires 'On-demand scans (ODS): Read'.
 .PARAMETER Id
 Malicious file identifier
+.PARAMETER ScanId
+On-demand scan identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -136,32 +157,52 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
+    [Parameter(ParameterSetName='filter_by_scan_id',Mandatory)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$ScanId,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get',Position=2)]
+    [Parameter(ParameterSetName='filter_by_scan_id')]
     [ValidateSet('id|asc','id|desc','scan_id|asc','scan_id|desc','host_id|asc','host_id|desc',
       'host_scan_id|asc','host_scan_id|desc','filename|asc','filename|desc','hash|asc','hash|desc',
       'pattern_id|asc','pattern_id|desc','severity|asc','severity|desc','last_updated|asc',
       'last_updated|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get',Position=3)]
+    [Parameter(ParameterSetName='filter_by_scan_id')]
     [int32]$Limit,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get')]
+    [Parameter(ParameterSetName='filter_by_scan_id')]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get')]
+    [Parameter(ParameterSetName='filter_by_scan_id')]
     [switch]$All,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get')]
+    [Parameter(ParameterSetName='filter_by_scan_id')]
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = if ($PSCmdlet.ParameterSetName -eq 'filter_by_scan_id') {
+        '/ods/queries/malicious-files/v1:get'
+      } else {
+        $PSCmdlet.ParameterSetName
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
-    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+    if ($Id) {
+      @($Id).foreach{ $List.Add($_) }
+    } else {
+      if ($ScanId) { $PSBoundParameters['Filter'] = "scan_id:'$ScanId'" }
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
   end {
     if ($List) {
