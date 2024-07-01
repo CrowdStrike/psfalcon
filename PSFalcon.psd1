@@ -88,6 +88,7 @@
     'Remove-FalconContainerPolicyGroup'
     'Remove-FalconRegistryCredential'
     'Request-FalconRegistryCredential'
+    'Set-FalconContainerPolicyPrecedence'
     'Show-FalconRegistryCredential'
 
     # detects

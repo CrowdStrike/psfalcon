@@ -1214,6 +1214,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconRegistryCredential
     }
   }
 }
+function Set-FalconContainerPolicyPrecedence {
+<#
+.SYNOPSIS
+Set Falcon Cloud Security container image assessment policy precedence
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER Id
+Policy identifiers in desired precedence order
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Set-FalconContainerPolicyPrecedence
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-precedence/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-precedence/v1:post',
+      Mandatory,Position=1)]
+    [Alias('precedence')]
+    [string[]]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Show-FalconRegistryCredential {
 <#
 .SYNOPSIS
