@@ -82,6 +82,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
       'last_updated|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/ods/queries/scans/v1:get',Position=3)]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/ods/queries/scans/v1:get',Position=4)]
     [ValidateSet('scan_file',IgnoreCase=$false)]
@@ -172,6 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
     [string]$Sort,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get',Position=3)]
     [Parameter(ParameterSetName='filter_by_scan_id')]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/ods/queries/malicious-files/v1:get')]
     [int32]$Offset,
