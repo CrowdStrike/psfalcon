@@ -90,14 +90,14 @@
     },
     "post": {
       "body": {
+        "root": [
+          "extract_all",
+          "sha256"
+        ],
         "files": [
           "comment",
           "is_confidential",
           "name"
-        ],
-        "root": [
-          "extract_all",
-          "sha256"
         ]
       }
     }
@@ -869,13 +869,13 @@
     "get": {},
     "patch": {
       "body": {
-        "policy_data": [
-          "rules"
-        ],
         "root": [
           "description",
           "is_enabled",
           "name"
+        ],
+        "policy_data": [
+          "rules"
         ]
       },
       "query": [
@@ -913,12 +913,12 @@
     "get": {},
     "patch": {
       "body": {
-        "policy_group_data": [
-          "conditions"
-        ],
         "root": [
           "description",
           "name"
+        ],
+        "policy_group_data": [
+          "conditions"
         ]
       },
       "query": [
@@ -927,13 +927,13 @@
     },
     "post": {
       "body": {
-        "policy_group_data": [
-          "conditions"
-        ],
         "root": [
           "description",
           "name",
           "policy_id"
+        ],
+        "policy_group_data": [
+          "conditions"
         ]
       }
     }
@@ -962,14 +962,14 @@
     },
     "post": {
       "body": {
-        "credential": [
-          "details"
-        ],
         "root": [
           "type",
           "url",
           "url_uniqueness_key",
           "user_defined_alias"
+        ],
+        "credential": [
+          "details"
         ]
       }
     },
@@ -980,13 +980,13 @@
     },
     "patch": {
       "body": {
-        "credential": [
-          "details",
-          "type"
-        ],
         "root": [
           "state",
           "user_defined_alias"
+        ],
+        "credential": [
+          "details",
+          "type"
         ]
       },
       "query": [
@@ -1273,6 +1273,28 @@
         "offset",
         "limit",
         "sort"
+      ]
+    }
+  },
+  "/discover/combined/applications/v1": {
+    "get": {
+      "query": [
+        "after",
+        "limit",
+        "sort",
+        "filter",
+        "facet"
+      ]
+    }
+  },
+  "/discover/combined/hosts/v1": {
+    "get": {
+      "query": [
+        "after",
+        "limit",
+        "sort",
+        "filter",
+        "facet"
       ]
     }
   },
@@ -1586,6 +1608,10 @@
     },
     "post": {
       "body": {
+        "root": [
+          "send_email_notification",
+          "user_tags"
+        ],
         "sandbox": [
           "action_script",
           "browser",
@@ -1600,10 +1626,6 @@
           "system_date",
           "system_time",
           "url"
-        ],
-        "root": [
-          "send_email_notification",
-          "user_tags"
         ]
       }
     }
@@ -1790,15 +1812,6 @@
     },
     "post": {
       "body": {
-        "repeated": [
-          "all_day",
-          "end_time",
-          "frequency",
-          "monthly_days",
-          "occurrence",
-          "start_time",
-          "weekly_days"
-        ],
         "root": [
           "description",
           "name",
@@ -1808,6 +1821,15 @@
           "schedule_start",
           "timezone",
           "users"
+        ],
+        "repeated": [
+          "all_day",
+          "end_time",
+          "frequency",
+          "monthly_days",
+          "occurrence",
+          "start_time",
+          "weekly_days"
         ]
       }
     },
@@ -1819,15 +1841,6 @@
     },
     "patch": {
       "body": {
-        "repeated": [
-          "all_day",
-          "end_time",
-          "frequency",
-          "monthly_days",
-          "occurrence",
-          "start_time",
-          "weekly_days"
-        ],
         "root": [
           "description",
           "id",
@@ -1838,6 +1851,15 @@
           "schedule_start",
           "timezone",
           "users"
+        ],
+        "repeated": [
+          "all_day",
+          "end_time",
+          "frequency",
+          "monthly_days",
+          "occurrence",
+          "start_time",
+          "weekly_days"
         ]
       }
     }
@@ -2089,15 +2111,11 @@
   "/fwmgr/entities/network-locations/v1": {
     "post": {
       "body": {
-        "connection_types": [
-          "wired",
-          "wireless"
+        "https_reachable_hosts": [
+          "hostnames"
         ],
         "dns_resolution_targets": [
           "targets"
-        ],
-        "https_reachable_hosts": [
-          "hostnames"
         ],
         "root": [
           "default_gateways",
@@ -2107,6 +2125,10 @@
           "enabled",
           "host_addresses",
           "name"
+        ],
+        "connection_types": [
+          "wired",
+          "wireless"
         ],
         "icmp_request_targets": [
           "targets"
@@ -2125,15 +2147,11 @@
     },
     "patch": {
       "body": {
-        "connection_types": [
-          "wired",
-          "wireless"
+        "https_reachable_hosts": [
+          "hostnames"
         ],
         "dns_resolution_targets": [
           "targets"
-        ],
-        "https_reachable_hosts": [
-          "hostnames"
         ],
         "root": [
           "created_by",
@@ -2148,6 +2166,10 @@
           "modified_by",
           "modified_on",
           "name"
+        ],
+        "connection_types": [
+          "wired",
+          "wireless"
         ],
         "icmp_request_targets": [
           "targets"
@@ -2198,6 +2220,12 @@
     },
     "post": {
       "body": {
+        "root": [
+          "description",
+          "enabled",
+          "name",
+          "platform"
+        ],
         "rules": [
           "action",
           "address_family",
@@ -2217,12 +2245,6 @@
           "remote_address",
           "remote_port",
           "temp_id"
-        ],
-        "root": [
-          "description",
-          "enabled",
-          "name",
-          "platform"
         ]
       },
       "query": [
@@ -2261,6 +2283,12 @@
   "/fwmgr/entities/rule-groups/validation/v1": {
     "post": {
       "body": {
+        "root": [
+          "description",
+          "enabled",
+          "name",
+          "platform"
+        ],
         "rules": [
           "action",
           "address_family",
@@ -2280,12 +2308,6 @@
           "remote_address",
           "remote_port",
           "temp_id"
-        ],
-        "root": [
-          "description",
-          "enabled",
-          "name",
-          "platform"
         ]
       },
       "query": [
@@ -2477,12 +2499,12 @@
   "/image-assessment/combined/vulnerability-lookups/v1": {
     "post": {
       "body": {
+        "root": [
+          "osversion"
+        ],
         "applicationPackages": [
           "libraries",
           "type"
-        ],
-        "root": [
-          "osversion"
         ],
         "packages": [
           "LayerHash",
@@ -2949,14 +2971,6 @@
   "/ioarules/entities/rules/v1": {
     "post": {
       "body": {
-        "field_values": [
-          "final_value",
-          "label",
-          "name",
-          "type",
-          "value",
-          "values"
-        ],
         "root": [
           "comment",
           "description",
@@ -2965,6 +2979,14 @@
           "pattern_severity",
           "rulegroup_id",
           "ruletype_id"
+        ],
+        "field_values": [
+          "final_value",
+          "label",
+          "name",
+          "type",
+          "value",
+          "values"
         ]
       }
     },
@@ -2977,6 +2999,11 @@
     },
     "patch": {
       "body": {
+        "root": [
+          "comment",
+          "rulegroup_id",
+          "rulegroup_version"
+        ],
         "rule_updates": [
           "description",
           "disposition_id",
@@ -2985,11 +3012,6 @@
           "instance_id",
           "name",
           "pattern_severity",
-          "rulegroup_version"
-        ],
-        "root": [
-          "comment",
-          "rulegroup_id",
           "rulegroup_version"
         ]
       }
@@ -3099,6 +3121,9 @@
     },
     "post": {
       "body": {
+        "root": [
+          "comment"
+        ],
         "indicators": [
           "action",
           "applied_globally",
@@ -3113,9 +3138,6 @@
           "tags",
           "type",
           "value"
-        ],
-        "root": [
-          "comment"
         ]
       },
       "query": [
@@ -3133,21 +3155,6 @@
     },
     "patch": {
       "body": {
-        "bulk_update": [
-          "action",
-          "applied_globally",
-          "description",
-          "expiration",
-          "filter",
-          "from_parent",
-          "host_groups",
-          "metadata",
-          "mobile_action",
-          "platforms",
-          "severity",
-          "source",
-          "tags"
-        ],
         "root": [
           "comment"
         ],
@@ -3158,6 +3165,21 @@
           "expiration",
           "host_groups",
           "id",
+          "metadata",
+          "mobile_action",
+          "platforms",
+          "severity",
+          "source",
+          "tags"
+        ],
+        "bulk_update": [
+          "action",
+          "applied_globally",
+          "description",
+          "expiration",
+          "filter",
+          "from_parent",
+          "host_groups",
           "metadata",
           "mobile_action",
           "platforms",
@@ -3452,6 +3474,9 @@
   "/malquery/queries/hunt/v1": {
     "post": {
       "body": {
+        "root": [
+          "yara_rule"
+        ],
         "options": [
           "filter_filetypes",
           "filter_meta",
@@ -3460,9 +3485,6 @@
           "max_size",
           "min_date",
           "min_size"
-        ],
-        "root": [
-          "yara_rule"
         ]
       }
     }
@@ -3505,6 +3527,12 @@
   "/message-center/entities/case/v2": {
     "post": {
       "body": {
+        "root": [
+          "body",
+          "title",
+          "type",
+          "user_uuid"
+        ],
         "detections": [
           "id",
           "product",
@@ -3513,12 +3541,6 @@
         "incidents": [
           "id",
           "url"
-        ],
-        "root": [
-          "body",
-          "title",
-          "type",
-          "user_uuid"
         ]
       }
     }
@@ -3834,11 +3856,6 @@
     },
     "post": {
       "body": {
-        "schedule": [
-          "ignored_by_channelfile",
-          "interval",
-          "start_timestamp"
-        ],
         "root": [
           "cloud_ml_level_detection",
           "cloud_ml_level_prevention",
@@ -3856,6 +3873,11 @@
           "scan_inclusions",
           "sensor_ml_level_detection",
           "sensor_ml_level_prevention"
+        ],
+        "schedule": [
+          "ignored_by_channelfile",
+          "interval",
+          "start_timestamp"
         ]
       }
     },
@@ -5070,15 +5092,15 @@
     },
     "post": {
       "body": {
+        "root": [
+          "rule_id"
+        ],
         "actions": [
           "content_format",
           "frequency",
           "recipients",
           "trigger_matchless",
           "type"
-        ],
-        "root": [
-          "rule_id"
         ]
       }
     },
@@ -5337,13 +5359,13 @@
       ]
     },
     "post": {
-      "formdata": [
+      "query": [
         "sample",
         "file_name",
         "comment",
         "is_confidential"
       ],
-      "query": [
+      "formdata": [
         "sample",
         "file_name",
         "comment",
