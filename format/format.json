@@ -5525,6 +5525,13 @@
       ]
     }
   },
+  "/snapshots/entities/scanreports/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
   "/spotlight/combined/evaluation-logic/v1": {
     "get": {
       "query": [

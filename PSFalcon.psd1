@@ -548,6 +548,7 @@
 
     # snapshots
     'Get-FalconSnapshot'
+    'Get-FalconSnapshotScan'
 
     # spotlight
     'Get-FalconRemediation'
