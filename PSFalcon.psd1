@@ -546,6 +546,9 @@
     'Get-FalconCloudPolicy'
     'Get-FalconCloudSchedule'
 
+    # snapshots
+    'Get-FalconSnapshot'
+
     # spotlight
     'Get-FalconRemediation'
     'Get-FalconVulnerability'
