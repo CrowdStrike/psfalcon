@@ -5523,6 +5523,16 @@
       "query": [
         "ids"
       ]
+    },
+    "post": {
+      "body": {
+        "resources": [
+          "account_id",
+          "asset_identifier",
+          "cloud_provider",
+          "region"
+        ]
+      }
     }
   },
   "/snapshots/entities/scanreports/v1": {
