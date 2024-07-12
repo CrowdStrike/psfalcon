@@ -286,9 +286,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     if ($Script:Falcon.Format) {
       # Determine valid 'Resource' and 'Type' values using 'Format.json'
       [string[]]$ValidResource = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
-        $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
+        $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
       }).foreach{
-        @($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[0]
+        if ($_ -match 'container-compliance') {
+          'container-compliance'
+        } else {
+          ($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[0]
+        }
       } | Select-Object -Unique | Sort-Object
       if ($ValidResource -and $ValidResource -notcontains $PSBoundParameters.Resource) {
         # Error if 'Resource' is not in ValidResource list
@@ -296,9 +300,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
           ($ValidResource -join ', ')
       }
       [string[]]$ValidType = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
-        $_ -match ('/container-security/aggregates/{0}/[\w-]+/v1' -f $PSBoundParameters.Resource)
+        $_ -match ('/{0}/aggregates/([\w-]+/)?[\w-]+/v\d' -f $PSBoundParameters.Resource)
       }).foreach{
-        @($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[1]
+        if ($_ -match 'container-compliance') {
+          $_ -replace '(/container-compliance/aggregates/|/v\d)',$null
+        } else {
+          @($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[1]
+        }
       } | Where-Object { $ExcludeCountType -notcontains $_ } | Sort-Object
       if ($ValidType -and $ValidType -notcontains $PSBoundParameters.Type) {
         # Error if 'Type' is not in ValidType list
@@ -306,11 +314,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
           ($ValidType -join ', ')
       }
     }
-    @('resource','type').foreach{
+    $Param.Endpoint = if ($PSBoundParameters.Resource -eq 'container-compliance') {
+      # Switch to /container-compliance/ API
+      $Param.Endpoint -replace '-security/','-compliance/' -replace '\{resource\}/',
+        $null -replace '\{type\}',$PSBoundParameters.Type -replace '/v1:','/v2:'
+    } else {
       # Update target API endpoint using 'Resource' and 'Type'
-      $Param.Endpoint = $Param.Endpoint -replace "{$_}",$PSBoundParameters.$_
-      [void]$PSBoundParameters.Remove($_)
+      $Param.Endpoint -replace '\{resource\}',$PSBoundParameters.Resource -replace '\{type\}',
+        $PSBoundParameters.Type
     }
+    # Remove 'resource' and 'type' and perform request
+    @('resource','type').foreach{ [void]$PSBoundParameters.Remove($_) }
     $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
     if ($Request -and $Request.buckets) {
       # Output 'buckets' sub-object
@@ -1269,21 +1283,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
 }
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Resource -ScriptBlock {
   if ($Script:Falcon.Format) {
-    # Add 'Resource' to Get-FalconContainerCount using 'format.json'
-    @($Script:Falcon.Format.PSObject.Properties.Name).Where({
-      $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
+    # Add 'Resource' values to Get-FalconContainerCount using 'format.json'
+    $List = [System.Collections.Generic.List[string]]@()
+    @(@($Format.PSObject.Properties.Name).Where({
+      $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
     }).foreach{
-      ($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[0]
-    } | Select-Object -Unique | Sort-Object
+      if ($_ -match 'container-compliance') {
+        'container-compliance'
+      } else {
+        ($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[0]
+      }
+    } | Select-Object -Unique).foreach{
+      $List.Add($_)
+    }
+    $List | Sort-Object
   }
 }
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Type -ScriptBlock {
   if ($Script:Falcon.Format) {
-    # Add 'Type' to Get-FalconContainerCount using 'Format.json'
-    @($Script:Falcon.Format.PSObject.Properties.Name).Where({
-      $_ -match '/container-security/aggregates/[\w-]+/[\w-]+/v1'
+    # Add 'Type' values to Get-FalconContainerCount using 'Format.json'
+    $List = [System.Collections.Generic.List[string]]@()
+    @(@($Script:Falcon.Format.PSObject.Properties.Name).Where({
+      $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
     }).foreach{
-      ($_ -replace '(/container-security/aggregates/|/v1)',$null -split '/',2)[1]
-    } | Select-Object -Unique | Where-Object { $ExcludeCountType -notcontains $_ } | Sort-Object
+      if ($_ -match 'container-compliance') {
+        $_ -replace '(/container-compliance/aggregates/|/v\d)',$null
+      } else {
+        ($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[1]
+      }
+    } | Select-Object -Unique).Where({$ExcludeCountType -notcontains $_}).foreach{
+      $List.Add($_)
+    }
+    $List | Sort-Object
   }
 }

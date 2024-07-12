@@ -394,6 +394,76 @@
       ]
     }
   },
+  "/container-compliance/aggregates/compliance-by-clusters/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/compliance-by-rules/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/failed-containers-by-rules/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/failed-containers-count-by-severity/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/failed-images-by-rules/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/failed-images-count-by-severity/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/failed-rules-by-clusters/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/failed-rules-by-images/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/failed-rules-count-by-severity/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
+  "/container-compliance/aggregates/rules-by-status/v2": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
   "/container-security/aggregates/clusters/count-by-date/v1": {
     "get": {}
   },
