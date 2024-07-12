@@ -284,14 +284,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     if (!$PSBoundParameters.Resource) { $PSBoundParameters['Resource'] = 'containers' }
     if (!$PSBoundParameters.Type) { $PSBoundParameters['Type'] = 'count' }
     if ($Script:Falcon.Format) {
-      # Determine valid 'Resource' and 'Type' values using 'Format.json'
+      # Determine valid 'Resource' values using 'Format.json'
       [string[]]$ValidResource = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
         $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
       }).foreach{
         if ($_ -match 'container-compliance') {
           'container-compliance'
         } else {
-          ($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[0]
+          @($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[0]
         }
       } | Select-Object -Unique | Sort-Object
       if ($ValidResource -and $ValidResource -notcontains $PSBoundParameters.Resource) {
@@ -299,15 +299,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
         throw 'Invalid "Resource" value. [Accepted: {1}]' -f $PSBoundParameters.Resource,
           ($ValidResource -join ', ')
       }
+      # Determine valid Type' values using 'Format.json'
+      [string]$TypePattern = if ($PSBoundParameters.Resource -eq 'container-compliance') {
+        '/{0}/aggregates/[\w-]+/v\d' -f $PSBoundParameters.Resource
+      } else {
+        '/container-security/aggregates/{0}/[\w-]+/v\d' -f $PSBoundParameters.Resource
+      }
       [string[]]$ValidType = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
-        $_ -match ('/{0}/aggregates/([\w-]+/)?[\w-]+/v\d' -f $PSBoundParameters.Resource)
-      }).foreach{
-        if ($_ -match 'container-compliance') {
+      $_ -match $TypePattern}).foreach{
+        if ($PSBoundParameters.Resource -eq 'container-compliance') {
           $_ -replace '(/container-compliance/aggregates/|/v\d)',$null
         } else {
           @($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[1]
         }
-      } | Where-Object { $ExcludeCountType -notcontains $_ } | Sort-Object
+      }
       if ($ValidType -and $ValidType -notcontains $PSBoundParameters.Type) {
         # Error if 'Type' is not in ValidType list
         throw 'Invalid "Type" value for "{0}". [Accepted: {1}]' -f $PSBoundParameters.Resource,
