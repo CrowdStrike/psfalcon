@@ -1,4 +1,3 @@
-[string[]]$ExcludeCountType = 'find-by-runtimeversion'
 function Edit-FalconContainerPolicy {
 <#
 .SYNOPSIS
@@ -1290,7 +1289,7 @@ Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName 
   if ($Script:Falcon.Format) {
     # Add 'Resource' values to Get-FalconContainerCount using 'format.json'
     $List = [System.Collections.Generic.List[string]]@()
-    @(@($Format.PSObject.Properties.Name).Where({
+    @(@($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
     }).foreach{
       if ($_ -match 'container-compliance') {
@@ -1307,6 +1306,7 @@ Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName 
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Type -ScriptBlock {
   if ($Script:Falcon.Format) {
     # Add 'Type' values to Get-FalconContainerCount using 'Format.json'
+    [string[]]$ExcludeCountType = 'find-by-runtimeversion'
     $List = [System.Collections.Generic.List[string]]@()
     @(@($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
