@@ -1,3 +1,4 @@
+[string[]]$ExcludeCountType = 'find-by-runtimeversion'
 function Edit-FalconContainerPolicy {
 <#
 .SYNOPSIS
@@ -309,7 +310,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
         if ($PSBoundParameters.Resource -eq 'container-compliance') {
           $_ -replace '(/container-compliance/aggregates/|/v\d)',$null
         } else {
-          @($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[1]
+          @($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[1] | Where-Object {
+            $ExcludeCountType -notcontains $_ }
         }
       }
       if ($ValidType -and $ValidType -notcontains $PSBoundParameters.Type) {
@@ -1306,7 +1308,6 @@ Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName 
 Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Type -ScriptBlock {
   if ($Script:Falcon.Format) {
     # Add 'Type' values to Get-FalconContainerCount using 'Format.json'
-    [string[]]$ExcludeCountType = 'find-by-runtimeversion'
     $List = [System.Collections.Generic.List[string]]@()
     @(@($Script:Falcon.Format.PSObject.Properties.Name).Where({
       $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
