@@ -167,6 +167,47 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainer
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconContainerAlert {
+<#
+.SYNOPSIS
+Search for Falcon Container Security container alerts
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAlert
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/combined/container-alerts/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconContainerAssessment {
 <#
 .SYNOPSIS
@@ -497,6 +538,58 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDriftIndicator
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
+}
+function Get-FalconContainerImage {
+<#
+.SYNOPSIS
+Search for Falcon Cloud Security container images
+.DESCRIPTION
+Requires 'Falcon Container Image: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER WithConfig
+Include container image configuration detail
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerImage
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/combined/container-images/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get',Mandatory,Position=4)]
+    [Alias('with_config')]
+    [boolean]$WithConfig,
+    [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get')]
+    [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get')]
+    [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get')]
+    [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerIom {
 <#

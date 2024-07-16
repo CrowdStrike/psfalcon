@@ -625,14 +625,6 @@
       ]
     }
   },
-  "/container-security/aggregates/enrichment/clusters/entities/v1": {
-    "get": {
-      "query": [
-        "cluster_id",
-        "filter"
-      ]
-    }
-  },
   "/container-security/aggregates/images/assessment-history/v1": {
     "get": {
       "query": [
@@ -813,6 +805,26 @@
       ]
     }
   },
+  "/container-security/combined/container-alerts/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
+  "/container-security/combined/container-images/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
   "/container-security/combined/containers/v1": {
     "get": {
       "query": [
@@ -857,6 +869,17 @@
     "get": {
       "query": [
         "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
+  "/container-security/combined/images/detail/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "with_config",
         "limit",
         "offset",
         "sort"
