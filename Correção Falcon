@@ -1,0 +1,38 @@
+1 - Baixa o PSFalcon no Github: https://github.com/CrowdStrike/psfalcon
+
+Usa meu script aqui para distribuir (executa.ps1)
+
+```
+Import-Module -Name ./PSFalcon.psd1 -Force
+
+Request-FalconToken -ClientId SUAAPI -ClientSecret SUASCRET -Cloud us-1
+
+# Vai no grupo que vc quer acertar e altere pelo ID que tem na URL
+$GroupId = "cf5b2566f5f0456097ef65f6c07db494"
+$HostIds = Get-FalconHost -All -Filter "groups:'$GroupId'"
+
+Invoke-FalconRTR -Command runscript -Arguments "-CloudFile='SCRIPT-NO-RESPONSE-SCRIPTS'" -Verbose -HostIds $HostIds -Timeout 90 | Export-Csv 'export-result.csv'
+```
+
+-------------------------------------------
+
+2 - Script para colocar no response scripts files na console do CrowdStrike
+
+```
+$ProgressPreference = 'SilentlyContinue'
+
+# Caminho de rede para a pasta já descompactada
+$networkPath = "\\fileserver\pasta"
+
+# Caminho local para onde a pasta será copiada
+$localPath = "pasta"
+
+# Copiar a pasta do caminho de rede para a máquina local
+Copy-Item -Path $networkPath -Destination $localPath -Recurse
+
+# Navegar para o diretório copiado
+cd $localPath
+
+# Instalar o Elastic Agent
+.\software-pra-instalar.exe install
+```
