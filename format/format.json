@@ -1125,6 +1125,17 @@
       ]
     }
   },
+  "/delivery-settings/entities/delivery-settings/v1": {
+    "get": {},
+    "post": {
+      "body": {
+        "delivery_settings": [
+          "delivery_cadence",
+          "delivery_type"
+        ]
+      }
+    }
+  },
   "/detects/entities/detects/v2": {
     "patch": {
       "body": {
@@ -1720,7 +1731,10 @@
           "send_email_notification",
           "user_tags"
         ]
-      }
+      },
+      "query": [
+        "aid"
+      ]
     }
   },
   "/falconx/queries/reports/v1": {
@@ -3484,6 +3498,7 @@
         "job_id",
         "app_id",
         "infer_json_types",
+        "job_status_only",
         "limit",
         "match_response_schema",
         "metadata",
@@ -3923,7 +3938,6 @@
           "hosts",
           "initiated_from",
           "max_duration",
-          "max_file_size",
           "pause_duration",
           "quarantine",
           "scan_exclusions",

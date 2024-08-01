@@ -93,6 +93,10 @@
     'Set-FalconContainerPolicyPrecedence'
     'Show-FalconRegistryCredential'
 
+    # delivery-settings
+    'Get-FalconChannelControl'
+    'Set-FalconChannelControl'
+
     # detects
     'Edit-FalconDetection'
     'Get-FalconDetection'
