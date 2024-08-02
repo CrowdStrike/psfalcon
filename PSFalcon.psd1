@@ -205,6 +205,14 @@
 
     # host-migration
     'Get-FalconMigration'
+    'Get-FalconMigrationCid'
+    'Get-FalconMigrationHost'
+    'Invoke-FalconMigrationAction'
+    'New-FalconMigration'
+    'Start-FalconMigration'
+    'Stop-FalconMigration'
+    'Rename-FalconMigration'
+    'Remove-FalconMigration'
 
     # identity-protection
     'Invoke-FalconIdentityGraph'

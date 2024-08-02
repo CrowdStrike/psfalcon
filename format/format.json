@@ -2538,10 +2538,85 @@
       ]
     }
   },
+  "/host-migration/entities/migrations-actions/v1": {
+    "post": {
+      "body": {
+        "action_parameters": [
+          "name",
+          "value"
+        ],
+        "root": [
+          "filter",
+          "ids"
+        ]
+      },
+      "query": [
+        "action_name"
+      ]
+    }
+  },
+  "/host-migration/entities/host-migrations-actions/v1": {
+    "post": {
+      "body": {
+        "action_parameters": [
+          "name",
+          "value"
+        ],
+        "root": [
+          "filter",
+          "ids"
+        ]
+      },
+      "query": [
+        "id",
+        "action_name"
+      ]
+    }
+  },
+  "/host-migration/entities/migration-destinations/GET/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "device_ids",
+          "filter"
+        ]
+      }
+    }
+  },
+  "/host-migration/entities/host-migrations/GET/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      }
+    }
+  },
   "/host-migration/entities/migrations/v1": {
     "get": {
       "query": [
         "ids"
+      ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "device_ids",
+          "filter",
+          "name",
+          "target_cid"
+        ]
+      }
+    }
+  },
+  "/host-migration/queries/host-migrations/v1": {
+    "get": {
+      "query": [
+        "id",
+        "offset",
+        "limit",
+        "sort",
+        "filter"
       ]
     }
   },
