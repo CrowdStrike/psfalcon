@@ -796,7 +796,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       } elseif ($Pair.Key -eq 'IoaGroup') {
         foreach ($Item in $Pair.Value.Import) {
           # Create IoaGroup
-          if (!$Item.Comment) { $Item.Comment = $UserAgent }
+          if (!$Item.comment) { Set-Property $Item comment ($UserAgent,"Import-FalconConfig" -join ': ') }
           [object]$IoaGroup = $Item | & "New-Falcon$($Pair.Key)"
           if ($IoaGroup) {
             Update-Id $IoaGroup $Pair.Key
@@ -805,6 +805,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               # Create IoaRule
               [object[]]$IoaGroup.rules = foreach ($Rule in $Item.rules) {
                 $Rule.rulegroup_id = $IoaGroup.id
+                if (!$Rule.comment) { Set-Property $Rule comment ($UserAgent,"Import-FalconConfig" -join ': ') }}
                 $Req = try { $Rule | New-FalconIoaRule } catch { Write-Error $_ }
                 if ($Req) {
                   Add-Result Created $Req IoaRule
