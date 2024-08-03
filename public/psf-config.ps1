@@ -796,6 +796,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       } elseif ($Pair.Key -eq 'IoaGroup') {
         foreach ($Item in $Pair.Value.Import) {
           # Create IoaGroup
+          if (!$Item.Comment) { $Item.Comment = $UserAgent }
           [object]$IoaGroup = $Item | & "New-Falcon$($Pair.Key)"
           if ($IoaGroup) {
             Update-Id $IoaGroup $Pair.Key
