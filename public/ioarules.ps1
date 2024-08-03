@@ -485,9 +485,6 @@ function New-FalconIoaRule {
 .SYNOPSIS
 Create a custom Indicator of Attack rule within a rule group
 .DESCRIPTION
-'RuleTypeId' and 'DispositionId' values can be found using 'Get-FalconIoaType -Detailed' under the 'id' and
-'disposition_map' properties.
-
 Requires 'Custom IOA rules: Write'.
 .PARAMETER Name
 Rule name
@@ -515,12 +512,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaRule
     [string]$Name,
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
       Position=2)]
-    [ValidateSet('critical','high','medium','low','informational',IgnoreCase=$false)]
     [Alias('pattern_severity')]
     [string]$PatternSeverity,
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
       Position=3)]
-    [ValidateSet(1,2,5,6,9,10,11,12)]
     [Alias('ruletype_id')]
     [string]$RuletypeId,
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:post',Mandatory,ValueFromPipelineByPropertyName,
@@ -661,4 +656,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconIoaRule
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+Register-ArgumentCompleter -CommandName New-FalconIoaRule -ParameterName RuleTypeId -ScriptBlock {
+  Get-FalconIoaType
+}
+Register-ArgumentCompleter -CommandName New-FalconIoaRule -ParameterName PatternSeverity -ScriptBlock {
+  Get-FalconIoaSeverity
 }
