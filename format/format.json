@@ -3199,6 +3199,27 @@
       }
     }
   },
+  "/ioarules/entities/rules/v2": {
+    "patch": {
+      "body": {
+        "root": [
+          "comment",
+          "rulegroup_id",
+          "rulegroup_version"
+        ],
+        "rule_updates": [
+          "description",
+          "disposition_id",
+          "enabled",
+          "field_values",
+          "instance_id",
+          "name",
+          "pattern_severity",
+          "rulegroup_version"
+        ]
+      }
+    }
+  },
   "/ioarules/entities/rules/validate/v1": {
     "post": {
       "body": {
