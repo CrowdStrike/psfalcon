@@ -602,8 +602,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHostGroup
     if ($List) {
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format.Body = @{ root = @('resources') }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
+      for ($i = 0; $i -lt $List.Count; $i += 50) {
+        $PSBoundParameters['resources'] = @($List[$i..($i + 49)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
