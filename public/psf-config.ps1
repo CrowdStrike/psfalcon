@@ -701,12 +701,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             # Update tagged 'variant' builds with current tagged build versions
             foreach ($Variant in @($Item.settings.variants | Where-Object { $_.build -match '^\d+\|' })) {
               $VarTag = ($Variant.build -split '\|',2)[-1]
-              $Current = ($BuildList | Where-Object { $_.build -like "*|$VarTag" -and $_.platform -eq
+              $VarCurrent = ($BuildList | Where-Object { $_.build -like "*|$VarTag" -and $_.platform -eq
                 $Variant.platform }).build
-              if ($Current -and $Variant.build -ne $Current) {
-                $Variant.build = $Current
-                Write-Log 'Import-FalconConfig' "Updated variant build from '$($Variant.build)' to '$Current'"
-              } elseif (!$Current) {
+              if ($VarCurrent -and $Variant.build -ne $VarCurrent) {
+                $Variant.build = $VarCurrent
+                Write-Log 'Import-FalconConfig' "Updated variant build from '$($Variant.build)' to '$VarCurrent'"
+              } elseif (!$VarCurrent) {
                 Write-Log 'Import-FalconConfig' "Failed to match '$VarTag' to current build for variant '$(
                   $Variant.platform)'"
               }
