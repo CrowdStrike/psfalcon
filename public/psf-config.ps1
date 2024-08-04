@@ -351,8 +351,45 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
     }
     function Compare-Setting ([object]$New,[object]$Old,[string]$Type,[string]$Property,[switch]$Result) {
-      if ($Type -match 'Policy$') {
-        # Compare modified policy settings
+      if ($Type -eq 'SensorUpdatePolicy') {
+        [string[]]$Select = if ($Old) {
+          foreach ($i in @($New.settings.PSObject.Properties)) {
+            # Check SensorUpdatePolicy settings sub-properties for changes
+            if ($i.Name -match '^(scheduler|variants)$') {
+              # Check 'scheduler' and 'variants' sub-properties
+              [boolean[]]$SubProp = @($i.Value).foreach{
+                @($_.PSObject.Properties).foreach{
+                  if ($_.Value -ne $Old.settings.($i.Name).($_.Name)) {
+                    if ($Result) {
+                      # Capture sub-property result
+                      Add-Result Modified $New $Type ($i.Name,$_.Name -join '.') $Old.settings.($i.Name).(
+                        $_.Name) $_.Value
+                    } else {
+                      # Output true for modified sub-property
+                      $true
+                    }
+                  }
+                }
+              }
+              # Output property name when modified sub-properties are present
+              if ($SubProp -eq $true) { $i.Name }
+            } else {
+              if ($i.Value -ne $Old.settings.($i.Name)) {
+                if ($Result) {
+                  # Capture result
+                  Add-Result Modified $New $Type $i.Name $Old.settings.($i.Name) $i.Value
+                } else {
+                  # Output modified property name
+                  $i.Name
+                }
+              }
+            }
+          }
+        }
+        # Output settings to be modified by property name
+        if ($Select) { $New.settings | Select-Object $Select }
+      } elseif ($Type -match 'Policy$') {
+        # Compare modified policy settings with 'id' and 'value' sub-properties
         $NewArr = if ($New.prevention_settings) { $New.prevention_settings } else { $New.settings }
         $OldArr = if ($Old.prevention_settings) { $Old.prevention_settings } else { $Old.settings }
         if ($OldArr -or $Result) {
@@ -422,6 +459,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($Object.$_.id) { [string[]]$Object.$_ = $Object.$_.id }
       }
       return $Object
+    }
+    function Get-CurrentBuild ([string]$String,[object[]]$List,[string]$Platform) {
+      if ($String -match '\|') {
+        # Match by sensor build tag, replacing suffix with wildcard for cloud disparities
+        if ($String -match '^n\|tagged\|\d{1,}$') { $String = $String -replace '\d{1,}$','*' }
+        @($List).Where({ $_.platform -eq $Platform -and $_.build -like "*|$String" }) |
+          Select-Object build,sensor_version
+      } elseif ($String) {
+        # Check for exact sensor build version match
+        @($List).Where({ $_.platform -eq $Platform -and $_.build -eq $String }) |
+          Select-Object build,sensor_version
+      } else {
+        $null
+      }
     }
     function Import-ConfigData ([string]$FilePath) {
       # Load 'FalconConfig' archive into memory
@@ -673,7 +724,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       }
       if ($Pair.Key -eq 'SensorUpdatePolicy' -and ($Pair.Value.Import -or $Pair.Value.Modify)) {
-        # Retrieve available sensor build versions to update 'tags'
+        # Retrieve available sensor build versions to update build versions
         [object[]]$BuildList = try {
           Write-Host "[Import-FalconConfig] Retrieving available sensor builds..."
           Get-FalconBuild
@@ -682,33 +733,48 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             $Pair.Key)' import. Verify 'Sensor update policies: Write' permission."
         }
         foreach ($Item in @(@($Pair.Value.Import) + @($Pair.Value.Modify))) {
-          # Update tagged builds with current tagged build versions
-          if ($Item.settings.build -match '^\d+\|') {
-            [string]$Tag = ($Item.settings.build -split '\|',2)[-1]
-            # Replace 'latest' tagged build suffix digits with wildcard for imports into different clouds
-            if ($Tag -match '^n|tagged|\d{1,}$') { $Tag = $Tag -replace '\d{1,}$','*' }
-            $Current = @($BuildList).Where({ $_.build -like "*|$Tag" -and $_.platform -eq
-              $Item.platform_name }).build
-            if ($Current -and $Item.settings.build -ne $Current) {
-              $Item.settings.build = $Current
-              Write-Log 'Import-FalconConfig' "Updated build from '$($Item.settings.build)' to '$Current'"
-            } elseif (!$Current) {
-              Write-Log 'Import-FalconConfig' "Failed to match '$Tag' to current build for '$(
-                $Item.platform_name)'"
+          # Update sensor builds with current available build values
+          if ($Item.settings.build) {
+            [string]$PolicyBuild = if ($Item.settings.build -match '|') {
+              ($Item.settings.build -split '\|',2)[-1]
+            } else {
+              $Item.settings.build
+            }
+            $PolicyNew = Get-CurrentBuild $PolicyBuild $BuildList $Item.platform_name
+            if ($PolicyNew -and $PolicyNew.build -ne $Item.settings.build) {
+              # Replace build with current tagged version
+              Write-Log 'Import-FalconConfig' (
+                'Replaced build "{0}" with "{1}" for {2} policy "{3}"' -f $Item.settings.build,$PolicyNew.build,
+                $Item.platform_name,$Item.name)
+              @('build','sensor_version').foreach{ $Item.settings.$_ = $PolicyNew.$_ }
+            } elseif (!$PolicyNew) {
+              # Strip build if build match is not available
+              Write-Log 'Import-FalconConfig' ('Removed build "{0}" from {1} policy "{2}"' -f $Item.settings.build,
+                $Item.platform_name,$Item.name)
+              @('build','sensor_version').foreach{ $Item.settings.$_ = $null }
             }
           }
           if ($Item.settings.variants) {
-            # Update tagged 'variant' builds with current tagged build versions
-            foreach ($Variant in @($Item.settings.variants | Where-Object { $_.build -match '^\d+\|' })) {
-              $VarTag = ($Variant.build -split '\|',2)[-1]
-              $VarCurrent = ($BuildList | Where-Object { $_.build -like "*|$VarTag" -and $_.platform -eq
-                $Variant.platform }).build
-              if ($VarCurrent -and $Variant.build -ne $VarCurrent) {
-                $Variant.build = $VarCurrent
-                Write-Log 'Import-FalconConfig' "Updated variant build from '$($Variant.build)' to '$VarCurrent'"
-              } elseif (!$VarCurrent) {
-                Write-Log 'Import-FalconConfig' "Failed to match '$VarTag' to current build for variant '$(
-                  $Variant.platform)'"
+            foreach ($Variant in $Item.settings.variants) {
+              # Update sensor variants with current available variant build values
+              [string]$VariantBuild = if ($Variant.build -match '|') {
+                ($Variant.build -split '\|',2)[-1]
+              } else {
+                $Variant.build
+              }
+              $VariantNew = Get-CurrentBuild $VariantBuild $BuildList $Variant.platform
+              if ($VariantNew -and $VariantNew.build -ne $Variant.build) {
+                # Replace build with current tagged version
+                Write-Log 'Import-FalconConfig' (
+                  'Replaced build "{0}" with "{1}" for {2} variant for policy "{3}"' -f $Variant.build,
+                  $VariantNew.build,$Variant.platform,$Item.name)
+                @('build','sensor_version').foreach{ $Variant.$_ = $VariantNew.$_ }
+              } elseif (!$VariantNew) {
+                # Strip build if build match is not available
+                Write-Log 'Import-FalconConfig' (
+                  'Removed build "{0}" from {1} variant for policy "{2}"' -f $Variant.build,$Variant.platform,
+                  $Item.name)
+                @('build','sensor_version').foreach{ $Variant.$_ = $null }
               }
             }
           }
