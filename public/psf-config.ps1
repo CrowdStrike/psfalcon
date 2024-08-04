@@ -357,22 +357,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             # Check SensorUpdatePolicy settings sub-properties for changes
             if ($i.Name -match '^(scheduler|variants)$') {
               # Check 'scheduler' and 'variants' sub-properties
-              [boolean[]]$SubProp = @($i.Value).foreach{
-                @($_.PSObject.Properties).foreach{
-                  if ($_.Value -ne $Old.settings.($i.Name).($_.Name)) {
-                    if ($Result) {
-                      # Capture sub-property result
-                      Add-Result Modified $New $Type ($i.Name,$_.Name -join '.') $Old.settings.($i.Name).(
-                        $_.Name) $_.Value
-                    } else {
-                      # Output true for modified sub-property
-                      $true
+              if ($Result -and $null -eq $New.settings.($i.Name)) {
+                @($Old.settings.($i.Name)).foreach{
+                  @($_.PSObject.Properties).foreach{
+                    Add-Result Modified $New $Type ($i.Name,$_.Name -join '.') $_.Value $null
+                  }
+                }
+              } else {
+                [boolean[]]$SubProp = @($i.Value).foreach{
+                  @($_.PSObject.Properties).foreach{
+                    if ($_.Value -ne $Old.settings.($i.Name).($_.Name)) {
+                      if ($Result) {
+                        # Capture sub-property result
+                        Add-Result Modified $New $Type ($i.Name,$_.Name -join '.') $Old.settings.($i.Name).(
+                          $_.Name) $_.Value
+                      } else {
+                        # Output true for modified sub-property
+                        $true
+                      }
                     }
                   }
                 }
+                # Output property name when modified sub-properties are present
+                if ($SubProp -eq $true) { $i.Name }
               }
-              # Output property name when modified sub-properties are present
-              if ($SubProp -eq $true) { $i.Name }
             } else {
               if ($i.Value -ne $Old.settings.($i.Name)) {
                 if ($Result) {
@@ -751,7 +759,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               # Strip build if build match is not available
               Write-Log 'Import-FalconConfig' ('Removed build "{0}" from {1} policy "{2}"' -f $Item.settings.build,
                 $Item.platform_name,$Item.name)
-              @('build','sensor_version').foreach{ $Item.settings.$_ = $null }
+              @('build','sensor_version').foreach{ $Item.settings.$_ = "" }
             }
           }
           if ($Item.settings.variants) {
