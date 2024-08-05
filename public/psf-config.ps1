@@ -477,7 +477,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       } elseif ($String) {
         # Check for exact sensor build version match
         @($List).Where({ $_.platform -eq $Platform -and $_.build -eq $String }) |
-          Select-Object build,sensor_version
+          Select-Object build,sensor_version,stage
       } else {
         $null
       }
@@ -743,46 +743,53 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         foreach ($Item in @(@($Pair.Value.Import) + @($Pair.Value.Modify))) {
           # Update sensor builds with current available build values
           if ($Item.settings.build) {
-            [string]$PolicyBuild = if ($Item.settings.build -match '|') {
+            [string]$pBuild = if ($Item.settings.build -match '|') {
               ($Item.settings.build -split '\|',2)[-1]
             } else {
               $Item.settings.build
             }
-            $PolicyNew = Get-CurrentBuild $PolicyBuild $BuildList $Item.platform_name
-            if ($PolicyNew -and $PolicyNew.build -ne $Item.settings.build) {
+            $pNew = Get-CurrentBuild $pBuild $BuildList $Item.platform_name
+            if ($pNew -and $pNew.build -ne $Item.settings.build) {
               # Replace build with current tagged version
               Write-Log 'Import-FalconConfig' (
-                'Replaced build "{0}" with "{1}" for {2} policy "{3}"' -f $Item.settings.build,$PolicyNew.build,
+                'Replaced build "{0}" with "{1}" for {2} policy "{3}"' -f $Item.settings.build,$pNew.build,
                 $Item.platform_name,$Item.name)
-              @('build','sensor_version').foreach{ $Item.settings.$_ = $PolicyNew.$_ }
-            } elseif (!$PolicyNew) {
+              @('build','sensor_version','stage').foreach{ Set-Property $Item.settings $_ $pNew.$_ }
+            } elseif (!$pNew) {
               # Strip build if build match is not available
-              Write-Log 'Import-FalconConfig' ('Removed build "{0}" from {1} policy "{2}"' -f $Item.settings.build,
-                $Item.platform_name,$Item.name)
-              @('build','sensor_version').foreach{ $Item.settings.$_ = "" }
+              Set-Property $Item.settings build $null
             }
+          }
+          if (!$Item.settings.build) {
+            # Strip build, sensor_version and stage if 'build' is not present in policy
+            Write-Log 'Import-FalconConfig' (
+              'Removed build values from {0} policy "{1}"' -f $Item.platform_name,$Item.name)
+            @('build','sensor_version','stage').foreach{ Set-Property $Item.settings $_ $null }
           }
           if ($Item.settings.variants) {
             foreach ($Variant in $Item.settings.variants) {
               # Update sensor variants with current available variant build values
-              [string]$VariantBuild = if ($Variant.build -match '|') {
+              [string]$vBuild = if ($Variant.build -match '|') {
                 ($Variant.build -split '\|',2)[-1]
               } else {
                 $Variant.build
               }
-              $VariantNew = Get-CurrentBuild $VariantBuild $BuildList $Variant.platform
-              if ($VariantNew -and $VariantNew.build -ne $Variant.build) {
+              $vNew = Get-CurrentBuild $vBuild $BuildList $Variant.platform
+              if ($vNew -and $vNew.build -ne $Variant.build) {
                 # Replace build with current tagged version
                 Write-Log 'Import-FalconConfig' (
                   'Replaced build "{0}" with "{1}" for {2} variant for policy "{3}"' -f $Variant.build,
-                  $VariantNew.build,$Variant.platform,$Item.name)
-                @('build','sensor_version').foreach{ $Variant.$_ = $VariantNew.$_ }
-              } elseif (!$VariantNew) {
-                # Strip build if build match is not available
+                  $vNew.build,$Variant.platform,$Item.name)
+                @('build','sensor_version','stage').foreach{ Set-Property $Variant $_ $vNew.$_ }
+              } elseif (!$vNew) {
+                # Strip build if match is not available
+                Set-Property $Variant build $null
+              }
+              if (!$Variant.build) {
+                # Strip build and sensor_version if 'build' is not present
                 Write-Log 'Import-FalconConfig' (
-                  'Removed build "{0}" from {1} variant for policy "{2}"' -f $Variant.build,$Variant.platform,
-                  $Item.name)
-                @('build','sensor_version').foreach{ $Variant.$_ = $null }
+                  'Removed build values from {0} variant for policy "{1}"' -f $Variant.platform,$Item.name)
+                @('build','sensor_version','stage').foreach{ Set-Property $Variant $_ $null }
               }
             }
           }
