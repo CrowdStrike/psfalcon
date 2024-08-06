@@ -9,12 +9,12 @@ Requires 'Falcon Container Image: Write'.
 Image assessment policy identifier
 .PARAMETER Name
 Policy name
-.PARAMETER Description
-Policy description
-.PARAMETER IsEnabled
-
+.PARAMETER Enabled
+Policy enablement
 .PARAMETER PolicyData
 
+.PARAMETER Description
+Policy description
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicy
 #>
@@ -22,20 +22,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicy
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Mandatory,
-      Position=1)]
+      ValueFromPipelineByPropertyName,Position=2)]
     [string]$Name,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Mandatory,
-      Position=2)]
-    [string]$Description,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Position=3)]
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
     [Alias('is_enabled')]
-    [boolean]$IsEnabled,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Position=4)]
+    [boolean]$Enabled,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
     [Alias('policy_data')]
-    [object]$PolicyData
+    [object]$PolicyData,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [string]$Description
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -62,6 +65,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicyGroup
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',
       ValueFromPipelineByPropertyName,Position=2)]
@@ -1195,6 +1199,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicy
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -1216,6 +1221,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicyGroup
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -1367,6 +1373,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconContainerPolicyPrecedence
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-precedence/v1:post',
       Mandatory,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('precedence')]
     [string[]]$Id
   )
