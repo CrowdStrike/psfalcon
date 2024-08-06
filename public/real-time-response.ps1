@@ -714,12 +714,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
             $_
           }
         }
-        @($Request.hosts).Where({ $_.errors }).foreach{
+        @($Request.hosts).Where({$_.errors}).foreach{
           # Write warning for hosts in batch that produced errors
           $PSCmdlet.WriteWarning(('[Invoke-FalconBatchGet]',($_.errors.code,
             $_.errors.message -join ': '),('[aid: {0}]' -f $_.aid) -join ' '))
         }
-        @($Request.hosts).Where({ $_.stderr }).foreach{
+        @($Request.hosts).Where({$_.stderr}).foreach{
           # Write warning for hosts in batch that produced 'stderr'
           $PSCmdlet.WriteWarning(('[Invoke-FalconBatchGet]',$_.stderr,
             ('[aid: {0}' -f $_.aid) -join ' '))
@@ -1355,12 +1355,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
       @(Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters).foreach{
         if ($_.batch_id -and $_.resources) {
           [string]$BatchId = $_.batch_id
-          @($_.resources.PSObject.Properties.Value).Where({ $_.errors }).foreach{
+          @($_.resources.PSObject.Properties.Value).Where({$_.errors}).foreach{
             # Write warning for hosts in batch that produced errors
             $PSCmdlet.WriteWarning("[Start-FalconSession] $(
               @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]")
           }
-          @($_.resources.PSObject.Properties.Value).Where({ $_.session_id }).foreach{
+          @($_.resources.PSObject.Properties.Value).Where({$_.session_id}).foreach{
             # Append 'batch_id' for hosts with a 'session_id'
             Set-Property $_ batch_id $BatchId
           }
@@ -1440,7 +1440,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
     }
     @(Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters).foreach{
       if ($Endpoint -eq '/real-time-response/combined/batch-refresh-session/v1:post') {
-        @($_.PSObject.Properties.Value).Where({ $_.errors }).foreach{
+        @($_.PSObject.Properties.Value).Where({$_.errors}).foreach{
           # Write warning for hosts in batch that produced errors
           $PSCmdlet.WriteWarning("[Update-FalconSession] $(
             @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]")

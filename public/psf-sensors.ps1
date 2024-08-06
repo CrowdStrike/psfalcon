@@ -29,7 +29,7 @@ function Invoke-TagScript {
         # Determine if uninstallation token is required, if host is online, and current SensorTag values
         [string]$Protection = $Object.device_policies.sensor_update.uninstall_protection
         [string]$State = (Get-FalconHost -Id $Object.device_id -State).state
-        [string[]]$Existing = @($Object.tags).Where({ $_ -match 'SensorGroupingTags/' }) -replace
+        [string[]]$Existing = @($Object.tags).Where({$_ -match 'SensorGroupingTags/'}) -replace
           'SensorGroupingTags/',$null
         [string]$TagString = if ($Existing -and $Action -ne 'Set') {
           if ($Action -eq 'Add') {
@@ -42,7 +42,7 @@ function Invoke-TagScript {
             [boolean]$Remove = $false
             @($Tag).foreach{ if ($Remove -eq $false -and $Existing -contains $_) { $Remove = $true } }
             if ($Remove -eq $true) {
-              (@($Existing).Where({ $Tag -notcontains $_ }) | Select-Object -Unique) -join ','
+              (@($Existing).Where({$Tag -notcontains $_}) | Select-Object -Unique) -join ','
             }
           }
         } else {
@@ -209,7 +209,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
         [PSCustomObject]@{
           cid = $_.cid
           device_id = $_.device_id
-          tags = @($_.tags).Where({ $_ -match 'SensorGroupingTags/' }) -replace 'SensorGroupingTags/',
+          tags = @($_.tags).Where({$_ -match 'SensorGroupingTags/'}) -replace 'SensorGroupingTags/',
             $null -join ','
         }
       }

@@ -93,8 +93,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
     } else {
       if (!$Select) {
         # Use items in 'ValidateSet' when not provided
-        [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({ $_.Name -eq
-          'ExportItem' }).Parameters.Where({ $_.Name -eq 'Select' }).Attributes.ValidValues).foreach{ $_ }
+        [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({$_.Name -eq
+          'ExportItem'}).Parameters.Where({$_.Name -eq 'Select'}).Attributes.ValidValues).foreach{ $_ }
       }
       if ($Select -contains 'FileVantagePolicy' -and $Select -notcontains 'FileVantageRuleGroup') {
         # Force 'FileVantageRuleGroup' when exporting 'FileVantagePolicy' for 'rule_groups'
@@ -212,7 +212,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         } elseif ($Type -match '^FileVantageRule(Group)?$') {
           $Item.type
         } elseif ($Type -eq 'FileVantageExclusion' -and $Item.policy_id) {
-          @($Config.FileVantagePolicy.PSObject.Properties.Value).Where({ $_.id -eq $Item.policy_id }).platform |
+          @($Config.FileVantagePolicy.PSObject.Properties.Value).Where({$_.id -eq $Item.policy_id}).platform |
             Select-Object -Unique
         } else {
           $null
@@ -239,11 +239,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         $Notify.Add($Type)
         if ($Type -eq 'FileVantageRule') {
-          $Notify.Add("$($Obj.name) in '$(@($Config.Ids.FileVantageRuleGroup).Where({
-            $_.new_id -eq $Item.rule_group_id }).name)'.")
+          $Notify.Add("$($Obj.name) in '$(@($Config.Ids.FileVantageRuleGroup).Where({$_.new_id -eq
+            $Item.rule_group_id}).name)'.")
         } elseif ($Type -eq 'FileVantageExclusion') {
-          $Notify.Add("'$($Obj.name)' in '$(@($Config.Ids.FileVantagePolicy).Where({
-            $_.new_id -eq $Item.policy_id }).name)'.")
+          $Notify.Add("'$($Obj.name)' in '$(@($Config.Ids.FileVantagePolicy).Where({$_.new_id -eq
+            $Item.policy_id}).name)'.")
         } else {
           $Notify.Add("'$($Obj.name)'.")
         }
@@ -262,13 +262,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           foreach ($Key in $Platform.Keys) {
             # Define properties for comparison between imported and existing items (by platform)
             @('Cid','Import').foreach{
-              $Platform.$Key[$_] = @($Config.$Item.$_).Where({
-                $_.platform -eq $Key -or $_.platform_name -eq $Key
-              })
+              $Platform.$Key[$_] = @($Config.$Item.$_).Where({$_.platform -eq $Key -or $_.platform_name -eq $Key})
             }
             [string[]]$Available = ($Platform.$Key.Cid | Get-Member -MemberType NoteProperty |
               Select-Object -Unique).Name
-            [string[]]$Compare = @('name','type','value').Where({ $Available -contains $_ })
+            [string[]]$Compare = @('name','type','value').Where({$Available -contains $_})
             Write-Log 'Import-FalconConfig' "Evaluating $Key $Item using '$($Compare -join ',')'"
             $FilterScript = [scriptblock]::Create(
               (@($Compare).foreach{ "`$Platform.`$Key.Cid.$_ -notcontains `$_.$_" }) -join ' -and '
@@ -309,7 +307,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           # Define properties for comparison between imported and existing items
           [string[]]$Available = ($Config.$Item.Cid | Get-Member -MemberType NoteProperty |
             Select-Object -Unique).Name
-          [string[]]$Compare = @('name','type','value').Where({ $Available -contains $_ })
+          [string[]]$Compare = @('name','type','value').Where({$Available -contains $_})
           Write-Log 'Import-FalconConfig' "Evaluating $Item using '$($Compare -join ',')'"
           $FilterScript = [scriptblock]::Create(
             (@($Compare).foreach{ "`$Config.$Item.Cid.$_ -notcontains `$_.$_" }) -join ' -and '
@@ -403,11 +401,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($OldArr -or $Result) {
           foreach ($Item in $NewArr) {
             if ($Item.value.PSObject.Properties.Name -eq 'enabled') {
-              if ($OldArr.Where({ $_.id -eq $Item.id }).value.enabled -ne $Item.value.enabled) {
+              if ($OldArr.Where({$_.id -eq $Item.id}).value.enabled -ne $Item.value.enabled) {
                 if ($Result) {
                   # Capture modified result for boolean settings
-                  Add-Result Modified $New $Type $Item.id ($OldArr.Where({ $_.id -eq
-                    $Item.id }).value.enabled) $Item.value.enabled
+                  Add-Result Modified $New $Type $Item.id ($OldArr.Where({$_.id -eq
+                    $Item.id}).value.enabled) $Item.value.enabled
                 } else {
                   # Output setting to be modified
                   $Item | Select-Object id,value
@@ -415,7 +413,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
             } else {
               foreach ($Name in $Item.value.PSObject.Properties.Name) {
-                if ($OldArr.Where({ $_.id -eq $Item.id }).value.$Name -ne $Item.value.$Name) {
+                if ($OldArr.Where({$_.id -eq $Item.id}).value.$Name -ne $Item.value.$Name) {
                   if ($Result) {
                     # Capture modified result for sub-settings
                     Add-Result Modified $New $Type ($Item.id,$Name -join ':') (($OldArr | Where-Object {
@@ -446,7 +444,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             Add-Result Modified $New $Type $Property $Old.$Property $New.$Property
           }
         } else {
-          @($New.PSObject.Properties.Name).Where({ $_ -notmatch '^(id|comment)$' }).foreach{
+          @($New.PSObject.Properties.Name).Where({$_ -notmatch '^(id|comment)$'}).foreach{
             if ($New.$_ -ne $Old.$_) { Add-Result Modified $New $Type $_ $Old.$_ $New.$_ }
           }
         }
@@ -472,11 +470,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       if ($String -match '\|') {
         # Match by sensor build tag, replacing suffix with wildcard for cloud disparities
         if ($String -match '^n\|tagged\|\d{1,}$') { $String = $String -replace '\d{1,}$','*' }
-        @($List).Where({ $_.platform -eq $Platform -and $_.build -like "*|$String" }) |
+        @($List).Where({$_.platform -eq $Platform -and $_.build -like "*|$String"}) |
           Select-Object build,sensor_version
       } elseif ($String) {
         # Check for exact sensor build version match
-        @($List).Where({ $_.platform -eq $Platform -and $_.build -eq $String }) |
+        @($List).Where({$_.platform -eq $Platform -and $_.build -eq $String}) |
           Select-Object build,sensor_version,stage
       } else {
         $null
@@ -520,8 +518,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
         }
         # Remove created and failed Ioc from 'Import' using 'id' value
-        [string[]]$Remove = @($Object.Value.Import).Where({ $_.type -eq $i.type -and $_.value -eq $i.value }).id
-        $Object.Value.Import = @($Object.Value.Import).Where({ $Remove -notcontains $_.id })
+        [string[]]$Remove = @($Object.Value.Import).Where({$_.type -eq $i.type -and $_.value -eq $i.value}).id
+        $Object.Value.Import = @($Object.Value.Import).Where({$Remove -notcontains $_.id})
       }
       # Repeat until 'Import' is empty
       if ($Object.Value.Import) { Invoke-CreateIoc $Object }
@@ -545,12 +543,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           foreach ($OldId in $Object.rule_groups) {
             # Update rule_groups with new identifier(s)
             $Object.rule_groups = $Object.rule_groups -replace $OldId,
-              @($Config.Ids.FileVantageRuleGroup).Where({ $_.old_id -eq $OldId }).new_id
+              @($Config.Ids.FileVantageRuleGroup).Where({$_.old_id -eq $OldId}).new_id
           }
           if ($Object.rule_groups) {
             # Filter to rule_groups that are missing
-            [string[]]$Add = @($Object.rule_groups).Where({ $Cid.rule_groups -notcontains $_ -and
-              ![string]::IsNullOrWhiteSpace($_) })
+            [string[]]$Add = @($Object.rule_groups).Where({$Cid.rule_groups -notcontains $_ -and
+              ![string]::IsNullOrWhiteSpace($_)})
             if ($Add) {
               # Assign and capture result
               @(Add-FalconFileVantageRuleGroup -PolicyId $Object.id -Id $Add).foreach{
@@ -562,7 +560,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
         } elseif ($Property -eq 'host_groups' -and $Object.host_groups) {
           # Filter to host_groups that are missing
-          [string[]]$Add = @($Object.host_groups).Where({ $Cid.host_groups -notcontains $_ })
+          [string[]]$Add = @($Object.host_groups).Where({$Cid.host_groups -notcontains $_})
           if ($Add) {
             # Assign and capture result
             @(Add-FalconFileVantageHostGroup -PolicyId $Object.id -Id $Add).foreach{
@@ -604,7 +602,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     # Import configuration files and capture identifiers for comparison
     if (!$ArchivePath) { throw "Failed to resolve '$($PSBoundParameters.Path)'." }
     $Config = Import-ConfigData $ArchivePath
-    @($Config.Keys).Where({ $_ -notmatch '^(Ids|FirewallRule|Result)$' }).foreach{
+    @($Config.Keys).Where({$_ -notmatch '^(Ids|FirewallRule|Result)$'}).foreach{
       if ($Allowed -notcontains $_) {
         throw "'$($_,'json' -join '.')' is not a valid Json file name. Ensure that all files within '$(
           $ArchivePath)' correspond with output from 'Export-FalconConfig' [$(($Allowed | ForEach-Object {
@@ -612,7 +610,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }) -join ',')]."
       }
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Value.Import})) {
       foreach ($Import in $Pair.Value.Import) {
         # Create a record of identifiers within CID to compare with imports
         $Import = Compress-Property $Import
@@ -624,7 +622,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       }
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch '^(Ids|Result)$' })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Key -notmatch '^(Ids|Result)$'})) {
       $Pair.Value['Cid'] = try {
         if ($Pair.Key -match '^FileVantage(Policy|RuleGroup)$') {
           [string]$Property = if ($Pair.Key -eq 'FileVantagePolicy') { 'platform' } else { 'type' }
@@ -646,7 +644,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             foreach ($i in (& "Get-Falcon$($Pair.Key)" @Param -Type $_ | Where-Object -FilterScript (
             [scriptblock]::Create($Filter)))) {
               if ($Pair.Key -eq 'FileVantageRuleGroup' -and $i.assigned_rules.id -and
-              @($Pair.Value.Import).Where({ $_.type -eq $i.type -and $_.name -eq $i.name })) {
+              @($Pair.Value.Import).Where({$_.type -eq $i.type -and $_.name -eq $i.name})) {
                 # Update FileVantageRuleGroup 'assigned_rules' with rule content when matching import is present
                 $RuleId = $i.assigned_rules.id | Where-Object { ![string]::IsNullOrWhiteSpace($_) }
                 if ($RuleId) {
@@ -700,15 +698,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           # Track 'Ignored' items for final output
           [string]$Comment = if ($Item.deleted -eq $true) {
             'Deleted'
-          } elseif ($Item.type -and $Item.value -and @($Pair.Value.Cid).Where({ $_.type -eq $Item.type -and
-          $_.value -eq $Item.value })) {
+          } elseif ($Item.type -and $Item.value -and @($Pair.Value.Cid).Where({$_.type -eq $Item.type -and
+          $_.value -eq $Item.value})) {
             'Exists'
-          } elseif ($Item.type -and $Item.name -and @($Pair.Value.Cid).Where({ $_.type -eq $Item.type -and
-          $_.name -eq $Item.name })) {
+          } elseif ($Item.type -and $Item.name -and @($Pair.Value.Cid).Where({$_.type -eq $Item.type -and
+          $_.name -eq $Item.name})) {
             'Exists'
-          } elseif ($Item.value -and @($Pair.Value.Cid).Where({ $_.value -eq $Item.value })) {
+          } elseif ($Item.value -and @($Pair.Value.Cid).Where({$_.value -eq $Item.value})) {
             'Exists'
-          } elseif ($Item.name -and @($Pair.Value.Cid).Where({ $_.name -eq $Item.name })) {
+          } elseif ($Item.name -and @($Pair.Value.Cid).Where({$_.name -eq $Item.name})) {
             'Exists'
           }
           if ($Comment -and $ModifyExisting -notcontains $Pair.Key) {
@@ -719,7 +717,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         if ($Pair.Key -eq 'FileVantageRuleGroup') {
           $Pair.Value.Import = foreach ($i in $Pair.Value.Import) {
-            if (!@($Pair.Value.Cid).Where({ $_.type -eq $i.type -and $_.name -eq $i.name })) {
+            if (!@($Pair.Value.Cid).Where({$_.type -eq $i.type -and $_.name -eq $i.name})) {
               # Remove rule groups that will not be created from 'Import'
               $i
             } elseif ($ModifyExisting -contains $Pair.Key) {
@@ -796,7 +794,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       }
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -eq 'HostGroup' -and $_.Value.Import })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Key -eq 'HostGroup' -and $_.Value.Import})) {
       foreach ($HostGroup in ($Pair.Value.Import | & "New-Falcon$($Pair.Key)")) {
         # Create HostGroup to prepare for assignment
         Update-Id $HostGroup $Pair.Key
@@ -804,13 +802,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
       [void]$Pair.Value.Remove('Import')
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Value.Import -or $_.Value.Modify })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Value.Import -or $_.Value.Modify})) {
       # Update 'Import' and 'Modify' HostGroup ids
       @('Import','Modify').foreach{
         foreach ($Item in $Pair.Value.$_) {
           @('groups','host_groups').foreach{
             foreach ($OldId in $Item.$_) {
-              [string]$NewId = @($Config.Ids.HostGroup).Where({ $_.old_id -eq $OldId }).new_id
+              [string]$NewId = @($Config.Ids.HostGroup).Where({$_.old_id -eq $OldId}).new_id
               if ($NewId) {
                 [string[]]$Item.$_ = $Item.$_ -replace $OldId,$NewId
                 if ($NewId -ne $OldId) {
@@ -823,7 +821,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       }
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Import })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Key -match 'Policy$' -and $_.Value.Import})) {
       @($Pair.Value.Import | & "New-Falcon$($Pair.Key)").foreach{
         # Create Policy
         Update-Id $_ $Pair.Key
@@ -831,7 +829,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
       [void]$Pair.Value.Remove('Import')
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -ne 'FirewallRule' -and $_.Value.Import })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Key -ne 'FirewallRule' -and $_.Value.Import})) {
       if ($Pair.Key -eq 'FileVantageRuleGroup') {
         foreach ($Item in $Pair.Value.Import) {
           @($Item | & "New-Falcon$($Pair.Key)").foreach{
@@ -896,7 +894,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
               if ($IoaGroup.rules.enabled -eq $true) {
                 @($IoaGroup | Edit-FalconIoaRule).foreach{
-                  @($_.rules).Where({ $_.enabled -eq $true }).foreach{
+                  @($_.rules).Where({$_.enabled -eq $true}).foreach{
                     # Enable IoaRule
                     Add-Result Modified $_ IoaRule enabled $false $_.enabled
                   }
@@ -932,17 +930,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
       [void]$Pair.Value.Remove('Import')
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -notmatch 'Policy$' -and $_.Value.Modify })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Key -notmatch 'Policy$' -and $_.Value.Modify})) {
       if ($Pair.Key -eq 'FileVantageRuleGroup') {
         foreach ($Group in $Pair.Value.Modify) {
-          $CidGroup = @($Config.($Pair.Key).Cid).Where({ $_.type -eq $Group.type -and $_.name -eq $Group.name })
+          $CidGroup = @($Config.($Pair.Key).Cid).Where({$_.type -eq $Group.type -and $_.name -eq $Group.name})
           if ($CidGroup) {
             foreach ($Rule in $Group.assigned_rules) {
-              $CidRule = @($CidGroup.assigned_rules).Where({ $_.type -eq $Rule.type -and $_.name -eq $Rule.name })
+              $CidRule = @($CidGroup.assigned_rules).Where({$_.type -eq $Rule.type -and $_.name -eq $Rule.name})
               if ($CidRule) {
                 # Evaluate and update each FileVantageRule when required
-                [string[]]$Modified = @($Rule.PSObject.Properties.Name).Where({ $_ -notmatch
-                '^(type|(rule_group_)?id)$' }).foreach{
+                [string[]]$Modified = @($Rule.PSObject.Properties.Name).Where({$_ -notmatch
+                '^(type|(rule_group_)?id)$'}).foreach{
                   if (!$CidRule.$_ -or $CidRule.$_ -ne $Rule.$_) {
                     if (($_ -eq 'content_files' -and ![string]::IsNullOrWhiteSpace($CidRule.$_) -or
                     ![string]::IsNullOrWhiteSpace($Rule.$_)) -or $_ -ne 'content_files') {
@@ -995,7 +993,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               [scriptblock]::Create($Filter))
             if ($Cid) {
               [System.Collections.Generic.List[string]]$Modify = @('id')
-              @($Select).Where({ $_ -ne 'id' }).foreach{
+              @($Select).Where({$_ -ne 'id'}).foreach{
                 [object]$Diff = if ($null -ne $Item.$_ -and $null -ne $Cid.$_) {
                   # Compare properties that exist in both 'Modify' and CID
                   if ($Pair.Key -eq 'FirewallGroup' -and $_ -eq 'rule_ids') {
@@ -1075,7 +1073,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             } else {
               foreach ($Item in ($EditList | & "Edit-Falcon$($Pair.Key)")) {
                 foreach ($Result in ($EditList | Where-Object { $_.id -eq $Item.id })) {
-                  @($Result.PSObject.Properties.Name).Where({ $_ -ne 'id' -and $_ -ne 'comment' }).foreach{
+                  @($Result.PSObject.Properties.Name).Where({$_ -ne 'id' -and $_ -ne 'comment'}).foreach{
                     # Modify item and capture result
                     Compare-Setting $Item ($Config.($Pair.Key).Cid | Where-Object { $_.id -eq
                       $Item.id }) $Pair.Key $_ -Result
@@ -1099,12 +1097,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
       [void]$Pair.Value.Remove('Modify')
     }
-    foreach ($Pair in $Config.GetEnumerator().Where({ $_.Key -match 'Policy$' -and $_.Value.Modify })) {
+    foreach ($Pair in $Config.GetEnumerator().Where({$_.Key -match 'Policy$' -and $_.Value.Modify})) {
       foreach ($Policy in $Pair.Value.Modify) {
         # Update policy with current id value and use CID value for comparison
-        [string]$Policy.id = @($Config.Ids.($Pair.Key)).Where({ $_.name -eq $Policy.name -and
-          $_.platform_name -eq $Policy.platform_name }).new_id
-        [object]$Cid = @($Config.($Pair.Key).cid).Where({ $_.id -eq $Policy.id })
+        [string]$Policy.id = @($Config.Ids.($Pair.Key)).Where({$_.name -eq $Policy.name -and
+          $_.platform_name -eq $Policy.platform_name}).new_id
+        [object]$Cid = @($Config.($Pair.Key).cid).Where({$_.id -eq $Policy.id})
         if ($Policy.id -and $Pair.Key -eq 'FirewallPolicy') {
           if ($Policy.settings.policy_id) { $Policy.settings.policy_id = $Policy.id }
           foreach ($Id in $Policy.settings.rule_group_ids) {
@@ -1161,8 +1159,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                   $Exclusion.PSObject.Properties.Remove('repeated')
                 }
                 if ($Existing) {
-                  [string[]]$Modified = @($Exclusion.PSObject.Properties.Name).Where({ $_ -notmatch
-                  '^((policy_)?id|\w+_timestamp)$' }).foreach{
+                  [string[]]$Modified = @($Exclusion.PSObject.Properties.Name).Where({$_ -notmatch
+                  '^((policy_)?id|\w+_timestamp)$'}).foreach{
                     # Compare existing exclusion against import to find new or modified properties
                     if ($_ -eq 'repeated') {
                       foreach ($i in $Exclusion.repeated.PSObject.Properties.Name) {

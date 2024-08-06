@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
   begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
   process {
     if ($Detection.behaviors -and $Detection.device) {
-      @($Detection.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
+      @($Detection.behaviors).Where({$_.tactic -notmatch '^(Machine Learning|Malware)$'}).foreach{
         $Output.Add(([PSCustomObject]@{
           pattern_id = $_.behavior_id
           pattern_name = $_.display_name
@@ -262,7 +262,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
     if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
     if ($PSBoundParameters.GroupId -eq 'all') {
       # Remove 'all' from 'GroupId', and remove 'GroupId' if 'all' was the only value
-      $PSBoundParameters.GroupId = @($PSBoundParameters.GroupId).Where({ $_ -ne 'all' })
+      $PSBoundParameters.GroupId = @($PSBoundParameters.GroupId).Where({$_ -ne 'all'})
       if ([string]::IsNullOrEmpty($PSBoundParameters.GroupId)) { [void]$PSBoundParameters.Remove('GroupId') }
     }
     if ($PSBoundParameters.GroupId) {

@@ -27,7 +27,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconPreventionPhase
       # Collect detailed policy information for unique identifiers
       $PolicyList = Get-FalconPreventionPolicy -Id $List -EA 0 | Select-Object id,
         name,platform_name,prevention_settings | Sort-Object platform_name
-      @($List).Where({ $PolicyList.id -notcontains $_ }).foreach{
+      @($List).Where({$PolicyList.id -notcontains $_}).foreach{
         # Generate error when 'id' values were not found
         Write-Error "'$_' was not found."
       }

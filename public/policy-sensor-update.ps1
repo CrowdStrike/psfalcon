@@ -335,9 +335,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
         Invoke-Falcon @Param -UserInput $PSBoundParameters -EA 1
       }
       if ($Request -and $Include) {
-        [string[]]$ReqProperty = @($Request[0].PSObject.Properties.Name).Where({ $_ -ne 'device_id' })
+        [string[]]$ReqProperty = @($Request[0].PSObject.Properties.Name).Where({$_ -ne 'device_id'})
         foreach ($i in ($Request.device_id | Get-FalconHost -EA 0 | Select-Object @($Include + 'device_id'))) {
-          @($ReqProperty).foreach{ Set-Property $i $_ @($Request).Where({ $_.device_id -eq $i.device_id }).$_ }
+          @($ReqProperty).foreach{ Set-Property $i $_ @($Request).Where({$_.device_id -eq $i.device_id}).$_ }
           $i
         }
       } else {

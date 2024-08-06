@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
   )
   begin {
     function Group-Selection ($Object,$GroupBy) {
-      ($Object | Group-Object $GroupBy).Where({ $_.Count -gt 1 -and $_.Name }).foreach{
+      ($Object | Group-Object $GroupBy).Where({$_.Count -gt 1 -and $_.Name}).foreach{
         $_.Group | Sort-Object last_seen | Select-Object -First ($_.Count - 1)
       }
     }

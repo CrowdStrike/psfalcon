@@ -171,7 +171,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
         if ($Script:Falcon.MemberCid) { $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)" }
         $Request = $Script:Falcon.Api.Invoke($Param)
         if ($Request.Result) {
-          $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
+          $Region = $Request.Result.Headers.GetEnumerator().Where({$_.Key -eq 'X-Cs-Region'}).Value
           $Redirect = switch ($Region) {
             # Update ApiClient hostname if redirected
             'eu-1' { 'https://api.eu-1.crowdstrike.com' }

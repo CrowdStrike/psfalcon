@@ -27,7 +27,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
   begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
   process {
     if ($Detection.behaviors -and $Detection.device) {
-      @($Detection.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
+      @($Detection.behaviors).Where({$_.tactic -match '^(Machine Learning|Malware)$'}).foreach{
         $Output.Add(([PSCustomObject]@{
           value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
           excluded_from = @('blocking')

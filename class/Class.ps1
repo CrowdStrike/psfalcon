@@ -94,7 +94,7 @@ class ApiClient {
           # Output response headers to verbose stream and warn when 'X-Api-Deprecation' appears
           $this.Verbose('ApiClient.Invoke',"$($Request.Result.Headers.GetEnumerator().foreach{
             @($_.Key,(@($_.Value) -join ', ')) -join '=' } -join ', ')")
-          @($Request.Result.Headers.GetEnumerator().Where({ $_.Key -match '^X-Api-Deprecation' })).foreach{
+          @($Request.Result.Headers.GetEnumerator().Where({$_.Key -match '^X-Api-Deprecation'})).foreach{
             Write-Warning ([string]$_.Key,[string]$_.Value -join ': ')
           }
         }
@@ -104,14 +104,14 @@ class ApiClient {
         }
         $RetryAfter = if ($HashCode -eq 429 -and $Param.Path -notmatch '/oauth2/token$') {
           # Capture 'X-Ratelimit-Retryafter' when present
-          $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Ratelimit-Retryafter' }).Value
+          $Request.Result.Headers.GetEnumerator().Where({$_.Key -eq 'X-Ratelimit-Retryafter'}).Value
         }
         if ($RetryAfter) {
           # Subtract current time from 'X-Ratelimit-Retryafter', warn, and retry when rate limited
           [int32]$Wait = (([System.DateTimeOffset]::FromUnixTimeSeconds($RetryAfter)).LocalDateTime -
             (Get-Date)).Seconds
-          $Limit = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Ratelimit-Limit' }).Value
-          $Remaining = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Ratelimit-Remaining' }).Value
+          $Limit = $Request.Result.Headers.GetEnumerator().Where({$_.Key -eq 'X-Ratelimit-Limit'}).Value
+          $Remaining = $Request.Result.Headers.GetEnumerator().Where({$_.Key -eq 'X-Ratelimit-Remaining'}).Value
           Write-Warning ('Rate limited for {0} second(s). [{1}, {2}]' -f $Wait,('Limit',$Limit -join '='),
             ('Remaining',$Remaining -join '='))
           Start-Sleep -Seconds $Wait

@@ -193,11 +193,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMalQuery
       Format = @{ Body = @{ root = @('yara_rule','options'); patterns = @('type','value') }}
     }
     $Aliases = (Get-Command $MyInvocation.MyCommand.Name).Parameters.GetEnumerator().Where({
-      $_.Value.Attributes.ParameterSetName -eq $PSCmdlet.ParameterSetName })
+      $_.Value.Attributes.ParameterSetName -eq $PSCmdlet.ParameterSetName})
     $Options = @{}
     foreach ($Opt in @('FilterFiletype','FilterMeta','Limit','MaxDate','MaxSize','MinDate','MinSize')) {
       if ($PSBoundParameters.$Opt) {
-        $Alias = $Aliases.Where({ $_.Key -eq $Opt }).Value.Aliases[0]
+        $Alias = $Aliases.Where({$_.Key -eq $Opt}).Value.Aliases[0]
         $Key = if ($Alias) { $Alias } else { $Opt.ToLower() }
         $Options[$Key] = $PSBoundParameters.$Opt
         [void]$PSBoundParameters.Remove($Opt)
