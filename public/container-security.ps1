@@ -7,11 +7,11 @@ Modify a Falcon Cloud Security container policy
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Id
 Image assessment policy identifier
-.PARAMETER Description
-
-.PARAMETER IsEnabled
-
 .PARAMETER Name
+Policy name
+.PARAMETER Description
+Policy description
+.PARAMETER IsEnabled
 
 .PARAMETER PolicyData
 
@@ -25,15 +25,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicy
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [string]$Id,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Mandatory,
-      Position=0)]
+      Position=1)]
     [string]$Name,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Mandatory,
-      Position=0)]
+      Position=2)]
     [string]$Description,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Position=3)]
     [Alias('is_enabled')]
     [boolean]$IsEnabled,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Position=4)]
     [Alias('policy_data')]
     [object]$PolicyData
   )
@@ -50,10 +50,10 @@ Requires 'Falcon Container Image: Write'.
 Image group identifier
 .PARAMETER Name
 Image group name
+.PARAMETER Condition
+One or more hashtables containing policy image group "prop" and "value" conditions
 .PARAMETER Description
 Image group description
-.PARAMETER PolicyGroupData
-
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicyGroup
 #>
@@ -63,19 +63,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicyGroup
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
     [string]$Id,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',
       ValueFromPipelineByPropertyName,Position=2)]
-    [string]$Description,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=3)]
     [string]$Name,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=4)]
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
     [Alias('policy_group_data')]
-    [object]$PolicyGroupData
+    [hashtable[]]$Condition,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [string]$Description
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','name','policy_group_data') }; Query = @('id') }
+    }
+  }
+  process {
+    if ($PSBoundParameters.Condition) {
+      $PSBoundParameters.Condition = @{ conditions = $PSBoundParameters.Condition }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Edit-FalconContainerRegistry {
 <#
@@ -1044,36 +1055,49 @@ function New-FalconContainerPolicyGroup {
 Create Falcon Cloud Security container policy image groups
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
-.PARAMETER PolicyId
-Container image policy identifier
 .PARAMETER Name
 Image group name
+.PARAMETER PolicyId
+Container image policy identifier
+.PARAMETER Condition
+One or more hashtables containing policy image group "prop" and "value" conditions
 .PARAMETER Description
 Image group description
-.PARAMETER PolicyGroupData
-
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicyGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Position=1)]
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Mandatory,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Mandatory,
+      Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Mandatory,
-      Position=2)]
-    [string]$Name,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Mandatory,
       Position=3)]
-    [string]$Description,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',
-      Position=4)]
     [Alias('policy_group_data')]
-    [object]$PolicyGroupData
+    [hashtable[]]$Condition,
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:post',Position=4)]
+    [string]$Description
+    
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','name','policy_id','policy_group_data') }}
+    }
+  }
+  process {
+    if ($PSBoundParameters.Condition) {
+      $PSBoundParameters.Condition = @{ conditions = $PSBoundParameters.Condition }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function New-FalconContainerRegistry {
 <#
