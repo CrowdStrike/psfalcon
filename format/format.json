@@ -1003,33 +1003,7 @@
         "id"
       ]
     },
-    "get": {},
-    "patch": {
-      "body": {
-        "root": [
-          "description",
-          "name"
-        ],
-        "policy_group_data": [
-          "conditions"
-        ]
-      },
-      "query": [
-        "id"
-      ]
-    },
-    "post": {
-      "body": {
-        "root": [
-          "description",
-          "name",
-          "policy_id"
-        ],
-        "policy_group_data": [
-          "conditions"
-        ]
-      }
-    }
+    "get": {}
   },
   "/container-security/entities/image-assessment-policy-precedence/v1": {
     "post": {
