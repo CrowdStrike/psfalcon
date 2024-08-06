@@ -841,7 +841,7 @@ Container registry identifier
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
-Maximum number of results per request
+Maximum number of results per request [default: 100]
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -863,6 +863,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerRegistry
     [Parameter(ParameterSetName='/container-security/queries/registries/v1:get',Position=1)]
     [string]$Sort,
     [Parameter(ParameterSetName='/container-security/queries/registries/v1:get',Position=2)]
+    [ValidateRange(1,5000)]
     [int]$Limit,
     [Parameter(ParameterSetName='/container-security/queries/registries/v1:get')]
     [int]$Offset,
@@ -883,6 +884,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerRegistry
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List)
+      $Param['Max'] = 100
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1086,11 +1088,9 @@ Registry type
 .PARAMETER Url
 URL used to log in to the registry
 .PARAMETER Credential
-A hashtable containing credentials to access the registry
+A hashtable containing username and password used to access the registry
 .PARAMETER UrlUniquenessKey
 Registry URL alias
-
-Available with Docker Hub, Google Artifact Registry, Google Container Registry, IBM Cloud, and Oracle
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerRegistry
 #>
@@ -1218,7 +1218,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerRegistry
     [string]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
