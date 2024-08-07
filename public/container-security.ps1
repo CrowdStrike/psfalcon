@@ -1365,6 +1365,8 @@ function Set-FalconContainerPolicyPrecedence {
 .SYNOPSIS
 Set Falcon Cloud Security container image assessment policy precedence
 .DESCRIPTION
+All policy identifiers must be supplied in order to define policy precedence.
+
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Id
 Policy identifiers in desired precedence order
