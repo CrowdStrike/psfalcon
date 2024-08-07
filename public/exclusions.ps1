@@ -1,9 +1,13 @@
 function Edit-FalconCertificateExclusion {
 <#
 .SYNOPSIS
-Updates existing Certificate Based Exclusions
+Modify a certificate-based Machine Learning exclusion
 .DESCRIPTION
 Requires 'Machine Learning exclusions: Write'.
+.PARAMETER Name
+
+.PARAMETER Description
+
 .PARAMETER AppliedGlobally
 
 .PARAMETER Certificate
@@ -12,33 +16,23 @@ Requires 'Machine Learning exclusions: Write'.
 
 .PARAMETER Comment
 Audit log comment
-.PARAMETER CreatedBy
-
-.PARAMETER CreatedOn
-
-.PARAMETER Description
-
 .PARAMETER HostGroup
-
-.PARAMETER Id
-XXX identifier
-.PARAMETER ModifiedBy
-
-.PARAMETER ModifiedOn
-
-.PARAMETER Name
 
 .PARAMETER Status
 
+.PARAMETER Id
+XXX identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
 #>
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [string]$Id,
+    
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [string]$Description,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
     [Alias('applied_globally')]
     [boolean]$AppliedGlobally,
@@ -50,26 +44,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
     [string]$Comment,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [Alias('created_by')]
-    [string]$CreatedBy,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [Alias('created_on')]
-    [datetime]$CreatedOn,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [string]$Description,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
     [Alias('host_groups')]
     [string[]]$HostGroup,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [Alias('modified_by')]
-    [string]$ModifiedBy,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [Alias('modified_on')]
-    [datetime]$ModifiedOn,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [string]$Name,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [string]$Status
+    [string]$Status,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -77,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
 function Get-FalconCertificate {
 <#
 .SYNOPSIS
-Retrieves certificate signing information for a file
+Retrieve certificate signing information for a file
 .DESCRIPTION
 Requires 'Machine Learning exclusions: Read'.
 .PARAMETER Id
@@ -98,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCertificate
 function Get-FalconCertificateExclusion {
 <#
 .SYNOPSIS
-Search for certificate-based exclusions
+Search for certificate-based Machine Learning exclusions
 .DESCRIPTION
 Requires 'Machine Learning exclusions: Read'.
 .PARAMETER Id
@@ -162,7 +143,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCertificateExclusion
 function New-FalconCertificateExclusion {
 <#
 .SYNOPSIS
-Create new Certificate Based Exclusions.
+Create a certificate-based Machine Learning exclusion
 .DESCRIPTION
 Requires 'Machine Learning exclusions: Write'.
 .PARAMETER AppliedGlobally
@@ -173,17 +154,10 @@ Requires 'Machine Learning exclusions: Write'.
 
 .PARAMETER Comment
 Audit log comment
-.PARAMETER CreatedBy
-
-.PARAMETER CreatedOn
 
 .PARAMETER Description
 
 .PARAMETER HostGroups
-
-.PARAMETER ModifiedBy
-
-.PARAMETER ModifiedOn
 
 .PARAMETER Name
 
@@ -233,25 +207,25 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCertificateExclusion
 function Remove-FalconCertificateExclusion {
 <#
 .SYNOPSIS
-Delete the exclusions by id
+Remove certificate-based Machine Learning exclusions
 .DESCRIPTION
 Requires 'Machine Learning exclusions: Write'.
-.PARAMETER Id
-Exclusion identifier
 .PARAMETER Comment
 Audit log comment
+.PARAMETER Id
+Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCertificateExclusion
 #>
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:delete',
     SupportsShouldProcess)]
   param(
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:delete',Position=1)]
+    [string]$Comment,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:delete',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [Alias('ids')]
-    [string[]]$Id,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:delete',Position=0)]
-    [string]$Comment
+    [string[]]$Id
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
