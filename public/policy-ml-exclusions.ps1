@@ -79,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
       Position=4)]
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=4)]
+      ValueFromPipelineByPropertyName,Position=5)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
