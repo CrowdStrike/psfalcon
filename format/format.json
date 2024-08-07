@@ -960,21 +960,6 @@
       ]
     },
     "get": {},
-    "patch": {
-      "body": {
-        "root": [
-          "description",
-          "is_enabled",
-          "name"
-        ],
-        "policy_data": [
-          "rules"
-        ]
-      },
-      "query": [
-        "id"
-      ]
-    },
     "post": {
       "body": {
         "root": [
@@ -985,17 +970,7 @@
     }
   },
   "/container-security/entities/image-assessment-policy-exclusions/v1": {
-    "get": {},
-    "post": {
-      "body": {
-        "conditions": [
-          "description",
-          "prop",
-          "ttl",
-          "value"
-        ]
-      }
-    }
+    "get": {}
   },
   "/container-security/entities/image-assessment-policy-groups/v1": {
     "delete": {
@@ -1043,21 +1018,6 @@
     "delete": {
       "query": [
         "ids"
-      ]
-    },
-    "patch": {
-      "body": {
-        "credential": [
-          "details",
-          "type"
-        ],
-        "root": [
-          "state",
-          "user_defined_alias"
-        ]
-      },
-      "query": [
-        "id"
       ]
     }
   },
