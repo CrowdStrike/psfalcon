@@ -218,10 +218,6 @@
     'Invoke-FalconIdentityGraph'
     'Get-FalconIdentityHost'
 
-    # idp-entities-explorer
-    'Edit-FalconIdentityEntity'
-    'Get-FalconIdentityEntity'
-
     # image-assessment
     'Get-FalconContainerVulnerability'
 

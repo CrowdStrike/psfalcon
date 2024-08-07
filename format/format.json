@@ -2583,35 +2583,6 @@
       ]
     }
   },
-  "/idp-entities-explorer/entities/entities/v1": {
-    "patch": {
-      "body": {
-        "root": [
-          "authorizerEntityIds",
-          "classifications",
-          "ids",
-          "operation"
-        ]
-      }
-    },
-    "post": {
-      "body": {
-        "root": [
-          "ids"
-        ]
-      }
-    }
-  },
-  "/idp-entities-explorer/queries/entities/v1": {
-    "get": {
-      "query": [
-        "offset",
-        "limit",
-        "sort",
-        "filter"
-      ]
-    }
-  },
   "/image-assessment/combined/vulnerability-lookups/v1": {
     "post": {
       "body": {
