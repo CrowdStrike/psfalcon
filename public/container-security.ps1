@@ -11,10 +11,10 @@ Image assessment policy identifier
 Policy name
 .PARAMETER Enabled
 Policy enablement
-.PARAMETER PolicyData
-
 .PARAMETER Description
 Policy description
+.PARAMETER Rule
+One or more hashtables containing rule "action" and "policy_rules_data"
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicy
 #>
@@ -28,20 +28,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicy
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
     [string]$Name,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',
+    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=3)]
     [Alias('is_enabled')]
     [boolean]$Enabled,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',
       ValueFromPipelineByPropertyName,Position=4)]
-    [Alias('policy_data')]
-    [object]$PolicyData,
+    [string]$Description,
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:patch',
       ValueFromPipelineByPropertyName,Position=5)]
-    [string]$Description
+    [Alias('policy_data')]
+    [hashtable[]]$Rule
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','is_enabled','name','policy_data') }; Query = @('id') }
+    }
+  }
+  process {
+    if ($PSBoundParameters.Rule) {
+      $PSBoundParameters.Rule = @{ rules = [PSCustomObject[]]$PSBoundParameters.Rule }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Edit-FalconContainerPolicyGroup {
 <#
@@ -1023,14 +1034,8 @@ function New-FalconContainerPolicyExclusion {
 Create Falcon Cloud Security container policy exclusions
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
-.PARAMETER Prop
-
-.PARAMETER Value
-
-.PARAMETER Description
-
-.PARAMETER Ttl
-
+.PARAMETER Condition
+One or more hashtables containing "prop", "value", "description", and "ttl" values
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicyExclusion
 #>
@@ -1038,19 +1043,17 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicyExclusion
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
-      Mandatory,Position=1)]
-    [string]$Prop,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
-      Mandatory,Position=2)]
-    [string[]]$Value,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
-      Position=3)]
-    [string]$Description,
-    [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:post',
-      Position=4)]
-    [double]$Ttl
+      Mandatory,ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('conditions')]
+    [hashtable[]]$Condition
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('conditions') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerPolicyGroup {
