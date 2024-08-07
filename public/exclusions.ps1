@@ -5,23 +5,23 @@ Modify a certificate-based Machine Learning exclusion
 .DESCRIPTION
 Requires 'Machine Learning exclusions: Write'.
 .PARAMETER Name
-
+Exclusion name
 .PARAMETER Description
+Exclusion description
+.PARAMETER Status
+Exclusion status
+.PARAMETER Certificate
 
 .PARAMETER AppliedGlobally
 
-.PARAMETER Certificate
-
-.PARAMETER ChildrenCid
-
+.PARAMETER Cid
+Child CIDs, used when in a Flight Control environment
+.PARAMETER GroupId
+Host group identifier
 .PARAMETER Comment
 Audit log comment
-.PARAMETER HostGroup
-
-.PARAMETER Status
-
 .PARAMETER Id
-XXX identifier
+Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
 #>
@@ -33,20 +33,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
     [string]$Description,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [hashtable]$Certificate,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
     [Alias('applied_globally')]
     [boolean]$AppliedGlobally,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [object]$Certificate,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('children_cids')]
-    [string[]]$ChildrenCid,
+    [string[]]$Cid,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('host_groups')]
+    [string[]]$GroupId,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
     [string]$Comment,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [Alias('host_groups')]
-    [string[]]$HostGroup,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [string]$Status,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [string]$Id
@@ -145,60 +147,49 @@ function New-FalconCertificateExclusion {
 Create a certificate-based Machine Learning exclusion
 .DESCRIPTION
 Requires 'Machine Learning exclusions: Write'.
-.PARAMETER AppliedGlobally
-
+.PARAMETER Name
+Exclusion name
+.PARAMETER Description
+Exclusion description
+.PARAMETER Status
+Exclusion status
 .PARAMETER Certificate
 
-.PARAMETER ChildrenCid
+.PARAMETER AppliedGlobally
 
+.PARAMETER Cid
+Child CIDs, used when in a Flight Control environment
+.PARAMETER GroupId
+Host group identifier
 .PARAMETER Comment
 Audit log comment
-
-.PARAMETER Description
-
-.PARAMETER HostGroups
-
-.PARAMETER Name
-
-.PARAMETER Status
-
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCertificateExclusion
 #>
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
     SupportsShouldProcess)]
   param(
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Mandatory,Position=0)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [hashtable]$Certificate,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
     [Alias('applied_globally')]
     [boolean]$AppliedGlobally,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [object]$Certificate,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('children_cids')]
-    [string[]]$ChildrenCid,
+    [string[]]$Cid,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [string]$Comment,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [Alias('created_by')]
-    [string]$CreatedBy,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [Alias('created_on')]
-    [datetime]$CreatedOn,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [string]$Description,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('host_groups')]
-    [string[]]$HostGroups,
+    [string[]]$GroupId,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [Alias('modified_by')]
-    [string]$ModifiedBy,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [Alias('modified_on')]
-    [datetime]$ModifiedOn,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Mandatory,Position=0)]
-    [string]$Name,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [string]$Status
+    [string]$Comment
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
