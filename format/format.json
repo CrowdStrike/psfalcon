@@ -1455,13 +1455,9 @@
           "certificate",
           "children_cids",
           "comment",
-          "created_by",
-          "created_on",
           "description",
           "host_groups",
           "id",
-          "modified_by",
-          "modified_on",
           "name",
           "status"
         ]
@@ -1474,12 +1470,8 @@
           "certificate",
           "children_cids",
           "comment",
-          "created_by",
-          "created_on",
           "description",
           "host_groups",
-          "modified_by",
-          "modified_on",
           "name",
           "status"
         ]
