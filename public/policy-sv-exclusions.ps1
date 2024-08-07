@@ -8,8 +8,8 @@ Requires 'Sensor Visibility Exclusions: Write'.
 RegEx pattern value
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
-.PARAMETER IsDescendantProcess
-
+.PARAMETER DescendantProcess
+Apply to descendant processes
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=3)]
     [Alias('is_descendant_process')]
-    [boolean]$IsDescendantProcess,
+    [boolean]$DescendantProcess,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=4)]
     [string]$Comment,
@@ -128,8 +128,8 @@ Requires 'Sensor Visibility Exclusions: Write'.
 RegEx pattern value
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
-.PARAMETER IsDescendentProcess
-
+.PARAMETER DescendantProcess
+Apply to descendant processes
 .PARAMETER Comment
 Audit log comment
 .LINK
@@ -147,7 +147,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
       Position=3)]
     [Alias('is_descendant_process')]
-    [boolean]$IsDescendantProcess,
+    [boolean]$DescendantProcess,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
       Position=4)]
     [string]$Comment
