@@ -34,7 +34,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
       Position=4)]
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
