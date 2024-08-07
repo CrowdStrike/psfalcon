@@ -53,8 +53,8 @@ Requires 'Machine Learning Exclusions: Write'.
 RegEx pattern value
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
-.PARAMETER IsDescendantProcess
-
+.PARAMETER DescendantProcess
+Apply to descendant processes
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -74,7 +74,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=3)]
     [Alias('is_descendant_process')]
-    [boolean]$IsDescendantProcess,
+    [boolean]$DescendantProcess,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=4)]
     [string]$Comment,
