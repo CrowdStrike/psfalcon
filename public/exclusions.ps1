@@ -28,7 +28,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
     SupportsShouldProcess)]
   param(
-    
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
     [string]$Name,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
