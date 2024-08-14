@@ -290,14 +290,6 @@
           "service_account"
         ]
       }
-    },
-    "post": {
-      "body": {
-        "resources": [
-          "parent_id",
-          "parent_type"
-        ]
-      }
     }
   },
   "/cloud-connect-cspm-gcp/entities/account/v2": {
