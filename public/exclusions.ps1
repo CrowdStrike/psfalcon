@@ -11,11 +11,11 @@ Exclusion description
 .PARAMETER Status
 Exclusion status
 .PARAMETER Certificate
-
+Apply to all hosts in environment
 .PARAMETER AppliedGlobally
-
-.PARAMETER Cid
-Child CIDs, used when in a Flight Control environment
+Exclusion should be applied to all hosts
+.PARAMETER MemberCid
+Member CIDs, used when in a Flight Control environment
 .PARAMETER GroupId
 Host group identifier
 .PARAMETER Comment
@@ -28,33 +28,47 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
     [string]$Description,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
     [string]$Status,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
-    [hashtable]$Certificate,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [object]$Certificate,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=5)]
     [Alias('applied_globally')]
     [boolean]$AppliedGlobally,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=6)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('children_cids')]
     [string[]]$Cid,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=7)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('host_groups')]
     [string[]]$GroupId,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',
+      ValueFromPipelineByPropertyName,Position=8)]
     [string]$Comment,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=9)]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Certificate) {
+      # Force required properties in 'certificate'
+      $PSBoundParameters.Certificate = Select-CertificateProperty $PSBoundParameters.Certificate
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconCertificate {
 <#
@@ -154,11 +168,11 @@ Exclusion description
 .PARAMETER Status
 Exclusion status
 .PARAMETER Certificate
-
+Certificate detail
 .PARAMETER AppliedGlobally
-
-.PARAMETER Cid
-Child CIDs, used when in a Flight Control environment
+Apply to all hosts in environment
+.PARAMETER MemberCid
+Member CIDs, used when in a Flight Control environment
 .PARAMETER GroupId
 Host group identifier
 .PARAMETER Comment
@@ -169,30 +183,43 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCertificateExclusion
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Mandatory,Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Mandatory,Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=2)]
     [string]$Description,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=3)]
     [string]$Status,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
-    [hashtable]$Certificate,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [object]$Certificate,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=5)]
     [Alias('applied_globally')]
     [boolean]$AppliedGlobally,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=6)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('children_cids')]
-    [string[]]$Cid,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [string[]]$MemberCid,
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=7)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('host_groups')]
     [string[]]$GroupId,
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Position=0)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
+      ValueFromPipelineByPropertyName,Position=8)]
     [string]$Comment
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Certificate) {
+      # Force required properties in 'certificate'
+      $PSBoundParameters.Certificate = Select-CertificateProperty $PSBoundParameters.Certificate
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Remove-FalconCertificateExclusion {
 <#

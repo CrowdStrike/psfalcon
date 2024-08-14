@@ -885,6 +885,27 @@ function Remove-EmptyValue {
     }
   }
 }
+function Select-CertificateProperty {
+  [CmdletBinding()]
+  [OutputType([PSCustomObject])]
+  param(
+    [Parameter(Mandatory,Position=1)]
+    [object]$Object
+  )
+  try {
+    # Select required fields when submitting a certificate for a certificate-based exclusion
+    [string[]]$Select = 'issuer','serial','subject','thumbprint','valid_from','valid_to'
+    $Output = [PSCustomObject]$Object | Select-Object $Select
+    if ($Output) {
+      @($Select).foreach{
+        if (!$Output.$_ -or $null -eq $Output.$_) { throw "Certificate missing required property '$_'." }
+      }
+      $Output
+    }
+  } catch {
+    throw $_
+  }
+}
 function Select-Property {
   [CmdletBinding()]
   param(
