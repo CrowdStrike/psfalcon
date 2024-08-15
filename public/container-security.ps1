@@ -1002,6 +1002,43 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function New-FalconContainerImage {
+<#
+.SYNOPSIS
+Create a Falcon Cloud Security base container image
+.DESCRIPTION
+Requires 'Falcon Container Image: Write'.
+.PARAMETER ImageId
+Container image identifier
+.PARAMETER ImageDigest
+Container image digest
+.PARAMETER Registry
+Container registry
+.PARAMETER Repository
+Container repository
+.PARAMETER Tag
+Container tag
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerImage
+#>
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/base-images/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/container-security/entities/base-images/v1:post',Mandatory,Position=1)]
+    [Alias('image_id')]
+    [string]$ImageId,
+    [Parameter(ParameterSetName='/container-security/entities/base-images/v1:post',Mandatory,Position=2)]
+    [Alias('image_digest')]
+    [string]$ImageDigest,
+    [Parameter(ParameterSetName='/container-security/entities/base-images/v1:post',Mandatory,Position=3)]
+    [string]$Registry,
+    [Parameter(ParameterSetName='/container-security/entities/base-images/v1:post',Mandatory,Position=4)]
+    [string]$Repository,
+    [Parameter(ParameterSetName='/container-security/entities/base-images/v1:post',Mandatory,Position=5)]
+    [string]$Tag
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function New-FalconContainerPolicy {
 <#
 .SYNOPSIS
@@ -1157,7 +1194,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerRegistry
 function Remove-FalconContainerImage {
 <#
 .SYNOPSIS
-Remove a Falcon container image
+Remove a Falcon Cloud Security base container image
 .DESCRIPTION
 Requires 'Falcon Container Image: Write'.
 .PARAMETER Id
@@ -1165,24 +1202,23 @@ Container image identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerImage
 #>
-  [CmdletBinding(DefaultParameterSetName='/images/{id}:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/container-security/entities/base-images/v1:delete',
+    SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/images/{id}:delete',Mandatory,ValueFromPipelineByPropertyName,
-      ValueFromPipeline,Position=1)]
-    [object]$Id
+    [Parameter(ParameterSetName='/container-security/entities/base-images/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; HostUrl = Get-ContainerUrl }}
-  process {
-    $PSBoundParameters.Id = switch ($PSBoundParameters.Id) {
-      { $_.ImageInfo.id } { $_.ImageInfo.id }
-      { $_ -is [string] } { $_ }
-    }
-    if ($PSBoundParameters.Id -notmatch '^[A-Fa-f0-9]{64}$') {
-      throw "'$($PSBoundParameters.Id)' is not a valid image identifier."
-    } else {
-      $Endpoint = $PSCmdlet.ParameterSetName -replace '{id}',$PSBoundParameters.Id
-      [void]$PSBoundParameters.Remove('Id')
-      Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
 }

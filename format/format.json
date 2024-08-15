@@ -938,6 +938,24 @@
       ]
     }
   },
+  "/container-security/entities/base-images/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "post": {
+      "body": {
+        "base_images": [
+          "image_digest",
+          "image_id",
+          "registry",
+          "repository",
+          "tag"
+        ]
+      }
+    }
+  },
   "/container-security/entities/drift-indicators/v1": {
     "get": {
       "query": [

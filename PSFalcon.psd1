@@ -80,6 +80,7 @@
     'Get-FalconContainerRegistry'
     'Get-FalconContainerSensor'
     'Get-FalconContainerVulnerability'
+    'New-FalconContainerImage'
     'New-FalconContainerPolicy'
     'New-FalconContainerPolicyExclusion'
     'New-FalconContainerPolicyGroup'
