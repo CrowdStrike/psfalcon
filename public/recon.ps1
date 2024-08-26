@@ -98,7 +98,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
     [Alias('Array')]
     [object[]]$InputObject,
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=1)]
-    [ValidatePattern('^\w{76}$')]
     [string]$Id,
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:patch',Mandatory,Position=2)]
     [ValidateSet('new','in-progress','closed-false-positive','closed-true-positive',IgnoreCase=$false)]
@@ -365,7 +364,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconNotification
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Parameter(ParameterSetName='/recon/entities/notifications-detailed-translated/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^\w{76}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/recon/queries/notifications/v1:get',Position=1)]
@@ -442,7 +440,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRecord
   param(
     [Parameter(ParameterSetName='/recon/entities/notifications-exposed-data-records/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^\w{76}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/recon/queries/notifications-exposed-data-records/v1:get',Position=1)]
@@ -905,7 +902,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReconNotification
   param(
     [Parameter(ParameterSetName='/recon/entities/notifications/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [ValidatePattern('^\w{76}$')]
     [Alias('ids')]
     [string[]]$Id
   )
