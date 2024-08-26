@@ -458,7 +458,6 @@
     'Show-FalconModule'
 
     # psf-policies
-    'Compare-FalconPreventionPhase'
     'Copy-FalconDeviceControlPolicy'
     'Copy-FalconFirewallPolicy'
     'Copy-FalconPreventionPolicy'
