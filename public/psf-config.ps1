@@ -1127,10 +1127,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             @($Policy.settings | Edit-FalconFirewallSetting).foreach{
               # Apply FirewallSetting
               Set-Property $Policy settings $Policy.settings
-              @('platform_id','default_inbound','default_outbound','enforce','test_mode','local_logging',
-              'rule_group_ids').foreach{
-                # Add individual setting values to output
-                Add-Result Modified $Policy $Pair.Key $_ $null $Policy.settings.$_
+              @('platform_id','default_inbound','default_outbound','enforce','test_mode','local_logging').foreach{
+                if ($Cid.settings.$_ -ne $Policy.settings.$_) {
+                  # Add individual modified settings to output
+                  Add-Result Modified $Policy $Pair.Key $_ $Cid.settings.$_ $Policy.settings.$_
+                }
+              }
+              if (Compare-Object $Cid.settings.rule_group_ids $Policy.settings.rule_group_ids) {
+                # Add 'rule_group_ids' to output when modified
+                Add-Result Modified $Policy $Pair.Key rule_group_ids $Cid.settings.rule_group_ids (
+                  $Policy.settings.rule_group_ids)
               }
             }
           }
