@@ -349,7 +349,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
     }
     function Compare-Setting ([object]$New,[object]$Old,[string]$Type,[string]$Property,[switch]$Result) {
-      if ($Type -eq 'SensorUpdatePolicy') {
+      if ($Type -eq 'DeviceControlPolicy') {
+        [string[]]$Select = if ($Old) {
+          foreach ($i in @($New.settings.PSObject.Properties)) {
+            if ($i.Name -match '^(enforcement_mode|end_user_notification|enhanced_file_metadata)$') {
+              if ($i.Value -ne $Old.settings.($i.Name)) {
+                if ($Result) {
+                  # Capture result
+                  Add-Result Modified $New $Type $i.Name $Old.settings.($i.Name) $i.Value
+                } else {
+                  # Output modified property name
+                  $i.Name
+                }
+              }
+            }
+          }
+        }
+        # Output settings to be modified by property name
+        if ($Select) { $New.settings | Select-Object $Select }
+      } elseif ($Type -eq 'SensorUpdatePolicy') {
         [string[]]$Select = if ($Old) {
           foreach ($i in @($New.settings.PSObject.Properties)) {
             # Check SensorUpdatePolicy settings sub-properties for changes
@@ -435,8 +453,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($Property -eq 'field_values') {
           foreach ($Name in $New.$Property.name) {
             # Track 'field_values' for IoaRule for each modified value
-            $OldValue = ($Old.$Property | Where-Object { $_.name -eq $Name }).values | ConvertTo-Json -Compress
-            $NewValue = ($New.$Property | Where-Object { $_.name -eq $Name }).values | ConvertTo-Json -Compress
+            $OldValue = @($Old.$Property).Where({$_.name -eq $Name}).values | ConvertTo-Json -Compress
+            $NewValue = @($New.$Property).Where({$_.name -eq $Name}).values | ConvertTo-Json -Compress
             if ($NewValue -ne $OldValue) { Add-Result Modified $New $Type $Name $OldValue $NewValue }
           }
         } elseif ($Property) {
@@ -572,12 +590,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       } else {
         # Assign group(s) to target object
         [string]$Invoke = if ($Property -eq 'ioa_rule_groups') { 'add-rule-group' } else { 'add-host-group' }
-        $Req = foreach ($Id in $Object.$Property) {
-          if ($Cid.$Property -notcontains $Id) { @(Invoke-PolicyAction $Type $Invoke $Object.id $Id).foreach{ $_ }}
+        [object[]]$Req = foreach ($Id in $Object.$Property) {
+          if ($Cid.$Property -notcontains $Id) {
+            @(Invoke-PolicyAction $Type $Invoke $Object.id $Id).foreach{
+              # Output entire result if object is returned, otherwise return '$Property.$Id'
+              if ($_.$Property) { $_ } else { $Id }
+            }
+          }
         }
         if ($Req) {
-          # Capture result
-          Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') ($Req[-1].$Property.id -join ',')
+          if ($Req[-1].$Property.id) {
+            # Capture result if entire object is returned
+            Add-Result Modified $Req[-1] $Type $Property ($Cid.$Property -join ',') (
+              $Req[-1].$Property.id -join ',')
+          } else {
+            # Combine '$Property.$Id' values
+            Add-Result Modified $Object $Type $Property ($Cid.$Property -join ',') ($Req -join ',')
+          }
         }
       }
     }
@@ -1104,24 +1133,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           $_.platform_name -eq $Policy.platform_name}).new_id
         [object]$Cid = @($Config.($Pair.Key).cid).Where({$_.id -eq $Policy.id})
         if ($Policy.id -and $Pair.Key -eq 'FirewallPolicy') {
+          # Check 'FirewallPolicy' for changes
           if ($Policy.settings.policy_id) { $Policy.settings.policy_id = $Policy.id }
           foreach ($Id in $Policy.settings.rule_group_ids) {
-            [object]$Group = $Config.Ids.FirewallGroup | Where-Object { $_.old_id -eq $Id }
+            [object]$Group = @($Config.Ids.FirewallGroup).Where({$_.old_id -eq $Id})
             [string[]]$Policy.settings.rule_group_ids = if ($Group) {
               # Update 'rule_group_ids' with new id values
-              Write-Log 'Import-FalconConfig' ('Updated FirewallGroup "{0}" to "{1}" under FirewallPolicy "{2}"' -f
-                $Id,$Group.id,$Policy.id)
+              Write-Log 'Import-FalconConfig' ('Updated FirewallGroup "{0}" to "{1}" under {2} "{3}"' -f
+                $Id,$Group.id,$Pair.Key,$Policy.id)
               $Policy.settings.rule_group_ids -replace $Id,$Group.new_id
             } else {
               # Remove unmatched 'rule_group_ids' values
-              Write-Log 'Import-FalconConfig' ('Removed unmatched FirewallGroup "{0}" from FirewallPolicy "{1}"' -f
-                $Id,$Policy.id)
+              Write-Log 'Import-FalconConfig' ('Removed unmatched FirewallGroup "{0}" from {1} "{2}"' -f
+                $Id,$Pair.Key,$Policy.id)
               $Policy.settings.rule_group_ids -replace $Id,$null
             }
-            if (!$Policy.settings.rule_group_ids) {
-              # Remove empty 'rule_group_ids' value before submission of 'settings'
-              [void]$Policy.settings.PSObject.Properties.Remove('rule_group_ids')
-            }
+          }
+          if (!$Policy.settings.rule_group_ids) {
+            # Remove empty 'rule_group_ids' value before submission of 'settings'
+            [void]$Policy.settings.PSObject.Properties.Remove('rule_group_ids')
           }
           if ($Policy.settings) {
             @($Policy.settings | Edit-FalconFirewallSetting).foreach{
