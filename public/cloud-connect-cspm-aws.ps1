@@ -19,13 +19,13 @@ Region where remediation occurs
 .PARAMETER RemediationTouAccepted
 Remediation terms-of-use acceptance date
 .PARAMETER Environment
-
+Environment
 .PARAMETER TargetOu
-
+Target OU
 .PARAMETER DspmEnabled
-
+DSPM enabled
 .PARAMETER DspmRole
-
+DSPM role ARN
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAwsAccount
 #>
@@ -214,11 +214,11 @@ Enable behavior assessment for account
 .PARAMETER SensorManagementEnabled
 Enable sensor management for account
 .PARAMETER TargetOu
-
+Target OU
 .PARAMETER DspmEnabled
-
+DSPM enabled
 .PARAMETER DspmRole
-
+DSPM role ARN
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAwsAccount
 #>
