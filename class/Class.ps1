@@ -72,7 +72,7 @@ class ApiClient {
         # Send request
         $this.Client.SendAsync($Message,[System.Net.Http.HttpCompletionOption]::ResponseHeadersRead)
       }
-      if ($Param.Outfile -and $Request) {
+      if ($Request -and $Param.Outfile) {
         try {
           # Download file to provided 'OutFile' path and display file information when successful
           $LocalPath = $this.Path($Param.Outfile)
@@ -86,10 +86,10 @@ class ApiClient {
             if ($this.Client.DefaultRequestHeaders.$_) { [void]($this.Client.DefaultRequestHeaders.Remove($_)) }
           }
         }
-      } elseif ($Request.Result.StatusCode) {
+      } elseif ($Request) {
         # Output HTTP response code to verbose stream
-        $HashCode = $Request.Result.StatusCode.GetHashCode()
-        $this.Verbose('ApiClient.Invoke',($HashCode,$Request.Result.StatusCode -join ': '))
+        $HashCode = if ($Request.Result.StatusCode) { $Request.Result.StatusCode.GetHashCode() }
+        if ($HashCode) { $this.Verbose('ApiClient.Invoke',($HashCode,$Request.Result.StatusCode -join ': ')) }
         if ($Request.Result.Headers) {
           # Output response headers to verbose stream and warn when 'X-Api-Deprecation' appears
           $this.Verbose('ApiClient.Invoke',"$($Request.Result.Headers.GetEnumerator().foreach{
