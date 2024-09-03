@@ -197,7 +197,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
               [string]$Value = if ($Name -eq 'image_name' -and $Rule.($Map.$Name) -notmatch '\.\w+$') {
                 # Convert directory paths to glob syntax with a single asterisk
                 [string]$Glob = $Rule.($Map.$Name) -replace '^\w:\\',$null
-                if ($Glob -match '\\$') { $Glob,'*' -join $null } else { $Glob,'*' -join '\' }
+                if ($Glob -match '\\$') { [string]::Concat($Glob,'*') } else { $Glob,'*' -join '\' }
               } else {
                 $Rule.($Map.$Name)
               }

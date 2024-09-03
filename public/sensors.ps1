@@ -11,7 +11,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCcid
 #>
   [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/ccid/v1:get',SupportsShouldProcess)]
   param()
-  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Get-FalconInstaller {
 <#
@@ -38,43 +38,47 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
 #>
-  [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v1:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v2:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/sensors/entities/installers/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/sensors/entities/installers/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v1:get',Position=1)]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=1)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v1:get',Position=2)]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=2)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=2)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v1:get',Position=3)]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=3)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=3)]
     [ValidateRange(1,500)]
     [int32]$Limit,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v1:get')]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v1:get')]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get')]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get')]
     [int32]$Offset,
-    [Parameter(ParameterSetName='/sensors/combined/installers/v1:get',Mandatory)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Mandatory)]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v1:get')]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v1:get')]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get')]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v1:get')]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get')]
     [switch]$Total
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconStream {
@@ -116,18 +120,18 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconInstaller
 #>
-  [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v1:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v2:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/sensors/entities/download-installer/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
     [Alias('name')]
     [string]$Path,
-    [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/sensors/entities/download-installer/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
     [Alias('sha256')]
     [string]$Id,
-    [Parameter(ParameterSetName='/sensors/entities/download-installer/v1:get')]
+    [Parameter(ParameterSetName='/sensors/entities/download-installer/v2:get')]
     [switch]$Force
   )
   begin {

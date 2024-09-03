@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
     [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -59,10 +59,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Invoke-FalconQuarantineAction {
@@ -103,17 +107,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
     [Parameter(ParameterSetName='/quarantine/entities/quarantined-files/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Test-FalconQuarantineAction {

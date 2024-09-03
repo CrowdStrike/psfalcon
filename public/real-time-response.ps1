@@ -25,7 +25,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconAdminCommand
     [int32]$SequenceId,
     [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -61,7 +61,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconCommand
     [int32]$SequenceId,
     [Parameter(ParameterSetName='/real-time-response/entities/command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -91,7 +91,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:get',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:get',Position=1)]
@@ -99,7 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconGetFile
     [int32]$Timeout,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_get_cmd_req_id')]
     [string]$BatchGetCmdReqId
   )
@@ -152,7 +152,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Confirm-FalconResponderCommand
     [int32]$SequenceId,
     [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -277,10 +277,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconLibraryScript
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconPutFile {
@@ -313,7 +317,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
     [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -341,7 +345,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $Param['Max'] = 200
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -376,7 +381,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -404,7 +409,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -452,8 +457,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Parameter(ParameterSetName='/real-time-response/entities/sessions/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=1)]
     [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=1)]
@@ -489,10 +494,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Invoke-FalconAdminCommand {
@@ -557,12 +566,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-admin-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/entities/admin-command/v1:post')]
@@ -589,12 +598,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
         Wait = $PSBoundParameters.Wait
       }
       if ($Timeout) { $GetParam['Timeout'] = $PSBoundParameters.Timeout }
-      if ($List) { $GetParam['OptionalHostId'] = @($List | Select-Object -Unique) }
+      if ($List) { $GetParam['OptionalHostId'] = @($List) }
       Invoke-FalconBatchGet @GetParam
     } else {
       # Verify 'Endpoint' using BatchId/SessionId
       [string]$Endpoint = if ($PSBoundParameters.BatchId) {
-        if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
+        if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
         '/real-time-response/combined/batch-admin-command/v1:post'
       } elseif ($PSBoundParameters.SessionId) {
         '/real-time-response/entities/admin-command/v1:post'
@@ -602,7 +611,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
       if ($Endpoint) {
         if ($PSBoundParameters.HostTimeout) {
           # Add 's' to denote seconds for 'host_timeout_duration'
-          $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+          $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
         }
         $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
           # Join 'Command' and 'Argument' into 'command_string'
@@ -677,7 +686,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-get-command/v1:post')]
@@ -689,10 +698,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
   }
   process { if ($OptionalHostId) { @($OptionalHostId).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
     if ($PSBoundParameters.HostTimeout) {
       # Add 's' to denote seconds for 'host_timeout_duration'
-      $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+      $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
     }
     foreach ($Request in (Invoke-Falcon @Param -UserInput $PSBoundParameters)) {
       if ($Request.batch_get_cmd_req_id -and $Request.combined.resources) {
@@ -705,12 +714,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconBatchGet
             $_
           }
         }
-        @($Request.hosts).Where({ $_.errors }).foreach{
+        @($Request.hosts).Where({$_.errors}).foreach{
           # Write warning for hosts in batch that produced errors
           $PSCmdlet.WriteWarning(('[Invoke-FalconBatchGet]',($_.errors.code,
             $_.errors.message -join ': '),('[aid: {0}]' -f $_.aid) -join ' '))
         }
-        @($Request.hosts).Where({ $_.stderr }).foreach{
+        @($Request.hosts).Where({$_.stderr}).foreach{
           # Write warning for hosts in batch that produced 'stderr'
           $PSCmdlet.WriteWarning(('[Invoke-FalconBatchGet]',$_.stderr,
             ('[aid: {0}' -f $_.aid) -join ' '))
@@ -778,12 +787,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/entities/command/v1:post')]
@@ -798,7 +807,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
   end {
     # Verify 'Endpoint' using BatchId/SessionId
     $Endpoint = if ($PSBoundParameters.BatchId) {
-      if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
+      if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
       '/real-time-response/combined/batch-command/v1:post'
     } else {
       '/real-time-response/entities/command/v1:post'
@@ -806,7 +815,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
     if ($Endpoint) {
       if ($PSBoundParameters.HostTimeout) {
         # Add 's' to denote seconds for 'host_timeout_duration'
-        $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+        $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
       }
       $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
         # Join 'Command' and 'Argument' into 'command_string'
@@ -898,12 +907,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
     [int32]$HostTimeout,
     [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-active-responder-command/v1:post',
       Mandatory,ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId,
     [Parameter(ParameterSetName='/real-time-response/entities/active-responder-command/v1:post')]
@@ -924,12 +933,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
         Wait = $PSBoundParameters.Wait
       }
       if ($Timeout) { $GetParam['Timeout'] = $PSBoundParameters.Timeout }
-      if ($List) { $GetParam['OptionalHostId'] = @($List | Select-Object -Unique) }
+      if ($List) { $GetParam['OptionalHostId'] = @($List) }
       Invoke-FalconBatchGet @GetParam
     } else {
       # Verify 'Endpoint' using BatchId/SessionId
       $Endpoint = if ($PSBoundParameters.BatchId) {
-        if ($List) { $PSBoundParameters['OptionalHostId'] = @($List | Select-Object -Unique) }
+        if ($List) { $PSBoundParameters['OptionalHostId'] = @($List) }
         '/real-time-response/combined/batch-active-responder-command/v1:post'
       } elseif ($PSBoundParameters.SessionId) {
         '/real-time-response/entities/active-responder-command/v1:post'
@@ -937,7 +946,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
       if ($Endpoint) {
         if ($PSBoundParameters.HostTimeout) {
           # Add 's' to denote seconds for 'host_timeout_duration'
-          $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+          $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
         }
         $PSBoundParameters['command_string'] = if ($PSBoundParameters.Argument) {
           # Join 'Command' and 'Argument' into 'command_string'
@@ -998,7 +1007,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
     [string]$Sha256,
     [Parameter(ParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=3)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/entities/extracted-file-contents/v1:get')]
@@ -1049,12 +1058,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('cloud_request_id','task_id')]
     [string]$CloudRequestId
   )
@@ -1082,13 +1091,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$SessionId,
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -1111,7 +1120,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
     [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -1133,7 +1142,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -1155,7 +1164,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('session_id')]
     [string]$Id
   )
@@ -1304,7 +1313,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
     [Alias('queue_offline')]
     [boolean]$QueueOffline,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('existing_batch_id')]
     [string]$ExistingBatchId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-init-session/v1:post',Position=3)]
@@ -1333,25 +1342,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconSession
       # Verify 'Endpoint' using BatchId/SessionId and select hosts
       [void]$PSBoundParameters.Remove('Id')
       $Endpoint = if ($List.Count -eq 1 -and !$HostTimeout -and !$ExistingBatchId) {
-        $PSBoundParameters['device_id'] = $List[0]
+        $PSBoundParameters['device_id'] = @($List)[0]
         '/real-time-response/entities/sessions/v1:post'
       } else {
         if ($PSBoundParameters.HostTimeout) {
           # Add 's' to denote seconds for 'host_timeout_duration'
-          $PSBoundParameters.HostTimeout = $PSBoundParameters.HostTimeout,'s' -join $null
+          $PSBoundParameters.HostTimeout = [string]::Concat($PSBoundParameters.HostTimeout,'s')
         }
-        $PSBoundParameters['host_ids'] = @($List | Select-Object -Unique)
+        $PSBoundParameters['host_ids'] = @($List)
         '/real-time-response/combined/batch-init-session/v1:post'
       }
       @(Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters).foreach{
         if ($_.batch_id -and $_.resources) {
           [string]$BatchId = $_.batch_id
-          @($_.resources.PSObject.Properties.Value).Where({ $_.errors }).foreach{
+          @($_.resources.PSObject.Properties.Value).Where({$_.errors}).foreach{
             # Write warning for hosts in batch that produced errors
             $PSCmdlet.WriteWarning("[Start-FalconSession] $(
               @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]")
           }
-          @($_.resources.PSObject.Properties.Value).Where({ $_.session_id }).foreach{
+          @($_.resources.PSObject.Properties.Value).Where({$_.session_id}).foreach{
             # Append 'batch_id' for hosts with a 'session_id'
             Set-Property $_ batch_id $BatchId
           }
@@ -1412,7 +1421,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
     [string]$HostId,
     [Parameter(ParameterSetName='/real-time-response/combined/batch-refresh-session/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('batch_id')]
     [string]$BatchId
   )
@@ -1426,12 +1435,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconSession
     [string]$Endpoint = if ($PSBoundParameters.HostId) {
       '/real-time-response/entities/refresh-session/v1:post'
     } elseif ($PSBoundParameters.BatchId) {
-      if ($List) { $PSBoundParameters['HostToRemove'] = @($List | Select-Object -Unique) }
+      if ($List) { $PSBoundParameters['HostToRemove'] = @($List) }
       '/real-time-response/combined/batch-refresh-session/v1:post'
     }
     @(Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters).foreach{
       if ($Endpoint -eq '/real-time-response/combined/batch-refresh-session/v1:post') {
-        @($_.PSObject.Properties.Value).Where({ $_.errors }).foreach{
+        @($_.PSObject.Properties.Value).Where({$_.errors}).foreach{
           # Write warning for hosts in batch that produced errors
           $PSCmdlet.WriteWarning("[Update-FalconSession] $(
             @($_.errors.code,$_.errors.message) -join ': ') [aid: $($_.aid)]")

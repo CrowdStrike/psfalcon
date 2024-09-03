@@ -28,7 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
     [Parameter(ParameterSetName='/incidents/entities/behaviors/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^ind:[a-fA-F0-9]{32}:(\d|\-)+$')]
-    [Alias('Ids','behavior_id')]
+    [Alias('ids','behavior_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -52,10 +52,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIncident {
@@ -88,7 +92,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
     [Parameter(ParameterSetName='/incidents/entities/incidents/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
-    [Alias('Ids','incident_id')]
+    [Alias('ids','incident_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -115,10 +119,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconScore {
@@ -173,6 +181,8 @@ Requires 'Incidents: Write'.
 Action to perform
 .PARAMETER Value
 Value for the chosen action
+.PARAMETER Action
+One or more hashtables defining multiple name/value pairs
 .PARAMETER UpdateDetects
 Update status of related 'new' detections
 .PARAMETER OverwriteDetects
@@ -188,39 +198,52 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
     [ValidateSet('add_tag','delete_tag','unassign','update_description','update_name','update_status',
       'update_assigned_to_v2',IgnoreCase=$false)]
     [string]$Name,
-    [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,Position=2)]
+    [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Position=2)]
     [string]$Value,
+    [Parameter(ParameterSetName='action_parameters',Mandatory,Position=1)]
+    [Alias('action_parameters')]
+    [hashtable[]]$Action,
     [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Position=3)]
+    [Parameter(ParameterSetName='action_parameters',Position=2)]
     [Alias('update_detects')]
     [boolean]$UpdateDetects,
     [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Position=4)]
+    [Parameter(ParameterSetName='action_parameters',Position=3)]
     [Alias('overwrite_detects')]
     [boolean]$OverwriteDetects,
     [Parameter(ParameterSetName='/incidents/entities/incident-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
+    [Parameter(ParameterSetName='action_parameters',Mandatory,ValueFromPipelineByPropertyName,ValueFromPipeline,
+      Position=4)]
     [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
-    [Alias('Ids','incident_id')]
+    [Alias('ids','incident_id')]
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 1000 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/incidents/entities/incident-actions/v1:post'
+      Max = 1000
+    }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-      if ($PSBoundParameters.Name -eq 'update_status') {
-        if ($PSBoundParameters.Value -notmatch '^(closed|in_progress|new|reopened)$') {
-          throw "Valid values for 'update_status': 'closed', 'in_progress', 'new', 'reopened'."
-        } else {
-          $PSBoundParameters['Value'] = switch ($PSBoundParameters.Value) {
-            'new' { '20' }
-            'reopened' { '25' }
-            'in_progress' { '30' }
-            'closed' { '40' }
-          }
+      $PSBoundParameters['Id'] = @($List)
+      if ($PSBoundParameters.Action) {
+        # Verify valid 'Action' key/value pairs and update formatting before request
+        $Valid = (Get-Command $Param.Command).Parameters.Name.Attributes.ValidValues
+        [hashtable[]]$PSBoundParameters.Action = @($PSBoundParameters.Action).foreach{
+          Test-ActionParameter $_ $Valid -Incident
         }
+        $Param.Format.Body.root = @('ids','action_parameters')
+        [void]$Param.Format.Body.Remove('action_parameters')
+      } else {
+        # Update 'value' when 'name' is 'update_status'
+        $Valid = Test-ActionParameter @{ $PSBoundParameters.Name = $PSBoundParameters.Value } -Incident
+        if ($Valid -and $PSBoundParameters.Value -ne $Valid.Value) { $PSBoundParameters.Value = $Valid.Value }
       }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }

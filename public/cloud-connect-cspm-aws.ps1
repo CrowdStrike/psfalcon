@@ -1,7 +1,7 @@
-function Edit-FalconHorizonAwsAccount {
+function Edit-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
-Modify a Falcon Horizon AWS account
+Modify a Falcon Cloud Security AWS account
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
 .PARAMETER AccountId
@@ -18,11 +18,20 @@ Enable sensor management for account
 Region where remediation occurs
 .PARAMETER RemediationTouAccepted
 Remediation terms-of-use acceptance date
+.PARAMETER Environment
+Environment
+.PARAMETER TargetOu
+Target OU
+.PARAMETER DspmEnabled
+DSPM enabled
+.PARAMETER DspmRole
+DSPM role ARN
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
     SupportsShouldProcess)]
+  [Alias('Edit-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -31,11 +40,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
     [string]$AccountId,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
       ValueFromPipelineByPropertyName,Position=2)]
-    [ValidateSet('af-south-1','ap-east-1','ap-northeast-1','ap-northeast-2','ap-northeast-3','ap-south-1',
-      'ap-south-2','ap-southeast-1','ap-southeast-2','ap-southeast-3','ap-southeast-4','ca-central-1',
-      'cn-north-1','cn-northwest-1','eu-central-1','eu-central-2','eu-north-1','eu-south-1','eu-south-2',
-      'eu-west-1','eu-west-2','eu-west-3','il-central-1','me-central-1','me-south-1','sa-east-1','us-east-1',
-      'us-east-2','us-gov-east-1','us-gov-west-1','us-west-1','us-west-2',IgnoreCase=$false)]
     [Alias('cloudtrail_region')]
     [string]$CloudtrailRegion,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
@@ -57,15 +61,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHorizonAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
       ValueFromPipelineByPropertyName,Position=7)]
     [Alias('remediation_tou_accepted')]
-    [string]$RemediationTouAccepted
+    [string]$RemediationTouAccepted,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=8)]
+    [string]$Environment,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=10)]
+    [Alias('target_ous')]
+    [string[]]$TargetOu,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=11)]
+    [Alias('dspm_enabled')]
+    [boolean]$DspmEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=12)]
+    [Alias('dspm_role')]
+    [string]$DspmRole
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Get-FalconHorizonAwsAccount {
+function Get-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
-Search for Falcon Horizon AWS accounts
+Search for Falcon Cloud Security AWS accounts
 .DESCRIPTION
 A properly provisioned AWS account will display the status 'Event_DiscoverAccountStatusOperational'.
 
@@ -84,6 +103,8 @@ Field to group by
 AWS IAM role ARNs
 .PARAMETER Migrated
 Only return migrated Discover for Cloud accounts
+.PARAMETER CspmLite
+Only return CSPM Lite accounts
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -93,15 +114,15 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAwsAccount
 #>
-  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonAwsAccount')]
   param(
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
     [ValidatePattern('^\d{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=1)]
     [ValidatePattern('^o-[0-9a-z]{10,32}$')]
@@ -124,6 +145,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=6)]
     [boolean]$Migrated,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=7)]
+    [Alias('cspm_lite')]
+    [boolean]$CspmLite,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get',Position=8)]
     [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:get')]
@@ -137,33 +161,38 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsAccount
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
-function Get-FalconHorizonAwsLink {
+function Get-FalconCloudAwsLink {
 <#
 .SYNOPSIS
-Retrieve a URL to grant Falcon Horizon access in AWS
+Retrieve a URL to grant Falcon Cloud Security access in AWS
 .DESCRIPTION
 Once logging in to the provided link using your AWS administrator credentials, use the 'Create Stack' button to
 grant access.
 
 Requires 'CSPM registration: Read'.
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonAwsLink
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAwsLink
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/console-setup-urls/v1:get',
     SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonAwsLink')]
   param()
-  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
-function New-FalconHorizonAwsAccount {
+function New-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
-Provision a Falcon Horizon AWS account
+Provision a Falcon Cloud Security AWS account
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
 .PARAMETER AccountId
@@ -184,75 +213,143 @@ Use existing Cloudtrail log
 Enable behavior assessment for account
 .PARAMETER SensorManagementEnabled
 Enable sensor management for account
+.PARAMETER TargetOu
+Target OU
+.PARAMETER DspmEnabled
+DSPM enabled
+.PARAMETER DspmRole
+DSPM role ARN
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
     SupportsShouldProcess)]
+  [Alias('New-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,Position=1)]
     [ValidatePattern('^\d{12}$')]
     [Alias('account_id')]
     [string]$AccountId,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,Position=2)]
-    [ValidateSet('af-south-1','ap-east-1','ap-northeast-1','ap-northeast-2','ap-northeast-3','ap-south-1',
-      'ap-south-2','ap-southeast-1','ap-southeast-2','ap-southeast-3','ap-southeast-4','ca-central-1',
-      'cn-north-1','cn-northwest-1','eu-central-1','eu-central-2','eu-north-1','eu-south-1','eu-south-2',
-      'eu-west-1','eu-west-2','eu-west-3','il-central-1','me-central-1','me-south-1','sa-east-1','us-east-1',
-      'us-east-2','us-gov-east-1','us-gov-west-1','us-west-1','us-west-2',IgnoreCase=$false)]
     [Alias('cloudtrail_region')]
     [string]$CloudtrailRegion,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=3)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
     [ValidatePattern('^\d{12}$')]
     [Alias('organization_id')]
     [string]$OrganizationId,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
     [Alias('account_type')]
     [string]$AccountType,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
     [Alias('is_master')]
     [boolean]$IsMaster,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
     [Alias('iam_role_arn')]
     [string]$IamRoleArn,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=7)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=7)]
     [Alias('use_existing_cloudtrail')]
     [boolean]$UseExistingCloudtrail,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=8)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=8)]
     [Alias('behavior_assessment_enabled')]
     [boolean]$BehaviorAssessmentEnabled,
-    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=9)]
     [Alias('sensor_management_enabled')]
-    [boolean]$SensorManagementEnabled
+    [boolean]$SensorManagementEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=10)]
+    [Alias('target_ous')]
+    [string[]]$TargetOu,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=11)]
+    [Alias('dspm_enabled')]
+    [boolean]$DspmEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=12)]
+    [Alias('dspm_role')]
+    [string]$DspmRole
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Receive-FalconHorizonAwsScript {
+function Receive-FalconCloudAwsScript {
 <#
 .SYNOPSIS
-Download a Bash script which grants Falcon Horizon access using the AWS CLI
+Download a Bash script which grants Falcon Cloud Security access using the AWS CLI
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER Id
 AWS account identifier
+.PARAMETER OrganizationId
+AWS organization identifier
+.PARAMETER Template
+Template to be rendered
+.PARAMETER Account
+List of AWS accounts to register
+.PARAMETER AccountType
+Type of account
+.PARAMETER AwsProfile
+AWS profile to use during registration
+.PARAMETER CustomRole
+Custom IAM role to be use during registration
+.PARAMETER BehaviorAssessment
+Enable behavior assessment
+.PARAMETER SensorManagement
+Enable sensor management
+.PARAMETER ExistingCloudtrail
+Use existing Cloudtraile
 .PARAMETER Path
 Destination path
 .PARAMETER Force
 Overwrite existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAwsScript
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
     SupportsShouldProcess)]
+  [Alias('Receive-FalconHorizonAwsScript')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^\d{12}$')]
     [Alias('ids')]
     [string[]]$Id,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=2)]
+    [Alias('organization_id')]
+    [string]$OrganizationId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=3)]
+    [ValidateSet('aws-bash','aws-terraform',IgnoreCase=$false)]
+    [string]$Template,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=4)]
+    [Alias('accounts')]
+    [string[]]$Account,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=5)]
+    [ValidateSet('commercial','gov',IgnoreCase=$false)]
+    [Alias('account_type')]
+    [string]$AccountType,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=6)]
+    [Alias('aws_profile')]
+    [string]$AwsProfile,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=7)]
+    [Alias('custom_role_name')]
+    [string]$CustomRole,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=8)]
+    [Alias('behavior_assessment_enabled')]
+    [boolean]$BehaviorAssessment,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=9)]
+    [Alias('sensor_management_enabled')]
+    [boolean]$SensorManagement,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=10)]
+    [Alias('use_existing_cloudtrail')]
+    [boolean]$ExistingCloudtrail,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
-      Position=2)]
+      Position=11)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     [switch]$Force
@@ -280,10 +377,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconHorizonAwsScript
     }
   }
 }
-function Remove-FalconHorizonAwsAccount {
+function Remove-FalconCloudAwsAccount {
 <#
 .SYNOPSIS
-Remove Falcon Horizon AWS accounts
+Remove Falcon Cloud Security AWS accounts
 .DESCRIPTION
 Requires 'CSPM registration: Write'.
 .PARAMETER Id
@@ -291,15 +388,16 @@ AWS account identifier
 .PARAMETER OrganizationId
 AWS organization identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
     SupportsShouldProcess)]
+  [Alias('Remove-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^\d{12}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='OrganizationIds',Mandatory)]
     [ValidatePattern('^o-[0-9a-z]{10,32}$')]
@@ -313,9 +411,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHorizonAwsAccount
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }

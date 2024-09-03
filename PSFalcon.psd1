@@ -1,6 +1,6 @@
 @{
   RootModule = 'PSFalcon.psm1'
-  ModuleVersion = '2.2.6'
+  ModuleVersion = '2.2.7'
   CompatiblePSEditions = @('Desktop','Core')
   GUID = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
   Author = 'Brendan Kremian'
@@ -23,42 +23,86 @@
     'Send-FalconSampleArchive'
 
     # cloud-connect-cspm-aws
-    'Edit-FalconHorizonAwsAccount'
-    'Get-FalconHorizonAwsAccount'
-    'Get-FalconHorizonAwsLink'
-    'New-FalconHorizonAwsAccount'
-    'Receive-FalconHorizonAwsScript'
-    'Remove-FalconHorizonAwsAccount'
+    'Edit-FalconCloudAwsAccount'
+    'Get-FalconCloudAwsAccount'
+    'Get-FalconCloudAwsLink'
+    'New-FalconCloudAwsAccount'
+    'Receive-FalconCloudAwsScript'
+    'Remove-FalconCloudAwsAccount'
 
     # cloud-connect-cspm-azure
-    'Edit-FalconHorizonAzureAccount'
-    'Get-FalconHorizonAzureAccount'
-    'Get-FalconHorizonAzureCertificate'
-    'New-FalconHorizonAzureAccount'
-    'Receive-FalconHorizonAzureScript'
-    'Remove-FalconHorizonAzureAccount'
+    'Edit-FalconCloudAzureAccount'
+    'Get-FalconCloudAzureAccount'
+    'Get-FalconCloudAzureCertificate'
+    'Get-FalconCloudAzureGroup'
+    'New-FalconCloudAzureAccount'
+    'New-FalconCloudAzureGroup'
+    'Receive-FalconCloudAzureScript'
+    'Remove-FalconCloudAzureAccount'
+    'Remove-FalconCloudAzureGroup'
+
+    # cloud-connect-cspm-gcp
+    'Edit-FalconCloudGcpAccount'
+    'Edit-FalconCloudGcpServiceAccount'
+    'Get-FalconCloudGcpAccount'
+    'Get-FalconCloudGcpServiceAccount'
+    'Invoke-FalconCloudGcpHealthCheck'
+    'New-FalconCloudGcpAccount'
+    'Receive-FalconCloudGcpScript'
+    'Remove-FalconCloudGcpAccount'
+    'Test-FalconCloudGcpServiceAccount'
 
     # configuration-assessment
     'Get-FalconConfigAssessment'
     'Get-FalconConfigAssessmentLogic'
+    'Get-FalconConfigAssessmentRule'
 
     # container-security
+    'Edit-FalconContainerPolicy'
+    'Edit-FalconContainerPolicyGroup'
     'Edit-FalconContainerRegistry'
+    'Get-FalconContainer'
+    'Get-FalconContainerAlert'
     'Get-FalconContainerAssessment'
+    'Get-FalconContainerDeployment'
+    'Get-FalconContainerDetection'
+    'Get-FalconContainerCluster'
+    'Get-FalconContainerCount'
+    'Get-FalconContainerDriftIndicator'
+    'Get-FalconContainerImage'
+    'Get-FalconContainerIom'
+    'Get-FalconContainerNode'
+    'Get-FalconContainerPackage'
+    'Get-FalconContainerPod'
+    'Get-FalconContainerPolicy'
+    'Get-FalconContainerPolicyExclusion'
+    'Get-FalconContainerPolicyGroup'
     'Get-FalconContainerRegistry'
     'Get-FalconContainerSensor'
+    'Get-FalconContainerVulnerability'
+    'New-FalconContainerImage'
+    'New-FalconContainerPolicy'
+    'New-FalconContainerPolicyExclusion'
+    'New-FalconContainerPolicyGroup'
     'New-FalconContainerRegistry'
+    'Remove-FalconContainerImage'
     'Remove-FalconContainerRegistry'
+    'Remove-FalconContainerPolicy'
+    'Remove-FalconContainerPolicyGroup'
     'Remove-FalconRegistryCredential'
     'Request-FalconRegistryCredential'
-    'Remove-FalconContainerImage'
+    'Set-FalconContainerPolicyPrecedence'
     'Show-FalconRegistryCredential'
+
+    # delivery-settings
+    'Get-FalconChannelControl'
+    'Set-FalconChannelControl'
 
     # detects
     'Edit-FalconDetection'
     'Get-FalconDetection'
-    'Get-FalconHorizonIoa'
-    'Get-FalconHorizonIom'
+    'Get-FalconCloudIoa'
+    'Get-FalconCloudIom'
 
     # devices
     'Add-FalconGroupingTag'
@@ -77,6 +121,13 @@
 
     # enrollments
     'Invoke-FalconMobileAction'
+
+    # exclusions
+    'Edit-FalconCertificateExclusion'
+    'Get-FalconCertificate'
+    'Get-FalconCertificateExclusion'
+    'New-FalconCertificateExclusion'
+    'Remove-FalconCertificateExclusion'
 
     # falcon-complete-dashboards
     'Get-FalconCompleteAlert'
@@ -97,6 +148,9 @@
     'Receive-FalconMemoryDump'
     'Remove-FalconReport'
 
+    # fem
+    'Edit-FalconAsset'
+
     # fdr
     'Get-FalconReplicatorEvent'
     'Get-FalconReplicatorField'
@@ -109,11 +163,15 @@
     'Edit-FalconFileVantagePolicy'
     'Edit-FalconFileVantageRule'
     'Edit-FalconFileVantageRuleGroup'
+    'Get-FalconFileVantageAction'
     'Get-FalconFileVantageChange'
+    'Get-FalconFileVantageContent'
     'Get-FalconFileVantageExclusion'
     'Get-FalconFileVantagePolicy'
     'Get-FalconFileVantageRule'
     'Get-FalconFileVantageRuleGroup'
+    'Invoke-FalconFileVantageAction'
+    'Invoke-FalconFileVantageWorkflow'
     'New-FalconFileVantageExclusion'
     'New-FalconFileVantagePolicy'
     'New-FalconFileVantageRule'
@@ -146,6 +204,17 @@
     'Set-FalconFirewallLocationPrecedence'
     'Test-FalconFirewallPath'
 
+    # host-migration
+    'Get-FalconMigration'
+    'Get-FalconMigrationCid'
+    'Get-FalconMigrationHost'
+    'Invoke-FalconMigrationAction'
+    'New-FalconMigration'
+    'Start-FalconMigration'
+    'Stop-FalconMigration'
+    'Rename-FalconMigration'
+    'Remove-FalconMigration'
+
     # identity-protection
     'Invoke-FalconIdentityGraph'
     'Get-FalconIdentityHost'
@@ -169,6 +238,7 @@
     'Get-FalconCve'
     'Get-FalconIndicator'
     'Get-FalconIntel'
+    'Get-FalconMalwareFamily'
     'Get-FalconRule'
     'Receive-FalconAttck'
     'Receive-FalconIntel'
@@ -184,8 +254,8 @@
     'Remove-FalconInstallToken'
 
     # ioa
-    'Get-FalconHorizonIoaEvent'
-    'Get-FalconHorizonIoaUser'
+    'Get-FalconCloudIoaEvent'
+    'Get-FalconCloudIoaUser'
 
     # ioarules
     'Edit-FalconIoaGroup'
@@ -221,7 +291,6 @@
     'Get-FalconContainerAzureScript'
     'Get-FalconContainerAzureTenant'
     'Get-FalconContainerCloud'
-    'Get-FalconContainerCluster'
     'Get-FalconContainerScript'
     'Invoke-FalconContainerScan'
     'New-FalconContainerAwsAccount'
@@ -230,6 +299,11 @@
     'Receive-FalconContainerYaml'
     'Remove-FalconContainerAwsAccount'
     'Remove-FalconContainerAzureAccount'
+
+    # loggingapi
+    'Get-FalconFoundryRepository'
+    'Get-FalconFoundrySearch'
+    'Get-FalconFoundryView'
 
     # malquery
     'Get-FalconMalQuery'
@@ -288,6 +362,9 @@
     'Get-FalconOverWatchEvent'
     'Get-FalconOverWatchDetection'
     'Get-FalconOverWatchIncident'
+
+    # plugins
+    'Get-FalconWorkflowIntegration'
 
     # policy-device-control
     'Edit-FalconDeviceControlPolicy'
@@ -381,7 +458,6 @@
     'Show-FalconModule'
 
     # psf-policies
-    'Compare-FalconPreventionPhase'
     'Copy-FalconDeviceControlPolicy'
     'Copy-FalconFirewallPolicy'
     'Copy-FalconPreventionPolicy'
@@ -392,6 +468,7 @@
     'Add-FalconSensorTag'
     'Get-FalconSensorTag'
     'Remove-FalconSensorTag'
+    'Set-FalconSensorTag'
     'Uninstall-FalconSensor'
 
     # psf-real-time-response
@@ -473,15 +550,25 @@
     'Update-FalconStream'
 
     # settings
-    'Edit-FalconHorizonPolicy'
-    'Edit-FalconHorizonSchedule'
-    'Get-FalconHorizonPolicy'
-    'Get-FalconHorizonSchedule'
+    'Edit-FalconCloudPolicy'
+    'Edit-FalconCloudSchedule'
+    'Get-FalconCloudPolicy'
+    'Get-FalconCloudSchedule'
+
+    # snapshots
+    'Get-FalconSnapshot'
+    'Get-FalconSnapshotScan'
+    'New-FalconSnapshotScan'
 
     # spotlight
     'Get-FalconRemediation'
     'Get-FalconVulnerability'
     'Get-FalconVulnerabilityLogic'
+
+    # threatgraph
+    'Get-FalconThreatGraphEdge'
+    'Get-FalconThreatGraphIndicator'
+    'Get-FalconThreatGraphVertex'
 
     # ti
     'Get-FalconTailoredEvent'
@@ -497,12 +584,29 @@
     'Remove-FalconRole'
     'Remove-FalconUser'
 
+    # workflows
+    'Export-FalconWorkflow'
+    'Get-FalconWorkflow'
+    'Get-FalconWorkflowAction'
+    'Get-FalconWorkflowInput'
+    'Get-FalconWorkflowTrigger'
+    'Import-FalconWorkflow'
+    'Invoke-FalconWorkflow'
+    'Redo-FalconWorkflow'
+
     # zero-trust-assessment
     'Get-FalconZta'
   )
   CmdletsToExport = @()
   VariablesToExport = '*'
-  AliasesToExport = @('Get-FalconFimChange')
+  AliasesToExport = @('Edit-FalconHorizonAwsAccount','Edit-FalconHorizonAzureAccount','Edit-FalconHorizonPolicy',
+    'Edit-FalconHorizonSchedule','Get-FalconFimChange','Get-FalconHorizonAwsAccount','Get-FalconHorizonAwsLink',
+    'Get-FalconHorizonAzureAccount','Get-FalconHorizonAzureCertificate','Get-FalconHorizonAzureGroup',
+    'Get-FalconHorizonIoa','Get-FalconHorizonIoaEvent','Get-FalconHorizonIoaUser','Get-FalconHorizonIom',
+    'Get-FalconHorizonPolicy','Get-FalconHorizonSchedule','New-FalconHorizonAwsAccount',
+    'New-FalconHorizonAzureAccount','New-FalconHorizonAzureGroup','Receive-FalconHorizonAwsScript',
+    'Receive-FalconHorizonAzureScript','Remove-FalconHorizonAwsAccount','Remove-FalconHorizonAzureAccount',
+    'Remove-FalconHorizonAzureGroup')
   PrivateData = @{
     PSData = @{
       Tags = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
@@ -510,7 +614,7 @@
       LicenseUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
       ProjectUri = 'https://github.com/crowdstrike/psfalcon'
       IconUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
-      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.6'
+      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.7'
     }
   }
 }

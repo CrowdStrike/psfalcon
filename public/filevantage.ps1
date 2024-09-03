@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageHostGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       $PSBoundParameters['action'] = 'assign'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -70,7 +70,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageRuleGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       $PSBoundParameters['action'] = 'assign'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -135,17 +135,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
     [string]$Timezone,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
       ValueFromPipelineByPropertyName,Position=7)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'Edit-FalconFileVantageExclusion'
-          Endpoint = '/filevantage/entities/policy-scheduled-exclusions/v1:patch'
-          Allowed = @('all_day','end_time','frequency','monthly_days','occurrence','start_time','weekly_days')
-        }
-        Confirm-Parameter @Param
-      }
-    })]
     [object]$Repeated,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:patch',
       ValueFromPipelineByPropertyName,Position=8)]
@@ -163,18 +152,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
     [string]$Description
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('description','id','name','policy_id','processes','repeated','schedule_end','schedule_start',
-            'timezone','users')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param['Format'] = Get-EndpointFormat $Param.Format
   }
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Repeated) {
+      # Filter to defined 'repeated' properties and make sure 'repeated' is properly appended
+      $PSBoundParameters.Repeated = [PSCustomObject]$PSBoundParameters.Repeated |
+        Select-Object $Param.Format.Body.repeated
+      [void]$Param.Format.Body.Remove('repeated')
+      $Param.Format.Body.root += 'repeated'
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Edit-FalconFileVantagePolicy {
 <#
@@ -270,6 +260,8 @@ Track file write events
 Track registry key create events
 .PARAMETER RegKeyDelete
 Track registry key delete events
+.PARAMETER RegKeyPermission
+Track registry key permission change events
 .PARAMETER RegKeyRename
 Track registry key rename events
 .PARAMETER RegKeySet
@@ -282,6 +274,10 @@ Track registry value delete events
 Enable the capture of file content during events
 .PARAMETER ContentFiles
 A specific list of files to monitor for content changes
+.PARAMETER ContentRegistryValues
+A specific list of registry paths to monitor for content changes (matching Include/Exclude)
+.PARAMETER HashCapture
+Track file hash
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -388,28 +384,40 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
     [boolean]$RegKeyDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
       Position=26)]
+    [Alias('watch_permissions_key_changes')]
+    [boolean]$RegKeyPermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=27)]
     [Alias('watch_rename_key_changes')]
     [boolean]$RegKeyRename,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=27)]
+      Position=28)]
     [Alias('watch_set_value_changes')]
     [boolean]$RegKeySet,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=28)]
+      Position=29)]
     [Alias('watch_create_value_changes')]
     [boolean]$RegValueCreate,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=29)]
+      Position=30)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=30)]
+      Position=31)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
-      Position=31)]
+      Position=32)]
     [Alias('content_files')]
     [string[]]$ContentFiles,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=33)]
+    [Alias('content_registry_values')]
+    [string[]]$ContentRegistryValues,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',ValueFromPipelineByPropertyName,
+      Position=34)]
+    [Alias('enable_hash_capture')]
+    [boolean]$HashCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -450,6 +458,69 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRuleGroup
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconFileVantageAction {
+<#
+.SYNOPSIS
+Search for Falcon FileVantage actions
+.DESCRIPTION
+Requires 'Falcon FileVantage: Read'.
+.PARAMETER Id
+FileVantage action identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageAction
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/queries/actions/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) } } else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Get-FalconFileVantageChange {
 <#
 .SYNOPSIS
@@ -457,7 +528,7 @@ Search for Falcon FileVantage changes
 .DESCRIPTION
 Requires 'Falcon FileVantage: Read'.
 .PARAMETER Id
-Activity identifier
+FileVantage change identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -481,12 +552,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     [Parameter(ParameterSetName='/filevantage/entities/changes/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
     [string]$Filter,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=2)]
+    [ValidateSet('action_timestamp|asc','action_timestamp|desc','ingestion_timestamp|asc',
+      'ingestion_timestamp|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=3)]
     [ValidateRange(1,5000)]
@@ -504,11 +577,35 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-  end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
   }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Get-FalconFileVantageContent {
+<#
+.SYNOPSIS
+Retrieve content recorded in a Falcon FileVantage change
+.DESCRIPTION
+Requires 'Falcon FileVantage Content: Read'.
+.PARAMETER Id
+FileVantage change identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageContent
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/change-content/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/change-content/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconFileVantageExclusion {
 <#
@@ -541,10 +638,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageExclusion
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconFileVantagePolicy {
@@ -609,7 +710,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantagePolicy
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
     if ($Include) {
       $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
       if ($Request -and $Include -contains 'exclusions') {
@@ -660,7 +761,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRule
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -720,10 +821,84 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRuleGroup
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Invoke-FalconFileVantageAction {
+<#
+.SYNOPSIS
+Perform actions on Falcon FileVantage changes
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Name
+Action to perform
+.PARAMETER Comment
+Audit log comment
+.PARAMETER Id
+FileVantage change identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFileVantageAction
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/actions/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:post',Mandatory,Position=1)]
+    [ValidateSet('suppress','unsuppress','purge',IgnoreCase=$false)]
+    [Alias('operation')]
+    [string]$Name,
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:post',Position=2)]
+    [string]$Comment,
+    [Parameter(ParameterSetName='/filevantage/entities/actions/v1:post',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=3)]
+    [Alias('change_ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Invoke-FalconFileVantageWorkflow {
+<#
+.SYNOPSIS
+Execute an on-demand Falcon Fusion workflow for Falcon FileVantage changes
+.DESCRIPTION
+Requires 'Falcon FileVantage: Write'.
+.PARAMETER Id
+FileVantage change identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFileVantageWorkflow
+#>
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/workflow/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/filevantage/entities/workflow/v1:post',ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Mandatory,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconFileVantageExclusion {
@@ -774,17 +949,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [string]$Timezone,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=5)]
-    [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'New-FalconFileVantageExclusion'
-          Endpoint = '/filevantage/entities/policy-scheduled-exclusions/v1:post'
-          Allowed = @('all_day','end_time','frequency','monthly_days','occurrence','start_time','weekly_days')
-        }
-        Confirm-Parameter @Param
-      }
-    })]
     [object]$Repeated,
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=6)]
@@ -807,18 +971,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [string]$PolicyId
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{
-        Body = @{
-          root = @('description','name','policy_id','processes','repeated','schedule_end','schedule_start',
-            'timezone','users')
-        }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param['Format'] = Get-EndpointFormat $Param.Format
   }
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process {
+    if ($PSBoundParameters.Repeated) {
+      # Filter to defined 'repeated' properties and make sure 'repeated' is properly appended
+      $PSBoundParameters.Repeated = [PSCustomObject]$PSBoundParameters.Repeated |
+        Select-Object $Param.Format.Body.repeated
+      [void]$Param.Format.Body.Remove('repeated')
+      $Param.Format.Body.root += 'repeated'
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function New-FalconFileVantagePolicy {
 <#
@@ -907,6 +1072,8 @@ Track file write events
 Track registry key create events
 .PARAMETER RegKeyDelete
 Track registry key delete events
+.PARAMETER RegKeyPermission
+Track registry key permission change events
 .PARAMETER RegKeyRename
 Track registry key rename events
 .PARAMETER RegKeySet
@@ -919,6 +1086,10 @@ Track registry value delete events
 Enable the capture of file content during events
 .PARAMETER ContentFiles
 A specific list of files to monitor for content changes
+.PARAMETER ContentRegistryValues
+A specific list of registry paths to monitor for content changes (matching Include/Exclude)
+.PARAMETER HashCapture
+Track file hash
 .PARAMETER RuleGroupId
 FileVantage rule group identifier
 .LINK
@@ -1021,28 +1192,40 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
     [boolean]$RegKeyDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
       Position=25)]
+    [Alias('watch_permissions_key_changes')]
+    [boolean]$RegKeyPermission,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=26)]
     [Alias('watch_rename_key_changes')]
     [boolean]$RegKeyRename,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=26)]
+      Position=27)]
     [Alias('watch_set_value_changes')]
     [boolean]$RegKeySet,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=27)]
+      Position=28)]
     [Alias('watch_create_value_changes')]
     [boolean]$RegValueCreate,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=27)]
+      Position=29)]
     [Alias('watch_delete_value_changes')]
     [boolean]$RegValueDelete,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=28)]
+      Position=30)]
     [Alias('enable_content_capture')]
     [boolean]$EnableContentCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
-      Position=29)]
+      Position=31)]
     [Alias('content_files')]
     [string[]]$ContentFiles,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=32)]
+    [Alias('content_registry_values')]
+    [string[]]$ContentRegistryValues,
+    [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',ValueFromPipelineByPropertyName,
+      Position=33)]
+    [Alias('enable_hash_capture')]
+    [boolean]$HashCapture,
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:post',Mandatory,
       ValueFromPipelineByPropertyName)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -1119,7 +1302,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageExclusion
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1157,7 +1340,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageHostGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       $PSBoundParameters['action'] = 'unassign'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -1189,7 +1372,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantagePolicy
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1227,7 +1410,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRule
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1265,7 +1448,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRuleGroup
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       if ($PSCmdlet.ParameterSetName -match 'patch$') { $PSBoundParameters['action'] = 'unassign' }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
@@ -1305,7 +1488,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantagePrecedence
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1343,7 +1526,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRulePrecedence
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -1381,7 +1564,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRuleGroupPrece
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       $PSBoundParameters['action'] = 'precedence'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }

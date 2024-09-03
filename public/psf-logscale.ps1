@@ -1,15 +1,15 @@
 function Register-FalconEventCollector {
 <#
 .SYNOPSIS
-Define Falcon LogScale ingestion endpoint and token for logging
+Define Falcon LogScale or Falcon NGSIEM ingestion endpoint and token for logging
 .DESCRIPTION
-Once configured, the Falcon LogScale destination can be used by PSFalcon but the module will not send events to
-Falcon LogScale until 'Enable' options are chosen. 'Remove-FalconEventCollector' can be used to remove a
-configured destination and stop the transmission of events.
+Once configured, the Falcon LogScale or Falcon NGSIEM destination can be used by PSFalcon but the module will not
+send events to until 'Enable' options are chosen. 'Remove-FalconEventCollector' can be used to remove a configured
+destination and stop the transmission of events.
 .PARAMETER Uri
-Falcon LogScale cloud
+Falcon LogScale cloud or Falcon NGSIEM HEC ingestion URI
 .PARAMETER Token
-Falcon LogScale ingestion token
+Falcon LogScale or Falcon NGSIEM ingestion token
 .PARAMETER Enable
 Define events to send to the collector
 .LINK
@@ -21,7 +21,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
     [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=1)]
     [System.Uri]$Uri,
     [Parameter(Mandatory,ValueFromPipelineByPropertyName,Position=2)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^([a-fA-F0-9]{32}|[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12})$')]
     [string]$Token,
     [Parameter(ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('responses','requests')]
@@ -29,9 +29,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
   )
   process {
     if (!$Script:Falcon.Api) { throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'." }
-    $Script:Falcon.Api.Collector = @{
-      Uri = $PSBoundParameters.Uri.ToString() + 'api/v1/ingest/humio-structured/'
-      Token = $PSBoundParameters.Token
+    $Script:Falcon.Api.Collector = @{ Uri = $PSBoundParameters.Uri.ToString(); Token = $PSBoundParameters.Token }
+    if ($Token -match '^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$') {
+      $Script:Falcon.Api.Collector.Uri += 'api/v1/ingest/humio-structured/'
     }
     [string]$Message = "Added '$($Script:Falcon.Api.Collector.Uri)'"
     if ($PSBoundParameters.Enable) {
@@ -44,7 +44,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
 function Send-FalconEvent {
 <#
 .SYNOPSIS
-Create Falcon LogScale events from PSFalcon command results
+Create Falcon LogScale or Falcon NGSIEM events from PSFalcon command results
 .DESCRIPTION
 Uses the pre-defined 'Path' and 'Token' values from 'Register-FalconEventCollector' to create events from the
 output provided by a PSFalcon command.
@@ -64,11 +64,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconEvent
     $ProgressPreference = 'SilentlyContinue'
     [System.Collections.Generic.List[object]]$List = @()
   }
-  process { if ($Object) { @($Object).foreach{ $List.Add($_) }}}
+  process {
+    if ($Script:Falcon.Api.Collector.Token -and $Script:Falcon.Api.Collector.Token -match '^[a-fA-F0-9]{32}$') {
+      # Force object into [PSCustomObject] type and send to Falcon NGSIEM
+      [PSCustomObject]$Object = if ($Object -is [string]) { @{ string = $Object } } else { $Object }
+      Set-Property $Object '@timestamp' ([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())
+      Set-Property $Object '@sourcetype' $Script:Falcon.Api.UserAgent
+      $Param = @{
+        Uri = $Script:Falcon.Api.Collector.Uri
+        Method = 'POST'
+        Headers = @{
+          Authorization = @('Bearer',$Script:Falcon.Api.Collector.Token) -join ' '
+          ContentType = 'application/json'
+        }
+        Body = @{ event = $Object } | ConvertTo-Json -Depth 32
+      }
+      try { [void](Invoke-WebRequest @Param -UseBasicParsing) } catch { Write-Error $_ }
+    } else {
+      if ($Object) { @($Object).foreach{ $List.Add($_) }}
+    }
+  }
   end {
     if (!$Script:Falcon.Api.Collector.Uri -or !$Script:Falcon.Api.Collector.Token) {
       throw "Falcon LogScale destination has not been configured. Try 'Register-FalconEventCollector'."
     } elseif ($List) {
+      # Send events to Falcon LogScale environment
       [object[]]$Events = @($List).foreach{
         $Item = @{ timestamp = Get-Date -Format o; attributes = @{}}
         if ($_ -is [PSCustomObject]) {
@@ -128,13 +148,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Unregister-FalconEventCollector
   }
 }
 $Register = @{
+  # Add default Humio cloud addresses for autocompletion
   CommandName = 'Register-FalconEventCollector'
   ParameterName = 'Uri'
   ScriptBlock = {
     param($CommandName,$ParameterName,$WordToComplete,$CommandAst,$FakeBoundParameters)
-    $PublicClouds = @('https://cloud.community.humio.com/','https://cloud.humio.com/',
+    $PublicCloud = @('https://cloud.community.humio.com/','https://cloud.humio.com/',
       'https://cloud.us.humio.com/')
-    $Match = $PublicClouds | Where-Object { $_ -like "$WordToComplete*" }
+    $Match = $PublicCloud | Where-Object { $_ -like "$WordToComplete*" }
     $Match | ForEach-Object {
       New-Object -Type System.Management.Automation.CompletionResult -ArgumentList $_,
       $_,

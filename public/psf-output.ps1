@@ -266,7 +266,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconMap
   }
   end {
     if ($List) {
-      [string[]]$IocInput = @($List | Select-Object -Unique) -join ','
+      [string[]]$IocInput = @($List) -join ','
       if (!$IocInput) { throw "No valid indicators found." }
       [string]$Target = "$($FalconUI)/intelligence/graph?indicators=$($IocInput -join ',')"
       if ($PSCmdlet.ShouldProcess($Target)) { Start-Process $Target }
@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconModule
         ModulePath = Split-Path $ManifestPath -Parent
         UserModulePath = $env:PSModulePath
         UserHome = $HOME
-        UserAgent = 'crowdstrike-psfalcon',$ModuleData.ModuleVersion -join '/'
+        UserAgent = $Script:Falcon.Api.UserAgent
       }
     } else {
       throw "Unable to locate '$ManifestPath'."

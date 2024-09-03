@@ -13,8 +13,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
   param(
     [Parameter(ParameterSetName='/malquery/entities/requests/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
-    [Alias('Ids')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('ids')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -58,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
     [Parameter(ParameterSetName='/malquery/entities/metadata/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -68,7 +68,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -100,7 +100,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Group-FalconMalQuerySample
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -193,11 +193,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMalQuery
       Format = @{ Body = @{ root = @('yara_rule','options'); patterns = @('type','value') }}
     }
     $Aliases = (Get-Command $MyInvocation.MyCommand.Name).Parameters.GetEnumerator().Where({
-      $_.Value.Attributes.ParameterSetName -eq $PSCmdlet.ParameterSetName })
+      $_.Value.Attributes.ParameterSetName -eq $PSCmdlet.ParameterSetName})
     $Options = @{}
     foreach ($Opt in @('FilterFiletype','FilterMeta','Limit','MaxDate','MaxSize','MinDate','MinSize')) {
       if ($PSBoundParameters.$Opt) {
-        $Alias = $Aliases.Where({ $_.Key -eq $Opt }).Value.Aliases[0]
+        $Alias = $Aliases.Where({$_.Key -eq $Opt}).Value.Aliases[0]
         $Key = if ($Alias) { $Alias } else { $Opt.ToLower() }
         $Options[$Key] = $PSBoundParameters.$Opt
         [void]$PSBoundParameters.Remove($Opt)
@@ -236,7 +236,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalQuerySample
     [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^([A-Fa-f0-9]{64}|\w{8}-\w{4}-\w{4}-\w{4}-\w{12})$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id,
     [Parameter(ParameterSetName='/malquery/entities/download-files/v1:get')]
     [switch]$Force

@@ -10,7 +10,7 @@ If an active OAuth2 access token is due to expire in less than 60 seconds, a new
 requested using your cached credentials.
 
 The 'Collector' parameter allows for the submission of a [System.Collections.Hashtable] object containing the
-parameters included with a 'Register-FalconEventCollector' command ('Path', 'Token' and 'Enabled') in order to
+parameters included with a 'Register-FalconEventCollector' command ('Path', 'Token' and 'Enable') in order to
 log an initial OAuth2 access token request.
 .PARAMETER ClientId
 OAuth2 client identifier
@@ -21,11 +21,11 @@ CrowdStrike cloud [default: 'us-1']
 .PARAMETER CustomUrl
 Custom API URL for module troubleshooting
 .PARAMETER Hostname
-CrowdStrike API hostname
+CrowdStrike API hostname [default: 'https://api.crowdstrike.com']
 .PARAMETER MemberCid
 Member CID, used when authenticating within a multi-CID environment ('Falcon Flight Control')
 .PARAMETER Collector
-A hashtable containing 'Path', 'Token' and 'Enabled' properties for 'Register-FalconEventCollector'
+A hashtable containing 'Path', 'Token' and 'Enable' properties for 'Register-FalconEventCollector'
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
 #>
@@ -45,13 +45,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     [ValidatePattern('^\w{40}$')]
     [string]$ClientSecret,
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=3)]
-    [ValidateSet('eu-1','us-gov-1','us-1','us-2',IgnoreCase=$false)]
+    [ValidateSet('eu-1','us-1','us-2','us-gov-1','us-gov-2',IgnoreCase=$false)]
     [string]$Cloud,
     [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=3)]
     [string]$CustomUrl,
     [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('https://api.crowdstrike.com','https://api.us-2.crowdstrike.com',
-      'https://api.laggar.gcw.crowdstrike.com','https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
+      'https://api.laggar.gcw.crowdstrike.com','https://api.us-gov-2.crowdstrike.mil',
+      'https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
     [string]$Hostname,
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
     [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=4)]
@@ -73,9 +74,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     [System.Collections.Hashtable]$Collector
   )
   begin {
-    if ($PSBoundParameters.MemberCid -match '^[a-fA-F0-9]{32}-\w{2}$') {
-      $PSBoundParameters.MemberCid = $PSBoundParameters.MemberCid.Split('-')[0]
-    }
     function Get-ApiCredential ($UserInput) {
       $Output = @{}
       @('ClientId','ClientSecret','Hostname','MemberCid').foreach{
@@ -101,6 +99,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     }
   }
   process {
+    if ($PSBoundParameters.MemberCid) {
+      # Validate MemberCid value
+      $PSBoundParameters.MemberCid = Confirm-CidValue $PSBoundParameters.MemberCid
+    }
     if ($PSBoundParameters.CustomUrl) {
       # Override Hostname with CustomUrl
       $PSBoundParameters['Hostname'] = $PSBoundParameters.CustomUrl
@@ -109,9 +111,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
       # Convert 'Cloud' to 'Hostname'
       $Value = switch ($PSBoundParameters.Cloud) {
         'eu-1' { 'https://api.eu-1.crowdstrike.com' }
-        'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
         'us-1' { 'https://api.crowdstrike.com' }
         'us-2' { 'https://api.us-2.crowdstrike.com' }
+        'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
+        'us-gov-2' { 'https://api.us-gov-2.crowdstrike.mil' }
       }
       $PSBoundParameters['Hostname'] = $Value
       [void]$PSBoundParameters.Remove('Cloud')
@@ -136,7 +139,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
           if ($String) { Write-Log 'Request-FalconToken' "Set TLS 1.2 via $String." }
           $Script:Falcon.Api.Handler.AutomaticDecompression = [System.Net.DecompressionMethods]::Gzip,
             [System.Net.DecompressionMethods]::Deflate
-          $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd("$((Show-FalconModule).UserAgent)")
+          $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd($Script:Falcon.Api.UserAgent)
         } else {
           $PSCmdlet.WriteError('Unable to initialize [ApiClient] object.')
         }
@@ -168,13 +171,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
         if ($Script:Falcon.MemberCid) { $Param.Body += "&member_cid=$($Script:Falcon.MemberCid)" }
         $Request = $Script:Falcon.Api.Invoke($Param)
         if ($Request.Result) {
-          $Region = $Request.Result.Headers.GetEnumerator().Where({ $_.Key -eq 'X-Cs-Region' }).Value
+          $Region = $Request.Result.Headers.GetEnumerator().Where({$_.Key -eq 'X-Cs-Region'}).Value
           $Redirect = switch ($Region) {
             # Update ApiClient hostname if redirected
+            'eu-1' { 'https://api.eu-1.crowdstrike.com' }
             'us-1' { 'https://api.crowdstrike.com' }
             'us-2' { 'https://api.us-2.crowdstrike.com' }
             'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
-            'eu-1' { 'https://api.eu-1.crowdstrike.com' }
+            'us-gov-2' { 'https://api.us-gov-2.crowdstrike.mil' }
           }
           if ($Redirect -and $Script:Falcon.Hostname -ne $Redirect) {
             Write-Log 'Request-FalconToken' "Redirected to '$Region'."

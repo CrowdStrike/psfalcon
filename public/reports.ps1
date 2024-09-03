@@ -17,7 +17,7 @@ Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Execution
-Retrieve information about scheduled report execution
+Retrieve information about scheduled report execution(s)
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -34,7 +34,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
     [Parameter(ParameterSetName='/reports/entities/report-executions/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=1)]
     [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=1)]
@@ -87,7 +87,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -149,7 +149,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconScheduledReport
     [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id,
     [Parameter(ParameterSetName='/reports/entities/report-executions-download/v1:get')]
     [switch]$Force

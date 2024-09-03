@@ -33,7 +33,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
   param(
     [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=1)]
     [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=1)]
@@ -79,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
     if ($Include) {
       $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
       if (!$Request.slug) { $Request = $Request | & $MyInvocation.MyCommand.Name | Select-Object id,slug }
@@ -133,7 +133,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAttck
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -194,10 +194,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
   [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIndicator {
@@ -235,7 +239,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
   param(
     [Parameter(ParameterSetName='/intel/entities/indicators/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=1)]
     [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=1)]
@@ -278,10 +282,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconIntel {
@@ -317,7 +325,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
   param(
     [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/reports/v1:get',Position=1)]
     [Parameter(ParameterSetName='/intel/combined/reports/v1:get',Position=1)]
@@ -356,10 +364,87 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Get-FalconMalwareFamily {
+<#
+.SYNOPSIS
+Search for malware families
+.DESCRIPTION
+Requires 'Malware Families (Falcon Intelligence): Read'.
+.PARAMETER Id
+Malware family identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Mitre
+Retrieve MITRE TTP information for malware families
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalwareFamily
+#>
+  [CmdletBinding(DefaultParameterSetName='/intel/queries/malware/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/intel/entities/malware/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [Parameter(ParameterSetName='/intel/queries/mitre-malware/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=1)]
+    [ValidateScript({ Test-FqlStatement $_ })]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=2)]
+    [Alias('q')]
+    [string]$Query,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=3)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=4)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/intel/queries/mitre-malware/v1:get',Mandatory)]
+    [switch]$Mitre,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconRule {
@@ -404,7 +489,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
     [Parameter(ParameterSetName='/intel/entities/rules/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^\d{4,}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Mandatory,Position=1)]
     [ValidateSet('snort-suricata-master','snort-suricata-update','snort-suricata-changelog','yara-master',
@@ -444,10 +529,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Receive-FalconAttck {

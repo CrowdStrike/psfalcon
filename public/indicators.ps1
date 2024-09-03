@@ -23,13 +23,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocHost
   param(
     [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [Parameter(ParameterSetName='/indicators/aggregates/devices-count/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/iocs/aggregates/indicators/device-count/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
     [ValidateSet('domain','ipv4','ipv6','md5','sha256',IgnoreCase=$false)]
     [string]$Type,
     [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [Parameter(ParameterSetName='/indicators/aggregates/devices-count/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/iocs/aggregates/indicators/device-count/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
     [string]$Value,
     [Parameter(ParameterSetName='/indicators/queries/devices/v1:get',Position=3)]
@@ -39,7 +39,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocHost
     [int32]$Offset,
     [Parameter(ParameterSetName='/indicators/queries/devices/v1:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/indicators/aggregates/devices-count/v1:get',Mandatory)]
+    [Parameter(ParameterSetName='/iocs/aggregates/indicators/device-count/v1:get',Mandatory)]
     [switch]$Total
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -74,7 +74,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
   param(
     [Parameter(ParameterSetName='/processes/entities/processes/v1:get',ValueFromPipeline,Mandatory)]
     [ValidatePattern('^pid:[a-fA-F0-9]{32}:\d+$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/indicators/queries/processes/v1:get',Mandatory,Position=1)]
     [ValidateSet('domain','ipv4','ipv6','md5','sha256',IgnoreCase=$false)]
@@ -100,9 +100,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocProcess
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }

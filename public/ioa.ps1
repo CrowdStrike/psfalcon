@@ -1,7 +1,7 @@
-function Get-FalconHorizonIoaEvent {
+function Get-FalconCloudIoaEvent {
 <#
 .SYNOPSIS
-Retrieve Falcon Horizon Indicator of Attack events
+Retrieve Falcon Cloud Security Indicator of Attack events
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER CloudPlatform
@@ -27,9 +27,10 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIoaEvent
 #>
   [CmdletBinding(DefaultParameterSetName='/ioa/entities/events/v1:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonIoaEvent')]
   param(
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Mandatory,ValueFromPipelineByPropertyName,
        Position=1)]
@@ -45,11 +46,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
     [Alias('aws_account_id','account_id','AccountId')]
     [string]$AwsAccountId,
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_subscription_id')]
     [string]$AzureSubscriptionId,
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',ValueFromPipelineByPropertyName,Position=5)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_tenant_id')]
     [string]$AzureTenantId,
     [Parameter(ParameterSetName='/ioa/entities/events/v1:get',Position=6)]
@@ -92,10 +93,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaEvent
     }
   }
 }
-function Get-FalconHorizonIoaUser {
+function Get-FalconCloudIoaUser {
 <#
 .SYNOPSIS
-Retrieve Falcon Horizon Indicator of Attack users
+Retrieve Falcon Cloud Security Indicator of Attack users
 .DESCRIPTION
 Requires 'CSPM registration: Read'.
 .PARAMETER PolicyId
@@ -111,9 +112,10 @@ Azure tenant identifier
 .PARAMETER State
 Event state
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIoaUser
 #>
   [CmdletBinding(DefaultParameterSetName='/ioa/entities/users/v1:get',SupportsShouldProcess)]
+  [Alias('Get-FalconHorizonIoaUser')]
   param(
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Mandatory,ValueFromPipelineByPropertyName,
        Position=1)]
@@ -129,11 +131,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHorizonIoaUser
     [Alias('aws_account_id','account_id','AccountId')]
     [string]$AwsAccountId,
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_subscription_id')]
     [string]$AzureSubscriptionId,
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',ValueFromPipelineByPropertyName,Position=5)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('azure_tenant_id')]
     [string]$AzureTenantId,
     [Parameter(ParameterSetName='/ioa/entities/users/v1:get',Position=6)]

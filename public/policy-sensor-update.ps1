@@ -4,8 +4,8 @@ function Edit-FalconSensorUpdatePolicy {
 Modify Sensor Update policies
 .DESCRIPTION
 Requires 'Sensor update policies: Write'.
-.PARAMETER Array
-An array of policies to modify in a single request
+.PARAMETER InputObject
+One or more policies to modify in a single request
 .PARAMETER Id
 Policy identifier
 .PARAMETER Name
@@ -19,21 +19,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'Edit-FalconSensorUpdatePolicy'
-          Endpoint = '/policy/entities/sensor-update/v2:patch'
-          Required = @('id')
-          Pattern = @('id')
-        }
-        Confirm-Parameter @Param
-      }
+      Confirm-Parameter $_ 'Edit-FalconSensorUpdatePolicy' '/policy/entities/sensor-update/v2:patch'
     })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Alias('resources','Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id,
@@ -46,33 +37,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
     [object]$Setting
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/policy/entities/sensor-update/v2:patch'
-      Format = @{ Body = @{ resources = @('name','id','description','settings'); root = @('resources') }}
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/sensor-update/v2:patch' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
-        # Select allowed fields, when populated
-        [string[]]$Select = @('id','name','description','platform_name','settings').foreach{
-          if ($_ -eq 'settings') {
-            # Filter 'settings'
-            $i.settings = $i.settings | Select-Object @($i.settings.PSObject.Properties |
-              Where-Object { $null -ne $_.Value -and $_.Value -ne '' }).Name
-            if ($i.settings.variants) {
-              # Filter 'variants'
-              $i.settings.variants = @($i.settings.variants).foreach{
-                $_ | Select-Object @($_.PSObject.Properties | Where-Object {
-                  $null -ne $_.Value -and $_.Value -ne '' }).Name
-              }
-            }
-          }
-          if ($i.$_) { $_ }
-        }
-        if ($Select) { $List.Add(($i | Select-Object $Select)) }
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -80,8 +54,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
+        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -209,7 +185,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
     [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=1)]
@@ -248,7 +224,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
     if ($Include) {
       Invoke-Falcon @Param -UserInput $PSBoundParameters | ForEach-Object {
         Add-Include $_ $PSBoundParameters @{ members = 'Get-FalconSensorUpdatePolicyMember' }
@@ -331,8 +307,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
 #>
-  [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/policy/combined/reveal-uninstall-token/v1:post',Position=1)]
     [Alias('audit_message')]
@@ -348,18 +323,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
     [ValidatePattern('^([a-fA-F0-9]{32}|MAINTENANCE)$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process {
-    if ($Include) {
-      # Append properties from 'Include'
-      foreach ($Request in (Invoke-Falcon @Param -UserInput $PSBoundParameters)) {
-        @($Request | Get-FalconHost -EA 0 | Select-Object @($Include + 'device_id')).foreach{
-          @($_.PSObject.Properties).foreach{ Set-Property $Request $_.Name $_.Value }
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $Request = @($List).foreach{
+        $PSBoundParameters['Id'] = $_
+        Invoke-Falcon @Param -UserInput $PSBoundParameters -EA 1
+      }
+      if ($Request -and $Include) {
+        [string[]]$ReqProperty = @($Request[0].PSObject.Properties.Name).Where({$_ -ne 'device_id'})
+        foreach ($i in ($Request.device_id | Get-FalconHost -EA 0 | Select-Object @($Include + 'device_id'))) {
+          @($ReqProperty).foreach{ Set-Property $i $_ @($Request).Where({$_.device_id -eq $i.device_id}).$_ }
+          $i
         }
+      } else {
         $Request
       }
-    } else {
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
 }
@@ -400,7 +383,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconSensorUpdatePolicyActi
     }
   }
   process {
-    $PSBoundParameters['Ids'] = @($PSBoundParameters.Id)
+    $PSBoundParameters['ids'] = @($PSBoundParameters.Id)
     [void]$PSBoundParameters.Remove('Id')
     if ($PSBoundParameters.GroupId) {
       $PSBoundParameters['action_parameters'] = @(@{ name = 'group_id'; value = $PSBoundParameters.GroupId })
@@ -415,8 +398,8 @@ function New-FalconSensorUpdatePolicy {
 Create Sensor Update policies
 .DESCRIPTION
 Requires 'Sensor update policies: Write'.
-.PARAMETER Array
-An array of policies to create in a single request
+.PARAMETER InputObject
+One or more policies to create in a single request
 .PARAMETER PlatformName
 Operating system platform
 .PARAMETER Name
@@ -430,22 +413,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/policy/entities/sensor-update/v2:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='array',Mandatory,ValueFromPipeline)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      foreach ($Object in $_) {
-        $Param = @{
-          Object = $Object
-          Command = 'New-FalconSensorUpdatePolicy'
-          Endpoint = '/policy/entities/sensor-update/v2:post'
-          Required = @('name','platform_name')
-          Content = @('platform_name')
-          Format = @{ platform_name = 'PlatformName' }
-        }
-        Confirm-Parameter @Param
-      }
+      Confirm-Parameter $_ 'New-FalconSensorUpdatePolicy' '/policy/entities/sensor-update/v2:post'
     })]
-    [Alias('resources')]
-    [object[]]$Array,
+    [Alias('resources','Array')]
+    [object[]]$InputObject,
     [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=1)]
     [string]$Name,
     [Parameter(ParameterSetName='/policy/entities/sensor-update/v2:post',Mandatory,Position=2)]
@@ -459,39 +432,20 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
     [object]$Setting
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = '/policy/entities/sensor-update/v2:post'
-      Format = @{
-        Body = @{ resources = @('description','platform_name','name','settings'); root = @('resources') }
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/sensor-update/v2:post' }
+    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[object]]$List = @()
   }
   process {
-    if ($Array) {
-      foreach ($i in $Array) {
-        # Select allowed fields, when populated
-        [string[]]$Select = @('name','description','platform_name','settings').foreach{
-          if ($_ -eq 'settings') {
-            if ($i.settings.scheduler -and $i.settings.scheduler.enabled -eq $false) {
-              # Remove 'scheduler' if disabled
-              $i.settings.PSObject.Properties.Remove('scheduler')
-            }
-            # Filter 'settings' to remove empty values
-            $i.settings = $i.settings | Select-Object @($i.settings.PSObject.Properties |
-              Where-Object { $null -ne $_.Value -and $_.Value -ne '' }).Name
-            if ($i.settings.variants) {
-              # Filter 'variants' to remove empty values
-              $i.settings.variants = @($i.settings.variants).foreach{
-                $_ | Select-Object @($_.PSObject.Properties | Where-Object {
-                  $null -ne $_.Value -and $_.Value -ne '' }).Name
-              }
-            }
-          }
-          if ($i.$_) { $_ }
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
+        if ($i.settings.scheduler -and $i.settings.scheduler.enabled -eq $false) {
+          # Remove 'scheduler' if disabled
+          [void]$i.settings.PSObject.Properties.Remove('scheduler')
         }
-        if ($Select) { $List.Add(($i | Select-Object $Select)) }
+        $List.Add($i)
       }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -499,8 +453,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
   }
   end {
     if ($List) {
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['Array'] = @($List[$i..($i + 99)])
+        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -522,7 +478,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorUpdatePolicy
     [Parameter(ParameterSetName='/policy/entities/sensor-update/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -532,7 +488,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorUpdatePolicy
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -562,7 +518,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorUpdatePrecedence
     [string]$PlatformName,
     [Parameter(ParameterSetName='/policy/entities/sensor-update-precedence/v1:post',Mandatory,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}

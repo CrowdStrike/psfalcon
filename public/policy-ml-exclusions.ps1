@@ -7,7 +7,7 @@ Uses the 'behaviors' and 'device' properties of a detection to generate the nece
 Machine Learning exclusion. Specfically, it maps the following properties these fields:
 
 behaviors.filepath > value
-device.groups    > groups
+device.groups > groups
 
 The 'value' field is stripped of any leading NT file path ('Device/HarddiskVolume').
 
@@ -27,7 +27,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
   begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
   process {
     if ($Detection.behaviors -and $Detection.device) {
-      @($Detection.behaviors).Where({ $_.tactic -match '^(Machine Learning|Malware)$' }).foreach{
+      @($Detection.behaviors).Where({$_.tactic -match '^(Machine Learning|Malware)$'}).foreach{
         $Output.Add(([PSCustomObject]@{
           value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
           excluded_from = @('blocking')
@@ -53,6 +53,8 @@ Requires 'Machine Learning Exclusions: Write'.
 RegEx pattern value
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
+.PARAMETER DescendantProcess
+Apply to descendant processes
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -71,9 +73,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
     [object[]]$GroupId,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=3)]
+    [Alias('is_descendant_process')]
+    [boolean]$DescendantProcess,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=4)]
+      ValueFromPipelineByPropertyName,Position=5)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
@@ -121,7 +127,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:get',ValueFromPipelineByPropertyName,
       ValueFromPipeline,Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -147,10 +153,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconMlExclusion {
@@ -223,7 +233,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -233,7 +243,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMlExclusion
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

@@ -57,7 +57,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconInstallToken
     [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=4)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -67,7 +67,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconInstallToken
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -102,7 +102,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
     [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -125,10 +125,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconInstallTokenEvent {
@@ -162,7 +166,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
     [Parameter(ParameterSetName='/installation-tokens/entities/audit-events/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -184,10 +188,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconInstallTokenSetting {
@@ -205,7 +213,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenSetting
   [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/customer-settings/v1:get',
     SupportsShouldProcess)]
   param()
-  process { Invoke-Falcon -Endpoint $PSCmdlet.ParameterSetName }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function New-FalconInstallToken {
 <#
@@ -248,7 +256,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
     [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -258,7 +266,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

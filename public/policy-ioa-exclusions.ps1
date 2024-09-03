@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
   begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
   process {
     if ($Detection.behaviors -and $Detection.device) {
-      @($Detection.behaviors).Where({ $_.tactic -notmatch '^(Machine Learning|Malware)$' }).foreach{
+      @($Detection.behaviors).Where({$_.tactic -notmatch '^(Machine Learning|Malware)$'}).foreach{
         $Output.Add(([PSCustomObject]@{
           pattern_id = $_.behavior_id
           pattern_name = $_.display_name
@@ -158,7 +158,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -185,10 +185,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconIoaExclusion {
@@ -258,7 +262,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
     if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
     if ($PSBoundParameters.GroupId -eq 'all') {
       # Remove 'all' from 'GroupId', and remove 'GroupId' if 'all' was the only value
-      $PSBoundParameters.GroupId = @($PSBoundParameters.GroupId).Where({ $_ -ne 'all' })
+      $PSBoundParameters.GroupId = @($PSBoundParameters.GroupId).Where({$_ -ne 'all'})
       if ([string]::IsNullOrEmpty($PSBoundParameters.GroupId)) { [void]$PSBoundParameters.Remove('GroupId') }
     }
     if ($PSBoundParameters.GroupId) {
@@ -289,7 +293,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
     [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -299,7 +303,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

@@ -3,7 +3,7 @@ function Get-FalconRemediation {
 .SYNOPSIS
 Retrieve detail about remediations specified in a Falcon Spotlight vulnerability
 .DESCRIPTION
-Requires 'Spotlight vulnerabilities: Read'.
+Requires 'Vulnerabilities: Read'.
 .PARAMETER Id
 Remediation identifier
 .LINK
@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
   param(
     [Parameter(ParameterSetName='/spotlight/entities/remediations/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [object[]]$Id
   )
   begin {
@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -48,7 +48,7 @@ function Get-FalconVulnerability {
 .SYNOPSIS
 Search for Falcon Spotlight vulnerabilities
 .DESCRIPTION
-Requires 'Spotlight vulnerabilities: Read'.
+Requires 'Vulnerabilities: Read'.
 .PARAMETER Id
 Vulnerability identifier
 .PARAMETER Filter
@@ -75,7 +75,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     [Parameter(ParameterSetName='/spotlight/entities/vulnerabilities/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Mandatory,Position=1)]
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Mandatory,Position=1)]
@@ -91,7 +91,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     [string]$Sort,
     [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Position=4)]
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=4)]
-    [ValidateRange(1,400)]
+    [ValidateRange(1,5000)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get')]
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get')]
@@ -107,11 +107,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
+    if ($Param.Endpoint -match 'queries' -and $PSBoundParameters.Limit -gt 400) { $PSBoundParameters.Limit = 400 }
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Get-FalconVulnerabilityLogic {
@@ -119,7 +124,7 @@ function Get-FalconVulnerabilityLogic {
 .SYNOPSIS
 Search for Falcon Spotlight vulnerability evaluation logic
 .DESCRIPTION
-Requires 'Spotlight vulnerabilities: Read'.
+Requires 'Vulnerabilities: Read'.
 .PARAMETER Id
 Vulnerability logic identifier
 .PARAMETER Filter
@@ -143,7 +148,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
   param(
     [Parameter(ParameterSetName='/spotlight/entities/evaluation-logic/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [Alias('Ids','apps')]
+    [Alias('ids','apps')]
     [object[]]$Id,
     [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Mandatory,Position=1)]
     [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Mandatory,Position=1)]
@@ -190,7 +195,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
   }
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

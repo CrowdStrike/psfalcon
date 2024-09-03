@@ -4,14 +4,16 @@ function Edit-FalconSvExclusion {
 Modify a Sensor Visibility exclusion
 .DESCRIPTION
 Requires 'Sensor Visibility Exclusions: Write'.
-.PARAMETER Id
-Exclusion identifier
 .PARAMETER Value
 RegEx pattern value
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
+.PARAMETER DescendantProcess
+Apply to descendant processes
 .PARAMETER Comment
 Audit log comment
+.PARAMETER Id
+Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
 #>
@@ -26,9 +28,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
     [object[]]$GroupId,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=3)]
+    [Alias('is_descendant_process')]
+    [boolean]$DescendantProcess,
+    [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
@@ -76,7 +82,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -102,10 +108,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
   end {
-    if ($List) { $PSBoundParameters['Id'] = @($List | Select-Object -Unique) }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function New-FalconSvExclusion {
@@ -116,10 +126,12 @@ Create a Sensor Visibility exclusion
 Requires 'Sensor Visibility Exclusions: Write'.
 .PARAMETER Value
 RegEx pattern value
-.PARAMETER Comment
-Audit log comment
 .PARAMETER GroupId
 Host group identifier or 'all' to apply to all hosts
+.PARAMETER DescendantProcess
+Apply to descendant processes
+.PARAMETER Comment
+Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
 #>
@@ -134,6 +146,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
     [object[]]$GroupId,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
       Position=3)]
+    [Alias('is_descendant_process')]
+    [boolean]$DescendantProcess,
+    [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
     [string]$Comment
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -167,7 +183,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSvExclusion
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/sv-exclusions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -177,7 +193,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSvExclusion
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

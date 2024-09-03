@@ -14,7 +14,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSample
     [Parameter(ParameterSetName='/samples/queries/samples/GET/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('sha256s','sha256','Ids')]
+    [Alias('sha256s','sha256','ids')]
     [string[]]$Id
   )
   begin {
@@ -24,7 +24,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSample
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
+      $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconSample
     [Parameter(ParameterSetName='/samples/entities/samples/v3:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=3)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids')]
+    [Alias('ids')]
     [string]$Id,
     [Parameter(ParameterSetName='/samples/entities/samples/v3:get')]
     [switch]$Force
@@ -99,7 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSample
     [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
-    [Alias('Ids','sha256')]
+    [Alias('ids','sha256')]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}

@@ -124,7 +124,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
     [Parameter(ParameterSetName='/identity-protection/entities/devices/GET/v1:post',
       ValueFromPipelineByPropertyName,ValueFromPipeline,Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('Ids','device_id','host_ids','aid')]
+    [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get',Position=1)]
     [ValidateScript({ Test-FqlStatement $_ })]
@@ -147,18 +147,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
   }
-  process {
-    if ($Id) {
-      @($Id).foreach{ $List.Add($_) }
-    } else {
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
-  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       $Param['Max'] = 5000
-      $PSBoundParameters['Id'] = @($List | Select-Object -Unique)
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
+      $PSBoundParameters['Id'] = @($List)
     }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }

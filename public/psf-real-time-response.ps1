@@ -53,7 +53,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
   process { if ($HostId) { @($HostId).foreach{ $List.Add($_) }}}
   end {
     [string[]]$Filter = if ($List) {
-      $List = $List | Where-Object { ![string]::IsNullOrEmpty($_) } | Select-Object -Unique
+      $List = @($List) | Where-Object { ![string]::IsNullOrEmpty($_) }
       for ($i = 0; $i -lt $List.Count; $i += 17) {
         # Create individual filter statements for groups of host identifiers
         [string]$IdList = "($((@($List[$i..($i + 16)]).foreach{ "aid:'$_'" }) -join ','))"
@@ -83,9 +83,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
             }
           }
           if ($Include -and $HostList) {
-            @($HostList.Where({ $_.device_id -eq $BaseObj.aid })).foreach{
+            @($HostList.Where({$_.device_id -eq $BaseObj.aid})).foreach{
               # Append 'Include' properties to base output
-              @($_.PSObject.Properties.Where({ $_.Name -ne 'device_id' })).foreach{ $BaseObj[$_.Name] = $_.Value }
+              @($_.PSObject.Properties.Where({$_.Name -ne 'device_id'})).foreach{ $BaseObj[$_.Name] = $_.Value }
             }
           }
           @($Session.commands).foreach{
@@ -321,8 +321,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
         $i = [PSCustomObject]@{ aid = $_.aid; deployment_step = $Step }
         if ($Include) {
           # Append 'Include' fields to output
-          @($HostList).Where({ $_.device_id -eq $i.aid }).foreach{
-            @($_.PSObject.Properties).Where({ $Include -contains $_.Name }).foreach{
+          @($HostList).Where({$_.device_id -eq $i.aid}).foreach{
+            @($_.PSObject.Properties).Where({$Include -contains $_.Name}).foreach{
               Set-Property $i $_.Name $_.Value
             }
           }
@@ -353,7 +353,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
       # Use Host identifiers to also retrieve 'platform_name' and 'Include' fields
       [string[]]$Select = 'device_id','platform_name'
       if ($Include) { $Select += ($Include | Where-Object { $_ -ne 'platform_name' })}
-      @($List | Select-Object -Unique | Get-FalconHost | Select-Object $Select).foreach{ $HostList.Add($_) }
+      @($List | Get-FalconHost | Select-Object $Select).foreach{ $HostList.Add($_) }
     }
     if ($HostList) {
       # Check for existing 'CloudFile' and upload 'LocalFile' if chosen
@@ -384,7 +384,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                 'Mac' }).device_id
               Linux = ($HostList | Where-Object { $SessionIds -contains $_.device_id -and $_.platform_name -eq
                 'Linux' }).device_id
-            }).GetEnumerator().Where({ $_.Value })) {
+            }).GetEnumerator().Where({$_.Value})) {
               # Define target temporary folder
               [string]$TempDir = switch ($Pair.Key) {
                 'Windows' { "\Windows\Temp\$DeployName" }
@@ -475,6 +475,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                   Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
                     Measure-Object).Count) $($Pair.Key) host(s)..."
                   [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
+                  # Add delay when queueing to ensure commands are processed in correct order
+                  if ($QueueOffline -eq $true) { Start-Sleep -Seconds 1 }
                   [string[]]$Optional = Write-RtrResult (Invoke-FalconAdminCommand @Param) $Step $Session.batch_id
                 }
               }
@@ -557,13 +559,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
   end {
     if ($List) {
       # Gather list of unique host identifiers and append 'GroupId' when present
-      [object[]]$HostList = @($List | Select-Object -Unique).foreach{ [PSCustomObject]@{ aid = $_ }}
+      [object[]]$HostList = @($List).foreach{ [PSCustomObject]@{ aid = $_ }}
       if ($GroupId) { @($HostList).foreach{ Set-Property $_ 'group_id' $GroupId }}
       if ($Include) {
         foreach ($i in (Get-FalconHost -Id $HostList.aid | Select-Object @($Include + 'device_id'))) {
-          foreach ($p in @($i.PSObject.Properties.Where({ $_.Name -ne 'device_id' }))) {
+          foreach ($p in @($i.PSObject.Properties.Where({$_.Name -ne 'device_id'}))) {
             # Append 'Include' fields to output
-            @($HostList).Where({ $_.aid -eq $i.device_id }).foreach{ Set-Property $_ $p.Name $p.Value }
+            @($HostList).Where({$_.aid -eq $i.device_id}).foreach{ Set-Property $_ $p.Name $p.Value }
           }
         }
       }
@@ -586,11 +588,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
           $Init = @{ Id = $Output.aid; Timeout = 30; QueueOffline = $QueueOffline }
           $InitReq = Start-FalconSession @Init
           if ($InitReq -and ($InitReq.batch_id -or $InitReq.session_id)) {
-            $JobId = Start-RtrUpdate $InitReq $Timeout
+            $JobId = Start-RtrUpdate $InitReq 20
             # Output verbose message with batch_id or session_id
             [string[]]$Message = if ($InitReq.batch_id) {
-              'batch_id:',$InitReq.batch_id,"[$(@($InitReq.hosts).Where({ $_.complete -eq $true -or
-                $_.offline_queued -eq $true }).Count) host(s)]"
+              'batch_id:',$InitReq.batch_id,"[$(@($InitReq.hosts).Where({$_.complete -eq $true -or
+                $_.offline_queued -eq $true}).Count) host(s)]"
             } else {
               'session_id:',$InitReq.session_id
             }
