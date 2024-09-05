@@ -1,10 +1,10 @@
-param([Parameter(Mandatory,Position=1)][string]$Tag,[Parameter(Position=2)][string]$Token)
+param([Parameter(Position=1)][string]$Token)
 $ExePath = Join-Path $env:ProgramFiles "CrowdStrike\CsSensorSettings.exe"
 if (Test-Path $ExePath) {
   if ($Token) {
-    echo "$Token" | & "$ExePath" set --grouping-tags "$Tag"
+    echo "$Token" | & "$ExePath" clear --grouping-tags
   } else {
-    & "$ExePath" set --grouping-tags "$Tag"
+    & "$ExePath" clear --grouping-tags
   }
 } else {
   throw "Not found: $ExePath"
