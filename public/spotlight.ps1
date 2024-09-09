@@ -107,7 +107,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
-    if ($Param.Endpoint -match 'queries' -and $PSBoundParameters.Limit -gt 400) { $PSBoundParameters.Limit = 400 }
+    if (($Param.Endpoint -match 'queries' -and $PSBoundParameters.Limit -gt 400) -or
+    ($PSBoundParameters.All -and !$PSBoundParameters.Limit)) {
+      $PSBoundParameters['Limit'] = 400
+    }
   }
   process {
     if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
