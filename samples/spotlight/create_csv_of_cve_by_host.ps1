@@ -66,7 +66,7 @@ process {
         if ($Output) {
           # Retrieve recent login activity for unique 'aid' values
           $IdList = $Output.aid | Select-Object -Unique
-          $LoginList = Get-FalconHost -Id $IdList -Login
+          $LoginList = Get-FalconHost -Id $IdList -Login -Verbose
           if ($LoginList) {
             foreach ($Id in $IdList) {
               @($Output).Where({$_.aid -eq $Id}).foreach{
