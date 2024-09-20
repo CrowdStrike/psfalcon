@@ -14,7 +14,7 @@ Optional child CID, if requesting an authorization token for a single child CID
 .PARAMETER Cve
 One or more CVE values
 .EXAMPLE
-.\create_csv_of_cve_by_host.ps1 -ClientId abc -ClientSecret def -Path .\my_cve.txt
+.\create_csv_of_cve_by_host.ps1 -ClientId abc -ClientSecret def -Cve 'CVE-2024-0001','CVE-2024-0002'
 #>
 [CmdletBinding()]
 param(
