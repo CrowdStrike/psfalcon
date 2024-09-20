@@ -2,7 +2,7 @@
 using module @{ModuleName='PSFalcon';ModuleVersion='2.2'}
 <#
 .SYNOPSIS
-
+Create a CSV containing a list of detected CVEs by host, including most recent login information
 .PARAMETER ClientId
 API client identifier
 .PARAMETER ClientSecret
