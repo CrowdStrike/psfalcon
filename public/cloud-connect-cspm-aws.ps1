@@ -303,7 +303,13 @@ Enable behavior assessment
 .PARAMETER SensorManagement
 Enable sensor management
 .PARAMETER ExistingCloudtrail
-Use existing Cloudtraile
+Use existing Cloudtrail
+.PARAMETER DspmEnabled
+Enable DSPM
+.PARAMETER DspmRegions
+DSPM region
+.PARAMETER DspmRole
+DSPM role
 .PARAMETER Path
 Destination path
 .PARAMETER Force
@@ -321,7 +327,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAwsScript
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=2)]
-    [Alias('organization_id')]
+    [Alias('organization-id')]
     [string]$OrganizationId,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=3)]
     [ValidateSet('aws-bash','aws-terraform',IgnoreCase=$false)]
@@ -348,8 +354,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAwsScript
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=10)]
     [Alias('use_existing_cloudtrail')]
     [boolean]$ExistingCloudtrail,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=11)]
+    [Alias('dspm_enabled')]
+    [boolean]$DspmEnabled,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=12)]
+    [Alias('dspm_role')]
+    [string]$DspmRole,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=13)]
+    [Alias('dspm_regions')]
+    [string[]]$DspmRegion,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Mandatory,
-      Position=11)]
+      Position=14)]
     [string]$Path,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get')]
     [switch]$Force

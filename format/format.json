@@ -168,8 +168,11 @@
         "accounts",
         "behavior_assessment_enabled",
         "sensor_management_enabled",
+        "dspm_enabled",
+        "dspm_regions",
+        "dspm_role",
         "use_existing_cloudtrail",
-        "organization_id",
+        "organization-id",
         "aws_profile",
         "custom_role_name"
       ]
