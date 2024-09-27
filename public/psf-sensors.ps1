@@ -363,7 +363,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
       if ($HostList.platform_name -notmatch '^(Windows|Linux)$') {
         throw 'Only Windows and Linux hosts are currently supported for uninstallation using PSFalcon.'
       }
-      [string]$Filename = if ($Platform -eq 'Linux') { 'uninstall_sensor.sh' } else { 'uninstall_sensor.ps1' }
+      [string]$Filename = if ($HostList.platform_name -eq 'Linux') {
+        'uninstall_sensor.sh'
+      } else {
+        'uninstall_sensor.ps1'
+      }
       [string]$Script = Get-Content (Join-Path (Join-Path (Show-FalconModule).ModulePath 'script') $Filename) -Raw
       $Param = @{
         Command = 'runscript'
