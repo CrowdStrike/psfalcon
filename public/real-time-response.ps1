@@ -621,9 +621,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
           $PSBoundParameters.Command
         }
         foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters)) {
-          if ($BatchId) {
-            $Request = @($Request.PSObject.Properties.Value).foreach{
-              # Append 'batch_id' to each command result
+          if ($BatchId -and @($Request.PSObject.Properties.Value).Where({$_.session_id})) {
+            $Request = @($Request.PSObject.Properties.Value).Where({$_.session_id}).foreach{
+              # Append 'batch_id' to command results with a 'session_id'
               Set-Property $_ batch_id $BatchId
               $_
             }
@@ -633,6 +633,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
           } elseif ($Wait -and $SessionId) {
             Wait-RtrCommand $Request $MyInvocation.MyCommand.Name
           } else {
+            Write-Host ($Request | ConvertTo-Json)
             $Request
           }
         }
@@ -825,9 +826,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCommand
         $PSBoundParameters.Command
       }
       foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters)) {
-        if ($BatchId) {
-          $Request = @($Request.PSObject.Properties.Value).foreach{
-            # Append 'batch_id' to each command result
+        if ($BatchId -and @($Request.PSObject.Properties.Value).Where({$_.session_id})) {
+          $Request = @($Request.PSObject.Properties.Value).Where({$_.session_id}).foreach{
+            # Append 'batch_id' to command results with a 'session_id'
             Set-Property $_ batch_id $BatchId
             $_
           }
@@ -956,9 +957,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconResponderCommand
           $PSBoundParameters.Command
         }
         foreach ($Request in (Invoke-Falcon @Param -Endpoint $Endpoint -UserInput $PSBoundParameters)) {
-          if ($BatchId) {
-            $Request = @($Request.PSObject.Properties.Value).foreach{
-              # Append 'batch_id' to each command result
+          if ($BatchId -and @($Request.PSObject.Properties.Value).Where({$_.session_id})) {
+            $Request = @($Request.PSObject.Properties.Value).Where({$_.session_id}).foreach{
+              # Append 'batch_id' to command results with a 'session_id'
               Set-Property $_ batch_id $BatchId
               $_
             }
