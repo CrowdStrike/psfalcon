@@ -1015,19 +1015,6 @@
         "ids"
       ]
     },
-    "post": {
-      "body": {
-        "credential": [
-          "details"
-        ],
-        "root": [
-          "type",
-          "url",
-          "url_uniqueness_key",
-          "user_defined_alias"
-        ]
-      }
-    },
     "delete": {
       "query": [
         "ids"
@@ -1228,23 +1215,6 @@
           "ids"
         ]
       }
-    }
-  },
-  "/devices/entities/host-group-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
-      "query": [
-        "action_name",
-        "disable_hostname_check"
-      ]
     }
   },
   "/devices/entities/host-groups/v1": {
@@ -1597,33 +1567,6 @@
       ]
     }
   },
-  "/falconx/entities/memory-dump/extracted-strings/v1": {
-    "get": {
-      "query": [
-        "id",
-        "name",
-        "Accept-Encoding"
-      ]
-    }
-  },
-  "/falconx/entities/memory-dump/hex-dump/v1": {
-    "get": {
-      "query": [
-        "id",
-        "name",
-        "Accept-Encoding"
-      ]
-    }
-  },
-  "/falconx/entities/memory-dump/v1": {
-    "get": {
-      "query": [
-        "id",
-        "name",
-        "Accept-Encoding"
-      ]
-    }
-  },
   "/falconx/entities/report-summaries/v1": {
     "get": {
       "query": [
@@ -1647,32 +1590,6 @@
     "get": {
       "query": [
         "ids"
-      ]
-    },
-    "post": {
-      "body": {
-        "sandbox": [
-          "action_script",
-          "browser",
-          "command_line",
-          "document_password",
-          "enable_tor",
-          "environment_id",
-          "interactivity",
-          "network_settings",
-          "sha256",
-          "submit_name",
-          "system_date",
-          "system_time",
-          "url"
-        ],
-        "root": [
-          "send_email_notification",
-          "user_tags"
-        ]
-      },
-      "query": [
-        "aid"
       ]
     }
   },
@@ -2155,74 +2072,9 @@
     }
   },
   "/fwmgr/entities/network-locations/v1": {
-    "post": {
-      "body": {
-        "connection_types": [
-          "wired",
-          "wireless"
-        ],
-        "root": [
-          "default_gateways",
-          "description",
-          "dhcp_servers",
-          "dns_servers",
-          "enabled",
-          "host_addresses",
-          "name"
-        ],
-        "dns_resolution_targets": [
-          "targets"
-        ],
-        "https_reachable_hosts": [
-          "hostnames"
-        ],
-        "icmp_request_targets": [
-          "targets"
-        ]
-      },
-      "query": [
-        "clone_id",
-        "add_fw_rules",
-        "comment"
-      ]
-    },
     "delete": {
       "query": [
         "ids"
-      ]
-    },
-    "patch": {
-      "body": {
-        "connection_types": [
-          "wired",
-          "wireless"
-        ],
-        "root": [
-          "created_by",
-          "created_on",
-          "default_gateways",
-          "description",
-          "dhcp_servers",
-          "dns_servers",
-          "enabled",
-          "host_addresses",
-          "id",
-          "modified_by",
-          "modified_on",
-          "name"
-        ],
-        "dns_resolution_targets": [
-          "targets"
-        ],
-        "https_reachable_hosts": [
-          "hostnames"
-        ],
-        "icmp_request_targets": [
-          "targets"
-        ]
-      },
-      "query": [
-        "comment"
       ]
     }
   },
@@ -2441,18 +2293,6 @@
       ]
     }
   },
-  "/fwmgr/queries/policy-rules/v1": {
-    "get": {
-      "query": [
-        "id",
-        "sort",
-        "filter",
-        "q",
-        "offset",
-        "limit"
-      ]
-    }
-  },
   "/fwmgr/queries/rule-groups/v1": {
     "get": {
       "query": [
@@ -2462,53 +2302,6 @@
         "offset",
         "after",
         "limit"
-      ]
-    }
-  },
-  "/fwmgr/queries/rules/v1": {
-    "get": {
-      "query": [
-        "sort",
-        "filter",
-        "q",
-        "offset",
-        "after",
-        "limit"
-      ]
-    }
-  },
-  "/host-migration/entities/migrations-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "filter",
-          "ids"
-        ]
-      },
-      "query": [
-        "action_name"
-      ]
-    }
-  },
-  "/host-migration/entities/host-migrations-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "filter",
-          "ids"
-        ]
-      },
-      "query": [
-        "id",
-        "action_name"
       ]
     }
   },
@@ -2578,6 +2371,13 @@
       }
     }
   },
+  "/identity-protection/entities/policy-rules/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
   "/identity-protection/queries/devices/v1": {
     "get": {
       "query": [
@@ -2585,6 +2385,15 @@
         "limit",
         "sort",
         "filter"
+      ]
+    }
+  },
+  "/identity-protection/queries/policy-rules/v1": {
+    "get": {
+      "query": [
+        "enabled",
+        "simulation_mode",
+        "name"
       ]
     }
   },
@@ -3130,18 +2939,6 @@
       }
     }
   },
-  "/ioarules/entities/rules/validate/v1": {
-    "post": {
-      "body": {
-        "fields": [
-          "name",
-          "test_data",
-          "type",
-          "values"
-        ]
-      }
-    }
-  },
   "/ioarules/queries/pattern-severities/v1": {
     "get": {
       "query": [
@@ -3256,14 +3053,6 @@
       "query": [
         "retrodetects",
         "ignore_warnings"
-      ]
-    },
-    "delete": {
-      "query": [
-        "filter",
-        "ids",
-        "comment",
-        "from_parent"
       ]
     },
     "patch": {
@@ -3522,20 +3311,6 @@
   "/malquery/aggregates/quotas/v1": {
     "get": {}
   },
-  "/malquery/combined/fuzzy-search/v1": {
-    "post": {
-      "body": {
-        "options": [
-          "filter_meta",
-          "limit"
-        ],
-        "patterns": [
-          "type",
-          "value"
-        ]
-      }
-    }
-  },
   "/malquery/entities/download-files/v1": {
     "get": {
       "query": [
@@ -3562,43 +3337,6 @@
       "body": {
         "root": [
           "samples"
-        ]
-      }
-    }
-  },
-  "/malquery/queries/exact-search/v1": {
-    "post": {
-      "body": {
-        "options": [
-          "filter_filetypes",
-          "filter_meta",
-          "limit",
-          "max_date",
-          "max_size",
-          "min_date",
-          "min_size"
-        ],
-        "patterns": [
-          "type",
-          "value"
-        ]
-      }
-    }
-  },
-  "/malquery/queries/hunt/v1": {
-    "post": {
-      "body": {
-        "options": [
-          "filter_filetypes",
-          "filter_meta",
-          "limit",
-          "max_date",
-          "max_size",
-          "min_date",
-          "min_size"
-        ],
-        "root": [
-          "yara_rule"
         ]
       }
     }
@@ -3636,27 +3374,6 @@
         "user_uuid",
         "file"
       ]
-    }
-  },
-  "/message-center/entities/case/v2": {
-    "post": {
-      "body": {
-        "root": [
-          "body",
-          "title",
-          "type",
-          "user_uuid"
-        ],
-        "detections": [
-          "id",
-          "product",
-          "url"
-        ],
-        "incidents": [
-          "id",
-          "url"
-        ]
-      }
     }
   },
   "/message-center/entities/cases/GET/v1": {
@@ -3966,39 +3683,6 @@
       "query": [
         "ids"
       ]
-    },
-    "post": {
-      "body": {
-        "root": [
-          "cloud_ml_level_detection",
-          "cloud_ml_level_prevention",
-          "cpu_priority",
-          "description",
-          "endpoint_notification",
-          "file_paths",
-          "host_groups",
-          "initiated_from",
-          "max_duration",
-          "max_file_size",
-          "pause_duration",
-          "quarantine",
-          "scan_exclusions",
-          "scan_inclusions",
-          "sensor_ml_level_detection",
-          "sensor_ml_level_prevention"
-        ],
-        "schedule": [
-          "ignored_by_channelfile",
-          "interval",
-          "start_timestamp"
-        ]
-      }
-    },
-    "delete": {
-      "query": [
-        "ids",
-        "filter"
-      ]
     }
   },
   "/ods/queries/malicious-files/v1": {
@@ -4215,22 +3899,6 @@
       }
     }
   },
-  "/policy/entities/device-control-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
-      "query": [
-        "action_name"
-      ]
-    }
-  },
   "/policy/entities/device-control-precedence/v1": {
     "post": {
       "body": {
@@ -4272,22 +3940,6 @@
           "settings"
         ]
       }
-    }
-  },
-  "/policy/entities/firewall-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
-      "query": [
-        "action_name"
-      ]
     }
   },
   "/policy/entities/firewall-precedence/v1": {
@@ -4412,22 +4064,6 @@
       }
     }
   },
-  "/policy/entities/prevention-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
-      "query": [
-        "action_name"
-      ]
-    }
-  },
   "/policy/entities/prevention-precedence/v1": {
     "post": {
       "body": {
@@ -4471,22 +4107,6 @@
       }
     }
   },
-  "/policy/entities/response-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
-      "query": [
-        "action_name"
-      ]
-    }
-  },
   "/policy/entities/response-precedence/v1": {
     "post": {
       "body": {
@@ -4528,22 +4148,6 @@
           "settings"
         ]
       }
-    }
-  },
-  "/policy/entities/sensor-update-actions/v1": {
-    "post": {
-      "body": {
-        "action_parameters": [
-          "name",
-          "value"
-        ],
-        "root": [
-          "ids"
-        ]
-      },
-      "query": [
-        "action_name"
-      ]
     }
   },
   "/policy/entities/sensor-update-precedence/v1": {
@@ -4824,6 +4428,48 @@
       }
     }
   },
+  "/quickscanpro/entities/files/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "post": {
+      "formdata": [
+        "file",
+        "scan"
+      ]
+    }
+  },
+  "/quickscanpro/entities/scans/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    },
+    "post": {
+      "body": {
+        "resources": [
+          "sha256"
+        ]
+      }
+    }
+  },
+  "/quickscanpro/queries/scans/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "offset",
+        "limit",
+        "sort"
+      ]
+    }
+  },
   "/real-time-response-audit/combined/sessions/v1": {
     "get": {
       "query": [
@@ -4836,24 +4482,6 @@
     }
   },
   "/real-time-response/combined/batch-active-responder-command/v1": {
-    "post": {
-      "body": {
-        "root": [
-          "base_command",
-          "batch_id",
-          "command_string",
-          "optional_hosts",
-          "persist_all"
-        ]
-      },
-      "query": [
-        "timeout",
-        "timeout_duration",
-        "host_timeout_duration"
-      ]
-    }
-  },
-  "/real-time-response/combined/batch-admin-command/v1": {
     "post": {
       "body": {
         "root": [
@@ -4968,18 +4596,6 @@
         "cloud_request_id",
         "sequence_id"
       ]
-    },
-    "post": {
-      "body": {
-        "root": [
-          "base_command",
-          "command_string",
-          "device_id",
-          "id",
-          "persist",
-          "session_id"
-        ]
-      }
     }
   },
   "/real-time-response/entities/command/v1": {
@@ -5410,29 +5026,11 @@
       ]
     }
   },
-  "/reports/entities/report-executions-retry/v1": {
-    "post": {
-      "body": {
-        "root": [
-          "id"
-        ]
-      }
-    }
-  },
   "/reports/entities/report-executions/v1": {
     "get": {
       "query": [
         "ids"
       ]
-    }
-  },
-  "/reports/entities/scheduled-reports/execution/v1": {
-    "post": {
-      "body": {
-        "root": [
-          "id"
-        ]
-      }
     }
   },
   "/reports/entities/scheduled-reports/v1": {
@@ -5471,20 +5069,6 @@
         "password_protected"
       ]
     },
-    "post": {
-      "formdata": [
-        "sample",
-        "file_name",
-        "comment",
-        "is_confidential"
-      ],
-      "query": [
-        "sample",
-        "file_name",
-        "comment",
-        "is_confidential"
-      ]
-    },
     "delete": {
       "query": [
         "ids"
@@ -5498,30 +5082,6 @@
           "sha256s"
         ]
       }
-    }
-  },
-  "/scanner/entities/scans/v1": {
-    "get": {
-      "query": [
-        "ids"
-      ]
-    },
-    "post": {
-      "body": {
-        "root": [
-          "samples"
-        ]
-      }
-    }
-  },
-  "/scanner/queries/scans/v1": {
-    "get": {
-      "query": [
-        "filter",
-        "offset",
-        "limit",
-        "sort"
-      ]
     }
   },
   "/sensors/combined/installers/v2": {
@@ -5825,19 +5385,6 @@
       ]
     }
   },
-  "/user-management/entities/user-actions/v1": {
-    "post": {
-      "body": {
-        "action": [
-          "action_name",
-          "action_value"
-        ],
-        "root": [
-          "ids"
-        ]
-      }
-    }
-  },
   "/user-management/entities/user-role-actions/v1": {
     "post": {
       "body": {
@@ -5967,9 +5514,7 @@
   "/workflows/entities/execute/v1": {
     "post": {
       "body": {
-        "root": [
-          ""
-        ]
+        "root": []
       },
       "query": [
         "execution_cid",

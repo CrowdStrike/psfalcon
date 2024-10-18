@@ -218,6 +218,7 @@
     # identity-protection
     'Invoke-FalconIdentityGraph'
     'Get-FalconIdentityHost'
+    'Get-FalconIdentityRule'
 
     # image-assessment
     'Get-FalconContainerVulnerability'
@@ -252,10 +253,6 @@
     'Get-FalconInstallTokenSetting'
     'New-FalconInstallToken'
     'Remove-FalconInstallToken'
-
-    # ioa
-    'Get-FalconCloudIoaEvent'
-    'Get-FalconCloudIoaUser'
 
     # ioarules
     'Edit-FalconIoaGroup'
@@ -481,6 +478,13 @@
     'Invoke-FalconQuarantineAction'
     'Test-FalconQuarantineAction'
 
+    # quickscanpro
+    'Get-FalconQuickScan'
+    'New-FalconQuickScan'
+    'Remove-FalconQuickScan'
+    'Remove-FalconQuickScanFile'
+    'Send-FalconQuickScanFile'
+
     # real-time-response
     'Confirm-FalconAdminCommand'
     'Confirm-FalconCommand'
@@ -536,11 +540,6 @@
     'Send-FalconSample'
     'Receive-FalconSample'
     'Remove-FalconSample'
-
-    # scanner
-    'Get-FalconQuickScan'
-    'Get-FalconQuickScanQuota'
-    'New-FalconQuickScan'
 
     # sensors
     'Get-FalconCcid'
