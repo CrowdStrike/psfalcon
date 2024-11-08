@@ -153,6 +153,8 @@ Length of time to wait for a result, in seconds [default: 60]
 Add non-responsive Hosts to the offline queue
 .PARAMETER Include
 Include additional properties
+.PARAMETER BypassExecPolicy
+Bypass the PowerShell Execution Policy on target Windows hosts
 .PARAMETER GroupId
 Host group identifier
 .PARAMETER HostId
@@ -225,6 +227,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
       'mac_address','os_build','os_version','platform_name','product_type','product_type_desc',
       'serial_number','system_manufacturer','system_product_name','tags',IgnoreCase=$false)]
     [string[]]$Include,
+    [Parameter(ParameterSetName='HostId_File',Position=6)]
+    [Parameter(ParameterSetName='GroupId_File',Position=6)]
+    [Parameter(ParameterSetName='HostId_Archive',Position=7)]
+    [Parameter(ParameterSetName='GroupId_Archive',Position=7)]
+    [switch]$BypassExecPolicy,
     [Parameter(ParameterSetName='GroupId_File',Mandatory)]
     [Parameter(ParameterSetName='GroupId_Archive',Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -444,6 +451,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                         if ($Argument) { $String = $String,$Argument -join ' ' }
                         [string]$Executable = if ($RunFile -match '\.(bat|cmd)$') {
                           'cmd.exe',"'$String'" -join ' '
+                        } elseif ($BypassExecPolicy) {
+                          'powershell.exe',"'-ExecutionPolicy Bypass -c &{$String}'" -join ' '
                         } else {
                           'powershell.exe',"'-c &{$String}'" -join ' '
                         }
