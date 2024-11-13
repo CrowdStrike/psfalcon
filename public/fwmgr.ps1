@@ -66,7 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
     if ($DiffOperation) {
       @($DiffOperation).foreach{
         # Filter to defined 'diff_operations' properties
-        [PSCustomObject]$i = $_ | Select-Object $Param.Format.Body.diff_operations
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.diff_operations
         if ($i.op -and $i.op -notmatch '^(add|remove|replace)$') {
           # Error if 'op' is an unexpected value
           $ObjectString = ConvertTo-Json $i -Compress
@@ -97,13 +97,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
         } elseif ($_ -eq 'rule_versions') {
           $PSBoundParameters['rule_versions'] = if ($PSBoundParameters.RuleVersion) {
             # Use provided 'RuleVersion'
-            $PSBoundParameters.RuleVersion
+            @($PSBoundParameters.RuleVersion).foreach{
+              if ($_ -eq 'null') { [string]$_ } else { [int32]$_ }
+            }
           } elseif ($PSBoundParameters.RuleId) {
             # Use provided 'RuleId' to retrieve 'rule_versions'
-            (Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version
+            [int32[]]((Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version)
           } elseif ($Local:Ref.rule_ids) {
             # Use existing 'rule_versions' from group
-            (Get-FalconFirewallRule -Id $Local:Ref.rule_ids).version
+            [int32[]]((Get-FalconFirewallRule -Id $Local:Ref.rule_ids).version)
           }
         } else {
           # Use property from existing group
