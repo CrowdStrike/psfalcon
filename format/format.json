@@ -102,6 +102,13 @@
       }
     }
   },
+  "/billing-dashboards-usage/aggregates/weekly-average/v1": {
+    "get": {
+      "query": [
+        "filter"
+      ]
+    }
+  },
   "/cloud-connect-cspm-aws/entities/account/v1": {
     "get": {
       "query": [

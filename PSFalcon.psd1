@@ -22,6 +22,9 @@
     'Remove-FalconSampleArchive'
     'Send-FalconSampleArchive'
 
+    # billing-dashboards-usage
+    'Get-FalconHostAverage'
+
     # cloud-connect-cspm-aws
     'Edit-FalconCloudAwsAccount'
     'Get-FalconCloudAwsAccount'
