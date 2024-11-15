@@ -57,7 +57,6 @@ function Invoke-TagScript {
         [string]$State = (Get-FalconHost -Id $Object.device_id -State).state
         if ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and $State -eq 'online')) {
           # Add quotes around tag value string for Windows script use
-          #if ($TagString -and $Object.platform_name -eq 'Windows') { $TagString = ('"{0}"' -f $TagString) }
           if ($TagString) { $TagString = ('"{0}"' -f $TagString) }
           [string]$CmdLine = if ($Protection -eq 'ENABLED') {
             # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
