@@ -613,7 +613,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     function Update-Id ([object]$Item,[string]$Type) {
       if ($Config.Ids.$Type) {
         # Add 'new_id' to 'Ids'
-        [string[]]$Compare = @('platform_name','platform','type','value','name').foreach{ if ($Item.$_) { $_ }}
+        [string[]]$Compare = @('cid','platform_name','platform','type','value','name').foreach{
+          if ($Item.$_) { $_ }
+        }
         [string]$Filter = (@($Compare).foreach{ "`$_.$($_) -eq '$($Item.$_)'" }) -join ' -and '
         @($Config.Ids.$Type | Where-Object -FilterScript ([scriptblock]::Create($Filter))).foreach{
           $_.new_id = if ($Item.family) { $Item.family } else { $Item.id }
@@ -639,11 +641,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }) -join ',')]."
       }
     }
+    # Attempt to retrieve CID using 'Get-FalconCcid' for evaluation
+    [string]$Local:HomeCid = Confirm-CidValue (Get-FalconCcid -EA 0)
     foreach ($Pair in $Config.GetEnumerator().Where({$_.Value.Import})) {
       foreach ($Import in $Pair.Value.Import) {
         # Create a record of identifiers within CID to compare with imports
         $Import = Compress-Property $Import
-        @($Import | Select-Object name,platform,platforms,platform_name,type,value).foreach{
+        @($Import | Select-Object cid,name,platform,platforms,platform_name,type,value).foreach{
           $Id = if ($Import.family) { $Import.family } else { $Import.id }
           Set-Property $_ old_id $Id
           Set-Property $_ new_id $null
@@ -701,9 +705,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
       if ($Pair.Key -match 'Policy$') {
         $Pair.Value.Import = foreach ($Policy in $Pair.Value.Import) {
-          if (!($Config.($Pair.Key).Cid | Where-Object { $_.name -eq $Policy.name -and
-          (($Policy.platform_name -and $_.platform_name -eq $Policy.platform_name) -or ($Policy.platform -and
-          $_.platform -eq $Policy.platform)) })) {
+          if (!@($Config.($Pair.Key).Cid).Where({$_.name -eq $Policy.name -and (($Policy.platform_name -and
+          $_.platform_name -eq $Policy.platform_name) -or ($Policy.platform -and $_.platform -eq
+          $Policy.platform))})) {
             # Keep only missing policy items for each OS under 'Import'
             $Policy
             $Pair.Value.Modify.Add($Policy.PSObject.Copy())
@@ -1129,8 +1133,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     foreach ($Pair in $Config.GetEnumerator().Where({$_.Key -match 'Policy$' -and $_.Value.Modify})) {
       foreach ($Policy in $Pair.Value.Modify) {
         # Update policy with current id value and use CID value for comparison
-        [string]$Policy.id = @($Config.Ids.($Pair.Key)).Where({$_.name -eq $Policy.name -and
-          $_.platform_name -eq $Policy.platform_name}).new_id
+        [string]$Policy.id = @($Config.Ids.($Pair.Key)).Where({$_.cid -eq $Policy.cid -and $_.name -eq
+            $Policy.name -and $_.platform_name -eq $Policy.platform_name}).new_id
         [object]$Cid = @($Config.($Pair.Key).cid).Where({$_.id -eq $Policy.id})
         if ($Policy.id -and $Pair.Key -eq 'FirewallPolicy') {
           # Check 'FirewallPolicy' for changes
@@ -1171,16 +1175,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         } elseif ($Policy.id -and ($Policy.prevention_settings -or $Policy.settings)) {
-          # Compare Policy settings
-          $Setting = Compare-Setting $Policy $Cid $Pair.Key
-          if ($Setting) {
-            try {
-              # Modify Policy
-              @(& "Edit-Falcon$($Pair.Key)" -Id $Policy.id -Setting $Setting).foreach{
-                Compare-Setting (Compress-Property $_) $Cid $Pair.Key -Result
+          if (!$HomeCid -or ($HomeCid -and $Policy.cid -and $Policy.cid -eq $HomeCid)) {
+            # Compare Policy settings for non-inherited policies if 'HomeCid' is available
+            $Setting = Compare-Setting $Policy $Cid $Pair.Key
+            if ($Setting) {
+              try {
+                # Modify Policy
+                @(& "Edit-Falcon$($Pair.Key)" -Id $Policy.id -Setting $Setting).foreach{
+                  Compare-Setting (Compress-Property $_) $Cid $Pair.Key -Result
+                }
+              } catch {
+                Write-Error $_
               }
-            } catch {
-              Write-Error $_
             }
           }
         }
@@ -1189,7 +1195,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             if ($Policy.exclusions) {
               foreach ($Exclusion in $Policy.exclusions) {
                 # Check for existing matching exclusion
-                $Existing = @($Cid.exclusions).Where({ $_.name -eq $Exclusion.name })
+                $Existing = @($Cid.exclusions).Where({$_.name -eq $Exclusion.name})
                 if ($null -eq $Exclusion.repeated.PSObject.Properties.Name) {
                   # Remove 'repeated' from imported exclusion when empty to prevent submission error
                   $Exclusion.PSObject.Properties.Remove('repeated')
@@ -1245,8 +1251,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             if ($Policy.ioa_rule_groups) { Submit-Group $Pair.Key ioa_rule_groups $Policy $Cid }
             if ($Policy.groups) { Submit-Group $Pair.Key groups $Policy $Cid }
             if ($Policy.host_groups) { Submit-Group $Pair.Key host_groups $Policy $Cid }
-            if ($Cid.enabled -ne $Policy.enabled) {
-              # Enable/disable policy
+            if ((!$HomeCid -or ($HomeCid -and $Policy.cid -and $Policy.cid -eq $HomeCid)) -and $Cid.enabled -ne
+            $Policy.enabled) {
+              # Enable/disable non-inherited policies if 'HomeCid' is available
               [string]$Action = if ($Policy.enabled -eq $true) { 'enable' } else { 'disable' }
               $Req = Invoke-PolicyAction $Pair.Key $Action $Policy.id
               if ($Req) { Add-Result Modified $Req $Pair.Key enabled $Cid.enabled $Policy.enabled }
@@ -1258,12 +1265,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
   }
   end {
-    if ($Config.Result | Where-Object { $_.action -ne 'Ignored' }) {
+    if (@($Config.Result).Where({$_.action -ne 'Ignored'})) {
       # Output warning for existing policy precedence
-      foreach ($Item in ($Config.Result | Where-Object { $_.action -eq 'Created' -and $_.type -match 'Policy$' } |
+      foreach ($Item in (@($Config.Result).Where({$_.action -eq 'Created' -and $_.type -match 'Policy$'}) |
       Select-Object type,platform -Unique)) {
-        if ($Config.($Item.type).Cid | Where-Object { $_.platform_name -eq $Item.platform -and $_.name -ne
-        'platform_default' }) {
+        if (@($Config.($Item.type).Cid).Where({$_.platform_name -eq $Item.platform -and $_.name -ne
+        'platform_default'})) {
           $PSCmdlet.WriteWarning("[Import-FalconConfig] Existing $($Item.platform) $(
             $Item.type) items were found. Verify precedence!")
         }
