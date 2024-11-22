@@ -119,6 +119,9 @@
     'Remove-FalconGroupingTag'
     'Remove-FalconHostGroup'
 
+    # device-content
+    'Get-FalconChannelState'
+
     # discover
     'Get-FalconAsset'
 

@@ -801,9 +801,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -821,9 +821,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -831,9 +831,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -841,9 +841,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -851,9 +851,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -861,9 +861,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -871,9 +871,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -882,9 +882,9 @@
       "query": [
         "filter",
         "with_config",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -892,9 +892,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -902,9 +902,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -913,9 +913,9 @@
       "query": [
         "filter",
         "only_zero_day_affected",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -923,9 +923,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -1041,9 +1041,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -1051,9 +1051,9 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
-        "offset",
-        "sort"
+        "offset"
       ]
     }
   },
@@ -1301,6 +1301,23 @@
         "offset",
         "limit",
         "sort"
+      ]
+    }
+  },
+  "/device-content/entities/states/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/device-content/queries/states/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "sort",
+        "offset",
+        "filter"
       ]
     }
   },
