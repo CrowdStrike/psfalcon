@@ -1,5 +1,5 @@
 pkg="falcon-sensor"
-if [! -d /run/systemzzz/system ]; then
+if [! -d /run/systemd/system ]; then
   echo "systemd is required for uninstallation of $pkg" 1>&2
   exit 1
 fi
