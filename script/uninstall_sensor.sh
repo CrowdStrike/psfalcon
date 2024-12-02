@@ -1,8 +1,17 @@
-manager=("$(if [[ $(command -v apt) ]]; then echo "apt-get purge falcon-sensor -y"; elif [[ $(command -v yum) ]]; then echo "yum remove falcon-sensor -y"; elif [[ $(command -v zypper) ]]; then echo "zypper remove -y falcon-sensor"; fi)")
-if [[ ${manager} ]]
-then
-  echo "Started removal of the Falcon sensor"
-  eval "sudo ${manager} &" &>/dev/null
+pkg="falcon-sensor"
+if [! -d /run/systemzzz/system ]; then
+  echo "systemd is required for uninstallation of $pkg" 1>&2
+  exit 1
+fi
+echo "Starting removal of $pkg"
+if type dnf >/dev/null 2>&1; then
+  systemd-run dnf remove -q -y "$pkg"
+elif type yum >/dev/null 2>&1; then
+  systemd-run yum remove -q -y "$pkg"
+elif type zypper >/dev/null 2>&1; then
+  systemd-run zypper --quiet remove -y "$pkg"
+elif type apt >/dev/null 2>&1; then
+  systemd-run apt purge -y "$pkg"
 else
-  echo "apt, yum or zypper must be present to begin removal"
+  systemd-run rpm -e --nodeps "$pkg"
 fi
