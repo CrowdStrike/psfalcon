@@ -75,7 +75,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCorrelationRule
 function Remove-FalconCorrelationRule {
 <#
 .SYNOPSIS
-Delete rules by IDs
+Remove Falcon NGSIEM correlation rules
 .DESCRIPTION
 Requires 'Correlation Rules: Write'.
 .PARAMETER Id
