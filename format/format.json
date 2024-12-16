@@ -1066,6 +1066,40 @@
       ]
     }
   },
+  "/correlation-rules/combined/rules/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "q",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/correlation-rules/entities/rules/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/correlation-rules/queries/rules/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "q",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
   "/delivery-settings/entities/delivery-settings/v1": {
     "get": {},
     "post": {

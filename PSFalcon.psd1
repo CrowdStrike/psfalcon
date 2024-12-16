@@ -97,6 +97,10 @@
     'Set-FalconContainerPolicyPrecedence'
     'Show-FalconRegistryCredential'
 
+    # correlation-rules
+    'Get-FalconCorrelationRule'
+    'Remove-FalconCorrelationRule'
+
     # delivery-settings
     'Get-FalconChannelControl'
     'Set-FalconChannelControl'
