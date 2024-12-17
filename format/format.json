@@ -3814,6 +3814,27 @@
       ]
     }
   },
+  "/policy/combined/content-update/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "offset",
+        "limit",
+        "sort"
+      ]
+    }
+  },
+  "/policy/combined/content-update-members/v1": {
+    "get": {
+      "query": [
+        "id",
+        "filter",
+        "offset",
+        "limit",
+        "sort"
+      ]
+    }
+  },
   "/policy/combined/device-control-members/v1": {
     "get": {
       "query": [
@@ -3944,6 +3965,46 @@
         "limit",
         "sort"
       ]
+    }
+  },
+  "/policy/entities/content-update/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    },
+    "patch": {
+      "body": {
+        "resources": [
+          "description",
+          "id",
+          "name",
+          "settings"
+        ]
+      }
+    },
+    "post": {
+      "body": {
+        "resources": [
+          "description",
+          "name",
+          "settings"
+        ]
+      }
+    }
+  },
+  "/policy/entities/content-update-precedence/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      }
     }
   },
   "/policy/entities/default-device-control/v1": {
@@ -4284,6 +4345,27 @@
           "value"
         ]
       }
+    }
+  },
+  "/policy/queries/content-update/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "offset",
+        "limit",
+        "sort"
+      ]
+    }
+  },
+  "/policy/queries/content-update-members/v1": {
+    "get": {
+      "query": [
+        "id",
+        "filter",
+        "offset",
+        "limit",
+        "sort"
+      ]
     }
   },
   "/policy/queries/device-control-members/v1": {

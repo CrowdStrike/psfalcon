@@ -373,6 +373,15 @@
     # plugins
     'Get-FalconWorkflowIntegration'
 
+    # policy-content-update
+    'Edit-FalconContentPolicy'
+    'Get-FalconContentPolicy'
+    'Get-FalconContentPolicyMember'
+    'Invoke-FalconContentPolicyAction'
+    'New-FalconContentPolicy'
+    'Remove-FalconContentPolicy'
+    'Set-FalconContentPrecedence'
+
     # policy-device-control
     'Edit-FalconDeviceControlPolicy'
     'Get-FalconDeviceControlPolicy'
