@@ -16,7 +16,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
   [CmdletBinding(DefaultParameterSetName='ExportItem',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='ExportItem',Position=1)]
-    [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup',
+    [ValidateSet('ContentPolicy','DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup',
       'FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy',
       'ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
     [Alias('Items')]
@@ -45,7 +45,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           & "Get-Falcon$String" @Param -Type $_ 2>$null |
             Where-Object -FilterScript ([scriptblock]::Create($Filter))
         }
-      } elseif ($String -match 'Policy$') {
+      } elseif ($String -match '(?<!Content)Policy$') {
         @('Windows','Mac','Linux').foreach{
           # Create policy exports in 'platform_name' order to retain precedence
           & "Get-Falcon$String" -Filter "platform_name:'$_'" -Detailed -All 2>$null
