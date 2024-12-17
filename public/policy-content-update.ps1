@@ -231,12 +231,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContentPolicyAction
       $PSBoundParameters['ids'] = @($PSBoundParameters.Id)
       [void]$PSBoundParameters.Remove('Id')
       if ($PSBoundParameters.GroupId) {
-        $PSBoundParameters['action_parameters'] = @(
-          @{
-            name = if ($PSBoundParameters.Name -match 'rule-group$') { 'rule_group_id' } else { 'group_id' }
-            value = $PSBoundParameters.GroupId
-          }
-        )
+        $PSBoundParameters['action_parameters'] = @(@{ name = 'group_id'; value = $PSBoundParameters.GroupId })
         [void]$PSBoundParameters.Remove('GroupId')
       }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
