@@ -113,7 +113,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       if ($JsonFiles -and $PSCmdlet.ShouldProcess($ExportFile,'Compress-Archive')) {
         # Archive Json exports with content and remove them when complete
         $Param = @{
-          Path = (Get-ChildItem | Where-Object { $JsonFiles -contains $_.FullName -and $_.Length -gt 0 }).FullName
+          Path = @(Get-ChildItem).Where({$JsonFiles -contains $_.FullName -and $_.Length -gt 0}).FullName
           DestinationPath = $ExportFile
           Force = $Force
         }
@@ -165,11 +165,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     [string]$Path,
     [Alias('Force')]
     [switch]$AssignExisting,
-    [ValidateSet('DeviceControlPolicy','PreventionPolicy','ResponsePolicy','SensorUpdatePolicy')]
+    [ValidateSet('ContentPolicy','DeviceControlPolicy','PreventionPolicy','ResponsePolicy','SensorUpdatePolicy')]
     [string[]]$ModifyDefault,
-    [ValidateSet('DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup','FirewallPolicy',
-      'HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy','ResponsePolicy','Script',
-      'SensorUpdatePolicy','SvExclusion')]
+    [ValidateSet('ContentPolicy','DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup',
+      'FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy',
+      'ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
     [string[]]$ModifyExisting
   )
   begin {
@@ -234,7 +234,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         # Notify when items are created or modified
         [System.Collections.Generic.List[string]]$Notify = @('[Import-FalconConfig]',$Action)
         if ($Property) { $Notify.Add("'$Property' for") }
-        if ($Obj.platform -and $Obj.platform -notmatch ',' -and $Type -ne 'FileVantageRule') {
+        if ($Obj.platform -and $Obj.platform -notmatch '(^all$|,)' -and $Type -ne 'FileVantageRule') {
           $Notify.Add($Obj.platform)
         }
         $Notify.Add($Type)
@@ -349,7 +349,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
     }
     function Compare-Setting ([object]$New,[object]$Old,[string]$Type,[string]$Property,[switch]$Result) {
-      if ($Type -eq 'DeviceControlPolicy') {
+      if ($Type -eq 'ContentPolicy') {
+        [string[]]$Select = foreach ($Ras in $New.settings.ring_assignment_settings) {
+          foreach ($i in $Ras.id) {
+            # Check each 'ring_assignment_settings' for modified values using 'id' and 'ring_assignment'
+            $NewRas = @($Ras).Where({$_.id -eq $i}).ring_assignment
+            $OldRas = @($Old.settings.ring_assignment_settings).Where({$_.id -eq $i}).ring_assignment
+            if ($NewRas -ne $OldRas) {
+              # Capture result or output modified property name
+              if ($Result) { Add-Result Modified $New $Type $i $OldRas $NewRas } else { $i }
+            }
+          }
+        }
+        # Output settings for modification
+        if ($Select) { $New.settings }
+      } elseif ($Type -eq 'DeviceControlPolicy') {
         [string[]]$Select = if ($Old) {
           foreach ($i in @($New.settings.PSObject.Properties)) {
             if ($i.Name -match '^(enforcement_mode|end_user_notification|enhanced_file_metadata)$') {
