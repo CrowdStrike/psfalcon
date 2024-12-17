@@ -157,7 +157,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
     [int32]$Limit,
     [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=4)]
     [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=4)]
-    [ValidateSet('channel_state','group_names','login_history','network_history','online_state','policy_names',
+    [ValidateSet('content_state','group_names','login_history','network_history','online_state','policy_names',
       'zero_trust_assessment',IgnoreCase=$false)]
     [string[]]$Include,
     [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get')]
@@ -215,11 +215,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
             @($Request).foreach{ ,[PSCustomObject]@{ device_id = $_ }}
           }
         }
-        if ($Include -contains 'channel_state') {
-          foreach ($i in (Get-FalconChannelState -Id $Request.device_id -EA 0)) {
+        if ($Include -contains 'content_state') {
+          foreach ($i in (Get-FalconContentState -Id $Request.device_id -EA 0)) {
             $SetParam = @{
               Object = $Request | Where-Object { $_.device_id -eq $i.device_id }
-              Name = 'channel_state'
+              Name = 'content_state'
               Value = $i | Select-Object system_critical,rapid_response_content,vulnerability_management,
                 sensor_operations
             }

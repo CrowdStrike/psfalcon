@@ -1,7 +1,7 @@
-function Get-FalconChannelState {
+function Get-FalconContentState {
 <#
 .SYNOPSIS
-Search for host channel content states
+Search for host content file states
 .DESCRIPTION
 Requires 'Device Content: Read'.
 .PARAMETER Id
@@ -21,7 +21,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconChannelState
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentState
 #>
   [CmdletBinding(DefaultParameterSetName='/device-content/queries/states/v1:get',SupportsShouldProcess)]
   param(

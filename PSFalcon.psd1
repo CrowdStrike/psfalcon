@@ -102,8 +102,8 @@
     'Remove-FalconCorrelationRule'
 
     # delivery-settings
-    'Get-FalconChannelControl'
-    'Set-FalconChannelControl'
+    'Get-FalconContentControl'
+    'Set-FalconContentControl'
 
     # detects
     'Edit-FalconDetection'
@@ -124,7 +124,7 @@
     'Remove-FalconHostGroup'
 
     # device-content
-    'Get-FalconChannelState'
+    'Get-FalconContentState'
 
     # discover
     'Get-FalconAsset'
