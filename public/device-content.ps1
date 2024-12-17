@@ -27,6 +27,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentState
   param(
     [Parameter(ParameterSetName='/device-content/entities/states/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/device-content/queries/states/v1:get',Position=1)]
