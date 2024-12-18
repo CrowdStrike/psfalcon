@@ -229,6 +229,7 @@
     'Invoke-FalconIdentityGraph'
     'Get-FalconIdentityHost'
     'Get-FalconIdentityRule'
+    'Remove-FalconIdentityRule'
 
     # image-assessment
     'Get-FalconContainerVulnerability'

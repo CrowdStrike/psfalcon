@@ -175,8 +175,7 @@ Retrieve detailed information
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityRule
 #>
-  [CmdletBinding(DefaultParameterSetName='/identity-protection/queries/policy-rules/v1:get',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/identity-protection/queries/policy-rules/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
@@ -207,3 +206,33 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityRule
     }
   }
 }
+function Remove-FalconIdentityRule {
+<#
+.SYNOPSIS
+Remove Falcon Identity Protection policy rules
+.DESCRIPTION
+Requires 'Identity Protection Policy Rules: Write'.
+.PARAMETER Id
+Policy rule identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIdentityRule
+#>
+  [CmdletBinding(DefaultParameterSetName='/identity-protection/entities/policy-rules/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+

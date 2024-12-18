@@ -2430,6 +2430,11 @@
     }
   },
   "/identity-protection/entities/policy-rules/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
     "get": {
       "query": [
         "ids"
