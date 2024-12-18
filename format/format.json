@@ -4414,6 +4414,8 @@
     "get": {
       "query": [
         "filter",
+        "ifn_regex",
+        "cl_regex",
         "offset",
         "limit",
         "sort"
@@ -5084,6 +5086,7 @@
           "breach_monitor_only",
           "breach_monitoring_enabled",
           "filter",
+          "match_on_tsq_result_types",
           "name",
           "originating_template_id",
           "permissions",
@@ -5106,6 +5109,7 @@
           "breach_monitoring_enabled",
           "filter",
           "id",
+          "match_on_tsq_result_types",
           "name",
           "permissions",
           "priority",
