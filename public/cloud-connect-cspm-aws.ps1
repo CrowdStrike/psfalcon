@@ -327,7 +327,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAwsScript
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=2)]
-    [Alias('organization-id')]
+    [Alias('organization_id')]
     [string]$OrganizationId,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/user-scripts-download/v1:get',Position=3)]
     [ValidateSet('aws-bash','aws-terraform',IgnoreCase=$false)]
