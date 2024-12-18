@@ -179,7 +179,7 @@
         "dspm_regions",
         "dspm_role",
         "use_existing_cloudtrail",
-        "organization-id",
+        "organization_id",
         "aws_profile",
         "custom_role_name"
       ]
