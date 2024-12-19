@@ -173,11 +173,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconScheduledReport
       $PSBoundParameters.Path = switch ($PSBoundParameters.Path) {
         # Update 'Path' using report detail
         { $_.result_metadata.report_file_name } {
-          # Update 'Id' using 'last_execution.id' if provided with report properties
+          # Update 'Id' using 'last_execution.id' and use 'result_metadata.report_file_name'
           $PSBoundParameters.Id = $_.id
           $_.result_metadata.report_file_name
         }
         { $_.report_file_name } { $_.report_file_name }
+        { $_.report_params.format } {
+          # Update 'Id' using 'last_execution.id' and use 'last_execution.id' and 'report_params.format'
+          $PSBoundParameters.Id = $_.id
+          $_.id,$_.report_params.format -join '.'
+        }
         { $_ -is [string] } { $_ }
       }
       $OutPath = Test-OutFile $PSBoundParameters.Path

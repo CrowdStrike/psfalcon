@@ -1,6 +1,6 @@
 @{
   RootModule = 'PSFalcon.psm1'
-  ModuleVersion = '2.2.7'
+  ModuleVersion = '2.2.8'
   CompatiblePSEditions = @('Desktop','Core')
   GUID = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
   Author = 'Brendan Kremian'
@@ -21,6 +21,9 @@
     'Get-FalconSampleExtraction'
     'Remove-FalconSampleArchive'
     'Send-FalconSampleArchive'
+
+    # billing-dashboards-usage
+    'Get-FalconHostAverage'
 
     # cloud-connect-cspm-aws
     'Edit-FalconCloudAwsAccount'
@@ -94,9 +97,13 @@
     'Set-FalconContainerPolicyPrecedence'
     'Show-FalconRegistryCredential'
 
+    # correlation-rules
+    'Get-FalconCorrelationRule'
+    'Remove-FalconCorrelationRule'
+
     # delivery-settings
-    'Get-FalconChannelControl'
-    'Set-FalconChannelControl'
+    'Get-FalconContentControl'
+    'Set-FalconContentControl'
 
     # detects
     'Edit-FalconDetection'
@@ -115,6 +122,9 @@
     'New-FalconHostGroup'
     'Remove-FalconGroupingTag'
     'Remove-FalconHostGroup'
+
+    # device-content
+    'Get-FalconContentState'
 
     # discover
     'Get-FalconAsset'
@@ -218,6 +228,9 @@
     # identity-protection
     'Invoke-FalconIdentityGraph'
     'Get-FalconIdentityHost'
+    'Get-FalconIdentityRule'
+    'New-FalconIdentityRule'
+    'Remove-FalconIdentityRule'
 
     # image-assessment
     'Get-FalconContainerVulnerability'
@@ -252,10 +265,6 @@
     'Get-FalconInstallTokenSetting'
     'New-FalconInstallToken'
     'Remove-FalconInstallToken'
-
-    # ioa
-    'Get-FalconCloudIoaEvent'
-    'Get-FalconCloudIoaUser'
 
     # ioarules
     'Edit-FalconIoaGroup'
@@ -365,6 +374,15 @@
 
     # plugins
     'Get-FalconWorkflowIntegration'
+
+    # policy-content-update
+    'Edit-FalconContentPolicy'
+    'Get-FalconContentPolicy'
+    'Get-FalconContentPolicyMember'
+    'Invoke-FalconContentPolicyAction'
+    'New-FalconContentPolicy'
+    'Remove-FalconContentPolicy'
+    'Set-FalconContentPrecedence'
 
     # policy-device-control
     'Edit-FalconDeviceControlPolicy'
@@ -481,6 +499,13 @@
     'Invoke-FalconQuarantineAction'
     'Test-FalconQuarantineAction'
 
+    # quickscanpro
+    'Get-FalconQuickScan'
+    'New-FalconQuickScan'
+    'Remove-FalconQuickScan'
+    'Remove-FalconQuickScanFile'
+    'Send-FalconQuickScanFile'
+
     # real-time-response
     'Confirm-FalconAdminCommand'
     'Confirm-FalconCommand'
@@ -537,11 +562,6 @@
     'Receive-FalconSample'
     'Remove-FalconSample'
 
-    # scanner
-    'Get-FalconQuickScan'
-    'Get-FalconQuickScanQuota'
-    'New-FalconQuickScan'
-
     # sensors
     'Get-FalconCcid'
     'Get-FalconInstaller'
@@ -557,7 +577,9 @@
 
     # snapshots
     'Get-FalconSnapshot'
+    'Get-FalconSnapshotCredential'
     'Get-FalconSnapshotScan'
+    'New-FalconSnapshotAwsAccount'
     'New-FalconSnapshotScan'
 
     # spotlight

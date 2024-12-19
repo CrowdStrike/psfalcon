@@ -13,7 +13,8 @@ Converted rules used with 'New-FalconFirewallGroup' to create groups containing 
 .PARAMETER Map
 A hashtable containing the following keys with the corresponding CSV column or rule property as the value
 
-Required: action, description, direction, enabled, local_address, local_port, name, remote_address, remote_port
+Required: action, description, direction, enabled, local_address, local_port, name, protocol, remote_address,
+  remote_port
 Optional: image_name, network_location, service_name
 .PARAMETER Path
 Path to a CSV file containing rules to convert
@@ -29,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
     [Parameter(ParameterSetName='CSV',Mandatory,Position=1)]
     [ValidateScript({
       foreach ($Key in @('action','description','direction','enabled','local_address','local_port','name',
-      'remote_address','remote_port')) {
+      'protocol','remote_address','remote_port')) {
         if ($_.Keys -notcontains $Key) { throw "Missing required '$Key' property." } else { $true }
       }
     })]
@@ -236,15 +237,11 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
     }
   }
   process {
-    if (!$Path) {
-      # Convert pipeline object into formatted rule
-      Convert-RuleObject ([PSCustomObject]$Object | Select-Object @($Map.Values)) $Map
-    }
+    # Convert pipeline object into formatted rule
+    if (!$Path) { Convert-RuleObject ([PSCustomObject]$Object | Select-Object @($Map.Values)) $Map }
   }
   end {
-    if ($Path) {
-      # Import CSV and convert rules to expected format
-      Import-Csv $Path | & $MyInvocation.MyCommand.Name -Map $Map
-    }
+    # Import CSV and convert rules to expected format
+    if ($Path) { Import-Csv $Path | & $MyInvocation.MyCommand.Name -Map $Map }
   }
 }

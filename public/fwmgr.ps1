@@ -66,11 +66,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
     if ($DiffOperation) {
       @($DiffOperation).foreach{
         # Filter to defined 'diff_operations' properties
-        [PSCustomObject]$i = $_ | Select-Object $Param.Format.Body.diff_operations
+        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.diff_operations
         if ($i.op -and $i.op -notmatch '^(add|remove|replace)$') {
-          # Ignore if 'op' is an unexpected value
+          # Error if 'op' is an unexpected value
           $ObjectString = ConvertTo-Json $i -Compress
-          Write-Error "'$($i.op)' is not a valid 'op' value. $ObjectString"
+          throw ('"{0}" is not a valid "op" value. {1}' -f $i.op,$ObjectString)
         } else {
           $List.Add($i)
         }
@@ -78,34 +78,61 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
     }
   }
   end {
-    if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallGroup','Get-FalconFirewallGroup')) {
-      # Remove remaining 'DiffOperation' value
-      [void]$PSBoundParameters.Remove('DiffOperation')
-      @($Param.Format.Body.root).Where({$_ -ne 'id'}).foreach{
-        if (!$PSBoundParameters.$_) {
-          # When not provided, add required fields using existing rule group
-          if (!$Group) { $Group = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {} }
-          $PSBoundParameters[$_] = if ($_ -eq 'rulegroup_version') {
-            if ($Group.version) { $Group.version } else { 0 }
+    if ($List) {
+      $PSBoundParameters['diff_operations'] = @($List)
+      if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallGroup','Get-FalconFirewallGroup')) {
+        # Retrieve existing group to populate missing properties
+        $Local:Ref = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {}
+        @($Param.Format.Body.root).Where({$_ -ne 'id'}).foreach{
+          if ($_ -eq 'diff_type') {
+            # Add required 'diff_type'
+            $PSBoundParameters['diff_type'] = 'application/json-patch+json'
+          } elseif ($_ -eq 'rule_ids') {
+            $PSBoundParameters['rule_ids'] = if ($PSBoundParameters.RuleId) {
+              # Use provided 'RuleId'
+              $PSBoundParameters.RuleId
+            } elseif ($Local:Ref.rule_ids) {
+              # Use existing 'rule_ids' from group
+              $Local:Ref.rule_ids
+            }
           } elseif ($_ -eq 'rule_versions') {
-            if ($PSBoundParameters.RuleId) {
-              (Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version
-            } else {
-              (Get-FalconFirewallRule -Id $Group.rule_ids).version
+            $PSBoundParameters['rule_versions'] = if ($PSBoundParameters.RuleVersion) {
+              # Use provided 'RuleVersion'
+              @($PSBoundParameters.RuleVersion).foreach{
+                if ($_ -eq 'null') { [string]$_ } else { [int32]$_ }
+              }
+            } elseif ($PSBoundParameters.RuleId) {
+              # Use provided 'RuleId' to retrieve 'rule_versions'
+              [int32[]]((Get-FalconFirewallRule -Id $PSBoundParameters.RuleId).version)
+            } elseif ($Local:Ref.rule_ids) {
+              # Use existing 'rule_versions' from group
+              [int32[]]((Get-FalconFirewallRule -Id $Local:Ref.rule_ids).version)
             }
           } else {
-            $Group.$_
+            # Use property from existing group
+            $PSBoundParameters[$_] = $Local:Ref.$_
           }
         }
+        @('rule_ids','rule_versions').foreach{
+          if ($null -eq $PSBoundParameters.rule_versions) {
+            # Convert null 'rule_ids' and 'rule_versions' values to empty array
+            $PSBoundParameters.$_ = @()
+          } else {
+            # Ensure array is used for submission
+            $PSBoundParameters.$_ = @($PSBoundParameters.$_)
+          }
+        }
+        if (!$PSBoundParameters.tracking) {
+          # Error if 'tracking' was not pulled from existing group
+          throw ('Failed to retrieve "tracking" value from rule group "{0}".' -f $PSBoundParameters.Id)
+        }
       }
-      if (!$PSBoundParameters.Tracking) { throw "Unable to obtain 'tracking' value from rule group '$($Id)'." }
+      # Remove remaining 'DiffOperation' and parameters that have been renamed, update 'Format' and make request
+      @('DiffOperation','RuleId','RuleVersion').foreach{ [void]$PSBoundParameters.Remove($_) }
+      $Param.Format.Body.root += 'diff_operations'
+      [void]$Param.Format.Body.Remove('diff_operations')
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    # Add 'diff_type', add 'diff_operations' as an array and modify 'Format'
-    $PSBoundParameters['diff_type'] = 'application/json-patch+json'
-    $PSBoundParameters['diff_operations'] = @($List)
-    [void]$Param.Format.Body.Remove('diff_operations')
-    $Param.Format.Body.root += 'diff_operations'
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
 function Edit-FalconFirewallLocation {

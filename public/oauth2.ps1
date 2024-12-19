@@ -141,7 +141,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
             [System.Net.DecompressionMethods]::Deflate
           $Script:Falcon.Api.Client.DefaultRequestHeaders.UserAgent.ParseAdd($Script:Falcon.Api.UserAgent)
         } else {
-          $PSCmdlet.WriteError('Unable to initialize [ApiClient] object.')
+          $PSCmdlet.WriteError(
+            [System.Management.Automation.ErrorRecord]::New(
+              [Exception]::New('Failed to initialize [ApiClient] object.'),
+              'failed_to_initialize_api_client_object',
+              [System.Management.Automation.ErrorCategory]::ObjectNotFound,
+              $null
+            )
+          )
         }
         [string]$FormatPath = Join-Path (Show-FalconModule).ModulePath (Join-Path format format.json)
         if ((Test-Path $FormatPath) -eq $false) { throw "Unable to find 'format.json'." }
@@ -272,7 +279,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconToken
         MemberCid = $Script:Falcon.MemberCid
       }
     } else {
-      $PSCmdlet.WriteError("No authorization token available. Try 'Request-FalconToken'.")
+      $PSCmdlet.WriteError(
+        [System.Management.Automation.ErrorRecord]::New(
+          [Exception]::New('No authorization token available. Try "Request-FalconToken".'),
+          'no_authorization_request_made',
+          [System.Management.Automation.ErrorCategory]::ResourceUnavailable,
+          $null
+        )
+      )
     }
   }
 }

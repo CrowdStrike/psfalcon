@@ -11,61 +11,53 @@ function Invoke-TagScript {
     [string[]]$String
   )
   process {
-    [string]$ScriptPath = Join-Path (Show-FalconModule).ModulePath 'script'
-    [string[]]$Tag = $String -replace 'SensorGroupingTags/',$null
+    # Gather existing tags, check for uninstall protection and define initial output
+    [string]$Protection = $Object.device_policies.sensor_update.uninstall_protection
     $Output = [PSCustomObject]@{
       cid = $Object.cid
       device_id = $Object.device_id
-      tags = $null
+      tags = @(@($Object.tags).Where({$_ -match 'SensorGroupingTags/'}) -replace 'SensorGroupingTags/',$null)
       offline_queued = $false
       session_id = $null
       cloud_request_id = $null
-      status = $null
+      status = if (@('Linux','Mac','Windows') -notcontains $Object.platform_name) {
+        # Abort when 'platform_name' is unexpected
+        'UNSUPPORTED_PLATFORM'
+      } elseif ($Object.platform_name -ne 'Windows' -and $Protection -eq 'ENABLED') {
+        # Abort when uninstall protection is enabled and platform_name is not 'Windows'
+        'NO_TOKEN_SUPPORT_FOR_OS'
+      }
     }
-    if (@('Linux','Mac','Windows') -notcontains $Object.platform_name) {
-      $Output.status = 'UNSUPPORTED_PLATFORM'
-    } else {
-      try {
-        # Determine if uninstallation token is required, if host is online, and current SensorTag values
-        [string]$Protection = $Object.device_policies.sensor_update.uninstall_protection
+    if (!$Output.status) {
+      [string[]]$TagInput = $String -replace 'SensorGroupingTags/',$null
+      [string]$ScriptPath = Join-Path (Show-FalconModule).ModulePath 'script'
+      [string]$TagString = if (($Action -eq 'Add' -and !$Output.tags) -or $Action -eq 'Set') {
+        # Select all provided tags when using 'Set', or 'Add' and no tags exist
+        ($TagInput | Select-Object -Unique) -join ','
+      } elseif ($Action -eq 'Add') {
+        # Select tag(s) to append
+        [boolean[]]$Append = @($TagInput).foreach{ if ($Output.tags -notcontains $_) { $true } else { $false }}
+        if ($Append -eq $true) { (@($Output.tags + $TagInput) | Select-Object -Unique) -join ',' }
+      } elseif ($Action -eq 'Remove') {
+        # Select tag(s) to remove
+        [boolean[]]$Remove = @($TagInput).foreach{ if ($Output.tags -contains $_) { $true } else { $false }}
+        if ($Remove -eq $true) { (@($Output.tags).Where({$TagInput -notcontains $_})) -join ',' }
+      }
+      $Output.status = if ($Action -eq 'Add' -and !$TagString) {
+        # Abort when tag(s) to 'Add' are already present
+        'TAG_PRESENT'
+      } elseif ($Action -eq 'Remove' -and !$Output.tags) {
+        # Abort when no tags are present to 'Remove'
+        'NO_TAG_SET'
+      } elseif ($Action -eq 'Remove' -and $TagInput -and !$TagString) {
+        # Abort when tag(s) to 'Remove' are not present
+        'TAG_NOT_PRESENT'
+      } else {
+        # Verify that device is currently online
         [string]$State = (Get-FalconHost -Id $Object.device_id -State).state
-        [string[]]$Existing = @($Object.tags).Where({$_ -match 'SensorGroupingTags/'}) -replace
-          'SensorGroupingTags/',$null
-        [string]$TagString = if ($Existing -and $Action -ne 'Set') {
-          if ($Action -eq 'Add') {
-            # Select tag(s) to append
-            [boolean]$Append = $false
-            @($Tag).foreach{ if ($Append -eq $false -and $Existing -notcontains $_) { $Append = $true } }
-            if ($Append -eq $true) { (@($Existing + $Tag) | Select-Object -Unique) -join ',' }
-          } elseif ($Action -eq 'Remove') {
-            # Select tag(s) to remove
-            [boolean]$Remove = $false
-            @($Tag).foreach{ if ($Remove -eq $false -and $Existing -contains $_) { $Remove = $true } }
-            if ($Remove -eq $true) {
-              (@($Existing).Where({$Tag -notcontains $_}) | Select-Object -Unique) -join ','
-            }
-          }
-        } else {
-          # Use new tag(s) when none are currently assigned, or when using 'Set-FalconSensorTag'
-          ($Tag | Select-Object -Unique) -join ','
-        }
-        if ((!$TagString -and $Tag) -or (!$Existing -and !$Tag) -or ($Object.platform_name -ne 'Windows' -and
-        $Protection -eq 'ENABLED')) {
-          # Output host properties and 'tags' value when no changes are made
-          $Output.tags = $Existing -join ','
-          $Output.status = if ($Object.platform_name -ne 'Windows' -and $Protection -eq 'ENABLED') {
-            # Abort when uninstallation token is required but 'platform_name' is not Windows
-            'NO_TOKEN_SUPPORT_FOR_OS'
-          } elseif ($Action -eq 'Add' -and $Tag) {
-            'TAG_PRESENT'
-          } elseif ($Action -eq 'Remove' -and !$Tag) {
-            'NO_TAG_SET'
-          } else {
-            'TAG_NOT_PRESENT'
-          }
-        } elseif ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and $State -eq 'online')) {
+        if ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and $State -eq 'online')) {
           # Add quotes around tag value string for Windows script use
-          if ($Object.platform_name -eq 'Windows' -and $TagString) { $TagString = ('"{0}"' -f $TagString) }
+          if ($TagString) { $TagString = ('"{0}"' -f $TagString) }
           [string]$CmdLine = if ($Protection -eq 'ENABLED') {
             # Retrieve uninstallation token and add to 'CommandLine' when host is 'online'
             [string]$Token = (Get-FalconUninstallToken -Id $Object.device_id -AuditMessage (($Action,
@@ -74,11 +66,11 @@ function Invoke-TagScript {
           } elseif ($TagString) {
             $TagString
           }
-          # Import RTR script content and run script via RTR
+          # Import script content and run script using Real-time Response
           [string]$ScriptName = if ($Action -eq 'Remove' -and !$TagString) {
-            'clear_sensortag'
+            'remove_sensortag'
           } else {
-            if ($Action -eq 'Set') { 'add_sensortag' } else { ($Action.ToLower(),'sensortag' -join '_') }
+            'add_sensortag'
           }
           [string]$Extension = switch ($Object.platform_name) {
             'Linux' { 'sh' }
@@ -86,47 +78,55 @@ function Invoke-TagScript {
             'Windows' { 'ps1' }
           }
           [string]$ScriptFile = (Join-Path $ScriptPath ($ScriptName,$Extension -join '.'))
+          if (!(Test-Path $ScriptFile)) { throw "Failed to locate '$ScriptFile'." }
           Write-Log ($Action,'FalconSensorTag' -join '-') "Importing '$ScriptFile'..."
-          $Script = Get-Content $ScriptFile -Raw
+          $ScriptContent = Get-Content $ScriptFile -Raw
           $Param = @{
             Command = 'runscript'
-            Argument = '-Raw=```{0}```' -f $Script
+            Argument = '-Raw=```{0}```' -f $ScriptContent
             HostId = $Object.device_id
-            QueueOffline = if ($QueueOffline) { $QueueOffline } else { $false }
+            QueueOffline = $QueueOffline
           }
           if ($CmdLine) { $Param.Argument += (' -CommandLine=```{0}```' -f $CmdLine) }
           @(Invoke-FalconRtr @Param).foreach{
-            $Output.tags = if ($_.errors) {
+            # Capture offline queue status, 'errors' or 'stderr' in 'status'
+            if ($_.offline_queued -eq $true) {
+              'PENDING_QUEUE'
+            } elseif ($_.errors) {
               $_.errors
             } elseif ($_.stderr) {
               $_.stderr
-            } elseif ($_.offline_queued -eq $true) {
-              $Output.status = 'PENDING_QUEUE'
-              $Existing -join ','
-            } else {
-              $Output.status = if ($Action -eq 'Add') {
-                'TAG_ADDED'
-              } elseif ($Action -eq 'Remove') {
-                if ($TagString) { 'TAG_REMOVED' } else { 'TAG_CLEARED' }
-              } else {
-                'TAG_SET'
-              }
+            } elseif ($_.stdout) {
+              # Compare 'stdout' with $TagInput and update 'status'
               $Result = ($_.stdout).Trim()
-              if ($Result -match 'Maintenance Token>') { ($TagString).Trim('"') } else { $Result }
+              $Output.tags = if ($Result -match 'Maintenance Token>') { ($TagString).Trim('"') } else { $Result }
+              [string[]]$FinalValue = $Output.tags -split ','
+              if ($Action -eq 'Remove') {
+                [boolean[]]$Removed = @($Tag).foreach{
+                  if ($FinalValue -contains $_) { $false } else { $true }
+                }
+                if ($Removed -ne $false) { 'TAG_REMOVED' } else { 'TAG_NOT_REMOVED' }
+              } else {
+                [boolean[]]$Set = @($Tag).foreach{
+                  if ($FinalValue -contains $_) { $true } else { $false }
+                }
+                if ($Set -ne $false) {
+                  if ($Action -eq 'Add') { 'TAG_ADDED' } else { 'TAG_SET' }
+                } else {
+                  if ($Action -eq 'Add') { 'TAG_NOT_ADDED' } else { 'TAG_NOT_SET' }
+                }
+              }
             }
-            foreach ($Property in @('offline_queued','session_id','cloud_request_id')) {
-              $Output.$Property = $_.$Property
-            }
+            # Append Real-time response properties to initial output
+            foreach ($i in @('offline_queued','session_id','cloud_request_id')) { $Output.$i = $_.$i }
           }
         } else {
-          # Output existing tags when device is offline and not queued
-          $Output.tags = $Existing -join ','
-          $Output.status = 'HOST_OFFLINE_AND_NOT_QUEUED'
+          # Abort if host is offline and 'QueueOffline' is false
+          'HOST_OFFLINE_AND_NOT_QUEUED'
         }
-      } catch {
-        Write-Error $_
       }
     }
+    $Output.tags = $Output.tags -join ','
     $Output
   }
 }
@@ -362,7 +362,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
       if ($HostList.platform_name -notmatch '^(Windows|Linux)$') {
         throw 'Only Windows and Linux hosts are currently supported for uninstallation using PSFalcon.'
       }
-      [string]$Filename = if ($Platform -eq 'Linux') { 'uninstall_sensor.sh' } else { 'uninstall_sensor.ps1' }
+      [string]$Filename = if ($HostList.platform_name -eq 'Linux') {
+        'uninstall_sensor.sh'
+      } else {
+        'uninstall_sensor.ps1'
+      }
       [string]$Script = Get-Content (Join-Path (Join-Path (Show-FalconModule).ModulePath 'script') $Filename) -Raw
       $Param = @{
         Command = 'runscript'

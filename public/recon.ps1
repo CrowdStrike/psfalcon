@@ -163,6 +163,8 @@ Monitor for breach data
 Monitor only for breach data.  Must be accompanied by BreachMonitoring: True.
 .PARAMETER SubstringMatching
 Monitor for substring matches. Only available for the 'Typosquatting' topic.
+.PARAMETER MatchOnTsqResultType
+Monitor for basedomains and/or subdomains. Only available for the 'Typosquatting' topic.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
@@ -195,7 +197,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
     [boolean]$BreachMonitorOnly,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=8)]
     [Alias('substring_matching_enabled')]
-    [boolean]$SubstringMatching
+    [boolean]$SubstringMatching,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=9)]
+    [Alias('match_on_tsq_result_types')]
+    [ValidateSet('basedomains','subdomains',IgnoreCase=$false)]
+    [string[]]$MatchOnTsqResultType
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/recon/entities/rules/v1:patch' }
@@ -726,6 +732,8 @@ Monitor for breach data
 Monitor only for breach data.  Must be accompanied by BreachMonitoring: True.
 .PARAMETER SubstringMatching
 Monitor for substring matches. Only available for the 'Typosquatting' topic.
+.PARAMETER MatchOnTsqResultType
+Monitor for basedomains and/or subdomains. Only available for the 'Typosquatting' topic.
 .PARAMETER OriginatingTemplateId
 Identifier of originating rule template, if based on one
 .LINK
@@ -762,7 +770,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=8)]
     [Alias('substring_matching_enabled')]
     [boolean]$SubstringMatching,
-    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=9)]
+    [Alias('match_on_tsq_result_types')]
+    [ValidateSet('basedomains','subdomains',IgnoreCase=$false)]
+    [string[]]$MatchOnTsqResultType,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=10)]
     [Alias('originating_template_id')]
     [string]$OriginatingTemplateId
   )

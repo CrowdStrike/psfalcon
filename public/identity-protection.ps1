@@ -156,3 +156,153 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
+function Get-FalconIdentityRule {
+<#
+.SYNOPSIS
+Search for Falcon Identity Protection policy rules
+.DESCRIPTION
+Requires 'Identity Protection Policy Rules: Read'.
+.PARAMETER Id
+Falcon Identity Protection policy rule identifier
+.PARAMETER Name
+Filter by rule name
+.PARAMETER Enabled
+Filter by rule enablement status
+.PARAMETER SimulationMode
+Filter by simulation mode
+.PARAMETER Detailed
+Retrieve detailed information
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityRule
+#>
+  [CmdletBinding(DefaultParameterSetName='/identity-protection/queries/policy-rules/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/identity-protection/queries/policy-rules/v1:get',Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/identity-protection/queries/policy-rules/v1:get',Position=2)]
+    [boolean]$Enabled,
+    [Parameter(ParameterSetName='/identity-protection/queries/policy-rules/v1:get',Position=3)]
+    [Alias('simulation_mode')]
+    [boolean]$SimulationMode,
+    [Parameter(ParameterSetName='/identity-protection/queries/policy-rules/v1:get')]
+    [switch]$Detailed
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $Param['Max'] = 70
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function New-FalconIdentityRule {
+<#
+.SYNOPSIS
+Create Falcon Identity Protection policy rules
+.DESCRIPTION
+Requires 'Identity Protection Policy Rules: Write'.
+.PARAMETER Name
+Rule name
+.PARAMETER Action
+Rule action
+.PARAMETER Trigger
+Rule trigger
+.PARAMETER Enabled
+Rule enablement status
+.PARAMETER SimulationMode
+Enable simulation mode
+.PARAMETER Activity
+Object containing 'accessType' and/or 'accessTypeCustom', for rule conditions based on access
+.PARAMETER Destination
+Object containing 'entityId' and/or 'groupMembership', for rule conditions based on destination
+.PARAMETER SourceEndpoint
+Object containing 'entityId' and/or 'groupMembership', for define rule conditions based on source endpoints
+.PARAMETER SourceUser
+Object containing 'entityId' and/or 'groupMembership', for define rule conditions based on source users
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconIdentityRule
+#>
+  [CmdletBinding(DefaultParameterSetName='/identity-protection/entities/policy-rules/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Mandatory,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Mandatory,Position=2)]
+    [ValidateSet('ADD_TO_WATCH_LIST','ALLOW','APPLY_SSO_POLICY','BLOCK','FORCE_PASSWORD_CHANGE','MFA',
+      IgnoreCase=$false)]
+    [string]$Action,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Mandatory,Position=3)]
+    [ValidateSet('access','accountEvent','alert','federatedAccess',IgnoreCase=$false)]
+    [string]$Trigger,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Mandatory,Position=4)]
+    [boolean]$Enabled,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Mandatory,Position=5)]
+    [boolean]$SimulationMode,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Position=6)]
+    [object]$Activity,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Position=7)]
+    [object]$Destination,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Position=8)]
+    [object]$SourceEndpoint,
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:post',Position=9)]
+    [object]$SourceUser
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','enabled','name','simulationMode','trigger','activity','destination',
+        'sourceEndpoint','sourceUser') }}
+    }
+  }
+  process {
+    # Create 'JsonBody' for submission to ensure camelCase is used
+    $JsonBody = @{}
+    @($Param.Format.Body.root).foreach{
+      if ($null -ne $PSBoundParameters.$_) { $JsonBody[$_] = $PSBoundParameters.$_ }
+    }
+    $Param['JsonBody'] = $JsonBody | ConvertTo-Json -Depth 32 -Compress
+    Invoke-Falcon @Param
+  }
+}
+function Remove-FalconIdentityRule {
+<#
+.SYNOPSIS
+Remove Falcon Identity Protection policy rules
+.DESCRIPTION
+Requires 'Identity Protection Policy Rules: Write'.
+.PARAMETER Id
+Policy rule identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIdentityRule
+#>
+  [CmdletBinding(DefaultParameterSetName='/identity-protection/entities/policy-rules/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+

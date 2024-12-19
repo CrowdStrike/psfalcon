@@ -44,21 +44,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundrySearch
   [CmdletBinding(DefaultParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Mandatory,Position=0)]
+    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Mandatory,Position=1)]
     [Alias('job_id')]
     [string]$Id,
-    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=0)]
+    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=2)]
     [Alias('app_id')]
     [string]$AppId,
-    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=0)]
+    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=3)]
     [Alias('infer_json_types')]
     [boolean]$InferJsonTypes,
-    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=0)]
+    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=4)]
     [string]$Limit,
-    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=0)]
+    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=5)]
     [Alias('match_response_schema')]
     [boolean]$MatchResponseSchema,
-    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=0)]
+    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=6)]
     [boolean]$Metadata,
     [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get')]
     [string]$Offset

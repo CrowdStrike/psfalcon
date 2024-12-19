@@ -7,7 +7,7 @@ class ApiClient {
     $this.Collector = $null
     $this.Handler = [System.Net.Http.HttpClientHandler]::New()
     $this.Client = [System.Net.Http.HttpClient]::New($this.Handler)
-    $this.Client.Timeout = [System.TimeSpan]::New(0,1,0)
+    $this.Client.Timeout = [System.TimeSpan]::New(0,5,30)
     $this.UserAgent = 'crowdstrike-psfalcon/2.2.7'
   }
   [string] Path([string]$Path) {

@@ -142,6 +142,10 @@ Falcon Query Language expression to limit results
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER IfnRegex
+Filter by Image Filename RegEx pattern
+.PARAMETER ClRegex
+Filter by Command Line RegEx pattern
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -172,6 +176,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=3)]
     [ValidateRange(1,500)]
     [int32]$Limit,
+    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=4)]
+    [Alias('ifn_regex')]
+    [string]$IfnRegex,
+    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=5)]
+    [Alias('cl_regex')]
+    [string]$ClRegex,
     [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
