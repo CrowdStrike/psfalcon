@@ -296,14 +296,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconMigration
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $PSBoundParameters['action_name'] = 'start_migration'
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }; Query = @('action_name') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
+      $PSBoundParameters['action_name'] = 'start_migration'
       for ($i = 0; $i -lt $List.Count; $i += 500) {
         $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -331,14 +335,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconMigration
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $PSBoundParameters['action_name'] = 'stop_migration'
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }; Query = @('action_name') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
+      $PSBoundParameters['action_name'] = 'stop_migration'
       for ($i = 0; $i -lt $List.Count; $i += 500) {
         $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -366,14 +374,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMigration
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $PSBoundParameters['action_name'] = 'delete_migration'
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }; Query = @('action_name') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
+      $PSBoundParameters['action_name'] = 'delete_migration'
       for ($i = 0; $i -lt $List.Count; $i += 500) {
         $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -410,9 +422,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Rename-FalconMigration
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{ Query = @('action_name'); Body = @{ root = @('ids','action_parameters') }}
     }
-    $PSBoundParameters['action_name'] = 'rename_migration'
   }
   process {
+    $PSBoundParameters['action_name'] = 'rename_migration'
     $PSBoundParameters['action_parameters'] = @(@{ name = 'migration_name'; value = $PSBoundParameters.Name })
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
