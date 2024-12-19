@@ -23,7 +23,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshot
 #>
   [CmdletBinding(DefaultParameterSetName='/snapshots/combined/deployments/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/snapshots/entities/deployments/v1:get',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/snapshots/entities/deployments/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids')]
@@ -60,6 +60,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshot
     }
   }
 }
+function Get-FalconSnapshotCredential {
+<#
+.SYNOPSIS
+Gets the registry credentials
+.DESCRIPTION
+Requires 'Snapshot Scanner Image Download: Read'.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshotCredential
+#>
+  [CmdletBinding(DefaultParameterSetName='/snapshots/entities/image-registry-credentials/v1:get',
+    SupportsShouldProcess)]
+  param()
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
+}
 function Get-FalconSnapshotScan {
 <#
 .SYNOPSIS
@@ -74,7 +88,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshotScan
   [CmdletBinding(DefaultParameterSetName='/snapshots/entities/scanreports/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/snapshots/entities/scanreports/v1:get',Mandatory,ValueFromPipelineByPropertyName,
-      ValueFromPipeline)]
+      ValueFromPipeline,Position=1)]
     [Alias('ids','asset_identifier')]
     [string[]]$Id
   )
@@ -89,6 +103,51 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshotScan
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
+}
+function New-FalconSnapshotAwsAccount {
+<#
+.SYNOPSIS
+Add an AWS account for Falcon Cloud Security snapshot scanning
+.DESCRIPTION
+Requires 'Snapshot: Write'.
+.PARAMETER AccountNumber
+AWS account number
+.PARAMETER BatchRegion
+Object(s) containing 'region', 'job_queue', and 'job_definition_name'
+.PARAMETER IamExternalId
+AWS IAM external identifier
+.PARAMETER IamRoleArn
+AWS IAM role ARN
+.PARAMETER KmsAlias
+AWS KMS alias
+.PARAMETER ProcessingAccount
+AWS processing account
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconSnapshotAwsAccount
+#>
+  [CmdletBinding(DefaultParameterSetName='/snapshots/entities/accounts/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/snapshots/entities/accounts/v1:post',ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('account_number')]
+    [string]$AccountNumber,
+    [Parameter(ParameterSetName='/snapshots/entities/accounts/v1:post',ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('batch_regions')]
+    [object[]]$BatchRegion,
+    [Parameter(ParameterSetName='/snapshots/entities/accounts/v1:post',ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('iam_external_id')]
+    [string]$IamExternalId,
+    [Parameter(ParameterSetName='/snapshots/entities/accounts/v1:post',ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('iam_role_arn')]
+    [string]$IamRoleArn,
+    [Parameter(ParameterSetName='/snapshots/entities/accounts/v1:post',ValueFromPipelineByPropertyName,Position=5)]
+    [Alias('kms_alias')]
+    [string]$KmsAlias,
+    [Parameter(ParameterSetName='/snapshots/entities/accounts/v1:post',ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('processing_account')]
+    [string]$ProcessingAccount
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconSnapshotScan {
 <#

@@ -577,7 +577,9 @@
 
     # snapshots
     'Get-FalconSnapshot'
+    'Get-FalconSnapshotCredential'
     'Get-FalconSnapshotScan'
+    'New-FalconSnapshotAwsAccount'
     'New-FalconSnapshotScan'
 
     # spotlight

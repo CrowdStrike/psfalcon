@@ -5340,6 +5340,20 @@
       ]
     }
   },
+  "/snapshots/entities/accounts/v1": {
+    "post": {
+      "body": {
+        "aws_accounts": [
+          "account_number",
+          "batch_regions",
+          "iam_external_id",
+          "iam_role_arn",
+          "kms_alias",
+          "processing_account"
+        ]
+      }
+    }
+  },
   "/snapshots/entities/deployments/v1": {
     "get": {
       "query": [
