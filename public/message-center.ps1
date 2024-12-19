@@ -249,6 +249,10 @@ Case content
 Detection identifier
 .PARAMETER IncidentId
 Incident identifier
+.PARAMETER MalwareSubmissionId
+Malware submission identifier
+.PARAMETER ReconRuleType
+Recon rule type
 .PARAMETER UserId
 User identifier
 .LINK
@@ -289,8 +293,16 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
     })]
     [Alias('incidents','incident_id','IncidentIds')]
     [string[]]$IncidentId,
+    [Parameter(ParameterSetName='/message-center/entities/case/v2:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('malware_submission_id')]
+    [string]$MalwareSubmissionId,
+    [Parameter(ParameterSetName='/message-center/entities/case/v2:post',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('recon_rule_type')]
+    [string]$ReconRuleType,
     [Parameter(ParameterSetName='/message-center/entities/case/v2:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=6)]
+      ValueFromPipelineByPropertyName,Position=8)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId
@@ -299,7 +311,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCompleteCase
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('body','detections','incidents','title','type','user_uuid') }}
+      Format = @{ Body = @{ root = @('body','detections','incidents','malware_submission_id','recon_rule_type',
+        'title','type','user_uuid') }}
     }
     [System.Collections.Generic.List[hashtable]]$LdtList = @()
     [System.Collections.Generic.List[hashtable]]$IncList = @()
