@@ -1,6 +1,6 @@
 @{
   RootModule = 'PSFalcon.psm1'
-  ModuleVersion = '2.2.8'
+  ModuleVersion = '2.2.9'
   CompatiblePSEditions = @('Desktop','Core')
   GUID = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
   Author = 'Brendan Kremian'
@@ -636,7 +636,7 @@
       LicenseUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
       ProjectUri = 'https://github.com/crowdstrike/psfalcon'
       IconUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
-      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.7'
+      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.9'
     }
   }
 }
