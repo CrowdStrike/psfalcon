@@ -99,6 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlNotificatio
   }
   process {
     @('Bluetooth','Usb').foreach{
+      # Select required properties for 'bluetooth_custom_notifications' and 'usb_custom_notifications'
       [string[]]$Select = 'use_custom','custom_message'
       if ($_ -eq 'Bluetooth') {
         $PSBoundParameters.$_ = [PSCustomObject]$PSBoundParameters.$_ | Select-Object @{
