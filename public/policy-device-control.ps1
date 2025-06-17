@@ -1,7 +1,7 @@
 function Edit-FalconDeviceControlClass {
 <#
 .SYNOPSIS
-Update device control policys classes (USB and Bluetooth)
+Modify Device Control policy classes
 .DESCRIPTION
 Requires 'Device control policies: Write'.
 .PARAMETER InputObject
@@ -65,6 +65,60 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlClass
     }
   }
 }
+function Edit-FalconDeviceControlNotification {
+<#
+.SYNOPSIS
+Modify default Device Control notification settings
+.DESCRIPTION
+Requires 'Device control policies: Write'.
+.PARAMETER Bluetooth
+Bluetooth custom notification settings ('blocked_notification')
+.PARAMETER Usb
+USB custom notification settings ('blocked_notification', 'restricted_notification')
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlNotification
+#>
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-default-settings/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/policy/entities/device-control-default-settings/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('bluetooth_custom_notifications')]
+    [object]$Bluetooth,
+    [Parameter(ParameterSetName='/policy/entities/device-control-default-settings/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('usb_custom_notifications')]
+    [object]$Usb
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('bluetooth_custom_notifications','usb_custom_notifications') }}
+    }
+  }
+  process {
+    @('Bluetooth','Usb').foreach{
+      [string[]]$Select = 'use_custom','custom_message'
+      if ($_ -eq 'Bluetooth') {
+        $PSBoundParameters.$_ = [PSCustomObject]$PSBoundParameters.$_ | Select-Object @{
+          l='blocked_notification'
+          e={[PSCustomObject]$_.blocked_notification | Select-Object $Select}
+        }
+      } else {
+        $PSBoundParameters.$_ = [PSCustomObject]$PSBoundParameters.$_ | Select-Object @{
+          l='blocked_notification'
+          e={[PSCustomObject]$_.blocked_notification | Select-Object $Select}
+        },
+        @{
+          l='restricted_notification'
+          e={[PSCustomObject]$_.restricted_notification | Select-Object $Select}
+        }
+      }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Edit-FalconDeviceControlPolicy {
 <#
 .SYNOPSIS
@@ -83,16 +137,6 @@ Policy description
 USB settings
 .PARAMETER BluetoothSetting
 Bluetooth settings
-.PARAMETER Default
-Modify the default Windows Device Control policy
-.PARAMETER Blocked
-Custom notification for blocked events
-.PARAMETER UseBlocked
-Enable custom notification for blocked events
-.PARAMETER Restricted
-Custom notification for restricted events
-.PARAMETER UseRestricted
-Enable custom notification for restricted events
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
@@ -116,27 +160,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
     [object]$BluetoothSetting,
     [Parameter(ParameterSetName='/policy/entities/device-control/v2:patch',Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [string]$Id,
-    [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Mandatory)]
-    [switch]$Default,
-    [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=1)]
-    [string]$Blocked,
-    [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=2)]
-    [boolean]$UseBlocked,
-    [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=3)]
-    [string]$Restricted,
-    [Parameter(ParameterSetName='/policy/entities/default-device-control/v1:patch',Position=4)]
-    [boolean]$UseRestricted
+    [string]$Id
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
-        $PSCmdlet.ParameterSetName
-      } else {
-        '/policy/entities/device-control/v2:patch'
-      }
-    }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/device-control/v2:patch' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
@@ -149,26 +176,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
         $List.Add($i)
       }
     } else {
-      if ($PSCmdlet.ParameterSetName -match 'default-device-control') {
-        $PSBoundParameters['custom_notifications'] = @{}
-        @('Blocked','Restricted').foreach{
-          $Property = @{}
-          if ($PSBoundParameters.$_) {
-            # Add 'Blocked' or 'Restricted' as 'custom_message' and remove from input
-            $Property['custom_message'] = $PSBoundParameters.$_
-            [void]$PSBoundParameters.Remove($_)
-          }
-          if ($null -ne $PSBoundParameters."Use$_") {
-            # Add 'Use' or 'UseRestricted' as 'use_custom' and remove from input
-            $Property['use_custom'] = $PSBoundParameters."Use$_"
-            [void]$PSBoundParameters.Remove("Use$_")
-          }
-          if ($Property.custom_message -or $null -ne $Property.use_custom) {
-            # Add under 'custom_notifications'
-            $PSBoundParameters.custom_notifications[($_.ToLower(),'notification' -join '_')] = $Property
-          }
-        }
-      }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -183,6 +190,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
       }
     }
   }
+}
+function Get-FalconDeviceControlNotification {
+<#
+.SYNOPSIS
+List default Device Control notification settings
+.DESCRIPTION
+Requires 'Device control policies: Read'.
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlNotification
+#>
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-default-settings/v1:get',
+    SupportsShouldProcess)]
+  param()
+  process {Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Get-FalconDeviceControlPolicy {
 <#

@@ -4161,17 +4161,6 @@
       }
     }
   },
-  "/policy/entities/default-device-control/v1": {
-    "get": {},
-    "patch": {
-      "body": {
-        "custom_notifications": [
-          "blocked_notification",
-          "restricted_notification"
-        ]
-      }
-    }
-  },
   "/policy/entities/device-control-classes/v1": {
     "patch": {
       "body": {

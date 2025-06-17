@@ -399,7 +399,9 @@
 
     # policy-device-control
     'Edit-FalconDeviceControlClass'
+    'Edit-FalconDeviceControlNotification'
     'Edit-FalconDeviceControlPolicy'
+    'Get-FalconDeviceControlNotification'
     'Get-FalconDeviceControlPolicy'
     'Get-FalconDeviceControlPolicyMember'
     'Invoke-FalconDeviceControlPolicyAction'
