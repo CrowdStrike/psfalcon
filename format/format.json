@@ -5722,9 +5722,9 @@
         "root": [
           "action",
           "cid",
+          "expires_at",
           "role_ids",
-          "uuid",
-          "expires_at"
+          "uuid"
         ]
       }
     }
