@@ -10,6 +10,8 @@ User identifier
 Customer identifier
 .PARAMETER Id
 User role
+.PARAMETER ExpiresAt
+Expiration date
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
 #>
@@ -27,7 +29,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
     [Alias('role_ids','ids')]
-    [string[]]$Id
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Position=4)]
+    [ValidatePattern('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(00|[0-9]|1[0-9]|2[0-3]):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9])Z')]
+    [Alias('expires_at','date','expiration')]
+    [string]$ExpiresAt
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
@@ -40,6 +46,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
       $PSBoundParameters['role_ids'] = @($List)
       $PSBoundParameters['uuid'] = $PSBoundParameters.UserId
       $PSBoundParameters['action'] = 'grant'
+      $PSBoundParameters['expires_at'] = $PSBoundParameters.ExpiresAt
       [void]$PSBoundParameters.Remove('Id')
       [void]$PSBoundParameters.Remove('UserId')
       Invoke-Falcon @Param -UserInput $PSBoundParameters

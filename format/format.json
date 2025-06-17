@@ -5723,7 +5723,8 @@
           "action",
           "cid",
           "role_ids",
-          "uuid"
+          "uuid",
+          "expires_at"
         ]
       }
     }
