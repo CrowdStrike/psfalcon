@@ -177,7 +177,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainer
   [CmdletBinding(DefaultParameterSetName='/container-security/combined/containers/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/containers/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/containers/v1:get',Position=2)]
     [string]$Sort,
@@ -218,7 +218,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAlert
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get',Position=2)]
     [string]$Sort,
@@ -259,7 +259,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/image-assessment/images/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/image-assessment/images/v1:get',Position=2)]
     [ValidateSet('first_seen.asc','first_seen.desc','highest_detection_severity.asc',
@@ -304,7 +304,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
   [CmdletBinding(DefaultParameterSetName='/container-security/combined/clusters/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get',Position=2)]
     [string]$Sort,
@@ -339,7 +339,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=2)]
     [string]$Resource,
@@ -435,7 +435,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDeployment
   [CmdletBinding(DefaultParameterSetName='/container-security/combined/deployments/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get',Position=2)]
     [string]$Sort,
@@ -478,7 +478,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDetection
   param(
     [Parameter(ParameterSetName='/container-security/combined/detections/v1:get',Position=1)]
     [Parameter(ParameterSetName='/container-security/queries/detections/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/detections/v1:get',Position=2)]
     [string]$Sort,
@@ -533,7 +533,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDriftIndicator
     [string[]]$Id,
     [Parameter(ParameterSetName='/container-security/combined/drift-indicators/v1:get',Position=1)]
     [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/drift-indicators/v1:get',Position=2)]
     [Parameter(ParameterSetName='/container-security/queries/drift-indicators/v1:get',Position=2)]
@@ -593,7 +593,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerImage
   param(
     [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get',Position=1)]
     [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/container-images/v1:get',Position=2)]
     [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get',Position=2)]
@@ -651,7 +651,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerIom
     [string[]]$Id,
     [Parameter(ParameterSetName='/container-security/combined/kubernetes-ioms/v1:get',Position=1)]
     [Parameter(ParameterSetName='/container-security/queries/kubernetes-ioms/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/kubernetes-ioms/v1:get',Position=2)]
     [Parameter(ParameterSetName='/container-security/queries/kubernetes-ioms/v1:get',Position=2)]
@@ -708,7 +708,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerNode
   [CmdletBinding(DefaultParameterSetName='/container-security/combined/nodes/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get',Position=2)]
     [string]$Sort,
@@ -750,7 +750,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPackage
   [CmdletBinding(DefaultParameterSetName='/container-security/combined/packages/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/packages/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/packages/v1:get',Position=2)]
     [ValidateSet('license.asc','license.desc','package_name_version.asc','package_name_version.desc','type.asc',
@@ -795,7 +795,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPod
   [CmdletBinding(DefaultParameterSetName='/container-security/combined/pods/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/container-security/combined/pods/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/pods/v1:get',Position=2)]
     [string]$Sort,
@@ -983,7 +983,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
     [Alias('cve_id')]
     [string]$Id,
     [Parameter(ParameterSetName='/container-security/combined/vulnerabilities/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/container-security/combined/vulnerabilities/v1:get',Position=2)]
     [ValidateSet('cps_current_rating.asc','cps_current_rating.desc','cve_id.asc','cve_id.desc','cvss_score.asc',
