@@ -93,7 +93,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAwsAccount
     [string]$DeploymentMethod,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
       ValueFromPipelineByPropertyName,Position=15)]
-    [Alias('client_id')]
+    [Alias('falcon_client_id')]
     [string]$ClientId
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -307,7 +307,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAwsAccount
     [string]$DeploymentMethod,
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
       Position=15)]
-    [Alias('client_id')]
+    [Alias('falcon_client_id')]
     [string]$ClientId
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
