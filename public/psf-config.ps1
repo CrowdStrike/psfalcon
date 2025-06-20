@@ -328,68 +328,51 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         # Output settings for modification
         if ($Select) { $New.settings }
       } elseif ($Item -eq 'DeviceControlPolicy') {
-        # Select DeviceControlPolicy exceptions and settings to modify or results to output
-        $Output = @{ exception = @{}; setting = @{ bluetooth_settings = @{}; usb_settings = @{} } }
-        foreach ($t in @('bluetooth_settings','usb_settings')) {
-          if ($New.$t) {
-            foreach ($p in @($New.$t.PSObject.Properties)) {
-              if ($p.Name -match 'custom(_end_user)?_notifications') {
-                # Compare 'custom_notifications' properties
-                $NewNote = $p.Value | ConvertTo-Json -Compress
-                $OldNote = $Old.$t.($p.Name) | ConvertTo-Json -Compress
-                if ($NewNote -ne $OldNote) {
-                  if ($Result) {
+        if ($Result) {
+          # Capture DeviceControlPolicy results
+          foreach ($t in @('bluetooth_settings','usb_settings')) {
+            if ($New.$t) {
+              foreach ($p in @($New.$t.PSObject.Properties)) {
+                if ($p.Name -match 'custom(_end_user)?_notifications') {
+                  # Compare 'custom_notifications' properties
+                  $NewNote = $p.Value | ConvertTo-Json -Compress
+                  $OldNote = $Old.$t.($p.Name) | ConvertTo-Json -Compress
+                  if ($NewNote -ne $OldNote) {
                     # Capture modified property result
                     Add-Result Modified $New $Item ($t,$p.Name -join '.') $OldNote $NewNote
-                  } elseif ($NewNote) {
-                    # Capture modified property content
-                    $Output.setting.$t[$p.Name] = $p.Value
                   }
-                }
-              } elseif ($p.Name -ne 'classes' -and $p.Value -ne $Old.$t.($p.Name)) {
-                if ($Result) {
+                } elseif ($p.Name -ne 'classes' -and $p.Value -ne $Old.$t.($p.Name)) {
                   # Capture modified property result
                   Add-Result Modified $New $Item ($t,$p.Name -join '.') $Old.$t.($p.Name) $p.Value
-                } else {
-                  # Capture modified property content
-                  $Output.setting.$t[$p.Name] = $p.Value
                 }
               }
-            }
-            # Compare 'classes' with existing DeviceControlPolicy classes
-            $tClass = $t -replace '_settings','_classes'
-            foreach ($c in $New.$t.classes) {
-              $RefC = @($Old.$t.classes).Where({$_.class -eq $c.class}) | Select-Object id,action,class,
-              minor_classes,
-              @{
-                l='exceptions'
-                e={
-                  @($Config.$Item.ExCid).Where({$_.policy_id -eq $Old.id -and $_.type -eq $t}) |
-                  Select-Object id,class,vendor_id,vendor_name,product_id,product_name,serial_number,combined_id,
-                  action,match_method,description,minor_classes
+              # Compare 'classes' with existing DeviceControlPolicy classes
+              foreach ($c in $New.$t.classes) {
+                $RefC = @($Old.$t.classes).Where({$_.class -eq $c.class}) |
+                Select-Object id,action,class,minor_classes,
+                @{
+                  l='exceptions'
+                  e={
+                    @($Config.$Item.ExCid).Where({$_.policy_id -eq $Old.id -and $_.type -eq $t}) |
+                    Select-Object id,class,vendor_id,vendor_name,product_id,product_name,serial_number,combined_id,
+                    action,match_method,description,minor_classes
+                  }
                 }
-              }
-              if ($c.minor_classes) {
-                # Compare 'minor_classes' under 'bluetooth_settings'
-                [System.Collections.Generic.List[PSCustomObject]]$McList = @()
-                foreach ($m in $c.minor_classes) {
-                  $RefM = @($RefC.minor_classes).Where({$_.minor_class -eq $m.minor_class})
-                  if ($RefM -and $m.action -ne $RefM.action) {
-                    if ($Result) {
+                if ($c.minor_classes) {
+                  # Compare 'minor_classes' under 'bluetooth_settings'
+                  foreach ($m in $c.minor_classes) {
+                    $RefM = @($RefC.minor_classes).Where({$_.minor_class -eq $m.minor_class})
+                    if ($RefM -and $m.action -ne $RefM.action) {
                       # Capture modified 'action' under 'minor_classes'
                       Add-Result Modified $New $Item ($c.class,$m.minor_class,
                         'action' -join '.') $RefM.action $m.action
-                    } else {
-                      # Add 'minor_class' with existing 'id' and new 'action' value
-                      Update-Id $m $RefM $Item
-                      $McList.Add(([PSCustomObject]$m | Select-Object action,minor_class))
                     }
                   }
                 }
-                # Add 'minor_classes' that require changes
-                if ($McList) { $c.minor_classes = $McList }
-              }
-              if ($Result) {
+                if ($c.action -ne $RefC.action) {
+                  # Capture 'action' result for class
+                  Add-Result Modified $New $Item ($c.class,'action' -join '.') $RefC.action $c.action
+                }
                 foreach ($e in $c.exceptions) {
                   # Compare exclusions to find new or modified results
                   $Filter = Write-SelectFilter $e DeviceControlException
@@ -404,14 +387,58 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                       # Capture new exception results
                       Add-Result Created $New $Item ($c.class,'exceptions' -join '.') -New $eName
                     } elseif ($RefE -and $e.action -ne $RefE.action) {
-                      # Capture modified 'action' result
+                      # Capture modified 'action' result for exception
                       Add-Result Modified $New $Item ($c.class,'exceptions','action' -join '.') $RefE.action (
                         $eObj.action) -Comment $eName
                     }
                   }
                 }
-              } else {
-                Set-Property $c exceptions ([System.Collections.Generic.List[PSCustomObject]]@())
+              }
+            }
+          }
+        } else {
+          # Select DeviceControlPolicy exceptions and settings to modify
+          $Output = @{ exception = @{}; setting = @{ bluetooth_settings = @{}; usb_settings = @{} } }
+          foreach ($t in @('bluetooth_settings','usb_settings')) {
+            if ($New.$t) {
+              foreach ($p in @($New.$t.PSObject.Properties)) {
+                if ($p.Name -match 'custom(_end_user)?_notifications') {
+                  # Compare 'custom_notifications' properties
+                  $NewNote = $p.Value | ConvertTo-Json -Compress
+                  $OldNote = $Old.$t.($p.Name) | ConvertTo-Json -Compress
+                  if ($NewNote -and $NewNote -ne $OldNote) { $Output.setting.$t[$p.Name] = $p.Value }
+                } elseif ($p.Name -ne 'classes' -and $p.Value -ne $Old.$t.($p.Name)) {
+                  # Capture modified property content
+                  $Output.setting.$t[$p.Name] = $p.Value
+                }
+              }
+              # Compare 'classes' with existing DeviceControlPolicy classes
+              foreach ($c in $New.$t.classes) {
+                $RefC = @($Old.$t.classes).Where({$_.class -eq $c.class}) |
+                Select-Object id,action,class,minor_classes,
+                @{
+                  l='exceptions'
+                  e={
+                    @($Config.$Item.ExCid).Where({$_.policy_id -eq $Old.id -and $_.type -eq $t}) |
+                    Select-Object id,class,vendor_id,vendor_name,product_id,product_name,serial_number,combined_id,
+                    action,match_method,description,minor_classes
+                  }
+                }
+                if ($c.minor_classes) {
+                  # Compare 'minor_classes' under 'bluetooth_settings'
+                  [System.Collections.Generic.List[PSCustomObject]]$McList = @()
+                  foreach ($m in $c.minor_classes) {
+                    $RefM = @($RefC.minor_classes).Where({$_.minor_class -eq $m.minor_class})
+                    if ($RefM -and $m.action -ne $RefM.action) {
+                      # Add 'minor_class' with existing 'id' and new 'action' value
+                      Update-Id $m $RefM $Item
+                      $McList.Add(([PSCustomObject]$m | Select-Object action,minor_class))
+                    }
+                  }
+                  # Add 'minor_classes' that require changes
+                  if ($McList) { $c.minor_classes = $McList }
+                }
+                $ExList = [System.Collections.Generic.List[PSCustomObject]]@()
                 foreach ($e in @($Config.$Item.ExImp).Where({$_.policy_id -eq $New.id -and $_.type -eq $t -and
                 $_.class -eq $c.class})) {
                   $Filter = Write-SelectFilter $e DeviceControlException
@@ -424,23 +451,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                       $eObj.$_ }) -join '_') -join ':')
                     if (!$RefE) {
                       # Capture missing exceptions for modification
-                      $c.exceptions.Add($eObj)
+                      $ExList.Add($eObj)
                     } elseif ($RefE -and $RefE.action -ne $e.action) {
                       # Use existing exception 'id' for modification of 'action'
                       Set-Property $eObj id $RefE.id
-                      $c.exceptions.Add($eObj)
+                      $ExList.Add($eObj)
                     }
                   }
                 }
-              }
-              if ($c.exceptions -or $c.action -ne $RefC.action) {
-                # Add 'bluetooth_classes' or 'usb_classes' for modification
-                if (!$Result -and !$Output.exception.$tClass) { $Output.exception[$tClass] = @{} }
-                if ($c.action -ne $RefC.action) {
-                  if ($Result) {
-                    # Capture 'action' result
-                    Add-Result Modified $New $Item ($c.class,'action' -join '.') $RefC.action $c.action
-                  } else {
+                if ($ExList -or $c.action -ne $RefC.action) {
+                  # Add 'bluetooth_classes' or 'usb_classes' for modification
+                  $tClass = $t -replace '_settings','_classes'
+                  if (!$Output.exception.$tClass) { $Output.exception[$tClass] = @{} }
+                  if ($c.action -ne $RefC.action) {
                     # Select properties for 'bluetooth_classes' or 'usb_classes'
                     if (!$Output.exception.$tClass.classes) {
                       # Add 'classes' list
@@ -448,19 +471,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                     }
                     # Add 'class' to list when 'action' is different
                     $Output.exception.$tClass.classes.Add(([PSCustomObject]$c |
-                      Select-Object @($c.PSObject.Properties.Name).Where({$_ -ne 'id'})))
+                      Select-Object @($c.PSObject.Properties.Name).Where({$_ -notmatch '^(id|exceptions)$'})))
+                  }
+                  if ($ExList) {
+                    if (!$Output.exception.$tClass.upsert_exceptions) {
+                      # Add 'upsert_exceptions' list
+                      $Output.exception.$tClass['upsert_exceptions'] =
+                        [System.Collections.Generic.List[PSCustomObject]]@()
+                    }
+                    # Add new or modified exception to list
+                    @($ExList).foreach{ $Output.exception.$tClass.upsert_exceptions.Add($_) }
                   }
                 }
-                # Add 'upsert_exceptions' list
-                if (!$Result -and $c.exceptions) { $Output.exception.$tClass['upsert_exceptions'] = $c.exceptions }
               }
             }
           }
-        }
-        if (!$Result) {
-          # Output DeviceControlPolicy settings and exceptions
           if ($Output.setting.bluetooth_settings.Count -or $Output.setting.usb_settings.Count -or
           $Output.exception.Count) {
+            # Output DeviceControlPolicy settings and exceptions
             @('bluetooth_settings','usb_settings').foreach{
               # Remove empty 'bluetooth_settings' or 'usb_settings'
               if (!$Output.setting.$_.Count) { $Output.setting.Remove($_) }
