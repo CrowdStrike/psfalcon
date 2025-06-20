@@ -28,6 +28,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
     function Get-ItemContent ([string]$String) {
       # Request content for provided 'Item'
       Write-Host ('[Export-FalconConfig] Exporting "{0}"...' -f $String)
+      $Param = @{ Detailed = $true; All = $true }
       $ConfigFile = Join-Path $Location "$String.json"
       $Config = if ($String -match '^FileVantage(Policy|RuleGroup)$') {
         [string]$Filter = if ($String -eq 'FileVantagePolicy') {
@@ -38,31 +39,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           # Filter to user-created FileVantageRuleGroup
           '$_.created_by -ne "internal"'
         }
-        $Param = @{ Detailed = $true; All = $true }
-        if ($String -eq 'FileVantagePolicy' ) { $Param['include'] = 'exclusions' }
+        if ($String -eq 'FileVantagePolicy' ) { $Param['Include'] = 'exclusions' }
         @((Get-Command "Get-Falcon$String").Parameters.Type.Attributes.ValidValues).foreach{
           # Retrieve FileVantagePolicy/RuleGroup for each 'Type'
           & "Get-Falcon$String" @Param -Type $_ 2>$null |
             Where-Object -FilterScript ([scriptblock]::Create($Filter))
         }
       } elseif ($String -match '(?<!Content)Policy$') {
+        if ($String -eq 'FirewallPolicy') { $Param['Include'] = 'settings' }
         @('Windows','Mac','Linux').foreach{
           # Create policy exports in 'platform_name' order to retain precedence
-          & "Get-Falcon$String" -Filter "platform_name:'$_'" -Detailed -All 2>$null
+          & "Get-Falcon$String" -Filter "platform_name:'$_'" @Param 2>$null
         }
       } else {
-        & "Get-Falcon$String" -Detailed -All 2>$null
+        & "Get-Falcon$String" $Param 2>$null
       }
       if ($Config) {
-        if ($String -eq 'FirewallPolicy') {
-          # Export firewall settings
-          Write-Host '[Export-FalconConfig] Exporting "FirewallSetting"...'
-          $Setting = Get-FalconFirewallSetting -Id $Config.id 2>$null
-          foreach ($i in $Setting) {
-            @($Config).Where({$_.id -eq $i.policy_id}).PSObject.Properties.Add((
-              New-Object PSNoteProperty('settings',$i)))
-          }
-        } elseif ($String -eq 'FileVantageRuleGroup') {
+        if ($String -eq 'FileVantageRuleGroup') {
           # Update 'assigned_rules' with rule content inside FileVantage rule groups
           foreach ($i in $Config) {
             $RuleId = @($i.assigned_rules.id).Where({![string]::IsNullOrWhiteSpace($_)})
