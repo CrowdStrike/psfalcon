@@ -1512,13 +1512,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         [PSCustomObject]$Ref
       )
       # Perform an action on a policy and output result
-      $Param = @{ Name = $Action; ErrorAction = 'SilentlyContinue'; ErrorVariable = 'Fail' }
+      $Param = @{ ErrorAction = 'SilentlyContinue'; ErrorVariable = 'Fail' }
       if ($Id) { $Param['GroupId'] = $Id }
       if ($Obj.id) {
         $Req = if ($Item -eq 'FileVantagePolicy') {
           $Obj | Edit-FalconFileVantagePolicy @Param
         } else {
-          $Obj.id | & "Invoke-Falcon$($Item)Action" @Param
+          $Obj.id | & "Invoke-Falcon$($Item)Action" -Name $Action @Param
         }
         if ($Action -match '^add-(host|rule)-group$') {
           if ($Req) {
