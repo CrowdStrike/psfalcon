@@ -495,8 +495,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
         }
       } elseif ($Item -eq 'FirewallPolicy') {
-        @($New.settings.PSObject.Properties).Where({$_.Name -ne 'tracking' -and $_.Value -ne
-        $Old.settings.($_.Name)}).foreach{
+        @($New.settings.PSObject.Properties).Where({$_.Name -notmatch '^((platform|policy)_id|tracking)$' -and
+        $_.Value -ne $Old.settings.($_.Name)}).foreach{
           if ($Result) {
             # Capture result
             Add-Result Modified $New $Item $_.Name ($Old.settings.($_.Name) -join ',') ($_.Value -join ',')
@@ -1199,8 +1199,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         } elseif ($Obj.settings) {
           if ($Item -eq 'FirewallPolicy') {
             if ($Obj.settings) {
-              # Update 'policy_id' under 'settings'
-              Set-Property $Obj.settings policy_id $Obj.id
+              if ($Obj.id -ne $Ref.id) {
+                # Update policy identifier
+                Update-Id $Obj $Ref $Item
+              }
+              if ($Obj.settings.policy_id -ne $Ref.id) {
+                # Update 'policy_id' under 'settings'
+                Set-Property $Obj.settings policy_id $Ref.id
+              }
               if ($Obj.settings.rule_group_ids) {
                 # Update 'rule_group_ids'
                 $Obj.settings.rule_group_ids = [string[]](
@@ -1621,19 +1627,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               Set-IdRef $i $Item -Update
               Add-Result Created $i $Item
               if ($Rule) {
-                @($Rule).foreach{
-                  # Update identifier for FirewallRule, capture result
-                  if ($_.rule_group -and $_.rule_group.id) { $_.rule_group.id = $i.id }
-                  Add-Result Created $_ FirewallRule
+                foreach ($r in $Rule) {
+                  # Update FirewallRule rule_group, convert 'family' to index, capture result
+                  if ($r.rule_group -and $r.rule_group.id -and $r.rule_group.id -ne $i.id) {
+                    $r.rule_group.id = $i.id
+                  }
+                  if ($r.family) { $r.family = 'precedence',($Rule.IndexOf($r) + 1) -join ':' }
+                  Add-Result Created $r FirewallRule
                 }
               }
             } elseif ($Fail) {
               # Capture FirewallGroup creation failure
               Add-Result Failed $i $Item -Comment $Fail.exception.message -Log 'to create'
               if ($Rule) {
-                @($Rule).foreach{
+                foreach ($r in $Rule) {
                   # Capture FirewallRule creation failure
-                  Add-Result Failed $_ FirewallRule -Comment $Fail.exception.message -Log 'to create'
+                  if ($r.rule_group -and $r.rule_group.id -and $r.rule_group.id -ne $i.id) {
+                    $r.rule_group.id = $i.id
+                  }
+                  if ($r.family) { $r.family = 'precedence',($Rule.IndexOf($r) + 1) -join ':' }
+                  Add-Result Failed $r FirewallRule -Comment $Fail.exception.message -Log 'to create'
                 }
               }
             }
