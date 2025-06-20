@@ -1111,10 +1111,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           $Edit = Compare-Setting $Obj $Ref $Item
           if ($Edit.setting.Count) {
             # Modify DeviceControlPolicy properties
-            $sReq = [PSCustomObject]$Edit.setting | Edit-FalconDeviceControlPolicy @Param
-            if ($sReq) {
+            $ReqS = [PSCustomObject]$Edit.setting | Edit-FalconDeviceControlPolicy @Param
+            if ($ReqS) {
               # Capture each modified property
-              Compare-Setting $Req $sReq $Item -Result
+              Compare-Setting $Req $ReqS $Item -Result
             } elseif ($Fail) {
               # Capture failure to modify Policy
               Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
@@ -1122,11 +1122,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
           if ($Edit.exception.Count) {
             # Modify DeviceControlPolicy classes
-            $Req = [PSCustomObject]$Edit.exception | Edit-FalconDeviceControlClass @Param
-            if ($Req) {
+            $ReqE = [PSCustomObject]$Edit.exception | Edit-FalconDeviceControlClass @Param
+            if ($ReqE) {
               # Capture each modified property
-              $Old = if ($sReq) { $sReq } else { $Ref }
-              Compare-Setting $Req $Old $Item -Result
+              $Old = if ($ReqS) { $ReqS } else { $Ref }
+              Compare-Setting $ReqE $Old $Item -Result
             } elseif ($Fail) {
               # Capture failure to modify Policy
               Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
