@@ -2224,7 +2224,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       $_.property -match '^rule_group(_id)?s$' -and $_.old_value)}) | Select-Object -Property action,type,
       platform,name -Unique)) {
         if ($i.action -eq 'Created' -and !$i.property -and @($Config.($i.type).Cid).Where({$_.platform_name -eq
-        $i.platform -and $_.name -notmatch $PolicyDefault })) {
+        $i.platform -and $_.name -ne $i.name -and $_.name -notmatch $PolicyDefault})) {
           # Output precedence warning for existing policies for each 'platform'
           $PSCmdlet.WriteWarning(
             ('[Import-FalconConfig] Existing {0} {1} were found. Verify precedence!' -f $i.platform,$i.type))
