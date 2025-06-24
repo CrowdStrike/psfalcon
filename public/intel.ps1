@@ -556,12 +556,12 @@ function Receive-FalconAttck {
 Download Mitre ATT&CK information for an actor
 .DESCRIPTION
 Requires 'Actors (Falcon Intelligence): Read'.
-.PARAMETER Path
-Destination path
-.PARAMETER Slug
-Actor identifier ('slug')
 .PARAMETER Format
-Export format
+Export format [default: json]
+.PARAMETER Path
+Destination path [default: .\<slug>.<format>]
+.PARAMETER ActorId
+Actor identifier ('slug')
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
@@ -569,14 +569,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
 #>
   [CmdletBinding(DefaultParameterSetName='/intel/entities/mitre-reports/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=1)]
-    [string]$Path,
-    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=2)]
-    [Alias('actor_id')]
-    [string]$Slug,
-    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=3)]
+    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Position=1)]
     [ValidateSet('csv','json',IgnoreCase=$false)]
     [string]$Format,
+    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Position=2)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [Alias('actor_id','slug')]
+    [string]$ActorId,
     [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get')]
     [switch]$Force
   )
@@ -589,7 +590,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
     $Param.Format['Outfile'] = 'path'
   }
   process {
-    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $Format
+    if (!$PSBoundParameters.Path) { $PSBoundParameters['Path'] = $PSBoundParameters.ActorId }
+    if (!$PSBoundParameters.Format) { $PSBoundParameters['Format'] = 'json' }
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $PSBoundParameters.Format
     $OutPath = Test-OutFile $PSBoundParameters.Path
     if ($OutPath.Category -eq 'ObjectNotFound') {
       Write-Error @OutPath
