@@ -234,7 +234,8 @@
     'Remove-FalconMigration'
 
     # humio
-    'New-FalconLookupFile'
+    'Receive-FalconLookupFile'
+    'Send-FalconLookupFile'
 
     # identity-protection
     'Invoke-FalconIdentityGraph'
