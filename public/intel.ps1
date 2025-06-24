@@ -1,7 +1,7 @@
 function Get-FalconActor {
 <#
 .SYNOPSIS
-Search for threat actors
+Search for Falcon Intelligence threat actors
 .DESCRIPTION
 Requires 'Actors (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -207,7 +207,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
 function Get-FalconIndicator {
 <#
 .SYNOPSIS
-Search for intelligence indicators
+Search for Falcon Intelligence indicators
 .DESCRIPTION
 Requires 'Indicators (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 function Get-FalconIntel {
 <#
 .SYNOPSIS
-Search for intelligence reports
+Search for Falcon Intelligence reports
 .DESCRIPTION
 Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -377,7 +377,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 function Get-FalconMalwareFamily {
 <#
 .SYNOPSIS
-Search for malware families
+Search for Falcon Intelligence malware families
 .DESCRIPTION
 Requires 'Malware Families (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -560,8 +560,8 @@ Requires 'Actors (Falcon Intelligence): Read'.
 Export format [default: json]
 .PARAMETER Path
 Destination path [default: .\<slug>.<format>]
-.PARAMETER ActorId
-Actor identifier ('slug')
+.PARAMETER Slug
+Actor identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
@@ -576,8 +576,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
     [string]$Path,
     [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
-    [Alias('actor_id','slug')]
-    [string]$ActorId,
+    [Alias('actor_id')]
+    [string]$Slug,
     [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get')]
     [switch]$Force
   )
@@ -590,7 +590,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
     $Param.Format['Outfile'] = 'path'
   }
   process {
-    if (!$PSBoundParameters.Path) { $PSBoundParameters['Path'] = $PSBoundParameters.ActorId }
+    if (!$PSBoundParameters.Path) { $PSBoundParameters['Path'] = $PSBoundParameters.Slug }
     if (!$PSBoundParameters.Format) { $PSBoundParameters['Format'] = 'json' }
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $PSBoundParameters.Format
     $OutPath = Test-OutFile $PSBoundParameters.Path
@@ -608,7 +608,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
 function Receive-FalconIntel {
 <#
 .SYNOPSIS
-Download an intelligence report
+Download a Falcon Intelligence report
 .DESCRIPTION
 Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Path
@@ -656,10 +656,71 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
     }
   }
 }
+function Receive-FalconMalwareFamilyAttck {
+<#
+.SYNOPSIS
+Download Mitre ATT&CK information for a malware family
+.DESCRIPTION
+Requires 'Malware Families (Falcon Intelligence): Read'.
+.PARAMETER Format
+Export format [default: JSON]
+.PARAMETER Path
+Destination path [default: .\<slug>.<format>]
+.PARAMETER Slug
+Malware family identifier
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalwareFamilyAttck
+#>
+  [CmdletBinding(DefaultParameterSetName='/intel/entities/malware-mitre-reports/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get',Position=1)]
+    [ValidateSet('CSV','JSON','JSON_NAVIGATOR',IgnoreCase=$false)]
+    [string]$Format,
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get',Position=2)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [string]$Slug,
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+    }
+    $Param.Format['Outfile'] = 'path'
+  }
+  process {
+    if (!$PSBoundParameters.Path) { $PSBoundParameters['Path'] = $PSBoundParameters.Slug }
+    if (!$PSBoundParameters.Format) { $PSBoundParameters['Format'] = 'JSON' }
+    $Extension = if ($PSBoundParameters.Format -eq 'JSON_NAVIGATOR') {
+      'json'
+    } else {
+      ($PSBoundParameters.Format).ToLower()
+    }
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $Extension
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        $PSBoundParameters['Id'] = $PSBoundParameters.Slug
+        [void]$PSBoundParameters.Remove('Slug')
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
 function Receive-FalconRule {
 <#
 .SYNOPSIS
-Download the most recent ruleset, or a specific ruleset
+Download the most recent or a specific Falcon Intelligence ruleset
 .DESCRIPTION
 Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Type

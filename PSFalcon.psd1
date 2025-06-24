@@ -267,6 +267,7 @@
     'Get-FalconRule'
     'Receive-FalconAttck'
     'Receive-FalconIntel'
+    'Receive-FalconMalwareFamilyAttck'
     'Receive-FalconRule'
 
     # installation-tokens

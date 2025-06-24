@@ -2844,6 +2844,14 @@
       ]
     }
   },
+  "/intel/entities/malware-mitre-reports/v1": {
+    "get": {
+      "query": [
+        "id",
+        "format"
+      ]
+    }
+  },
   "/intel/entities/mitre-reports/v1": {
     "get": {
       "query": [
