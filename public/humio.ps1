@@ -9,7 +9,7 @@ Repository name
 .PARAMETER Filename
 Lookup file name
 .PARAMETER Path
-Destination path
+Destination path [default: .\<filename>.csv]
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
