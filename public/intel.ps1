@@ -15,7 +15,7 @@ Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Field
-Specific fields, or a predefined collection name surrounded by two underscores [default: __basic__]
+Specific fields to return, or a predefined collection name surrounded by two underscores [default: __basic__]
 .PARAMETER Include
 Include additional information
 .PARAMETER Offset
@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
     [int32]$Limit,
     [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=2)]
     [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=5)]
-    [Alias('Fields')]
+    [Alias('fields')]
     [string[]]$Field,
     [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=5)]
     [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=6)]
@@ -347,7 +347,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
     [int32]$Limit,
     [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Position=2)]
     [Parameter(ParameterSetName='/intel/combined/reports/v1:get',Position=5)]
-    [Alias('Fields')]
+    [Alias('fields')]
     [string[]]$Field,
     [Parameter(ParameterSetName='/intel/queries/reports/v1:get')]
     [Parameter(ParameterSetName='/intel/combined/reports/v1:get')]
@@ -390,6 +390,8 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Field
+Specific fields to return
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Mitre
@@ -412,23 +414,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalwareFamily
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=2)]
     [Alias('q')]
     [string]$Query,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=3)]
     [string]$Sort,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=4)]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=4)]
     [ValidateRange(1,5000)]
     [int32]$Limit,
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=5)]
+    [Alias('fields')]
+    [string[]]$Field,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/intel/queries/mitre-malware/v1:get',Mandatory)]
     [switch]$Mitre,
-    [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Mandatory)]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
     [switch]$Total
