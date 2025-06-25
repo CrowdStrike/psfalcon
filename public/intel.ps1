@@ -503,8 +503,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Mandatory,Position=1)]
-    [ValidateSet('snort-suricata-master','snort-suricata-update','snort-suricata-changelog','yara-master',
-      'yara-update','yara-changelog','common-event-format','netwitness',IgnoreCase=$false)]
+    [ValidateSet('common-event-format','cql-changelog','cql-master','cql-update','netwitness',
+      'snort-suricata-changelog','snort-suricata-master','snort-suricata-update','yara-changelog','yara-master',
+      'yara-update',IgnoreCase=$false)]
     [string]$Type,
     [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Position=2)]
     [string[]]$Name,
@@ -741,8 +742,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
   [CmdletBinding(DefaultParameterSetName='/intel/entities/rules-files/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=1)]
-    [ValidateSet('common-event-format','netwitness','snort-suricata-changelog','snort-suricata-master',
-      'snort-suricata-update','yara-changelog','yara-master','yara-update',IgnoreCase=$false)]
+    [ValidateSet('common-event-format','cql-changelog','cql-master','cql-update','netwitness',
+      'snort-suricata-changelog','snort-suricata-master','snort-suricata-update','yara-changelog','yara-master',
+      'yara-update',IgnoreCase=$false)]
     [string]$Type,
     [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Position=2)]
     [Alias('If-None-Match')]
