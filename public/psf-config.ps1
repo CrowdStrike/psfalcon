@@ -713,12 +713,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         'IoaGroup' {
           @{l='cid';e={$_.customer_id}},'id','name','platform','enabled','deleted','version','description',
-          @{l='rules';e={Compress-Object $_.rules IoaRule}},'rule_ids'
-        }
-        'IoaRule' {
-          @{l='cid';e={$_.customer_id}},'description','disposition_id','enabled','instance_id','name',
-          'pattern_severity','rulegroup_id','ruletype_id','comment',@{l='field_values';e={
-          $_.field_values | Select-Object name,label,type,values}}
+          'rule_ids','rules'
         }
         'Ioc' {
           'id','type','value','platforms','severity','deleted','expiration','action','mobile_action','tags',
@@ -941,6 +936,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             $RefR = @($Ref.rules).Where({$_.deleted -eq $false}) |
               Where-Object -FilterScript (Write-SelectFilter $r IoaRule)
             if ($RefR) {
+              Write-Log 'Edit-Item' (('IoaRule "{0}"' -f $r.name),([PSCustomObject]@{
+                old=$r.instance_id;new=$RefR.instance_id} | Format-List | Out-String).Trim() -join "`n")
               [hashtable[]]$PropTable = if ($RefR) {
                 # Evaluate IoaRule properties for changes
                 @('disposition_id','enabled','pattern_severity').foreach{
