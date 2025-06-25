@@ -347,7 +347,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
       # Retrieve Host Group member device_id and platform_name
       [string[]]$Select = 'device_id','platform_name'
       if ($Include) { $Select += @($Include).Where({$_ -ne 'platform_name'}) }
-      @(Get-FalconHost -Filter "groups:['$GroupId']" -Field $Select -Detailed -All).foreach{
+      @(Get-FalconHost -Filter "groups:['$GroupId']" -Detailed -All | Select-Object $Select).foreach{
         $HostList.Add($_)
       }
     } elseif ($HostId) {
