@@ -1242,10 +1242,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         }
-        if ($Obj.id -ne $Ref.id) {
-          # Update policy identifier for modifying 'groups' and 'enabled'
-          Update-Id $Obj $Ref $Item
-        }
+        # Update policy identifier for modifying 'groups' and 'enabled'
+        if ($Obj.id -ne $Ref.id) { Update-Id $Obj $Ref $Item }
         if ($Item -eq 'PreventionPolicy') {
           if ($Obj.ioa_rule_groups) {
             # Update IoaGroup identifiers and assign to PreventionPolicy
