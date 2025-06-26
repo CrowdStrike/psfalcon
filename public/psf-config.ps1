@@ -1123,6 +1123,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         } elseif ($Item -eq 'FileVantagePolicy') {
+          # Update policy identifier
+          if ($Obj.id -ne $Ref.id) { Update-Id $Obj $Ref $Item }
           if ($Obj.exclusions) {
             foreach ($e in $Obj.exclusions) {
               # Check for existing matching exclusion
@@ -1186,7 +1188,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           foreach ($g in @('host_groups','rule_groups')) {
             # Update identifiers and assign FileVantageRuleGroup and HostGroup to FileVantagePolicy
             if ($Obj.$g) {
-              $Group = @(Update-GroupId $Obj.$g $Item $g).Where({$Obj.$g.id -notcontains $_.id})
+              $Group = Update-GroupId $Obj.$g $Item $g
               if ($Group -and $Obj.$g) {
                 Set-Property $Obj $g $Group
                 Submit-Group $Item $g $Obj $Ref
@@ -1805,7 +1807,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           # Assign FileVantageRuleGroup and capture result
           $Req = $Obj.rule_groups | Add-FalconFileVantageRuleGroup -PolicyId $Obj.id @Param
           if ($Req) {
-            Add-Result Modified $Req $Item rule_groups ($Ref.rule_groups -join ',') ($Req.rule_groups.id -join ',')
+            Add-Result Modified $Req $Item rule_groups ($Ref.rule_groups.id -join ',') (
+              $Req.rule_groups.id -join ',')
           } elseif ($Fail) {
             # Capture FileVantageRuleGroup assignment failure
             Add-Result Failed $Obj FileVantagePolicy -Comment $Fail.exception.message -Log 'to assign'
@@ -1814,7 +1817,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           # Assign HostGroup and capture result
           $Req = $Obj.host_groups | Add-FalconFileVantageHostGroup -PolicyId $Obj.id @Param
           if ($Req) {
-            Add-Result Modified $Req $Item host_groups ($Ref.host_groups -join ',') ($Req.host_groups.id -join ',')
+            Add-Result Modified $Req $Item host_groups ($Ref.host_groups.id -join ',') (
+              $Req.host_groups.id -join ',')
           } elseif ($Fail) {
             # Capture HostGroup assignment failure
             Add-Result Failed $Obj FileVantagePolicy -Comment $Fail.exception.message -Log 'to assign'
