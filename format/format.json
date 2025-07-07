@@ -1608,7 +1608,7 @@
       ]
     }
   },
-  "/falcon-complete-dashboards/queries/alerts/v1": {
+  "/falcon-complete-dashboards/queries/alerts/v2": {
     "get": {
       "query": [
         "limit",

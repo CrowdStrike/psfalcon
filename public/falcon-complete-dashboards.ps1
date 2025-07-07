@@ -19,22 +19,22 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteAlert
 #>
-  [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/alerts/v1:get',
+  [CmdletBinding(DefaultParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get',Position=2)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get',Position=3)]
     [ValidateRange(1,500)]
     [int]$Limit,
-    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v1:get')]
+    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get')]
     [string]$Offset,
-    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v1:get')]
+    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v1:get')]
+    [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get')]
     [switch]$Total
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
