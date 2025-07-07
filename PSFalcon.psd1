@@ -149,7 +149,6 @@
     'Get-FalconCompleteAllowlist'
     'Get-FalconCompleteBlocklist'
     'Get-FalconCompleteCollection'
-    'Get-FalconCompleteDetection'
     'Get-FalconCompleteEscalation'
     'Get-FalconCompleteIncident'
     'Get-FalconCompleteRemediation'

@@ -1638,16 +1638,6 @@
       ]
     }
   },
-  "/falcon-complete-dashboards/queries/detects/v1": {
-    "get": {
-      "query": [
-        "limit",
-        "sort",
-        "filter",
-        "offset"
-      ]
-    }
-  },
   "/falcon-complete-dashboards/queries/devicecount-collections/v1": {
     "get": {
       "query": [
