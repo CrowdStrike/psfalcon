@@ -52,7 +52,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           & "Get-Falcon$String" -Filter "platform_name:'$_'" @Param 2>$null
         }
       } else {
-        & "Get-Falcon$String" $Param 2>$null
+        & "Get-Falcon$String" @Param 2>$null
       }
       if ($Config) {
         if ($String -eq 'FileVantageRuleGroup') {
