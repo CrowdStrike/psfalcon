@@ -2532,6 +2532,24 @@
       ]
     }
   },
+  "/hunting/entities/intelligence-queries/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/hunting/queries/intelligence-queries/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "sort",
+        "filter",
+        "q"
+      ]
+    }
+  },
   "/identity-protection/entities/devices/GET/v1": {
     "post": {
       "body": {

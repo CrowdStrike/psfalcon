@@ -236,6 +236,9 @@
     'Receive-FalconLookupFile'
     'Send-FalconLookupFile'
 
+    # hunting
+    'Get-FalconCaoQuery'
+
     # identity-protection
     'Invoke-FalconIdentityGraph'
     'Get-FalconIdentityHost'
