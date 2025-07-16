@@ -3353,6 +3353,143 @@
       ]
     }
   },
+  "/it-automation/combined/scheduled-tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/task-executions/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/task-groups/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/entities/policies-precedence/v1": {
+    "patch": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      },
+      "query": [
+        "platform"
+      ]
+    }
+  },
+  "/it-automation/entities/policies/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/scheduled-tasks/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/task-executions/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/task-groups/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/tasks/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/queries/policies/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "sort",
+        "platform"
+      ]
+    }
+  },
+  "/it-automation/queries/scheduled-tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/queries/task-executions/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/queries/task-groups/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/queries/tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
   "/kubernetes-protection/entities/accounts/aws/v1": {
     "get": {
       "query": [

@@ -305,6 +305,14 @@
     'New-FalconIoc'
     'Remove-FalconIoc'
 
+    # it-automation
+    'Get-FalconItPolicy'
+    'Get-FalconItScheduledTask'
+    'Get-FalconItTask'
+    'Get-FalconItTaskExecution'
+    'Get-FalconItTaskGroup'
+    'Set-FalconItPolicyPrecedence'
+
     # kubernetes-protection
     'Edit-FalconContainerAwsAccount'
     'Edit-FalconContainerAzureAccount'
