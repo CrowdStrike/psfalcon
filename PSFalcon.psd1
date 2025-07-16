@@ -306,12 +306,14 @@
     'Remove-FalconIoc'
 
     # it-automation
+    'Add-FalconItHostGroup'
     'Get-FalconItFileTask'
     'Get-FalconItPolicy'
     'Get-FalconItScheduledTask'
     'Get-FalconItTask'
     'Get-FalconItTaskExecution'
     'Get-FalconItTaskGroup'
+    'Remove-FalconItHostGroup'
     'Remove-FalconItPolicy'
     'Remove-FalconItScheduledTask'
     'Remove-FalconItTask'

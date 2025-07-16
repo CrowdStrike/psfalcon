@@ -1,3 +1,40 @@
+function Add-FalconItHostGroup {
+<#
+.SYNOPSIS
+Assign host groups to Falcon for IT policies
+.DESCRIPTION
+Requires 'IT Automation - Policies: Write'.
+.PARAMETER PolicyId
+Policy identifier
+.PARAMETER Id
+Host group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconItHostGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,Position=1)]
+    [Alias('policy_id')]
+    [string]$PolicyId,
+    [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Alias('host_group_ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      $PSBoundParameters['action'] = 'assign'
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Get-FalconItFileTask {
 <#
 .SYNOPSIS
@@ -385,6 +422,43 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconItHostGroup {
+<#
+.SYNOPSIS
+Remove host groups from Falcon for IT policies
+.DESCRIPTION
+Requires 'IT Automation - Policies: Write'.
+.PARAMETER PolicyId
+Policy identifier
+.PARAMETER Id
+Host group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItHostGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,Position=1)]
+    [Alias('policy_id')]
+    [string]$PolicyId,
+    [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Alias('host_group_ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      $PSBoundParameters['action'] = 'unassign'
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }

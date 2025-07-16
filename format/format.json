@@ -3404,6 +3404,17 @@
       ]
     }
   },
+  "/it-automation/entities/policies-host-groups/v1": {
+    "patch": {
+      "body": {
+        "root": [
+          "action",
+          "host_group_ids",
+          "policy_id"
+        ]
+      }
+    }
+  },
   "/it-automation/entities/policies-precedence/v1": {
     "patch": {
       "body": {
