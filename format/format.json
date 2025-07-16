@@ -3353,6 +3353,17 @@
       ]
     }
   },
+  "/it-automation/combined/associated-tasks/v1": {
+    "get": {
+      "query": [
+        "id",
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
   "/it-automation/combined/scheduled-tasks/v1": {
     "get": {
       "query": [
@@ -3406,6 +3417,11 @@
     }
   },
   "/it-automation/entities/policies/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
     "get": {
       "query": [
         "ids"
@@ -3413,6 +3429,11 @@
     }
   },
   "/it-automation/entities/scheduled-tasks/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
     "get": {
       "query": [
         "ids"
@@ -3427,6 +3448,11 @@
     }
   },
   "/it-automation/entities/task-groups/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
     "get": {
       "query": [
         "ids"
@@ -3434,6 +3460,11 @@
     }
   },
   "/it-automation/entities/tasks/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
     "get": {
       "query": [
         "ids"

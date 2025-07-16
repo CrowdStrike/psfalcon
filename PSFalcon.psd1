@@ -306,11 +306,16 @@
     'Remove-FalconIoc'
 
     # it-automation
+    'Get-FalconItFileTask'
     'Get-FalconItPolicy'
     'Get-FalconItScheduledTask'
     'Get-FalconItTask'
     'Get-FalconItTaskExecution'
     'Get-FalconItTaskGroup'
+    'Remove-FalconItPolicy'
+    'Remove-FalconItScheduledTask'
+    'Remove-FalconItTask'
+    'Remove-FalconItTaskGroup'
     'Set-FalconItPolicyPrecedence'
 
     # kubernetes-protection

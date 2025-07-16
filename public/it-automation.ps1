@@ -1,3 +1,49 @@
+function Get-FalconItFileTask {
+<#
+.SYNOPSIS
+Search for Falcon for IT tasks associated with a given file
+.DESCRIPTION
+Requires 'IT Automation - Tasks: Read'.
+.PARAMETER Id
+File identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItFileTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/combined/associated-tasks/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id,
+    [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Position=2)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Position=3)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Position=4)]
+    [ValidateRange(1,1000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconItPolicy {
 <#
 .SYNOPSIS
@@ -11,7 +57,7 @@ Operating system platform
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
-Maximum number of results per request
+Maximum number of results per request [default: 100]
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -69,7 +115,7 @@ Search for Falcon for IT scheduled tasks
 .DESCRIPTION
 Requires 'IT Automation - Tasks: Read'.
 .PARAMETER Id
-Task or task execution identifier
+Scheduled task identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
@@ -140,13 +186,13 @@ Search for Falcon for IT tasks
 .DESCRIPTION
 Requires 'IT Automation - Tasks: Read'.
 .PARAMETER Id
-Task or task execution identifier
+Task identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
-Maximum number of results per request
+Maximum number of results per request [default: 100]
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -216,7 +262,7 @@ Falcon Query Language expression to limit results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
-Maximum number of results per request
+Maximum number of results per request [default: 100]
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -286,7 +332,7 @@ Falcon Query Language expression to limit results
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
-Maximum number of results per request
+Maximum number of results per request [default: 100]
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -336,6 +382,127 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
   process {
     if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
   }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconItPolicy {
+<#
+.SYNOPSIS
+Remove Falcon for IT policies
+.DESCRIPTION
+Requires 'IT Automation - Policies: Write'.
+.PARAMETER Id
+Policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItPolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconItScheduledTask {
+<#
+.SYNOPSIS
+Remove Falcon for IT scheduled tasks
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Write'.
+.PARAMETER Id
+Scheduled task identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItScheduledTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/scheduled-tasks/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconItTask {
+<#
+.SYNOPSIS
+Remove Falcon for IT tasks
+.DESCRIPTION
+Requires 'IT Automation - Tasks: Write'.
+.PARAMETER Id
+Task identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/tasks/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconItTaskGroup {
+<#
+.SYNOPSIS
+Remove Falcon for IT task groups
+.DESCRIPTION
+Requires 'IT Automation - Tasks: Write'.
+.PARAMETER Id
+Task group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTaskGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-groups/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
       $PSBoundParameters['Id'] = @($List)
