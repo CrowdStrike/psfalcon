@@ -37,6 +37,143 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconItHostGroup
     }
   }
 }
+function Edit-FalconItTask {
+<#
+.SYNOPSIS
+Modify Falcon for IT tasks
+.DESCRIPTION
+Requires 'IT Automation - Tasks: Write'.
+.PARAMETER Name
+Task name
+.PARAMETER Description
+Task description
+.PARAMETER TaskType
+Task type
+.PARAMETER AccessType
+Task access type
+.PARAMETER Target
+Falcon Query Language expression to define target hosts
+.PARAMETER Parameter
+Task parameters ('key', 'label', 'input_type')
+.PARAMETER Query
+Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args', 'script_file_id')
+.PARAMETER Remediation
+Remediation parameters by operating system
+.PARAMETER Trigger
+Trigger condition
+.PARAMETER Verification
+Verification condition
+.PARAMETER OsQuery
+OsQuery statement
+.PARAMETER TaskGroupId
+Task group identifier
+.PARAMETER AddUserGroupId
+User group identifier to add
+.PARAMETER AddUserId
+User identifier to add
+.PARAMETER RemoveUserGroupId
+User group identifier to remove
+.PARAMETER RemoveUserId
+User identifier to remove
+.PARAMETER OutputParser
+Column and delimiter values to parse result output
+.PARAMETER Id
+Task identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/tasks/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidateSet('query','remediation',IgnoreCase=$false)]
+    [Alias('task_type')]
+    [string]$TaskType,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [ValidateSet('Public','Shared',IgnoreCase=$false)]
+    [Alias('access_type')]
+    [string]$AccessType,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [string]$Target,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('task_parameters')]
+    [object[]]$Parameter,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('queries')]
+    [object]$Query,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('remediations')]
+    [object]$Remediation,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=9)]
+    [Alias('trigger_condition')]
+    [object[]]$Trigger,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=10)]
+    [Alias('verification_condition')]
+    [object[]]$Verification,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=11)]
+    [Alias('os_query')]
+    [string]$OsQuery,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=12)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('task_group_id')]
+    [string]$TaskGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=13)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('add_assigned_user_group_ids')]
+    [string[]]$AddUserGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=14)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('add_assigned_user_ids')]
+    [string[]]$AddUserId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=15)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('remove_assigned_user_group_ids')]
+    [string[]]$RemoveUserGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=16)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('remove_assigned_user_ids')]
+    [string[]]$RemoveUserId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=17)]
+    [Alias('output_parser_config')]
+    [object]$OutputParser,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=18)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('access_type','add_assigned_user_group_ids','add_assigned_user_ids','description','name',
+            'os_query','output_parser_config','queries','remediations','remove_assigned_user_group_ids',
+            'remove_assigned_user_ids','target','task_group_id','task_parameters','task_type','trigger_condition',
+            'verification_condition')
+        }
+        Query = @('id')
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconItFileTask {
 <#
 .SYNOPSIS
@@ -64,6 +201,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItFileTask
   param(
     [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
     [string]$Id,
     [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Position=2)]
     [ValidateScript({Test-FqlStatement $_})]
@@ -177,6 +315,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItScheduledTask
   param(
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/it-automation/queries/scheduled-tasks/v1:get',Position=1)]
@@ -248,6 +387,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTask
   param(
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:get',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/it-automation/queries/tasks/v1:get',Position=1)]
@@ -318,6 +458,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskExecution
   param(
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/it-automation/queries/task-executions/v1:get',Position=1)]
@@ -430,6 +571,125 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
     }
   }
 }
+function New-FalconItTask {
+<#
+.SYNOPSIS
+Create Falcon for IT tasks
+.DESCRIPTION
+Requires 'IT Automation - Tasks: Write'.
+.PARAMETER Name
+Task name
+.PARAMETER Description
+Task description
+.PARAMETER TaskType
+Task type
+.PARAMETER AccessType
+Task access type
+.PARAMETER Target
+Falcon Query Language expression to define target hosts
+.PARAMETER Parameter
+Task parameters ('key', 'label', 'input_type')
+.PARAMETER Query
+Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args', 'script_file_id')
+.PARAMETER Remediation
+Remediation parameters by operating system
+.PARAMETER Trigger
+Trigger condition
+.PARAMETER Verification
+Verification condition
+.PARAMETER OsQuery
+OsQuery statement
+.PARAMETER TaskGroupId
+Task group identifier
+.PARAMETER UserGroupId
+User group identifier (for 'Shared' AccessType)
+.PARAMETER UserId
+User identifier (for 'Shared' AccessType)
+.PARAMETER OutputParser
+Column and delimiter values to parse result output
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/tasks/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',Mandatory,ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidateSet('query','remediation',IgnoreCase=$false)]
+    [Alias('task_type')]
+    [string]$TaskType,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [ValidateSet('Public','Shared',IgnoreCase=$false)]
+    [Alias('access_type')]
+    [string]$AccessType,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [string]$Target,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('task_parameters')]
+    [object[]]$Parameter,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('queries')]
+    [object]$Query,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('remediations')]
+    [object]$Remediation,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=9)]
+    [Alias('trigger_condition')]
+    [object[]]$Trigger,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=10)]
+    [Alias('verification_condition')]
+    [object[]]$Verification,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=11)]
+    [Alias('os_query')]
+    [string]$OsQuery,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=12)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('task_group_id')]
+    [string]$TaskGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=13)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('assigned_user_group_ids')]
+    [string[]]$UserGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=14)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('assigned_user_ids')]
+    [string[]]$UserId,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=15)]
+    [Alias('output_parser_config')]
+    [object]$OutputParser
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('access_type','assigned_user_group_ids','assigned_user_ids','description','name','os_query',
+            'output_parser_config','queries','remediations','target','task_group_id','task_parameters',
+            'task_type','trigger_condition','verification_condition')
+        }
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Remove-FalconItHostGroup {
 <#
 .SYNOPSIS
@@ -516,6 +776,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItScheduledTask
   param(
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -546,6 +807,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTask
   param(
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
