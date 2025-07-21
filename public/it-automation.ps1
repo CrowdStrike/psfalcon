@@ -15,10 +15,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconItHostGroup
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
     [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('host_group_ids')]
     [string[]]$Id
   )
@@ -110,6 +112,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItPolicy
   param(
     [Parameter(ParameterSetName='/it-automation/entities/policies/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/it-automation/queries/policies/v1:get',Mandatory,Position=1)]
@@ -385,6 +388,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
   param(
     [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/it-automation/queries/task-groups/v1:get',Position=1)]
@@ -443,10 +447,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItHostGroup
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('policy_id')]
     [string]$PolicyId,
     [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('host_group_ids')]
     [string[]]$Id
   )
@@ -478,6 +484,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItPolicy
   param(
     [Parameter(ParameterSetName='/it-automation/entities/policies/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -569,6 +576,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTaskGroup
   param(
     [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -605,6 +613,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconItPolicyPrecedence
     [string]$Platform,
     [Parameter(ParameterSetName='/it-automation/entities/policies-precedence/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
