@@ -314,6 +314,7 @@
     'Get-FalconItTask'
     'Get-FalconItTaskExecution'
     'Get-FalconItTaskGroup'
+    'Invoke-FalconItTask'
     'New-FalconItTask'
     'Remove-FalconItHostGroup'
     'Remove-FalconItPolicy'

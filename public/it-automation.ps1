@@ -56,7 +56,8 @@ Falcon Query Language expression to define target hosts
 .PARAMETER Parameter
 Task parameters ('key', 'label', 'input_type')
 .PARAMETER Query
-Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args', 'script_file_id')
+Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args',
+'script_file_id')
 .PARAMETER Remediation
 Remediation parameters by operating system
 .PARAMETER Trigger
@@ -102,6 +103,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTask
     [string]$AccessType,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
       Position=5)]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Target,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
       Position=6)]
@@ -571,6 +573,98 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
     }
   }
 }
+function Invoke-FalconItTask {
+<#
+.SYNOPSIS
+Initiate an existing Falcon for IT task, or create and run a task on target hosts
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Write'.
+.PARAMETER Id
+Task identifier
+.PARAMETER Target
+Falcon Query Language expression to define target hosts
+.PARAMETER Query
+Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args',
+'script_file_id')
+.PARAMETER ExecutionArg
+Key/value pairs to define arguments during execution of an existing task
+.PARAMETER OsQuery
+OsQuery statement
+.PARAMETER DiscoverOffline
+Discover offline hosts
+.PARAMETER DiscoverNew
+Discover new hosts
+.PARAMETER Guardrail
+Execution guardrails and limits
+.PARAMETER Distribute
+Distribute task
+.PARAMETER OutputParser
+Specifies columns and delimiter for parsing script execution results
+.PARAMETER ExpirationInterval
+Interval before task expires. Once expired, new and offline hosts won't be targeted
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-executions/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Mandatory,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('task_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Mandatory,Position=2)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Target,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=2)]
+    [Alias('queries')]
+    [object]$Query,
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=3)]
+    [Alias('execution_args')]
+    [object]$ExecutionArg,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=3)]
+    [string]$OsQuery,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=4)]
+    [Alias('discover_offline_hosts')]
+    [boolean]$DiscoverOffline,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=5)]
+    [Alias('discover_new_hosts')]
+    [boolean]$DiscoverNew,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=6)]
+    [Alias('guardrails')]
+    [object]$Guardrail,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=7)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=7)]
+    [boolean]$Distribute,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=8)]
+    [Alias('output_parser_config')]
+    [object]$OutputParser,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=8)]
+    [Alias('expiration_interval')]
+    [string]$ExpirationInterval
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = if ($PSCmdlet.ParameterSetName -match 'live-query-execution') {
+            @('discover_new_hosts','discover_offline_hosts','distribute','expiration_interval','guardrails',
+              'osquery','output_parser_config','target','queries')
+          } else {
+            @('discover_new_hosts','discover_offline_hosts','distribute','execution_args','expiration_interval',
+              'guardrails','target','task_id')
+          }
+        }
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function New-FalconItTask {
 <#
 .SYNOPSIS
@@ -590,7 +684,8 @@ Falcon Query Language expression to define target hosts
 .PARAMETER Parameter
 Task parameters ('key', 'label', 'input_type')
 .PARAMETER Query
-Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args', 'script_file_id')
+Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args',
+'script_file_id')
 .PARAMETER Remediation
 Remediation parameters by operating system
 .PARAMETER Trigger
@@ -630,6 +725,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
     [string]$AccessType,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
       Position=5)]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Target,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
       Position=6)]
