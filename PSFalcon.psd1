@@ -306,8 +306,9 @@
     'Remove-FalconIoc'
 
     # it-automation
-    'Edit-FalconItTask'
     'Add-FalconItHostGroup'
+    'Edit-FalconItPolicy'
+    'Edit-FalconItTask'
     'Get-FalconItFileTask'
     'Get-FalconItPolicy'
     'Get-FalconItScheduledTask'
@@ -315,6 +316,7 @@
     'Get-FalconItTaskExecution'
     'Get-FalconItTaskGroup'
     'Invoke-FalconItTask'
+    'New-FalconItPolicy'
     'New-FalconItTask'
     'Remove-FalconItHostGroup'
     'Remove-FalconItPolicy'

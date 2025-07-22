@@ -37,6 +37,54 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconItHostGroup
     }
   }
 }
+function Edit-FalconItPolicy {
+<#
+.SYNOPSIS
+Modify Falcon for IT policies
+.DESCRIPTION
+Requires 'IT Automation - Policies: Write'.
+.PARAMETER Id
+Policy identifier
+.PARAMETER Name
+Policy name
+.PARAMETER Description
+Description of the policy
+.PARAMETER Config
+Policy settings
+.PARAMETER Enabled
+Policy enablement status
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItPolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [object]$Config,
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('is_enabled')]
+    [boolean]$Enabled
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('config','description','id','is_enabled','name') }}
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Edit-FalconItTask {
 <#
 .SYNOPSIS
@@ -661,6 +709,48 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
           }
         }
       }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function New-FalconItPolicy {
+<#
+.SYNOPSIS
+Create Falcon for IT policies
+.DESCRIPTION
+Requires 'IT Automation - Policies: Write'.
+.PARAMETER Name
+Policy name
+.PARAMETER Platform
+Operating system platform
+.PARAMETER Description
+Description of the policy
+.PARAMETER Config
+Policy settings
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconItPolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('Windows','Mac','Linux',IgnoreCase=$false)]
+    [string]$Platform,
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/it-automation/entities/policies/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [object]$Config
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('config','description','name','platform') }}
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
