@@ -310,6 +310,7 @@
     'Edit-FalconItPolicy'
     'Edit-FalconItTask'
     'Get-FalconItFileTask'
+    'Get-FalconItHostExecution'
     'Get-FalconItPolicy'
     'Get-FalconItScheduledTask'
     'Get-FalconItTask'
@@ -324,6 +325,7 @@
     'Remove-FalconItTask'
     'Remove-FalconItTaskGroup'
     'Set-FalconItPolicyPrecedence'
+    'Stop-FalconItTaskExecution'
 
     # kubernetes-protection
     'Edit-FalconContainerAwsAccount'

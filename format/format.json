@@ -3458,6 +3458,26 @@
       ]
     }
   },
+  "/it-automation/entities/task-execution-cancel/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "task_execution_id"
+        ]
+      }
+    }
+  },
+  "/it-automation/entities/task-execution-host-status/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
   "/it-automation/entities/task-groups/v1": {
     "delete": {
       "query": [

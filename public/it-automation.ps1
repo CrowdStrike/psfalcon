@@ -259,7 +259,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItFileTask
     [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Position=3)]
     [string]$Sort,
     [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get',Position=4)]
-    [ValidateRange(1,1000)]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get')]
     [int32]$Offset,
@@ -270,6 +270,66 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItFileTask
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconItHostExecution {
+<#
+.SYNOPSIS
+Search for host results of Falcon for IT task executions
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Read'.
+.PARAMETER Id
+Task execution identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItHostExecution
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-execution-host-status/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-host-status/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-host-status/v1:get',Position=2)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-host-status/v1:get',Position=3)]
+    [ValidateSet('end_time|asc','end_time|desc','start_time|asc','start_time|desc','status|asc','status|desc',
+      'total_results|asc','total_results|desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-host-status/v1:get',Position=4)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-host-status/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-host-status/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-host-status/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
 }
 function Get-FalconItPolicy {
 <#
@@ -381,7 +441,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItScheduledTask
     [string]$Sort,
     [Parameter(ParameterSetName='/it-automation/queries/scheduled-tasks/v1:get',Position=3)]
     [Parameter(ParameterSetName='/it-automation/combined/scheduled-tasks/v1:get',Position=3)]
-    [ValidateRange(1,1000)]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/it-automation/queries/scheduled-tasks/v1:get')]
     [Parameter(ParameterSetName='/it-automation/combined/scheduled-tasks/v1:get')]
@@ -452,7 +512,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTask
     [string]$Sort,
     [Parameter(ParameterSetName='/it-automation/queries/tasks/v1:get',Position=3)]
     [Parameter(ParameterSetName='/it-automation/combined/tasks/v1:get',Position=3)]
-    [ValidateRange(1,1000)]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/it-automation/queries/tasks/v1:get')]
     [Parameter(ParameterSetName='/it-automation/combined/tasks/v1:get')]
@@ -523,7 +583,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskExecution
     [string]$Sort,
     [Parameter(ParameterSetName='/it-automation/queries/task-executions/v1:get',Position=3)]
     [Parameter(ParameterSetName='/it-automation/combined/task-executions/v1:get',Position=3)]
-    [ValidateRange(1,1000)]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/it-automation/queries/task-executions/v1:get')]
     [Parameter(ParameterSetName='/it-automation/combined/task-executions/v1:get')]
@@ -594,7 +654,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
     [string]$Sort,
     [Parameter(ParameterSetName='/it-automation/queries/task-groups/v1:get',Position=3)]
     [Parameter(ParameterSetName='/it-automation/combined/task-groups/v1:get',Position=3)]
-    [ValidateRange(1,1000)]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/it-automation/queries/task-groups/v1:get')]
     [Parameter(ParameterSetName='/it-automation/combined/task-groups/v1:get')]
@@ -1076,4 +1136,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconItPolicyPrecedence
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
+}
+function Stop-FalconItTaskExecution {
+<#
+.SYNOPSIS
+Cancel a Falcon for IT task execution
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Write'.
+.PARAMETER Id
+Task execution identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconItTaskExecution
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-execution-cancel/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-cancel/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('task_execution_id')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
