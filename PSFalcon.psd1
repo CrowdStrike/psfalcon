@@ -392,8 +392,10 @@
     # ngsiem-content
     'Get-FalconNgsDashboard'
     'Get-FalconNgsLookupFile'
+    'Get-FalconNgsParser'
     'Remove-FalconNgsDashboard'
     'Remove-FalconNgsLookupFile'
+    'Remove-FalconNgsParser'
 
     # oauth2
     'Request-FalconToken'
