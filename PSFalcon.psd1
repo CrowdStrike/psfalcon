@@ -233,8 +233,8 @@
     'Remove-FalconMigration'
 
     # humio
-    'Receive-FalconLookupFile'
-    'Send-FalconLookupFile'
+    'Receive-FalconNgsLookupFile'
+    'Send-FalconNgsLookupFile'
 
     # hunting
     'Get-FalconCaoQuery'
@@ -388,6 +388,12 @@
     'Remove-FalconGroupRole'
     'Remove-FalconUserGroup'
     'Remove-FalconUserGroupMember'
+
+    # ngsiem-content
+    'Get-FalconNgsDashboard'
+    'Get-FalconNgsLookupFile'
+    'Remove-FalconNgsDashboard'
+    'Remove-FalconNgsLookupFile'
 
     # oauth2
     'Request-FalconToken'

@@ -4036,6 +4036,56 @@
       ]
     }
   },
+  "/ngsiem-content/entities/dashboards-template/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/lookupfiles/v1": {
+    "delete": {
+      "query": [
+        "filename",
+        "search_domain"
+      ]
+    },
+    "get": {
+      "query": [
+        "filename",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/lookupfiles/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/dashboards/v1": {
+    "delete": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/dashboards/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "search_domain"
+      ]
+    }
+  },
   "/ods/entities/malicious-files/v1": {
     "get": {
       "query": [

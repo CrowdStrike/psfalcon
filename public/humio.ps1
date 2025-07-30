@@ -1,7 +1,7 @@
-function Receive-FalconLookupFile {
+function Receive-FalconNgsLookupFile {
 <#
 .SYNOPSIS
-Download a lookup file from Falcon NGSIEM
+Download a Falcon NGSIEM lookup file
 .DESCRIPTION
 Requires 'NGSIEM: Read'.
 .PARAMETER Repository
@@ -13,7 +13,7 @@ Destination path [default: .\<filename>.csv]
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconLookupFile
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsLookupFile
 #>
   [CmdletBinding(DefaultParameterSetName='/humio/api/v1/repositories/{repository}/files/{filename}:get',
     SupportsShouldProcess)]
@@ -58,10 +58,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconLookupFile
     }
   }
 }
-function Send-FalconLookupFile {
+function Send-FalconNgsLookupFile {
 <#
 .SYNOPSIS
-Upload a lookup file to Falcon NGSIEM
+Upload a Falcon NGSIEM lookup file
 .DESCRIPTION
 Requires 'NGSIEM: Write'.
 .PARAMETER Path
@@ -69,7 +69,7 @@ Path to lookup file
 .PARAMETER Repository
 Repository name [default: search-all]
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Send-FalconLookupFile
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsLookupFile
 #>
   [CmdletBinding(DefaultParameterSetName='/humio/api/v1/repositories/{repository}/files:post',
     SupportsShouldProcess)]
