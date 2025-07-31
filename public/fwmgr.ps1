@@ -148,7 +148,7 @@ Location name
 .PARAMETER Description
 Location description
 .PARAMETER Enabled
-Location status
+Location enablement status
 .PARAMETER ConnectionType
 Wired or wireless connection types with associated properties
 .PARAMETER DefaultGateway
@@ -837,7 +837,7 @@ Requires 'Firewall management: Write'.
 .PARAMETER Name
 Rule group name
 .PARAMETER Enabled
-Rule group status
+Rule group enablement status
 .PARAMETER Platform
 Operating system platform [default: windows]
 .PARAMETER Description
@@ -936,7 +936,7 @@ Location name
 .PARAMETER Description
 Location description
 .PARAMETER Enabled
-Location status
+Location enablement status
 .PARAMETER ConnectionType
 Wired or wireless connection types with associated properties
 .PARAMETER DefaultGateway

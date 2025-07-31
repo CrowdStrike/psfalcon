@@ -10,7 +10,7 @@ Image assessment policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Enabled
-Policy enablement
+Policy enablement status
 .PARAMETER Description
 Policy description
 .PARAMETER Rule
