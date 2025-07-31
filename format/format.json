@@ -1161,20 +1161,6 @@
       }
     }
   },
-  "/detects/entities/detects/v2": {
-    "patch": {
-      "body": {
-        "root": [
-          "assigned_to_uuid",
-          "comment",
-          "ids",
-          "new_behaviors_processed",
-          "show_in_ui",
-          "status"
-        ]
-      }
-    }
-  },
   "/detects/entities/ioa/v1": {
     "get": {
       "query": [
@@ -1199,26 +1185,6 @@
     "get": {
       "query": [
         "ids"
-      ]
-    }
-  },
-  "/detects/entities/summaries/GET/v1": {
-    "post": {
-      "body": {
-        "root": [
-          "ids"
-        ]
-      }
-    }
-  },
-  "/detects/queries/detects/v1": {
-    "get": {
-      "query": [
-        "offset",
-        "limit",
-        "sort",
-        "filter",
-        "q"
       ]
     }
   },

@@ -111,8 +111,6 @@
     'Set-FalconContentControl'
 
     # detects
-    'Edit-FalconDetection'
-    'Get-FalconDetection'
     'Get-FalconCloudIoa'
     'Get-FalconCloudIom'
 
