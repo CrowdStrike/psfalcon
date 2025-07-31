@@ -1114,6 +1114,34 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Redo-FalconItTaskExecution {
+<#
+.SYNOPSIS
+Retry a Falcon for IT task execution
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Write'.
+.PARAMETER RunType
+Hosts to target during retry attempt
+.PARAMETER Id
+Task execution identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconItTaskExecution
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-execution-rerun/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-rerun/v1:post',Mandatory,Position=1)]
+    [ValidateSet('failed','hosts','offline','target',IgnoreCase=$false)]
+    [Alias('run_type')]
+    [string]$RunType,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-rerun/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Alias('task_execution_id')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Remove-FalconItHostGroup {
 <#
 .SYNOPSIS

@@ -3444,6 +3444,16 @@
       ]
     }
   },
+  "/it-automation/entities/task-execution-rerun/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "run_type",
+          "task_execution_id"
+        ]
+      }
+    }
+  },
   "/it-automation/entities/task-groups/v1": {
     "delete": {
       "query": [
