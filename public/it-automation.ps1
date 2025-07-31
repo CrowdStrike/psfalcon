@@ -85,6 +85,95 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItPolicy
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Edit-FalconItScheduledTask {
+<#
+.SYNOPSIS
+Modify Falcon for IT scheduled tasks
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Write'.
+.PARAMETER Id
+Scheduled task identifier
+.PARAMETER Target
+Falcon Query Language expression to define target hosts
+.PARAMETER Schedule
+Key/value pairs to define task scheduling
+.PARAMETER Enabled
+Scheduled task enablement status
+.PARAMETER Trigger
+Trigger condition
+.PARAMETER ExecutionArg
+Key/value pairs to define arguments during execution of an existing task
+.PARAMETER DiscoverOffline
+Discover offline hosts
+.PARAMETER DiscoverNew
+Discover new hosts
+.PARAMETER Guardrail
+Execution guardrails and limits
+.PARAMETER Distribute
+Distribute task
+.PARAMETER ExpirationInterval
+Duration for which the task stays active. Once expired, new and offline hosts won't be targeted. Example: 1m
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItScheduledTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Target,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [object]$Schedule,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [Alias('is_active')]
+    [boolean]$Enabled,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('trigger_condition')]
+    [object[]]$Trigger,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('execution_args')]
+    [object]$ExecutionArg,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('discover_offline_hosts')]
+    [boolean]$DiscoverOffline,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('discover_new_hosts')]
+    [boolean]$DiscoverNew,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=9)]
+    [object]$Guardrail,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=10)]
+    [boolean]$Distribute,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=11)]
+    [Alias('expiration_interval')]
+    [string]$ExpirationInterval
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('discover_new_hosts','discover_offline_hosts','distribute','execution_args',
+            'expiration_interval','guardrails','is_active','schedule','target','trigger_condition')
+        }
+        Query = @('id')
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Edit-FalconItTask {
 <#
 .SYNOPSIS
@@ -811,6 +900,95 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItPolicy
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{ Body = @{ root = @('config','description','name','platform') }}
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function New-FalconItScheduledTask {
+<#
+.SYNOPSIS
+Schedule a Falcon for IT task
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Write'.
+.PARAMETER TaskId
+Task identifier
+.PARAMETER Target
+Falcon Query Language expression to define target hosts
+.PARAMETER Schedule
+Key/value pairs to define task scheduling
+.PARAMETER Enabled
+Scheduled task enablement status
+.PARAMETER Trigger
+Trigger condition
+.PARAMETER ExecutionArg
+Key/value pairs to define arguments during execution of an existing task
+.PARAMETER DiscoverOffline
+Discover offline hosts
+.PARAMETER DiscoverNew
+Discover new hosts
+.PARAMETER Guardrail
+Execution guardrails and limits
+.PARAMETER Distribute
+Distribute task
+.PARAMETER ExpirationInterval
+Interval before task expires. Once expired, new and offline hosts won't be targeted
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconItScheduledTask
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('task_id')]
+    [string]$TaskId,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Target,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [object]$Schedule,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('is_active')]
+    [boolean]$Enabled,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('trigger_condition')]
+    [object[]]$Trigger,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('execution_args')]
+    [object]$ExecutionArg,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('discover_offline_hosts')]
+    [boolean]$DiscoverOffline,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('discover_new_hosts')]
+    [boolean]$DiscoverNew,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=9)]
+    [object]$Guardrail,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=10)]
+    [boolean]$Distribute,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=11)]
+    [Alias('expiration_interval')]
+    [string]$ExpirationInterval
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('discover_new_hosts','discover_offline_hosts','distribute','execution_args',
+            'expiration_interval','guardrails','is_active','schedule','target','task_id','trigger_condition')
+        }
+      }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
