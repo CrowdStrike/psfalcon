@@ -313,6 +313,81 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTask
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Edit-FalconItTaskGroup {
+<#
+.SYNOPSIS
+Modify Falcon for IT task groups
+.DESCRIPTION
+Requires 'IT Automation - Tasks: Write'.
+.PARAMETER Id
+Task group identifier
+.PARAMETER Name
+Name of the task group
+.PARAMETER Description
+Description of the task group
+.PARAMETER AccessType
+Access type of the group
+.PARAMETER AddTaskId
+Task identifiers to add
+.PARAMETER AddUserGroupId
+User group identifier to add
+.PARAMETER AddUserId
+User identifier to add
+.PARAMETER RemoveTaskId
+Task identifiers to remove
+.PARAMETER RemoveUserGroupId
+User group identifier to remove
+.PARAMETER RemoveUserId
+User identifier to remove
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTaskGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-groups/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [ValidateRange(1,200)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidateRange(1,512)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [ValidateSet('Public','Shared',IgnoreCase=$false)]
+    [Alias('access_type')]
+    [string]$AccessType,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('add_task_ids')]
+    [string[]]$AddTaskId,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('add_assigned_user_group_ids')]
+    [string[]]$AddUserGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('add_assigned_user_ids')]
+    [string[]]$AddUserId,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('remove_task_ids')]
+    [string[]]$RemoveTaskId,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=9)]
+    [Alias('remove_assigned_user_group_ids')]
+    [string[]]$RemoveUserGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=10)]
+    [Alias('remove_assigned_user_ids')]
+    [string[]]$RemoveUserId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconItFileTask {
 <#
 .SYNOPSIS
@@ -1112,6 +1187,56 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
       }
     }
   }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function New-FalconItTaskGroup {
+<#
+.SYNOPSIS
+Create Falcon for IT task groups
+.DESCRIPTION
+Requires 'IT Automation - Tasks: Write'.
+.PARAMETER Name
+Name of the task group
+.PARAMETER Description
+Description of the task group
+.PARAMETER AccessType
+Access type
+.PARAMETER TaskId
+Task identifiers to assign
+.PARAMETER UserGroupId
+User group identifiers (for 'Shared' AccessType)
+.PARAMETER UserId
+Assigned user identifiers (for 'Shared' AccessType)
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTaskGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-groups/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidateSet('Public','Shared',IgnoreCase=$false)]
+    [Alias('access_type')]
+    [string]$AccessType,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [Alias('task_ids')]
+    [string[]]$TaskId,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('assigned_user_group_ids')]
+    [string[]]$UserGroupId,
+    [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('assigned_user_ids')]
+    [string[]]$UserId
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Redo-FalconItTaskExecution {

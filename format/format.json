@@ -3464,6 +3464,36 @@
       "query": [
         "ids"
       ]
+    },
+    "patch": {
+      "body": {
+        "root": [
+          "access_type",
+          "add_assigned_user_group_ids",
+          "add_assigned_user_ids",
+          "add_task_ids",
+          "description",
+          "name",
+          "remove_assigned_user_group_ids",
+          "remove_assigned_user_ids",
+          "remove_task_ids"
+        ]
+      },
+      "query": [
+        "id"
+      ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "access_type",
+          "assigned_user_group_ids",
+          "assigned_user_ids",
+          "description",
+          "name",
+          "task_ids"
+        ]
+      }
     }
   },
   "/it-automation/entities/tasks/v1": {
