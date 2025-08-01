@@ -30,7 +30,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
     function Assert-CursorVariable ($UserInput,$EndCursor) {
       # Use variable definition to ensure 'Cursor' is within 'Variable' hashtable
       if ($UserInput.query -match '^(\s+)?query(\s+)?\(.+Cursor') {
-        @([regex]::Matches($UserInput.query,'(?<=query(\s+)?\()(\$\w+:.[^\)]+)').Value -replace '\$',$null).foreach{
+        @([regex]::Matches($UserInput.query,'(?<=query(\s+)?\()(\$\w+:.[^\)]+)').Value -replace '\$',
+        $null).foreach{
           $Array = ($_ -split ':',2).Trim()
           if ($Array[1] -eq 'Cursor') {
             if (!$UserInput.variables) {
