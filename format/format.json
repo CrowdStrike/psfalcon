@@ -3454,6 +3454,34 @@
       }
     }
   },
+  "/it-automation/entities/task-execution-results/v1": {
+    "get": {
+      "query": [
+        "id",
+        "offset",
+        "limit",
+        "sort"
+      ]
+    }
+  },
+  "/it-automation/entities/task-execution-results-search/v1": {
+    "get": {
+      "query": [
+        "id"
+      ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "filter_expressions",
+          "group_by_fields",
+          "search_end",
+          "search_start",
+          "task_execution_id"
+        ]
+      }
+    }
+  },
   "/it-automation/entities/task-groups/v1": {
     "delete": {
       "query": [

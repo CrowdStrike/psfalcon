@@ -315,6 +315,7 @@
     'Get-FalconItScheduledTask'
     'Get-FalconItTask'
     'Get-FalconItTaskExecution'
+    'Get-FalconItTaskExecutionSearch'
     'Get-FalconItTaskGroup'
     'Invoke-FalconItTask'
     'New-FalconItPolicy'
@@ -327,6 +328,7 @@
     'Remove-FalconItScheduledTask'
     'Remove-FalconItTask'
     'Remove-FalconItTaskGroup'
+    'Search-FalconItTaskExecution'
     'Set-FalconItPolicyPrecedence'
     'Stop-FalconItTaskExecution'
 

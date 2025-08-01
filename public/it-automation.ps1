@@ -774,6 +774,55 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskExecution
     }
   }
 }
+function Get-FalconItTaskExecutionSearch {
+<#
+.SYNOPSIS
+Retrieve results for a Falcon for IT task execution search job, or host results from a search job
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Read'.
+.PARAMETER Id
+Task execution search identifier
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 500]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER HostResult
+Display host execution results from search job
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskExecutionSearch
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-execution-results-search/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results-search/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('job_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get',Mandatory)]
+    [switch]$HostResult,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconItTaskGroup {
 <#
 .SYNOPSIS
@@ -1430,6 +1479,48 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTaskGroup
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
+}
+function Search-FalconItTaskExecution {
+<#
+.SYNOPSIS
+Start a search job for Falcon for IT task execution results
+.DESCRIPTION
+Requires 'IT Automation - Task Executions: Read'.
+.PARAMETER Filter
+One or more Falcon Query Language expressions to limit results
+.PARAMETER GroupBy
+One or more fields to group results
+.PARAMETER End
+End time of search
+.PARAMETER Start
+Start time of search
+.PARAMETER Id
+Task execution identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Search-FalconItTaskExecution
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-execution-results-search/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results-search/v1:post',Position=1)]
+    [Alias('filter_expressions')]
+    [string[]]$Filter,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results-search/v1:post',Position=2)]
+    [Alias('group_by_fields')]
+    [string[]]$GroupBy,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results-search/v1:post',Position=3)]
+    [Alias('search_start')]
+    [string]$Start,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results-search/v1:post',Position=4)]
+    [Alias('search_end')]
+    [string]$End,
+    [Parameter(ParameterSetName='/it-automation/entities/task-execution-results-search/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
+    [Alias('task_execution_id')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Set-FalconItPolicyPrecedence {
 <#
