@@ -319,6 +319,7 @@
     'New-FalconItPolicy'
     'New-FalconItScheduledTask'
     'New-FalconItTask'
+    'Redo-FalconItTaskExecution'
     'Remove-FalconItHostGroup'
     'Remove-FalconItPolicy'
     'Remove-FalconItScheduledTask'
