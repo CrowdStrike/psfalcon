@@ -708,7 +708,7 @@ function Get-FalconItTaskExecution {
 .SYNOPSIS
 Search for Falcon for IT task executions
 .DESCRIPTION
-Requires 'IT Automation - Tasks Executions: Read'.
+Requires 'IT Automation - Task Executions: Read'.
 .PARAMETER Id
 Task execution identifier
 .PARAMETER Filter
