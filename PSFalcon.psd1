@@ -399,12 +399,15 @@
     'Get-FalconNgsDashboard'
     'Get-FalconNgsLookupFile'
     'Get-FalconNgsParser'
+    'Get-FalconNgsSavedQuery'
     'New-FalconNgsParser'
     'Receive-FalconNgsDashboard'
     'Receive-FalconNgsParser'
+    'Receive-FalconNgsSavedQuery'
     'Remove-FalconNgsDashboard'
     'Remove-FalconNgsLookupFile'
     'Remove-FalconNgsParser'
+    'Remove-FalconNgsSavedQuery'
 
     # oauth2
     'Request-FalconToken'

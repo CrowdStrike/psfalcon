@@ -4070,16 +4070,6 @@
       ]
     }
   },
-  "/ngsiem-content/queries/parsers/v1": {
-    "get": {
-      "query": [
-        "limit",
-        "offset",
-        "filter",
-        "repository"
-      ]
-    }
-  },
   "/ngsiem-content/entities/dashboards-template/v1": {
     "get": {
       "query": [
@@ -4098,16 +4088,6 @@
     "get": {
       "query": [
         "filename",
-        "search_domain"
-      ]
-    }
-  },
-  "/ngsiem-content/queries/lookupfiles/v1": {
-    "get": {
-      "query": [
-        "limit",
-        "offset",
-        "filter",
         "search_domain"
       ]
     }
@@ -4142,7 +4122,53 @@
       ]
     }
   },
+  "/ngsiem-content/entities/savedqueries/v1": {
+    "delete": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/savedqueries-template/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    }
+  },
   "/ngsiem-content/queries/dashboards/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/lookupfiles/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/parsers/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "repository"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/savedqueries/v1": {
     "get": {
       "query": [
         "limit",

@@ -52,7 +52,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsParser
   [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/parsers/v1:patch',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+      ValueFromPipelineByPropertyName,Position=1)]
     [string]$Id,
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
@@ -118,9 +118,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsDashboard
       ValueFromPipelineByPropertyName,Position=1)]
     [Alias('ids')]
     [string]$Id,
-    [Parameter(ParameterSetName='/ngsiem-content/queries/dashboards/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/dashboards/v1:get',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',Mandatory,Position=2)]
     [ValidateSet('all','dashboards','falcon','third-party',IgnoreCase=$false)]
     [Alias('search_domain')]
     [string]$Domain,
@@ -169,11 +169,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsLookupFile
   [CmdletBinding(DefaultParameterSetName='/ngsiem-content/queries/lookupfiles/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName)]
-    [string]$Filename,
-    [Parameter(ParameterSetName='/ngsiem-content/queries/lookupfiles/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Mandatory,Position=1)]
+    [string]$Filename,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/lookupfiles/v1:get',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
     [ValidateSet('all','dashboards','falcon','parsers-repository','third-party',IgnoreCase=$false)]
     [Alias('search_domain')]
     [string]$Domain,
@@ -222,12 +222,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsParser
   [CmdletBinding(DefaultParameterSetName='/ngsiem-content/queries/parsers/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName,Position=1)]
     [Alias('ids')]
     [string]$Id,
     [Parameter(ParameterSetName='/ngsiem-content/queries/parsers/v1:get',Mandatory,Position=1)]
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
+      ValueFromPipelineByPropertyName,Position=2)]
     [ValidateSet('parsers-repository',IgnoreCase=$false)]
     [string]$Repository,
     [Parameter(ParameterSetName='/ngsiem-content/queries/parsers/v1:get',Position=2)]
@@ -242,6 +242,60 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsParser
     [Parameter(ParameterSetName='/ngsiem-content/queries/parsers/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/ngsiem-content/queries/parsers/v1:get')]
+    [switch]$Total
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Write-NgsContent @Param -UserInput $PSBoundParameters -Property id }
+}
+function Get-FalconNgsSavedQuery {
+<#
+.SYNOPSIS
+Search for Falcon NGSIEM saved queries
+.DESCRIPTION
+Requires 'NGSIEM Saved Queries: Read'.
+.PARAMETER Id
+Saved query identifier
+.PARAMETER Domain
+Repository or view
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Limit
+Maximum number of results per request [default: 50]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsSavedQuery
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/queries/savedqueries/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('all','dashboards','falcon','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get',Position=2)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get',Position=3)]
+    [string]$Limit,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get')]
+    [string]$Offset,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get')]
     [switch]$Total
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -440,6 +494,74 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsParser
     }
   }
 }
+function Receive-FalconNgsSavedQuery {
+<#
+.SYNOPSIS
+Download a Falcon NGSIEM saved query YAML template
+.DESCRIPTION
+Requires 'NGSIEM Saved Queries: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Id
+Saved query identifier
+.PARAMETER Domain
+Repository or view
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsSavedQuery
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:get',Position=1)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidateSet('all','dashboards','falcon','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:get')]
+    [switch]$Force
+
+  )
+  process {
+    if (!$PSBoundParameters.Path) {
+      # When 'Path' is not specified, use a combination of 'query', 'search_domain', and 'id'
+      $PSBoundParameters['Path'] = Join-Path (Get-Location).Path (('query',$PSBoundParameters.Domain,
+        $PSBoundParameters.Id -join '_'),'yaml' -join '.')
+    }
+    $Request = Get-FalconNgsSavedQuery -Id $PSBoundParameters.Id -Domain $PSBoundParameters.Domain
+    if ($Request) {
+      $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'yaml'
+      $OutPath = Test-OutFile $PSBoundParameters.Path
+      if ($OutPath.Category -eq 'ObjectNotFound') {
+        Write-Error @OutPath
+      } elseif ($PSBoundParameters.Path) {
+        if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+          Write-Error @OutPath
+        } elseif ($Request.yaml_template) {
+          $OutParam = @{
+            InputObject = $Request.yaml_template
+            FilePath = $PSBoundParameters.Path
+            Encoding = 'UTF8'
+          }
+          if ($PSBoundParameters.Force) { $OutParam['Force'] = $true }
+          Out-File @OutParam
+        }
+      }
+    }
+  }
+  end {
+    if ($Request -and $OutParam -and (Test-Path $OutParam.FilePath)) {
+      Get-ChildItem $OutParam.FilePath | Select-Object FullName,Length,LastWriteTime
+    }
+  }
+}
 function Remove-FalconNgsDashboard {
 <#
 .SYNOPSIS
@@ -518,6 +640,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsParser
       ValueFromPipelineByPropertyName,Position=2)]
     [ValidateSet('parsers-repository',IgnoreCase=$false)]
     [string]$Repository
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Remove-FalconNgsSavedQuery {
+<#
+.SYNOPSIS
+Remove Falcon NGSIEM saved queries
+.DESCRIPTION
+Requires 'NGSIEM Saved Queries: Write'.
+.PARAMETER Id
+Saved query identifier
+.PARAMETER Domain
+Repository or view
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsSavedQuery
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/savedqueries/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('all','dashboards','falcon','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
