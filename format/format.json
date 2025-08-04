@@ -4134,6 +4134,14 @@
       ]
     }
   },
+  "/ngsiem-content/entities/parsers-template/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "repository"
+      ]
+    }
+  },
   "/ngsiem-content/queries/dashboards/v1": {
     "get": {
       "query": [

@@ -28,6 +28,65 @@ function Write-NgsContent {
     }
   }
 }
+function Edit-FalconNgsParser {
+<#
+.SYNOPSIS
+Modify Falcon NGSIEM parsers
+.DESCRIPTION
+Requires 'NGSIEM Parsers: Write'.
+.PARAMETER Id
+Parser identifier
+.PARAMETER Repository
+Repository name
+.PARAMETER Script
+Parser script to transform input into events
+.PARAMETER TestCase
+An example event and output parameters to use for analysis
+.PARAMETER FieldToRemove
+Event fields to remove before parsing
+.PARAMETER FieldToTag
+Event fields to tag during parsing
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsParser
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/parsers/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Repository,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Script,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('test_cases')]
+    [object[]]$TestCase,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('fields_to_be_removed_before_parsing')]
+    [string[]]$FieldToRemoveParsing,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('fields_to_tag')]
+    [string[]]$FieldToTag
+
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('fields_to_be_removed_before_parsing','fields_to_tag','id','repository','script','test_cases')
+        }
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconNgsDashboard {
 <#
 .SYNOPSIS
@@ -61,7 +120,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsDashboard
     [string]$Id,
     [Parameter(ParameterSetName='/ngsiem-content/queries/dashboards/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
-    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',Mandatory,Position=2)]
     [ValidateSet('all','dashboards','falcon','third-party',IgnoreCase=$false)]
     [Alias('search_domain')]
     [string]$Domain,
@@ -138,7 +197,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsLookupFile
 function Get-FalconNgsParser {
 <#
 .SYNOPSIS
-Retrieve Parser in NGSIEM as LogScale YAML Template
+Search for Falcon NGSIEM parsers
 .DESCRIPTION
 Requires 'NGSIEM Parsers: Read'.
 .PARAMETER Id
@@ -187,6 +246,199 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsParser
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Write-NgsContent @Param -UserInput $PSBoundParameters -Property id }
+}
+function New-FalconNgsParser {
+<#
+.SYNOPSIS
+Create a Falcon NGSIEM parser
+.DESCRIPTION
+Requires 'NGSIEM Parsers: Write'.
+.PARAMETER Name
+Parser name
+.PARAMETER Repository
+Repository name
+.PARAMETER Script
+Parser script to transform input into events
+.PARAMETER TestCase
+An example event and output parameters to use for analysis
+.PARAMETER FieldToRemove
+Event fields to remove before parsing
+.PARAMETER FieldToTag
+Event fields to tag during parsing
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconNgsParser
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/parsers/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Repository,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Script,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('test_cases')]
+    [object[]]$TestCase,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('fields_to_be_removed_before_parsing')]
+    [string[]]$FieldToRemove,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('fields_to_tag')]
+    [string[]]$FieldToTag
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('fields_to_be_removed_before_parsing','fields_to_tag','name','repository','script','test_cases')
+        }
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Receive-FalconNgsDashboard {
+<#
+.SYNOPSIS
+Download a Falcon NGSIEM dashboard YAML template
+.DESCRIPTION
+Requires 'NGSIEM Dashboards: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Id
+Dashboard identifier
+.PARAMETER Domain
+Repository or view
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsDashboard
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',Position=1)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidateSet('all','dashboards','falcon','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:get')]
+    [switch]$Force
+  )
+  process {
+    if (!$PSBoundParameters.Path) {
+      # When 'Path' is not specified, use a combination of 'dashboard', 'search_domain', and 'id'
+      $PSBoundParameters['Path'] = Join-Path (Get-Location).Path (('dashboard',$PSBoundParameters.Domain,
+        $PSBoundParameters.Id -join '_'),'yaml' -join '.')
+    }
+    $Request = Get-FalconNgsDashboard -Id $PSBoundParameters.Id -Domain $PSBoundParameters.Domain
+    if ($Request) {
+      $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'yaml'
+      $OutPath = Test-OutFile $PSBoundParameters.Path
+      if ($OutPath.Category -eq 'ObjectNotFound') {
+        Write-Error @OutPath
+      } elseif ($PSBoundParameters.Path) {
+        if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+          Write-Error @OutPath
+        } elseif ($Request.yaml_template) {
+          $OutParam = @{
+            InputObject = $Request.yaml_template
+            FilePath = $PSBoundParameters.Path
+            Encoding = 'UTF8'
+          }
+          if ($PSBoundParameters.Force) { $OutParam['Force'] = $true }
+          Out-File @OutParam
+        }
+      }
+    }
+  }
+  end {
+    if ($Request -and $OutParam -and (Test-Path $OutParam.FilePath)) {
+      Get-ChildItem $OutParam.FilePath | Select-Object FullName,Length,LastWriteTime
+    }
+  }
+}
+function Receive-FalconNgsParser {
+<#
+.SYNOPSIS
+Download a Falcon NGSIEM parser YAML template
+.DESCRIPTION
+Requires 'NGSIEM Parsers: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Id
+Parser identifier
+.PARAMETER Repository
+Repository name
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsParser
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/parsers-template/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers-template/v1:get',Position=1)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers-template/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidateSet('parsers-repository',IgnoreCase=$false)]
+    [string]$Repository,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers-template/v1:get')]
+    [switch]$Force
+
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process {
+    if (!$PSBoundParameters.Path) {
+      # When 'Path' is not specified, use a combination of 'parser', 'repository', and 'id'
+      $PSBoundParameters['Path'] = Join-Path (Get-Location).Path (('parser',$PSBoundParameters.Repository,
+        $PSBoundParameters.Id -join '_'),'yaml' -join '.')
+    }
+    $Request = Write-NgsContent @Param -UserInput $PSBoundParameters -Property id
+    if ($Request) {
+      $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'yaml'
+      $OutPath = Test-OutFile $PSBoundParameters.Path
+      if ($OutPath.Category -eq 'ObjectNotFound') {
+        Write-Error @OutPath
+      } elseif ($PSBoundParameters.Path) {
+        if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+          Write-Error @OutPath
+        } elseif ($Request.yaml_template) {
+          $OutParam = @{
+            InputObject = $Request.yaml_template
+            FilePath = $PSBoundParameters.Path
+            Encoding = 'UTF8'
+          }
+          if ($PSBoundParameters.Force) { $OutParam['Force'] = $true }
+          Out-File @OutParam
+        }
+      }
+    }
+  }
+  end {
+    if ($Request -and $OutParam -and (Test-Path $OutParam.FilePath)) {
+      Get-ChildItem $OutParam.FilePath | Select-Object FullName,Length,LastWriteTime
+    }
+  }
 }
 function Remove-FalconNgsDashboard {
 <#

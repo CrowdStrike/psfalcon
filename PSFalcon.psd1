@@ -395,9 +395,13 @@
     'Remove-FalconUserGroupMember'
 
     # ngsiem-content
+    'Edit-FalconNgsParser'
     'Get-FalconNgsDashboard'
     'Get-FalconNgsLookupFile'
     'Get-FalconNgsParser'
+    'New-FalconNgsParser'
+    'Receive-FalconNgsDashboard'
+    'Receive-FalconNgsParser'
     'Remove-FalconNgsDashboard'
     'Remove-FalconNgsLookupFile'
     'Remove-FalconNgsParser'
