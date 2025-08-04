@@ -907,10 +907,12 @@ Falcon Query Language expression to define target hosts
 .PARAMETER Query
 Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args',
 'script_file_id')
-.PARAMETER ExecutionArg
-Key/value pairs to define arguments during execution of an existing task
 .PARAMETER OsQuery
 OsQuery statement
+.PARAMETER ExecutionArg
+Key/value pairs to define arguments during execution of an existing task
+.PARAMETER Trigger
+Trigger condition
 .PARAMETER DiscoverOffline
 Discover offline hosts
 .PARAMETER DiscoverNew
@@ -939,31 +941,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=2)]
     [Alias('queries')]
     [object]$Query,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=3)]
+    [string]$OsQuery,
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=3)]
     [Alias('execution_args')]
     [object]$ExecutionArg,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=3)]
-    [string]$OsQuery,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=4)]
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=4)]
+    [Alias('trigger_condition')]
+    [object[]]$Trigger,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=5)]
     [Alias('discover_offline_hosts')]
     [boolean]$DiscoverOffline,
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=5)]
-    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=6)]
     [Alias('discover_new_hosts')]
     [boolean]$DiscoverNew,
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=6)]
-    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=7)]
     [Alias('guardrails')]
     [object]$Guardrail,
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=7)]
-    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=7)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=8)]
     [boolean]$Distribute,
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=8)]
     [Alias('output_parser_config')]
     [object]$OutputParser,
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=9)]
-    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=8)]
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=9)]
     [Alias('expiration_interval')]
     [string]$ExpirationInterval
   )
@@ -978,7 +983,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
               'osquery','output_parser_config','target','queries')
           } else {
             @('discover_new_hosts','discover_offline_hosts','distribute','execution_args','expiration_interval',
-              'guardrails','target','task_id')
+              'guardrails','target','task_id','trigger_condition')
           }
         }
       }
