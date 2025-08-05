@@ -411,6 +411,9 @@
     'Send-FalconNgsLookupFile'
     'Send-FalconNgsParser'
     'Send-FalconNgsSavedQuery'
+    'Update-FalconNgsDashboard'
+    'Update-FalconNgsLookupFile'
+    'Update-FalconNgsSavedQuery'
 
     # oauth2
     'Request-FalconToken'

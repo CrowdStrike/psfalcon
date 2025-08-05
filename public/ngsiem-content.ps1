@@ -800,3 +800,106 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsSavedQuery
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Update-FalconNgsDashboard {
+<#
+.SYNOPSIS
+Update a Falcon NGSIEM dashboard using a YAML template
+.DESCRIPTION
+Requires 'NGSIEM Dashboards: Write'.
+.PARAMETER Id
+Dashboard identifier
+.PARAMETER Domain
+Repository or view
+.PARAMETER Path
+Path to YAML template
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsDashboard
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/dashboards-template/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('all','falcon','parsers-repository','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('yaml_template','FullName')]
+    [string]$Path
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Update-FalconNgsLookupFile {
+<#
+.SYNOPSIS
+Update a Falcon NGSIEM lookup file using a YAML template
+.DESCRIPTION
+Requires 'NGSIEM Lookup Files: Write'.
+.PARAMETER Id
+Lookup file identifier
+.PARAMETER Domain
+Repository or view
+.PARAMETER Path
+Path to YAML template
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsLookupFile
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/lookupfiles/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Filename,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('all','falcon','parsers-repository','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('file','FullName')]
+    [string]$Path
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Update-FalconNgsSavedQuery {
+<#
+.SYNOPSIS
+Update a Falcon NGSIEM saved query using a YAML template
+.DESCRIPTION
+Requires 'NGSIEM Saved Queries: Write'.
+.PARAMETER Id
+Saved query identifier
+.PARAMETER Domain
+Repository or view
+.PARAMETER Path
+Path to YAML template
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsSavedQuery
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('all','falcon','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('yaml_template','FullName')]
+    [string]$Path
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}

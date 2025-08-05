@@ -4083,6 +4083,13 @@
         "name",
         "yaml_template"
       ]
+    },
+    "patch": {
+      "formdata": [
+        "search_domain",
+        "ids",
+        "yaml_template"
+      ]
     }
   },
   "/ngsiem-content/entities/lookupfiles/v1": {
@@ -4096,6 +4103,13 @@
       "query": [
         "filename",
         "search_domain"
+      ]
+    },
+    "patch": {
+      "formdata": [
+        "search_domain",
+        "filename",
+        "file"
       ]
     },
     "post": {
@@ -4161,6 +4175,13 @@
     "post": {
       "formdata": [
         "search_domain",
+        "yaml_template"
+      ]
+    },
+    "patch": {
+      "formdata": [
+        "search_domain",
+        "ids",
         "yaml_template"
       ]
     }
