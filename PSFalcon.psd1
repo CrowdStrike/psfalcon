@@ -408,6 +408,9 @@
     'Remove-FalconNgsLookupFile'
     'Remove-FalconNgsParser'
     'Remove-FalconNgsSavedQuery'
+    'Send-FalconNgsDashboard'
+    'Send-FalconNgsParser'
+    'Send-FalconNgsSavedQuery'
 
     # oauth2
     'Request-FalconToken'

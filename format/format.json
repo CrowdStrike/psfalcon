@@ -4076,6 +4076,13 @@
         "ids",
         "search_domain"
       ]
+    },
+    "post": {
+      "formdata": [
+        "search_domain",
+        "name",
+        "yaml_template"
+      ]
     }
   },
   "/ngsiem-content/entities/lookupfiles/v1": {
@@ -4120,6 +4127,13 @@
         "ids",
         "repository"
       ]
+    },
+    "post": {
+      "formdata": [
+        "repository",
+        "name",
+        "yaml_template"
+      ]
     }
   },
   "/ngsiem-content/entities/savedqueries/v1": {
@@ -4135,6 +4149,12 @@
       "query": [
         "ids",
         "search_domain"
+      ]
+    },
+    "post": {
+      "formdata": [
+        "search_domain",
+        "yaml_template"
       ]
     }
   },

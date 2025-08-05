@@ -56,6 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsParser
     [string]$Id,
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('parsers-repository',IgnoreCase=$false)]
     [string]$Repository,
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=3)]
@@ -329,6 +330,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconNgsParser
     [string]$Name,
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('parsers-repository',IgnoreCase=$false)]
     [string]$Repository,
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=3)]
@@ -668,6 +670,100 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsSavedQuery
     [ValidateSet('all','dashboards','falcon','third-party',IgnoreCase=$false)]
     [Alias('search_domain')]
     [string]$Domain
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Send-FalconNgsDashboard {
+<#
+.SYNOPSIS
+Create a Falcon NGSIEM dashboard from a YAML template
+.DESCRIPTION
+Requires 'NGSIEM Dashboards: Write'.
+.PARAMETER Name
+Dashboard name
+.PARAMETER Domain
+Repository or view
+.PARAMETER Path
+Path to YAML template
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsDashboard
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/dashboards-template/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:post',Mandatory,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('all','falcon','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards-template/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('yaml_template','FullName')]
+    [string]$Path
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Send-FalconNgsParser {
+<#
+.SYNOPSIS
+Create a Falcon NGSIEM parser from a YAML template
+.DESCRIPTION
+Requires 'NGSIEM Parsers: Write'.
+.PARAMETER Name
+Parser name
+.PARAMETER Repository
+Repository name
+.PARAMETER Path
+Path to YAML template
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsParser
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/parsers-template/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers-template/v1:post',Mandatory,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers-template/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('parsers-repository',IgnoreCase=$false)]
+    [string]$Repository,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/parsers-template/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('yaml_template','FullName')]
+    [string]$Path
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Send-FalconNgsSavedQuery {
+<#
+.SYNOPSIS
+Create a Falcon NGSIEM saved query from a YAML template
+.DESCRIPTION
+Requires 'NGSIEM Saved Queries: Write'.
+.PARAMETER Domain
+Repository or view
+.PARAMETER Path
+Path to YAML template
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsSavedQuery
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidateSet('all','falcon','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries-template/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('yaml_template','FullName')]
+    [string]$Path
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
