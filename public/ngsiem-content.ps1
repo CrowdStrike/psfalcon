@@ -707,6 +707,38 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsDashboard
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Send-FalconNgsLookupFile {
+<#
+.SYNOPSIS
+Create a Falcon NGSIEM lookup file from a CSV
+.DESCRIPTION
+Requires 'NGSIEM Lookup Files: Write'.
+.PARAMETER Filename
+Lookup file name
+.PARAMETER Domain
+Repository or view
+.PARAMETER Path
+Path to CSV
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsLookupFile
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/lookupfiles/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:post',Mandatory,Position=1)]
+    [string]$Filename,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('all','falcon','parsers-repository','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('file','FullName')]
+    [string]$Path
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Send-FalconNgsParser {
 <#
 .SYNOPSIS

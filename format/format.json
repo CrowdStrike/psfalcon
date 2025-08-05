@@ -4097,6 +4097,13 @@
         "filename",
         "search_domain"
       ]
+    },
+    "post": {
+      "formdata": [
+        "search_domain",
+        "filename",
+        "file"
+      ]
     }
   },
   "/ngsiem-content/entities/dashboards/v1": {

@@ -232,7 +232,6 @@
 
     # humio
     'Receive-FalconNgsLookupFile'
-    'Send-FalconNgsLookupFile'
 
     # hunting
     'Get-FalconCaoQuery'
@@ -409,6 +408,7 @@
     'Remove-FalconNgsParser'
     'Remove-FalconNgsSavedQuery'
     'Send-FalconNgsDashboard'
+    'Send-FalconNgsLookupFile'
     'Send-FalconNgsParser'
     'Send-FalconNgsSavedQuery'
 
