@@ -17,29 +17,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
   param(
     [Parameter(ParameterSetName='ExportItem',Position=1)]
     [ValidateSet('ContentPolicy','DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup',
-      'FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy',
-      'ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
+      'FirewallLocation','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion',
+      'PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
     [Alias('Items')]
     [string[]]$Select,
     [Parameter(ParameterSetName='ExportItem')]
     [switch]$Force
   )
   begin {
-    function Add-AssignedGroup ([string]$String,[PSCustomObject[]]$Obj) {
-      function Assert-GroupList ([string]$Key) {
-        if (!$AddList.ContainsKey($Key)) {
-          # Create list under 'AddList' to contain identifiers
-          $AddList[$Key] = [System.Collections.Generic.List[string]]@()
-        }
-      }
-      if ($String -eq 'FirewallGroup' -and $Obj.rule_ids) {
-        # Add identifiers for assigned 'FirewallRule' to export
-        Assert-GroupList FirewallRule
-        @($Obj.rule_ids).foreach{ $AddList.FirewallRule.Add($_) }
+    function Add-AssignedItem ([string]$String,[PSCustomObject[]]$Obj) {
+      function Assert-IdList ([string]$String) {
+        # Add key to 'AddList'
+        if (!$AddList.ContainsKey($String)) { $AddList[$String] = [System.Collections.Generic.List[string]]@() }
       }
       if ($String -match '(Exclusion|Ioc|Policy)$' -and $Select -notcontains 'HostGroup') {
-        # Add identifiers for assigned 'HostGroup' to export
-        Assert-GroupList HostGroup
+        # Add identifiers for assigned 'HostGroup'
+        Assert-IdList HostGroup
         if ($Obj.groups -and $Obj.groups.id) {
           @($Obj.groups.id).foreach{ $AddList.HostGroup.Add($_) }
         } elseif ($Obj.host_groups -and $Obj.host_groups.id) {
@@ -48,23 +41,36 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           @($Obj.host_groups).foreach{ $AddList.HostGroup.Add($_) }
         }
       }
+      if ($String -eq 'FirewallGroup' -and $Obj.rule_ids) {
+        # Add identifiers for assigned 'FirewallRule'
+        Assert-IdList FirewallRule
+        @($Obj.rule_ids).foreach{ $AddList.FirewallRule.Add($_) }
+      }
       if ($String -eq 'FirewallPolicy' -and $Select -notcontains 'FirewallGroup') {
-        # Add identifiers for assigned 'FirewallGroup' to export
-        Assert-GroupList FirewallGroup
+        # Add identifiers for assigned 'FirewallGroup'
+        Assert-IdList FirewallGroup
         if ($Obj.settings -and $Obj.settings.rule_group_ids) {
           @($Obj.settings.rule_group_ids).foreach{ $AddList.FirewallGroup.Add($_) }
         }
       }
+      if ($String -eq 'FirewallRule' -and $Select -notcontains 'FirewallLocation') {
+        # Add 'FirewallLocation' identifiers when assigned to 'FirewallRule'
+        Assert-IdList FirewallLocation
+        @(@($Obj.fields).Where({$_.name -eq 'network_location'}).values | Select-Object -Unique).Where({
+        $FwLocation -notcontains $_}).foreach{
+          $AddList.FirewallLocation.Add($_)
+        }
+      }
       if ($String -eq 'FileVantagePolicy' -and $Select -notcontains 'FileVantageRuleGroup') {
-        # Add identifiers for assigned 'rule_group_ids' to list of 'FileVantageRuleGroup' to export
-        Assert-GroupList FileVantageRuleGroup
+        # Add identifiers for assigned 'rule_group_ids' to list of 'FileVantageRuleGroup'
+        Assert-IdList FileVantageRuleGroup
         if ($Obj.rule_groups -and $Obj.rule_groups.id) {
           @($Obj.rule_groups.id).foreach{ $AddList.FileVantageRuleGroup.Add($_) }
         }
       }
       if ($String -eq 'PreventionPolicy' -and $Select -notcontains 'IoaGroup') {
-        # Add identifiers for assigned 'ioa_rule_groups' to list of 'IoaGroup' to export
-        Assert-GroupList IoaGroup
+        # Add identifiers for assigned 'ioa_rule_groups' to list of 'IoaGroup'
+        Assert-IdList IoaGroup
         if ($Obj.ioa_rule_groups -and $Obj.ioa_rule_groups.id) {
           @($Obj.ioa_rule_groups.id).foreach{ $AddList.IoaGroup.Add($_) }
         }
@@ -72,7 +78,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
     }
     function Get-ItemContent ([string]$String,[string[]]$Id) {
       # Request content for provided 'Item'
-      Write-Host ('[Export-FalconConfig] Exporting "{0}"...' -f $String)
+      $Message = if ($Id) {
+        '[Export-FalconConfig] Exporting assigned "{0}"...' -f $String
+      } else {
+        '[Export-FalconConfig] Exporting "{0}"...' -f $String
+      }
+      Write-Host $Message
       $Param = @{ Detailed = $true; All = $true }
       [string]$ConfigFile = Join-Path $Location ($String,'json' -join '.')
       [PSCustomObject[]]$Config = if ($String -match '^FileVantage(Policy|RuleGroup)$') {
@@ -99,15 +110,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       } else {
         & "Get-Falcon$String" @Param 2>$null
       }
+      if ($Config -and $Id) {
+        # Filter export to specific objects by 'Property'
+        $Property = if ($String -eq 'FirewallRule') { 'family' } else { 'id' }
+        [PSCustomObject[]]$Config = @($Config).Where({$Id -contains $_.$Property})
+      }
       if ($Config) {
-        if ($Id) {
-          # Filter export to specific objects by 'Property'
-          $Property = if ($String -eq 'FirewallRule') { 'family' } else { 'id' }
-          [PSCustomObject[]]$Config = @($Config).Where({$Id -contains $_.$Property})
-        } else {
-          # Check for assigned groups to add to export
-          Add-AssignedGroup $String $Config
-        }
+        # Verify that assigned items are included in export
+        Add-AssignedItem $String $Config
         if ($String -eq 'FileVantageRuleGroup') {
           foreach ($i in $Config) {
             # Update 'assigned_rules' with rule content inside FileVantage rule groups
@@ -142,15 +152,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       Write-Error @OutPath
     } else {
       $AddList = @{}
-      [System.Collections.Generic.List[string]]$JsonFiles = foreach ($String in $Select) {
+      [System.Collections.Generic.List[string]]$JsonFiles = @()
+      foreach ($String in $Select) {
         # Create Json export and capture file name
-        Get-ItemContent $String
+        @(Get-ItemContent $String).foreach{ $JsonFiles.Add($_) }
       }
       if ($JsonFiles -and $AddList.GetEnumerator().Where({$_.Value})) {
-        foreach ($p in $AddList.GetEnumerator().Where({$_.Value})) {
-          # Retrieve assigned groups when not added to 'Select'
-          $JsonFiles.Add((Get-ItemContent $p.Key $p.Value))
-        }
+        do {
+          foreach ($p in @($AddList.GetEnumerator().Where({$_.Value}) | Select-Object -First 1)) {
+            # Retrieve assigned groups when not added to 'Select'
+            $JsonFiles.Add((Get-ItemContent $p.Key $p.Value))
+            $AddList.Remove($p.Key)
+          }
+        } while (@($AddList.GetEnumerator()).Where({$_.Value}))
       }
       if ($JsonFiles -and $PSCmdlet.ShouldProcess($ExportFile,'Compress-Archive')) {
         # Archive Json exports with content and remove them when complete
