@@ -62,6 +62,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
           @($Obj.rule_groups.id).foreach{ $AddList.FileVantageRuleGroup.Add($_) }
         }
       }
+      if ($String -eq 'PreventionPolicy' -and $Select -notcontains 'IoaGroup') {
+        # Add identifiers for assigned 'ioa_rule_groups' to list of 'IoaGroup' to export
+        Assert-GroupList IoaGroup
+        if ($Obj.ioa_rule_groups -and $Obj.ioa_rule_groups.id) {
+          @($Obj.ioa_rule_groups.id).foreach{ $AddList.IoaGroup.Add($_) }
+        }
+      }
     }
     function Get-ItemContent ([string]$String,[string[]]$Id) {
       # Request content for provided 'Item'
@@ -823,8 +830,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         # Add dependent values to Select for evaluation (not creation/modification)
         if ($UserDict.AssignExisting) {
           # When AssignExisting is present
-          if ($UserDict.Select -match '^(Ioa|Ml|Sv)Exclusion$|Ioc$|Policy$' -and $UserDict.Select -notcontains
-          'HostGroup') {
+          if ($UserDict.Select -match '(Exclusion|Ioc|Policy)$' -and $UserDict.Select -notcontains 'HostGroup') {
             # HostGroup when importing Exclusion, Ioc, or Policy
             $UserDict.Select += 'HostGroup'
           }
