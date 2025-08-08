@@ -2153,11 +2153,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     # Create identifier references for imported items
     foreach ($p in $Config.GetEnumerator().Where({$_.Value.Import})) {
       Set-IdRef $p.Value.Import $p.Key
-      if (!$Config.HostGroup.Import -and $p.Values.Import.groups) {
+      if ($p.Values.Import.groups -and !$Config.HostGroup.Import) {
         # Capture HostGroup identifiers when HostGroup was not imported
         Set-IdRef $p.Values.Import.groups HostGroup
       }
-      if (!$Config.IoaGroup.Import -and $p.Key -eq 'PreventionPolicy' -and $p.Value.Import.ioa_rule_groups) {
+      if ($p.Key -eq 'PreventionPolicy' -and $p.Value.Import.ioa_rule_groups -and !$Config.IoaGroup.Import) {
         # Capture IoaGroup identifiers from PreventionPolicy when IoaGroup was not imported
         Set-IdRef $p.Value.Import.ioa_rule_groups IoaGroup
       }
