@@ -25,6 +25,23 @@
     # billing-dashboards-usage
     'Get-FalconHostAverage'
 
+    # case-files
+    'Edit-FalconNgsCaseFile'
+    'Get-FalconNgsCaseFile'
+    'Receive-FalconNgsCaseFile'
+    'Remove-FalconNgsCaseFile'
+    'Send-FalconNgsCaseFile'
+
+    # casemgmt
+    'Get-FalconNgsCaseField'
+    'Get-FalconNgsCaseNotificationGroup'
+    'Get-FalconNgsCaseSla'
+    'Get-FalconNgsCaseTemplate'
+    'Get-FalconNgsCaseTemplateSnapshot'
+    'Remove-FalconNgsCaseNotificationGroup'
+    'Remove-FalconNgsCaseSla'
+    'Remove-FalconNgsCaseTemplate'
+
     # cloud-connect-cspm-aws
     'Edit-FalconCloudAwsAccount'
     'Get-FalconCloudAwsAccount'

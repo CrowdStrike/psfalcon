@@ -121,6 +121,159 @@
       ]
     }
   },
+  "/case-files/combined/file-details/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/case-files/entities/file-details/v1": {
+    "patch": {
+      "body": {
+        "root": [
+          "description",
+          "id"
+        ]
+      }
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/case-files/entities/files/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/case-files/entities/files/bulk-download/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      }
+    }
+  },
+  "/case-files/entities/files/download/v1": {
+    "get": {
+      "query": [
+        "id"
+      ]
+    }
+  },
+  "/case-files/queries/file-details/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/entities/fields/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/entities/notification-groups/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    },
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/entities/slas/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/entities/template-snapshots/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "template_ids",
+        "versions"
+      ]
+    }
+  },
+  "/casemgmt/entities/templates/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/queries/fields/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/notification-groups/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/slas/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/template-snapshots/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/templates/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
   "/cloud-connect-cspm-aws/entities/account/v1": {
     "get": {
       "query": [
