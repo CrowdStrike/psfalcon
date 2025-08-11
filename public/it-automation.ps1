@@ -195,6 +195,8 @@ Task parameters ('key', 'label', 'input_type')
 .PARAMETER Query
 Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args',
 'script_file_id')
+.PARAMETER CompositeQuery
+Composite query parameters ('host_attributes', 'task_ids')
 .PARAMETER Remediation
 Remediation parameters by operating system
 .PARAMETER Trigger
@@ -252,47 +254,51 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTask
     [object]$Query,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
       Position=8)]
+    [Alias('composite_query')]
+    [object]$CompositeQuery,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=9)]
     [Alias('remediations')]
     [object]$Remediation,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=9)]
+      Position=10)]
     [Alias('trigger_condition')]
     [object[]]$Trigger,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=10)]
+      Position=11)]
     [Alias('verification_condition')]
     [object[]]$Verification,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=11)]
+      Position=12)]
     [Alias('os_query')]
     [string]$OsQuery,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=12)]
+      Position=13)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('task_group_id')]
     [string]$TaskGroupId,
-    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=13)]
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=14)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('add_assigned_user_group_ids')]
     [string[]]$AddUserGroupId,
-    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=14)]
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=15)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('add_assigned_user_ids')]
     [string[]]$AddUserId,
-    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=15)]
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=16)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('remove_assigned_user_group_ids')]
     [string[]]$RemoveUserGroupId,
-    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=16)]
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Position=17)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('remove_assigned_user_ids')]
     [string[]]$RemoveUserId,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=17)]
+      Position=18)]
     [Alias('output_parser_config')]
     [object]$OutputParser,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=18)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=19)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
@@ -302,10 +308,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTask
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
         Body = @{
-          root = @('access_type','add_assigned_user_group_ids','add_assigned_user_ids','description','name',
-            'os_query','output_parser_config','queries','remediations','remove_assigned_user_group_ids',
-            'remove_assigned_user_ids','target','task_group_id','task_parameters','task_type','trigger_condition',
-            'verification_condition')
+          root = @('access_type','add_assigned_user_group_ids','add_assigned_user_ids','composite_query',
+            'description','name','os_query','output_parser_config','queries','remediations',
+            'remove_assigned_user_group_ids','remove_assigned_user_ids','target','task_group_id','task_parameters',
+            'task_type','trigger_condition','verification_condition')
         }
         Query = @('id')
       }
@@ -907,6 +913,8 @@ Falcon Query Language expression to define target hosts
 .PARAMETER Query
 Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args',
 'script_file_id')
+.PARAMETER CompositeQuery
+Composite query parameters ('host_attributes', 'task_ids')
 .PARAMETER OsQuery
 OsQuery statement
 .PARAMETER ExecutionArg
@@ -942,6 +950,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
     [Alias('queries')]
     [object]$Query,
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=3)]
+    [Alias('composite_query')]
+    [object]$CompositeQuery,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=4)]
     [string]$OsQuery,
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=3)]
     [Alias('execution_args')]
@@ -949,25 +960,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=4)]
     [Alias('trigger_condition')]
     [object[]]$Trigger,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=5)]
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=5)]
     [Alias('discover_offline_hosts')]
     [boolean]$DiscoverOffline,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=6)]
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=6)]
     [Alias('discover_new_hosts')]
     [boolean]$DiscoverNew,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=7)]
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=7)]
     [Alias('guardrails')]
     [object]$Guardrail,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=7)]
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=8)]
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=8)]
     [boolean]$Distribute,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=8)]
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=9)]
     [Alias('output_parser_config')]
     [object]$OutputParser,
-    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=10)]
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=9)]
     [Alias('expiration_interval')]
     [string]$ExpirationInterval
@@ -979,8 +990,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
       Format = @{
         Body = @{
           root = if ($PSCmdlet.ParameterSetName -match 'live-query-execution') {
-            @('discover_new_hosts','discover_offline_hosts','distribute','expiration_interval','guardrails',
-              'osquery','output_parser_config','target','queries')
+            @('composite_query','discover_new_hosts','discover_offline_hosts','distribute','expiration_interval',
+              'guardrails','osquery','output_parser_config','target','queries')
           } else {
             @('discover_new_hosts','discover_offline_hosts','distribute','execution_args','expiration_interval',
               'guardrails','target','task_id','trigger_condition')
@@ -1143,6 +1154,8 @@ Task parameters ('key', 'label', 'input_type')
 .PARAMETER Query
 Query parameters by operating system ('action_type', 'content', 'file_ids', 'language', 'script_args',
 'script_file_id')
+.PARAMETER CompositeQuery
+Composite query parameters ('host_attributes', 'task_ids')
 .PARAMETER Remediation
 Remediation parameters by operating system
 .PARAMETER Trigger
@@ -1194,37 +1207,41 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
     [object]$Query,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
       Position=8)]
+    [Alias('composite_query')]
+    [object]$CompositeQuery,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=9)]
     [Alias('remediations')]
     [object]$Remediation,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=9)]
+      Position=10)]
     [Alias('trigger_condition')]
     [object[]]$Trigger,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=10)]
+      Position=11)]
     [Alias('verification_condition')]
     [object[]]$Verification,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=11)]
+      Position=12)]
     [Alias('os_query')]
     [string]$OsQuery,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=12)]
+      Position=13)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('task_group_id')]
     [string]$TaskGroupId,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=13)]
+      Position=14)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('assigned_user_group_ids')]
     [string[]]$UserGroupId,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=14)]
+      Position=15)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('assigned_user_ids')]
     [string[]]$UserId,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=15)]
+      Position=16)]
     [Alias('output_parser_config')]
     [object]$OutputParser
   )
@@ -1234,9 +1251,9 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
         Body = @{
-          root = @('access_type','assigned_user_group_ids','assigned_user_ids','description','name','os_query',
-            'output_parser_config','queries','remediations','target','task_group_id','task_parameters',
-            'task_type','trigger_condition','verification_condition')
+          root = @('access_type','assigned_user_group_ids','assigned_user_ids','composite_query','description',
+            'name','os_query','output_parser_config','queries','remediations','target','task_group_id',
+            'task_parameters','task_type','trigger_condition','verification_condition')
         }
       }
     }
