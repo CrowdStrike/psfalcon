@@ -25,6 +25,11 @@
     # billing-dashboards-usage
     'Get-FalconHostAverage'
 
+    # cases
+    'Add-FalconNgsCaseTag'
+    'Get-FalconNgsCase'
+    'Remove-FalconNgsCaseTag'
+
     # case-files
     'Edit-FalconNgsCaseFile'
     'Get-FalconNgsCaseFile'
