@@ -196,6 +196,8 @@ Tags to categorize the submission
 Send email notification
 .PARAMETER SubmitName
 Submission name
+.PARAMETER Aid
+Agent identifier
 .PARAMETER Sha256
 Sha256 hash value
 .LINK
@@ -203,7 +205,6 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 #>
   [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
   param(
-
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=1)]
     [ValidateSet('android','macOS_10.15','ubuntu16_x64','ubuntu20_x64','win7_x64','win7_x86','win10_x64',
       'win11_x64',IgnoreCase=$false)]
@@ -250,12 +251,14 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=14)]
     [Alias('send_email_notification')]
     [boolean]$SendEmail,
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=15)]
+    [string]$Aid,
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',ValueFromPipelineByPropertyName,
-      Position=15)]
+      Position=16)]
     [Alias('submit_name','file_name')]
     [string]$SubmitName,
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',ValueFromPipelineByPropertyName,
-      ValueFromPipeline,Position=16)]
+      ValueFromPipeline,Position=17)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
     [string]$Sha256
   )
