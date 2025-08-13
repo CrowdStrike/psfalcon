@@ -6,8 +6,10 @@ Assign criticality to an external asset within Falcon Discover
 Requires 'Falcon Discover: Write'.
 .PARAMETER Criticality
 Asset criticality level
-.PARAMETER Comment
-Audit log comment
+.PARAMETER Description
+Asset criticality description
+.PARAMETER Triage
+Triage parameters ('action', 'assigned_to', 'description', 'status')
 .PARAMETER Cid
 Customer identifier
 .PARAMETER Id
@@ -22,13 +24,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconAsset
     [string]$Criticality,
     [Parameter(ParameterSetName='/fem/entities/external-assets/v1:patch',Position=2)]
     [Alias('criticality_description')]
-    [string]$Comment,
+    [string]$Description,
+    [Parameter(ParameterSetName='/fem/entities/external-assets/v1:patch',Position=3)]
+    [object]$Triage,
     [Parameter(ParameterSetName='/fem/entities/external-assets/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-      Position=3)]
+      Position=4)]
     [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
     [Parameter(ParameterSetName='/fem/entities/external-assets/v1:patch',Mandatory,ValueFromPipelineByPropertyName,
-      ValueFromPipeline,Position=4)]
+      ValueFromPipeline,Position=5)]
     [string]$Id
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
