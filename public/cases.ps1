@@ -24,7 +24,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconNgsCaseTag
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function New-CommandName {
+function Get-FalconNgsCase {
 <#
 .SYNOPSIS
 Search for Falcon NGSIEM cases
@@ -38,8 +38,6 @@ Falcon Query Language expression to limit results
 Perform a generic substring search across available fields
 .PARAMETER Sort
 Property and direction to sort results
-
-('status', 'cid', 'created_timestamp', 'updated_timestamp', 'assigned_to_name', 'assigned_to_userid', 'assigned_to_uuid', 'tags' | sort | %{ "'$_|asc'","'$_|desc'" }) -join ','
 .PARAMETER Limit
 Maximum number of results per request [default: 100]
 .PARAMETER Offset
@@ -51,7 +49,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-CommandName
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCase
 #>
   [CmdletBinding(DefaultParameterSetName='/cases/queries/cases/v1:get',SupportsShouldProcess)]
   param(
