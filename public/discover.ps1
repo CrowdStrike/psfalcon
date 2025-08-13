@@ -58,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=1)]
     [Parameter(ParameterSetName='/discover/combined/applications/v1:get',Position=1)]
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=1)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
@@ -68,7 +68,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=2)]
     [Parameter(ParameterSetName='/discover/combined/applications/v1:get',Position=2)]
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=2)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=2)]
     [string]$Sort,
@@ -77,7 +77,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get',Position=3)]
     [Parameter(ParameterSetName='/discover/combined/applications/v1:get',Position=3)]
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Position=3)]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get',Position=3)]
     [int32]$Limit,
@@ -91,17 +91,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/discover/combined/hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/combined/applications/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [string]$After,
     [Parameter(ParameterSetName='/discover/combined/hosts/v1:get',Mandatory)]
     [Parameter(ParameterSetName='/discover/combined/applications/v1:get',Mandatory)]
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [switch]$Detailed,
@@ -110,14 +110,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
     [Parameter(ParameterSetName='/discover/combined/applications/v1:get')]
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/discover/queries/hosts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/accounts/v1:get')]
     [Parameter(ParameterSetName='/discover/queries/applications/v1:get')]
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get')]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get')]
     [Parameter(ParameterSetName='/discover/queries/logins/v1:get')]
     [switch]$Total,
@@ -128,7 +128,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [Parameter(ParameterSetName='/discover/combined/applications/v1:get',Mandatory)]
     [Parameter(ParameterSetName='/discover/entities/applications/v1:get',Mandatory)]
     [switch]$Application,
-    [Parameter(ParameterSetName='/fem/queries/external-assets/v1:get',Mandatory)]
+    [Parameter(ParameterSetName='/fem/queries/external-assets/v2:get',Mandatory)]
     [Parameter(ParameterSetName='/fem/entities/external-assets/v1:get',Mandatory)]
     [switch]$External,
     [Parameter(ParameterSetName='/discover/queries/iot-hosts/v2:get',Mandatory)]
@@ -165,9 +165,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
         # Error when 'Limit' exceeds 100 or 1,000 for relevant API
         $MaxLimit = if ($PSCmdlet.ParameterSetName -match $RegEx.CombinedUrl) { 1000 } else { 100 }
         if ($PSBoundParameters.Limit -and $PSBoundParameters.Limit -gt $MaxLimit) {
-          $Message = ('Cannot validate argument on parameter "Limit". The {0} argument is greater than the maxi' +
-            'mum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the com' +
-            'mand again.') -f $PSBoundParameters.Limit,$MaxLimit
+          $Message = ('Cannot validate argument on parameter "Limit". The {0} argument is greater than the maxim' +
+            'um allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the comm' +
+            'and again.') -f $PSBoundParameters.Limit,$MaxLimit
           throw $Message
         }
       }
@@ -181,9 +181,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
           'login_event'
         }
         [string[]]$Facet = @($PSBoundParameters.Include).foreach{
-          $Message = ('Cannot validate argument on parameter "Include". The argument "{0}" does not belong to t' +
-            'he set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then' +
-            ' try the command again.') -f $_,($Valid -join ',')
+          $Message = ('Cannot validate argument on parameter "Include". The argument "{0}" does not belong to th' +
+            'e set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then ' +
+            'try the command again.') -f $_,($Valid -join ',')
           if ($Valid -notcontains $_) { throw $Message } elseif ($_ -ne 'login_event') { $_ }
         }
         if ($Facet) {

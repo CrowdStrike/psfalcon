@@ -1983,10 +1983,10 @@
       ]
     }
   },
-  "/fem/queries/external-assets/v1": {
+  "/fem/queries/external-assets/v2": {
     "get": {
       "query": [
-        "offset",
+        "after",
         "limit",
         "sort",
         "filter"
