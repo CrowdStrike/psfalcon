@@ -128,8 +128,6 @@ Modify Falcon Device Control policies
 Requires 'Device control policies: Write'.
 .PARAMETER InputObject
 One or more policies to modify in a single request
-.PARAMETER Id
-Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -138,6 +136,10 @@ Policy description
 USB settings
 .PARAMETER BluetoothSetting
 Bluetooth settings
+.PARAMETER Propagated
+Propagate policy to child environments
+.PARAMETER Id
+Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
 #>
@@ -159,6 +161,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
     [Parameter(ParameterSetName='/policy/entities/device-control/v2:patch',Position=4)]
     [Alias('bluetooth_settings')]
     [object]$BluetoothSetting,
+    [Parameter(ParameterSetName='/policy/entities/device-control/v2:patch',Position=5)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [boolean]$Propagated,
     [Parameter(ParameterSetName='/policy/entities/device-control/v2:patch',Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id

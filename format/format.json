@@ -727,7 +727,8 @@
     "get": {
       "query": [
         "under_assessment",
-        "limit"
+        "limit",
+        "filter"
       ]
     }
   },
@@ -4797,6 +4798,7 @@
           "description",
           "id",
           "name",
+          "propagated",
           "usb_settings"
         ]
       }
