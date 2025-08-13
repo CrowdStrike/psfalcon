@@ -168,10 +168,16 @@ before they can be provided to the Falcon Intelligence Sandbox.
 Requires 'Sandbox (Falcon Intelligence): Write'.
 .PARAMETER EnvironmentId
 Analysis environment
+.PARAMETER AutoDetect
+Auto detect environment
 .PARAMETER Url
 A webpage or file URL
 .PARAMETER ActionScript
 Runtime script for sandbox analysis
+.PARAMETER Browser
+Browser to use with URL submission
+.PARAMETER Interactivity
+Whether sandbox detonation is interactive
 .PARAMETER CommandLine
 Command line script passed to the submitted file at runtime
 .PARAMETER SystemDate
@@ -186,6 +192,8 @@ Network settings to use in the analysis environment
 Route traffic via TOR
 .PARAMETER UserTag
 Tags to categorize the submission
+.PARAMETER SendEmail
+Send email notification
 .PARAMETER SubmitName
 Submission name
 .PARAMETER Sha256
@@ -195,47 +203,59 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
 #>
   [CmdletBinding(DefaultParameterSetName='/falconx/entities/submissions/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Mandatory,Position=1)]
-    [ValidateSet('android','macOS_10.15','ubuntu16_x64','win7_x64','win7_x86','win10_x64',IgnoreCase=$false)]
+
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=1)]
+    [ValidateSet('android','macOS_10.15','ubuntu16_x64','ubuntu20_x64','win7_x64','win7_x86','win10_x64',
+      'win11_x64',IgnoreCase=$false)]
     [Alias('environment_id')]
     [string]$EnvironmentId,
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=2)]
-    [string]$Url,
+    [Alias('auto_detect_environment')]
+    [boolean]$AutoDetect,
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=3)]
-    [ValidateSet('default','default_maxantievasion','default_randomfiles','default_randomtheme',
-      'default_openie',IgnoreCase=$false)]
+    [string]$Url,
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=4)]
+    [ValidateSet('default','default_maxantievasion','default_randomfiles','default_randomtheme','default_openie',
+      IgnoreCase=$false)]
     [Alias('action_script')]
     [string]$ActionScript,
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=5)]
+    [string]$Browser,
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=6)]
+    [boolean]$Interactivity,
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=7)]
     [Alias('command_line')]
     [string]$CommandLine,
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=8)]
     [ValidatePattern('^\d{4}-\d{2}-\d{2}$')]
     [Alias('system_date')]
     [string]$SystemDate,
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=9)]
     [ValidatePattern('^\d{2}:\d{2}$')]
     [Alias('system_time')]
     [string]$SystemTime,
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=7)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=10)]
     [Alias('document_password')]
     [string]$DocumentPassword,
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=8)]
-    [ValidateSet('default','tor','simulated','offline',IgnoreCase=$false)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=11)]
+    [ValidateSet('default','offline','simulated','tor',IgnoreCase=$false)]
     [Alias('network_settings','NetworkSettings')]
     [string]$NetworkSetting,
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=12)]
     [Alias('enable_tor')]
     [boolean]$EnableTor,
-    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=10)]
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=13)]
     [Alias('user_tags','UserTags')]
     [string[]]$UserTag,
+    [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',Position=14)]
+    [Alias('send_email_notification')]
+    [boolean]$SendEmail,
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',ValueFromPipelineByPropertyName,
-      Position=11)]
+      Position=15)]
     [Alias('submit_name','file_name')]
     [string]$SubmitName,
     [Parameter(ParameterSetName='/falconx/entities/submissions/v1:post',ValueFromPipelineByPropertyName,
-      ValueFromPipeline,Position=12)]
+      ValueFromPipeline,Position=16)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
     [string]$Sha256
   )
@@ -245,9 +265,9 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
         Body = @{
-          root = @('user_tags')
-          sandbox = @('submit_name','system_date','action_script','environment_id','command_line','system_time',
-            'url','document_password','enable_tor','sha256','network_settings')
+          root = @('aid','auto_detect_environment','send_email_notification','user_tags')
+          sandbox = @('action_script','browser','command_line','document_password','enable_tor','environment_id',
+            'interactivity','network_settings','sha256','submit_name','system_date','system_time','url')
         }
       }
     }
@@ -260,9 +280,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSubmission
         'android' { 200 }
         'macOS_10.15' { 400 }
         'ubuntu16_x64' { 300 }
+        'ubuntu20_x64' { 310 }
         'win7_x64' { 110 }
         'win7_x86' { 100 }
         'win10_x64' { 160 }
+        'win11_x64' { 140 }
       }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
