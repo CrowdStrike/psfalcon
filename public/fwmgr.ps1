@@ -1,3 +1,106 @@
+function Compare-FalconFirewallLocation {
+<#
+.SYNOPSIS
+List Falcon Firewall Management location properties that differ in comparison to a reference location
+.PARAMETER Reference
+Location to use as reference for comparison
+.PARAMETER Object
+Location to list differing properties from
+.PARAMETER IncludeEqual
+Include all properties in output when differing properties are found
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
+#>
+[CmdletBinding()]
+  param(
+    [Parameter(Mandatory)]
+    [object]$Reference,
+    [Parameter(Mandatory)]
+    [object]$Object,
+    [Parameter()]
+    [switch]$IncludeEqual
+  )
+  begin {
+    function Compare-Object ([object]$Ref,[object]$Obj,[string[]]$Arr) {
+      [string[]]$pDiff = foreach ($p in $Arr) {
+        if ($p -eq 'enabled' -and $Ref.$p -ne $Obj.$p) {
+          # Output 'enabled' when values differ
+          $p
+        } elseif ($p -eq 'connection_types') {
+          if ($Obj.$p.wired -ne $Ref.$p.wired) {
+            # Output 'connection_types' when 'wired' value differs
+            $p
+          } elseif (($Obj.$p.wireless -and !$Ref.$p.wireless) -or (!$Obj.$p.wireless -and $Ref.$p.wireless)) {
+            # Output 'connection_types' when one object does not have 'wireless' values
+            $p
+          } elseif ($Obj.$p.wireless -and $Ref.$p.wireless) {
+            foreach ($i in @('enabled','require_encryption','ssids')) {
+              if (($Obj.$p.wireless.$i -and !$Ref.$p.wireless.$i) -or
+              (!$Obj.$p.wireless.$i -and $Ref.$p.wireless.$i)) {
+                # Output 'connection_types' when one does not have 'wireless' sub-values
+                $p
+              } elseif ($i -ne 'ssids' -and ($Obj.$p.wireless.$i -ne $Ref.$p.wireless.$i)) {
+                # Output 'connection_types' when 'ssids' values differ
+                $p
+              } elseif ($i -eq 'ssids' -and (Compare-Object $Obj.$p.wireless.$i $Ref.$p.wireless.$i)) {
+                # Output 'connection_types' when 'enabled' or 'require_encryption' values differ
+                $p
+              }
+            }
+          }
+        } elseif ($p -eq 'https_reachable_hosts') {
+          if (($Obj.$p.hostnames -and !$Ref.$p.hostnames) -or (!$Obj.$p.hostnames -and $Ref.$p.hostnames) -or
+          (Compare-Object $Obj.$p.hostnames $Ref.$p.hostnames)) {
+            # Output 'https_reachable_hosts' when one has 'hostnames' values or when 'hostnames' differ
+            $p
+          }
+        } elseif ($p -eq 'icmp_request_targets') {
+          if (($Obj.$p.targets -and !$Ref.$p.targets) -or (!$Obj.$p.targets -and $Ref.$p.targets) -or
+          (Compare-Object $Obj.$p.targets $Ref.$p.targets)) {
+            # Output 'icmp_request_targets' when one has 'targets' values or when 'targets' differ
+            $p
+          }
+        } elseif ($p -eq 'dns_resolution_targets') {
+          if (($Obj.$p.targets -and !$Ref.$p.targets) -or (!$Obj.$p.targets -and $Ref.$p.targets)) {
+            # Output 'dns_resolution_targets' when one has 'targets' values
+            $p
+          } elseif ($Obj.$p.targets -and $Ref.$p.targets) {
+            foreach ($i in $Obj.$p.targets) {
+              $iRef = @($Ref.$p.targets).Where({$_.hostname -eq $i.hostname})
+              if (!$iRef) {
+                # Output 'dns_resolution_targets' when new 'hostname' is found
+                $p
+              } elseif ($iRef -and (Compare-Object $iRef.ip_match $i.ip_match)) {
+                # Output 'dns_resolution_targets' when 'ip_match' differs
+                $p
+              }
+            }
+          }
+        } elseif (@('default_gateways','dhcp_servers','dns_servers','host_addresses') -contains $p) {
+          if (($Obj.$p -and !$Ref.$p) -or (!$Obj.$p -and $Ref.$p) -or (Compare-Object $Obj.$p $Ref.$p)) {
+            # Output property when one has values or when values differ
+            $p
+          }
+        }
+      }
+      # Output list of differing properties
+      if ($pDiff) { $pDiff | Select-Object -Unique }
+    }
+  }
+  process {
+    # Define properties to compare, then check for modified properties
+    [string[]]$List = @(@($Reference,$Object).foreach{ $_.PSObject.Properties.Name }).Where({$_ -notmatch
+      '^(cid|id|name|(created|modified)_(by|on))$'}) | Select-Object -Unique
+    [object[]]$Select = Compare-Object $Reference $Object $List
+    if ($Select -and $IncludeEqual) {
+      # Append 'id', 'cid', and 'name' from reference
+      [object[]]$Select = @{l='id';e={$Reference.id}},@{l='cid';e={$Reference.cid}},
+        @{l='name';e={$Reference.name}} + $List
+    }
+    # Output selected properties
+    if ($Select) { $Object | Select-Object $Select }
+  }
+}
 function Edit-FalconFirewallGroup {
 <#
 .SYNOPSIS
@@ -176,37 +279,49 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocation
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=2)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
     [string]$Name,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=3)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
     [string]$Description,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=4)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
     [boolean]$Enabled,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=5)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
     [Alias('connection_types')]
     [object]$ConnectionType,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=6)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=6)]
     [Alias('default_gateways')]
     [string[]]$DefaultGateway,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=7)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=7)]
     [Alias('dhcp_servers')]
     [string[]]$DhcpServer,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=8)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=8)]
     [Alias('dns_servers')]
     [string[]]$DnsServer,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=9)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=9)]
     [Alias('host_addresses')]
     [string[]]$HostAddress,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=10)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=10)]
     [Alias('dns_resolution_targets')]
     [object[]]$DnsResolutionTarget,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=11)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=11)]
     [Alias('https_reachable_hosts')]
-    [string[]]$HttpsReachableHost,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=12)]
+    [object[]]$HttpsReachableHost,
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=12)]
     [Alias('icmp_request_targets')]
-    [string[]]$IcmpRequestTarget,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',Position=13)]
+    [object[]]$IcmpRequestTarget,
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:patch',ValueFromPipelineByPropertyName,
+      Position=13)]
     [string]$Comment
   )
   begin {
@@ -215,22 +330,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocation
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
         Body = @{
-          root = @('https_reachable_hosts','dhcp_servers','name','icmp_request_targets',
-            'default_gateways','host_addresses','dns_resolution_targets','description','id',
-            'connection_types','enabled','dns_servers')
+          root = @('connection_types','default_gateways','description','dhcp_servers','dns_resolution_targets',
+            'dns_servers','enabled','host_addresses','https_reachable_hosts','icmp_request_targets','id','name')
         }
         Query = @('comment')
       }
     }
   }
   process {
-    if ($PSBoundParameters.DnsResolutionTarget) {
+    if ($PSBoundParameters.DnsResolutionTarget -and !$PSBoundParameters.DnsResolutionTarget.targets) {
       $PSBoundParameters.DnsResolutionTarget = @{ targets = [object[]]$PSBoundParameters.DnsResolutionTarget }
     }
-    if ($PSBoundParameters.HttpsReachableHost) {
+    if ($PSBoundParameters.HttpsReachableHost -and !$PSBoundParameters.HttpsReachableHost.hostnames) {
       $PSBoundParameters.HttpsReachableHost = @{ hostnames = [string[]]$PSBoundParameters.HttpsReachableHost }
     }
-    if ($PSBoundParameters.IcmpRequestTarget) {
+    if ($PSBoundParameters.IcmpRequestTarget -and !$PSBoundParameters.IcmpRequestTarget.targets) {
       $PSBoundParameters.IcmpRequestTarget = @{ targets = [string[]]$PSBoundParameters.IcmpRequestTarget }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -930,7 +1044,7 @@ Requires 'Firewall management: Write'.
 .PARAMETER CloneId
 Clone an existing location
 .PARAMETER AddFwRule
-Include firewall rules from existing location
+Include firewall rules from existing location (when using 'CloneId')
 .PARAMETER Name
 Location name
 .PARAMETER Description
@@ -948,7 +1062,7 @@ DNS server IP address or CIDR block
 .PARAMETER HostAddress
 Host IP address or CIDR block
 .PARAMETER DnsResolutionTarget
-Target IP address or CIDR block, with optional domain name
+Object containing DNS resolution target information ('hostname', 'ip_match')
 .PARAMETER HttpsReachableHost
 Target domain name using a trusted certificate
 .PARAMETER IcmpRequestTarget
@@ -960,44 +1074,56 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallLocation
 #>
   [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations/v1:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='CloneId',Mandatory,ValueFromPipelineByPropertyName,Position=1)]
+    [Parameter(ParameterSetName='CloneId',Mandatory,ValueFromPipeline,Position=1)]
     [Alias('clone_id','id')]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$CloneId,
     [Parameter(ParameterSetName='CloneId',Position=2)]
     [Alias('add_fw_rules')]
     [boolean]$AddFwRule,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=2)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
     [string]$Description,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=3)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
     [boolean]$Enabled,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=4)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=4)]
     [Alias('connection_types')]
     [object]$ConnectionType,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=5)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=5)]
     [Alias('default_gateways')]
     [string[]]$DefaultGateway,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=6)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=6)]
     [Alias('dhcp_servers')]
     [string[]]$DhcpServer,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=7)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=7)]
     [Alias('dns_servers')]
     [string[]]$DnsServer,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=8)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=8)]
     [Alias('host_addresses')]
     [string[]]$HostAddress,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=9)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=9)]
     [Alias('dns_resolution_targets')]
     [object[]]$DnsResolutionTarget,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=10)]
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=10)]
     [Alias('https_reachable_hosts')]
-    [string[]]$HttpsReachableHost,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=11)]
+    [object[]]$HttpsReachableHost,
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=11)]
     [Alias('icmp_request_targets')]
-    [string[]]$IcmpRequestTarget,
-    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',Position=12)]
+    [object[]]$IcmpRequestTarget,
+    [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:post',ValueFromPipelineByPropertyName,
+      Position=12)]
     [string]$Comment
   )
   begin {
@@ -1006,22 +1132,21 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallLocation
       Endpoint = '/fwmgr/entities/network-locations/v1:post'
       Format = @{
         Body = @{
-          root = @('description','dhcp_servers','name','https_reachable_hosts','icmp_request_targets',
-            'default_gateways','host_addresses','dns_resolution_targets','connection_types',
-            'dns_servers','enabled')
+          root = @('connection_types','default_gateways','description','dhcp_servers','dns_resolution_targets',
+            'dns_servers','enabled','host_addresses','https_reachable_hosts','icmp_request_targets','name')
         }
-        Query = @('clone_id','comment','add_fw_rules')
+        Query = @('add_fw_rules','clone_id','comment')
       }
     }
   }
   process {
-    if ($PSBoundParameters.DnsResolutionTarget) {
+    if ($PSBoundParameters.DnsResolutionTarget -and !$PSBoundParameters.DnsResolutionTarget.targets) {
       $PSBoundParameters.DnsResolutionTarget = @{ targets = [object[]]$PSBoundParameters.DnsResolutionTarget }
     }
-    if ($PSBoundParameters.HttpsReachableHost) {
+    if ($PSBoundParameters.HttpsReachableHost -and !$PSBoundParameters.HttpsReachableHost.hostnames) {
       $PSBoundParameters.HttpsReachableHost = @{ hostnames = [string[]]$PSBoundParameters.HttpsReachableHost }
     }
-    if ($PSBoundParameters.IcmpRequestTarget) {
+    if ($PSBoundParameters.IcmpRequestTarget -and !$PSBoundParameters.IcmpRequestTarget.targets) {
       $PSBoundParameters.IcmpRequestTarget = @{ targets = [string[]]$PSBoundParameters.IcmpRequestTarget }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters

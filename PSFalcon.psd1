@@ -223,6 +223,7 @@
     'Set-FalconFileVantageRuleGroupPrecedence'
 
     # fwmgr
+    'Compare-FalconFirewallLocation'
     'Edit-FalconFirewallGroup'
     'Edit-FalconFirewallLocation'
     'Edit-FalconFirewallLocationSetting'
