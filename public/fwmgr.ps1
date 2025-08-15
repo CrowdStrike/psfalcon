@@ -1,7 +1,7 @@
 function Compare-FalconFirewallLocation {
 <#
 .SYNOPSIS
-List Falcon Firewall Management location properties that differ in comparison to a reference location
+List Falcon Firewall Management location differing properties in comparison with a reference location
 .PARAMETER Reference
 Location to use as reference for comparison
 .PARAMETER Object
