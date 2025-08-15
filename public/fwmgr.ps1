@@ -22,7 +22,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
   )
   begin {
     function Compare-FalconObj ([PSCustomObject]$Ref,[PSCustomObject]$Obj,[string[]]$Arr) {
-      Write-Log 'Compare-FalconFirewallLocation' ($Arr -join ',')
+      Write-Log 'Compare-FalconFirewallLocation' ('Evaluating:',($Arr -join ', ') -join "`n")
       [string[]]$pDiff = foreach ($p in $Arr) {
         if ($p -eq 'enabled' -and $Ref.$p -ne $Obj.$p) {
           # Output 'enabled' when values differ
@@ -65,13 +65,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
           }
         } elseif ($p -eq 'https_reachable_hosts') {
           if (($Obj.$p.hostnames -and !$Ref.$p.hostnames) -or (!$Obj.$p.hostnames -and $Ref.$p.hostnames) -or
-          (Compare-Object $Obj.$p.hostnames $Ref.$p.hostnames)) {
+          ($Obj.$p.hostnames -and $Ref.$p.hostnames -and (Compare-Object $Obj.$p.hostnames $Ref.$p.hostnames))) {
             # Output 'https_reachable_hosts' when one has 'hostnames' values or when 'hostnames' differ
             $p
           }
         } elseif ($p -eq 'icmp_request_targets') {
           if (($Obj.$p.targets -and !$Ref.$p.targets) -or (!$Obj.$p.targets -and $Ref.$p.targets) -or
-          (Compare-Object $Obj.$p.targets $Ref.$p.targets)) {
+          ($Obj.$p.targets -and $Ref.$p.targets -and (Compare-Object $Obj.$p.targets $Ref.$p.targets))) {
             # Output 'icmp_request_targets' when one has 'targets' values or when 'targets' differ
             $p
           }
@@ -108,14 +108,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
     [string[]]$List = @($Reference.PSObject.Properties.Name + $Object.PSObject.Properties.Name).Where({
       $_ -notmatch '^(cid|id|name|(created|modified)_(by|on))$'}) | Select-Object -Unique
     if ($Reference -and $Object -and $List) {
-      [object[]]$Select = Compare-FalconObj $Reference $Object $List
-      if ($Select -and $IncludeEqual) {
-        # Append 'id', 'cid', and 'name' from reference
-        [object[]]$Select = @{l='id';e={$Reference.id}},@{l='cid';e={$Reference.cid}},
-          @{l='name';e={$Reference.name}} + $List
+      [string[]]$Select = Compare-FalconObj $Reference $Object $List
+      if ($Select) {
+        Write-Log 'Compare-FalconFirewallLocation' ('Found:',($Select -join ', ') -join "`n")
+        if ($IncludeEqual) {
+           # Append 'id', 'cid', and 'name' from reference and output all properties
+          $Object | Select-Object @{l='id';e={$Reference.id}},@{l='cid';e={$Reference.cid}},
+            @{l='name';e={$Reference.name}} + $List
+        } else {
+          # Output selected properties
+          $Object | Select-Object $Select
+        }
       }
-      # Output selected properties
-      if ($Select) { $Object | Select-Object $Select }
     }
   }
 }
