@@ -228,8 +228,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     })]
     [string]$Path,
     [ValidateSet('ContentPolicy','DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup','FirewallGroup',
-      'FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion','PreventionPolicy',
-      'ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
+      'FirewallLocation','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion',
+      'PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
     [string[]]$Select,
     [Alias('Force')]
     [switch]$AssignExisting,
@@ -237,8 +237,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       'SensorUpdatePolicy')]
     [string[]]$ModifyDefault,
     [ValidateSet('All','ContentPolicy','DeviceControlPolicy','FileVantagePolicy','FileVantageRuleGroup',
-      'FirewallGroup','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc','MlExclusion',
-      'PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
+      'FirewallGroup','FirewallLocation','FirewallPolicy','HostGroup','IoaExclusion','IoaGroup','Ioc',
+      'MlExclusion','PreventionPolicy','ResponsePolicy','Script','SensorUpdatePolicy','SvExclusion')]
     [string[]]$ModifyExisting
   )
   begin {
@@ -750,6 +750,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           @{l='cid';e={$_.customer_id}},'id','name','platform','enabled','deleted','description','rule_ids',
           'policy_ids','rules'
         }
+        'FirewallLocation' {
+          'cid','id','name','enabled','description','rule_count','host_addresses','default_gateways',
+          'dhcp_servers','dns_servers','connection_types','https_reachable_hosts','icmp_request_targets',
+          'dns_resolution_targets','metadata'
+        }
         'FirewallPolicy' {
           'cid','id','name','platform_name','description','enabled','channel_version','rule_set_id',
           @{l='groups';e={$_.groups | Select-Object id,name}},
@@ -965,6 +970,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           #}
           # Output items with properties to be modified and remove from Modify list
           #if ($m.Count -gt 1) { $Item | Select-Object $m }
+        } elseif ($Ref -and $Item -eq 'FirewallLocation') {
+          $Comp = Compare-FalconFirewallLocation -Reference $Ref -Object $Obj
+          if ($Comp) {
+            # Modify FirewallLocation when differences are found
+            if ($Ref.id -ne $Obj.id) { Set-Property $Obj id $Ref.id }
+            $Req = $Obj | Edit-FalconFirewallLocation @Param
+            if ($Req) {
+              # Capture individual modified property results
+              @($Comp.PSObject.Properties.Name).foreach{ Add-Result Modified $Ref $Item $_ $Ref.$_ $Obj.$_ }
+            } elseif ($Fail) {
+              # Capture failure to modify FirewallLocation
+              Add-Result Failed $Ref $Item -Comment $Fail.exception.message -Log 'to modify'
+            }
+          } else {
+            # Add ignored result
+            Add-Result Ignored $Ref $Item -Comment Identical
+          }
         } elseif ($Ref -and $Item -eq 'HostGroup') {
           # Modify HostGroup
           [string[]]$PropList = if ($Obj.description -ne $Ref.description) {
@@ -1126,9 +1148,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             'content'
           }
           if ($PropList) {
-            # Update identifier with value from CID and modify exclusion
+            # Update identifier with value from CID and modify Script
             Set-Property $Obj id $Ref.id
-            # Modify exclusion
+            # Modify Script
             $Req = $Obj | Edit-FalconScript @Param
             if ($Req) {
               @($PropList).foreach{
@@ -1141,7 +1163,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 }
               }
             } elseif ($Fail) {
-              # Capture failure to modify script
+              # Capture failure to modify Script
               Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
             }
           } else {
@@ -2214,8 +2236,20 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 Add-Result Created $_ $p.Key
                 Set-IdRef $_ $p.Key -Update
               }
-              if ($Fail) { Add-Result Failed $i $p.Key -Comment $Fail.exception.message -Log 'to create' }
+              if ($Fail) { Add-Result Failed $i $p.Key -Log 'to create' -Comment $Fail.exception.message }
             }
+          }
+        }
+      } elseif ($p.Key -eq 'FirewallLocation') {
+        # Create FirewallLocation
+        @($p.Value.Import).foreach{
+          $i = $_ | New-FalconFirewallLocation -EA 0 -EV Fail
+          if ($i) {
+            # Capture result
+            Add-Result Created $i $p.Key
+          } elseif ($Fail) {
+            # Capture failure
+            Add-Result Failed $_ $p.Key -Log 'to create' -Comment ($Fail.exception.message -join ',')
           }
         }
       } elseif ($p.Key -match 'Group$') {
@@ -2286,7 +2320,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
     # Modify non-policy items
     foreach ($p in $Config.GetEnumerator().Where({$_.Value.Modify -and $_.Key -notmatch 'Policy$'})) {
-      # Gather matching item from CID, evaluate for differences and modify by type
       foreach ($m in $p.Value.Modify) { Edit-Item $m $p.Key $UaComment }
       Clear-ConfigList $p.Key Modify
     }
@@ -2314,22 +2347,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
   }
   end {
     if ($Config.Values.Result) {
-      # Select 'policy created' and FileVantagePolicy 'modified rule_groups' results
-      foreach ($i in (@($Config.Values.Result).Where({($_.type -match 'Policy$' -and $_.action -eq
-      'Created') -or ($_.type -match '^(FileVantage|Firewall)Policy$' -and $_.action -eq 'Modified' -and
-      $_.property -match '^rule_group(_id)?s$' -and $_.old_value)}) | Select-Object -Property action,type,
-      platform,name -Unique)) {
-        if ($i.action -eq 'Created' -and !$i.property -and @($Config.($i.type).Cid).Where({$_.platform_name -eq
-        $i.platform -and $_.name -ne $i.name -and $_.name -notmatch $PolicyDefault})) {
-          # Output precedence warning for existing policies for each 'platform'
+      foreach ($i in (@($Config.Values.Result).Where({$_.action -eq 'Created' -and $_.type -match 'Policy$'}) |
+      Select-Object -Property action,type,platform,name -Unique)) {
+        if ($i.action -eq 'Created' -and @($Config.($i.type).Cid).Where({$_.name -notmatch $PolicyDefault -and
+        $_.platform_name -eq $i.platform -and $_.name -ne $i.name})) {
+          # Output precedence warning when existing Policy is found under each 'platform'
           $PSCmdlet.WriteWarning(
             ('[Import-FalconConfig] Existing {0} {1} were found. Verify precedence!' -f $i.platform,$i.type))
-        } elseif ($i.action -eq 'Modified' -and $i.property) {
-          # Output precedence when rule groups are assigned to policies with existing rule groups
-          $PSCmdlet.WriteWarning(
-            ('[Import-FalconConfig] {0} {1} "{2}" had existing "{3}". Verify precedence!' -f $i.platform,
-              $i.type,$i.name,$i.property))
         }
+      }
+      foreach ($i in (@($Config.Values.Result).Where({$_.action -eq 'Modified' -and $_.type -match
+      '^(FileVantage|Firewall)Policy$' -and $_.property -match '^rule_group(_id)?s$' -and $_.old_value}) |
+      Select-Object -Property action,type,platform,name -Unique)) {
+        # Output precedence warning when rule groups are assigned to policies with existing rule groups
+        $PSCmdlet.WriteWarning(
+          ('[Import-FalconConfig] {0} {1} "{2}" had existing "{3}". Verify precedence!' -f $i.platform,
+            $i.type,$i.name,$i.property))
+      }
+      if (@($Config.Values.Result).Where({$_.action -eq 'Created' -and $_.type -eq 'FirewallLocation'}) -and
+      $Config.FirewallLocation.Cid) {
+        # Output precedence warning for existing 'FirewallLocation'
+          $PSCmdlet.WriteWarning('[Import-FalconConfig] Existing FirewallLocation found. Verify precedence!')
       }
     }
     if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
