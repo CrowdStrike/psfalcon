@@ -14,37 +14,52 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
 [CmdletBinding()]
   param(
     [Parameter(Mandatory)]
-    [object]$Reference,
+    [PSCustomObject]$Reference,
     [Parameter(Mandatory)]
-    [object]$Object,
+    [PSCustomObject]$Object,
     [Parameter()]
     [switch]$IncludeEqual
   )
   begin {
-    function Compare-Object ([object]$Ref,[object]$Obj,[string[]]$Arr) {
+    function Compare-FalconObj ([PSCustomObject]$Ref,[PSCustomObject]$Obj,[string[]]$Arr) {
+      Write-Log 'Compare-FalconFirewallLocation' ($Arr -join ',')
       [string[]]$pDiff = foreach ($p in $Arr) {
         if ($p -eq 'enabled' -and $Ref.$p -ne $Obj.$p) {
           # Output 'enabled' when values differ
           $p
         } elseif ($p -eq 'connection_types') {
-          if ($Obj.$p.wired -ne $Ref.$p.wired) {
-            # Output 'connection_types' when 'wired' value differs
+          if ((!$Obj.$p -and $Ref.$p) -or ($Obj.$p -and !$Ref.$p)) {
+            # Output 'connection_types' when one object does not have values
             $p
-          } elseif (($Obj.$p.wireless -and !$Ref.$p.wireless) -or (!$Obj.$p.wireless -and $Ref.$p.wireless)) {
-            # Output 'connection_types' when one object does not have 'wireless' values
-            $p
-          } elseif ($Obj.$p.wireless -and $Ref.$p.wireless) {
-            foreach ($i in @('enabled','require_encryption','ssids')) {
-              if (($Obj.$p.wireless.$i -and !$Ref.$p.wireless.$i) -or
-              (!$Obj.$p.wireless.$i -and $Ref.$p.wireless.$i)) {
-                # Output 'connection_types' when one does not have 'wireless' sub-values
-                $p
-              } elseif ($i -ne 'ssids' -and ($Obj.$p.wireless.$i -ne $Ref.$p.wireless.$i)) {
-                # Output 'connection_types' when 'ssids' values differ
-                $p
-              } elseif ($i -eq 'ssids' -and (Compare-Object $Obj.$p.wireless.$i $Ref.$p.wireless.$i)) {
-                # Output 'connection_types' when 'enabled' or 'require_encryption' values differ
-                $p
+          } else {
+            if ($Obj.$p.wired -ne $Ref.$p.wired) {
+              # Output 'connection_types' when 'wired' value differs
+              $p
+            } elseif (($Obj.$p.wireless -and !$Ref.$p.wireless) -or (!$Obj.$p.wireless -and $Ref.$p.wireless)) {
+              # Output 'connection_types' when one object does not have 'wireless' values
+              $p
+            } elseif ($Obj.$p.wireless -and $Ref.$p.wireless) {
+              foreach ($i in @('enabled','require_encryption','ssids')) {
+                if ($i -eq 'ssids') {
+                  if (($Obj.$p.wireless.$i -and !$Ref.$p.wireless.$i) -or
+                  (!$Obj.$p.wireless.$i -and $Ref.$p.wireless.$i)) {
+                    # Output 'connection_types' when one does not have 'ssids' values
+                    $p
+                  } elseif ($Obj.$p.wireless.$i -and $Ref.$p.wireless.$i -and
+                  (Compare-Object $Obj.$p.wireless.$i $Ref.$p.wireless.$i)) {
+                    # Output 'connection_types' when 'ssids' values differ
+                    $p
+                  }
+                } else {
+                  if (($Obj.$p.wireless.$i -and !$Ref.$p.wireless.$i) -or
+                  (!$Obj.$p.wireless.$i -and $Ref.$p.wireless.$i)) {
+                    # Output 'connection_types' when one does not have 'enabled' or 'require_encryption' values
+                    $p
+                  } elseif ($Obj.$p.wireless.$i -ne $Ref.$p.wireless.$i) {
+                    # Output 'connection_types' when 'enabled' or 'require_encryption' values differ
+                    $p
+                  }
+                }
               }
             }
           }
@@ -77,7 +92,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
             }
           }
         } elseif (@('default_gateways','dhcp_servers','dns_servers','host_addresses') -contains $p) {
-          if (($Obj.$p -and !$Ref.$p) -or (!$Obj.$p -and $Ref.$p) -or (Compare-Object $Obj.$p $Ref.$p)) {
+          if (($Obj.$p -and !$Ref.$p) -or (!$Obj.$p -and $Ref.$p) -or ($Obj.$p -and $Ref.$p -and
+          (Compare-Object $Obj.$p $Ref.$p))) {
             # Output property when one has values or when values differ
             $p
           }
@@ -89,16 +105,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
   }
   process {
     # Define properties to compare, then check for modified properties
-    [string[]]$List = @(@($Reference,$Object).foreach{ $_.PSObject.Properties.Name }).Where({$_ -notmatch
-      '^(cid|id|name|(created|modified)_(by|on))$'}) | Select-Object -Unique
-    [object[]]$Select = Compare-Object $Reference $Object $List
-    if ($Select -and $IncludeEqual) {
-      # Append 'id', 'cid', and 'name' from reference
-      [object[]]$Select = @{l='id';e={$Reference.id}},@{l='cid';e={$Reference.cid}},
-        @{l='name';e={$Reference.name}} + $List
+    [string[]]$List = @($Reference.PSObject.Properties.Name + $Object.PSObject.Properties.Name).Where({
+      $_ -notmatch '^(cid|id|name|(created|modified)_(by|on))$'}) | Select-Object -Unique
+    if ($Reference -and $Object -and $List) {
+      [object[]]$Select = Compare-FalconObj $Reference $Object $List
+      if ($Select -and $IncludeEqual) {
+        # Append 'id', 'cid', and 'name' from reference
+        [object[]]$Select = @{l='id';e={$Reference.id}},@{l='cid';e={$Reference.cid}},
+          @{l='name';e={$Reference.name}} + $List
+      }
+      # Output selected properties
+      if ($Select) { $Object | Select-Object $Select }
     }
-    # Output selected properties
-    if ($Select) { $Object | Select-Object $Select }
   }
 }
 function Edit-FalconFirewallGroup {
@@ -338,14 +356,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocation
     }
   }
   process {
-    if ($PSBoundParameters.DnsResolutionTarget -and !$PSBoundParameters.DnsResolutionTarget.targets) {
-      $PSBoundParameters.DnsResolutionTarget = @{ targets = [object[]]$PSBoundParameters.DnsResolutionTarget }
+    # Create 'dns_resolution_targets' object
+    if ($PSBoundParameters.DnsResolutionTarget) {
+      $PSBoundParameters.DnsResolutionTarget = if (!$PSBoundParameters.DnsResolutionTarget.targets) {
+        # Create list of 'targets' containing 'hostname' objects
+        @{ targets = @($PSBoundParameters.DnsResolutionTarget).foreach{ @{ hostname = $_ }}}
+      } else {
+        # Remove 'polling_interval' and keep 'targets'
+        $PSBoundParameters.DnsResolutionTarget | Select-Object targets
+      }
     }
-    if ($PSBoundParameters.HttpsReachableHost -and !$PSBoundParameters.HttpsReachableHost.hostnames) {
-      $PSBoundParameters.HttpsReachableHost = @{ hostnames = [string[]]$PSBoundParameters.HttpsReachableHost }
-    }
-    if ($PSBoundParameters.IcmpRequestTarget -and !$PSBoundParameters.IcmpRequestTarget.targets) {
-      $PSBoundParameters.IcmpRequestTarget = @{ targets = [string[]]$PSBoundParameters.IcmpRequestTarget }
+    # Create 'icmp_request_targets' and 'https_reachable_hosts' objects
+    @('IcmpRequestTarget','HttpsReachableHost').foreach{
+      $i = if ($_ -eq 'HttpsReachableHost') { 'hostnames' } else { 'targets' }
+      if ($PSBoundParameters.$_) {
+        $PSBoundParameters.$_ = if (!$PSBoundParameters.$_.$i) {
+          # Create 'hostnames' or 'targets' object
+          @{ $i = @($PSBoundParameters.$_) }
+        } else {
+          # Remove 'polling_interval' and keep 'hostnames' or 'targets'
+          @{ $i = @($PSBoundParameters.$_.$i) }
+        }
+      }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
@@ -1140,14 +1172,28 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallLocation
     }
   }
   process {
-    if ($PSBoundParameters.DnsResolutionTarget -and !$PSBoundParameters.DnsResolutionTarget.targets) {
-      $PSBoundParameters.DnsResolutionTarget = @{ targets = [object[]]$PSBoundParameters.DnsResolutionTarget }
+    # Create 'dns_resolution_targets' object
+    if ($PSBoundParameters.DnsResolutionTarget) {
+      $PSBoundParameters.DnsResolutionTarget = if (!$PSBoundParameters.DnsResolutionTarget.targets) {
+        # Create list of 'targets' containing 'hostname' objects
+        @{ targets = @($PSBoundParameters.DnsResolutionTarget).foreach{ @{ hostname = $_ }}}
+      } else {
+        # Remove 'polling_interval' and keep 'targets'
+        $PSBoundParameters.DnsResolutionTarget | Select-Object targets
+      }
     }
-    if ($PSBoundParameters.HttpsReachableHost -and !$PSBoundParameters.HttpsReachableHost.hostnames) {
-      $PSBoundParameters.HttpsReachableHost = @{ hostnames = [string[]]$PSBoundParameters.HttpsReachableHost }
-    }
-    if ($PSBoundParameters.IcmpRequestTarget -and !$PSBoundParameters.IcmpRequestTarget.targets) {
-      $PSBoundParameters.IcmpRequestTarget = @{ targets = [string[]]$PSBoundParameters.IcmpRequestTarget }
+    # Create 'icmp_request_targets' and 'https_reachable_hosts' objects
+    @('IcmpRequestTarget','HttpsReachableHost').foreach{
+      $i = if ($_ -eq 'HttpsReachableHost') { 'hostnames' } else { 'targets' }
+      if ($PSBoundParameters.$_) {
+        $PSBoundParameters.$_ = if (!$PSBoundParameters.$_.$i) {
+          # Create 'hostnames' or 'targets' object
+          @{ $i = @($PSBoundParameters.$_) }
+        } else {
+          # Remove 'polling_interval' and keep 'hostnames' or 'targets'
+          @{ $i = @($PSBoundParameters.$_.$i) }
+        }
+      }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
