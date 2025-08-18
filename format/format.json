@@ -3415,21 +3415,6 @@
     },
     "patch": {
       "body": {
-        "bulk_update": [
-          "action",
-          "applied_globally",
-          "description",
-          "expiration",
-          "filter",
-          "from_parent",
-          "host_groups",
-          "metadata",
-          "mobile_action",
-          "platforms",
-          "severity",
-          "source",
-          "tags"
-        ],
         "root": [
           "comment"
         ],
