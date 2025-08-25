@@ -38,11 +38,17 @@
     'Send-FalconNgsCaseFile'
 
     # casemgmt
+    'Edit-FalconNgsCaseNotificationGroup'
+    'Edit-FalconNgsCaseSla'
+    'Edit-FalconNgsCaseTemplate'
     'Get-FalconNgsCaseField'
     'Get-FalconNgsCaseNotificationGroup'
     'Get-FalconNgsCaseSla'
     'Get-FalconNgsCaseTemplate'
     'Get-FalconNgsCaseTemplateSnapshot'
+    'New-FalconNgsCaseNotificationGroup'
+    'New-FalconNgsCaseSla'
+    'New-FalconNgsCaseTemplate'
     'Remove-FalconNgsCaseNotificationGroup'
     'Remove-FalconNgsCaseSla'
     'Remove-FalconNgsCaseTemplate'
