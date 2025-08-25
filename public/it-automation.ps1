@@ -394,6 +394,49 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTaskGroup
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Edit-FalconItUserGroup {
+<#
+.SYNOPSIS
+Modify a Falcon for IT user group
+.DESCRIPTION
+Requires 'IT Automation - User Groups: Write'.
+.PARAMETER Name
+User group name
+.PARAMETER Description
+User group description
+.PARAMETER AddUserId
+User identifiers to add
+.PARAMETER RemoveUserId
+User identifiers to add
+.PARAMETER Id
+User group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItUserGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/it-user-groups/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [Alias('add_user_ids')]
+    [string[]]$AddUserId,
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [Alias('remove_user_ids')]
+    [string[]]$RemoveUserId,
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconItFileTask {
 <#
 .SYNOPSIS
@@ -900,6 +943,71 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
     }
   }
 }
+function Get-FalconItUserGroup {
+<#
+.SYNOPSIS
+Search for Falcon for IT user groups
+.DESCRIPTION
+Requires 'IT Automation - User Groups: Read'.
+.PARAMETER Id
+User group identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Offset
+Position to begin retrieving results 
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItUserGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/queries/it-user-groups/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/it-automation/queries/it-user-groups/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/it-automation/queries/it-user-groups/v1:get',Position=2)]
+    [ValidateSet('created_by|asc','created_by|desc','created_time|asc','created_time|desc','modified_by|asc',
+      'modified_by|desc','modified_time|asc','modified_time|desc','name|asc','name|desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/it-automation/queries/it-user-groups/v1:get',Position=3)]
+    [ValidateRange(1,1000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/it-automation/queries/it-user-groups/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/it-automation/queries/it-user-groups/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/it-automation/queries/it-user-groups/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/it-automation/queries/it-user-groups/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Invoke-FalconItTask {
 <#
 .SYNOPSIS
@@ -1310,6 +1418,32 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTaskGroup
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function New-FalconItUserGroup {
+<#
+.SYNOPSIS
+Create a Falcon for IT user group
+.DESCRIPTION
+Requires 'IT Automation - User Groups: Write'.
+.PARAMETER Name
+User group name
+.PARAMETER Description
+User group description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconItUserGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/it-user-groups/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description
+    
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Redo-FalconItTaskExecution {
 <#
 .SYNOPSIS
@@ -1485,6 +1619,37 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTaskGroup
   [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-groups/v1:delete',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconItUserGroup {
+<#
+.SYNOPSIS
+Remove Falcon for IT user groups
+.DESCRIPTION
+Requires 'IT Automation - User Groups: Write'.
+.PARAMETER Id
+User group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItUserGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/it-user-groups/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
