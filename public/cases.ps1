@@ -1,3 +1,52 @@
+function Add-FalconNgsCaseEvidence {
+<#
+.SYNOPSIS
+Add alerts or events to a Falcon NGSIEM case
+.DESCRIPTION
+Requires 'Cases: Write'.
+.PARAMETER AlertId
+Alert identifier
+.PARAMETER EventId
+Event identifier
+.PARAMETER Id
+Case identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconNgsCaseEvidence
+#>
+  [CmdletBinding(DefaultParameterSetName='/cases/entities/alert-evidence/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cases/entities/alert-evidence/v1:post',Mandatory,Position=1)]
+    [Alias('alerts')]
+    [string[]]$AlertId,
+    [Parameter(ParameterSetName='/cases/entities/event-evidence/v1:post',Mandatory,Position=1)]
+    [Alias('events')]
+    [string[]]$EventId,
+    [Parameter(ParameterSetName='/cases/entities/alert-evidence/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Parameter(ParameterSetName='/cases/entities/event-evidence/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('alerts','events','id') }}
+    }
+  }
+  process {
+    @('alerts','events').foreach{
+      # Convert 'id' values into array of objects containing 'id' values
+      if ($PSBoundParameters.($_ -replace 's$','id')) {
+        $PSBoundParameters[$_] = [PSCustomObject[]]@($PSBoundParameters.($_ -replace 's$','id')).foreach{
+          [PSCustomObject]@{ id = $_ }
+        }
+        [void]$PSBoundParameters.Remove(($_ -replace 's$','id'))
+      }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Add-FalconNgsCaseTag {
 <#
 .SYNOPSIS
