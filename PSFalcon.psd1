@@ -28,6 +28,7 @@
     # cases
     'Add-FalconNgsCaseTag'
     'Get-FalconNgsCase'
+    'New-FalconNgsCase'
     'Remove-FalconNgsCaseTag'
 
     # case-files

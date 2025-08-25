@@ -95,6 +95,106 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCase
     }
   }
 }
+function New-FalconNgsCase {
+<#
+.SYNOPSIS
+Create a Falcon NGSIEM case
+.DESCRIPTION
+Requires 'Cases: Write'.
+.PARAMETER Name
+Case name
+.PARAMETER Severity
+Case severity
+.PARAMETER Description
+Case description
+.PARAMETER Status
+Case status
+.PARAMETER Evidence
+Object containing evidence properties ('alerts', 'events', 'leads')
+.PARAMETER Tag
+Case tags
+.PARAMETER AssignedUuid
+User identifier for case assignment
+.PARAMETER Template
+Object containing case template properties ('id')
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconNgsCase
+#>
+  [CmdletBinding(DefaultParameterSetName='/cases/entities/cases/v2:put',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',Mandatory,ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',Mandatory,ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Severity,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=4)]
+    [ValidateSet('new','in_progress','reopened','closed',IgnoreCase=$false)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=5)]
+    [object]$Evidence,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('tags')]
+    [string[]]$Tag,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=7)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('assigned_to_user_uuid')]
+    [string]$AssignedUuid,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=8)]
+    [object]$Template
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('assigned_to_user_uuid','description','evidence','name','severity','status','tags','template')
+        }
+      }
+    }
+    [string[]]$Allowed = 'critical','high','medium','low','informational'
+  }
+  process {
+    $PSBoundParameters.Severity = if ($PSBoundParameters.Severity -as [int32] -is [int32]) {
+      # Force [int32] value
+      [int32]$PSBoundParameters.Severity
+    } elseif ($Allowed -notcontains $PSBoundParameters.Severity) {
+      # Error when provided [string] not in list
+      throw ('Invalid "Severity" value! [{0}]' -f ((@($Allowed).foreach{ '"{0}"' -f $_ }) -join ','))
+    } else {
+      # Convert [string] value to [int32]
+      switch ($PSBoundParameters.Severity) {
+        'critical' { 80 }
+        'high' { 60 }
+        'medium' { 40 }
+        'low' { 20 }
+        'informational' { 10 }
+      }
+    }
+    if ($PSBoundParameters.Evidence) {
+      # Select 'id' value under 'alerts', 'events', and 'leads'
+      $PSBoundParameters.Evidence = $PSBoundParameters.Evidence | Select-Object @{l='alerts';
+        e={$_.alerts | Select-Object id}},@{l='events';e={$_.events | Select-Object id}},@{l='leads';
+        e={$_.leads | Select-Object id}}
+      @('alerts','events','leads').foreach{
+        # Ensure 'alerts', 'events', and 'leads' contain arrays of 'id' values
+        if ($PSBoundParameters.Evidence.$_.id) {
+          $PSBoundParameters.Evidence.$_ = [PSCustomObject[]]@($PSBoundParameters.Evidence.$_)
+        } else {
+          $PSBoundParameters.Evidence.PSObject.Properties.Remove($_)
+        }
+      }
+    }
+    if ($PSBoundParameters.Template) {
+      # Select 'id' under 'template'
+      $PSBoundParameters.Template = $PSBoundParameters.Template | Select-Object id
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Remove-FalconNgsCaseTag {
 <#
 .SYNOPSIS
