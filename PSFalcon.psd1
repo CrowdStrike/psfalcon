@@ -726,14 +726,34 @@
   )
   CmdletsToExport = @()
   VariablesToExport = '*'
-  AliasesToExport = @('Edit-FalconHorizonAwsAccount','Edit-FalconHorizonAzureAccount','Edit-FalconHorizonPolicy',
-    'Edit-FalconHorizonSchedule','Get-FalconFimChange','Get-FalconHorizonAwsAccount','Get-FalconHorizonAwsLink',
-    'Get-FalconHorizonAzureAccount','Get-FalconHorizonAzureCertificate','Get-FalconHorizonAzureGroup',
-    'Get-FalconHorizonIoa','Get-FalconHorizonIoaEvent','Get-FalconHorizonIoaUser','Get-FalconHorizonIom',
-    'Get-FalconHorizonPolicy','Get-FalconHorizonSchedule','New-FalconHorizonAwsAccount',
-    'New-FalconHorizonAzureAccount','New-FalconHorizonAzureGroup','Receive-FalconHorizonAwsScript',
-    'Receive-FalconHorizonAzureScript','Remove-FalconHorizonAwsAccount','Remove-FalconHorizonAzureAccount',
-    'Remove-FalconHorizonAzureGroup')
+  AliasesToExport = @(
+    'Edit-FalconHorizonAwsAccount'
+    'Edit-FalconHorizonAzureAccount'
+    'Edit-FalconHorizonPolicy'
+    'Edit-FalconHorizonSchedule'
+    'Get-FalconChannelControl'
+    'Get-FalconFimChange'
+    'Get-FalconHorizonAwsAccount'
+    'Get-FalconHorizonAwsLink'
+    'Get-FalconHorizonAzureAccount'
+    'Get-FalconHorizonAzureCertificate'
+    'Get-FalconHorizonAzureGroup'
+    'Get-FalconHorizonIoa'
+    'Get-FalconHorizonIoaEvent'
+    'Get-FalconHorizonIoaUser'
+    'Get-FalconHorizonIom'
+    'Get-FalconHorizonPolicy'
+    'Get-FalconHorizonSchedule'
+    'New-FalconHorizonAwsAccount'
+    'New-FalconHorizonAzureAccount'
+    'New-FalconHorizonAzureGroup'
+    'Receive-FalconHorizonAwsScript'
+    'Receive-FalconHorizonAzureScript'
+    'Remove-FalconHorizonAwsAccount'
+    'Remove-FalconHorizonAzureAccount'
+    'Remove-FalconHorizonAzureGroup'
+    'Set-FalconChannelControl'
+  )
   PrivateData = @{
     PSData = @{
       Tags = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
