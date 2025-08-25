@@ -26,6 +26,7 @@
     'Get-FalconHostAverage'
 
     # cases
+    'Edit-FalconNgsCase'
     'Add-FalconNgsCaseEvidence'
     'Add-FalconNgsCaseTag'
     'Get-FalconNgsCase'

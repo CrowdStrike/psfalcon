@@ -1,3 +1,27 @@
+function Convert-SeverityValue {
+  [CmdletBinding()]
+  [OutputType([int32])]
+  param([string]$String)
+  process {
+    [string[]]$Allowed = 'critical','high','medium','low','informational'
+    if ($String -as [int32] -is [int32]) {
+      # Force [int32] value
+      [int32]$String
+    } elseif ($Allowed -notcontains $String) {
+      # Error when provided [string] not in list
+      throw ('Invalid "Severity" value! [{0}]' -f ((@($Allowed).foreach{ '"{0}"' -f $_ }) -join ','))
+    } else {
+      # Convert [string] value to [int32]
+      switch ($String) {
+        'critical' { 80 }
+        'high' { 60 }
+        'medium' { 40 }
+        'low' { 20 }
+        'informational' { 10 }
+      }
+    }
+  }
+}
 function Add-FalconNgsCaseEvidence {
 <#
 .SYNOPSIS
@@ -72,6 +96,96 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconNgsCaseTag
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Edit-FalconNgsCase {
+<#
+.SYNOPSIS
+Modify a Falcon NGSIEM case
+.DESCRIPTION
+Requires 'Cases: Write'.
+.PARAMETER Name
+Case name
+.PARAMETER Severity
+Case severity
+.PARAMETER Description
+Case description
+.PARAMETER Status
+Case status
+.PARAMETER CustomField
+Objects containing 'custom_fields' properties ('id', 'values')
+.PARAMETER SlaActive
+SLA status
+.PARAMETER AssignedUuid
+User identifier for case assignment
+.PARAMETER RemoveUuid
+Remove assigned user from case
+.PARAMETER Template
+Object containing case template properties ('id')
+.PARAMETER Id
+Case identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsCase
+#>
+  [CmdletBinding(DefaultParameterSetName='/cases/entities/cases/v2:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Severity,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=4)]
+    [ValidateSet('new','in_progress','reopened','closed',IgnoreCase=$false)]
+    [string]$Status,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',ValueFromPipelineByPropertyName,Position=5)]
+    [Alias('custom_fields')]
+    [object[]]$CustomField,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('slas_active')]
+    [boolean]$SlaActive,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',ValueFromPipelineByPropertyName,Position=7)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('assigned_to_user_uuid')]
+    [string]$AssignedUuid,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',ValueFromPipelineByPropertyName,Position=8)]
+    [Alias('remove_user_assignment')]
+    [boolean]$RemoveUuid,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:put',ValueFromPipelineByPropertyName,Position=9)]
+    [object]$Template,
+    [Parameter(ParameterSetName='/cases/entities/cases/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline,Position=10)]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('fields','id') }}
+    }
+  }
+  process {
+    $PSBoundParameters['fields'] = @{}
+    foreach ($p in $PSBoundParameters.GetEnumerator().Where({@('AssignedUuid','CustomField','Description','Name',
+    'RemoveUuid','Severity','SlaActive','Status','Template') -contains $_.Key})) {
+      # Move input under 'fields' object using parameter alias/name and remove existing input
+      $a = ((Get-Command $Param.Command).Parameters.($p.Key).Aliases)[0]
+      $n = if ($a) { $a } else { ($p.Key).ToLower() }
+      $PSBoundParameters.fields[$n] = if ($n -eq 'custom_fields') {
+        # Select 'id' and 'values' under 'custom_fields'
+        [PSCustomObject[]]@($p.Value | Select-Object id,values)
+      } elseif ($n -eq 'severity') {
+        # Convert [string] value to [int32]
+        Convert-SeverityValue $p.Value
+      } elseif ($n -eq 'template') {
+        # Select 'id' under 'template'
+        $p.Value | Select-Object id
+      } else {
+        $p.Value
+      }
+      [void]$PSBoundParameters.Remove($p.Key)
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Get-FalconNgsCase {
 <#
@@ -204,24 +318,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconNgsCase
         }
       }
     }
-    [string[]]$Allowed = 'critical','high','medium','low','informational'
   }
   process {
-    $PSBoundParameters.Severity = if ($PSBoundParameters.Severity -as [int32] -is [int32]) {
-      # Force [int32] value
-      [int32]$PSBoundParameters.Severity
-    } elseif ($Allowed -notcontains $PSBoundParameters.Severity) {
-      # Error when provided [string] not in list
-      throw ('Invalid "Severity" value! [{0}]' -f ((@($Allowed).foreach{ '"{0}"' -f $_ }) -join ','))
-    } else {
+    if ($PSBoundParameters.Severity) {
       # Convert [string] value to [int32]
-      switch ($PSBoundParameters.Severity) {
-        'critical' { 80 }
-        'high' { 60 }
-        'medium' { 40 }
-        'low' { 20 }
-        'informational' { 10 }
-      }
+      $PSBoundParameters.Severity = Convert-SeverityValue $PSBoundParameters.Severity
     }
     if ($PSBoundParameters.Evidence) {
       # Select 'id' value under 'alerts', 'events', and 'leads'
