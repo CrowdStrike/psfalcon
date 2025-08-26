@@ -33,8 +33,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       if ($String -match '(Exclusion|Ioc|Policy)$' -and $Select -notcontains 'HostGroup') {
         # Add identifiers for assigned 'HostGroup'
         Assert-IdList HostGroup
-        if ($Obj.groups -and $Obj.groups.id) {
-          @($Obj.groups.id).foreach{ $AddList.HostGroup.Add($_) }
+        if ($Obj.groups) {
+          if ($Obj.groups.id) {
+            @($Obj.groups.id).foreach{ $AddList.HostGroup.Add($_) }
+          } else {
+            @($Obj.groups).foreach{ $AddList.HostGroup.Add($_) }
+          }
         } elseif ($Obj.host_groups -and $Obj.host_groups.id) {
           @($Obj.host_groups.id).foreach{ $AddList.HostGroup.Add($_) }
         } elseif ($String -eq 'Ioc' -and $Obj.host_groups) {
@@ -209,9 +213,9 @@ Import selected files from archive
 .PARAMETER AssignExisting
 Assign existing host groups with identical names to imported items
 .PARAMETER ModifyDefault
-Modify default policies to match import. Use 'All' for all possible values (or all values in 'Select').
+Modify default policies to match import. Use 'All' for all possible values (or all values in 'Select')
 .PARAMETER ModifyExisting
-Modify existing items to match import. Use 'All' for all possible values (or all values in 'Select').
+Modify existing items to match import. Use 'All' for all possible values (or all values in 'Select')
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
 #>
