@@ -375,19 +375,43 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         [switch]$Result
       )
       if ($Item -eq 'ContentPolicy') {
-        [string[]]$Select = foreach ($Ras in $New.settings.ring_assignment_settings) {
-          foreach ($i in $Ras.id) {
-            # Check each 'ring_assignment_settings' for modified values using 'id' and 'ring_assignment'
-            $NewRas = @($Ras).Where({$_.id -eq $i}).ring_assignment
-            $OldRas = @($Old.settings.ring_assignment_settings).Where({$_.id -eq $i}).ring_assignment
-            if ($NewRas -ne $OldRas) {
-              # Capture result or output modified property name
-              if ($Result) { Add-Result Modified $New $Item $i $OldRas $NewRas } else { $i }
+        [string[]]$Select = foreach ($i in $New.settings.ring_assignment_settings) {
+          [PSCustomObject]$Ref = $Old.settings.ring_assignment_settings | Where-Object { $_.id -eq $i.id }
+          if ($i -and $Ref) {
+            @($i.PSObject.Properties.Name + $Ref.PSObject.Properties.Name | Select-Object -Unique).foreach{
+              if ($_ -eq 'override') {
+                if (($i.$_.value -and !$Ref.$_.value) -or (!$i.$_.value -and $Ref.$_.value) -or
+                (($i.$_.value -and $Ref.$_.value) -and ($i.$_.value -ne $Ref.$_.value))) {
+                  if ($Result) {
+                    # Capture result
+                    Add-Result Modified $New $Item ($i.id,$_,'value' -join '.') $Ref.$_.value $i.$_.value
+                  } else {
+                    # Output 'override' when 'value' does not match
+                    $_
+                  }
+                }
+              } elseif (($i.$_ -and !$Ref.$_) -or (!$i.$_ -and $Ref.$_) -or (($i.$_ -and $Ref.$_) -and
+              ($i.$_ -ne $Ref.$_))) {
+                if ($Result) {
+                  # Capture result
+                  Add-Result Modified $New $Item ($i.id,$_ -join '.') $Ref.$_ $i.$_
+                } else {
+                  # Output property name when values do not match
+                  $_
+                }
+              }
             }
+          } else {
+            # Notify when 'ring_assignment_settings' are not present on $New or $Old
+            Write-Log 'Compare-Setting' (($Item,$New.name -join ':'),
+              'Unable to compare "ring_assignment_settings"' -join "`n ")
           }
         }
-        # Output settings for modification
-        if ($Select) { $New.settings }
+        if ($Select) {
+          # Output settings for modification
+          Write-Log 'Compare-Setting' (($Item,$New.name -join ':'),($Select -join ',') -join "`n ")
+          $New.settings
+        }
       } elseif ($Item -eq 'DeviceControlPolicy') {
         if ($Result) {
           # Capture DeviceControlPolicy results
