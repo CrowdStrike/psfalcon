@@ -204,8 +204,8 @@ are included.
 If using 'Select', any dependencies are added based on your input and whether or not the 'AssignExisting' switch
 is included.
 
-Requires 'Sensor Download: Read' permission for CID comparison plus the relevant read and write permissions for
-items that are being imported.
+'Sensor Download: Read' permission is required for CID comparison in Flight Control environments, and 'Read' and
+'Write' permissions are required for all items being imported.
 .PARAMETER Path
 FalconConfig archive path
 .PARAMETER Select
