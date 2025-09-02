@@ -295,7 +295,7 @@ function Get-FalconUninstallToken {
 .SYNOPSIS
 Retrieve an uninstallation or maintenance token
 .DESCRIPTION
-Requires 'Sensor update policies: Write', plus related permission(s) for 'Include' selection(s).
+Requires 'Sensor update policies: Write', plus related permission(s) for "Include" selection(s).
 .PARAMETER AuditMessage
 Audit log comment
 .PARAMETER Include
