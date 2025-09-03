@@ -337,7 +337,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           $Notify.Add(('"{0}" for' -f $Property))
         }
         if ($Result.platform -and $Result.platform -notmatch ',' -and $Type -notmatch
-        '(FileVantage|Firewall)Rule') {
+        'ContentPolicy|(FileVantage|Firewall)Rule') {
           $Notify.Add($Result.platform)
         }
         $Notify.Add($Type)
@@ -1422,6 +1422,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
               if ($Comment) {
                 # Remove existing items from Import unless comment is specified
+                Update-Id $i $Ref $p.Key
                 Add-Result Ignored $i $p.Key -Comment $Comment
               } else {
                 # Add existing items to Modify to analyze for modification
@@ -2380,8 +2381,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         if ($i.action -eq 'Created' -and @($Config.($i.type).Cid).Where({$_.name -notmatch $PolicyDefault -and
         $_.platform_name -eq $i.platform -and $_.name -ne $i.name})) {
           # Output precedence warning when existing Policy is found under each 'platform'
-          $PSCmdlet.WriteWarning(
-            ('[Import-FalconConfig] Existing {0} {1} were found. Verify precedence!' -f $i.platform,$i.type))
+          if ($i.platform -eq 'all') {
+            $PSCmdlet.WriteWarning(
+              ('[Import-FalconConfig] Existing {0} found. Verify precedence!' -f $i.type))
+          } else {
+            $PSCmdlet.WriteWarning(
+              ('[Import-FalconConfig] Existing {0} {1} found. Verify precedence!' -f $i.platform,$i.type))
+          }
         }
       }
       foreach ($i in (@($Config.Values.Result).Where({$_.action -eq 'Modified' -and $_.type -match
