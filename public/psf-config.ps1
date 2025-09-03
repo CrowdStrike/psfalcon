@@ -581,9 +581,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             # Add policy identifier for modification
             @('exception','setting').foreach{ if ($Output.$_.Count) { $Output.$_['id'] = $Old.id } }
             $Output
-          } else {
-            # Capture ignored result
-            Add-Result Ignored $New $Item -Comment Identical
           }
         }
       } elseif ($Item -eq 'FirewallPolicy') {
@@ -1913,7 +1910,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         [PSCustomObject]$Obj,
         [PSCustomObject]$Ref
       )
-      if ($Item -eq 'FileVantagePolicy') {
+      if ($Item -eq 'DeviceControlPolicy') {
+        [string[]]$GroupId = foreach ($g in $Obj.groups) {
+          # Assign HostGroup and return 'id' for result output
+          if ($Ref.groups -notcontains $g) {
+            $Req = Invoke-PolicyAction $Item 'add-host-group' $Obj $g
+            if ($Req) { $g }
+          }
+        }
+        if ($GroupId) {
+          # Capture assigned groups
+          Add-Result Modified $Obj $Item $Property ($Ref.groups -join ',') (
+            @($Ref.groups + $GroupId) -join ',')
+        } elseif ($Ref.enabled -eq $Obj.enabled) {
+          # Capture ignored result
+          Add-Result Ignored $Obj $Item -Comment Identical
+        }
+      } elseif ($Item -eq 'FileVantagePolicy') {
         $Param = @{ ErrorAction = 'SilentlyContinue'; ErrorVariable = 'Fail' }
         if ($Property -eq 'rule_groups' -and $Obj.rule_groups) {
           # Assign FileVantageRuleGroup and capture result
@@ -1950,6 +1963,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         } elseif ($Req) {
           # Combine '$Property.$Id' values
           Add-Result Modified $Obj $Item $Property ($Ref.$Property -join ',') ($Req -join ',')
+        } elseif ($Ref.enabled -eq $Obj.enabled) {
+          # Capture ignored result
+          Add-Result Ignored $Obj $Item -Comment Identical
         }
       }
     }
