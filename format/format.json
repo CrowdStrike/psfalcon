@@ -1,4 +1,4 @@
-{
+﻿{
   "/alerts/combined/alerts/v1": {
     "post": {
       "body": {
@@ -6333,11 +6333,15 @@
       ]
     }
   },
-  "/user-management/entities/roles/v1": {
-    "get": {
+  "/user-management/entities/roles/GET/v2": {
+    "post": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      },
       "query": [
-        "cid",
-        "ids"
+        "cid"
       ]
     }
   },

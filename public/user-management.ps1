@@ -117,7 +117,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
 #>
   [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/user-management/entities/roles/GET/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Alias('ids','roles','role_id')]
     [string[]]$Id,
@@ -126,7 +126,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [Alias('user_uuid','uuid')]
     [string]$UserId,
     [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=1)]
-    [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/user-management/entities/roles/GET/v2:post',Position=2)]
     [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
     [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
