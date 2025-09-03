@@ -2376,8 +2376,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
   }
   end {
     if ($Config.Values.Result) {
-      foreach ($i in (@($Config.Values.Result).Where({$_.action -eq 'Created' -and $_.type -match 'Policy$'}) |
-      Select-Object -Property action,type,platform,name -Unique)) {
+      foreach ($i in (@($Config.Values.Result).Where({$_.action -eq 'Created' -and $_.type -match 'Policy$' -and
+      !$_.property}) | Select-Object -Property action,type,platform,name -Unique)) {
         if ($i.action -eq 'Created' -and @($Config.($i.type).Cid).Where({$_.name -notmatch $PolicyDefault -and
         $_.platform_name -eq $i.platform -and $_.name -ne $i.name})) {
           # Output precedence warning when existing Policy is found under each 'platform'
