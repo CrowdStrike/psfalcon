@@ -2408,7 +2408,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       }
       foreach ($i in (@($Config.Values.Result).Where({$_.action -eq 'Modified' -and $_.type -match
       '^(FileVantage|Firewall)Policy$' -and $_.property -match '^rule_group(_id)?s$' -and $_.old_value}) |
-      Select-Object -Property action,type,platform,name -Unique)) {
+      Select-Object -Property platform,type,name,property -Unique)) {
         # Output precedence warning when rule groups are assigned to policies with existing rule groups
         $PSCmdlet.WriteWarning(
           ('[Import-FalconConfig] {0} {1} "{2}" had existing "{3}". Verify precedence!' -f $i.platform,
