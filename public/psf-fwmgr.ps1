@@ -15,7 +15,7 @@ A hashtable containing the following keys with the corresponding CSV column or r
 default map will be used if one is not provided.
 
 Mandatory: action, description, direction, enabled, local_address, name, protocol, remote_address
-Optional: fqdn, fqdn_enabled, image_name, local_port, network_location, remote_port, service_name
+Optional: fqdn, fqdn_enabled, image_name, local_port, network_location, platform_ids, remote_port, service_name
 .PARAMETER Path
 Path to a CSV file containing rules to convert
 .PARAMETER Object
@@ -198,6 +198,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
             local_address = @(New-RuleAddress $Obj.($UserMap.local_address) $Obj.($UserMap.name))
             local_port = @(New-RulePort $Obj.($UserMap.local_port))
             name = $Obj.($UserMap.name)
+            platform_ids = @($Obj.($UserMap.platform_ids))
             protocol = $Protocol
             remote_address = @(New-RuleAddress $Obj.($UserMap.remote_address) $Obj.($UserMap.name))
             remote_port = @(New-RulePort $Obj.($UserMap.remote_port))
@@ -231,8 +232,8 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
     # Properties evaluated for rule creation
     [string[]]$Mandatory = 'action','description','direction','enabled','local_address','name','protocol',
       'remote_address'
-    [string[]]$Optional = 'fqdn','fqdn_enabled','image_name','local_port','network_location','remote_port',
-      'service_name'
+    [string[]]$Optional = 'fqdn','fqdn_enabled','image_name','local_port','network_location','platform_ids',
+      'remote_port','service_name'
     $Regex = @{
       # Regex patterns to use when checking rule content
       Any = '^(any|\*)$'
