@@ -459,7 +459,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                   Add-Result Modified $New $Item ($c.class,'action' -join '.') $RefC.action $c.action
                 }
                 foreach ($e in $c.exceptions) {
-                  # Compare exclusions to find new or modified results
+                  # Compare exceptions to find new or modified results
                   $Filter = Write-SelectFilter $e DeviceControlException
                   if ($Filter) {
                     # Compare new exceptions against existing exceptions in target DeviceControlPolicy
@@ -1127,34 +1127,52 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         } elseif ($Ref -and $Item -match '^(Ioa|Ml|Sv)Exclusion$') {
+          [System.Collections.Generic.List[string]]$PropList = @()
+          if ($Ref.id -ne $Obj.id) {
+            # Update identifier
+            Write-Log 'Edit-Item' ($Item,([PSCustomObject]@{old=$Obj.id;new=$Ref.id} | Format-List |
+              Out-String).Trim() -join "`n")
+            Set-Property $Obj id $Ref.id
+          }
           # Verify 'applied_globally' and 'groups' values
           Update-Exclusion $Obj $Item $Config.HostGroup.Ref
-          [string[]]$PropList = if ($Ref.is_descendant_process -ne $Obj.is_descendant_process) {
-            'is_descendant_process'
-          } elseif ($Ref.applied_globally -ne $Obj.applied_globally) {
-            'applied_globally'
-          } elseif ($Ref.applied_globally -eq $false) {
-            if (($Obj.groups -and $Ref.groups -and (Compare-Object $Ref.groups.id $Obj.groups.id)) -or
-            ($Obj.groups -and !$Ref.groups)) {
-              # HostGroup identifiers don't match
-              'groups'
+          if ($Item -eq 'IoaExclusion') {
+            # Compare properties specific to 'IoaExclusion'
+            @('cl_regex','ifn_regex','pattern_id','pattern_name').foreach{
+              if ($Ref.$_ -ne $Obj.$_) { $PropList.Add($_) }
             }
           }
-          if ($PropList -and $Obj.groups) {
-            # Update identifier with value from CID and modify exclusion
-            if ($New.id -ne $Obj.id) {
-              Write-Log 'Edit-Item' ($Item,([PSCustomObject]@{old=$Obj.id;new=$Ref.id} | Format-List |
-                Out-String).Trim() -join "`n")
-              Set-Property $Obj id $Ref.id
+          if ($Item -eq 'MlExclusion') {
+            # Compare properties specific to 'MlExclusion'
+            if (Compare-Object $Ref.excluded_from $Obj.excluded_from) { $PropList.Add('excluded_from') }
+            if ($Ref.is_descendant_process -ne $Obj.is_descendant_process) {
+              $PropList.Add('is_descendant_process')
             }
+          }
+          if ($Item -eq 'SvExclusion' -and $Ref.is_descendant_process -ne $Obj.is_descendant_process) {
+            # Compare properties specific to 'SvExclusion'
+            $PropList.Add('is_descendant_process')
+          }
+          if ($Ref.applied_globally -ne $Obj.applied_globally) {
+            # Compare 'applied_globally'
+            $PropList.Add('applied_globally')
+          }
+          if (($Obj.groups -and !$Ref.groups) -or (!$Obj.groups -and $Ref.groups) -or ($Obj.groups -and
+          $Ref.groups -and (Compare-Object $Ref.groups.id $Obj.groups.id))) {
+            # HostGroup identifiers don't match
+            $PropList.Add('groups')
+          }
+          if ($PropList) {
+            # Update identifier with value from CID and modify exclusion
             $Req = $Obj | & "Edit-Falcon$Item" @Param
             if ($Req) {
               @($PropList).foreach{
-                # Capture modified properties
                 if ($_ -eq 'groups') {
+                  # Capture modified 'groups' identifiers
                   Add-Result Modified $Req $Item $_ ($Ref.$_.id -join ',') ($Req.$_.id -join ',')
                 } else {
-                  Add-Result Modified $Req $Item $_ $Ref.$_ $Req.$_
+                  # Capture modified properties
+                  Add-Result Modified $Req $Item $_ ($Ref.$_ -join ',') ($Req.$_ -join ',')
                 }
               }
             } elseif ($Fail) {
