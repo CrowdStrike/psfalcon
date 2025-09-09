@@ -59,6 +59,8 @@ RegEx pattern value
 Host group identifier or 'all' to apply to all hosts
 .PARAMETER DescendantProcess
 Apply to descendant processes
+.PARAMETER ExcludedFrom
+Actions to exclude
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -81,6 +83,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
     [boolean]$DescendantProcess,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=4)]
+    [ValidateSet('blocking','extraction',IgnoreCase=$false)]
+    [Alias('excluded_from')]
+    [string[]]$ExcludedFrom,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=5)]

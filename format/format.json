@@ -4958,6 +4958,7 @@
       "body": {
         "root": [
           "comment",
+          "excluded_from",
           "groups",
           "id",
           "is_descendant_process",
