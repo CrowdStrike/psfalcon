@@ -1014,20 +1014,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
         } elseif ($Ref -and $Item -eq 'HostGroup') {
           # Modify HostGroup
-          [string[]]$PropList = if ($Obj.description -ne $Ref.description) {
-            # Check for modified 'description'
-            'description'
-          } elseif ($Obj.group_type -eq 'static' -and $Obj.assignment_rule -match '(device_id:|hostname:)') {
+          [System.Collections.Generic.List[string]]$PropList = @()
+          if ($Ref.id -ne $Obj.id) {
+            # Update identifier to match reference HostGroup
+            Update-Id $Obj $Ref $Item
+          }
+          if ($Obj.group_type -eq 'static') {
             # Compare hostname lists using 'assignment_rule' and output 'assignment_rule' if different
             [string[]]$ObjH = @($Obj.assignment_rule -split '(device_id:|hostname:)').Where({
               $_ -match '\[.+\]'}) -replace "^\[|'|\],?$" -split ','
             [string[]]$RefH = @($Ref.assignment_rule -split '(device_id:|hostname:)').Where({
               $_ -match '\[.+\]'}) -replace "^\[|'|\],?$" -split ','
-            if (Compare-Object $ObjH $RefH) { 'assignment_rule' }
+            if (Compare-Object $ObjH $RefH) { $PropList.Add('assignment_rule') }
+          } elseif ($Ref.assignment_rule -ne $Obj.assignment_rule) {
+            # Compare 'assignment_rule'
+            $PropList.Add('assignment_rule')
           }
+          # Check for modified 'description'
+          if ($Obj.description -ne $Ref.description) { $PropList.Add('description') }
           if ($PropList) {
-            # Update identifier to match reference HostGroup
-            if ($Obj.id -ne $Ref.id) { Update-Id $Obj $Ref $Item }
             $Req = $Obj | Edit-FalconHostGroup @Param
             if ($Req) {
               # Capture individual modified property results
