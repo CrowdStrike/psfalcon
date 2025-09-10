@@ -111,7 +111,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
       @($InputObject).foreach{
         # Filter to defined 'indicators' properties and remove empty values
         $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.indicators
-        Remove-EmptyValue $i comment,expiration,tag
+        Remove-EmptyValue $i comment,expiration,tags
         $List.Add($i)
       }
     } else {
