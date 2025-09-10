@@ -1165,7 +1165,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
           if ($PropList) {
             # Modify Ioc
-            $Req = $Obj | & "Edit-Falcon$Item" @Param
+            $Req = $Obj | Edit-FalconIoc @Param
             if ($Req) {
               # Capture modified properties
               @($PropList).foreach{ Add-Result Modified $Req $Item $_ ($Ref.$_ -join ',') ($Req.$_ -join ',') }
@@ -1235,22 +1235,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             Add-Result Ignored $Obj $Item -Comment Identical
           }
         } elseif ($Ref -and $Item -eq 'Script') {
+          [System.Collections.Generic.List[string]]$PropList = @()
+          if ($Ref.id -ne $Obj.id) {
+            # Update identifier
+            Write-Log 'Edit-Item' ($Item,([PSCustomObject]@{old=$Obj.id;new=$Ref.id} |
+              Format-List | Out-String).Trim() -join "`n")
+            Set-Property $Obj id $Ref.id
+          }
           # Check Script properties
-          [string[]]$PropList = if ($Obj.permission_type -ne $Ref.permission_type) {
-            'permission_type'
-          } elseif ($Obj.sha256 -ne $Ref.sha256) {
-            'content'
+          if ($Obj.permission_type -ne $Ref.permission_type) {
+            $PropList.Add('permission_type')
+          }
+          if ($Obj.sha256 -ne $Ref.sha256) {
+            $PropList.Add('content')
           }
           if ($PropList) {
-            # Update identifier with value from CID and modify Script
-            Set-Property $Obj id $Ref.id
             # Modify Script
             $Req = $Obj | Edit-FalconScript @Param
             if ($Req) {
               @($PropList).foreach{
                 if ($_ -eq 'content') {
                   # Exclude 'old_value' and 'new_value' for 'content'
-                  Add-Result Modified $Obj Script content -Comment 'Uploaded content'
+                  Add-Result Modified $Obj Script content -Comment 'Uploaded script content from archive'
                 } else {
                   # Capture individual modified property results
                   Add-Result Modified $Obj Script $_ $Ref.$_ $Obj.$_
