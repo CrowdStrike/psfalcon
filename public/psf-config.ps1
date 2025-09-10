@@ -1061,7 +1061,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                         $Old = $v | Select-Object label,value | ConvertTo-Json -Compress
                         $New = @($Fv.values).Where({$_.label.Equals($v.label)}) | Select-Object label,value |
                           ConvertTo-Json -Compress
-                        if (Compare-Object $Old $New) {
+                        if ($Old -and $New -and (Compare-Object $Old $New)) {
                           # Capture 'field_values' as a simple Json for result output
                           @{
                             property = 'field_values'
