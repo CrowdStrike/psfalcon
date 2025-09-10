@@ -50,7 +50,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=1)]
     [string]$Action,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=2)]
-    [Alias('Platforms')]
+    [Alias('platforms')]
     [string[]]$Platform,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=3)]
     [string]$Severity,
