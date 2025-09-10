@@ -1131,6 +1131,52 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
             }
           }
+        } elseif ($Ref -and $Item -eq 'Ioc') {
+          [System.Collections.Generic.List[string]]$PropList = @()
+          if ($Ref.id -ne $Obj.id) {
+            # Update identifier
+            Write-Log 'Edit-Item' ($Item,([PSCustomObject]@{old=$Obj.id;new=$Ref.id} |
+              Format-List | Out-String).Trim() -join "`n")
+            Set-Property $Obj id $Ref.id
+          }
+          if ($Obj.applied_globally -eq $true) {
+            # Convert 'groups' to 'all' when 'applied_globally' is true
+            Set-Property $Obj host_groups @('all')
+            Write-Log 'Edit-Item' ('Changed "host_groups" for {0} "{1}" to "all"' -f $Item,$Obj.id)
+          } elseif ($Obj.host_groups) {
+            foreach ($i in $Obj.host_groups) {
+              # Update assigned HostGroup with new identifiers or remove existing group
+              $gRef = @($Config.HostGroup.Ref).Where({$_.old -eq $i})
+              if ($gRef -and $i -ne $gRef.new) {
+                Write-Log 'Edit-Item' "$((($Item,'host_groups' -join '.'),$Obj.id -join ': '),
+                  ([PSCustomObject]@{old=$i;new=$gRef.new} | Format-List | Out-String).Trim() -join "`n")"
+                $Obj.host_groups = $Obj.host_groups -replace $i,$gRef.new
+              } elseif (!$gRef) {
+                Write-Log 'Edit-Item' ('Removed group identifier "{0}" from {1} "{2}"' -f $i,$Item,$Obj.id)
+              }
+            }
+          }
+          @('action','applied_globally','host_groups','mobile_action','platforms','severity','tags').foreach{
+            # Compare properties to find modified values
+            if (($Ref.$_ -and !$Obj.$_) -or (!$Ref.$_ -and $Obj.$_) -or ($Ref.$_ -and $Obj.$_ -and
+            (Compare-Object $Ref.$_ $Obj.$_))) {
+              $PropList.Add($_)
+            }
+          }
+          if ($PropList) {
+            # Modify Ioc
+            $Req = $Obj | & "Edit-Falcon$Item" @Param
+            if ($Req) {
+              # Capture modified properties
+              @($PropList).foreach{ Add-Result Modified $Req $Item $_ ($Ref.$_ -join ',') ($Req.$_ -join ',') }
+            } elseif ($Fail) {
+              # Capture failure to modify exclusion
+              Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
+            }
+          } else {
+            # Add ignored result
+            Add-Result Ignored $Obj $Item -Comment Identical
+          }
         } elseif ($Ref -and $Item -match '^(Ioa|Ml|Sv)Exclusion$') {
           [System.Collections.Generic.List[string]]$PropList = @()
           if ($Ref.id -ne $Obj.id) {
@@ -1168,7 +1214,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             $PropList.Add('groups')
           }
           if ($PropList) {
-            # Update identifier with value from CID and modify exclusion
+            # Modify exclusion
             $Req = $Obj | & "Edit-Falcon$Item" @Param
             if ($Req) {
               @($PropList).foreach{
@@ -1184,7 +1230,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               # Capture failure to modify exclusion
               Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
             }
-          } elseif (!$PropList) {
+          } else {
             # Add ignored result
             Add-Result Ignored $Obj $Item -Comment Identical
           }
