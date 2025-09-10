@@ -629,46 +629,39 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         # Output settings to be modified by property name
         if ($Select) { $New.settings | Select-Object $Select }
       } elseif ($Item -match 'Policy$') {
-        # Compare modified policy settings with 'id' and 'value' sub-properties
-        $NewArr = $New.settings
-        $OldArr = $Old.settings
-        if ($OldArr -or $Result) {
-          foreach ($i in $NewArr) {
-            if ($i.value.PSObject.Properties.Name -eq 'enabled') {
-              if ($OldArr.Where({$_.id -eq $i.id}).value.enabled -ne $i.value.enabled) {
-                if ($Result) {
-                  # Capture modified result for boolean settings
-                  Add-Result Modified $New $Item $i.id $OldArr.Where({$_.id -eq
-                    $i.id}).value.enabled $i.value.enabled
-                } else {
-                  # Output setting to be modified
-                  Write-Log 'Compare-Setting' (($Item,$New.id -join ': '),([PSCustomObject]@{id=$i.id;old=(
-                    $OldArr.Where({$_.id -eq $i.id}).value | ConvertTo-Json -Compress);new=($i.value |
-                    ConvertTo-Json -Compress)} | Format-List | Out-String).Trim() -join "`n")
-                  $i | Select-Object id,value
-                }
-              }
-            } else {
-              foreach ($n in $i.value.PSObject.Properties.Name) {
-                if ($OldArr.Where({$_.id -eq $i.id}).value.$n -ne $i.value.$n) {
-                  if ($Result) {
-                    # Capture modified result for sub-settings
-                    Add-Result Modified $New $Item ($i.id,$n -join ':') @($OldArr).Where({$_.id -eq
-                      $i.id}).value.$n $Item.value.$n
-                  } else {
-                    # Output setting to be modified
-                    Write-Log 'Compare-Setting' (($Item,$New.id -join ': '),([PSCustomObject]@{id=$i.id;old=(
-                      $OldArr.Where({$_.id -eq $i.id}).value | ConvertTo-Json -Compress);new=($i.value |
-                      ConvertTo-Json -Compress)} | Format-List | Out-String).Trim() -join "`n")
-                    $i | Select-Object id,value
+        if ($Old.settings -or $Result) {
+          # Compare modified policy settings with 'id' and 'value'
+          [System.Collections.Generic.List[string]]$PropList = @()
+          foreach ($i in $New.settings) {
+            # Compare expected sub-properties 'configured', 'enabled', 'detection', and 'prevention'
+            $NewV = $i.value | Select-Object detection,prevention,@{l='configured';e={[boolean]$_.configured}},
+              @{l='enabled';e={[boolean]$_.enabled}}
+            $OldV = $Old.settings.Where({$_.id -eq $i.id}).value | Select-Object detection,prevention,
+              @{l='configured';e={[boolean]$_.configured}},@{l='enabled';e={[boolean]$_.enabled}}
+            if (($OldV | ConvertTo-Json -Compress) -ne ($NewV | ConvertTo-Json -Compress)) {
+              if ($Result) {
+                # Capture result for modified setting
+                @('detection','prevention','configured','enabled').foreach{
+                  if ($OldV.$_ -ne $NewV.$_) {
+                    Add-Result Modified $New $Item ($i.id,$_ -join '.') $OldV.$_ $NewV.$_
                   }
                 }
+              } else {
+                # Output setting to be modified
+                $PropList.Add($i.id)
               }
             }
           }
+          if ($PropList) {
+            # Output settings with differing values
+            @($New.settings).Where({$PropList -contains $_.id}) | Select-Object id,value
+          }
+        } elseif ($New.settings.id) {
+          # Output new settings when 'id' sub-properties are present
+          $New.settings | Select-Object id,value
         } else {
           # Output new settings
-          if ($NewArr.id) { $NewArr | Select-Object id,value } else { $NewArr }
+          $New.settings
         }
       } elseif ($Result) {
         # Compare other modified item properties
@@ -1282,6 +1275,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       $Param = @{ ErrorAction = 'SilentlyContinue'; ErrorVariable = 'Fail' }
       if ($Obj) {
         # Update identifier to match reference policy
+        if ($Ref.id -ne $Obj.id) { Update-Id $Obj $Ref $Item }
         if ($Item -eq 'DeviceControlPolicy') {
           $Edit = Compare-Setting $Obj $Ref $Item
           if ($Edit.setting.Count) {
@@ -1308,8 +1302,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         } elseif ($Item -eq 'FileVantagePolicy') {
-          # Update policy identifier
-          if ($Obj.id -ne $Ref.id) { Update-Id $Obj $Ref $Item }
           if ($Obj.exclusions) {
             foreach ($e in $Obj.exclusions) {
               # Check for existing matching exclusion
@@ -1383,10 +1375,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         } elseif ($Obj.settings) {
           if ($Item -eq 'FirewallPolicy') {
             if ($Obj.settings) {
-              if ($Obj.id -ne $Ref.id) {
-                # Update policy identifier
-                Update-Id $Obj $Ref $Item
-              }
               if ($Obj.settings.policy_id -ne $Ref.id) {
                 # Update 'policy_id' under 'settings'
                 Set-Property $Obj.settings policy_id $Ref.id
@@ -1415,7 +1403,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             $Edit = Compare-Setting $Obj $Ref $Item
             if ($Edit) {
               # Modify Policy and capture result
-              if ($Obj.id -ne $Ref.id) { Update-Id $Obj $Ref $Item }
               $Req = & "Edit-Falcon$Item" -Id $Obj.id -Setting $Edit @Param
               if ($Req) {
                 # Capture each modified property
@@ -1427,8 +1414,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         }
-        # Update policy identifier for modifying 'groups' and 'enabled'
-        if ($Obj.id -ne $Ref.id) { Update-Id $Obj $Ref $Item }
         if ($Item -eq 'PreventionPolicy') {
           if ($Obj.ioa_rule_groups) {
             # Update IoaGroup identifiers and assign to PreventionPolicy
@@ -2039,8 +2024,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           # Combine '$Property.$Id' values
           Add-Result Modified $Obj $Item $Property ($Ref.$Property -join ',') ($Req -join ',')
         } elseif ($Ref.enabled -eq $Obj.enabled) {
-          # Capture ignored result
-          Add-Result Ignored $Obj $Item -Comment Identical
+          if (!@($Config.$Item.Result).Where({$_.id -eq $Obj.id -and ($_.action -eq 'Modified' -or
+          $_.action -eq 'Ignored')})) {
+            # Add ignored result when nothing is modified for a given policy
+            Add-Result Ignored $Obj $Item -Comment Identical
+          }
         }
       }
     }
