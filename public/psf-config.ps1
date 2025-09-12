@@ -966,28 +966,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
         } elseif ($Ref -and $Item -eq 'FirewallGroup') {
-          ## need to add FirewallRule evaluation
-          #@('id','name','enabled','rule_ids').Where({$_ -ne 'id'}).foreach{
-          #  [object]$Diff = if ($null -ne $Item.$_ -and $null -ne $Cid.$_) {
-          #    # Compare properties that exist in both Modify and CID
-          #    if ($p.Key -eq 'FirewallGroup' -and $_ -eq 'rule_ids') {
-          #      if ($Item.rule_ids) {
-          #       # Select FirewallRule from import using 'family' as 'id' value
-          #       [object[]]$FwRule = foreach ($Rule in $Item.rule_ids) {
-          #         $Config.FirewallRule.Import | Where-Object { $_.family -eq $Rule -and
-          #           $_.deleted -eq $false }
-          #       }
-          #       if ($FwRule) {
-          #         # Evaluate rules for modification
-          #       }
-          #      }
-          #    }
-          #  }
-          #  # Output properties that differ, or are not present in CID
-          #  if ($Diff -or ($null -ne $Item.$_ -and $null -eq $Cid.$_)) { $m.Add($_) }
-          #}
-          # Output items with properties to be modified and remove from Modify list
-          #if ($m.Count -gt 1) { $Item | Select-Object $m }
+          Update-Id $Obj $Ref $Item
+          if ($Ref.enabled -ne $Obj.enabled) {
+            # Create 'DiffOperations' for FirewallGroup enablement
+            $Req = $Ref | Edit-FalconFirewallGroup -DiffOperation @{
+              op = 'replace'
+              path = "/enabled"
+              value = $Obj.enabled
+            } @Param
+            if ($Req) {
+              # Capture individual modified property results
+              Add-Result Modified $Ref $Item enabled $Ref.enabled $Obj.enabled
+            } elseif ($Fail) {
+              # Capture failure to modify FirewallLocation
+              Add-Result Failed $Ref $Item -Comment $Fail.exception.message -Log 'to modify'
+            }
+          }
         } elseif ($Ref -and $Item -eq 'FirewallLocation') {
           $Comp = Compare-FalconFirewallLocation -Reference $Ref -Object $Obj
           if ($Comp) {
