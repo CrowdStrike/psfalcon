@@ -1372,45 +1372,45 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
             }
           }
-        } elseif ($Obj.settings) {
-          if ($Item -eq 'FirewallPolicy') {
-            if ($Obj.settings) {
-              if ($Obj.settings.policy_id -ne $Ref.id) {
-                # Update 'policy_id' under 'settings'
-                Set-Property $Obj.settings policy_id $Ref.id
-              }
-              if ($Obj.settings.rule_group_ids) {
-                # Update 'rule_group_ids'
-                $Obj.settings.rule_group_ids = [string[]](
-                  Update-GroupId $Obj.settings.rule_group_ids FirewallPolicy rule_group_ids)
-              }
-              if ((Compare-Setting $Obj $Ref $Item) -contains $true) {
-                # Modify 'settings'
-                $Req = $Obj.settings | Edit-FalconFirewallSetting @Param
-                if ($Req) {
-                  # Capture FirewallSetting result
-                  Compare-Setting $Obj $Ref $Item -Result
-                } elseif ($Fail) {
-                  # Capture failure to modify FirewallPolicy
-                  Add-Result Failed $Obj FirewallPolicy -Comment $Fail.exception.message -Log 'to modify'
-                }
-              } else {
-                # Add 'ignored' result
-                Add-Result Ignored $Obj FirewallPolicy -Comment Identical
-              }
+        } elseif ($Item -eq 'FirewallPolicy') {
+          if ($Ref.settings.policy_id -ne $Obj.settings.policy_id) {
+            # Update 'policy_id' under 'settings'
+            Set-Property $Obj.settings policy_id $Ref.settings.policy_id
+          }
+          if ($Obj.settings.rule_group_ids) {
+            # Update 'rule_group_ids'
+            $Obj.settings.rule_group_ids = [string[]](
+              Update-GroupId $Obj.settings.rule_group_ids FirewallPolicy rule_group_ids)
+          }
+          if ($null -eq $Obj.settings.rule_group_ids) {
+            # Ensure empty array is submitted for 'rule_group_ids' if no identifiers are present
+            $Obj.settings.rule_group_ids = @()
+          }
+          if ((Compare-Setting $Obj $Ref $Item) -contains $true) {
+            # Modify 'settings'
+            $Req = $Obj.settings | Edit-FalconFirewallSetting @Param
+            if ($Req) {
+              # Capture FirewallSetting result
+              Compare-Setting $Obj $Ref $Item -Result
+            } elseif ($Fail) {
+              # Capture failure to modify FirewallPolicy
+              Add-Result Failed $Obj FirewallPolicy -Comment $Fail.exception.message -Log 'to modify'
             }
           } else {
-            $Edit = Compare-Setting $Obj $Ref $Item
-            if ($Edit) {
-              # Modify Policy and capture result
-              $Req = & "Edit-Falcon$Item" -Id $Obj.id -Setting $Edit @Param
-              if ($Req) {
-                # Capture each modified property
-                Compare-Setting (Compress-Object $Req $Item) $Ref $Item -Result
-              } elseif ($Fail) {
-                # Capture failure to modify Policy
-                Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
-              }
+            # Add 'ignored' result
+            Add-Result Ignored $Obj FirewallPolicy -Comment Identical
+          }
+        } elseif ($Obj.settings) {
+          $Edit = Compare-Setting $Obj $Ref $Item
+          if ($Edit) {
+            # Modify Policy and capture result
+            $Req = & "Edit-Falcon$Item" -Id $Obj.id -Setting $Edit @Param
+            if ($Req) {
+              # Capture each modified property
+              Compare-Setting (Compress-Object $Req $Item) $Ref $Item -Result
+            } elseif ($Fail) {
+              # Capture failure to modify Policy
+              Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
             }
           }
         }
@@ -2058,7 +2058,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
     }
     function Update-GroupId {
       param(
-        [PSCustomObject[]]$Obj,
+        [object[]]$Obj,
         [string]$Item,
         [string]$Type
       )
@@ -2253,7 +2253,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           }
           if ($Output) {
             # Add 'cid' if 'TargetCid' matches, then create FilterScript
-            if ($HomeCid -and $Obj.cid -eq $HomeCid) { $Output += '$_.cid -eq "{0}"' -f $Obj.cid }
+            if ($HomeCid -and $Obj.cid -eq $HomeCid -and @($Config.$Item.Ref).Where({$_.cid})) {
+              $Output += '$_.cid -eq "{0}"' -f $Obj.cid
+            }
             [scriptblock]::Create(($Output -join ' -and '))
           } else {
             # Log when filter is not created
@@ -2480,7 +2482,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       if (@($Config.Values.Result).Where({$_.action -eq 'Created' -and $_.type -eq 'FirewallLocation'}) -and
       $Config.FirewallLocation.Cid) {
         # Output precedence warning for existing 'FirewallLocation'
-          $PSCmdlet.WriteWarning('[Import-FalconConfig] Existing FirewallLocation found. Verify precedence!')
+        $PSCmdlet.WriteWarning('[Import-FalconConfig] Existing FirewallLocation found. Verify precedence!')
       }
     }
     if (Test-Path $OutputFile) { Get-ChildItem $OutputFile | Select-Object FullName,Length,LastWriteTime }
