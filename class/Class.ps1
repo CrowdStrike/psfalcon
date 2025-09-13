@@ -7,8 +7,8 @@ class ApiClient {
     $this.Collector = $null
     $this.Handler = [System.Net.Http.HttpClientHandler]::New()
     $this.Client = [System.Net.Http.HttpClient]::New($this.Handler)
-    $this.Client.Timeout = [System.TimeSpan]::New(0,5,30)
-    $this.UserAgent = 'crowdstrike-psfalcon/2.2.7'
+    $this.Client.Timeout = [System.TimeSpan]::New(0,10,0)
+    $this.UserAgent = 'crowdstrike-psfalcon/2.2.9'
   }
   [string] Path([string]$Path) {
     $Output = if (![IO.Path]::IsPathRooted($Path)) {
@@ -36,19 +36,24 @@ class ApiClient {
         # Create Formdata message
         $Message.Content = [System.Net.Http.MultipartFormDataContent]::New()
         $Param.Formdata.GetEnumerator().foreach{
-          $Verbose = if ($_.Key -match '^((data_)?file|upfile)$') {
+          $Verbose = if ($_.Key -match '^((data_)?file|upfile|yaml_template)$') {
             # With 'file' or 'upfile', create StreamContent from key/value pair
             $FileStream = [System.IO.FileStream]::New($this.Path($_.Value),[System.IO.FileMode]::Open)
             $Filename = [System.IO.Path]::GetFileName($this.Path($_.Value))
             $StreamContent = [System.Net.Http.StreamContent]::New($FileStream)
             $FileType = $this.StreamType($Filename)
-            if ($FileType) { $StreamContent.Headers.ContentType = $FileType }
+            if ($FileType) {
+              # Add StreamContent with ContentType to verbose output
+              $StreamContent.Headers.ContentType = $FileType
+              "$($_.Key)=<StreamContent>","ContentType=$FileType" -join ', '
+            } else {
+              "$($_.Key)=<StreamContent>"
+            }
             $Message.Content.Add($StreamContent,$_.Key,$Filename)
-            @($_.Key,'<StreamContent>') -join '='
           } else {
             # Add StringContent for other Formdata key/value pairs
             $Message.Content.Add([System.Net.Http.StringContent]::New($_.Value),$_.Key)
-            @($_.Key,$_.Value) -join '='
+            "$($_.Key)=$($_.Value)"
           }
           $this.Verbose('ApiClient.Invoke',($Verbose -join ', '))
         }
@@ -74,11 +79,17 @@ class ApiClient {
       }
       if ($Request -and $Param.Outfile) {
         try {
-          # Download file to provided 'OutFile' path and display file information when successful
-          $LocalPath = $this.Path($Param.Outfile)
-          $this.Verbose('ApiClient.Invoke',"Creating '$LocalPath'.")
-          [System.IO.File]::WriteAllBytes($LocalPath,$Request.Result)
-          if (Test-Path $LocalPath) { Get-ChildItem $LocalPath | Select-Object FullName,Length,LastWriteTime }
+          if ($Request.Result) {
+            # Download file to provided 'OutFile' path and display file information when successful
+            $LocalPath = $this.Path($Param.Outfile)
+            $this.Verbose('ApiClient.Invoke',('Creating "{0}"' -f $LocalPath))
+            [System.IO.File]::WriteAllBytes($LocalPath,$Request.Result)
+            if (Test-Path $LocalPath) { Get-ChildItem $LocalPath | Select-Object FullName,Length,LastWriteTime }
+          } else {
+            # Return null when no ByteArray is available for download
+            $this.Verbose('ApiClient.Invoke','Empty ByteArray!')
+            $null
+          }
         } catch {
           throw $_
         } finally {

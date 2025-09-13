@@ -25,7 +25,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconConfigAssessment
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/configuration-assessment/combined/assessments/v1:get',Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/configuration-assessment/combined/assessments/v1:get',Position=2)]
     [ValidateSet('finding.evaluation_logic','finding.rule','host',IgnoreCase=$false)]

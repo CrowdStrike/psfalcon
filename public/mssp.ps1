@@ -439,7 +439,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMemberCid
     [Alias('ids','child_cid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/mssp/queries/children/v1:get',Position=2)]
     [ValidateSet('last_modified_timestamp.asc','last_modified_timestamp.desc',IgnoreCase=$false)]

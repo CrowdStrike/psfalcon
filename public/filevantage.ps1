@@ -491,7 +491,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageAction
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/filevantage/queries/actions/v1:get',Position=2)]
     [string]$Sort,
@@ -555,7 +555,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/filevantage/queries/changes/v3:get',Position=2)]
     [ValidateSet('action_timestamp|asc','action_timestamp|desc','ingestion_timestamp|asc',

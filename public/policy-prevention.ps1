@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/prevention/v1:patch' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
@@ -57,6 +57,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
   }
   end {
     if ($List) {
+      # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
@@ -102,7 +103,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicy
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/prevention/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/prevention/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/combined/prevention/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/queries/prevention/v1:get',Position=2)]
@@ -182,7 +183,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPreventionPolicyMember
     [string]$Id,
     [Parameter(ParameterSetName='/policy/queries/prevention-members/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/combined/prevention-members/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/prevention-members/v1:get',Position=3)]
     [Parameter(ParameterSetName='/policy/combined/prevention-members/v1:get',Position=3)]
@@ -300,7 +301,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/prevention/v1:post' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
@@ -320,6 +321,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
   }
   end {
     if ($List) {
+      # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {

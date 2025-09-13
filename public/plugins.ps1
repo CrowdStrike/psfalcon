@@ -18,7 +18,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowIntegration
   [CmdletBinding(DefaultParameterSetName='/plugins/combined/configs/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/plugins/combined/configs/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/plugins/combined/configs/v1:get',Position=2)]
     [string]$Sort,

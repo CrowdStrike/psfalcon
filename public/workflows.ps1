@@ -1,7 +1,7 @@
 function Export-FalconWorkflow {
 <#
 .SYNOPSIS
-Export a Falcon Fusion workflow YAML
+Export a Falcon Fusion SOAR workflow YAML
 .DESCRIPTION
 Requires 'Workflow: Read'.
 .PARAMETER Sanitize
@@ -58,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconWorkflow
 function Get-FalconWorkflow {
 <#
 .SYNOPSIS
-Search for Falcon Fusion workflows
+Search for Falcon Fusion SOAR workflows
 .DESCRIPTION
 Requires 'Workflow: Read'.
 .PARAMETER Id
@@ -89,7 +89,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
     [string[]]$Id,
     [Parameter(ParameterSetName='/workflows/combined/definitions/v1:get',Position=1)]
     [Parameter(ParameterSetName='/workflows/combined/executions/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/workflows/combined/definitions/v1:get',Position=2)]
     [Parameter(ParameterSetName='/workflows/combined/executions/v1:get',Position=2)]
@@ -128,7 +128,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
 function Get-FalconWorkflowAction {
 <#
 .SYNOPSIS
-Search for Falcon Fusion workflow actions
+Search for Falcon Fusion SOAR workflow actions
 .DESCRIPTION
 Requires 'Workflow: Read'.
 .PARAMETER Filter
@@ -149,17 +149,26 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowAction
   [CmdletBinding(DefaultParameterSetName='/workflows/combined/activities/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/workflows/combined/activities/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/workflows/combined/activities/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get',Position=2)]
     [string]$Sort,
     [Parameter(ParameterSetName='/workflows/combined/activities/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get',Position=3)]
+    [ValidateRange(1,500)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/workflows/combined/activities/v1:get')]
+    [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get')]
     [string]$Offset,
+    [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get',Mandatory)]
+    [switch]$Library,
     [Parameter(ParameterSetName='/workflows/combined/activities/v1:get')]
+    [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/workflows/combined/activities/v1:get')]
+    [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get')]
     [switch]$Total
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -168,7 +177,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowAction
 function Get-FalconWorkflowInput {
 <#
 .SYNOPSIS
-Retrieve information about Falcon Fusion workflow human inputs
+Retrieve information about Falcon Fusion SOAR workflow human inputs
 .DESCRIPTION
 Requires 'Workflow: Read'.
 .PARAMETER Id
@@ -199,7 +208,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowInput
 function Get-FalconWorkflowTrigger {
 <#
 .SYNOPSIS
-Search for Falcon Fusion workflow triggers
+Search for Falcon Fusion SOAR workflow triggers
 .DESCRIPTION
 Requires 'Workflow: Read'.
 .PARAMETER Filter
@@ -210,7 +219,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowTrigger
   [CmdletBinding(DefaultParameterSetName='/workflows/combined/triggers/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/workflows/combined/triggers/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -219,7 +228,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowTrigger
 function Import-FalconWorkflow {
 <#
 .SYNOPSIS
-Import a Falcon Fusion workflow YAML
+Import a Falcon Fusion SOAR workflow YAML
 .DESCRIPTION
 Requires 'Workflow: Write'.
 .PARAMETER Name
@@ -227,7 +236,7 @@ Workflow name
 .PARAMETER ValidateOnly
 Validate workflow without creating it
 .PARAMETER Path
-Path to Falcon Fusion workflow YAML
+Path to Falcon Fusion SOAR workflow YAML
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Import-FalconWorkflow
 #>
@@ -263,7 +272,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconWorkflow
 function Invoke-FalconWorkflow {
 <#
 .SYNOPSIS
-Execute an on-demand Falcon Fusion workflow
+Execute an on-demand Falcon Fusion SOAR workflow
 .DESCRIPTION
 Requires 'Workflow: Write'.
 .PARAMETER Cid
@@ -324,7 +333,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
 function Redo-FalconWorkflow {
 <#
 .SYNOPSIS
-Resume or retry a failed Falcon Fusion workflow execution
+Resume or retry a failed Falcon Fusion SOAR workflow execution
 .DESCRIPTION
 Requires 'Workflow: Write'.
 .PARAMETER Id

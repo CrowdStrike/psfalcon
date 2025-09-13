@@ -105,7 +105,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallToken
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/installation-tokens/queries/tokens/v1:get',Position=2)]
     [string]$Sort,
@@ -169,7 +169,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstallTokenEvent
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/installation-tokens/queries/audit-events/v1:get',Position=2)]
     [string]$Sort,

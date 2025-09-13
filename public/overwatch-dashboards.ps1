@@ -14,7 +14,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchEvent
   param(
     [Parameter(ParameterSetName='/overwatch-dashboards/aggregates/ow-events-global-counts/v1:get',
        Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -36,7 +36,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchDetection
   param(
     [Parameter(ParameterSetName='/overwatch-dashboards/aggregates/detections-global-counts/v1:get',
        Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
@@ -58,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconOverWatchIncident
   param(
     [Parameter(ParameterSetName='/overwatch-dashboards/aggregates/incidents-global-counts/v1:get',
        Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}

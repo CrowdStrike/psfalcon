@@ -29,7 +29,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshot
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/snapshots/combined/deployments/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/snapshots/combined/deployments/v1:get',Position=2)]
     [ValidateSet('account_id.asc','account_id.desc','asset_identifier.asc','asset_identifier.desc',

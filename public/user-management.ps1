@@ -10,6 +10,8 @@ User identifier
 Customer identifier
 .PARAMETER Id
 User role
+.PARAMETER ExpiresAt
+Expiration date and time (UTC, RFC3339)
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
 #>
@@ -27,7 +29,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
     [string]$Cid,
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,Position=3)]
     [Alias('role_ids','ids')]
-    [string[]]$Id
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Position=4)]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
+    [Alias('expires_at','date','expiration')]
+    [string]$ExpiresAt
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
@@ -111,38 +117,38 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
 #>
   [CmdletBinding(DefaultParameterSetName='/user-management/queries/roles/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/user-management/entities/roles/GET/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Alias('ids','roles','role_id')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Mandatory)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=1)]
-    [Parameter(ParameterSetName='/user-management/entities/roles/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=1)]
+    [Parameter(ParameterSetName='/user-management/entities/roles/GET/v2:post',Position=2)]
     [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
     [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=2)]
     [Alias('direct_only')]
     [boolean]$DirectOnly,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=3)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=3)]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=4)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=4)]
     [ValidateSet('cid|asc','cid|desc','role_name|asc','role_name|desc','type|asc','type|desc',IgnoreCase=$false)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get',Position=5)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=5)]
     [ValidateRange(1,500)]
     [int]$Limit,
     [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get')]
     [string]$Offset,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v1:get')]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get')]
     [switch]$Total
   )
   begin {
@@ -208,7 +214,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     [Alias('ids','uuid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=2)]
     [ValidateSet('first_name|asc','first_name|desc','last_name|asc','last_name|desc','name|asc','name|desc',

@@ -256,7 +256,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconLibraryScript
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/real-time-response/queries/falcon-scripts/v1:get',Position=2)]
     [ValidateSet('modified_timestamp.asc','modified_timestamp.desc','name.asc','name.desc',IgnoreCase=$false)]
@@ -320,7 +320,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPutFile
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/real-time-response/queries/put-files/v1:get',Position=2)]
     [string]$Sort,
@@ -384,7 +384,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScript
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/real-time-response/queries/scripts/v1:get',Position=2)]
     [string]$Sort,
@@ -462,7 +462,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSession
     [string[]]$Id,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=1)]
     [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/real-time-response/queries/sessions/v1:get',Position=2)]
     [Parameter(ParameterSetName='/real-time-response-audit/combined/sessions/v1:get',Position=2)]
@@ -633,7 +633,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAdminCommand
           } elseif ($Wait -and $SessionId) {
             Wait-RtrCommand $Request $MyInvocation.MyCommand.Name
           } else {
-            Write-Host ($Request | ConvertTo-Json)
             $Request
           }
         }
@@ -1036,6 +1035,57 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconGetFile
       if ($OutPath.Category -eq 'WriteError' -and !$Force) {
         Write-Error @OutPath
       } elseif ($PSBoundParameters.SessionId -and $PSBoundParameters.Sha256) {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
+function Receive-FalconPutFile {
+<#
+.SYNOPSIS
+Download a Real-time Response 'put' file
+.DESCRIPTION
+Requires 'Real time response: Write'.
+.PARAMETER Path
+Destination path
+.PARAMETER Id
+'Put' file identifier
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconPutFile
+#>
+  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-file-contents/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/real-time-response/entities/put-file-contents/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('name')]
+    [string]$Path,
+    [Parameter(ParameterSetName='/real-time-response/entities/put-file-contents/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/real-time-response/entities/put-file-contents/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ Accept = 'application/octet-stream' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+    }
+    $Param.Format['Outfile'] = 'path'
+  }
+  process {
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

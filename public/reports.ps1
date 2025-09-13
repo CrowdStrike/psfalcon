@@ -38,7 +38,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledReport
     [string[]]$Id,
     [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=1)]
     [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/reports/queries/scheduled-reports/v1:get',Position=2)]
     [Parameter(ParameterSetName='/reports/queries/report-executions/v1:get',Position=2)]

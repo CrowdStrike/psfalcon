@@ -616,11 +616,13 @@ function Invoke-Falcon {
     [string]$JsonBody
   )
   begin {
-    function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int) {
+    function Invoke-Loop ([hashtable]$Splat,[object]$Object,[int]$Int,[switch]$Raw) {
       do {
         # Determine next offset value
         [string[]]$Next = if ($Object.after) {
           @('after',$Object.after)
+        } elseif ($Object.next) {
+          @('offset',$Object.next)
         } elseif ($Object.next_token) {
           @('next_token',$Object.next_token)
         } elseif ($null -ne $Object.offset) {
@@ -631,21 +633,26 @@ function Invoke-Falcon {
           # Clone parameters and make request
           $Clone = Set-LoopParam $Splat $Next
           if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(240)) {
-            if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) {
-              # Refresh authorization token when required
-              Request-FalconToken
-            }
+            # Refresh authorization token when required
+            if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) { Request-FalconToken }
           }
           [string]$Target = New-ShouldMessage $Clone.Endpoint
           if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
             $Script:Falcon.Api.Invoke($Clone.Endpoint) | ForEach-Object {
               # Output result, update pagination and received count
               $Object = $_.meta.pagination
-              Write-Request $Clone $_ -OutVariable Output
-              [int]$Int += ($Output | Measure-Object).Count
-              if ($null -ne $Object.total) {
-                Write-Log $Command ("Retrieved {0} of {1}" -f $Int,$Object.total)
+              if ($Raw) {
+                Write-Request $Clone $_ -Raw -OutVariable Output
+              } else {
+                Write-Request $Clone $_ -OutVariable Output
               }
+              [int]$Int += if ($Raw) {
+                # Use 'resources' to count for 'RawOutput'
+                ($Output.resources | Measure-Object).Count
+              } else {
+                ($Output | Measure-Object).Count
+              }
+              if ($null -ne $Object.total) { Write-Log $Command ("Retrieved {0} of {1}" -f $Int,$Object.total) }
             }
           }
         } elseif ($Int -lt $Object.total) {
@@ -672,19 +679,35 @@ function Invoke-Falcon {
     }
     function Write-Request {
       [CmdletBinding()]
-      param([hashtable]$Splat,[object]$Object)
-      [boolean]$NoDetail = if ($Splat.Endpoint.Path -match '(/combined/|/rule-groups-full/)') {
-        # Determine if endpoint requires a secondary 'Detailed' request
-        $true
+      param([hashtable]$Splat,[object]$Object,[switch]$Raw)
+      if ($Raw) {
+        # Return entire result for 'RawOutput'
+        if ($Object.meta -and !$Object.errors) {
+          # Output 'meta' to verbose stream and capture 'trace_id' for a successful response
+          $Message = (@($Object.meta.PSObject.Properties).foreach{
+            if ($_.Name -eq 'pagination') {
+              @($_.Value.PSObject.Properties).foreach{ ('pagination',$_.Name -join '.'),$_.Value -join '=' }
+            } else {
+              $_.Name,$_.Value -join '='
+            }
+          }) -join ', '
+          Write-Log 'Write-Request' ($Message -join ' ')
+        }
+        $Object
       } else {
-        $false
-      }
-      if ($Splat.Detailed -eq $true -and $NoDetail -eq $false) {
-        # Get 'Detailed' result
-        $Output = Write-Result $Object
-        if ($Output.aid) { & $Command -Id $Output.aid } elseif ($Output) { & $Command -Id $Output }
-      } else {
-        Write-Result $Object
+        [boolean]$NoDetail = if ($Splat.Endpoint.Path -match '(/combined/|/rule-groups-full/)') {
+          # Determine if endpoint requires a secondary 'Detailed' request
+          $true
+        } else {
+          $false
+        }
+        if ($Splat.Detailed -eq $true -and $NoDetail -eq $false) {
+          # Get 'Detailed' result
+          $Output = Write-Result $Object
+          if ($Output.aid) { & $Command -Id $Output.aid } elseif ($Output) { & $Command -Id $Output }
+        } else {
+          Write-Result $Object
+        }
       }
     }
     if (!$Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization -or !$Script:Falcon.Hostname) {
@@ -735,23 +758,34 @@ function Invoke-Falcon {
         try {
           Write-Log $Command $Endpoint
           $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
-          if ($Request -and $RawOutput) {
-            # Return result if 'RawOutput' is defined
-            $Request
-          } elseif ($Request) {
+          if ($Request) {
             # Capture pagination for 'Total' and 'All'
             $Pagination = $Request.meta.pagination
             if ($null -ne $Pagination.total -and $_.Total -eq $true) {
               # Output 'Total'
               $Pagination.total
             } else {
-              Write-Request $_ $Request -OutVariable Result
+              if ($RawOutput) {
+                # Return entire result for 'RawOutput'
+                Write-Request $_ $Request -Raw -OutVariable Result
+              } else {
+                Write-Request $_ $Request -OutVariable Result
+              }
               if ($Result -and $_.All -eq $true) {
                 # Repeat request(s)
-                [int]$Count = ($Result | Measure-Object).Count
+                [int]$Count = if ($RawOutput) {
+                  # Count 'resources' for 'RawOutput'
+                  ($Result.resources | Measure-Object).Count
+                } else {
+                  ($Result | Measure-Object).Count
+                }
                 if ($Pagination.total -and $Count -lt $Pagination.total) {
                   Write-Log $Command "Retrieved $Count of $($Pagination.total)"
-                  Invoke-Loop $_ $Pagination $Count
+                  if ($RawOutput) {
+                    Invoke-Loop $_ $Pagination $Count -Raw
+                  } else {
+                    Invoke-Loop $_ $Pagination $Count
+                  }
                 }
               }
             }
@@ -768,6 +802,14 @@ function Invoke-UpdateCheck {
     [Parameter(Mandatory,Position=1)]
     [string]$BasePath
   )
+  function Test-GalleryInstall {
+    if (Get-Command -Name Get-InstalledModule -EA 0) {
+      # Check whether PSFalcon was installed using PSGallery
+      if ((Get-InstalledModule -Name PSFalcon -EA 0).Repository -eq 'PSGallery') { $true } else { $false }
+    } else {
+      $false
+    }
+  }
   function Write-UpdateJson {
     param(
       [Parameter(Mandatory,Position=1)]
@@ -779,51 +821,56 @@ function Invoke-UpdateCheck {
       [Parameter(Mandatory,Position=4)]
       [string]$Version
     )
-    # Create Json with update check information
-    [PSCustomObject]@{
-      psgallery_connection = $Connection
-      timestamp = $Timestamp
-      version = $Version
-    } | ConvertTo-Json -Compress > $Path
-    Write-Log 'Invoke-UpdateCheck' ('Created "{0}"' -f $Path)
+    # Create 'update_check.json'
+    try {
+      [PSCustomObject]@{
+        psgallery_connection = $Connection
+        timestamp = $Timestamp
+        version = $Version
+      } | ConvertTo-Json -Compress -EA 0 > $Path
+      Write-Log 'Invoke-UpdateCheck' ('Created "{0}"' -f $Path)
+    } catch {
+      Write-Log 'Invoke-UpdateCheck' ('Failed to create "{0}"' -f $Path)
+    }
   }
   function Write-VersionWarning ([string]$String) {
     # Write warning message notifying that a new release is available
     Write-Warning ('PSFalcon is out of date. Release v{0} is available on the PowerShell Gallery.' -f $String)
   }
-  # Check for available module update
-  $Current = try { (Show-FalconModule).ModuleVersion.Split(' ',2)[0] -replace '^v',$null } catch { $null }
-  if ($Current) {
-    # Create 'update_check.json' if it doesn't exist, then import 'update_check.json'
-    $JsonPath = Join-Path $BasePath update_check.json
+  # Check for write access to 'update_check.json'
+  $FilePath = Join-Path $BasePath update_check.json
+  $Access = try { [IO.File]::OpenWrite($FilePath).Close() } catch { $false }
+  if ($Access -ne $false) {
+    # Import 'update_check.json'
+    $Check = try { Get-Content -Path $FilePath -EA 0 | ConvertFrom-Json -EA 0 } catch { $null }
+    $InstVer = try { (Show-FalconModule).ModuleVersion.Split(' ',2)[0] -replace '^v',$null } catch { $null }
     $WeekAgo = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() - 604800000
-    if (!(Test-Path -Path $JsonPath)) {
-      # Determine if PowerShell Gallery was used for initial installation
-      $Connection = if (Get-Command -Name Get-InstalledModule -EA 0) {
-        if ((Get-InstalledModule -Name PSFalcon -EA 0).Repository -eq 'PSGallery') { $true } else { $false }
-      } else {
-        $false
-      }
-      Write-UpdateJson $JsonPath $Connection $WeekAgo $Current
-    }
-    $Json = try { Get-Content -Path $JsonPath -EA 0 | ConvertFrom-Json -EA 0 } catch { $null }
-    if ($Json -and $Json.psgallery_connection -eq $true -and $Json.timestamp -and $Json.version) {
-      if ($Current -lt $Json.version) {
-        # Notify that a new release is available
-        Write-VersionWarning $Json.version
-      } elseif ($WeekAgo -lt $Json.timestamp) {
-        # Check PowerShell Gallery every 7 days
+    if (!$Check) {
+      # Create 'update_check.json'
+      Write-UpdateJson $FilePath (Test-GalleryInstall) $WeekAgo $InstVer
+    } elseif ($Check.psgallery_connection -eq $true) {
+      if ($InstVer -lt $Check.version) {
+        # Notify of new release on PSGallery
+        Write-VersionWarning $Check.version
+      } elseif ($WeekAgo -lt $Check.timestamp) {
+        # Check PSGallery every 7 days
         $Gallery = try { Find-Module -Name PSFalcon -Repository PSGallery -EA 0 } catch { $null }
         $Timestamp = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
         if (!$Gallery) {
-          # Create new Json when PowerShell Gallery connection fails
-          Write-UpdateJson $JsonPath $false $Timestamp $Current
-        } elseif ($Gallery -and $Gallery.Version) {
-          # Create new Json with PowerShell Gallery version information
-          Write-UpdateJson $JsonPath $true $Timestamp $Gallery.Version.ToString()
+          # Create 'update_check.json' with 'psgallery_connection' of $false
+          Write-UpdateJson $FilePath $false $Timestamp $InstVer
+        } else {
+          # Overwrite 'update_check.json' with PSGallery version
+          Write-UpdateJson $FilePath $true $Timestamp $Gallery.Version.ToString()
+          if ($Check.version -lt $Gallery.version) {
+            # Notify of new release on PSGallery
+            Write-VersionWarning $Gallery.Version.ToString()
+          }
         }
       }
     }
+  } else {
+    Write-Log 'Invoke-UpdateCheck' 'Unable to create update file.'
   }
 }
 function New-ShouldMessage {

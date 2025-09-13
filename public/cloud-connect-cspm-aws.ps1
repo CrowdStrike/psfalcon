@@ -26,6 +26,12 @@ Target OU
 DSPM enabled
 .PARAMETER DspmRole
 DSPM role ARN
+.PARAMETER RootStackId
+Root Stack ID
+.PARAMETER DeploymentMethod
+Deployment method
+.PARAMETER ClientId
+Client ID
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAwsAccount
 #>
@@ -76,7 +82,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
       ValueFromPipelineByPropertyName,Position=12)]
     [Alias('dspm_role')]
-    [string]$DspmRole
+    [string]$DspmRole,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=13)]
+    [Alias('root_stack_id')]
+    [string]$RootStackId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=14)]
+    [Alias('deployment_method')]
+    [string]$DeploymentMethod,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:patch',
+      ValueFromPipelineByPropertyName,Position=15)]
+    [Alias('falcon_client_id')]
+    [string]$ClientId
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -219,11 +237,16 @@ Target OU
 DSPM enabled
 .PARAMETER DspmRole
 DSPM role ARN
+.PARAMETER RootStackId
+Root Stack ID
+.PARAMETER DeploymentMethod
+Deployment method
+.PARAMETER ClientId
+Client ID
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAwsAccount
 #>
-  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',
-    SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',SupportsShouldProcess)]
   [Alias('New-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',Mandatory,Position=1)]
@@ -273,7 +296,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAwsAccount
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
       Position=12)]
     [Alias('dspm_role')]
-    [string]$DspmRole
+    [string]$DspmRole,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=13)]
+    [Alias('root_stack_id')]
+    [string]$RootStackId,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=14)]
+    [Alias('deployment_method')]
+    [string]$DeploymentMethod,
+    [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:post',ValueFromPipelineByPropertyName,
+      Position=15)]
+    [Alias('falcon_client_id')]
+    [string]$ClientId
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }

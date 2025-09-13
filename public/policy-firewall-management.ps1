@@ -32,21 +32,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallPolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/firewall/v1:patch' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
-      @($InputObject).foreach{
-        # Filter to defined 'resources' properties
-        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
-        $List.Add($i)
-      }
+      # Filter to defined 'resources' properties
+      @($InputObject).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.resources)) }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
   end {
     if ($List) {
+      # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
@@ -92,7 +90,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicy
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/combined/firewall/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/queries/firewall/v1:get',Position=2)]
@@ -176,7 +174,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicyMember
     [string]$Id,
     [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get',Position=3)]
     [Parameter(ParameterSetName='/policy/combined/firewall-members/v1:get',Position=3)]
@@ -280,21 +278,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallPolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/firewall/v1:post' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
-      @($InputObject).foreach{
-        # Filter to defined 'resources' properties
-        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
-        $List.Add($i)
-      }
+      # Filter to defined 'resources' properties
+      @($InputObject).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.resources)) }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
   end {
     if ($List) {
+      # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {

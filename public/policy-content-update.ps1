@@ -35,21 +35,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContentPolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/content-update/v1:patch' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
-      @($InputObject).foreach{
-        # Filter to defined 'resources' properties
-        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
-        $List.Add($i)
-      }
+      # Filter to defined 'resources' properties
+      @($InputObject).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.resources)) }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
   end {
     if ($List) {
+      # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
@@ -93,7 +91,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentPolicy
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/content-update/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/content-update/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/combined/content-update/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/queries/content-update/v1:get',Position=2)]
@@ -166,7 +164,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentPolicyMember
     [string]$Id,
     [Parameter(ParameterSetName='/policy/combined/content-update-members/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/queries/content-update-members/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/combined/content-update-members/v1:get',Position=3)]
     [Parameter(ParameterSetName='/policy/queries/content-update-members/v1:get',Position=3)]
@@ -189,6 +187,33 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentPolicyMember
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconContentVersion {
+<#
+.SYNOPSIS
+List Content Update versions available for policy pinning
+.DESCRIPTION
+Requires 'Content Update Policies: Read'.
+.PARAMETER Category
+Content category
+.PARAMETER Sort
+Property and direction to sort results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentVersion
+#>
+  [CmdletBinding(DefaultParameterSetName='/policy/queries/content-update-pin-versions/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/policy/queries/content-update-pin-versions/v1:get',Mandatory,Position=1)]
+    [ValidateSet('rapid_response_al_bl_listing','sensor_operations','system_critical','vulnerability_management',
+      IgnoreCase=$false)]
+    [string]$Category,
+    [Parameter(ParameterSetName='/policy/queries/content-update-pin-versions/v1:get',Position=2)]
+    [ValidateSet('deployed_timestamp.asc','deployed_timestamp.desc',IgnoreCase=$false)]
+    [string]$Sort
+  )
+  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Invoke-FalconContentPolicyAction {
 <#
 .SYNOPSIS
@@ -207,7 +232,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContentPolicyAction
   [CmdletBinding(DefaultParameterSetName='/policy/entities/content-update-actions/v1:post',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/policy/entities/content-update-actions/v1:post',Mandatory,Position=1)]
-    [ValidateSet('add-host-group','disable','enable','remove-host-group',IgnoreCase=$false)]
+    [ValidateSet('add-host-group','disable','enable','override-allow','override-pause','override-revert',
+      'remove-host-group','remove-pinned-content-version','set-pinned-content-version',IgnoreCase=$false)]
     [Alias('action_name')]
     [string]$Name,
     [Parameter(ParameterSetName='/policy/entities/content-update-actions/v1:post',Position=2)]
@@ -216,6 +242,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContentPolicyAction
     [Parameter(ParameterSetName='/policy/entities/content-update-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
     [string[]]$Id
   )
   begin {
@@ -272,21 +299,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContentPolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/content-update/v1:post' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
-      @($InputObject).foreach{
-        # Filter to defined 'resources' properties
-        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
-        $List.Add($i)
-      }
+      # Filter to defined 'resources' properties
+      @($InputObject).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.resources)) }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
   end {
     if ($List) {
+      # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {

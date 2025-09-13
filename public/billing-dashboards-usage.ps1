@@ -13,7 +13,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostAverage
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/billing-dashboards-usage/aggregates/weekly-average/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}

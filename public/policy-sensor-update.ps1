@@ -39,21 +39,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/sensor-update/v2:patch' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
-      @($InputObject).foreach{
-        # Filter to defined 'resources' properties
-        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.resources
-        $List.Add($i)
-      }
+      # Filter to defined 'resources' properties
+      @($InputObject).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.resources)) }
     } else {
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
   end {
     if ($List) {
+      # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
@@ -120,7 +118,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconKernel
     [string]$Field,
     [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{distinct-field}/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{distinct-field}/v1:get',Position=3)]
     [ValidateSet('architecture.asc','architecture.desc','distro.asc','distro.desc','distro_version.asc',
@@ -189,7 +187,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/combined/sensor-update/v2:get',Position=2)]
     [Parameter(ParameterSetName='/policy/queries/sensor-update/v1:get',Position=2)]
@@ -269,7 +267,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicyMember
     [string]$Id,
     [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get',Position=3)]
     [Parameter(ParameterSetName='/policy/combined/sensor-update-members/v1:get',Position=3)]
@@ -297,7 +295,7 @@ function Get-FalconUninstallToken {
 .SYNOPSIS
 Retrieve an uninstallation or maintenance token
 .DESCRIPTION
-Requires 'Sensor update policies: Write', plus related permission(s) for 'Include' selection(s).
+Requires 'Sensor update policies: Write', plus related permission(s) for "Include" selection(s).
 .PARAMETER AuditMessage
 Audit log comment
 .PARAMETER Include
@@ -434,7 +432,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/sensor-update/v2:post' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
@@ -453,6 +451,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
   }
   end {
     if ($List) {
+      # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {

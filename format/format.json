@@ -1,4 +1,16 @@
-{
+﻿{
+  "/alerts/combined/alerts/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "after",
+          "filter",
+          "limit",
+          "sort"
+        ]
+      }
+    }
+  },
   "/alerts/entities/alerts/v2": {
     "post": {
       "body": {
@@ -109,6 +121,184 @@
       ]
     }
   },
+  "/cases/entities/cases/v2": {
+    "post": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      }
+    }
+  },
+  "/cases/entities/case-tags/v1": {
+    "delete": {
+      "query": [
+        "id",
+        "tag"
+      ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "id",
+          "tags"
+        ]
+      }
+    }
+  },
+  "/case-files/combined/file-details/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/case-files/entities/file-details/v1": {
+    "patch": {
+      "body": {
+        "root": [
+          "description",
+          "id"
+        ]
+      }
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/case-files/entities/files/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/case-files/entities/files/bulk-download/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      }
+    }
+  },
+  "/case-files/entities/files/download/v1": {
+    "get": {
+      "query": [
+        "id"
+      ]
+    }
+  },
+  "/case-files/queries/file-details/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/entities/fields/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/entities/notification-groups/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    },
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/entities/slas/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/entities/template-snapshots/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "template_ids",
+        "versions"
+      ]
+    }
+  },
+  "/casemgmt/entities/templates/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/casemgmt/queries/fields/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/notification-groups/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/slas/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/template-snapshots/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
+  "/casemgmt/queries/templates/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset"
+      ]
+    }
+  },
   "/cloud-connect-cspm-aws/entities/account/v1": {
     "get": {
       "query": [
@@ -131,11 +321,14 @@
           "account_type",
           "behavior_assessment_enabled",
           "cloudtrail_region",
+          "deployment_method",
           "dspm_enabled",
           "dspm_role",
+          "falcon_client_id",
           "iam_role_arn",
           "is_master",
           "organization_id",
+          "root_stack_id",
           "sensor_management_enabled",
           "target_ous",
           "use_existing_cloudtrail"
@@ -154,12 +347,15 @@
           "account_id",
           "behavior_assessment_enabled",
           "cloudtrail_region",
+          "deployment_method",
           "dspm_enabled",
           "dspm_role",
           "environment",
+          "falcon_client_id",
           "iam_role_arn",
           "remediation_region",
           "remediation_tou_accepted",
+          "root_stack_id",
           "sensor_management_enabled",
           "target_ous"
         ]
@@ -236,9 +432,7 @@
   "/cloud-connect-cspm-azure/entities/download-certificate/v1": {
     "get": {
       "query": [
-        "tenant_id",
-        "refresh",
-        "years_valid"
+        "tenant_id"
       ]
     }
   },
@@ -368,6 +562,24 @@
       "query": [
         "parent_type",
         "ids"
+      ]
+    }
+  },
+  "/cloud-security-assets/entities/resources/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/cloud-security-assets/queries/resources/v1": {
+    "get": {
+      "query": [
+        "after",
+        "filter",
+        "sort",
+        "limit",
+        "offset"
       ]
     }
   },
@@ -515,7 +727,8 @@
     "get": {
       "query": [
         "under_assessment",
-        "limit"
+        "limit",
+        "filter"
       ]
     }
   },
@@ -1066,7 +1279,7 @@
       ]
     }
   },
-  "/correlation-rules/combined/rules/v1": {
+  "/correlation-rules/combined/rules/v2": {
     "get": {
       "query": [
         "filter",
@@ -1077,19 +1290,35 @@
       ]
     }
   },
+  "/correlation-rules/entities/latest-rules/v1": {
+    "get": {
+      "query": [
+        "rule_ids"
+      ]
+    }
+  },
   "/correlation-rules/entities/rules/v1": {
     "delete": {
       "query": [
         "ids"
       ]
-    },
+    }
+  },
+  "/correlation-rules/entities/rule-versions/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/correlation-rules/entities/rules/v2": {
     "get": {
       "query": [
         "ids"
       ]
     }
   },
-  "/correlation-rules/queries/rules/v1": {
+  "/correlation-rules/queries/rules/v2": {
     "get": {
       "query": [
         "filter",
@@ -1107,20 +1336,6 @@
         "delivery_settings": [
           "delivery_cadence",
           "delivery_type"
-        ]
-      }
-    }
-  },
-  "/detects/entities/detects/v2": {
-    "patch": {
-      "body": {
-        "root": [
-          "assigned_to_uuid",
-          "comment",
-          "ids",
-          "new_behaviors_processed",
-          "show_in_ui",
-          "status"
         ]
       }
     }
@@ -1152,26 +1367,6 @@
       ]
     }
   },
-  "/detects/entities/summaries/GET/v1": {
-    "post": {
-      "body": {
-        "root": [
-          "ids"
-        ]
-      }
-    }
-  },
-  "/detects/queries/detects/v1": {
-    "get": {
-      "query": [
-        "offset",
-        "limit",
-        "sort",
-        "filter",
-        "q"
-      ]
-    }
-  },
   "/detects/queries/iom/v2": {
     "get": {
       "query": [
@@ -1180,6 +1375,28 @@
         "limit",
         "offset",
         "next_token"
+      ]
+    }
+  },
+  "/devices/combined/devices/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "sort",
+        "filter",
+        "fields"
+      ]
+    }
+  },
+  "/devices/combined/devices-hidden/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "sort",
+        "filter",
+        "fields"
       ]
     }
   },
@@ -1536,7 +1753,7 @@
       ]
     }
   },
-  "/falcon-complete-dashboards/queries/alerts/v1": {
+  "/falcon-complete-dashboards/queries/alerts/v2": {
     "get": {
       "query": [
         "limit",
@@ -1557,16 +1774,6 @@
     }
   },
   "/falcon-complete-dashboards/queries/blocklist/v1": {
-    "get": {
-      "query": [
-        "limit",
-        "sort",
-        "filter",
-        "offset"
-      ]
-    }
-  },
-  "/falcon-complete-dashboards/queries/detects/v1": {
     "get": {
       "query": [
         "limit",
@@ -1708,7 +1915,36 @@
       ]
     }
   },
+  "/fem/combined/ecosystem-subsidiaries/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "filter",
+        "sort",
+        "version_id"
+      ]
+    }
+  },
+  "/fem/entities/ecosystem-subsidiaries/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "version_id"
+      ]
+    }
+  },
   "/fem/entities/external-assets/v1": {
+    "delete": {
+      "body": {
+        "root": [
+          "description"
+        ]
+      },
+      "query": [
+        "ids"
+      ]
+    },
     "get": {
       "query": [
         "ids"
@@ -1726,10 +1962,31 @@
       }
     }
   },
-  "/fem/queries/external-assets/v1": {
+  "/fem/entities/external-asset-inventory/v1": {
+    "post": {
+      "body": {
+        "data": [
+          "assets",
+          "subsidiary_id"
+        ]
+      }
+    }
+  },
+  "/fem/queries/ecosystem-subsidiaries/v1": {
     "get": {
       "query": [
         "offset",
+        "limit",
+        "filter",
+        "sort",
+        "version_id"
+      ]
+    }
+  },
+  "/fem/queries/external-assets/v2": {
+    "get": {
+      "query": [
+        "after",
         "limit",
         "sort",
         "filter"
@@ -2420,6 +2677,24 @@
       ]
     }
   },
+  "/hunting/entities/intelligence-queries/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/hunting/queries/intelligence-queries/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "sort",
+        "filter",
+        "q"
+      ]
+    }
+  },
   "/identity-protection/entities/devices/GET/v1": {
     "post": {
       "body": {
@@ -2674,6 +2949,18 @@
       ]
     }
   },
+  "/intel/combined/malware/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "sort",
+        "filter",
+        "q",
+        "fields"
+      ]
+    }
+  },
   "/intel/combined/reports/v1": {
     "get": {
       "query": [
@@ -2707,6 +2994,14 @@
     "get": {
       "query": [
         "ids"
+      ]
+    }
+  },
+  "/intel/entities/malware-mitre-reports/v1": {
+    "get": {
+      "query": [
+        "id",
+        "format"
       ]
     }
   },
@@ -3120,21 +3415,6 @@
     },
     "patch": {
       "body": {
-        "bulk_update": [
-          "action",
-          "applied_globally",
-          "description",
-          "expiration",
-          "filter",
-          "from_parent",
-          "host_groups",
-          "metadata",
-          "mobile_action",
-          "platforms",
-          "severity",
-          "source",
-          "tags"
-        ],
         "root": [
           "comment"
         ],
@@ -3198,6 +3478,316 @@
   "/iocs/queries/severities/v1": {
     "get": {
       "query": [
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/associated-tasks/v1": {
+    "get": {
+      "query": [
+        "id",
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/scheduled-tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/task-executions/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/task-groups/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/combined/tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/entities/policies-host-groups/v1": {
+    "patch": {
+      "body": {
+        "root": [
+          "action",
+          "host_group_ids",
+          "policy_id"
+        ]
+      }
+    }
+  },
+  "/it-automation/entities/policies-precedence/v1": {
+    "patch": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      },
+      "query": [
+        "platform"
+      ]
+    }
+  },
+  "/it-automation/entities/policies/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/scheduled-tasks/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/task-executions/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/task-execution-cancel/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "task_execution_id"
+        ]
+      }
+    }
+  },
+  "/it-automation/entities/task-execution-host-status/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/entities/task-execution-rerun/v1": {
+    "post": {
+      "body": {
+        "root": [
+          "run_type",
+          "task_execution_id"
+        ]
+      }
+    }
+  },
+  "/it-automation/entities/task-execution-results/v1": {
+    "get": {
+      "query": [
+        "id",
+        "offset",
+        "limit",
+        "sort"
+      ]
+    }
+  },
+  "/it-automation/entities/task-execution-results-search/v1": {
+    "get": {
+      "query": [
+        "id"
+      ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "filter_expressions",
+          "group_by_fields",
+          "search_end",
+          "search_start",
+          "task_execution_id"
+        ]
+      }
+    }
+  },
+  "/it-automation/entities/task-groups/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    },
+    "patch": {
+      "body": {
+        "root": [
+          "access_type",
+          "add_assigned_user_group_ids",
+          "add_assigned_user_ids",
+          "add_task_ids",
+          "description",
+          "name",
+          "remove_assigned_user_group_ids",
+          "remove_assigned_user_ids",
+          "remove_task_ids"
+        ]
+      },
+      "query": [
+        "id"
+      ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "access_type",
+          "assigned_user_group_ids",
+          "assigned_user_ids",
+          "description",
+          "name",
+          "task_ids"
+        ]
+      }
+    }
+  },
+  "/it-automation/entities/tasks/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/it-automation/entities/it-user-groups/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "description",
+          "name"
+        ]
+      }
+    },
+    "patch": {
+      "body": {
+        "root": [
+          "add_user_ids",
+          "description",
+          "name",
+          "remove_user_ids"
+        ]
+      },
+      "query": [
+        "id"
+      ]
+    }
+  },
+  "/it-automation/queries/policies/v1": {
+    "get": {
+      "query": [
+        "offset",
+        "limit",
+        "sort",
+        "platform"
+      ]
+    }
+  },
+  "/it-automation/queries/scheduled-tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/queries/task-executions/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/queries/task-groups/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/queries/tasks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
+        "offset",
+        "limit"
+      ]
+    }
+  },
+  "/it-automation/queries/it-user-groups/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "sort",
         "offset",
         "limit"
       ]
@@ -3687,6 +4277,162 @@
       ]
     }
   },
+  "/ngsiem-content/entities/dashboards-template/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    },
+    "post": {
+      "formdata": [
+        "search_domain",
+        "name",
+        "yaml_template"
+      ]
+    },
+    "patch": {
+      "formdata": [
+        "search_domain",
+        "ids",
+        "yaml_template"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/lookupfiles/v1": {
+    "delete": {
+      "query": [
+        "filename",
+        "search_domain"
+      ]
+    },
+    "get": {
+      "query": [
+        "filename",
+        "search_domain"
+      ]
+    },
+    "patch": {
+      "formdata": [
+        "search_domain",
+        "filename",
+        "file"
+      ]
+    },
+    "post": {
+      "formdata": [
+        "search_domain",
+        "filename",
+        "file"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/dashboards/v1": {
+    "delete": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/parsers/v1": {
+    "delete": {
+      "query": [
+        "ids",
+        "repository"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids",
+        "repository"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/parsers-template/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "repository"
+      ]
+    },
+    "post": {
+      "formdata": [
+        "repository",
+        "name",
+        "yaml_template"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/savedqueries/v1": {
+    "delete": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/entities/savedqueries-template/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "search_domain"
+      ]
+    },
+    "post": {
+      "formdata": [
+        "search_domain",
+        "yaml_template"
+      ]
+    },
+    "patch": {
+      "formdata": [
+        "search_domain",
+        "ids",
+        "yaml_template"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/dashboards/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/lookupfiles/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "search_domain"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/parsers/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "repository"
+      ]
+    }
+  },
+  "/ngsiem-content/queries/savedqueries/v1": {
+    "get": {
+      "query": [
+        "limit",
+        "offset",
+        "filter",
+        "search_domain"
+      ]
+    }
+  },
   "/ods/entities/malicious-files/v1": {
     "get": {
       "query": [
@@ -3716,6 +4462,8 @@
         "root": [
           "cloud_ml_level_detection",
           "cloud_ml_level_prevention",
+          "cloud_pup_adware_level_detection",
+          "cloud_pup_adware_level_prevention",
           "cpu_priority",
           "description",
           "endpoint_notification",
@@ -3742,10 +4490,45 @@
     }
   },
   "/ods/entities/scheduled-scans/v1": {
+    "delete": {
+      "query": [
+        "ids",
+        "filter"
+      ]
+    },
     "get": {
       "query": [
         "ids"
       ]
+    },
+    "post": {
+      "body": {
+        "root": [
+          "cloud_ml_level_detection",
+          "cloud_ml_level_prevention",
+          "cloud_pup_adware_level_detection",
+          "cloud_pup_adware_level_prevention",
+          "cpu_priority",
+          "description",
+          "endpoint_notification",
+          "file_paths",
+          "host_groups",
+          "initiated_from",
+          "max_duration",
+          "max_file_size",
+          "pause_duration",
+          "quarantine",
+          "scan_exclusions",
+          "scan_inclusions",
+          "sensor_ml_level_detection",
+          "sensor_ml_level_prevention"
+        ],
+        "schedule": [
+          "ignored_by_channelfile",
+          "interval",
+          "start_timestamp"
+        ]
+      }
     }
   },
   "/ods/queries/malicious-files/v1": {
@@ -3844,16 +4627,6 @@
     "get": {
       "query": [
         "id",
-        "filter",
-        "offset",
-        "limit",
-        "sort"
-      ]
-    }
-  },
-  "/policy/combined/device-control/v1": {
-    "get": {
-      "query": [
         "filter",
         "offset",
         "limit",
@@ -4012,13 +4785,13 @@
       }
     }
   },
-  "/policy/entities/default-device-control/v1": {
-    "get": {},
+  "/policy/entities/device-control-classes/v1": {
     "patch": {
       "body": {
-        "custom_notifications": [
-          "blocked_notification",
-          "restricted_notification"
+        "policies": [
+          "bluetooth_classes",
+          "id",
+          "usb_classes"
         ]
       }
     }
@@ -4034,34 +4807,39 @@
     }
   },
   "/policy/entities/device-control/v1": {
-    "get": {
+    "delete": {
       "query": [
         "ids"
       ]
-    },
-    "post": {
-      "body": {
-        "resources": [
-          "clone_id",
-          "description",
-          "name",
-          "platform_name",
-          "settings"
-        ]
-      }
-    },
-    "delete": {
+    }
+  },
+  "/policy/entities/device-control/v2": {
+    "get": {
       "query": [
         "ids"
       ]
     },
     "patch": {
       "body": {
-        "resources": [
+        "policies": [
+          "bluetooth_settings",
           "description",
           "id",
           "name",
-          "settings"
+          "propagated",
+          "usb_settings"
+        ]
+      }
+    },
+    "post": {
+      "body": {
+        "policies": [
+          "bluetooth_settings",
+          "clone_id",
+          "description",
+          "name",
+          "platform_name",
+          "usb_settings"
         ]
       }
     }
@@ -4180,6 +4958,7 @@
       "body": {
         "root": [
           "comment",
+          "excluded_from",
           "groups",
           "id",
           "is_descendant_process",
@@ -4369,6 +5148,14 @@
         "filter",
         "offset",
         "limit",
+        "sort"
+      ]
+    }
+  },
+  "/policy/queries/content-update-pin-versions/v1": {
+    "get": {
+      "query": [
+        "category",
         "sort"
       ]
     }
@@ -4813,6 +5600,13 @@
     "get": {
       "query": [
         "ids"
+      ]
+    }
+  },
+  "/real-time-response/entities/put-file-contents/v1": {
+    "get": {
+      "query": [
+        "id"
       ]
     }
   },
@@ -5527,7 +6321,7 @@
       ]
     }
   },
-  "/user-management/combined/user-roles/v1": {
+  "/user-management/combined/user-roles/v2": {
     "get": {
       "query": [
         "user_uuid",
@@ -5540,11 +6334,15 @@
       ]
     }
   },
-  "/user-management/entities/roles/v1": {
-    "get": {
+  "/user-management/entities/roles/GET/v2": {
+    "post": {
+      "body": {
+        "root": [
+          "ids"
+        ]
+      },
       "query": [
-        "cid",
-        "ids"
+        "cid"
       ]
     }
   },
@@ -5554,6 +6352,7 @@
         "root": [
           "action",
           "cid",
+          "expires_at",
           "role_ids",
           "uuid"
         ]
@@ -5621,6 +6420,16 @@
     }
   },
   "/workflows/combined/activities/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "offset",
+        "limit",
+        "sort"
+      ]
+    }
+  },
+  "/workflows/combined/activity-content/v1": {
     "get": {
       "query": [
         "filter",

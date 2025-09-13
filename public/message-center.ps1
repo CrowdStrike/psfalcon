@@ -136,7 +136,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteActivity
     [Alias('case_id')]
     [string]$CaseId,
     [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/message-center/queries/case-activities/v1:get',Position=3)]
     [ValidateSet('activity.created_time.asc','activity.created_time.desc','activity.type.asc',
@@ -200,7 +200,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCase
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/message-center/queries/cases/v1:get',Position=2)]
     [ValidateSet('case.created_time.asc','case.created_time.desc','case.id.asc','case.id.desc',

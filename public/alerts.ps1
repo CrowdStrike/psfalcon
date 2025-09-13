@@ -18,6 +18,8 @@ Property and direction to sort results
 Maximum number of results per request
 .PARAMETER Offset
 Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
 .PARAMETER Detailed
 Retrieve detailed information
 .PARAMETER All
@@ -37,28 +39,39 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
     [Alias('include_hidden')]
     [boolean]$IncludeHidden,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post',Mandatory,Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=2)]
     [Alias('q')]
     [string]$Query,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=3)]
+    [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post',Position=2)]
     [string]$Sort,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=4)]
+    [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post',Position=3)]
     [ValidateRange(1,10000)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
     [int32]$Offset,
-    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
+    [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post')]
+    [string]$After,
+    [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post',Mandatory)]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
+    [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post')]
     [switch]$All,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
+    [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post')]
     [switch]$Total
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     [System.Collections.Generic.List[string]]$List = @()
+    if ($PSCmdlet.ParameterSetName -eq '/alerts/combined/alerts/v1:post') {
+      # Enforce maximum limit for '/alerts/combined/alerts/v1:post'
+      if ($PSBoundParameters.Limit -and $PSBoundParameters.Limit -gt 1000) { $PSBoundParameters['Limit'] = 1000 }
+    }
   }
   process {
     if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }

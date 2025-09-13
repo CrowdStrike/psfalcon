@@ -32,15 +32,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Expand-FalconSampleArchive
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($File) {
-      @($File).foreach{
-        # Filter to defined 'files' properties
-        $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.files
-        $List.Add($i)
-      }
+      # Filter to defined 'files' properties
+      @($File).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.files)) }
     }
   }
   end {

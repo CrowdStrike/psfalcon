@@ -1,6 +1,6 @@
 @{
   RootModule = 'PSFalcon.psm1'
-  ModuleVersion = '2.2.8'
+  ModuleVersion = '2.2.9'
   CompatiblePSEditions = @('Desktop','Core')
   GUID = 'd893eb9f-f6bb-4a40-9caf-aaff0e42acd1'
   Author = 'Brendan Kremian'
@@ -24,6 +24,37 @@
 
     # billing-dashboards-usage
     'Get-FalconHostAverage'
+
+    # cases
+    'Edit-FalconNgsCase'
+    'Add-FalconNgsCaseEvidence'
+    'Add-FalconNgsCaseTag'
+    'Get-FalconNgsCase'
+    'New-FalconNgsCase'
+    'Remove-FalconNgsCaseTag'
+
+    # case-files
+    'Edit-FalconNgsCaseFile'
+    'Get-FalconNgsCaseFile'
+    'Receive-FalconNgsCaseFile'
+    'Remove-FalconNgsCaseFile'
+    'Send-FalconNgsCaseFile'
+
+    # casemgmt
+    'Edit-FalconNgsCaseNotificationGroup'
+    'Edit-FalconNgsCaseSla'
+    'Edit-FalconNgsCaseTemplate'
+    'Get-FalconNgsCaseField'
+    'Get-FalconNgsCaseNotificationGroup'
+    'Get-FalconNgsCaseSla'
+    'Get-FalconNgsCaseTemplate'
+    'Get-FalconNgsCaseTemplateSnapshot'
+    'New-FalconNgsCaseNotificationGroup'
+    'New-FalconNgsCaseSla'
+    'New-FalconNgsCaseTemplate'
+    'Remove-FalconNgsCaseNotificationGroup'
+    'Remove-FalconNgsCaseSla'
+    'Remove-FalconNgsCaseTemplate'
 
     # cloud-connect-cspm-aws
     'Edit-FalconCloudAwsAccount'
@@ -54,6 +85,9 @@
     'Receive-FalconCloudGcpScript'
     'Remove-FalconCloudGcpAccount'
     'Test-FalconCloudGcpServiceAccount'
+
+    # cloud-security-assets
+    'Get-FalconCloudAsset'
 
     # configuration-assessment
     'Get-FalconConfigAssessment'
@@ -98,7 +132,9 @@
     'Show-FalconRegistryCredential'
 
     # correlation-rules
+    'Edit-FalconCorrelationRule'
     'Get-FalconCorrelationRule'
+    'New-FalconCorrelationRule'
     'Remove-FalconCorrelationRule'
 
     # delivery-settings
@@ -106,8 +142,6 @@
     'Set-FalconContentControl'
 
     # detects
-    'Edit-FalconDetection'
-    'Get-FalconDetection'
     'Get-FalconCloudIoa'
     'Get-FalconCloudIom'
 
@@ -144,7 +178,6 @@
     'Get-FalconCompleteAllowlist'
     'Get-FalconCompleteBlocklist'
     'Get-FalconCompleteCollection'
-    'Get-FalconCompleteDetection'
     'Get-FalconCompleteEscalation'
     'Get-FalconCompleteIncident'
     'Get-FalconCompleteRemediation'
@@ -160,6 +193,9 @@
 
     # fem
     'Edit-FalconAsset'
+    'Get-FalconSubsidiary'
+    'New-FalconAsset'
+    'Remove-FalconAsset'
 
     # fdr
     'Get-FalconReplicatorEvent'
@@ -196,6 +232,7 @@
     'Set-FalconFileVantageRuleGroupPrecedence'
 
     # fwmgr
+    'Compare-FalconFirewallLocation'
     'Edit-FalconFirewallGroup'
     'Edit-FalconFirewallLocation'
     'Edit-FalconFirewallLocationSetting'
@@ -224,6 +261,12 @@
     'Stop-FalconMigration'
     'Rename-FalconMigration'
     'Remove-FalconMigration'
+
+    # humio
+    'Receive-FalconNgsLookupFile'
+
+    # hunting
+    'Get-FalconCaoQuery'
 
     # identity-protection
     'Invoke-FalconIdentityGraph'
@@ -255,6 +298,7 @@
     'Get-FalconRule'
     'Receive-FalconAttck'
     'Receive-FalconIntel'
+    'Receive-FalconMalwareFamilyAttck'
     'Receive-FalconRule'
 
     # installation-tokens
@@ -289,6 +333,39 @@
     'Get-FalconIocType'
     'New-FalconIoc'
     'Remove-FalconIoc'
+
+    # it-automation
+    'Add-FalconItHostGroup'
+    'Edit-FalconItPolicy'
+    'Edit-FalconItScheduledTask'
+    'Edit-FalconItTask'
+    'Edit-FalconItTaskGroup'
+    'Edit-FalconItUserGroup'
+    'Get-FalconItFileTask'
+    'Get-FalconItHostExecution'
+    'Get-FalconItPolicy'
+    'Get-FalconItScheduledTask'
+    'Get-FalconItTask'
+    'Get-FalconItTaskExecution'
+    'Get-FalconItTaskExecutionSearch'
+    'Get-FalconItTaskGroup'
+    'Get-FalconItUserGroup'
+    'Invoke-FalconItTask'
+    'New-FalconItPolicy'
+    'New-FalconItScheduledTask'
+    'New-FalconItTask'
+    'New-FalconItTaskGroup'
+    'New-FalconItUserGroup'
+    'Redo-FalconItTaskExecution'
+    'Remove-FalconItHostGroup'
+    'Remove-FalconItPolicy'
+    'Remove-FalconItScheduledTask'
+    'Remove-FalconItTask'
+    'Remove-FalconItTaskGroup'
+    'Remove-FalconItUserGroup'
+    'Search-FalconItTaskExecution'
+    'Set-FalconItPolicyPrecedence'
+    'Stop-FalconItTaskExecution'
 
     # kubernetes-protection
     'Edit-FalconContainerAwsAccount'
@@ -352,9 +429,32 @@
     'Remove-FalconUserGroup'
     'Remove-FalconUserGroupMember'
 
+    # ngsiem-content
+    'Edit-FalconNgsParser'
+    'Get-FalconNgsDashboard'
+    'Get-FalconNgsLookupFile'
+    'Get-FalconNgsParser'
+    'Get-FalconNgsSavedQuery'
+    'New-FalconNgsParser'
+    'Receive-FalconNgsDashboard'
+    'Receive-FalconNgsParser'
+    'Receive-FalconNgsSavedQuery'
+    'Remove-FalconNgsDashboard'
+    'Remove-FalconNgsLookupFile'
+    'Remove-FalconNgsParser'
+    'Remove-FalconNgsSavedQuery'
+    'Send-FalconNgsDashboard'
+    'Send-FalconNgsLookupFile'
+    'Send-FalconNgsParser'
+    'Send-FalconNgsSavedQuery'
+    'Update-FalconNgsDashboard'
+    'Update-FalconNgsLookupFile'
+    'Update-FalconNgsSavedQuery'
+
     # oauth2
     'Request-FalconToken'
     'Revoke-FalconToken'
+    'Show-FalconToken'
     'Test-FalconToken'
 
     # ods
@@ -379,13 +479,17 @@
     'Edit-FalconContentPolicy'
     'Get-FalconContentPolicy'
     'Get-FalconContentPolicyMember'
+    'Get-FalconContentVersion'
     'Invoke-FalconContentPolicyAction'
     'New-FalconContentPolicy'
     'Remove-FalconContentPolicy'
     'Set-FalconContentPrecedence'
 
     # policy-device-control
+    'Edit-FalconDeviceControlClass'
+    'Edit-FalconDeviceControlNotification'
     'Edit-FalconDeviceControlPolicy'
+    'Get-FalconDeviceControlNotification'
     'Get-FalconDeviceControlPolicy'
     'Get-FalconDeviceControlPolicyMember'
     'Invoke-FalconDeviceControlPolicyAction'
@@ -521,6 +625,7 @@
     'Invoke-FalconCommand'
     'Invoke-FalconResponderCommand'
     'Receive-FalconGetFile'
+    'Receive-FalconPutFile'
     'Remove-FalconCommand'
     'Remove-FalconGetFile'
     'Remove-FalconPutFile'
@@ -621,14 +726,34 @@
   )
   CmdletsToExport = @()
   VariablesToExport = '*'
-  AliasesToExport = @('Edit-FalconHorizonAwsAccount','Edit-FalconHorizonAzureAccount','Edit-FalconHorizonPolicy',
-    'Edit-FalconHorizonSchedule','Get-FalconFimChange','Get-FalconHorizonAwsAccount','Get-FalconHorizonAwsLink',
-    'Get-FalconHorizonAzureAccount','Get-FalconHorizonAzureCertificate','Get-FalconHorizonAzureGroup',
-    'Get-FalconHorizonIoa','Get-FalconHorizonIoaEvent','Get-FalconHorizonIoaUser','Get-FalconHorizonIom',
-    'Get-FalconHorizonPolicy','Get-FalconHorizonSchedule','New-FalconHorizonAwsAccount',
-    'New-FalconHorizonAzureAccount','New-FalconHorizonAzureGroup','Receive-FalconHorizonAwsScript',
-    'Receive-FalconHorizonAzureScript','Remove-FalconHorizonAwsAccount','Remove-FalconHorizonAzureAccount',
-    'Remove-FalconHorizonAzureGroup')
+  AliasesToExport = @(
+    'Edit-FalconHorizonAwsAccount'
+    'Edit-FalconHorizonAzureAccount'
+    'Edit-FalconHorizonPolicy'
+    'Edit-FalconHorizonSchedule'
+    'Get-FalconChannelControl'
+    'Get-FalconFimChange'
+    'Get-FalconHorizonAwsAccount'
+    'Get-FalconHorizonAwsLink'
+    'Get-FalconHorizonAzureAccount'
+    'Get-FalconHorizonAzureCertificate'
+    'Get-FalconHorizonAzureGroup'
+    'Get-FalconHorizonIoa'
+    'Get-FalconHorizonIoaEvent'
+    'Get-FalconHorizonIoaUser'
+    'Get-FalconHorizonIom'
+    'Get-FalconHorizonPolicy'
+    'Get-FalconHorizonSchedule'
+    'New-FalconHorizonAwsAccount'
+    'New-FalconHorizonAzureAccount'
+    'New-FalconHorizonAzureGroup'
+    'Receive-FalconHorizonAwsScript'
+    'Receive-FalconHorizonAzureScript'
+    'Remove-FalconHorizonAwsAccount'
+    'Remove-FalconHorizonAzureAccount'
+    'Remove-FalconHorizonAzureGroup'
+    'Set-FalconChannelControl'
+  )
   PrivateData = @{
     PSData = @{
       Tags = @('CrowdStrike','Falcon','OAuth2','REST','API','PSEdition_Desktop','PSEdition_Core',
@@ -636,7 +761,7 @@
       LicenseUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/LICENSE'
       ProjectUri = 'https://github.com/crowdstrike/psfalcon'
       IconUri = 'https://raw.githubusercontent.com/crowdstrike/psfalcon/master/icon.png'
-      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.7'
+      ReleaseNotes = 'https://github.com/crowdstrike/psfalcon/releases/tag/2.2.9'
     }
   }
 }

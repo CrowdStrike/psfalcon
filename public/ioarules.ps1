@@ -98,7 +98,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaRule
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($RuleUpdate) {
@@ -164,7 +164,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaGroup
     [string[]]$Id,
     [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=1)]
     [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/ioarules/queries/rule-groups/v1:get',Position=2)]
     [Parameter(ParameterSetName='/ioarules/queries/rule-groups-full/v1:get',Position=2)]
@@ -293,7 +293,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaRule
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/ioarules/queries/rules/v1:get',Position=2)]
     [Alias('q')]

@@ -421,7 +421,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                 }
                 Windows = @{ Archive = "Expand-Archive $($TempDir,$PutFile -join '\') $TempDir" }
               }
-              foreach ($Cmd in @('mkdir','cd','put','runscript','run')) {
+              [string[]]$CmdList = if ($PSCmdlet.ParameterSetName -match '_File' -and $Pair.Key -ne 'Linux') {
+                # Skip 'runscript' (the 'extract' step) when the 'File' parameter is used on non-Linux hosts
+                'mkdir','cd','put','run'
+              } else {
+                'mkdir','cd','put','runscript','run'
+              }
+              foreach ($Cmd in $CmdList) {
                 # Define Real-time Response command parameters
                 $Param = @{
                   BatchId = $Session.batch_id
@@ -476,6 +482,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                       }
                     }
                   }
+                  # Use all available hosts for initial step or all hosts that completed previous step
                   OptionalHostId = if ($Cmd -eq 'mkdir') { $Pair.Value } else { $Optional }
                   Timeout = if ($Cmd -eq 'put') { 530 } else { $Timeout }
                 }
@@ -483,7 +490,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
                   # Issue command, output result to CSV and capture successful values
                   Write-Host "[Invoke-FalconDeploy] Issuing '$Cmd' to $(($Param.OptionalHostId |
                     Measure-Object).Count) $($Pair.Key) host(s)..."
-                  [string]$Step = if ($Cmd -eq 'runscript') { 'extract' } else { $Cmd }
+                  [string]$Step = if ($Cmd -eq 'runscript') {
+                    # Label step as 'extract' when using 'Archive', else 'chmod' for modifying 'File' on Linux
+                    if ($PSCmdlet.ParameterSetName -match '_Archive$') { 'extract' } else { 'chmod' }
+                  } else {
+                    $Cmd
+                  }
                   # Add delay when queueing to ensure commands are processed in correct order
                   if ($QueueOffline -eq $true) { Start-Sleep -Seconds 2 }
                   Write-RtrResult (Invoke-FalconAdminCommand @Param) $Step $Session.batch_id

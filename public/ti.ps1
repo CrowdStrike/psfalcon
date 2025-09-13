@@ -33,7 +33,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconTailoredEvent
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ti/events/queries/events/v2:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/ti/events/queries/events/v2:get',Position=2)]
     [Alias('q')]
@@ -101,7 +101,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconTailoredRule
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/ti/rules/queries/rules/v2:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/ti/rules/queries/rules/v2:get',Position=2)]
     [Alias('q')]

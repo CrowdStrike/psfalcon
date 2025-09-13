@@ -33,7 +33,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:get',Position=2)]
     [Alias('q')]
@@ -96,7 +96,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
     [ValidateSet('release','unrelease','delete',IgnoreCase=$false)]
     [string]$Action,
     [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Mandatory)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/quarantine/queries/quarantined-files/v1:patch',Position=3)]
     [Alias('q')]
@@ -139,7 +139,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconQuarantineAction
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/quarantine/aggregates/action-update-count/v1:get',Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter
   )
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}

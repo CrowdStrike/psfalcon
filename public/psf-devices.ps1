@@ -57,6 +57,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
       [object[]]$HostArray = if (!$PSBoundParameters.Hosts) {
         # Retrieve Host details
         $Param = @{
+          Field = $Required
           Detailed = $true
           All = $true
           ErrorAction = 'SilentlyContinue'
@@ -157,7 +158,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
         } else {
           (@($Group).foreach{ "hostname:['$_']" }) -join ','
         }
-        $Req = Get-FalconHost -Filter $Filter -Detailed | Select-Object $Select
+        $Req = Get-FalconHost -Filter $Filter -Field $Select -Detailed
         @($Group).foreach{
           if (($Partial -and $Req.hostname -notlike "$_*") -or (!$Partial -and $Req.hostname -notcontains $_)) {
             $PSCmdlet.WriteWarning("[Find-FalconHostname] No match found for '$_'.")

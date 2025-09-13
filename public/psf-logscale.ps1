@@ -62,7 +62,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconEvent
   begin {
     $OriginalProgress = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($Script:Falcon.Api.Collector.Token -and $Script:Falcon.Api.Collector.Token -match '^[a-fA-F0-9]{32}$') {

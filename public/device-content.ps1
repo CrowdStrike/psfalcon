@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentState
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/device-content/queries/states/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/device-content/queries/states/v1:get',Position=2)]
     [string]$Sort,
@@ -48,7 +48,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentState
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {

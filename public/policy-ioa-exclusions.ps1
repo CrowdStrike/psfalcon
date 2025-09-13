@@ -1,25 +1,24 @@
 function ConvertTo-FalconIoaExclusion {
 <#
 .SYNOPSIS
-Output required fields to create an Indicator of Attack exclusion from a Falcon detection
+Output required fields to create an Indicator of Attack exclusion from a Falcon alert or detection
 .DESCRIPTION
-Uses the 'behaviors' and 'device' properties of a detection to generate the necessary fields to create a new
-Indicator of Attack exclusion. Specfically, it maps the following properties these fields:
+Uses the 'behaviors' of a detection, or specific properties of an alert to create a new Indicator of Attack
+exclusion. Specfically, it maps the following properties these fields:
 
-behaviors.behavior_id > pattern_id
-behaviors.display_name > pattern_name
-behaviors.cmdline > cl_regex
-behaviors.filepath > ifn_regex
+behavior_id/pattern_id > pattern_id
+display_name > pattern_name
+cmdline > cl_regex
+filepath > ifn_regex
 device.groups > groups
 
 The 'cl_regex' and 'ifn_regex' fields are escaped using the [regex]::Escape() PowerShell accelerator. The
-'ifn_regex' output also replaces the NT device path ('Device/HarddiskVolume') with a wildcard.
+'ifn_regex' output also replaces the NT device path ('Device/HarddiskVolume') with a wildcard. If the host
+involved in the alert/detection is not in any host groups, the resulting exclusion will apply to all host groups.
 
-If the detection involves a device that is not in any groups, it uses 'all' to target all host groups.
-
-The resulting output can be passed to 'New-FalconIoaExclusion' to create an exclusion.
+The output of this command can be passed to 'New-FalconIoaExclusion' to create an exclusion.
 .PARAMETER Detection
-Falcon detection content, including 'behaviors' and 'device'
+Falcon alert or detection
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
 #>
@@ -28,28 +27,32 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
     [Parameter(Mandatory,ValueFromPipeline,Position=1)]
     [object]$Detection
   )
-  begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
-  process {
-    if ($Detection.behaviors -and $Detection.device) {
-      @($Detection.behaviors).Where({$_.tactic -notmatch '^(Machine Learning|Malware)$'}).foreach{
-        $Output.Add(([PSCustomObject]@{
-          pattern_id = $_.behavior_id
-          pattern_name = $_.display_name
-          cl_regex = [regex]::Escape($_.cmdline) -replace '(\\ {1,})+','\s+'
-          ifn_regex = [regex]::Escape($_.filepath) -replace '\\\\Device\\\\HarddiskVolume\d+','.*'
-          groups = if ($Detection.device.groups) { $Detection.device.groups } else { 'all' }
-          comment = "Created from $($Detection.detection_id) by $((Show-FalconModule).UserAgent)."
-        }))
-      }
-    } else {
-      foreach ($Property in @('behaviors','device')) {
-        if (!$Detection.$Property) {
-          throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property."
+  begin {
+    function New-ExObj ([object]$Obj,[string]$String) {
+      if ($Obj.tactic -notmatch '^(Machine Learning|Malware)$') {
+        [PSCustomObject]@{
+          name = $Obj.display_name
+          description = 'Created from {0} by {1}' -f $String,(Show-FalconModule).UserAgent
+          pattern_id = if ($Obj.behavior_id) { $Obj.behavior_id } else { $Obj.pattern_id }
+          pattern_name = $Obj.display_name
+          cl_regex = [regex]::Escape($Obj.cmdline) -replace '(\\ {1,})+','\s+'
+          ifn_regex = [regex]::Escape($Obj.filepath) -replace '\\\\Device\\\\HarddiskVolume\d+','.*'
+          groups = if ($Obj.device.groups) { $Obj.device.groups } else { 'all' }
         }
       }
     }
+    [System.Collections.Generic.List[PSCustomObject]]$Output = @()
   }
-  end { if ($Output) { @($Output | Group-Object pattern_id).foreach{ $_.Group | Select-Object -First 1 }}}
+  process {
+    if ($Detection.id) {
+      # Convert 'alert'
+      $Output.Add((New-ExObj $Detection $Detection.id))
+    } elseif ($Detection.detection_id -and $Detection.behaviors) {
+      # Convert 'detection' behaviors
+      @($Detection.behaviors).foreach{ $Output.Add((New-ExObj $_ $Detection.detection_id)) }
+    }
+  }
+  end { if ($Output) { @($Output | Group-Object value).foreach{ $_.Group | Select-Object -First 1 }}}
 }
 function Edit-FalconIoaExclusion {
 <#
@@ -165,7 +168,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=2)]
     [ValidateSet('applied_globally.asc','applied_globally.desc','created_by.asc','created_by.desc',

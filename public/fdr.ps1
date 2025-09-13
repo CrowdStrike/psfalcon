@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReplicatorEvent
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fdr/queries/schema-events/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/fdr/queries/schema-events/v1:get',Position=2)]
     [ValidateSet('name.asc','name.desc','description.asc','description.desc','platform.asc','platform.desc',
@@ -93,7 +93,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReplicatorField
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/fdr/queries/schema-fields/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/fdr/queries/schema-fields/v1:get',Position=2)]
     [ValidateSet('name.asc','name.desc','description.asc','description.desc','type.asc','type.desc',

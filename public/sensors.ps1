@@ -47,7 +47,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
     [string[]]$Id,
     [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=1)]
     [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=2)]
     [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=2)]

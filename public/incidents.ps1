@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
     [Alias('ids','behavior_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/incidents/queries/behaviors/v1:get',Position=2)]
     [ValidateSet('timestamp.asc','timestamp.desc',IgnoreCase=$false)]
@@ -95,7 +95,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
     [Alias('ids','incident_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/incidents/queries/incidents/v1:get',Position=2)]
     [ValidateSet('assigned_to.asc','assigned_to.desc','assigned_to_name.asc','assigned_to_name.desc',
@@ -153,7 +153,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
   [CmdletBinding(DefaultParameterSetName='/incidents/combined/crowdscores/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get',Position=2)]
     [ValidateSet('score.asc','score.desc','timestamp.asc','timestamp.desc',IgnoreCase=$false)]

@@ -85,7 +85,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/sv-exclusions/v1:get',Position=2)]
     [ValidateSet('applied_globally.asc','applied_globally.desc','created_by.asc','created_by.desc',

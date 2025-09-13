@@ -36,6 +36,8 @@ Maximum number of results per request
 Whether to validate search results against their schema
 .PARAMETER Metadata
 Whether to include metadata in the response
+.PARAMETER JobStatusOnly
+Whether to include job status and remove results in the response
 .PARAMETER Offset
 Position to begin retrieving results
 .LINK
@@ -60,6 +62,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundrySearch
     [boolean]$MatchResponseSchema,
     [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=6)]
     [boolean]$Metadata,
+    [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get',Position=7)]
+    [Alias('job_status_only')]
+    [boolean]$JobStatusOnly,
     [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get')]
     [string]$Offset
   )

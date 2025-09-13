@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
     [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get',Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/zero-trust-assessment/queries/assessments/v1:get',Position=2)]
     [ValidateSet('score|desc','score|asc',IgnoreCase=$false)]

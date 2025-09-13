@@ -30,7 +30,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMigration
     [Alias('ids','migration_id')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/host-migration/queries/migrations/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/host-migration/queries/migrations/v1:get',Position=2)]
     [ValidateSet('created_by|asc','created_by|desc','created_time|asc','created_time|desc','id|asc','id|desc',
@@ -131,7 +131,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMigrationHost
     [Alias('migration_id')]
     [string]$JobId,
     [Parameter(ParameterSetName='/host-migration/queries/host-migrations/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/host-migration/queries/host-migrations/v1:get',Position=3)]
     [ValidateSet('id|asc','id|desc','created_time|asc','created_time|desc','groups|asc','groups|desc',

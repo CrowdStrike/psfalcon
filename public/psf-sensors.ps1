@@ -28,31 +28,33 @@ function Invoke-TagScript {
         'NO_TOKEN_SUPPORT_FOR_OS'
       }
     }
+    # Abort when no tags are present to 'Remove'
+    if ($Action -eq 'Remove' -and !$Output.tags) { $Output.status = 'NO_TAG_SET' }
     if (!$Output.status) {
       [string[]]$TagInput = $String -replace 'SensorGroupingTags/',$null
-      [string]$ScriptPath = Join-Path (Show-FalconModule).ModulePath 'script'
       [string]$TagString = if (($Action -eq 'Add' -and !$Output.tags) -or $Action -eq 'Set') {
         # Select all provided tags when using 'Set', or 'Add' and no tags exist
         ($TagInput | Select-Object -Unique) -join ','
-      } elseif ($Action -eq 'Add') {
-        # Select tag(s) to append
+      } elseif ($Action -eq 'Add' -and $TagInput) {
         [boolean[]]$Append = @($TagInput).foreach{ if ($Output.tags -notcontains $_) { $true } else { $false }}
-        if ($Append -eq $true) { (@($Output.tags + $TagInput) | Select-Object -Unique) -join ',' }
-      } elseif ($Action -eq 'Remove') {
-        # Select tag(s) to remove
+        if ($Append -eq $true) {
+          # Append to existing tag(s)
+          (@($Output.tags + $TagInput) | Select-Object -Unique) -join ','
+        } else {
+          # Abort when tag(s) to 'Add' are already present
+          $Output.status = 'TAG_PRESENT'
+        }
+      } elseif ($Action -eq 'Remove' -and $TagInput) {
         [boolean[]]$Remove = @($TagInput).foreach{ if ($Output.tags -contains $_) { $true } else { $false }}
-        if ($Remove -eq $true) { (@($Output.tags).Where({$TagInput -notcontains $_})) -join ',' }
+        if ($Remove -eq $true) {
+          # Remove from existing tag(s)
+          (@($Output.tags).Where({$TagInput -notcontains $_})) -join ','
+        } else {
+          # Abort when tag(s) to 'Remove' are not present
+          $Output.status = 'TAG_NOT_PRESENT'
+        }
       }
-      $Output.status = if ($Action -eq 'Add' -and !$TagString) {
-        # Abort when tag(s) to 'Add' are already present
-        'TAG_PRESENT'
-      } elseif ($Action -eq 'Remove' -and !$Output.tags) {
-        # Abort when no tags are present to 'Remove'
-        'NO_TAG_SET'
-      } elseif ($Action -eq 'Remove' -and $TagInput -and !$TagString) {
-        # Abort when tag(s) to 'Remove' are not present
-        'TAG_NOT_PRESENT'
-      } else {
+      if (!$Output.status) {
         # Verify that device is currently online
         [string]$State = (Get-FalconHost -Id $Object.device_id -State).state
         if ($QueueOffline -eq $true -or ($QueueOffline -eq $false -and $State -eq 'online')) {
@@ -67,6 +69,7 @@ function Invoke-TagScript {
             $TagString
           }
           # Import script content and run script using Real-time Response
+          [string]$ScriptPath = Join-Path (Show-FalconModule).ModulePath 'script'
           [string]$ScriptName = if ($Action -eq 'Remove' -and !$TagString) {
             'remove_sensortag'
           } else {
@@ -90,7 +93,7 @@ function Invoke-TagScript {
           if ($CmdLine) { $Param.Argument += (' -CommandLine=```{0}```' -f $CmdLine) }
           @(Invoke-FalconRtr @Param).foreach{
             # Capture offline queue status, 'errors' or 'stderr' in 'status'
-            if ($_.offline_queued -eq $true) {
+            $Output.status = if ($_.offline_queued -eq $true) {
               'PENDING_QUEUE'
             } elseif ($_.errors) {
               $_.errors
@@ -99,17 +102,17 @@ function Invoke-TagScript {
             } elseif ($_.stdout) {
               # Compare 'stdout' with $TagInput and update 'status'
               $Result = ($_.stdout).Trim()
-              $Output.tags = if ($Result -match 'Maintenance Token>') { ($TagString).Trim('"') } else { $Result }
+              $Output.tags = if ($Result -match 'Maintenance Token>') {
+                if ($TagString) { ($TagString).Trim('"') }
+              } else {
+                $Result
+              }
               [string[]]$FinalValue = $Output.tags -split ','
               if ($Action -eq 'Remove') {
-                [boolean[]]$Removed = @($Tag).foreach{
-                  if ($FinalValue -contains $_) { $false } else { $true }
-                }
+                [boolean[]]$Removed = @($Tag).foreach{ if ($FinalValue -contains $_) { $false } else { $true }}
                 if ($Removed -ne $false) { 'TAG_REMOVED' } else { 'TAG_NOT_REMOVED' }
               } else {
-                [boolean[]]$Set = @($Tag).foreach{
-                  if ($FinalValue -contains $_) { $true } else { $false }
-                }
+                [boolean[]]$Set = @($Tag).foreach{ if ($FinalValue -contains $_) { $true } else { $false }}
                 if ($Set -ne $false) {
                   if ($Action -eq 'Add') { 'TAG_ADDED' } else { 'TAG_SET' }
                 } else {

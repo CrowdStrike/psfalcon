@@ -1,7 +1,7 @@
 function Get-FalconActor {
 <#
 .SYNOPSIS
-Search for threat actors
+Search for Falcon Intelligence threat actors
 .DESCRIPTION
 Requires 'Actors (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -15,7 +15,7 @@ Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Field
-Specific fields, or a predefined collection name surrounded by two underscores [default: __basic__]
+Specific fields to return, or a predefined collection name surrounded by two underscores [default: __basic__]
 .PARAMETER Include
 Include additional information
 .PARAMETER Offset
@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=1)]
     [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=2)]
     [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=2)]
@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconActor
     [int32]$Limit,
     [Parameter(ParameterSetName='/intel/entities/actors/v1:get',Position=2)]
     [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=5)]
-    [Alias('Fields')]
+    [Alias('fields')]
     [string[]]$Field,
     [Parameter(ParameterSetName='/intel/queries/actors/v1:get',Position=5)]
     [Parameter(ParameterSetName='/intel/combined/actors/v1:get',Position=6)]
@@ -172,7 +172,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/intel/queries/vulnerabilities/v1:get',Position=2)]
     [Alias('q')]
@@ -207,7 +207,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCve
 function Get-FalconIndicator {
 <#
 .SYNOPSIS
-Search for intelligence indicators
+Search for Falcon Intelligence indicators
 .DESCRIPTION
 Requires 'Indicators (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -243,7 +243,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=1)]
     [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/intel/queries/indicators/v1:get',Position=2)]
     [Parameter(ParameterSetName='/intel/combined/indicators/v1:get',Position=2)]
@@ -295,7 +295,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIndicator
 function Get-FalconIntel {
 <#
 .SYNOPSIS
-Search for intelligence reports
+Search for Falcon Intelligence reports
 .DESCRIPTION
 Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -329,7 +329,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/reports/v1:get',Position=1)]
     [Parameter(ParameterSetName='/intel/combined/reports/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/intel/queries/reports/v1:get',Position=2)]
     [Parameter(ParameterSetName='/intel/combined/reports/v1:get',Position=2)]
@@ -347,7 +347,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
     [int32]$Limit,
     [Parameter(ParameterSetName='/intel/entities/reports/v1:get',Position=2)]
     [Parameter(ParameterSetName='/intel/combined/reports/v1:get',Position=5)]
-    [Alias('Fields')]
+    [Alias('fields')]
     [string[]]$Field,
     [Parameter(ParameterSetName='/intel/queries/reports/v1:get')]
     [Parameter(ParameterSetName='/intel/combined/reports/v1:get')]
@@ -377,7 +377,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIntel
 function Get-FalconMalwareFamily {
 <#
 .SYNOPSIS
-Search for malware families
+Search for Falcon Intelligence malware families
 .DESCRIPTION
 Requires 'Malware Families (Falcon Intelligence): Read'.
 .PARAMETER Id
@@ -390,6 +390,8 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER Field
+Specific fields to return
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Mitre
@@ -412,23 +414,32 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalwareFamily
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=2)]
     [Alias('q')]
     [string]$Query,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=3)]
     [string]$Sort,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get',Position=4)]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=4)]
     [ValidateRange(1,5000)]
     [int32]$Limit,
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Position=5)]
+    [Alias('fields')]
+    [string[]]$Field,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/intel/queries/mitre-malware/v1:get',Mandatory)]
     [switch]$Mitre,
-    [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get',Mandatory)]
     [switch]$Detailed,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
+    [Parameter(ParameterSetName='/intel/combined/malware/v1:get')]
     [switch]$All,
     [Parameter(ParameterSetName='/intel/queries/malware/v1:get')]
     [switch]$Total
@@ -492,8 +503,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRule
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Mandatory,Position=1)]
-    [ValidateSet('snort-suricata-master','snort-suricata-update','snort-suricata-changelog','yara-master',
-      'yara-update','yara-changelog','common-event-format','netwitness',IgnoreCase=$false)]
+    [ValidateSet('common-event-format','cql-changelog','cql-master','cql-update','netwitness',
+      'snort-suricata-changelog','snort-suricata-master','snort-suricata-update','yara-changelog','yara-master',
+      'yara-update',IgnoreCase=$false)]
     [string]$Type,
     [Parameter(ParameterSetName='/intel/queries/rules/v1:get',Position=2)]
     [string[]]$Name,
@@ -545,12 +557,12 @@ function Receive-FalconAttck {
 Download Mitre ATT&CK information for an actor
 .DESCRIPTION
 Requires 'Actors (Falcon Intelligence): Read'.
-.PARAMETER Path
-Destination path
-.PARAMETER Slug
-Actor identifier ('slug')
 .PARAMETER Format
-Export format
+Export format [default: json]
+.PARAMETER Path
+Destination path [default: .\<slug>.<format>]
+.PARAMETER Slug
+Actor identifier
 .PARAMETER Force
 Overwrite an existing file when present
 .LINK
@@ -558,14 +570,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
 #>
   [CmdletBinding(DefaultParameterSetName='/intel/entities/mitre-reports/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=1)]
-    [string]$Path,
-    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=2)]
-    [Alias('actor_id')]
-    [string]$Slug,
-    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,Position=3)]
+    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Position=1)]
     [ValidateSet('csv','json',IgnoreCase=$false)]
     [string]$Format,
+    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Position=2)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [Alias('actor_id')]
+    [string]$Slug,
     [Parameter(ParameterSetName='/intel/entities/mitre-reports/v1:get')]
     [switch]$Force
   )
@@ -578,7 +591,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
     $Param.Format['Outfile'] = 'path'
   }
   process {
-    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $Format
+    if (!$PSBoundParameters.Path) { $PSBoundParameters['Path'] = $PSBoundParameters.Slug }
+    if (!$PSBoundParameters.Format) { $PSBoundParameters['Format'] = 'json' }
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $PSBoundParameters.Format
     $OutPath = Test-OutFile $PSBoundParameters.Path
     if ($OutPath.Category -eq 'ObjectNotFound') {
       Write-Error @OutPath
@@ -594,7 +609,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconAttck
 function Receive-FalconIntel {
 <#
 .SYNOPSIS
-Download an intelligence report
+Download a Falcon Intelligence report
 .DESCRIPTION
 Requires 'Reports (Falcon Intelligence): Read'.
 .PARAMETER Path
@@ -642,10 +657,71 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconIntel
     }
   }
 }
+function Receive-FalconMalwareFamilyAttck {
+<#
+.SYNOPSIS
+Download Mitre ATT&CK information for a malware family
+.DESCRIPTION
+Requires 'Malware Families (Falcon Intelligence): Read'.
+.PARAMETER Format
+Export format [default: JSON]
+.PARAMETER Path
+Destination path [default: .\<slug>.<format>]
+.PARAMETER Slug
+Malware family identifier
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalwareFamilyAttck
+#>
+  [CmdletBinding(DefaultParameterSetName='/intel/entities/malware-mitre-reports/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get',Position=1)]
+    [ValidateSet('CSV','JSON','JSON_NAVIGATOR',IgnoreCase=$false)]
+    [string]$Format,
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get',Position=2)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [string]$Slug,
+    [Parameter(ParameterSetName='/intel/entities/malware-mitre-reports/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+    }
+    $Param.Format['Outfile'] = 'path'
+  }
+  process {
+    if (!$PSBoundParameters.Path) { $PSBoundParameters['Path'] = $PSBoundParameters.Slug }
+    if (!$PSBoundParameters.Format) { $PSBoundParameters['Format'] = 'JSON' }
+    $Extension = if ($PSBoundParameters.Format -eq 'JSON_NAVIGATOR') {
+      'json'
+    } else {
+      ($PSBoundParameters.Format).ToLower()
+    }
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $Extension
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        $PSBoundParameters['Id'] = $PSBoundParameters.Slug
+        [void]$PSBoundParameters.Remove('Slug')
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
 function Receive-FalconRule {
 <#
 .SYNOPSIS
-Download the most recent ruleset, or a specific ruleset
+Download the most recent or a specific Falcon Intelligence ruleset
 .DESCRIPTION
 Requires 'Rules (Falcon Intelligence): Read'.
 .PARAMETER Type
@@ -666,8 +742,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconRule
   [CmdletBinding(DefaultParameterSetName='/intel/entities/rules-files/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Mandatory,Position=1)]
-    [ValidateSet('common-event-format','netwitness','snort-suricata-changelog','snort-suricata-master',
-      'snort-suricata-update','yara-changelog','yara-master','yara-update',IgnoreCase=$false)]
+    [ValidateSet('common-event-format','cql-changelog','cql-master','cql-update','netwitness',
+      'snort-suricata-changelog','snort-suricata-master','snort-suricata-update','yara-changelog','yara-master',
+      'yara-update',IgnoreCase=$false)]
     [string]$Type,
     [Parameter(ParameterSetName='/intel/entities/rules-latest-files/v1:get',Position=2)]
     [Alias('If-None-Match')]

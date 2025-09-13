@@ -29,9 +29,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
   begin {
     function Assert-CursorVariable ($UserInput,$EndCursor) {
       # Use variable definition to ensure 'Cursor' is within 'Variable' hashtable
-      if ($UserInput.query -match '^(\s+)?query\s+?\(.+Cursor') {
-        @([regex]::Matches($UserInput.query,
-          '(?<=query\s+?\()(\$\w+:.[^\)]+)').Value -replace '\$',$null).foreach{
+      if ($UserInput.query -match '^(\s+)?query(\s+)?\(.+Cursor') {
+        @([regex]::Matches($UserInput.query,'(?<=query(\s+)?\()(\$\w+:.[^\)]+)').Value -replace '\$',
+        $null).foreach{
           $Array = ($_ -split ':',2).Trim()
           if ($Array[1] -eq 'Cursor') {
             if (!$UserInput.variables) {
@@ -44,10 +44,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
       }
       return $UserInput
     }
+    function Find-PageProperty ($Object) {
+      # Determine result sub-property that contains 'pageInfo'
+      if ($Object) { @('entities','timeline').foreach{ if ($Object.$_.pageInfo) { $_ } }}
+    }
     function Invoke-GraphLoop ($Object,$Splat,$UserInput) {
       $RegEx = @{
-        # Patterns to validate statement for 'pageInfo' and 'Cursor' variable
-        CursorVariable = '^(\s+)?query\s+?\(.+Cursor'
+        # Patterns to validate statement for 'pageInfo' and 'endCursor' variable
+        CursorVariable = '^(\s+)?query(\s+)?\(.+Cursor'
         PageInfo = 'pageInfo(\s+)?{(\s+)?(hasNextPage([,\s]+)?|endCursor([,\s]+)?){2}(\s+)?}'
       }
       [string]$Message = if ($UserInput.query -notmatch $RegEx.CursorVariable) {
@@ -58,28 +62,29 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
       if ($Message) {
         $PSCmdlet.WriteWarning(("[$($Splat.Command)]",$Message -join ' '))
       } else {
+        $String = Find-PageProperty $Object
         do {
-          if ($Object.entities.pageInfo.endCursor) {
-            # Update 'Cursor' and repeat
-            $UserInput = Assert-CursorVariable $UserInput $Object.entities.pageInfo.endCursor
+          # Update 'endCursor' and repeat while 'hasNextPage' is true
+          if ($Object.$String.pageInfo.hasNextPage -eq $true -and $null -ne $Object.$String.pageInfo.endCursor) {
+            $UserInput = Assert-CursorVariable $UserInput $Object.$String.pageInfo.endCursor
             Write-GraphResult (Invoke-Falcon @Splat -UserInput $UserInput -OutVariable Object)
           }
         } while (
-          $Object.entities.pageInfo.hasNextPage -eq $true -and $null -ne
-            $Object.entities.pageInfo.endCursor
+          $Object.$String.pageInfo.hasNextPage -eq $true -and $null -ne $Object.$String.pageInfo.endCursor
         )
       }
     }
     function Write-GraphResult ($Object) {
-      if ($Object.entities.pageInfo) {
+      $String = Find-PageProperty $Object
+      if ($Object -and $String -and $Object.$String.pageInfo) {
         # Output verbose 'pageInfo' detail
-        [string]$Message = (@($Object.entities.pageInfo.PSObject.Properties).foreach{
+        [string]$Message = (@($Object.$String.pageInfo.PSObject.Properties).foreach{
           $_.Name,$_.Value -join '='
         }) -join ', '
         Write-Log 'Invoke-FalconIdentityGraph' ($Message -join ' ')
       }
-      # Output 'nodes'
-      if ($Object.entities.nodes) { $Object.entities.nodes } else { $Object }
+      # Output 'nodes' under sub-property
+      if ($Object -and $String -and $Object.$String.nodes) { $Object.$String.nodes } else { $Object }
     }
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
@@ -127,7 +132,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
     [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/identity-protection/queries/devices/v1:get',Position=2)]
     [string]$Sort,

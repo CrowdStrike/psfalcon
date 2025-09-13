@@ -1,56 +1,3 @@
-function Edit-FalconDetection {
-<#
-.SYNOPSIS
-Modify detections
-.DESCRIPTION
-Requires 'Detections: Write'.
-.PARAMETER Comment
-Detection comment
-.PARAMETER ShowInUi
-Visible within the Falcon UI [default: $true]
-.PARAMETER Status
-Detection status
-.PARAMETER AssignedToUuid
-User identifier for assignment
-.PARAMETER Id
-Detection identifier
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDetection
-#>
-  [CmdletBinding(DefaultParameterSetName='/detects/entities/detects/v2:patch',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=1)]
-    [string]$Comment,
-    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Position=2)]
-    [Alias('show_in_ui')]
-    [boolean]$ShowInUi,
-    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,Position=3)]
-    [ValidateSet('new','in_progress','true_positive','false_positive','closed','reopened',IgnoreCase=$false)]
-    [string]$Status,
-    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',ValueFromPipelineByPropertyName,Position=4)]
-    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
-    [Alias('assigned_to_uuid','uuid')]
-    [string]$AssignedToUuid,
-    [Parameter(ParameterSetName='/detects/entities/detects/v2:patch',Mandatory,ValueFromPipelineByPropertyName,
-      ValueFromPipeline,Position=5)]
-    [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
-    [Alias('ids','detection_id','detection_ids')]
-    [string[]]$Id
-  )
-  begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 1000 }
-    [System.Collections.Generic.List[string]]$List = @()
-  }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
-  end {
-    if ($PSBoundParameters.Comment -and !$PSBoundParameters.Status) {
-      throw "A 'status' value must be supplied when adding a comment."
-    } elseif ($List) {
-      $PSBoundParameters['Id'] = @($List)
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
-  }
-}
 function Get-FalconCloudIoa {
 <#
 .SYNOPSIS
@@ -191,7 +138,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIom
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/detects/queries/iom/v2:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/detects/queries/iom/v2:get',Position=2)]
     [ValidateSet('account_name.asc','account_name.desc','account_id.asc','account_id.desc','attack_types.asc',
@@ -219,77 +166,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIom
   )
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    [System.Collections.Generic.List[string]]$List = @()
-  }
-  process {
-    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
-  }
-  end {
-    if ($List) {
-      $PSBoundParameters['Id'] = @($List)
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
-  }
-}
-function Get-FalconDetection {
-<#
-.SYNOPSIS
-Search for detections
-.DESCRIPTION
-Requires 'Detections: Read'.
-.PARAMETER Id
-Detection identifier
-.PARAMETER Filter
-Falcon Query Language expression to limit results
-.PARAMETER Query
-Perform a generic substring search across available fields
-.PARAMETER Sort
-Property and direction to sort results
-.PARAMETER Limit
-Maximum number of results per request
-.PARAMETER Offset
-Position to begin retrieving results
-.PARAMETER Detailed
-Retrieve detailed information
-.PARAMETER All
-Repeat requests until all available results are retrieved
-.PARAMETER Total
-Display total result count instead of results
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDetection
-#>
-  [CmdletBinding(DefaultParameterSetName='/detects/queries/detects/v1:get',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/detects/entities/summaries/GET/v1:post',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
-    [Alias('ids','detection_id','detection_ids')]
-    [string[]]$Id,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
-    [string]$Filter,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=2)]
-    [Alias('q')]
-    [string]$Query,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=3)]
-    [ValidateSet('adversary_id.asc','adversary_id.desc','devices.hostname.asc','devices.hostname.desc',
-      'first_behavior.asc','first_behavior.desc','last_behavior.asc','last_behavior.desc',
-      'max_confidence.asc','max_confidence.desc','max_severity.asc','max_severity.desc',IgnoreCase=$false)]
-    [string]$Sort,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get',Position=4)]
-    [ValidateRange(1,5000)]
-    [int32]$Limit,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get')]
-    [int32]$Offset,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get')]
-    [switch]$Detailed,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get')]
-    [switch]$All,
-    [Parameter(ParameterSetName='/detects/queries/detects/v1:get')]
-    [switch]$Total
-  )
-  begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 1000 }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {

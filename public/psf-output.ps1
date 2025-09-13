@@ -89,7 +89,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconReport
       }
     }
     if ($Path) { $Path = $Script:Falcon.Api.Path($Path) }
-    $List = [System.Collections.Generic.List[object]]@()
+    [System.Collections.Generic.List[object]]$List = @()
   }
   process { if ($Object) { @($Object).foreach{ $List.Add($_) }}}
   end {

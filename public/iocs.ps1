@@ -10,10 +10,10 @@ One or more indicators to modify in a single request
 Action to perform when a host observes the indicator
 .PARAMETER Platform
 Operating system platform
-.PARAMETER Source
-Origination source
 .PARAMETER Severity
 Severity level
+.PARAMETER Source
+Origination source
 .PARAMETER Description
 Indicator description
 .PARAMETER Filename
@@ -27,7 +27,7 @@ Host group identifier
 .PARAMETER AppliedGlobally
 Assign to all host groups
 .PARAMETER Expiration
-Expiration date. When an indicator expires, its action is set to 'no_action' but it remains in your indicator list.
+Expiration date and time (UTC ISO 8601). When an indicator expires it is set to 'no_action'.
 .PARAMETER FromParent
 Inheritance from parent CID
 .PARAMETER Comment
@@ -50,13 +50,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=1)]
     [string]$Action,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=2)]
-    [Alias('Platforms')]
+    [Alias('platforms')]
     [string[]]$Platform,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=3)]
+    [string]$Severity,
+    [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=4)]
     [ValidateRange(1,256)]
     [string]$Source,
-    [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=4)]
-    [string]$Severity,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=5)]
     [string]$Description,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=6)]
@@ -66,7 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
     [Alias('tags')]
     [string[]]$Tag,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=8)]
-    [ValidateSet('no_action','allow','detect','prevent',IgnoreCase=$false)]
+    [ValidateSet('allow','detect','no_action','prevent',IgnoreCase=$false)]
     [Alias('mobile_action')]
     [string]$MobileAction,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=9)]
@@ -77,7 +77,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
     [Alias('applied_globally')]
     [boolean]$AppliedGlobally,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=11)]
-    [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
     [string]$Expiration,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:patch',Position=13)]
     [Alias('from_parent')]
@@ -104,14 +104,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
       Max = 2000
     }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
       @($InputObject).foreach{
         # Filter to defined 'indicators' properties and remove empty values
         $i = [PSCustomObject]$_ | Select-Object $Param.Format.Body.indicators
-        Remove-EmptyValue $i comment,expiration,tag
+        Remove-EmptyValue $i comment,expiration,tags
         $List.Add($i)
       }
     } else {
@@ -169,7 +169,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
     [string[]]$Id,
     [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=1)]
     [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/iocs/queries/indicators/v1:get',Position=2)]
     [Parameter(ParameterSetName='/iocs/combined/indicator/v1:get',Position=2)]
@@ -353,10 +353,10 @@ String representation of the indicator
 Action to perform when a host observes the indicator
 .PARAMETER Platform
 Operating system platform
-.PARAMETER Source
-Origination source
 .PARAMETER Severity
 Severity level
+.PARAMETER Source
+Origination source
 .PARAMETER Description
 Indicator description
 .PARAMETER Filename
@@ -370,7 +370,7 @@ Host group identifier
 .PARAMETER AppliedGlobally
 Assign to all host groups
 .PARAMETER Expiration
-Expiration date. When an indicator expires,its action is set to 'no_action' but it remains in your indicator list.
+Expiration date and time (UTC ISO 8601). When an indicator expires it is set to 'no_action'.
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Retrodetect
@@ -391,11 +391,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=2)]
     [Alias('platforms')]
     [string[]]$Platform,
-    [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=3)]
+    [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Mandatory,Position=3)]
+    [string]$Severity,
+    [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=4)]
     [ValidateRange(1,256)]
     [string]$Source,
-    [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=4)]
-    [string]$Severity,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=5)]
     [string]$Description,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=6)]
@@ -405,7 +405,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
     [Alias('tags')]
     [string[]]$Tag,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=8)]
-    [ValidateSet('no_action','allow','detect','prevent',IgnoreCase=$false)]
+    [ValidateSet('allow','detect','no_action','prevent',IgnoreCase=$false)]
     [Alias('mobile_action')]
     [string]$MobileAction,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=9)]
@@ -416,7 +416,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
     [Alias('applied_globally')]
     [boolean]$AppliedGlobally,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=11)]
-    [ValidatePattern('^(\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)$')]
+    [ValidatePattern('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$')]
     [string]$Expiration,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:post',Position=12)]
     [Parameter(ParameterSetName='Pipeline',Position=2)]
@@ -441,7 +441,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
       Max = 2000
     }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
@@ -490,7 +490,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoc
   [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='Filter',Mandatory)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/iocs/entities/indicators/v1:delete',Position=1)]
     [Parameter(ParameterSetName='Filter',Position=2)]

@@ -6,8 +6,8 @@ Request an OAuth2 access token
 If successful, your credentials ('ClientId', 'ClientSecret', 'MemberCid' and 'Cloud'/'CustomUrl'/'Hostname') and
 token are cached for re-use.
 
-If an active OAuth2 access token is due to expire in less than 60 seconds, a new token will automatically be
-requested using your cached credentials.
+If an active OAuth2 access token is due to expire in less than 240 seconds, a new token will automatically
+be requested using your cached credentials.
 
 The 'Collector' parameter allows for the submission of a [System.Collections.Hashtable] object containing the
 parameters included with a 'Register-FalconEventCollector' command ('Path', 'Token' and 'Enable') in order to
@@ -257,6 +257,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Revoke-FalconToken
     }
   }
 }
+function Show-FalconToken {
+<#
+.SYNOPSIS
+Display your current OAuth2 access token value
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Show-FalconToken
+#>
+  [CmdletBinding()]
+  param()
+  process {
+    if ($Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter) {
+      $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization.Parameter
+    } else {
+      $PSCmdlet.WriteError(
+        [System.Management.Automation.ErrorRecord]::New(
+          [Exception]::New('No access token available. Try "Request-FalconToken".'),
+          'no_access_request_made',
+          [System.Management.Automation.ErrorCategory]::ResourceUnavailable,
+          $null
+        )
+      )
+    }
+  }
+}
 function Test-FalconToken {
 <#
 .SYNOPSIS
@@ -281,8 +305,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconToken
     } else {
       $PSCmdlet.WriteError(
         [System.Management.Automation.ErrorRecord]::New(
-          [Exception]::New('No authorization token available. Try "Request-FalconToken".'),
-          'no_authorization_request_made',
+          [Exception]::New('No access token available. Try "Request-FalconToken".'),
+          'no_access_request_made',
           [System.Management.Automation.ErrorCategory]::ResourceUnavailable,
           $null
         )

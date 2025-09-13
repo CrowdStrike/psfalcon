@@ -1,21 +1,20 @@
 function ConvertTo-FalconMlExclusion {
 <#
 .SYNOPSIS
-Output required fields to create a Machine Learning exclusion from a Falcon detection
+Output required fields to create a Machine Learning exclusion from a Falcon alert or detection
 .DESCRIPTION
-Uses the 'behaviors' and 'device' properties of a detection to generate the necessary fields to create a new
+Uses the 'filepath' and 'device' properties of an alert/detection with a 'Machine Learning' tactic to create a
 Machine Learning exclusion. Specfically, it maps the following properties these fields:
 
-behaviors.filepath > value
+filepath > value
 device.groups > groups
 
-The 'value' field is stripped of any leading NT file path ('Device/HarddiskVolume').
+The 'filepath' field is stripped of any leading NT file path ('\Device\HarddiskVolume'). If the host involved in
+the alert/detection is not in any host groups, the resulting exclusion will apply to all host groups.
 
-If the detection involves a device that is not in any groups,it uses 'all' to target all host groups.
-
-The resulting output can be passed to 'New-FalconMlExclusion' to create an exclusion.
+The output of this command can be passed to 'New-FalconMlExclusion' to create an exclusion.
 .PARAMETER Detection
-Falcon detection content, including 'behaviors' and 'device'
+Falcon alert or detection
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
 #>
@@ -24,21 +23,26 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
     [Parameter(Mandatory,ValueFromPipeline,Position=1)]
     [object]$Detection
   )
-  begin { [System.Collections.Generic.List[PSCustomObject]]$Output = @() }
-  process {
-    if ($Detection.behaviors -and $Detection.device) {
-      @($Detection.behaviors).Where({$_.tactic -match '^(Machine Learning|Malware)$'}).foreach{
-        $Output.Add(([PSCustomObject]@{
-          value = $_.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
+  begin {
+    function New-ExObj ([object]$Obj,[string]$String) {
+      if ($Obj.tactic -match '^(Machine Learning|Malware)$' -and $Obj.filepath) {
+        [PSCustomObject]@{
+          value = $Obj.filepath -replace '\\Device\\HarddiskVolume\d+\\',$null
           excluded_from = @('blocking')
-          groups = if ($Detection.device.groups) { $Detection.device.groups } else { 'all' }
-          comment = "Created from $($Detection.detection_id) by $((Show-FalconModule).UserAgent)."
-        }))
+          groups = if ($Obj.device.groups) { @($Obj.device.groups) } else { 'all' }
+          comment = 'Created from {0} by {1}' -f $String,(Show-FalconModule).UserAgent
+        }
       }
-    } else {
-      foreach ($Property in @('behaviors','device')) {
-        if (!$Detection.$Property) { throw "[ConvertTo-FalconMlExclusion] Missing required '$Property' property." }
-      }
+    }
+    [System.Collections.Generic.List[PSCustomObject]]$Output = @()
+  }
+  process {
+    if ($Detection.id) {
+      # Convert 'alert'
+      $Output.Add((New-ExObj $Detection $Detection.id))
+    } elseif ($Detection.detection_id -and $Detection.behaviors) {
+      # Convert 'detection' behaviors
+      @($Detection.behaviors).foreach{ $Output.Add((New-ExObj $_ $Detection.detection_id)) }
     }
   }
   end { if ($Output) { @($Output | Group-Object value).foreach{ $_.Group | Select-Object -First 1 }}}
@@ -55,6 +59,8 @@ RegEx pattern value
 Host group identifier or 'all' to apply to all hosts
 .PARAMETER DescendantProcess
 Apply to descendant processes
+.PARAMETER ExcludedFrom
+Actions to exclude
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Id
@@ -77,6 +83,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconMlExclusion
     [boolean]$DescendantProcess,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
       Position=4)]
+    [ValidateSet('blocking','extraction',IgnoreCase=$false)]
+    [Alias('excluded_from')]
+    [string[]]$ExcludedFrom,
+    [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
     [string]$Comment,
     [Parameter(ParameterSetName='/policy/entities/ml-exclusions/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=5)]
@@ -130,7 +141,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/ml-exclusions/v1:get',Position=2)]
     [ValidateSet('applied_globally.asc','applied_globally.desc','created_by.asc','created_by.desc',

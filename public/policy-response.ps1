@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/response/v1:patch' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
@@ -53,6 +53,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
   }
   end {
     if ($List) {
+      # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {
@@ -98,7 +99,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
     [string[]]$Id,
     [Parameter(ParameterSetName='/policy/combined/response/v1:get',Position=1)]
     [Parameter(ParameterSetName='/policy/queries/response/v1:get',Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/combined/response/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/queries/response/v1:get',Position=2)]
@@ -178,7 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicyMember
     [string]$Id,
     [Parameter(ParameterSetName='/policy/queries/response-members/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/combined/response-members/v1:get',Position=2)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/policy/queries/response-members/v1:get',Position=3)]
     [Parameter(ParameterSetName='/policy/combined/response-members/v1:get',Position=3)]
@@ -287,7 +288,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
   begin {
     $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/response/v1:post' }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    [System.Collections.Generic.List[object]]$List = @()
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($InputObject) {
@@ -303,6 +304,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
   }
   end {
     if ($List) {
+      # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
       for ($i = 0; $i -lt $List.Count; $i += 100) {

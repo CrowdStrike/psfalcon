@@ -59,7 +59,7 @@ process {
       # Request all 100 hosts if total application results are less than 10,000
       Write-Host "[$i of $HostTotal] Requesting $AppTotal apps for hosts $($Group[0].device_id) to $(
         $Group[-1].device_id)..."
-      Add-AppList $Group (Get-FalconAsset -Filter $Filter -Application -Detailed -All)
+      Add-AppList $Group (Get-FalconAsset -Filter $Filter -Application -Detailed -Include host_info -All)
     } else {
       for ($i2=0; $i2 -lt ($Group.device_id | Measure-Object).Count; $i2+=20) {
         # Break group of 100 into groups of 20 to stay under 10,000 results
@@ -68,7 +68,7 @@ process {
         [int32]$SubTotal = Get-FalconAsset -Filter $SubFilter -Application -Total
         Write-Host "[$($i + $i2) of $HostTotal] Requesting $SubTotal apps for hosts $(
           $SubGroup[0].device_id) to $($SubGroup[-1].device_id)..."
-        Add-AppList $SubGroup (Get-FalconAsset -Filter $SubFilter -Application -Detailed -All)
+        Add-AppList $SubGroup (Get-FalconAsset -Filter $SubFilter -Application -Detailed -Include host_info -All)
       }
     }
   }

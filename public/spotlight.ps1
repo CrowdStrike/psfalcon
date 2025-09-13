@@ -79,7 +79,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     [string[]]$Id,
     [Parameter(ParameterSetName='/spotlight/queries/vulnerabilities/v1:get',Mandatory,Position=1)]
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/spotlight/combined/vulnerabilities/v1:get',Position=2)]
     [ValidateSet('cve','evaluation_logic','host_info','remediation',IgnoreCase=$false)]
@@ -155,7 +155,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
     [object[]]$Id,
     [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Mandatory,Position=1)]
     [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Mandatory,Position=1)]
-    [ValidateScript({ Test-FqlStatement $_ })]
+    [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/spotlight/queries/evaluation-logic/v1:get',Position=2)]
     [Parameter(ParameterSetName='/spotlight/combined/evaluation-logic/v1:get',Position=2)]
