@@ -1357,10 +1357,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             }
           }
           foreach ($g in @('host_groups','rule_groups')) {
-            # Update identifiers and assign FileVantageRuleGroup and HostGroup to FileVantagePolicy
-            if ($Obj.$g) {
+            if (!$Obj.$g -and $Ref.$g) {
+              # Remove 'rule_groups' and 'host_groups' from FileVantagePolicy
+              $Req = if ($g -eq 'host_groups') {
+                Remove-FalconFileVantageHostGroup -PolicyId $Ref.id -Id $Ref.$g.id @Param
+              } else {
+                Remove-FalconFileVantageRuleGroup -PolicyId $Ref.id -Id $Ref.$g.id @Param
+              }
+              if ($Req) {
+                # Capture result
+                Add-Result Modified $Req $Item $g ($Ref.$g.id -join ',') ($Req.$g.id -join ',')
+              } elseif ($Fail) {
+                # Capture assignment failure
+                Add-Result Failed $Ref FileVantagePolicy -Comment $Fail.exception.message -Log 'to remove'
+              }
+            } else {
+              # Update identifiers and assign FileVantageRuleGroup and HostGroup to FileVantagePolicy
               $Group = Update-GroupId $Obj.$g $Item $g
-              if ($Group -and $Obj.$g) {
+              if (($Group.id -and !$Ref.$g.id) -or ($Group.id -and $Ref.$g.id -and
+              (Compare-Object $Group.id $Ref.$g.id))) {
                 Set-Property $Obj $g $Group
                 Submit-Group $Item $g $Obj $Ref
               }
@@ -1982,9 +1997,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
       } elseif ($Item -eq 'FileVantagePolicy') {
         $Param = @{ ErrorAction = 'SilentlyContinue'; ErrorVariable = 'Fail' }
-        if ($Property -eq 'rule_groups' -and $Obj.rule_groups) {
+        if ($Property -eq 'rule_groups' -and $Obj.rule_groups.id) {
           # Assign FileVantageRuleGroup and capture result
-          $Req = $Obj.rule_groups | Add-FalconFileVantageRuleGroup -PolicyId $Obj.id @Param
+          $Req = Add-FalconFileVantageRuleGroup -PolicyId $Obj.id -Id $Obj.rule_groups.id @Param
           if ($Req) {
             Add-Result Modified $Req $Item rule_groups ($Ref.rule_groups.id -join ',') (
               $Req.rule_groups.id -join ',')
@@ -1992,9 +2007,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             # Capture FileVantageRuleGroup assignment failure
             Add-Result Failed $Obj FileVantagePolicy -Comment $Fail.exception.message -Log 'to assign'
           }
-        } elseif ($Property -eq 'host_groups' -and $Obj.host_groups) {
+        } elseif ($Property -eq 'host_groups' -and $Obj.host_groups.id) {
           # Assign HostGroup and capture result
-          $Req = $Obj.host_groups | Add-FalconFileVantageHostGroup -PolicyId $Obj.id @Param
+          $Req = Add-FalconFileVantageHostGroup -PolicyId $Obj.id -Id $Obj.host_groups.id @Param
           if ($Req) {
             Add-Result Modified $Req $Item host_groups ($Ref.host_groups.id -join ',') (
               $Req.host_groups.id -join ',')
