@@ -70,7 +70,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
     [System.Collections.Generic.List[string]]$List = @()
     if ($PSCmdlet.ParameterSetName -eq '/alerts/combined/alerts/v1:post') {
       # Enforce maximum limit for '/alerts/combined/alerts/v1:post'
-      if ($PSBoundParameters.Limit -and $PSBoundParameters.Limit -gt 1000) { $PSBoundParameters['Limit'] = 1000 }
+      if (($PSBoundParameters.Limit -and $PSBoundParameters.Limit -gt 1000) -or
+      ($PSBoundParameters.All -and !$PSBoundParameters.Limit)) {
+        $PSBoundParameters['Limit'] = 1000
+      }
     }
   }
   process {
