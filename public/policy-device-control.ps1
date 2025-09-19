@@ -398,6 +398,8 @@ function New-FalconDeviceControlPolicy {
 Create Falcon Device Control policies
 .DESCRIPTION
 Requires 'Device control policies: Write'.
+.PARAMETER InputObject
+One or more policies to create in a single request
 .PARAMETER Name
 Policy name
 .PARAMETER PlatformName
