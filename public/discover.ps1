@@ -3,7 +3,7 @@ function Get-FalconAsset {
 .SYNOPSIS
 Search for assets in Falcon Discover
 .DESCRIPTION
-Requires 'Falcon Discover: Read' and 'Falcon Discover IoT: Read'.
+Requires 'Assets: Read' and 'Falcon Discover IoT: Read'.
 .PARAMETER Id
 Asset identifier
 .PARAMETER Filter

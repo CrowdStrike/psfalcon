@@ -3,7 +3,7 @@ function Edit-FalconAsset {
 .SYNOPSIS
 Assign criticality to an external asset within Falcon Discover
 .DESCRIPTION
-Requires 'Falcon Discover: Write'.
+Requires 'Assets: Write'.
 .PARAMETER Criticality
 Asset criticality level
 .PARAMETER Description
@@ -46,7 +46,7 @@ function Get-FalconSubsidiary {
 .SYNOPSIS
 Search for subsidiaries in Falcon Discover 
 .DESCRIPTION
-Requires 'Falcon Discover: Read'.
+Requires 'Assets: Read'.
 .PARAMETER Id
 Subsidiary identifier
 .PARAMETER VersionId
@@ -142,7 +142,7 @@ function New-FalconAsset {
 .SYNOPSIS
 Add external assets to Falcon Discover
 .DESCRIPTION
-Requires 'Falcon Discover: Write'.
+Requires 'Assets: Write'.
 .PARAMETER Asset
 An object containing asset properties
 .PARAMETER SubsidiaryId
@@ -167,7 +167,7 @@ function Remove-FalconAsset {
 .SYNOPSIS
 Remove external assets from Falcon Discover
 .DESCRIPTION
-Requires 'Falcon Discover: Write'.
+Requires 'Assets: Write'.
 .PARAMETER Id
 Asset identifier
 .PARAMETER Comment
