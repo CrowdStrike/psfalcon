@@ -1320,29 +1320,35 @@ function Write-Result {
         }) -join ', '
         Write-Log 'Write-Result' ($Message -join ' ')
       }
-      if ($Json.PSObject.Properties.Where({$_.Name -ne 'meta' -and $null -ne $_.Value}) -or
-      $Json.meta.pagination.total -eq 0 -and !$Json.meta.reqid) {
-        # Remove 'meta' when other sub-properties are populated, or when pagination.total equals 0
-        [void]$Json.PSObject.Properties.Remove('meta')
-      }
       @($Json.PSObject.Properties).Where({$_.Name -eq 'errors' -and $_.Value}).foreach{
         @($_.Value).foreach{
-          # Output 'errors' to error stream as Json string
+          # Output error message and include response as TargetObject string
+          $Exception = if ($_.code -and $_.message) {
+            $_.code,$_.message -join ': '
+          } else {
+            ConvertTo-Json -InputObject $_ -Compress
+          }
           $PSCmdlet.WriteError(
             [System.Management.Automation.ErrorRecord]::New(
-              [Exception]::New((ConvertTo-Json $_ -Compress)),
+              [Exception]::New($Exception),
               $Json.meta.trace_id,
               [System.Management.Automation.ErrorCategory]::InvalidResult,
-              $Request
+              (ConvertTo-Json -InputObject $Json -Depth 8 -Compress)
             )
           )
         }
       }
       [void]$Json.PSObject.Properties.Remove('errors')
-      [string[]]$FieldList = @($Json.PSObject.Properties).Where({
+      if ($Json.PSObject.Properties.Where({$_.Name -ne 'meta' -and $null -ne $_.Value}) -or
+      $Json.meta.pagination.total -eq 0 -and !$Json.meta.reqid) {
+        # Remove 'meta' when other sub-properties are populated, or when pagination.total equals 0
+        [void]$Json.PSObject.Properties.Remove('meta')
+      }
+      [string[]]$FieldList = @($Json.PSObject.Properties).Where({$_.Name -ne 'extensions' -and
+      $null -ne $_.Value}).foreach{
         # Select sub-properties in response not named 'extensions'
-        $_.Name -ne 'extensions' -and $null -ne $_.Value
-      }).foreach{ $_.Name }
+        $_.Name
+      }
       if (($FieldList | Measure-Object).Count -gt 1) {
         # Output full response when multiple sub-properties are present
         $Json
