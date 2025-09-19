@@ -754,7 +754,9 @@ function Invoke-Falcon {
       }
       [string]$Target = New-ShouldMessage $_.Endpoint
       if ($PSCmdlet.ShouldProcess($Target,$Operation)) {
-        if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(240)) { Request-FalconToken }
+        if ($Script:Falcon.Expiration -le (Get-Date).AddSeconds(240)) {
+          if ($PSCmdlet.ShouldProcess('Request-FalconToken','Get-ApiCredential')) { Request-FalconToken }
+        }
         try {
           Write-Log $Command $Endpoint
           $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
