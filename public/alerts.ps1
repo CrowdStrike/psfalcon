@@ -77,7 +77,31 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
     }
   }
   process {
-    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+    if ($Id) {
+      @($Id).foreach{ $List.Add($_) }
+    } elseif ($PSCmdlet.ParameterSetName -eq '/alerts/combined/alerts/v1:post' -and $PSBoundParameters.All) {
+      [void]$PSBoundParameters.Remove('All')
+      [int]$Count = 0
+      do {
+        $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters -RawOutput
+        if ($Request.errors) {
+          # Output errors
+          @($Request.errors).foreach{ Write-Error ($_.code,$_.message -join ':') }
+        } else {
+          # Output resources, update 'after' and increase count
+          $Request.resources
+          $PSBoundParameters['After'] = $Request.meta.pagination.after
+          $Count += $Request.meta.pagination.limit
+          if ($Count -lt $Request.meta.pagination.total) {
+            # Output running count
+            Write-Log $Param.Command ('Retrieved {0} of {1}' -f $Count,$Request.meta.pagination.total)
+          }
+        }
+      } while ($Request.meta.pagination.total -and $Request.meta.pagination.limit -and
+        $Request.meta.pagination.after -and $Count -lt $Request.meta.pagination.total)
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
   end {
     if ($List) {
