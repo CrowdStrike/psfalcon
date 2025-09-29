@@ -1,9 +1,13 @@
 function Get-FalconCaoQuery {
 <#
 .SYNOPSIS
-Search intelligence queries that match the provided conditions
+Search for Falcon Counter Adversary Operations queries
 .DESCRIPTION
 Requires 'CAO Hunting: Read'.
+.PARAMETER Id
+Query identifier
+.PARAMETER IncludeTranslated
+Return translated content when present
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Query
@@ -12,8 +16,6 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
-.PARAMETER IncludeTranslated
-Return translated content when present
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -32,6 +34,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCaoQuery
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
+    [Parameter(ParameterSetName='/hunting/entities/intelligence-queries/v1:get',Position=2)]
+    [ValidateSet('__all__','SPL',IgnoreCase=$false)]
+    [Alias('include_translated_content')]
+    [string[]]$IncludeTranslated,
     [Parameter(ParameterSetName='/hunting/queries/intelligence-queries/v1:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
@@ -42,10 +48,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCaoQuery
     [string]$Sort,
     [Parameter(ParameterSetName='/hunting/queries/intelligence-queries/v1:get',Position=4)]
     [int32]$Limit,
-    [Parameter(ParameterSetName='/hunting/entities/intelligence-queries/v1:get',Position=5)]
-    [ValidateSet('__all__','SPL',IgnoreCase=$false)]
-    [Alias('include_translated_content')]
-    [string[]]$IncludeTranslated,
     [Parameter(ParameterSetName='/hunting/queries/intelligence-queries/v1:get')]
     [string]$Offset,
     [Parameter(ParameterSetName='/hunting/queries/intelligence-queries/v1:get')]

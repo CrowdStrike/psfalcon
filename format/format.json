@@ -2680,14 +2680,14 @@
   "/hunting/entities/intelligence-queries/v1": {
     "get": {
       "query": [
-        "ids"
+        "ids",
+        "include_translated_content"
       ]
     }
   },
   "/hunting/queries/intelligence-queries/v1": {
     "get": {
       "query": [
-        "include_translated_content",
         "offset",
         "limit",
         "sort",
