@@ -97,6 +97,10 @@
     # cloud-security-assets
     'Get-FalconCloudAsset'
 
+    # cloud-security-compliance
+    'Get-FalconCloudFrameworkSummary'
+    'Get-FalconCloudRuleSummary'
+
     # configuration-assessment
     'Get-FalconConfigAssessment'
     'Get-FalconConfigAssessmentLogic'

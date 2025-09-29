@@ -651,6 +651,22 @@
       ]
     }
   },
+  "/cloud-security-compliance/entities/framework-posture-summaries/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "filter"
+      ]
+    }
+  },
+  "/cloud-security-compliance/entities/rule-posture-summaries/v1": {
+    "get": {
+      "query": [
+        "ids",
+        "filter"
+      ]
+    }
+  },
   "/configuration-assessment/combined/assessments/v1": {
     "get": {
       "query": [
