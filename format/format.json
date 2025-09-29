@@ -2677,6 +2677,15 @@
       ]
     }
   },
+  "/hunting/entities/archive-exports/v1": {
+    "get": {
+      "query": [
+        "archive_type",
+        "filter",
+        "language"
+      ]
+    }
+  },
   "/hunting/entities/intelligence-queries/v1": {
     "get": {
       "query": [

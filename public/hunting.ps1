@@ -31,7 +31,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCaoQuery
   param(
     [Parameter(ParameterSetName='/hunting/entities/intelligence-queries/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
+    [ValidatePattern('^[a-fA-F0-9]{64}_[a-fA-F0-9]{64}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/hunting/entities/intelligence-queries/v1:get',Position=2)]
@@ -68,6 +68,71 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCaoQuery
     if ($List) {
       $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Receive-FalconCaoQueryArchive {
+<#
+.SYNOPSIS
+Download an archive containing Falcon Counter Adversary Operations queries
+.DESCRIPTION
+Requires 'CAO Hunting: Read'.
+.PARAMETER Path
+Destination path
+.PARAMETER Language
+Query language
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Type
+Archive type [default: zip]
+.PARAMETER Force
+Overwrite an existing file when present
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCaoQueryArchive
+#>
+  [CmdletBinding(DefaultParameterSetName='/hunting/entities/archive-exports/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/hunting/entities/archive-exports/v1:get',Mandatory,Position=1)]
+    [string]$Path,
+    [Parameter(ParameterSetName='/hunting/entities/archive-exports/v1:get',Mandatory,Position=2)]
+    [ValidateSet('__all__','cql','snort','suricata','yara',IgnoreCase=$false)]
+    [string]$Language,
+    [Parameter(ParameterSetName='/hunting/entities/archive-exports/v1:get',Position=3)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/hunting/entities/archive-exports/v1:get',Position=4)]
+    [ValidateSet('gzip','zip',IgnoreCase=$false)]
+    [Alias('archive_type')]
+    [string]$Type,
+    [Parameter(ParameterSetName='/hunting/entities/archive-exports/v1:get')]
+    [switch]$Force
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Headers = @{ Accept = 'application/octet-stream' }
+      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+    }
+    $Param.Format['Outfile'] = 'path'
+    [string]$Ext = ($PSBoundParameters.Path | Split-Path -Leaf).Split('.',2)[-1]
+    [string[]]$Valid = (Get-Command $Param.Command).Parameters.Type.Attributes.ValidValues
+  }
+  process {
+    if (!$PSBoundParameters.Type) {
+      # Check 'Path' for valid 'Type', default to 'zip'
+      $PSBoundParameters['Type'] = if ($Ext -and $Valid -contains $Ext) { $Ext } else { 'zip' }
+    }
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path $PSBoundParameters.Type
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
     }
   }
 }

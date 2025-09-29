@@ -267,6 +267,7 @@
 
     # hunting
     'Get-FalconCaoQuery'
+    'Receive-FalconCaoQueryArchive'
 
     # identity-protection
     'Invoke-FalconIdentityGraph'
