@@ -8,7 +8,7 @@ class ApiClient {
     $this.Handler = [System.Net.Http.HttpClientHandler]::New()
     $this.Client = [System.Net.Http.HttpClient]::New($this.Handler)
     $this.Client.Timeout = [System.TimeSpan]::New(0,10,0)
-    $this.UserAgent = 'crowdstrike-psfalcon/2.3.0'
+    $this.UserAgent = 'crowdstrike-psfalcon/2.2.10'
   }
   [string] Path([string]$Path) {
     $Output = if (![IO.Path]::IsPathRooted($Path)) {
