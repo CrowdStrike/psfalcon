@@ -12,6 +12,8 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER IncludeTranslated
+Return translated content when present
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER Detailed
@@ -40,6 +42,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCaoQuery
     [string]$Sort,
     [Parameter(ParameterSetName='/hunting/queries/intelligence-queries/v1:get',Position=4)]
     [int32]$Limit,
+    [Parameter(ParameterSetName='/hunting/entities/intelligence-queries/v1:get',Position=5)]
+    [ValidateSet('__all__','SPL',IgnoreCase=$false)]
+    [Alias('include_translated_content')]
+    [string[]]$IncludeTranslated,
     [Parameter(ParameterSetName='/hunting/queries/intelligence-queries/v1:get')]
     [string]$Offset,
     [Parameter(ParameterSetName='/hunting/queries/intelligence-queries/v1:get')]

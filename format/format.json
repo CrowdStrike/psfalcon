@@ -2687,6 +2687,7 @@
   "/hunting/queries/intelligence-queries/v1": {
     "get": {
       "query": [
+        "include_translated_content",
         "offset",
         "limit",
         "sort",
