@@ -86,6 +86,14 @@
     'Remove-FalconCloudGcpAccount'
     'Test-FalconCloudGcpServiceAccount'
 
+    # cloud-policies
+    'Get-FalconCloudControl'
+    'Get-FalconCloudFramework'
+    'Get-FalconCloudRule'
+    'Get-FalconCloudRuleOverride'
+    'Remove-FalconCloudRule'
+    'Remove-FalconCloudRuleOverride'
+
     # cloud-security-assets
     'Get-FalconCloudAsset'
 

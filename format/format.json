@@ -565,6 +565,74 @@
       ]
     }
   },
+  "/cloud-policies/entities/compliance/controls/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/cloud-policies/queries/compliance/controls/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
+  "/cloud-policies/entities/compliance/frameworks/v1": {
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/cloud-policies/queries/compliance/frameworks/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
+  "/cloud-policies/entities/rules/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/cloud-policies/entities/rule-overrides/v1": {
+    "delete": {
+      "query": [
+        "ids"
+      ]
+    },
+    "get": {
+      "query": [
+        "ids"
+      ]
+    }
+  },
+  "/cloud-policies/queries/rules/v1": {
+    "get": {
+      "query": [
+        "filter",
+        "limit",
+        "offset",
+        "sort"
+      ]
+    }
+  },
   "/cloud-security-assets/entities/resources/v1": {
     "get": {
       "query": [
@@ -2680,9 +2748,9 @@
   "/hunting/entities/archive-exports/v1": {
     "get": {
       "query": [
-        "archive_type",
+        "language",
         "filter",
-        "language"
+        "archive_type"
       ]
     }
   },
