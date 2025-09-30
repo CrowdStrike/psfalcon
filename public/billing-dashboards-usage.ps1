@@ -20,8 +20,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostAverage
     [string]$Filter,
     [Parameter(ParameterSetName='/billing-dashboards-usage/aggregates/hourly-average/v1:get',Mandatory)]
     [switch]$Hourly
-
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }

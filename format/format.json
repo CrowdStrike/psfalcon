@@ -114,20 +114,6 @@
       }
     }
   },
-  "/billing-dashboards-usage/aggregates/hourly-average/v1": {
-    "get": {
-      "query": [
-        "filter"
-      ]
-    }
-  },
-  "/billing-dashboards-usage/aggregates/weekly-average/v1": {
-    "get": {
-      "query": [
-        "filter"
-      ]
-    }
-  },
   "/cases/entities/cases/v2": {
     "post": {
       "body": {
