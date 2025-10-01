@@ -38,67 +38,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconCompleteActivity
   begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Edit-FalconCompleteCase {
-<#
-.SYNOPSIS
-Modify an existing Falcon Complete case
-.DESCRIPTION
-Requires 'Message Center: Write'.
-.PARAMETER Content
-Case content
-.PARAMETER DetectionId
-Detection identifier
-.PARAMETER IncidentId
-Incident identifier
-.PARAMETER Id
-Case identifier
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCompleteCase
-#>
-  [CmdletBinding(DefaultParameterSetName='/message-center/entities/case/v1:patch',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Position=1)]
-    [Alias('body')]
-    [string]$Content,
-    [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
-      Position=2)]
-    [ValidatePattern('^ldt:[a-fA-F0-9]{32}:\d+$')]
-    [Alias('detections','detection_id','DetectionIds')]
-    [string[]]$DetectionId,
-    [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',ValueFromPipelineByPropertyName,
-      Position=3)]
-    [ValidatePattern('^inc:[a-fA-F0-9]{32}:[a-fA-F0-9]{32}$')]
-    [Alias('incidents','incident_id','IncidentIds')]
-    [string[]]$IncidentId,
-    [Parameter(ParameterSetName='/message-center/entities/case/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=4)]
-    [string]$Id
-  )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('id','body','detections','incidents') }}
-    }
-    [System.Collections.Generic.List[hashtable]]$LdtList = @()
-    [System.Collections.Generic.List[hashtable]]$IncList = @()
-  }
-  process {
-    if ($DetectionId -or $IncidentId) {
-      if ($DetectionId) { @($DetectionId).foreach{ $LdtList.Add(@{ id = $_ }) }}
-      if ($IncidentId) { @($IncidentId).foreach{ $IncList.Add(@{ id = $_ }) }}
-    } else {
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
-  }
-  end {
-    if ($LdtList -or $IncList) {
-      if ($LdtList) { $PSBoundParameters['DetectionId'] = $LdtList }
-      if ($IncList) { $PSBoundParameters['IncidentId'] = $IncList }
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
-  }
-}
 function Get-FalconCompleteActivity {
 <#
 .SYNOPSIS

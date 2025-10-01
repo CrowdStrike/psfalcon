@@ -415,7 +415,6 @@
 
     # message-center
     'Add-FalconCompleteActivity'
-    'Edit-FalconCompleteCase'
     'New-FalconCompleteCase'
     'Get-FalconCompleteActivity'
     'Get-FalconCompleteCase'
