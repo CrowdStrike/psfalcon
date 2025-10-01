@@ -225,27 +225,27 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCaseNotificationGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/casemgmt/queries/notification-groups/v1:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/queries/notification-groups/v2:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:get',Mandatory,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v2:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v2:get',Position=2)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v2:get',Position=3)]
     [int32]$Limit,
-    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get')]
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v2:get')]
     [int32]$Offset,
-    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get')]
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v2:get')]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get')]
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v2:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get')]
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v2:get')]
     [switch]$Total
   )
   begin {
@@ -588,9 +588,9 @@ Notification group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsCaseNotificationGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v2:delete',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:delete',Mandatory,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
