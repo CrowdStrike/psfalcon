@@ -25,9 +25,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstalledPatch
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get',Position=2)]
-    [ValidateSet('hostname|asc','hostname|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get',Position=3)]
+    [ValidateRange(1,400)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get')]
     [string]$After,
