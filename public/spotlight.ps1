@@ -1,3 +1,50 @@
+function Get-FalconInstalledPatch {
+<#
+.SYNOPSIS
+Search for Falcon Spotlight installed patches
+.DESCRIPTION
+Requires 'Vulnerabilities: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstalledPatch
+#>
+  [CmdletBinding(DefaultParameterSetName='/spotlight/combined/installed-patches/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get',Position=2)]
+    [ValidateSet('hostname|asc','hostname|desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get',Position=3)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get')]
+    [string]$After,
+    [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/spotlight/combined/installed-patches/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','limit','sort') }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconRemediation {
 <#
 .SYNOPSIS

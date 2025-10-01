@@ -695,6 +695,7 @@
     'New-FalconSnapshotScan'
 
     # spotlight
+    'Get-FalconInstalledPatch'
     'Get-FalconRemediation'
     'Get-FalconVulnerability'
     'Get-FalconVulnerabilityLogic'
