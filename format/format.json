@@ -4658,27 +4658,6 @@
       ]
     }
   },
-  "/overwatch-dashboards/aggregates/detections-global-counts/v1": {
-    "get": {
-      "query": [
-        "filter"
-      ]
-    }
-  },
-  "/overwatch-dashboards/aggregates/incidents-global-counts/v1": {
-    "get": {
-      "query": [
-        "filter"
-      ]
-    }
-  },
-  "/overwatch-dashboards/aggregates/ow-events-global-counts/v1": {
-    "get": {
-      "query": [
-        "filter"
-      ]
-    }
-  },
   "/plugins/combined/configs/v1": {
     "get": {
       "query": [

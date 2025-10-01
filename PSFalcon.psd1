@@ -480,11 +480,6 @@
     'Start-FalconScan'
     'Stop-FalconScan'
 
-    # overwatch-dashboards
-    'Get-FalconOverWatchEvent'
-    'Get-FalconOverWatchDetection'
-    'Get-FalconOverWatchIncident'
-
     # plugins
     'Get-FalconWorkflowIntegration'
 
