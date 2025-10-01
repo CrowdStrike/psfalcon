@@ -210,6 +210,8 @@ Requires 'Case Templates: Read'.
 Notification group identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -234,6 +236,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCaseNotificationGroup
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get',Position=3)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/casemgmt/queries/notification-groups/v1:get')]
     [int32]$Offset,
@@ -268,6 +272,8 @@ Requires 'Case Templates: Read'.
 SLA identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -292,6 +298,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCaseSla
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/casemgmt/queries/slas/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/casemgmt/queries/slas/v1:get',Position=3)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/casemgmt/queries/slas/v1:get')]
     [int32]$Offset,
@@ -326,6 +334,8 @@ Requires 'Case Templates: Read'.
 Case template identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -349,6 +359,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCaseTemplate
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/casemgmt/queries/templates/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/casemgmt/queries/templates/v1:get',Position=3)]
     [int32]$Limit,
     [Parameter(ParameterSetName='/casemgmt/queries/templates/v1:get')]
     [int32]$Offset,

@@ -260,6 +260,7 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
         "offset"
       ]
@@ -269,6 +270,7 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
         "offset"
       ]
@@ -287,6 +289,7 @@
     "get": {
       "query": [
         "filter",
+        "sort",
         "limit",
         "offset"
       ]
