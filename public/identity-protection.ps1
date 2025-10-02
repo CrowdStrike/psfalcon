@@ -51,7 +51,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIdentityGraph
     function Invoke-GraphLoop ($Object,$Splat,$UserInput) {
       $RegEx = @{
         # Patterns to validate statement for 'pageInfo' and 'endCursor' variable
-        CursorVariable = '^(\s+)?query(\s+)?\(.+Cursor'
+        CursorVariable = '^(\s+)?query(.+)?\(.+Cursor'
         PageInfo = 'pageInfo(\s+)?{(\s+)?(hasNextPage([,\s]+)?|endCursor([,\s]+)?){2}(\s+)?}'
       }
       [string]$Message = if ($UserInput.query -notmatch $RegEx.CursorVariable) {
