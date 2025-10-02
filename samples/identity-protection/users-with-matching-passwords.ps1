@@ -22,9 +22,7 @@ query GetEntitiesByRiskFactor($after: Cursor, $riskFactors: [RiskFactorType!]) {
     isAdmin: hasRole(type: AdminAccountRole)
     accounts { ... on ActiveDirectoryAccountDescriptor { passwordAttributes { lastChange }}}
     riskFactors {
-     type
-     score
-     severity
+     type, score, severity
      ... on AttackPathBasedRiskFactor {
       attackPath {
        relation
@@ -52,6 +50,6 @@ query GetEntitiesByRiskFactor($after: Cursor, $riskFactors: [RiskFactorType!]) {
         l='passwordLastSet'
         e={$_.accounts.passwordAttributes.lastChange}
       })
-    }
+    } | Sort-Object -Property groupId
   }
 }
