@@ -34,7 +34,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
           @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
           $Clone = $Policy | New-FalconDeviceControlPolicy
           if ($Clone.id) {
-            @('usb_settings','bluetooth_settings').foreach{ $Clone.$_ = $Policy.$_ }
+            @('usb_settings','bluetooth_settings').foreach{ if ($Policy.$_) { $Clone.$_ = $Policy.$_ }}
             $Clone = $Clone | Edit-FalconDeviceControlPolicy
             if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
               $Enable = $Clone.id | Invoke-FalconDeviceControlPolicyAction enable
