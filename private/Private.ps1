@@ -759,7 +759,7 @@ function Invoke-Falcon {
         }
         try {
           Write-Log $Command $Endpoint
-          $Request = try { $Script:Falcon.Api.Invoke($_.Endpoint) } catch { Write-Error 'no_content_from_api' }
+          $Request = $Script:Falcon.Api.Invoke($_.Endpoint)
           if ($Request) {
             # Capture pagination for 'Total' and 'All'
             $Pagination = $Request.meta.pagination
