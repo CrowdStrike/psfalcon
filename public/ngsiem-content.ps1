@@ -838,7 +838,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsDashboard
 function Update-FalconNgsLookupFile {
 <#
 .SYNOPSIS
-Update a Falcon NGSIEM lookup file using a YAML template
+Update a Falcon NGSIEM lookup file using a CSV
 .DESCRIPTION
 Requires 'NGSIEM Lookup Files: Write'.
 .PARAMETER Id
@@ -846,7 +846,7 @@ Lookup file identifier
 .PARAMETER Domain
 Repository or view
 .PARAMETER Path
-Path to YAML template
+Path to CSV
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsLookupFile
 #>
