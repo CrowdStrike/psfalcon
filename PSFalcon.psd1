@@ -149,6 +149,16 @@
     'New-FalconCorrelationRule'
     'Remove-FalconCorrelationRule'
 
+    # data-protection
+    'Get-FalconDataProtectionAccount'
+    'Get-FalconDataProtectionApplication'
+    'Get-FalconDataProtectionClassification'
+    'Get-FalconDataProtectionLabel'
+    'Get-FalconDataProtectionLocation'
+    'Get-FalconDataProtectionPattern'
+    'Get-FalconDataProtectionPolicy'
+    'Get-FalconDataProtectionType'
+
     # delivery-settings
     'Get-FalconContentControl'
     'Set-FalconContentControl'
