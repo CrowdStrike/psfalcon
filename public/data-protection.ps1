@@ -1,3 +1,85 @@
+function Edit-FalconDataProtectionPolicy {
+<#
+.SYNOPSIS
+Modify a Falcon Data Protection policy
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Policy name
+.PARAMETER PlatformName
+Operating system
+.PARAMETER Description
+Policy description
+.PARAMETER HostGroup
+Assigned host groups
+.PARAMETER IsEnabled
+Policy status
+.PARAMETER Precedence
+Policy precedence
+.PARAMETER PolicyProperties
+An object containing policy properties
+.PARAMETER Id
+Policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionPolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [ValidateSet('win','mac',IgnoreCase=$false)]
+    [Alias('platform_name')]
+    [string]$PlatformName,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [Alias('host_groups')]
+    [object]$HostGroup,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('is_enabled')]
+    [boolean]$IsEnabled,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [int32]$Precedence,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('policy_properties')]
+    [object]$PolicyProperties,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=8)]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('description','host_groups','id','is_enabled','name','policy_properties','precedence')
+        }
+        Query = @('platform_name')
+      }
+    }
+  }
+  process {
+    if ($PSBoundParameters.PolicyProperties) {
+      @('custom_allow_notification','custom_block_notification').foreach{
+        # Force 'custom_allow_notification' and 'custom_block_notification' to $null when empty [string]
+        if ([string]::IsNullOrEmpty($PSBoundParameters.PolicyProperties.$_) -and $null -ne
+        $PSBoundParameters.PolicyProperties.$_) {
+          $PSBoundParameters.PolicyProperties.$_ = $null
+        }
+      }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Get-FalconDataProtectionAccount {
 <#
 .SYNOPSIS
@@ -552,6 +634,110 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionType
   end {
     if ($List) {
       $Param['Max'] = 100
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function New-FalconDataProtectionPolicy {
+<#
+.SYNOPSIS
+Create a Falcon Data Protection policy
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Policy name
+.PARAMETER PlatformName
+Operating system
+.PARAMETER Description
+Policy description
+.PARAMETER Precedence
+Policy precedence
+.PARAMETER PolicyProperties
+Object containing policy properties ('enable_content_inspection', 'enable_context_inspection', etc.)
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [ValidateSet('win','mac',IgnoreCase=$false)]
+    [Alias('platform_name')]
+    [string]$PlatformName,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [int32]$Precedence,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('policy_properties')]
+    [object]$PolicyProperties
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ resources = @('description','name','policy_properties','precedence') }
+        Query = @('platform_name')
+      }
+    }
+  }
+  process {
+    if ($PSBoundParameters.PolicyProperties) {
+      @('custom_allow_notification','custom_block_notification').foreach{
+        # Force 'custom_allow_notification' and 'custom_block_notification' to $null when empty [string]
+        if ([string]::IsNullOrEmpty($PSBoundParameters.PolicyProperties.$_) -and $null -ne
+        $PSBoundParameters.PolicyProperties.$_) {
+          $PSBoundParameters.PolicyProperties.$_ = $null
+        }
+      }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Remove-FalconDataProtectionPolicy {
+<#
+.SYNOPSIS
+Remove Falcon Data Protection policies
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER PlatformName
+Operating system
+.PARAMETER Id
+Policy identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPolicy
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('platform_name')]
+    [string[]]$PlatformName,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','platform_name') }
+      Max = 100
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
       $PSBoundParameters['Id'] = @($List)
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
