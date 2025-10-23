@@ -150,6 +150,7 @@
     'Remove-FalconCorrelationRule'
 
     # data-protection
+    'Edit-FalconDataProtectionClassification'
     'Edit-FalconDataProtectionPolicy'
     'Get-FalconDataProtectionAccount'
     'Get-FalconDataProtectionApplication'
@@ -159,7 +160,9 @@
     'Get-FalconDataProtectionPattern'
     'Get-FalconDataProtectionPolicy'
     'Get-FalconDataProtectionType'
+    'New-FalconDataProtectionClassification'
     'New-FalconDataProtectionPolicy'
+    'Remove-FalconDataProtectionClassification'
     'Remove-FalconDataProtectionPolicy'
 
     # delivery-settings

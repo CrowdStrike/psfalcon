@@ -1,3 +1,50 @@
+function Edit-FalconDataProtectionClassification {
+<#
+.SYNOPSIS
+Modify a Falcon Data Protection classification
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Classification name
+.PARAMETER ClassificationProperties
+Object containing classification properties ('content_patterns', 'evidence_duplication_enabled', 'file_types',
+'protection_mode', 'rules', 'scan_profiles', 'sensitivity_labels', 'web_sources')
+.PARAMETER Id
+Classification identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionClassification
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('classification_properties')]
+    [object]$ClassificationProperties,
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('classification_properties','id','name') }}
+    }
+  }
+  process {
+    if ($PSBoundParameters.ClassificationProperties) {
+      # Filter 'classification_properties'
+      $PSBoundParameters.ClassificationProperties = [PSCustomObject]$PSBoundParameters.ClassificationProperties |
+        Select-Object content_patterns,evidence_duplication_enabled,file_types,protection_mode,rules,
+        scan_profiles,sensitivity_labels,web_sources
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Edit-FalconDataProtectionPolicy {
 <#
 .SYNOPSIS
@@ -639,6 +686,48 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionType
     }
   }
 }
+function New-FalconDataProtectionClassification {
+<#
+.SYNOPSIS
+Create a Falcon Data Protection classification
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Classification name
+.PARAMETER ClassificationProperties
+Object containing classification properties ('content_patterns', 'evidence_duplication_enabled', 'file_types',
+'protection_mode', 'rules', 'scan_profiles', 'sensitivity_labels', 'web_sources')
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionClassification
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:post',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('classification_properties')]
+    [object]$ClassificationProperties
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('classification_properties','name') }}
+    }
+  }
+  process {
+    if ($PSBoundParameters.ClassificationProperties) {
+      # Filter 'classification_properties'
+      $PSBoundParameters.ClassificationProperties = [PSCustomObject]$PSBoundParameters.ClassificationProperties |
+        Select-Object content_patterns,evidence_duplication_enabled,file_types,protection_mode,rules,
+        scan_profiles,sensitivity_labels,web_sources
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function New-FalconDataProtectionPolicy {
 <#
 .SYNOPSIS
@@ -700,6 +789,42 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
       }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Remove-FalconDataProtectionClassification {
+<#
+.SYNOPSIS
+Remove Falcon Data Protection classifications
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Id
+Classification identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionClassification
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Remove-FalconDataProtectionPolicy {
