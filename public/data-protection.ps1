@@ -4,10 +4,10 @@ function Edit-FalconDataProtectionPolicy {
 Modify a Falcon Data Protection policy
 .DESCRIPTION
 Requires 'Data Protection: Write'.
-.PARAMETER Name
-Policy name
 .PARAMETER PlatformName
 Operating system
+.PARAMETER Name
+Policy name
 .PARAMETER Description
 Policy description
 .PARAMETER HostGroup
@@ -25,14 +25,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=1)]
-    [string]$Name,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=2)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
     [ValidateSet('win','mac',IgnoreCase=$false)]
     [Alias('platform_name')]
     [string]$PlatformName,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Name,
     [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
       Position=3)]
     [string]$Description,
@@ -645,10 +645,10 @@ function New-FalconDataProtectionPolicy {
 Create a Falcon Data Protection policy
 .DESCRIPTION
 Requires 'Data Protection: Write'.
-.PARAMETER Name
-Policy name
 .PARAMETER PlatformName
 Operating system
+.PARAMETER Name
+Policy name
 .PARAMETER Description
 Policy description
 .PARAMETER Precedence
@@ -662,12 +662,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
   param(
     [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
-    [string]$Name,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=2)]
     [ValidateSet('win','mac',IgnoreCase=$false)]
     [Alias('platform_name')]
     [string]$PlatformName,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Name,
     [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',ValueFromPipelineByPropertyName,
       Position=3)]
     [string]$Description,
