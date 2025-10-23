@@ -150,6 +150,7 @@
     'Remove-FalconCorrelationRule'
 
     # data-protection
+    'Edit-FalconDataProtectionApplication'
     'Edit-FalconDataProtectionClassification'
     'Edit-FalconDataProtectionPolicy'
     'Get-FalconDataProtectionAccount'
@@ -160,8 +161,10 @@
     'Get-FalconDataProtectionPattern'
     'Get-FalconDataProtectionPolicy'
     'Get-FalconDataProtectionType'
+    'New-FalconDataProtectionApplication'
     'New-FalconDataProtectionClassification'
     'New-FalconDataProtectionPolicy'
+    'Remove-FalconDataProtectionApplication'
     'Remove-FalconDataProtectionClassification'
     'Remove-FalconDataProtectionPolicy'
 

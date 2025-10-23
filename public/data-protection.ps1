@@ -1,3 +1,55 @@
+function Edit-FalconDataProtectionApplication {
+<#
+.SYNOPSIS
+Modify a Falcon Data Protection cloud application
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Cloud application name
+.PARAMETER Url
+Objects containing URL properties ('fqdn', 'path')
+.PARAMETER Description
+Cloud application description
+.PARAMETER Id
+Cloud application identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionApplication
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/cloud-applications/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('urls')]
+    [object[]]$Url,
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('description','name','urls') }
+        Query = @('id')
+      }
+    }
+  }
+  process {
+    if ($PSBoundParameters.Url) {
+      # Filter 'urls'
+      $PSBoundParameters.Url = [PSCustomObject[]]@($PSBoundParameters.Url | Select-Object fqdn,path)
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Edit-FalconDataProtectionClassification {
 <#
 .SYNOPSIS
@@ -686,6 +738,50 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionType
     }
   }
 }
+function New-FalconDataProtectionApplication {
+<#
+.SYNOPSIS
+Create a Falcon Data Protection cloud application
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Cloud application name
+.PARAMETER Url
+Objects containing URL properties ('fqdn', 'path')
+.PARAMETER Description
+Cloud application description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionApplication
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/cloud-applications/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('urls')]
+    [object[]]$Url,
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:post',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Description
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','name','urls') }}
+    }
+  }
+  process {
+    if ($PSBoundParameters.Url) {
+      # Filter 'urls'
+      $PSBoundParameters.Url = [PSCustomObject[]]@($PSBoundParameters.Url | Select-Object fqdn,path)
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function New-FalconDataProtectionClassification {
 <#
 .SYNOPSIS
@@ -789,6 +885,42 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
       }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Remove-FalconDataProtectionApplication {
+<#
+.SYNOPSIS
+Remove Falcon Data Protection cloud applications
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Id
+Cloud application identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionApplication
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/cloud-applications/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Remove-FalconDataProtectionClassification {
