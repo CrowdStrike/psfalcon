@@ -1,3 +1,56 @@
+function Edit-FalconDataProtectionAccount {
+<#
+.SYNOPSIS
+Modify a Falcon Data Protection enterprise account
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Enterprise account name
+.PARAMETER Domain
+Domain names
+.PARAMETER ApplicationGroupId
+Application group identifier
+.PARAMETER PluginConfigId
+Plugin configuration identifier
+.PARAMETER Id
+Enterprise account identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionAccount
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('domains')]
+    [string[]]$Domain,
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('application_group_id')]
+    [string]$ApplicationGroupId,
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('plugin_config_id')]
+    [string]$PluginConfigId,
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('application_group_id','domains','name','plugin_config_id') }
+        Query = @('id')
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Edit-FalconDataProtectionApplication {
 <#
 .SYNOPSIS
@@ -738,6 +791,51 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionType
     }
   }
 }
+function New-FalconDataProtectionAccount {
+<#
+.SYNOPSIS
+Create a Falcon Data Protection enterprise account
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Enterprise account name
+.PARAMETER Domain
+Domain names
+.PARAMETER ApplicationGroupId
+Application group identifier
+.PARAMETER PluginConfigId
+Plugin configuration identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionAccount
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/enterprise-accounts/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('domains')]
+    [string[]]$Domain,
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:post',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('application_group_id')]
+    [string]$ApplicationGroupId,
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:post',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [Alias('plugin_config_id')]
+    [string]$PluginConfigId
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('application_group_id','domains','name','plugin_config_id') }}
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function New-FalconDataProtectionApplication {
 <#
 .SYNOPSIS
@@ -885,6 +983,42 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
       }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Remove-FalconDataProtectionAccount {
+<#
+.SYNOPSIS
+Remove Falcon Data Protection enterprise accounts
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Id
+Enterprise account identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionAccount
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/enterprise-accounts/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
   }
 }
 function Remove-FalconDataProtectionApplication {
