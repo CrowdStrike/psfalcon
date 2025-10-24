@@ -171,7 +171,9 @@
     'Remove-FalconDataProtectionAccount'
     'Remove-FalconDataProtectionApplication'
     'Remove-FalconDataProtectionClassification'
+    'Remove-FalconDataProtectionLabel'
     'Remove-FalconDataProtectionLocation'
+    'Remove-FalconDataProtectionPattern'
     'Remove-FalconDataProtectionPolicy'
 
     # delivery-settings

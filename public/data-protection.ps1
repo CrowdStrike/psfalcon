@@ -1307,6 +1307,42 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionClassifi
     }
   }
 }
+function Remove-FalconDataProtectionLabel {
+<#
+.SYNOPSIS
+Remove Falcon Data Protection sensitivity labels
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Id
+Sensitivity label identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionLabel
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/labels/v2:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Remove-FalconDataProtectionLocation {
 <#
 .SYNOPSIS
@@ -1322,6 +1358,43 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionLocation
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconDataProtectionPattern {
+<#
+.SYNOPSIS
+Remove Falcon Data Protection content patterns
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Id
+Content pattern identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPattern
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/content-patterns/v1:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
