@@ -4,6 +4,8 @@ function Edit-FalconContentPolicy {
 Modify Content Update policies
 .DESCRIPTION
 Requires 'Content Update Policies: Write'.
+.PARAMETER InputObject
+One or more policies to modify in a single request
 .PARAMETER Id
 Policy identifier
 .PARAMETER Name
