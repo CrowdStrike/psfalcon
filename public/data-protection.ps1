@@ -1456,7 +1456,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPolicy
       $Valid[$_] = [System.Collections.Generic.List[string]]@()
     }
   }
-  process { $Valid.$PlatformName.Add($Id) }
+  process { if ($PlatformName -and $Id) { $Valid.$PlatformName.Add($Id) }}
   end {
     @('Id','PlatformName').foreach{ [void]$PSBoundParameters.Remove($_) }
     foreach ($Pair in $Valid.GetEnumerator()) {
