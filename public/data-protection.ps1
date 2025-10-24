@@ -1,3 +1,9 @@
+function Confirm-NullNotification ([object]$Object) {
+  @('custom_allow_notification','custom_block_notification').foreach{
+    # Force 'custom_allow_notification' and 'custom_block_notification' to $null when empty [string]
+    if ([string]::IsNullOrEmpty($Object.$_) -and $null -ne $Object.$_) { $Object.$_ = $null }
+  }
+}
 function Edit-FalconDataProtectionAccount {
 <#
 .SYNOPSIS
@@ -37,6 +43,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionAccount
     [string]$PluginConfigId,
     [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=5)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
   begin {
@@ -83,6 +90,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionApplicatio
     [string]$Description,
     [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
   begin {
@@ -131,6 +139,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionClassifica
     [object]$ClassificationProperties,
     [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
   begin {
@@ -140,15 +149,78 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionClassifica
       Format = @{ Body = @{ resources = @('classification_properties','id','name') }}
     }
   }
-  process {
-    if ($PSBoundParameters.ClassificationProperties) {
-      # Filter 'classification_properties'
-      $PSBoundParameters.ClassificationProperties = [PSCustomObject]$PSBoundParameters.ClassificationProperties |
-        Select-Object content_patterns,evidence_duplication_enabled,file_types,protection_mode,rules,
-        scan_profiles,sensitivity_labels,web_sources
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Edit-FalconDataProtectionLocation {
+<#
+.SYNOPSIS
+Modify a Falcon Data Protection web location
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER ApplicationId
+Application identifier
+.PARAMETER Name
+Web location name
+.PARAMETER LocationType
+Web location type
+.PARAMETER EnterpriseAccountId
+Enterprise account identifier
+.PARAMETER ProviderLocationId
+Provider location identifier
+.PARAMETER ProviderLocationName
+Provider location name
+.PARAMETER Id
+Web location identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionLocation
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/web-locations/v2:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('application_id')]
+    [string]$ApplicationId,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [Alias('location_type')]
+    [string]$LocationType,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('enterprise_account_id')]
+    [string]$EnterpriseAccountId,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:patch',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('provider_location_id')]
+    [string]$ProviderLocationId,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:patch',
+      ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('provider_location_name')]
+    [string]$ProviderLocationName,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=7)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('application_id','enterprise_account_id','location_type','name','provider_location_id',
+            'provider_location_name','type')
+        }
+        Query = @('id')
+      }
     }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconDataProtectionPolicy {
 <#
@@ -156,8 +228,12 @@ function Edit-FalconDataProtectionPolicy {
 Modify a Falcon Data Protection policy
 .DESCRIPTION
 Requires 'Data Protection: Write'.
+.PARAMETER InputObject
+One or more policies to modify in a request
 .PARAMETER PlatformName
 Operating system
+.PARAMETER Id
+Policy identifier
 .PARAMETER Name
 Policy name
 .PARAMETER Description
@@ -170,47 +246,44 @@ Policy status
 Policy precedence
 .PARAMETER PolicyProperties
 An object containing policy properties
-.PARAMETER Id
-Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({
+      Confirm-Parameter $_ 'Edit-FalconDataProtectionPolicy' '/data-protection/entities/policies/v2:patch'
+    })]
+    [Alias('resources')]
+    [object[]]$InputObject,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Mandatory,Position=1)]
     [ValidateSet('win','mac',IgnoreCase=$false)]
     [Alias('platform_name')]
     [string]$PlatformName,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=2)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Mandatory,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Position=3)]
     [string]$Name,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=3)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Position=4)]
     [string]$Description,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=4)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Position=5)]
     [Alias('host_groups')]
     [object]$HostGroup,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=5)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Position=6)]
     [Alias('is_enabled')]
     [boolean]$IsEnabled,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=6)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Position=7)]
     [int32]$Precedence,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',ValueFromPipelineByPropertyName,
-      Position=7)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Position=8)]
     [Alias('policy_properties')]
-    [object]$PolicyProperties,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=8)]
-    [string]$Id
+    [object]$PolicyProperties
   )
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
+      Endpoint = '/data-protection/entities/policies/v2:patch'
       Format = @{
         Body = @{
           resources = @('description','host_groups','id','is_enabled','name','policy_properties','precedence')
@@ -218,18 +291,34 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionPolicy
         Query = @('platform_name')
       }
     }
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
-    if ($PSBoundParameters.PolicyProperties) {
-      @('custom_allow_notification','custom_block_notification').foreach{
-        # Force 'custom_allow_notification' and 'custom_block_notification' to $null when empty [string]
-        if ([string]::IsNullOrEmpty($PSBoundParameters.PolicyProperties.$_) -and $null -ne
-        $PSBoundParameters.PolicyProperties.$_) {
-          $PSBoundParameters.PolicyProperties.$_ = $null
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties
+        $List.Add(([PSCustomObject]$_ | Select-Object @($Param.Format.Body.resources + 'platform_name')))
+      }
+    } else {
+      if ($PSBoundParameters.PolicyProperties) { Confirm-NullNotification $PSBoundParameters.PolicyProperties }
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+  end {
+    if ($List) {
+      # Create in groups of 10 by 'platform_name'
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format.Body = @{ root = @('resources') }
+      foreach ($Name in @($List.platform_name | Group-Object).Name) {
+        [System.Collections.Generic.List[PSCustomObject]]$PnList = @($List).Where({$_.platform_name -eq $Name})
+        foreach ($p in $PnList) { if ($p.policy_properties) { Confirm-NullNotification $p.policy_properties }}
+        for ($i=0;$i -lt $PnList.Count;$i+=9) {
+          $PSBoundParameters['platform_name'] = $Name
+          $PSBoundParameters['resources'] = @($PnList[$i..($i+9)])
+          Invoke-Falcon @Param -UserInput $PSBoundParameters
         }
       }
     }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
 function Get-FalconDataProtectionAccount {
@@ -262,6 +351,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionAccount
   param(
     [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/enterprise-accounts/v2:get',Position=1)]
@@ -332,6 +422,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionApplication
   param(
     [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/cloud-applications/v2:get',Position=1)]
@@ -401,6 +492,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionClassificat
   param(
     [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/classifications/v2:get',Position=1)]
@@ -470,6 +562,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionLabel
   param(
     [Parameter(ParameterSetName='/data-protection/entities/labels/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/labels/v2:get',Position=1)]
@@ -538,6 +631,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionLocation
   param(
     [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/web-locations/v2:get',Position=1)]
@@ -606,6 +700,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionPattern
   param(
     [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/content-patterns/v2:get',Position=1)]
@@ -678,6 +773,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionClassificat
   param(
     [Parameter(ParameterSetName='/data-protection/entities/policies/v2:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/policies/v2:get',Mandatory,Position=1)]
@@ -751,6 +847,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionType
   param(
     [Parameter(ParameterSetName='/data-protection/entities/file-types/v1:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id,
     [Parameter(ParameterSetName='/data-protection/queries/file-types/v2:get',Position=1)]
@@ -886,6 +983,8 @@ function New-FalconDataProtectionClassification {
 Create a Falcon Data Protection classification
 .DESCRIPTION
 Requires 'Data Protection: Write'.
+.PARAMETER InputObject
+One or more classifications to create
 .PARAMETER Name
 Classification name
 .PARAMETER ClassificationProperties
@@ -897,29 +996,122 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionClassificat
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({ Confirm-Parameter $_ 'New-FalconDataProtectionClassification' (
+      '/data-protection/entities/classifications/v2:post') })]
+    [Alias('resources')]
+    [object[]]$InputObject,
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:post',Mandatory,Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:post',
-      ValueFromPipelineByPropertyName,Position=2)]
+    [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:post',Position=2)]
     [Alias('classification_properties')]
     [object]$ClassificationProperties
   )
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
+      Endpoint = '/data-protection/entities/classifications/v2:post'
       Format = @{ Body = @{ resources = @('classification_properties','name') }}
     }
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
-    if ($PSBoundParameters.ClassificationProperties) {
-      # Filter 'classification_properties'
-      $PSBoundParameters.ClassificationProperties = [PSCustomObject]$PSBoundParameters.ClassificationProperties |
-        Select-Object content_patterns,evidence_duplication_enabled,file_types,protection_mode,rules,
-        scan_profiles,sensitivity_labels,web_sources
+    if ($InputObject) {
+      # Filter to defined 'resources' properties
+      @($InputObject).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.resources)) }
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+  end {
+    if ($List) {
+      # Create in groups of 10
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format.Body = @{ root = @('resources') }
+      for ($i=0;$i -lt $List.Count;$i+=10) {
+        $PSBoundParameters['resources'] = @($List[$i..($i+9)])
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
+function New-FalconDataProtectionLocation {
+<#
+.SYNOPSIS
+Create a Falcon Data Protection web location
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER InputObject
+One or more web locations to create
+.PARAMETER Name
+Web location name
+.PARAMETER ApplicationId
+Application identifier
+.PARAMETER EnterpriseAccountId
+Enterprise account identifier
+.PARAMETER ProviderLocationId
+Provider location identifier
+.PARAMETER ProviderLocationName
+Provider location name
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionLocation
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/web-locations/v2:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({
+      Confirm-Parameter $_ 'New-FalconDataProtectionLocation' '/data-protection/entities/web-locations/v2:post'
+    })]
+    [Alias('web_locations')]
+    [object[]]$InputObject,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:post',Mandatory,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:post',Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('application_id')]
+    [string]$ApplicationId,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:post',Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('enterprise_account_id')]
+    [string]$EnterpriseAccountId,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:post',Position=4)]
+    [Alias('provider_location_id')]
+    [string]$ProviderLocationId,
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:post',Position=5)]
+    [Alias('provider_location_name')]
+    [string]$ProviderLocationName
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/data-protection/entities/web-locations/v2:post'
+      Format = @{
+        Body = @{
+          web_locations = @('application_id','enterprise_account_id','name','provider_location_id',
+          'provider_location_name')
+        }
+      }
+    }
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
+  }
+  process {
+    if ($InputObject) {
+      # Filter to defined 'web_locations' properties
+      @($InputObject).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.web_locations)) }
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+  end {
+    if ($List) {
+      # Create in groups of 10
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format.Body = @{ root = @('web_locations') }
+      for ($i=0;$i -lt $List.Count;$i+=10) {
+        $PSBoundParameters['web_locations'] = @($List[$i..($i+9)])
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
   }
 }
 function New-FalconDataProtectionPolicy {
@@ -928,6 +1120,8 @@ function New-FalconDataProtectionPolicy {
 Create a Falcon Data Protection policy
 .DESCRIPTION
 Requires 'Data Protection: Write'.
+.PARAMETER InputObject
+One or more policies to create in a request
 .PARAMETER PlatformName
 Operating system
 .PARAMETER Name
@@ -943,46 +1137,63 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
+    [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
+    [ValidateScript({
+      Confirm-Parameter $_ 'New-FalconDataProtectionPolicy' '/data-protection/entities/policies/v2:post'
+    })]
+    [Alias('resources')]
+    [object[]]$InputObject,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,Position=1)]
     [ValidateSet('win','mac',IgnoreCase=$false)]
     [Alias('platform_name')]
     [string]$PlatformName,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=2)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,Position=2)]
     [string]$Name,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',ValueFromPipelineByPropertyName,
-      Position=3)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Mandatory,Position=3)]
     [string]$Description,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',ValueFromPipelineByPropertyName,
-      Position=4)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Position=4)]
     [int32]$Precedence,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',ValueFromPipelineByPropertyName,
-      Position=5)]
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:post',Position=5)]
     [Alias('policy_properties')]
     [object]$PolicyProperties
   )
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
+      Endpoint = '/data-protection/entities/policies/v2:post'
       Format = @{
         Body = @{ resources = @('description','name','policy_properties','precedence') }
         Query = @('platform_name')
       }
     }
+    [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
-    if ($PSBoundParameters.PolicyProperties) {
-      @('custom_allow_notification','custom_block_notification').foreach{
-        # Force 'custom_allow_notification' and 'custom_block_notification' to $null when empty [string]
-        if ([string]::IsNullOrEmpty($PSBoundParameters.PolicyProperties.$_) -and $null -ne
-        $PSBoundParameters.PolicyProperties.$_) {
-          $PSBoundParameters.PolicyProperties.$_ = $null
+    if ($InputObject) {
+      @($InputObject).foreach{
+        # Filter to defined 'resources' properties
+        $List.Add(([PSCustomObject]$_ | Select-Object @($Param.Format.Body.resources + 'platform_name')))
+      }
+    } else {
+      if ($PSBoundParameters.PolicyProperties) { Confirm-NullNotification $PSBoundParameters.PolicyProperties }
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+  end {
+    if ($List) {
+      # Create in groups of 10 by 'platform_name'
+      [void]$PSBoundParameters.Remove('InputObject')
+      $Param.Format.Body = @{ root = @('resources') }
+      foreach ($Name in @($List.platform_name | Group-Object).Name) {
+        [System.Collections.Generic.List[PSCustomObject]]$PnList = @($List).Where({$_.platform_name -eq $Name})
+        foreach ($p in $PnList) { if ($p.policy_properties) { Confirm-NullNotification $p.policy_properties }}
+        for ($i=0;$i -lt $PnList.Count;$i+=9) {
+          $PSBoundParameters['platform_name'] = $Name
+          $PSBoundParameters['resources'] = @($PnList[$i..($i+9)])
+          Invoke-Falcon @Param -UserInput $PSBoundParameters
         }
       }
     }
-    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
 function Remove-FalconDataProtectionAccount {
@@ -1001,6 +1212,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionAccount
   param(
     [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -1037,6 +1249,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionApplicat
   param(
     [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -1073,6 +1286,44 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionClassifi
   param(
     [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconDataProtectionLocation {
+<#
+.SYNOPSIS
+Remove Falcon Data Protection web locations
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Id
+Web location identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionLocation
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/web-locations/v2:delete',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -1099,8 +1350,6 @@ function Remove-FalconDataProtectionPolicy {
 Remove Falcon Data Protection policies
 .DESCRIPTION
 Requires 'Data Protection: Write'.
-.PARAMETER PlatformName
-Operating system
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -1109,11 +1358,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPolicy
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:delete',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/policies/v2:delete',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
-    [Alias('platform_name')]
-    [string[]]$PlatformName,
-    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:delete',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
   )
@@ -1121,7 +1367,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPolicy
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids','platform_name') }
+      Format = @{ Query = @('ids') }
       Max = 100
     }
     [System.Collections.Generic.List[string]]$List = @()

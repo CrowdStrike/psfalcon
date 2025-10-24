@@ -153,6 +153,7 @@
     'Edit-FalconDataProtectionAccount'
     'Edit-FalconDataProtectionApplication'
     'Edit-FalconDataProtectionClassification'
+    'Edit-FalconDataProtectionLocation'
     'Edit-FalconDataProtectionPolicy'
     'Get-FalconDataProtectionAccount'
     'Get-FalconDataProtectionApplication'
@@ -165,10 +166,12 @@
     'New-FalconDataProtectionAccount'
     'New-FalconDataProtectionApplication'
     'New-FalconDataProtectionClassification'
+    'New-FalconDataProtectionLocation'
     'New-FalconDataProtectionPolicy'
     'Remove-FalconDataProtectionAccount'
     'Remove-FalconDataProtectionApplication'
     'Remove-FalconDataProtectionClassification'
+    'Remove-FalconDataProtectionLocation'
     'Remove-FalconDataProtectionPolicy'
 
     # delivery-settings
