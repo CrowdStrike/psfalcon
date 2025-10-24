@@ -1423,6 +1423,8 @@ function Remove-FalconDataProtectionPolicy {
 Remove Falcon Data Protection policies
 .DESCRIPTION
 Requires 'Data Protection: Write'.
+.PARAMETER PlatformName
+Operating system
 .PARAMETER Id
 Policy identifier
 .LINK
@@ -1431,7 +1433,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPolicy
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:delete',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/policies/v2:delete',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidateSet('win','mac',IgnoreCase=$false)]
+    [Alias('platform_name')]
+    [string]$PlatformName,
+    [Parameter(ParameterSetName='/data-protection/entities/policies/v2:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids')]
     [string[]]$Id
@@ -1440,15 +1447,22 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPolicy
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('ids') }
+      Format = @{ Query = @('ids','platform_name') }
       Max = 100
     }
-    [System.Collections.Generic.List[string]]$List = @()
+    [hashtable]$Valid = @{}
+    @((Get-Command $Param.Command).Parameters.PlatformName.Attributes.ValidValues).foreach{
+      # Create hashtable of 'platform_name' lists to contain 'id' values
+      $Valid[$_] = [System.Collections.Generic.List[string]]@()
+    }
   }
-  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  process { $Valid.$PlatformName.Add($Id) }
   end {
-    if ($List) {
-      $PSBoundParameters['Id'] = @($List)
+    @('Id','PlatformName').foreach{ [void]$PSBoundParameters.Remove($_) }
+    foreach ($Pair in $Valid.GetEnumerator()) {
+      # Delete in groups of 'platform_name' using 'id' lists
+      $PSBoundParameters['platform_name'] = $Pair.Key
+      $PSBoundParameters['ids'] = $Pair.Value
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
