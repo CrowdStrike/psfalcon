@@ -453,14 +453,14 @@ function Get-ParamSet {
   process {
     if ($Content.Query -and ($Content.Query | Measure-Object).Count -gt $Max) {
       Write-Log 'Get-ParamSet' "Creating groups of $Max query values"
-      for ($i = 0; $i -lt ($Content.Query | Measure-Object).Count; $i += $Max) {
+      for ($i=0;$i -lt ($Content.Query | Measure-Object).Count;$i+=$Max) {
         # Split 'Query' values into groups
         $Split = $Switches.Clone()
         $Split.Add('Endpoint',$Base.Clone())
         $Split.Endpoint.Path += if ($Split.Endpoint.Path -match '\?') {
-          "&$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+          "&$($Content.Query[$i..($i+($Max-1))] -join '&')"
         } else {
-          "?$($Content.Query[$i..($i + ($Max - 1))] -join '&')"
+          "?$($Content.Query[$i..($i+($Max-1))] -join '&')"
         }
         $Content.GetEnumerator().Where({$_.Key -ne 'Query' -and $_.Value}).foreach{
           # Add values other than 'Query'
@@ -470,11 +470,11 @@ function Get-ParamSet {
       }
     } elseif ($Content.Body -and $Field -and ($Content.Body.$Field | Measure-Object).Count -gt $Max) {
       Write-Log 'Get-ParamSet' "Creating groups of $Max '$Field' values"
-      for ($i = 0; $i -lt ($Content.Body.$Field | Measure-Object).Count; $i += $Max) {
+      for ($i=0;$i -lt ($Content.Body.$Field | Measure-Object).Count;$i+=$Max) {
         # Split 'Body' content into groups using '$Field'
         $Split = $Switches.Clone()
         $Split.Add('Endpoint',$Base.Clone())
-        $Split.Endpoint.Add('Body',@{ $Field = $Content.Body.$Field[$i..($i + ($Max - 1))] })
+        $Split.Endpoint.Add('Body',@{ $Field = $Content.Body.$Field[$i..($i+($Max-1))] })
         $Content.GetEnumerator().Where({$_.Value}).foreach{
           # Add values other than 'Body.$Field'
           if ($_.Key -eq 'Query') {
