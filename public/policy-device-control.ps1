@@ -58,8 +58,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlClass
       # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('policies') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['policies'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['policies'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -190,8 +190,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
       # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('policies') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['policies'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['policies'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -454,8 +454,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
       # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('policies') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['policies'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['policies'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

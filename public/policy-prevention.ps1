@@ -60,8 +60,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconPreventionPolicy
       # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['resources'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -324,8 +324,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconPreventionPolicy
       # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('resources') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['resources'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['resources'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

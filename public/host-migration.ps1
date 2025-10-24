@@ -89,8 +89,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMigrationCid
   end {
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
-      for ($i = 0; $i -lt $List.Count; $i += 500) {
-        $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
+      for ($i=0;$i -lt $List.Count;$i+=500) {
+        $PSBoundParameters['ids'] = @($List[$i..($i+499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -220,14 +220,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconMigrationAction
       $IdValue = $PSBoundParameters.GroupId
       @('GroupId','HostId').foreach{ [void]$PSBoundParameters.Remove($_) }
       if ($PSBoundParameters.Name -eq 'remove_hosts') {
-        for ($i = 0; $i -lt $List.Count; $i += 500) {
-          $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
+        for ($i=0;$i -lt $List.Count;$i+=500) {
+          $PSBoundParameters['ids'] = @($List[$i..($i+499)])
           Invoke-Falcon @Param -UserInput $PSBoundParameters
         }
       } else {
         if (!$IdValue) { throw ('Must include "GroupId" with action "{0}".' -f $PSBoundParameters.Name) }
-        for ($i = 0; $i -lt $List.Count; $i += 500) {
-          $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
+        for ($i=0;$i -lt $List.Count;$i+=500) {
+          $PSBoundParameters['ids'] = @($List[$i..($i+499)])
           $PSBoundParameters['action_parameters'] = @(@{ name = 'host_group'; value = $IdValue })
           Invoke-Falcon @Param -UserInput $PSBoundParameters
         }
@@ -269,8 +269,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconMigration
   end {
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
-      for ($i = 0; $i -lt $List.Count; $i += 500) {
-        $PSBoundParameters['device_ids'] = @($List[$i..($i + 499)])
+      for ($i=0;$i -lt $List.Count;$i+=500) {
+        $PSBoundParameters['device_ids'] = @($List[$i..($i+499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -308,8 +308,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconMigration
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
       $PSBoundParameters['action_name'] = 'start_migration'
-      for ($i = 0; $i -lt $List.Count; $i += 500) {
-        $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
+      for ($i=0;$i -lt $List.Count;$i+=500) {
+        $PSBoundParameters['ids'] = @($List[$i..($i+499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -347,8 +347,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconMigration
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
       $PSBoundParameters['action_name'] = 'stop_migration'
-      for ($i = 0; $i -lt $List.Count; $i += 500) {
-        $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
+      for ($i=0;$i -lt $List.Count;$i+=500) {
+        $PSBoundParameters['ids'] = @($List[$i..($i+499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -386,8 +386,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMigration
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
       $PSBoundParameters['action_name'] = 'delete_migration'
-      for ($i = 0; $i -lt $List.Count; $i += 500) {
-        $PSBoundParameters['ids'] = @($List[$i..($i + 499)])
+      for ($i=0;$i -lt $List.Count;$i+=500) {
+        $PSBoundParameters['ids'] = @($List[$i..($i+499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

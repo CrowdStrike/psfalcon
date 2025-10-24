@@ -130,8 +130,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconNotification
       # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('raw_array') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['raw_array'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -219,8 +219,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
       # Modify in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('raw_array') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['raw_array'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
@@ -792,8 +792,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
       # Create in groups of 100
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('raw_array') } }
-      for ($i = 0; $i -lt $List.Count; $i += 100) {
-        $PSBoundParameters['raw_array'] = @($List[$i..($i + 99)])
+      for ($i=0;$i -lt $List.Count;$i+=100) {
+        $PSBoundParameters['raw_array'] = @($List[$i..($i+99)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }

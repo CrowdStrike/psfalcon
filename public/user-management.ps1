@@ -252,8 +252,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
   end {
     if ($Username) {
       # Re-submit 'Username' values as filtered searches
-      for ($i = 0; $i -lt ($Username | Measure-Object).Count; $i += 100) {
-        [string]$Filter = ($Username[$i..($i + 99)] | ForEach-Object { "uid:*'$_'" }) -join ','
+      for ($i=0;$i -lt ($Username | Measure-Object).Count;$i+=100) {
+        [string]$Filter = ($Username[$i..($i+99)] | ForEach-Object { "uid:*'$_'" }) -join ','
         if ($Filter) {
           $Search = @{ Filter = $Filter }
           if ($Include) { $Search['Include'] = $Include }

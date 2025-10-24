@@ -54,9 +54,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQueue
   end {
     [string[]]$Filter = if ($List) {
       $List = @($List).Where({![string]::IsNullOrEmpty($_)})
-      for ($i = 0; $i -lt $List.Count; $i += 17) {
+      for ($i=0;$i -lt $List.Count;$i+=17) {
         # Create individual filter statements for groups of host identifiers
-        [string]$IdList = "($((@($List[$i..($i + 16)]).foreach{ "aid:'$_'" }) -join ','))"
+        [string]$IdList = "($((@($List[$i..($i+16)]).foreach{ "aid:'$_'" }) -join ','))"
         $BaseFql,$IdList -join '+'
       }
     } else {
@@ -368,10 +368,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconDeploy
       try {
         # Force a base timeout of 60
         if (!$Timeout) { $Timeout = 60 }
-        for ($i = 0; $i -lt ($HostList | Measure-Object).Count; $i += 10000) {
+        for ($i=0;$i -lt ($HostList | Measure-Object).Count;$i+=10000) {
           # Start Real-time Response sessions in groups of 10,000 with 'HostTimeout' to force batch
           $Param = @{
-            Id = @($HostList[$i..($i + 9999)].device_id)
+            Id = @($HostList[$i..($i+9999)].device_id)
             Timeout = $Timeout
             HostTimeout = [math]::Truncate($Timeout*.9)
           }
@@ -602,10 +602,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconRtr
           " -Timeout=3595"
         }
       }
-      for ($i = 0; $i -lt ($HostList | Measure-Object).Count; $i += 10000) {
+      for ($i=0;$i -lt ($HostList | Measure-Object).Count;$i+=10000) {
         try {
           # Start Real-time Response session in groups of up to 10,000 hosts
-          [object[]]$Output = $HostList[$i..($i + 9999)]
+          [object[]]$Output = $HostList[$i..($i+9999)]
           $Init = @{ Id = $Output.aid; Timeout = 30; QueueOffline = $QueueOffline }
           $InitReq = Start-FalconSession @Init
           if ($InitReq -and ($InitReq.batch_id -or $InitReq.session_id)) {
