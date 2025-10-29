@@ -214,13 +214,107 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDpeLocation
       Format = @{
         Body = @{
           root = @('application_id','enterprise_account_id','location_type','name','provider_location_id',
-            'provider_location_name','type')
+          'provider_location_name','type')
         }
         Query = @('id')
       }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Edit-FalconDpePattern {
+<#
+.SYNOPSIS
+Modify a Falcon Data Protection content pattern
+.DESCRIPTION
+All fields are required when making a content pattern change. PSFalcon adds missing values automatically using
+data from your existing content pattern.
+
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Content pattern name
+.PARAMETER Regex
+One or more RegEx values to match
+.PARAMETER Description
+Content pattern description
+.PARAMETER Category
+Content pattern category
+.PARAMETER Region
+Three letter code for geographical location
+.PARAMETER MinMatchThreshold
+Minimum number of pattern matches
+.PARAMETER Example
+Content pattern example
+.PARAMETER Id
+Content pattern identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDpePattern
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('regexes')]
+    [string[]]$Regex,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [string]$Category,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [string]$Region,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+      ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('min_match_threshold')]
+    [int32]$MinMatchThreshold,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',
+      ValueFromPipelineByPropertyName,Position=7)]
+    [string]$Example,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=8)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('category','description','example','min_match_threshold','name','regexes','region') }
+        Query = @('id')
+      }
+    }
+    # Retrieve parameter names to perform value check
+    [string[]]$ParamList = @((Get-Command $Param.Command).Parameters.GetEnumerator().Where({
+      $_.Value.Attributes.ParameterSetName -eq '/data-protection/entities/content-patterns/v1:patch'
+    }).Key).Where({$_ -ne 'Id'})
+  }
+  process {
+    if ($PSCmdlet.ShouldProcess($PSBoundParameters.Id,'Get-FalconDpePattern')) {
+      # Retrieve existing content pattern and error when not found
+      $Local:Ref = try { Get-FalconDpePattern -Id $PSBoundParameters.Id -EA 0 } catch {}
+      if (!$Local:Ref) {
+        throw ('Content pattern "{0}" not found.' -f $PSBoundParameters.Id)
+      } else {
+        @($ParamList).foreach{
+          $i = switch ($_) {
+            # Convert parameter name to property name
+            'MinMatchThreshold' { 'min_match_threshold' }
+            'Regex' { 'regexes' }
+            default { $_.ToLower() }
+          }
+          if (!$PSBoundParameters.$_) { $PSBoundParameters[$_] = $Local:Ref.$i }
+        }
+      }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Edit-FalconDpePolicy {
 <#
@@ -1036,6 +1130,72 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpeClassification
     }
   }
 }
+function New-FalconDpeLabel {
+<#
+.SYNOPSIS
+Create a Falcon Data Protection sensitivity label
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Sensitivity label name
+.PARAMETER DisplayName
+Sensitivity label display name
+.PARAMETER LabelProvider
+Sensitivity label provider
+.PARAMETER Synced
+Sync sensitivity label with Microsoft 365 or Google Workspace
+.PARAMETER ExternalId
+Sensitivity label external identifier [when synced: $true]
+.PARAMETER PluginsConfigurationId
+CrowdStrike Falcon Store plugin identifier [when synced: $true]
+.PARAMETER CoAuthoring
+Co-authoring value for Microsoft 365 [when synced: $true]
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpeLabel
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/labels/v2:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [Alias('display_name')]
+    [string]$DisplayName,
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [Alias('label_provider')]
+    [string]$LabelProvider,
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:post',ValueFromPipelineByPropertyName,
+      Position=4)]
+    [boolean]$Synced,
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:post',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('external_id')]
+    [string]$ExternalId,
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('plugins_configuration_id')]
+    [string]$PluginsConfigurationId,
+    [Parameter(ParameterSetName='/data-protection/entities/labels/v2:post',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('co_authoring')]
+    [boolean]$CoAuthoring
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('co_authoring','display_name','external_id','label_provider','name','plugins_configuration_id',
+          'synced')
+        }
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function New-FalconDpeLocation {
 <#
 .SYNOPSIS
@@ -1113,6 +1273,73 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpeLocation
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
+  }
+}
+function New-FalconDpePattern {
+<#
+.SYNOPSIS
+Create a Falcon Data Protection content pattern
+.DESCRIPTION
+Requires 'Data Protection: Write'.
+.PARAMETER Name
+Content pattern name
+.PARAMETER Regex
+One or more RegEx values to match
+.PARAMETER Description
+Content pattern description
+.PARAMETER Category
+Content pattern category [default: PII]
+.PARAMETER Region
+Three letter code for geographical location [default: ALL]
+.PARAMETER MinMatchThreshold
+Minimum number of pattern matches [default: 1]
+.PARAMETER Example
+Content pattern example
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpePattern
+#>
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/content-patterns/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('regexes')]
+    [string[]]$Regex,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:post',
+      ValueFromPipelineByPropertyName,Position=3)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:post',
+      ValueFromPipelineByPropertyName,Position=4)]
+    [string]$Category,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:post',
+      ValueFromPipelineByPropertyName,Position=5)]
+    [string]$Region,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:post',
+      ValueFromPipelineByPropertyName,Position=6)]
+    [Alias('min_match_threshold')]
+    [int32]$MinMatchThreshold,
+    [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:post',
+      ValueFromPipelineByPropertyName,Position=7)]
+    [string]$Example
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('category','description','example','min_match_threshold','name','regexes','region') }
+      }
+    }
+  }
+  process {
+    # Add default values when missing
+    (@{Category = 'PII'; MinMatchThreshold = 1; Region = 'ALL'}).GetEnumerator().foreach{
+      if (!$PSBoundParameters.($_.Key)) { $PSBoundParameters[$_.Key] = $_.Value }
+    }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
 function New-FalconDpePolicy {
