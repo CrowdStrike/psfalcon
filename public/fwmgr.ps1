@@ -134,7 +134,7 @@ missing values automatically using data from your existing rule group.
 'DiffOperation' array objects must contain 'from', 'op', 'path' and 'value' properties. Accepted 'op' values are
 'add', 'remove' and 'replace'.
 
-When adding a rule to a rule group,the required rule fields must be included along with a 'temp_id' (in both the
+When adding a rule to a rule group, the required rule fields must be included along with a 'temp_id' (in both the
 rule properties and in precedence order within 'rule_ids') to establish proper placement of the rule within the
 rule group. Simlarly, the value 'null' must be placed within 'rule_versions' in precedence order.
 
@@ -205,7 +205,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
   end {
     if ($List) {
       $PSBoundParameters['diff_operations'] = @($List)
-      if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallGroup','Get-FalconFirewallGroup')) {
+      if ($PSCmdlet.ShouldProcess($PSBoundParameters.Id,'Get-FalconFirewallGroup')) {
         # Retrieve existing group to populate missing properties
         $Local:Ref = try { Get-FalconFirewallGroup -Id $PSBoundParameters.Id -EA 0 } catch {}
         @($Param.Format.Body.root).Where({$_ -ne 'id'}).foreach{
