@@ -4,7 +4,7 @@ function Confirm-NullNotification ([object]$Object) {
     if ([string]::IsNullOrEmpty($Object.$_) -and $null -ne $Object.$_) { $Object.$_ = $null }
   }
 }
-function Edit-FalconDataProtectionAccount {
+function Edit-FalconDpeAccount {
 <#
 .SYNOPSIS
 Modify a Falcon Data Protection enterprise account
@@ -21,7 +21,7 @@ Plugin configuration identifier
 .PARAMETER Id
 Enterprise account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionAccount
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDpeAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/enterprise-accounts/v1:patch',
     SupportsShouldProcess)]
@@ -58,7 +58,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionAccount
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Edit-FalconDataProtectionApplication {
+function Edit-FalconDpeApplication {
 <#
 .SYNOPSIS
 Modify a Falcon Data Protection cloud application
@@ -73,7 +73,7 @@ Cloud application description
 .PARAMETER Id
 Cloud application identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionApplication
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDpeApplication
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/cloud-applications/v1:patch',
     SupportsShouldProcess)]
@@ -111,7 +111,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionApplicatio
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
-function Edit-FalconDataProtectionClassification {
+function Edit-FalconDpeClassification {
 <#
 .SYNOPSIS
 Modify a Falcon Data Protection classification
@@ -125,7 +125,7 @@ Object containing classification properties ('content_patterns', 'evidence_dupli
 .PARAMETER Id
 Classification identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionClassification
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDpeClassification
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:patch',
     SupportsShouldProcess)]
@@ -151,7 +151,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionClassifica
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Edit-FalconDataProtectionLocation {
+function Edit-FalconDpeLocation {
 <#
 .SYNOPSIS
 Modify a Falcon Data Protection web location
@@ -172,7 +172,7 @@ Provider location name
 .PARAMETER Id
 Web location identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionLocation
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDpeLocation
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/web-locations/v2:patch',SupportsShouldProcess)]
   param(
@@ -222,7 +222,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionLocation
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function Edit-FalconDataProtectionPolicy {
+function Edit-FalconDpePolicy {
 <#
 .SYNOPSIS
 Modify a Falcon Data Protection policy
@@ -247,13 +247,13 @@ Policy precedence
 .PARAMETER PolicyProperties
 An object containing policy properties
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDpePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:patch',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      Confirm-Parameter $_ 'Edit-FalconDataProtectionPolicy' '/data-protection/entities/policies/v2:patch'
+      Confirm-Parameter $_ 'Edit-FalconDpePolicy' '/data-protection/entities/policies/v2:patch'
     })]
     [Alias('resources')]
     [object[]]$InputObject,
@@ -321,7 +321,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDataProtectionPolicy
     }
   }
 }
-function Get-FalconDataProtectionAccount {
+function Get-FalconDpeAccount {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection enterprise accounts
@@ -344,7 +344,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionAccount
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpeAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/enterprise-accounts/v2:get',
     SupportsShouldProcess)]
@@ -392,7 +392,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionAccount
     }
   }
 }
-function Get-FalconDataProtectionApplication {
+function Get-FalconDpeApplication {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection cloud applications
@@ -415,7 +415,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionApplication
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpeApplication
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/cloud-applications/v2:get',
     SupportsShouldProcess)]
@@ -463,7 +463,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionApplication
     }
   }
 }
-function Get-FalconDataProtectionClassification {
+function Get-FalconDpeClassification {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection classifications
@@ -486,7 +486,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionClassification
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpeClassification
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/classifications/v2:get',SupportsShouldProcess)]
   param(
@@ -533,7 +533,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionClassificat
     }
   }
 }
-function Get-FalconDataProtectionLabel {
+function Get-FalconDpeLabel {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection sensitivity labels
@@ -556,7 +556,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionLabel
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpeLabel
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/labels/v2:get',SupportsShouldProcess)]
   param(
@@ -602,7 +602,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionLabel
     }
   }
 }
-function Get-FalconDataProtectionLocation {
+function Get-FalconDpeLocation {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection web locations
@@ -625,7 +625,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionLocation
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpeLocation
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/web-locations/v2:get',SupportsShouldProcess)]
   param(
@@ -671,7 +671,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionLocation
     }
   }
 }
-function Get-FalconDataProtectionPattern {
+function Get-FalconDpePattern {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection content patterns
@@ -694,7 +694,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionPattern
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpePattern
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/content-patterns/v2:get',SupportsShouldProcess)]
   param(
@@ -742,7 +742,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionPattern
     }
   }
 }
-function Get-FalconDataProtectionPolicy {
+function Get-FalconDpePolicy {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection policies
@@ -767,7 +767,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionClassification
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpeClassification
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/policies/v2:get',SupportsShouldProcess)]
   param(
@@ -818,7 +818,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionClassificat
     }
   }
 }
-function Get-FalconDataProtectionType {
+function Get-FalconDpeType {
 <#
 .SYNOPSIS
 Search for Falcon Data Protection file types
@@ -841,7 +841,7 @@ Repeat requests until all available results are retrieved
 .PARAMETER Total
 Display total result count instead of results
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionType
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDpeType
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/queries/file-types/v2:get',SupportsShouldProcess)]
   param(
@@ -888,7 +888,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDataProtectionType
     }
   }
 }
-function New-FalconDataProtectionAccount {
+function New-FalconDpeAccount {
 <#
 .SYNOPSIS
 Create a Falcon Data Protection enterprise account
@@ -903,7 +903,7 @@ Application group identifier
 .PARAMETER PluginConfigId
 Plugin configuration identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionAccount
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpeAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/enterprise-accounts/v1:post',
     SupportsShouldProcess)]
@@ -933,7 +933,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionAccount
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
-function New-FalconDataProtectionApplication {
+function New-FalconDpeApplication {
 <#
 .SYNOPSIS
 Create a Falcon Data Protection cloud application
@@ -946,7 +946,7 @@ Objects containing URL properties ('fqdn', 'path')
 .PARAMETER Description
 Cloud application description
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionApplication
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpeApplication
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/cloud-applications/v1:post',
     SupportsShouldProcess)]
@@ -977,7 +977,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionApplication
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
-function New-FalconDataProtectionClassification {
+function New-FalconDpeClassification {
 <#
 .SYNOPSIS
 Create a Falcon Data Protection classification
@@ -991,14 +991,15 @@ Classification name
 Object containing classification properties ('content_patterns', 'evidence_duplication_enabled', 'file_types',
 'protection_mode', 'rules', 'scan_profiles', 'sensitivity_labels', 'web_sources')
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionClassification
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpeClassification
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:post',
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
-    [ValidateScript({ Confirm-Parameter $_ 'New-FalconDataProtectionClassification' (
-      '/data-protection/entities/classifications/v2:post') })]
+    [ValidateScript({
+      Confirm-Parameter $_ 'New-FalconDpeClassification' '/data-protection/entities/classifications/v2:post'
+    })]
     [Alias('resources')]
     [object[]]$InputObject,
     [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:post',Mandatory,Position=1)]
@@ -1035,7 +1036,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionClassificat
     }
   }
 }
-function New-FalconDataProtectionLocation {
+function New-FalconDpeLocation {
 <#
 .SYNOPSIS
 Create a Falcon Data Protection web location
@@ -1054,13 +1055,13 @@ Provider location identifier
 .PARAMETER ProviderLocationName
 Provider location name
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionLocation
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpeLocation
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/web-locations/v2:post',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      Confirm-Parameter $_ 'New-FalconDataProtectionLocation' '/data-protection/entities/web-locations/v2:post'
+      Confirm-Parameter $_ 'New-FalconDpeLocation' '/data-protection/entities/web-locations/v2:post'
     })]
     [Alias('web_locations')]
     [object[]]$InputObject,
@@ -1114,7 +1115,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionLocation
     }
   }
 }
-function New-FalconDataProtectionPolicy {
+function New-FalconDpePolicy {
 <#
 .SYNOPSIS
 Create a Falcon Data Protection policy
@@ -1133,13 +1134,13 @@ Policy precedence
 .PARAMETER PolicyProperties
 Object containing policy properties ('enable_content_inspection', 'enable_context_inspection', etc.)
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconDpePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:post',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='Pipeline',Mandatory,ValueFromPipeline)]
     [ValidateScript({
-      Confirm-Parameter $_ 'New-FalconDataProtectionPolicy' '/data-protection/entities/policies/v2:post'
+      Confirm-Parameter $_ 'New-FalconDpePolicy' '/data-protection/entities/policies/v2:post'
     })]
     [Alias('resources')]
     [object[]]$InputObject,
@@ -1196,7 +1197,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDataProtectionPolicy
     }
   }
 }
-function Remove-FalconDataProtectionAccount {
+function Remove-FalconDpeAccount {
 <#
 .SYNOPSIS
 Remove Falcon Data Protection enterprise accounts
@@ -1205,7 +1206,7 @@ Requires 'Data Protection: Write'.
 .PARAMETER Id
 Enterprise account identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionAccount
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/enterprise-accounts/v1:delete',
     SupportsShouldProcess)]
@@ -1233,7 +1234,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionAccount
     }
   }
 }
-function Remove-FalconDataProtectionApplication {
+function Remove-FalconDpeApplication {
 <#
 .SYNOPSIS
 Remove Falcon Data Protection cloud applications
@@ -1242,7 +1243,7 @@ Requires 'Data Protection: Write'.
 .PARAMETER Id
 Cloud application identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionApplication
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeApplication
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/cloud-applications/v1:delete',
     SupportsShouldProcess)]
@@ -1270,7 +1271,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionApplicat
     }
   }
 }
-function Remove-FalconDataProtectionClassification {
+function Remove-FalconDpeClassification {
 <#
 .SYNOPSIS
 Remove Falcon Data Protection classifications
@@ -1279,7 +1280,7 @@ Requires 'Data Protection: Write'.
 .PARAMETER Id
 Classification identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionClassification
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeClassification
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:delete',
     SupportsShouldProcess)]
@@ -1307,7 +1308,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionClassifi
     }
   }
 }
-function Remove-FalconDataProtectionLabel {
+function Remove-FalconDpeLabel {
 <#
 .SYNOPSIS
 Remove Falcon Data Protection sensitivity labels
@@ -1316,7 +1317,7 @@ Requires 'Data Protection: Write'.
 .PARAMETER Id
 Sensitivity label identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionLabel
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeLabel
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/labels/v2:delete',SupportsShouldProcess)]
   param(
@@ -1343,7 +1344,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionLabel
     }
   }
 }
-function Remove-FalconDataProtectionLocation {
+function Remove-FalconDpeLocation {
 <#
 .SYNOPSIS
 Remove Falcon Data Protection web locations
@@ -1352,7 +1353,7 @@ Requires 'Data Protection: Write'.
 .PARAMETER Id
 Web location identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionLocation
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeLocation
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/web-locations/v2:delete',
     SupportsShouldProcess)]
@@ -1380,7 +1381,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionLocation
     }
   }
 }
-function Remove-FalconDataProtectionPattern {
+function Remove-FalconDpePattern {
 <#
 .SYNOPSIS
 Remove Falcon Data Protection content patterns
@@ -1389,7 +1390,7 @@ Requires 'Data Protection: Write'.
 .PARAMETER Id
 Content pattern identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPattern
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpePattern
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/content-patterns/v1:delete',
     SupportsShouldProcess)]
@@ -1417,7 +1418,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPattern
     }
   }
 }
-function Remove-FalconDataProtectionPolicy {
+function Remove-FalconDpePolicy {
 <#
 .SYNOPSIS
 Remove Falcon Data Protection policies
@@ -1428,7 +1429,7 @@ Operating system
 .PARAMETER Id
 Policy identifier
 .LINK
-https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDataProtectionPolicy
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpePolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:delete',SupportsShouldProcess)]
   param(
