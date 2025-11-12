@@ -346,7 +346,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconMigration
   end {
     if ($List) {
       [void]$PSBoundParameters.Remove('Id')
-      $PSBoundParameters['action_name'] = 'stop_migration'
+      $PSBoundParameters['action_name'] = 'cancel_migration'
       for ($i=0;$i -lt $List.Count;$i+=500) {
         $PSBoundParameters['ids'] = @($List[$i..($i+499)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
