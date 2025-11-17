@@ -451,11 +451,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
   }
   end {
     if ($List) {
-      # Create in groups of 100
+      # Create in groups of 20
       [void]$PSBoundParameters.Remove('InputObject')
       $Param.Format = @{ Body = @{ root = @('policies') } }
-      for ($i=0;$i -lt $List.Count;$i+=100) {
-        $PSBoundParameters['policies'] = @($List[$i..($i+99)])
+      for ($i=0;$i -lt $List.Count;$i+=20) {
+        $PSBoundParameters['policies'] = @($List[$i..($i+19)])
         Invoke-Falcon @Param -UserInput $PSBoundParameters
       }
     }
