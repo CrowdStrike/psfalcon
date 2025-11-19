@@ -64,7 +64,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
     [object[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -152,10 +156,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','facet','filter','ids','limit','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
-    if (($Param.Endpoint -match 'queries' -and $PSBoundParameters.Limit -gt 400) -or
-    ($PSBoundParameters.All -and !$PSBoundParameters.Limit)) {
+    if ($PSBoundParameters.All -and !$PSBoundParameters.Limit) {
+      # Add maximum limit when not present and using 'All'
+      $PSBoundParameters['Limit'] = 5000
+    }
+    if ($Param.Endpoint -eq '/spotlight/queries/vulnerabilities/v1:get' -and $PSBoundParameters.Limit -gt 400) {
+      # Set maximum limit for /queries/ endpoint
       $PSBoundParameters['Limit'] = 400
     }
   }
@@ -222,7 +234,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerabilityLogic
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','ids','limit','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {

@@ -6241,68 +6241,6 @@
       ]
     }
   },
-  "/spotlight/combined/evaluation-logic/v1": {
-    "get": {
-      "query": [
-        "after",
-        "limit",
-        "filter",
-        "sort"
-      ]
-    }
-  },
-  "/spotlight/combined/vulnerabilities/v1": {
-    "get": {
-      "query": [
-        "after",
-        "limit",
-        "sort",
-        "filter",
-        "facet"
-      ]
-    }
-  },
-  "/spotlight/entities/evaluation-logic/v1": {
-    "get": {
-      "query": [
-        "ids"
-      ]
-    }
-  },
-  "/spotlight/entities/remediations/v2": {
-    "get": {
-      "query": [
-        "ids"
-      ]
-    }
-  },
-  "/spotlight/entities/vulnerabilities/v2": {
-    "get": {
-      "query": [
-        "ids"
-      ]
-    }
-  },
-  "/spotlight/queries/evaluation-logic/v1": {
-    "get": {
-      "query": [
-        "after",
-        "limit",
-        "filter",
-        "sort"
-      ]
-    }
-  },
-  "/spotlight/queries/vulnerabilities/v1": {
-    "get": {
-      "query": [
-        "after",
-        "limit",
-        "sort",
-        "filter"
-      ]
-    }
-  },
   "/threatgraph/combined/{vertex-type}/summary/v1": {
     "get": {
       "query": [
