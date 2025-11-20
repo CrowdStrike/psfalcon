@@ -29,22 +29,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
   process {
     if ($PSCmdlet.ShouldProcess('Copy-FalconDeviceControlPolicy','Get-FalconDeviceControlPolicy')) {
       try {
-        $Policy = Get-FalconDeviceControlPolicy -Id $Id
+        $Policy = Get-FalconDeviceControlPolicy -Id $Id | Select-Object cid,platform_name,enabled,
+          @{l='name';e={$PSBoundParameters.Name}},
+          @{l='description';e={$PSBoundParameters.Description}},
+          @{l='clone_id';e={$_.id}}
         if ($Policy) {
-          @('Name','Description').foreach{ if ($PSBoundParameters.$_) { $Policy.$_ = $PSBoundParameters.$_ }}
           $Clone = $Policy | New-FalconDeviceControlPolicy
-          if ($Clone.id) {
-            @('usb_settings','bluetooth_settings').foreach{ if ($Policy.$_) { $Clone.$_ = $Policy.$_ }}
-            $Clone = $Clone | Edit-FalconDeviceControlPolicy
-            if ($Clone.enabled -eq $false -and $Policy.enabled -eq $true) {
-              $Enable = $Clone.id | Invoke-FalconDeviceControlPolicyAction enable
-              if ($Enable) {
-                $Enable
-              } else {
-                $Clone.enabled = $true
-                $Clone
-              }
+          if ($Clone.enabled -ne $Policy.enabled) {
+            $Action = if ($Policy.enabled -eq $true) {
+              $Clone.id | Invoke-FalconDeviceControlPolicyAction -Name enable
+            } else {
+              $Clone.id | Invoke-FalconDeviceControlPolicyAction -Name disable
             }
+            if ($Action) {
+              $Clone.enabled = $Policy.enabled
+              $Clone
+            }
+          } else {
+            $Clone
           }
         }
       } catch {
