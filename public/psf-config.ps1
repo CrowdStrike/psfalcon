@@ -499,6 +499,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
               # Compare 'classes' with existing DeviceControlPolicy classes
               foreach ($c in $New.$t.classes) {
+                Write-Log 'Compare-Setting' ($t,'classes',$c.class -join '.')
                 $RefC = @($Old.$t.classes).Where({$_.class -eq $c.class}) |
                 Select-Object id,action,class,minor_classes,
                 @{
@@ -526,19 +527,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
                 $ExList = [System.Collections.Generic.List[PSCustomObject]]@()
                 foreach ($e in @($Config.$Item.ExImp).Where({$_.policy_id -eq $New.id -and $_.type -eq $t -and
                 $_.class -eq $c.class})) {
+                  # Compare exceptions for target DeviceControlPolicy
                   $Filter = Write-SelectFilter $e DeviceControlException
                   if ($Filter) {
-                    # Compare new exceptions against existing exceptions in target DeviceControlPolicy
                     $RefE = $RefC.exceptions | Where-Object -FilterScript $Filter
                     $eObj = [PSCustomObject]$e | Select-Object @($e.PSObject.Properties.Name).Where({
                       $_ -notmatch '^(id|policy_id|type)$'})
-                    $eName = ($eObj.match_method,((@(Select-ObjectName $eObj DeviceControlException).foreach{
-                      $eObj.$_ }) -join '_') -join ':')
                     if (!$RefE) {
                       # Capture missing exceptions for modification
                       $ExList.Add($eObj)
+                      Write-Log 'Compare-Setting' ('new_exception',
+                        ($eObj | Format-List | Out-String).Trim() -join "`n")
                     } elseif ($RefE -and $RefE.action -ne $e.action) {
                       # Use existing exception 'id' for modification of 'action'
+                      Write-Log 'Compare-Setting' ('modified_exception',
+                        ($eObj | Format-List | Out-String).Trim() -join "`n")
                       Set-Property $eObj id $RefE.id
                       $ExList.Add($eObj)
                     }
@@ -1269,7 +1272,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       $Param = @{ ErrorAction = 'SilentlyContinue'; ErrorVariable = 'Fail' }
       if ($Obj) {
         # Update identifier to match reference policy
-        if ($Ref.id -ne $Obj.id) { Update-Id $Obj $Ref $Item }
         if ($Item -eq 'DeviceControlPolicy') {
           $Edit = Compare-Setting $Obj $Ref $Item
           if ($Edit.setting.Count) {
@@ -1295,142 +1297,146 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
             }
           }
-        } elseif ($Item -eq 'FileVantagePolicy') {
-          if ($Obj.exclusions) {
-            foreach ($e in $Obj.exclusions) {
-              # Check for existing matching exclusion
-              $RefE = @($Ref.exclusions).Where({$_.name -eq $e.name})
-              # Remove 'repeated' from imported exclusion when empty to prevent submission error
-              if ($null -eq $e.repeated.PSObject.Properties.Name) { $e.PSObject.Properties.Remove('repeated') }
-              if ($RefE) {
-                [string[]]$Edit = @($e.PSObject.Properties.Name).Where({$_ -notmatch
-                '^((policy_)?id|\w+_timestamp)$'}).foreach{
-                  # Compare existing exclusion against import to find new or modified properties
-                  if ($_ -eq 'repeated') {
-                    foreach ($i in $e.repeated.PSObject.Properties.Name) {
-                      # Check each sub-property under 'repeated'
-                      if (!$RefE.repeated.$i -or $RefE.repeated.$i -ne $e.repeated.$i) { 'repeated' }
-                    }
-                  } elseif (!$RefE.$_ -or $e.$_ -ne $RefE.$_) {
-                    $_
-                  }
-                } | Select-Object -Unique
-                if ($Edit) {
-                  @('id','policy_id').foreach{
-                    # Update identifiers
-                    Write-Log 'Edit-Policy' (('FileVantageExclusion',$_ -join ': '),([PSCustomObject]@{old=$e.id;
-                      new=$RefE.$_} | Format-List | Out-String).Trim() -join "`n")
-                    Set-Property $e $_ $RefE.$_
-                  }
-                  # Modify FileVantageExclusion
-                  $Req = $e | Edit-FalconFileVantageExclusion @Param
-                  if ($Req) {
-                    @($Edit).foreach{
-                      if ($_ -eq 'repeated') {
-                        # Convert 'repeated' to a string and capture result
-                        Add-Result Modified $Req FileVantageExclusion $_ ($RefE.$_ | Format-List |
-                          Out-String).Trim() ($Req.$_ | Format-List | Out-String).Trim()
-                      } else {
-                        # Capture result
-                        Add-Result Modified $Req FileVantageExclusion $_ $RefE.$_ $Req.$_
+          if ($Ref.id -ne $Obj.id) { Update-Id $Obj $Ref $Item }
+        } else {
+          if ($Ref.id -ne $Obj.id) { Update-Id $Obj $Ref $Item }
+          if ($Item -eq 'FileVantagePolicy') {
+            if ($Obj.exclusions) {
+              foreach ($e in $Obj.exclusions) {
+                # Check for existing matching exclusion
+                $RefE = @($Ref.exclusions).Where({$_.name -eq $e.name})
+                # Remove 'repeated' from imported exclusion when empty to prevent submission error
+                if ($null -eq $e.repeated.PSObject.Properties.Name) { $e.PSObject.Properties.Remove('repeated') }
+                if ($RefE) {
+                  [string[]]$Edit = @($e.PSObject.Properties.Name).Where({$_ -notmatch
+                  '^((policy_)?id|\w+_timestamp)$'}).foreach{
+                    # Compare existing exclusion against import to find new or modified properties
+                    if ($_ -eq 'repeated') {
+                      foreach ($i in $e.repeated.PSObject.Properties.Name) {
+                        # Check each sub-property under 'repeated'
+                        if (!$RefE.repeated.$i -or $RefE.repeated.$i -ne $e.repeated.$i) { 'repeated' }
                       }
+                    } elseif (!$RefE.$_ -or $e.$_ -ne $RefE.$_) {
+                      $_
                     }
+                  } | Select-Object -Unique
+                  if ($Edit) {
+                    @('id','policy_id').foreach{
+                      # Update identifiers
+                      Write-Log 'Edit-Policy' (('FileVantageExclusion',$_ -join ': '),([PSCustomObject]@{old=$e.id;
+                        new=$RefE.$_} | Format-List | Out-String).Trim() -join "`n")
+                      Set-Property $e $_ $RefE.$_
+                    }
+                    # Modify FileVantageExclusion
+                    $Req = $e | Edit-FalconFileVantageExclusion @Param
+                    if ($Req) {
+                      @($Edit).foreach{
+                        if ($_ -eq 'repeated') {
+                          # Convert 'repeated' to a string and capture result
+                          Add-Result Modified $Req FileVantageExclusion $_ ($RefE.$_ | Format-List |
+                            Out-String).Trim() ($Req.$_ | Format-List | Out-String).Trim()
+                        } else {
+                          # Capture result
+                          Add-Result Modified $Req FileVantageExclusion $_ $RefE.$_ $Req.$_
+                        }
+                      }
+                    } elseif ($Fail) {
+                      # Capture failure to modify FileVantageExclusion
+                      Add-Result Failed $e FileVantageExclusion -Comment $Fail.exception.message -Log 'to modify'
+                    }
+                  }
+                } else {
+                  # Create FileVantageExclusion
+                  Write-Log 'Edit-Policy' (('FileVantageExclusion','policy_id' -join ': '),([PSCustomObject]@{
+                    old=$e.id;new=$Obj.id} | Format-List | Out-String).Trim() -join "`n")
+                  Set-Property $e policy_id $Obj.id
+                  $Req = $e | New-FalconFileVantageExclusion @Param
+                  if ($Req) {
+                    # Capture result
+                    Add-Result Created $Req FileVantageExclusion
                   } elseif ($Fail) {
-                    # Capture failure to modify FileVantageExclusion
-                    Add-Result Failed $e FileVantageExclusion -Comment $Fail.exception.message -Log 'to modify'
+                    # Capture failure to create FileVantageExclusion
+                    Add-Result Failed $e FileVantageExclusion -Comment $Fail.exception.message -Log 'to create'
                   }
                 }
-              } else {
-                # Create FileVantageExclusion
-                Write-Log 'Edit-Policy' (('FileVantageExclusion','policy_id' -join ': '),([PSCustomObject]@{
-                  old=$e.id;new=$Obj.id} | Format-List | Out-String).Trim() -join "`n")
-                Set-Property $e policy_id $Obj.id
-                $Req = $e | New-FalconFileVantageExclusion @Param
+              }
+            }
+            foreach ($g in @('host_groups','rule_groups')) {
+              if (!$Obj.$g -and $Ref.$g) {
+                # Remove 'rule_groups' and 'host_groups' from FileVantagePolicy
+                $Req = if ($g -eq 'host_groups') {
+                  Remove-FalconFileVantageHostGroup -PolicyId $Ref.id -Id $Ref.$g.id @Param
+                } else {
+                  Remove-FalconFileVantageRuleGroup -PolicyId $Ref.id -Id $Ref.$g.id @Param
+                }
                 if ($Req) {
                   # Capture result
-                  Add-Result Created $Req FileVantageExclusion
+                  Add-Result Modified $Req $Item $g ($Ref.$g.id -join ',') ($Req.$g.id -join ',')
                 } elseif ($Fail) {
-                  # Capture failure to create FileVantageExclusion
-                  Add-Result Failed $e FileVantageExclusion -Comment $Fail.exception.message -Log 'to create'
+                  # Capture assignment failure
+                  Add-Result Failed $Ref FileVantagePolicy -Comment $Fail.exception.message -Log 'to remove'
+                }
+              } else {
+                # Update identifiers and assign FileVantageRuleGroup and HostGroup to FileVantagePolicy
+                $Group = Update-GroupId $Obj.$g $Item $g
+                if (($Group.id -and !$Ref.$g.id) -or ($Group.id -and $Ref.$g.id -and
+                (Compare-Object $Group.id $Ref.$g.id))) {
+                  Set-Property $Obj $g $Group
+                  Submit-Group $Item $g $Obj $Ref
                 }
               }
             }
-          }
-          foreach ($g in @('host_groups','rule_groups')) {
-            if (!$Obj.$g -and $Ref.$g) {
-              # Remove 'rule_groups' and 'host_groups' from FileVantagePolicy
-              $Req = if ($g -eq 'host_groups') {
-                Remove-FalconFileVantageHostGroup -PolicyId $Ref.id -Id $Ref.$g.id @Param
-              } else {
-                Remove-FalconFileVantageRuleGroup -PolicyId $Ref.id -Id $Ref.$g.id @Param
-              }
+          } elseif ($Item -eq 'FirewallPolicy') {
+            if ($Ref.settings.policy_id -ne $Obj.settings.policy_id) {
+              # Update 'policy_id' under 'settings'
+              Set-Property $Obj.settings policy_id $Ref.settings.policy_id
+            }
+            if ($Obj.settings.rule_group_ids) {
+              # Update 'rule_group_ids'
+              $Obj.settings.rule_group_ids = [string[]](
+                Update-GroupId $Obj.settings.rule_group_ids FirewallPolicy rule_group_ids)
+            }
+            if ($null -eq $Obj.settings.rule_group_ids) {
+              # Ensure empty array is submitted for 'rule_group_ids' if no identifiers are present
+              $Obj.settings.rule_group_ids = @()
+            }
+            if ((Compare-Setting $Obj $Ref $Item) -contains $true) {
+              # Modify 'settings'
+              $Req = $Obj.settings | Edit-FalconFirewallSetting @Param
               if ($Req) {
-                # Capture result
-                Add-Result Modified $Req $Item $g ($Ref.$g.id -join ',') ($Req.$g.id -join ',')
+                # Capture FirewallSetting result
+                Compare-Setting $Obj $Ref $Item -Result
               } elseif ($Fail) {
-                # Capture assignment failure
-                Add-Result Failed $Ref FileVantagePolicy -Comment $Fail.exception.message -Log 'to remove'
+                # Capture failure to modify FirewallPolicy
+                Add-Result Failed $Obj FirewallPolicy -Comment $Fail.exception.message -Log 'to modify'
               }
             } else {
-              # Update identifiers and assign FileVantageRuleGroup and HostGroup to FileVantagePolicy
-              $Group = Update-GroupId $Obj.$g $Item $g
-              if (($Group.id -and !$Ref.$g.id) -or ($Group.id -and $Ref.$g.id -and
-              (Compare-Object $Group.id $Ref.$g.id))) {
-                Set-Property $Obj $g $Group
-                Submit-Group $Item $g $Obj $Ref
+              # Add 'ignored' result
+              Add-Result Ignored $Obj FirewallPolicy -Comment Identical
+            }
+          } elseif ($Obj.settings) {
+            $Edit = Compare-Setting $Obj $Ref $Item
+            if ($Edit) {
+              # Modify Policy and capture result
+              $Req = & "Edit-Falcon$Item" -Id $Obj.id -Setting $Edit @Param
+              if ($Req) {
+                # Capture each modified property
+                Compare-Setting (Compress-Object $Req $Item) $Ref $Item -Result
+              } elseif ($Fail) {
+                # Capture failure to modify Policy
+                Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
               }
             }
           }
-        } elseif ($Item -eq 'FirewallPolicy') {
-          if ($Ref.settings.policy_id -ne $Obj.settings.policy_id) {
-            # Update 'policy_id' under 'settings'
-            Set-Property $Obj.settings policy_id $Ref.settings.policy_id
-          }
-          if ($Obj.settings.rule_group_ids) {
-            # Update 'rule_group_ids'
-            $Obj.settings.rule_group_ids = [string[]](
-              Update-GroupId $Obj.settings.rule_group_ids FirewallPolicy rule_group_ids)
-          }
-          if ($null -eq $Obj.settings.rule_group_ids) {
-            # Ensure empty array is submitted for 'rule_group_ids' if no identifiers are present
-            $Obj.settings.rule_group_ids = @()
-          }
-          if ((Compare-Setting $Obj $Ref $Item) -contains $true) {
-            # Modify 'settings'
-            $Req = $Obj.settings | Edit-FalconFirewallSetting @Param
-            if ($Req) {
-              # Capture FirewallSetting result
-              Compare-Setting $Obj $Ref $Item -Result
-            } elseif ($Fail) {
-              # Capture failure to modify FirewallPolicy
-              Add-Result Failed $Obj FirewallPolicy -Comment $Fail.exception.message -Log 'to modify'
+          if ($Item -eq 'PreventionPolicy') {
+            if ($Obj.ioa_rule_groups) {
+              # Update IoaGroup identifiers and assign to PreventionPolicy
+              $Obj.ioa_rule_groups = Update-GroupId $Obj.ioa_rule_groups $Item ioa_rule_groups
+              if ($Obj.ioa_rule_groups) { Submit-Group $Item ioa_rule_groups $Obj $Ref }
+            } elseif ($Obj.name -match $PolicyDefault) {
+              # Record that no changes were made for default policy when ioa_rule_groups are not present
+              Add-Result Ignored $Obj $Item -Comment Identical
             }
-          } else {
-            # Add 'ignored' result
-            Add-Result Ignored $Obj FirewallPolicy -Comment Identical
-          }
-        } elseif ($Obj.settings) {
-          $Edit = Compare-Setting $Obj $Ref $Item
-          if ($Edit) {
-            # Modify Policy and capture result
-            $Req = & "Edit-Falcon$Item" -Id $Obj.id -Setting $Edit @Param
-            if ($Req) {
-              # Capture each modified property
-              Compare-Setting (Compress-Object $Req $Item) $Ref $Item -Result
-            } elseif ($Fail) {
-              # Capture failure to modify Policy
-              Add-Result Failed $Obj $Item -Comment $Fail.exception.message -Log 'to modify'
-            }
-          }
-        }
-        if ($Item -eq 'PreventionPolicy') {
-          if ($Obj.ioa_rule_groups) {
-            # Update IoaGroup identifiers and assign to PreventionPolicy
-            $Obj.ioa_rule_groups = Update-GroupId $Obj.ioa_rule_groups $Item ioa_rule_groups
-            if ($Obj.ioa_rule_groups) { Submit-Group $Item ioa_rule_groups $Obj $Ref }
-          } elseif ($Obj.name -match $PolicyDefault) {
-            # Record that no changes were made for default policy when ioa_rule_groups are not present
-            Add-Result Ignored $Obj $Item -Comment Identical
           }
         }
         if ($Obj.groups -and $Obj.name -notmatch $PolicyDefault) {
@@ -1527,8 +1533,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       foreach ($i in ($Obj | Select-Object id,bluetooth_settings,@{l='usb_settings';e={if ($_.settings) {
       $_.settings } else { $_.usb_settings }}})) {
         foreach ($t in @('usb_settings','bluetooth_settings')) {
-          @(@($i.$t.classes).Where({$_.exceptions}).exceptions).foreach{
-            [PSCustomObject]$_ | Select-Object @{l='policy_id';e={$i.id}},@{l='type';e={$t}},id,class,
+          foreach ($e in @($i.$t.classes).Where({$_.exceptions}).exceptions) {
+            Write-Log 'Get-DcException' (($t,$e.class,'exceptions' -join '.'),([PSCustomObject]@{policy_id=$i.id;
+              $e.match_method.ToLower()=((@(Select-ObjectName $e DeviceControlException).foreach{
+              $e.$_ }) -join '_')} | Format-List | Out-String).Trim() -join "`n")
+            [PSCustomObject]$e | Select-Object @{l='policy_id';e={$i.id}},@{l='type';e={$t}},id,class,
               vendor_id,vendor_name,product_id,product_name,serial_number,combined_id,action,match_method,
               description,minor_classes
           }
@@ -1991,7 +2000,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           # Capture assigned groups
           Add-Result Modified $Obj $Item $Property ($Ref.groups -join ',') (
             @($Ref.groups + $GroupId) -join ',')
-        } elseif ($Ref.enabled -eq $Obj.enabled) {
+        } elseif ($Ref.enabled -eq $Obj.enabled -and !@($Config.$Item.Result).Where({$_.id -eq $Obj.id -and
+        $_.action -match '^(Creat|Modifi)ed$'})) {
           # Capture ignored result
           Add-Result Ignored $Obj $Item -Comment Identical
         }
@@ -2032,12 +2042,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         } elseif ($Req) {
           # Combine '$Property.$Id' values
           Add-Result Modified $Obj $Item $Property ($Ref.$Property -join ',') ($Req -join ',')
-        } elseif ($Ref.enabled -eq $Obj.enabled) {
-          if (!@($Config.$Item.Result).Where({$_.id -eq $Obj.id -and ($_.action -eq 'Modified' -or
-          $_.action -eq 'Ignored')})) {
-            # Add ignored result when nothing is modified for a given policy
-            Add-Result Ignored $Obj $Item -Comment Identical
-          }
+        } elseif ($Ref.enabled -eq $Obj.enabled -and !@($Config.$Item.Result).Where({$_.id -eq $Obj.id -and
+        $_.action -match '^(Creat|Modifi)ed$'})) {
+          # Add ignored result when nothing is modified for a given policy
+          Add-Result Ignored $Obj $Item -Comment Identical
         }
       }
     }
@@ -2458,7 +2466,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           Add-Result Ignored $m $p.Key -Comment ('Multiple {0} named "{1}" present' -f $m.platform_name,$m.name)
         } elseif ($m -and $Cid) {
           # Modify policy by type
-          Edit-Policy $m $p.Key $Cid $Config
+          Edit-Policy $m $p.Key $Cid
         }
       }
       Clear-ConfigList $p.Key Modify
