@@ -730,6 +730,8 @@ Monitor only for breach data.  Must be accompanied by BreachMonitoring: True.
 Monitor for substring matches. Only available for the 'Typosquatting' topic.
 .PARAMETER MatchOnTsqResultType
 Monitor for basedomains and/or subdomains. Only available for the 'Typosquatting' topic.
+.PARAMETER LookbackPeriod
+The duration for which the rule will look back in the past at the first run
 .PARAMETER OriginatingTemplateId
 Identifier of originating rule template, if based on one
 .LINK
@@ -771,12 +773,24 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [ValidateSet('basedomains','subdomains',IgnoreCase=$false)]
     [string[]]$MatchOnTsqResultType,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=10)]
+    [Alias('lookback_period')]
+    [int64]$LookbackPeriod,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=11)]
     [Alias('originating_template_id')]
     [string]$OriginatingTemplateId
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/recon/entities/rules/v1:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/recon/entities/rules/v1:post'
+      Format = @{
+        Body = @{
+          root = @('breach_monitor_only','breach_monitoring_enabled','filter','lookback_period',
+            'match_on_tsq_result_types','name','originating_template_id','permissions','priority',
+            'substring_matching_enabled','topic')
+        }
+      }
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {

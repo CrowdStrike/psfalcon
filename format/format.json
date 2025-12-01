@@ -5948,22 +5948,6 @@
         "ids"
       ]
     },
-    "post": {
-      "body": {
-        "root": [
-          "breach_monitor_only",
-          "breach_monitoring_enabled",
-          "filter",
-          "match_on_tsq_result_types",
-          "name",
-          "originating_template_id",
-          "permissions",
-          "priority",
-          "substring_matching_enabled",
-          "topic"
-        ]
-      }
-    },
     "delete": {
       "query": [
         "ids",
