@@ -185,33 +185,33 @@ Script identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
 #>
-  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:patch',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v2:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
       ValueFromPipelineByPropertyName,Position=1)]
     [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
     [string[]]$Platform,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
       ValueFromPipelineByPropertyName,Position=2)]
     [ValidateSet('private','group','public',IgnoreCase=$false)]
     [Alias('permission_type')]
     [string]$PermissionType,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
       ValueFromPipelineByPropertyName,Position=3)]
     [string]$Name,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
       ValueFromPipelineByPropertyName,Position=4)]
     [string]$Description,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
       ValueFromPipelineByPropertyName,Position=5)]
     [ValidateLength(1,4096)]
     [Alias('comments_for_audit_log')]
     [string]$Comment,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=6)]
     [Alias('content','FullName')]
     [string]$Path,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:patch',Mandatory,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=7)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
     [string]$Id
@@ -220,6 +220,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Formdata = @('comments_for_audit_log','content','description','id','name','permission_type','platform')
+      }
       Headers = @{ ContentType = 'multipart/form-data' }
     }
   }
@@ -1239,19 +1242,19 @@ Path to local file
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
 #>
-  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:post',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v2:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',
+    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:post',
       ValueFromPipelineByPropertyName,Position=1)]
     [ValidateLength(1,32766)]
     [string]$Name,
-    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Position=2)]
+    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:post',Position=2)]
     [string]$Description,
-    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Position=3)]
+    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:post',Position=3)]
     [ValidateLength(1,4096)]
     [Alias('comments_for_audit_log')]
     [string]$Comment,
-    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:post',Mandatory,
+    [Parameter(ParameterSetName='/real-time-response/entities/put-files/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=4)]
     [ValidateScript({
       if (Test-Path $_ -PathType Leaf) {
@@ -1267,6 +1270,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconPutFile
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('comments_for_audit_log','description','file','name') }
       Headers = @{ ContentType = 'multipart/form-data' }
     }
   }
@@ -1293,30 +1297,30 @@ Path to local file or string-based script content
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
 #>
-  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:post',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v2:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
     [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
     [string[]]$Platform,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
     [ValidateSet('private','group','public',IgnoreCase=$false)]
     [Alias('permission_type')]
     [string]$PermissionType,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
       Position=3)]
     [ValidateLength(1,32766)]
     [string]$Name,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
       Position=4)]
     [string]$Description,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
       Position=5)]
     [ValidateLength(1,4096)]
     [Alias('comments_for_audit_log')]
     [string]$Comment,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:post',Mandatory,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=6)]
     [Alias('content','FullName')]
     [string]$Path
@@ -1325,6 +1329,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Formdata = @('comments_for_audit_log','content','description','name','permission_type','platform')
+      }
       Headers = @{ ContentType = 'multipart/form-data' }
     }
   }

@@ -5651,14 +5651,6 @@
     }
   },
   "/real-time-response/entities/put-files/v1": {
-    "post": {
-      "formdata": [
-        "file",
-        "description",
-        "name",
-        "comments_for_audit_log"
-      ]
-    },
     "delete": {
       "query": [
         "ids"
@@ -5708,32 +5700,9 @@
     }
   },
   "/real-time-response/entities/scripts/v1": {
-    "post": {
-      "formdata": [
-        "file",
-        "description",
-        "name",
-        "comments_for_audit_log",
-        "permission_type",
-        "content",
-        "platform"
-      ]
-    },
     "delete": {
       "query": [
         "ids"
-      ]
-    },
-    "patch": {
-      "formdata": [
-        "id",
-        "file",
-        "description",
-        "name",
-        "comments_for_audit_log",
-        "permission_type",
-        "content",
-        "platform"
       ]
     }
   },
