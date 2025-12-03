@@ -21,7 +21,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsLookupFile
     [Parameter(ParameterSetName='/humio/api/v1/repositories/{repository}/files/{filename}:get',Mandatory,
       Position=1)]
     [ValidateSet('3pi_parsers','event_search_all','falcon_for_it_view','forensics_view','investigate_view',
-      'search-all',IgnoreCase=$false)]
+      'search-all','third-party',IgnoreCase=$false)]
     [string]$Repository,
     [Parameter(ParameterSetName='/humio/api/v1/repositories/{repository}/files/{filename}:get',Mandatory,
       Position=2)]
