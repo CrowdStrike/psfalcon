@@ -493,6 +493,17 @@
     'Update-FalconNgsLookupFile'
     'Update-FalconNgsSavedQuery'
 
+    # ngsiem
+    'Edit-FalconNgsDataConnection'
+    'Edit-FalconNgsDataConnectionStatus'
+    'Get-FalconNgsDataConnection'
+    'Get-FalconNgsDataConnectionToken'
+    'Get-FalconNgsDataConnector'
+    'Get-FalconNgsDataConnectorConfig'
+    'New-FalconNgsDataConnection'
+    'Remove-FalconNgsDataConnection'
+    'Reset-FalconNgsDataConnectionToken'
+
     # oauth2
     'Request-FalconToken'
     'Revoke-FalconToken'
