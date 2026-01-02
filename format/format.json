@@ -114,31 +114,6 @@
       }
     }
   },
-  "/cases/entities/cases/v2": {
-    "post": {
-      "body": {
-        "root": [
-          "ids"
-        ]
-      }
-    }
-  },
-  "/cases/entities/case-tags/v1": {
-    "delete": {
-      "query": [
-        "id",
-        "tag"
-      ]
-    },
-    "post": {
-      "body": {
-        "root": [
-          "id",
-          "tags"
-        ]
-      }
-    }
-  },
   "/case-files/combined/file-details/v1": {
     "get": {
       "query": [
