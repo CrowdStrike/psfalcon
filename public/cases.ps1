@@ -248,7 +248,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCase
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter','limit','offset','q','sort') }
+      Format = @{
+        Query = @('filter','limit','offset','q','sort')
+        Body = @{ root = @('ids') }
+      }
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
