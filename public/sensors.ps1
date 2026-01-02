@@ -38,37 +38,41 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstaller
 #>
-  [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v2:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/sensors/queries/installers/v3:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/sensors/entities/installers/v2:get',Mandatory,
+    [Parameter(ParameterSetName='/sensors/entities/installers/v3:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
     [Alias('ids')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=1)]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=1)]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v3:get',Position=1)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v3:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=2)]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=2)]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v3:get',Position=2)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v3:get',Position=2)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get',Position=3)]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Position=3)]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v3:get',Position=3)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v3:get',Position=3)]
     [ValidateRange(1,500)]
     [int32]$Limit,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get')]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get')]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v3:get')]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v3:get')]
     [int32]$Offset,
-    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get',Mandatory)]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v3:get',Mandatory)]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get')]
-    [Parameter(ParameterSetName='/sensors/combined/installers/v2:get')]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v3:get')]
+    [Parameter(ParameterSetName='/sensors/combined/installers/v3:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/sensors/queries/installers/v2:get')]
+    [Parameter(ParameterSetName='/sensors/queries/installers/v3:get')]
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {

@@ -6024,16 +6024,6 @@
       }
     }
   },
-  "/sensors/combined/installers/v2": {
-    "get": {
-      "query": [
-        "offset",
-        "limit",
-        "sort",
-        "filter"
-      ]
-    }
-  },
   "/sensors/entities/datafeed-actions/v1/{partition}": {
     "post": {
       "query": [
@@ -6055,23 +6045,6 @@
     "get": {
       "query": [
         "id"
-      ]
-    }
-  },
-  "/sensors/entities/installers/v2": {
-    "get": {
-      "query": [
-        "ids"
-      ]
-    }
-  },
-  "/sensors/queries/installers/v2": {
-    "get": {
-      "query": [
-        "offset",
-        "limit",
-        "sort",
-        "filter"
       ]
     }
   },
