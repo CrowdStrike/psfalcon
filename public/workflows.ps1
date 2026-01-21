@@ -213,6 +213,14 @@ Search for Falcon Fusion SOAR workflow triggers
 Requires 'Workflow: Read'.
 .PARAMETER Filter
 Falcon Query Language expression to limit results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowTrigger
 #>
@@ -220,9 +228,23 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowTrigger
   param(
     [Parameter(ParameterSetName='/workflows/combined/triggers/v1:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
-    [string]$Filter
+    [string]$Filter,
+    [Parameter(ParameterSetName='/workflows/combined/triggers/v1:get',Position=2)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/workflows/combined/triggers/v1:get')]
+    [string]$Offset,
+    [Parameter(ParameterSetName='/workflows/combined/triggers/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/workflows/combined/triggers/v1:get')]
+    [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Import-FalconWorkflow {

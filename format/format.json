@@ -6367,13 +6367,6 @@
       ]
     }
   },
-  "/workflows/combined/triggers/v1": {
-    "get": {
-      "query": [
-        "filter"
-      ]
-    }
-  },
   "/workflows/entities/definitions/export/v1": {
     "get": {
       "query": [
