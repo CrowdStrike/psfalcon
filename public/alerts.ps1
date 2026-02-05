@@ -6,8 +6,6 @@ Search for alerts
 Requires 'Alerts: Read'.
 .PARAMETER Id
 Alert identifier
-.PARAMETER IncludeHidden
-Include hidden alerts when retrieving results by identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
 .PARAMETER Query
@@ -16,6 +14,8 @@ Perform a generic substring search across available fields
 Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
+.PARAMETER IncludeHidden
+Include hidden alerts when retrieving results by identifier
 .PARAMETER Offset
 Position to begin retrieving results
 .PARAMETER After
@@ -35,9 +35,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
       ValueFromPipeline)]
     [Alias('composite_ids','composite_id','ids')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/alerts/entities/alerts/v2:post',Position=1)]
-    [Alias('include_hidden')]
-    [boolean]$IncludeHidden,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=1)]
     [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post',Mandatory,Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
@@ -52,6 +49,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
     [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post',Position=3)]
     [ValidateRange(1,10000)]
     [int32]$Limit,
+    [Parameter(ParameterSetName='/alerts/entities/alerts/v2:post',Position=1)]
+    [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get',Position=5)]
+    [Alias('include_hidden')]
+    [boolean]$IncludeHidden,
     [Parameter(ParameterSetName='/alerts/queries/alerts/v2:get')]
     [int32]$Offset,
     [Parameter(ParameterSetName='/alerts/combined/alerts/v1:post')]
@@ -66,7 +67,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('composite_ids') }
+        Query = @('filter','include_hidden','limit','offset','q','sort')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
     if ($PSCmdlet.ParameterSetName -eq '/alerts/combined/alerts/v1:post') {
       # Enforce maximum limit for '/alerts/combined/alerts/v1:post'
@@ -74,6 +82,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAlert
       ($PSBoundParameters.All -and !$PSBoundParameters.Limit)) {
         $PSBoundParameters['Limit'] = 1000
       }
+      # Update 'Format'
+      $Param.Format = @{ Body = @{ root = @('after','filter','limit','sort') }}
     }
   }
   process {
@@ -155,6 +165,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/alerts/entities/alerts/v3:patch'
+      Format = @{
+        Body = @{ action_parameters = @('name','value'); root = @('composite_ids')}
+        Query = @('include_hidden')
+      }
       Max = 1000
     }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
@@ -170,8 +184,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
         [hashtable[]]$PSBoundParameters.Action = @($PSBoundParameters.Action).foreach{
           Test-ActionParameter $_ $Valid
         }
-        $Param.Format.Body.root = @('composite_ids','action_parameters')
-        [void]$Param.Format.Body.Remove('action_parameters')
+        $Param.Format.Body = @{ root = @('composite_ids','action_parameters') }
       }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
