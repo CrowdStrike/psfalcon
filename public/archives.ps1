@@ -30,8 +30,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Expand-FalconSampleArchive
     [string]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('extract_all','sha256'); files = @('comment','is_confidential','name')}}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -59,12 +62,12 @@ function Get-FalconSampleArchive {
 Retrieve status for uploaded sample archives or a list of the files inside them
 .DESCRIPTION
 Requires 'Sample uploads: Read'.
-.PARAMETER Offset
-Position to begin retrieving results
-.PARAMETER Limit
-Maximum number of results per request
 .PARAMETER IncludeFiles
 Include list of file names
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Id
 Sample archive identifier
 .PARAMETER FileList
@@ -91,7 +94,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSampleArchive
     [Parameter(ParameterSetName='/archives/entities/archive-files/v1:get',Mandatory)]
     [switch]$FileList
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id','include_files','limit','offset') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconSampleExtraction {
@@ -100,12 +109,12 @@ function Get-FalconSampleExtraction {
 Retrieve status for sample archive extractions or the files inside them
 .DESCRIPTION
 Requires 'Sample uploads: Read'.
-.PARAMETER Offset
-Position to begin retrieving results
-.PARAMETER Limit
-Maximum number of results per request
 .PARAMETER IncludeFiles
 Include list of file names
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
 .PARAMETER Id
 Sample archive identifier
 .PARAMETER FileList
@@ -132,7 +141,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSampleExtraction
     [Parameter(ParameterSetName='/archives/entities/extraction-files/v1:get',Mandatory)]
     [switch]$FileList
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id','include_files','limit','offset') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconSampleArchive {
@@ -154,7 +169,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSampleArchive
     [Alias('sha256')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconSampleArchive {
@@ -202,7 +223,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconSampleArchive
     [Alias('file','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('comment','file','is_confidential','name','password') }
+    }
+  }
   process {
     if (!$PSBoundParameters.Name) {
       $PSBoundParameters['Name'] = [System.IO.Path]::GetFileName($PSBoundParameters.Path)
