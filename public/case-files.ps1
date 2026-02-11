@@ -20,7 +20,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsCaseFile
       ValueFromPipelineByPropertyName,Position=2)]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','id') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconNgsCaseFile {
@@ -70,7 +76,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCaseFile
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -103,14 +113,24 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsCaseFile
     [string]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
-      if ($List.Count -gt 1) { $Param.Endpoint = '/case-files/entities/files/bulk-download/v1:post' }
-      $PSBoundParameters['Id'] = $List
+      if ($List.Count -gt 1) {
+        $Param.Endpoint = '/case-files/entities/files/bulk-download/v1:post'
+        $Param.Format = @{ Body = @{ root = @('ids') }}
+        $PSBoundParameters['ids'] = $List
+        [void]$PSBoundParameters.Remove('id')
+      } else {
+        $PSBoundParameters['Id'] = $List
+      }
       Invoke-Falcon @Param -UserInput $PSBoundParameters
     }
   }
@@ -134,7 +154,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsCaseFile
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -148,16 +172,46 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsCaseFile
 function Send-FalconNgsCaseFile {
 <#
 .SYNOPSIS
-Upload a file to a Falcon NGSIEM case
+Upload a Falcon NGSIEM case file
 .DESCRIPTION
 Requires 'Cases: Write'.
+.PARAMETER CaseId
+Case file identifier
+.PARAMETER Description
+File description
+.PARAMETER Path
+Path to local file
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsCaseFile
 #>
   [CmdletBinding(DefaultParameterSetName='/case-files/entities/files/upload/v1:post',SupportsShouldProcess)]
-  param()
+  param(
+    [Parameter(ParameterSetName='/case-files/entities/files/upload/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('case_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/case-files/entities/files/upload/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/case-files/entities/files/upload/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidateScript({
+      if (Test-Path $_ -PathType Leaf) {
+        $true
+      } else {
+        throw "Cannot find path '$_' because it does not exist or is a directory."
+      }
+    })]
+    [Alias('file','FullName')]
+    [string]$Path
+  )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    [System.Collections.Generic.List[string]]$List = @()
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('case_id','description','file') }
+      Headers = @{ ContentType = 'multipart/form-data' }
+    }
   }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
