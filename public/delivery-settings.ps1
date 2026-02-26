@@ -42,6 +42,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconContentControl
     [Alias('delivery_cadence')]
     [string]$Cadence
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ delivery_settings = @('delivery_cadence','delivery_type') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }

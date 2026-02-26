@@ -100,7 +100,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIoa
     [Parameter(ParameterSetName='/detects/entities/ioa/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Query = @('account_id','aws_account_id','azure_subscription_id','azure_tenant_id','cloud_provider',
+          'date_time_since','limit','next_token','resource_id','resource_uuid','service','severity','since',
+          'state')
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCloudIom {
@@ -165,7 +175,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudIom
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','next_token','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {

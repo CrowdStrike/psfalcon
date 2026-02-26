@@ -153,7 +153,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCorrelationRule
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','q','rule_ids','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -299,7 +303,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCorrelationRule
     [string[]]$RuleId
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
