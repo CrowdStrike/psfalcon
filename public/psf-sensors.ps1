@@ -157,11 +157,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
     [Parameter(Mandatory,Position=1)]
     [ValidateScript({
       @($_).foreach{
-        if ((Test-RegexValue $_) -eq 'tag') {
-          $true
-        } else {
-          throw "Valid values include letters numbers, hyphens, unscores and forward slashes. ['$_']"
-        }
+        if ((Test-RegexValue $_) -eq 'tag') { $true } else { throw "'$_' does not match valid tag values." }
       }
     })]
     [Alias('Tags')]
@@ -244,11 +240,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
     [Parameter(Position=1)]
     [ValidateScript({
       @($_).foreach{
-        if ((Test-RegexValue $_) -eq 'tag') {
-          $true
-        } else {
-          throw "Valid values include letters, numbers, hyphens, unscores and forward slashes. ['$_']"
-        }
+        if ((Test-RegexValue $_) -eq 'tag') { $true } else { throw "'$_' does not match valid tag values." }
       }
     })]
     [Alias('Tags')]
@@ -296,11 +288,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorTag
     [Parameter(Mandatory,Position=1)]
     [ValidateScript({
       @($_).foreach{
-        if ((Test-RegexValue $_) -eq 'tag') {
-          $true
-        } else {
-          throw "Valid values include letters numbers, hyphens, unscores and forward slashes. ['$_']"
-        }
+        if ((Test-RegexValue $_) -eq 'tag') { $true } else { throw "'$_' does not match valid tag values." }
       }
     })]
     [Alias('Tags')]

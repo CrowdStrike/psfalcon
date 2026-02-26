@@ -1231,7 +1231,7 @@ function Test-RegexValue {
       ipv6 = [regex]'^[0-9a-fA-F]{1,4}:'
       domain = [regex]'^(https?://)?((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}$'
       email = [regex]"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"
-      tag = [regex]'^[-\w\d_/]+$'
+      tag = [regex]'^[\w\d-_/\.@]+$'
     }
   }
   process {

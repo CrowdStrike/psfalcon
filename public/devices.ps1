@@ -17,9 +17,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupingTag
     [ValidatePattern('^FalconGroupingTags/.+$')]
     [ValidateScript({
       @($_).foreach{
-        if ((Test-RegexValue $_) -eq 'tag') { $true } else {
-          throw "Valid values include letters, numbers, hyphens, unscores and forward slashes. ['$_']"
-        }
+        if ((Test-RegexValue $_) -eq 'tag') { $true } else { throw "'$_' does not match valid tag values." }
       }
     })]
     [Alias('Tags')]
@@ -31,7 +29,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconGroupingTag
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','device_ids','tags') }}
+    }
     $PSBoundParameters['action'] = 'add'
     [System.Collections.Generic.List[string]]$List = @()
   }
@@ -678,11 +680,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
     [ValidatePattern('^FalconGroupingTags/.+$')]
     [ValidateScript({
       @($_).foreach{
-        if ((Test-RegexValue $_) -eq 'tag') {
-          $true
-        } else {
-          throw "Valid values include letters, numbers, hyphens, unscores and forward slashes. ['$_']"
-        }
+        if ((Test-RegexValue $_) -eq 'tag') { $true } else { throw "'$_' does not match valid tag values." }
       }
     })]
     [Alias('Tags')]
@@ -694,7 +692,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','device_ids','tags') }}
+    }
     $PSBoundParameters['action'] = 'remove'
     [System.Collections.Generic.List[string]]$List = @()
   }
