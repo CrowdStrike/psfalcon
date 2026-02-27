@@ -1792,8 +1792,28 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               foreach ($r in $i.rule_ids) {
                 # Select each FirewallRule from import using 'family' as 'id' value (excluding 'deleted')
                 @($Config.FirewallRule.Import).Where({$_.family -eq $r -and $_.deleted -eq $false}).foreach{
-                  # Trim rule names to 64 characters to meet API restriction
-                  if ($_.name.Length -gt 64) { $_.name = ($_.name).SubString(0,63) }
+                  if ($_.name.Length -gt 64) {
+                    # Trim rule names to 64 characters to meet API restriction
+                    $_.name = ($_.name).SubString(0,63)
+                  }
+                  # Gather 'network_location' values
+                  $FieldRef = $_.fields.Where({$_.name -eq 'network_location'})
+                  if ($FieldRef.values) {
+                    foreach ($Nl in $FieldRef.values.Where({$_ -match '^[a-fA-F0-9]{32}$'})) {
+                      $NlRef = @($Config.FirewallLocation.Ref).Where({$_.old -eq $Nl})
+                      if ($NlRef.new) {
+                        # Update 'network_location' values with new identifiers
+                        Set-Property $FieldRef values ($FieldRef.values -replace $NlRef.old,$NlRef.new)
+                        Write-Log 'New-Group' "$(('FirewallRule',$r -join ': '),($NlRef | Select-Object @{
+                          l='network_location';e={$_.name}},old,new | Format-List | Out-String).Trim() -join "`n")"
+                      }
+                    }
+                    @($_.fields.Where({$_.name -eq 'network_location'})).foreach{
+                      # Update 'network_location' values with modified list
+                      $_.values = @($FieldRef.values)
+                    }
+                  }
+                  # Output updated rule
                   $_
                 }
               }
@@ -2345,6 +2365,21 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       New-Group HostGroup
       Clear-ConfigList HostGroup Import
     }
+    # Create FirewallLocation
+    foreach ($p in $Config.GetEnumerator().Where({$_.Key -eq 'FirewallLocation' -and $_.Value.Import})) {
+      @($p.Value.Import).foreach{
+        $i = $_ | New-FalconFirewallLocation -EA 0 -EV Fail
+        if ($i) {
+          # Capture result
+          Set-IdRef $i $p.Key -Update
+          Add-Result Created $i $p.Key
+        } elseif ($Fail) {
+          # Capture failure
+          Add-Result Failed $_ $p.Key -Log 'to create' -Comment ($Fail.exception.message -join ',')
+        }
+      }
+      Clear-ConfigList $p.Key Import
+    }
     # Create non-policy items
     foreach ($p in $Config.GetEnumerator().Where({$_.Key -notmatch 'Policy$' -and $_.Value.Import})) {
       if ($p.Key -match '^(Ioa|Ml|Sv)Exclusion$') {
@@ -2365,18 +2400,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
               }
               if ($Fail) { Add-Result Failed $i $p.Key -Log 'to create' -Comment $Fail.exception.message }
             }
-          }
-        }
-      } elseif ($p.Key -eq 'FirewallLocation') {
-        # Create FirewallLocation
-        @($p.Value.Import).foreach{
-          $i = $_ | New-FalconFirewallLocation -EA 0 -EV Fail
-          if ($i) {
-            # Capture result
-            Add-Result Created $i $p.Key
-          } elseif ($Fail) {
-            # Capture failure
-            Add-Result Failed $_ $p.Key -Log 'to create' -Comment ($Fail.exception.message -join ',')
           }
         }
       } elseif ($p.Key -match 'Group$') {
