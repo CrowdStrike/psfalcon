@@ -37,7 +37,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteAlert
     [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/alerts/v2:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCompleteAllowlist {
@@ -79,7 +85,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteAllowlist
     [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/allowlist/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCompleteBlocklist {
@@ -121,7 +133,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteBlocklist
     [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/blocklist/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCompleteCollection {
@@ -166,7 +184,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteCollection
     [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/devicecount-collections/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCompleteEscalation {
@@ -208,7 +232,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteEscalation
     [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/escalations/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCompleteIncident {
@@ -250,7 +280,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteIncident
     [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/incidents/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCompleteRemediation {
@@ -292,6 +328,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCompleteRemediation
     [Parameter(ParameterSetName='/falcon-complete-dashboards/queries/remediations/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
