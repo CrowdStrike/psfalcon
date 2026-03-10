@@ -139,7 +139,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconAsset
     [switch]$Login
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','facet','filter','ids','limit','offset','sort') }
+    }
     $RegEx = @{
       CombinedUrl = '/discover/combined/(applications|hosts)/v1:get'
       AppFacet = '^(browser_extension|host_info|install_usage)$'
