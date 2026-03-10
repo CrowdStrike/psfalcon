@@ -61,7 +61,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCertificateExclusion
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=9)]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          exclusions = @('applied_globally','certificate','children_cids','comment','description','host_groups',
+            'id','name','status')
+        }
+      }
+    }
+  }
   process {
     if ($PSBoundParameters.Certificate) {
       # Force required properties in 'certificate'
@@ -91,7 +102,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCertificate
     [Alias('ids')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCertificateExclusion {
@@ -145,7 +162,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCertificateExclusion
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -186,7 +207,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCertificateExclusion
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Mandatory,Position=1)]
+    [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
     [string]$Name,
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:post',
       ValueFromPipelineByPropertyName,Position=2)]
@@ -215,7 +237,18 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCertificateExclusion
       ValueFromPipelineByPropertyName,Position=8)]
     [string]$Comment
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          exclusions = @('applied_globally','certificate','children_cids','comment','description','host_groups',
+          'name','status')
+        }
+      }
+    }
+  }
   process {
     if ($PSBoundParameters.Certificate) {
       # Force required properties in 'certificate'
@@ -251,7 +284,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCertificateExclusion
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('comment','ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
