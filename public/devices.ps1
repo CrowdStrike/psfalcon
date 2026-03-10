@@ -79,7 +79,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconHostGroup
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('assignment_rule','description','id','name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconHost {
@@ -207,6 +213,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
+      Format = if ($PSCmdlet.ParameterSetName -eq '/devices/entities/online-state/v1:get') {
+        @{ Query = @('ids') }
+      } else {
+        @{ Body = @{ root = @('ids') }; Query = @('fields','filter','limit','sort','offset') }
+      }
       Max = if ($PSCmdlet.ParameterSetName -eq '/devices/entities/devices/v2:post') {
         5000
       } elseif ($PSCmdlet.ParameterSetName -eq '/devices/entities/online-state/v1:get') {
@@ -398,7 +409,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroup
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -468,7 +483,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHostGroupMember
     [Parameter(ParameterSetName='/devices/queries/host-group-members/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','id','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconHostAction {
@@ -509,6 +530,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconHostAction
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }; Query = @('action_name') }
       Max = if ($PSBoundParameters.Name -match '_host$') { 100 } else { 500 }
     }
     if ($PSBoundParameters.Name) {
@@ -629,8 +651,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconHostGroup
     [string]$AssignmentRule
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/devices/entities/host-groups/v1:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/devices/entities/host-groups/v1:post'
+      Format = @{ Body = @{ resources = @('assignment_rule','description','group_type','name') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -728,7 +753,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHostGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
