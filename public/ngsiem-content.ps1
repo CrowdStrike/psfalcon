@@ -451,10 +451,14 @@ function Receive-FalconNgsLookupFile {
 Download a Falcon NGSIEM lookup file
 .DESCRIPTION
 Requires 'NGSIEM Lookup Files: Read'.
+.PARAMETER Path
+Destination path [default: .\<filename>.csv]
 .PARAMETER Filename
 Lookup file name
 .PARAMETER Domain
 Repository or view to search
+.PARAMETER Force
+Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsLookupFile
 #>
@@ -470,7 +474,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsLookupFile
       ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('all','dashboards','falcon','parsers-repository','third-party',IgnoreCase=$false)]
     [Alias('search_domain')]
-    [string]$Domain
+    [string]$Domain,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get')]
+    [switch]$Force
   )
   begin {
     $Param = @{
@@ -488,7 +494,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsLookupFile
       # When 'Path' is not specified, use 'Filename'
       $PSBoundParameters['Path'] = Join-Path (Get-Location).Path (Split-Path $PSBoundParameters.Filename -Leaf)
     }
-    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'csv'
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path csv
     $OutPath = Test-OutFile $PSBoundParameters.Path
     if ($OutPath.Category -eq 'ObjectNotFound') {
       Write-Error @OutPath

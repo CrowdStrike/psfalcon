@@ -304,9 +304,6 @@
     'Rename-FalconMigration'
     'Remove-FalconMigration'
 
-    # humio
-    'Receive-FalconNgsLookupFile'
-
     # hunting
     'Get-FalconCaoQuery'
     'Receive-FalconCaoQueryArchive'
