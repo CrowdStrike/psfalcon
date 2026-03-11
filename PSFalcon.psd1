@@ -479,6 +479,7 @@
     'Get-FalconNgsSavedQuery'
     'New-FalconNgsParser'
     'Receive-FalconNgsDashboard'
+    'Receive-FalconNgsLookupFile'
     'Receive-FalconNgsParser'
     'Receive-FalconNgsSavedQuery'
     'Remove-FalconNgsDashboard'

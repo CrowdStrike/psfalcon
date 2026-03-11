@@ -139,7 +139,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsDashboard
     [Parameter(ParameterSetName='/ngsiem-content/queries/dashboards/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','search_domain') }
+    }
+  }
   process { Write-NgsContent @Param -UserInput $PSBoundParameters -Property id }
 }
 function Get-FalconNgsLookupFile {
@@ -148,8 +154,6 @@ function Get-FalconNgsLookupFile {
 Search for Falcon NGSIEM lookup files
 .DESCRIPTION
 Requires 'NGSIEM Lookup Files: Read'.
-.PARAMETER Filename
-Lookup file name
 .PARAMETER Domain
 Repository or view to search
 .PARAMETER Filter
@@ -169,12 +173,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsLookupFile
 #>
   [CmdletBinding(DefaultParameterSetName='/ngsiem-content/queries/lookupfiles/v1:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,Position=1)]
-    [string]$Filename,
     [Parameter(ParameterSetName='/ngsiem-content/queries/lookupfiles/v1:get',Mandatory,Position=1)]
-    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,Position=2)]
     [ValidateSet('all','dashboards','falcon','parsers-repository','third-party',IgnoreCase=$false)]
     [Alias('search_domain')]
     [string]$Domain,
@@ -192,7 +191,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsLookupFile
     [Parameter(ParameterSetName='/ngsiem-content/queries/lookupfiles/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','search_domain') }
+    }
+  }
   process { Write-NgsContent @Param -UserInput $PSBoundParameters -Property filename }
 }
 function Get-FalconNgsParser {
@@ -245,7 +250,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsParser
     [Parameter(ParameterSetName='/ngsiem-content/queries/parsers/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','repository') }
+    }
+  }
   process { Write-NgsContent @Param -UserInput $PSBoundParameters -Property id }
 }
 function Get-FalconNgsSavedQuery {
@@ -299,7 +310,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsSavedQuery
     [Parameter(ParameterSetName='/ngsiem-content/queries/savedqueries/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','search_domain') }
+    }
+  }
   process { Write-NgsContent @Param -UserInput $PSBoundParameters -Property id }
 }
 function New-FalconNgsParser {
@@ -428,6 +445,62 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsDashboard
     }
   }
 }
+function Receive-FalconNgsLookupFile {
+<#
+.SYNOPSIS
+Download a Falcon NGSIEM lookup file
+.DESCRIPTION
+Requires 'NGSIEM Lookup Files: Read'.
+.PARAMETER Filename
+Lookup file name
+.PARAMETER Domain
+Repository or view to search
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsLookupFile
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Position=1)]
+    [ValidatePattern('\.gzip$')]
+    [string]$Path,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [string]$Filename,
+    [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [ValidateSet('all','dashboards','falcon','parsers-repository','third-party',IgnoreCase=$false)]
+    [Alias('search_domain')]
+    [string]$Domain
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Outfile = 'path'
+        Query = @('filename','search_domain')
+      }
+      Headers = @{ Accept = 'application/octet-stream' }
+    }
+  }
+  process {
+    if (!$PSBoundParameters.Path) {
+      # When 'Path' is not specified, use 'Filename'
+      $PSBoundParameters['Path'] = Join-Path (Get-Location).Path (Split-Path $PSBoundParameters.Filename -Leaf)
+    }
+    $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'csv'
+    $OutPath = Test-OutFile $PSBoundParameters.Path
+    if ($OutPath.Category -eq 'ObjectNotFound') {
+      Write-Error @OutPath
+    } elseif ($PSBoundParameters.Path) {
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
 function Receive-FalconNgsParser {
 <#
 .SYNOPSIS
@@ -462,7 +535,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconNgsParser
     [switch]$Force
 
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','repository') }
+    }
+  }
   process {
     if (!$PSBoundParameters.Path) {
       # When 'Path' is not specified, use a combination of 'parser', 'repository', and 'id'
@@ -589,7 +668,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsDashboard
     [Alias('search_domain')]
     [string]$Domain
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','search_domain') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconNgsLookupFile {
@@ -616,7 +701,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsLookupFile
     [Alias('search_domain')]
     [string]$Domain
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filename','search_domain') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconNgsParser {
@@ -643,7 +734,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsParser
     [ValidateSet('parsers-repository',IgnoreCase=$false)]
     [string]$Repository
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','repository') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconNgsSavedQuery {
@@ -671,7 +768,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsSavedQuery
     [Alias('search_domain')]
     [string]$Domain
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','search_domain') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconNgsDashboard {
@@ -704,7 +807,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsDashboard
     [Alias('yaml_template','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('name','search_domain','yaml_template') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconNgsLookupFile {
@@ -736,7 +845,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsLookupFile
     [Alias('file','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('file','filename','search_domain') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconNgsParser {
@@ -768,7 +883,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsParser
     [Alias('yaml_template','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('name','repository','yaml_template') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Send-FalconNgsSavedQuery {
@@ -797,7 +918,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconNgsSavedQuery
     [Alias('yaml_template','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('search_domain','yaml_template') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Update-FalconNgsDashboard {
@@ -832,7 +959,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsDashboard
     [Alias('yaml_template','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('ids','search_domain','yaml_template') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Update-FalconNgsLookupFile {
@@ -865,7 +998,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsLookupFile
     [Alias('file','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('file','filename','search_domain') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Update-FalconNgsSavedQuery {
@@ -900,6 +1039,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconNgsSavedQuery
     [Alias('yaml_template','FullName')]
     [string]$Path
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Formdata = @('ids','search_domain','yaml_template') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
