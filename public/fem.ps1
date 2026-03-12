@@ -35,7 +35,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconAsset
       ValueFromPipeline,Position=5)]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ assets = @('cid','criticality','criticality_description','id','triage') }}
+    }
+  }
   process {
     if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -104,7 +110,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubsidiary
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort','version_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -119,10 +129,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSubsidiary
         # Capture 'version_id' from 'meta'
         $version_id = $_.meta.version_id
         if ($Param.Endpoint -match '/queries/') {
-          @($_.resources).foreach{
-            # Convert 'id' string to object with 'id' and 'version_id' values
-            [PSCustomObject]@{ id = $_; version_id = $version_id }
-          }
+          # Convert 'id' string to object with 'id' and 'version_id' values
+          @($_.resources).foreach{ [PSCustomObject]@{ id = $_; version_id = $version_id } }
         } else {
           @($_.resources).foreach{
             # Append 'version_id' and return each detailed result
@@ -159,7 +167,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconAsset
     [Alias('subsidiary_id')]
     [string]$SubsidiaryId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ data = @('assets','subsidiary_id') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconAsset {
@@ -186,7 +200,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconAsset
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('description') }
+        Query = @('ids')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
