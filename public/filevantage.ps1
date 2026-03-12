@@ -25,7 +25,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageHostGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('action','ids','policy_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -64,7 +68,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconFileVantageRuleGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('action','ids','policy_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -152,8 +160,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageExclusion
     [string]$Description
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $Param['Format'] = Get-EndpointFormat $Param.Format
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('description','id','name','policy_id','processes','schedule_end','schedule_start','timezone',
+            'users')
+          repeated = @('all_day','end_time','frequency','monthly_days','occurrence','start_time','weekly_days')
+        }
+      }
+    }
   }
   process {
     if ($PSBoundParameters.Repeated) {
@@ -201,7 +218,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantagePolicy
     [ValidateLength(0,500)]
     [string]$Description
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = Body = @{ root = @('description','enabled','id','name') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconFileVantageRule {
@@ -424,7 +447,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRule
     [Alias('rule_group_id')]
     [string]$RuleGroupId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('content_files','content_registry_values','depth','description','enable_content_capture',
+          'enable_hash_capture','exclude','exclude_processes','exclude_users','id','include','include_processes',
+          'include_users','path','precedence','rule_group_id','severity','type',
+          'watch_attributes_directory_changes','watch_attributes_file_changes','watch_create_directory_changes',
+          'watch_create_file_changes','watch_create_key_changes','watch_delete_directory_changes',
+          'watch_delete_file_changes','watch_delete_key_changes','watch_delete_value_changes',
+          'watch_permissions_directory_changes','watch_permissions_file_changes','watch_permissions_key_changes',
+          'watch_rename_directory_changes','watch_rename_file_changes','watch_rename_key_changes',
+          'watch_set_value_changes','watch_write_file_changes')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconFileVantageRuleGroup {
@@ -455,7 +496,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFileVantageRuleGroup
     [ValidateLength(0,500)]
     [string]$Description
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','id','name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconFileVantageAction {
@@ -508,7 +555,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageAction
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -574,7 +625,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageChange
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','ids','limit','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -604,7 +659,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageContent
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconFileVantageExclusion {
@@ -635,7 +696,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageExclusion
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','policy_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -705,7 +770,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantagePolicy
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset','sort','type') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -755,7 +824,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRule
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','rule_group_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -818,7 +891,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFileVantageRuleGroup
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset','sort','type') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -860,7 +937,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFileVantageAction
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('change_ids','comment','operation') }}
+      Max = 100
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -890,7 +972,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconFileVantageWorkflow
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -971,8 +1057,16 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageExclusion
     [string]$PolicyId
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $Param['Format'] = Get-EndpointFormat $Param.Format
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('description','name','policy_id','processes','schedule_end','schedule_start','timezone','users')
+          repeated = @('all_day','end_time','frequency','monthly_days','occurrence','start_time','weekly_days')
+        }
+      }
+    }
   }
   process {
     if ($PSBoundParameters.Repeated) {
@@ -1015,7 +1109,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantagePolicy
     [ValidateLength(0,500)]
     [string]$Description
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','name','platform') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconFileVantageRule {
@@ -1232,7 +1332,25 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRule
     [Alias('rule_group_id')]
     [string]$RuleGroupId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('content_files','content_registry_values','depth','description','enable_content_capture',
+          'enable_hash_capture','exclude','exclude_processes','exclude_users','include','include_processes',
+          'include_users','path','precedence','rule_group_id','severity','type',
+          'watch_attributes_directory_changes','watch_attributes_file_changes','watch_create_directory_changes',
+          'watch_create_file_changes','watch_create_key_changes','watch_delete_directory_changes',
+          'watch_delete_file_changes','watch_delete_key_changes','watch_delete_value_changes',
+          'watch_permissions_directory_changes','watch_permissions_file_changes','watch_permissions_key_changes',
+          'watch_rename_directory_changes','watch_rename_file_changes','watch_rename_key_changes',
+          'watch_set_value_changes','watch_write_file_changes')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconFileVantageRuleGroup {
@@ -1265,7 +1383,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFileVantageRuleGroup
     [ValidateLength(0,500)]
     [string]$Description
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','name','type') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconFileVantageExclusion {
@@ -1296,7 +1420,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageExclusion
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','policy_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1334,7 +1462,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageHostGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('action','ids','policy_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1366,7 +1498,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantagePolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1404,7 +1540,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRule
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','rule_group_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1442,7 +1582,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRuleGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('action','ids','policy_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1482,7 +1626,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantagePrecedence
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','type') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1520,7 +1668,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRulePrecedence
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','rule_group_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1558,7 +1710,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFileVantageRuleGroupPrece
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('action','ids','policy_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
