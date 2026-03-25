@@ -183,7 +183,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
     [switch]$Validate
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          diff_operations = @('from','op','path','value')
+          root = @('diff_type','id','rule_ids','rule_versions','tracking')
+        }
+        Query = @('comment')
+      }
+    }
     $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
@@ -353,7 +363,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocation
       Format = @{
         Body = @{
           root = @('connection_types','default_gateways','description','dhcp_servers','dns_resolution_targets',
-            'dns_servers','enabled','host_addresses','https_reachable_hosts','icmp_request_targets','id','name')
+          'dns_servers','enabled','host_addresses','https_reachable_hosts','icmp_request_targets','id','name')
         }
         Query = @('comment')
       }
@@ -429,7 +439,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallLocationSetting
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations-metadata/v1:post',Position=6)]
     [string]$Comment
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('cid','dns_resolution_targets_polling_interval','https_reachable_hosts_polling_interval',
+          'icmp_request_targets_polling_interval','location_precedence')
+        }
+        Query = @('comment')
+      }
+    }
+  }
   process {
     if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -497,17 +519,25 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
     [Alias('policy_id','PolicyId')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('default_inbound','default_outbound','enforce','is_default_policy','local_logging',
+          'platform_id','policy_id','rule_group_ids','test_mode','tracking')
+        }
+      }
+    }
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallSetting','Get-FalconFirewallPolicy')) {
-      $Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
-      if ($Format) {
-        ($Format.Body.root | Where-Object { $_ -ne 'policy_id' }).foreach{
-          # When not provided, add required fields using existing policy settings
-          if (!$PSBoundParameters.$_) {
-            if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
-            if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
-          }
+      @($Format.Body.root).Where({$_ -ne 'policy_id'}).foreach{
+        # When not provided, add required fields using existing policy settings
+        if (!$PSBoundParameters.$_) {
+          if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
+          if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
         }
       }
     }
@@ -572,7 +602,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallEvent
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','ids','limit','offset','q','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -631,7 +665,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallField
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset','platform_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -703,7 +741,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallGroup
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','ids','limit','offset','q','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -774,7 +816,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallLocation
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','ids','limit','offset','q','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -827,7 +873,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPlatform
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -914,7 +964,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallRule
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('limit','sort','q','offset','after','filter','id') }
+      Format = if ($PSCmdlet.ParameterSetName -eq '/fwmgr/entities/rules/v1:get') {
+        @{ Query = @('ids') }
+      } else {
+        @{ Query = @('after','filter','id','limit','offset','q','sort') }
+      }
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
@@ -928,10 +982,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallRule
     }
   }
   end {
-    if ($List) {
-      $Param['Format'] = @{ Query = @('ids') }
-      $PSBoundParameters['Id'] = @($List)
-    }
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
     $Request = @(Invoke-Falcon @Param -UserInput $PSBoundParameters).foreach{
       if ($_.version -and $null -eq $_.version) { $_.version = 0 }
       $_
@@ -967,7 +1018,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallSetting
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1047,16 +1102,25 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallGroup
     [switch]$Validate
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('description','enabled','name','platform')
+          rules = @('action','address_family','description','direction','enabled','fields','fqdn','fqdn_enabled',
+            'icmp','local_address','local_port','log','monitor','name','protocol','remote_address','remote_port',
+            'temp_id')
+        }
+        Query = @('clone_id','comment','library')
+      }
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
     if ($Rule) {
-      @($Rule).foreach{
-        # Filter to defined 'rules' properties and remove empty values
-        $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.rules))
-      }
+      # Filter to defined 'rules' properties and remove empty values
+      @($Rule).foreach{ $List.Add(([PSCustomObject]$_ | Select-Object $Param.Format.Body.rules)) }
     }
   }
   end {
@@ -1169,7 +1233,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallLocation
       Format = @{
         Body = @{
           root = @('connection_types','default_gateways','description','dhcp_servers','dns_resolution_targets',
-            'dns_servers','enabled','host_addresses','https_reachable_hosts','icmp_request_targets','name')
+          'dns_servers','enabled','host_addresses','https_reachable_hosts','icmp_request_targets','name')
         }
         Query = @('add_fw_rules','clone_id','comment')
       }
@@ -1226,7 +1290,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('comment','ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1257,7 +1325,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallLocation
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1296,7 +1368,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFirewallLocationPrecedenc
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('cid','location_precedence') }; Query = @('comment') }
+    }
+  }
   process {
     if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -1325,7 +1403,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconFirewallPath
     [Alias('filepath_test_string')]
     [string]$String
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('filepath_pattern','filepath_test_string') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 Register-ArgumentCompleter -CommandName New-FalconFirewallGroup -ParameterName Platform -ScriptBlock {
