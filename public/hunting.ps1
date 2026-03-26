@@ -58,7 +58,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCaoQuery
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','include_translated_content','limit','offset','q','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -112,9 +116,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCaoQueryArchive
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      Format = @{ Outfile = 'path'; Query = @('archive_type','filter','language') }
     }
-    $Param.Format['Outfile'] = 'path'
     [string]$Ext = ($PSBoundParameters.Path | Split-Path -Leaf).Split('.',2)[-1]
     [string[]]$Valid = (Get-Command $Param.Command).Parameters.Type.Attributes.ValidValues
   }
