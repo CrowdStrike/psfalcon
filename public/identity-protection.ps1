@@ -149,7 +149,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityHost
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','sort')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -197,7 +204,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIdentityRule
     [switch]$Detailed
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('enabled','ids','name','simulation_mode') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -267,8 +278,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIdentityRule
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('action','enabled','name','simulationMode','trigger','activity','destination',
-        'sourceEndpoint','sourceUser') }}
+      Format = @{
+        Body = @{
+          root = @('action','enabled','name','simulationMode','trigger','activity','destination','sourceEndpoint',
+          'sourceUser')
+        }
+      }
     }
   }
   process {
@@ -301,7 +316,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIdentityRule
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
