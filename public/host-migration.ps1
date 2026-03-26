@@ -50,7 +50,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMigration
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -82,7 +86,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMigrationCid
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('device_ids','filter') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -151,7 +159,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMigrationHost
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = if ($PSCmdlet.ParameterSetName -eq '/host-migration/entities/host-migrations/GET/v1:post') {
+        @{ Body = @{ root = @('ids') }}
+      } else {
+        @{ Query = @('filter','id','limit','offset','sort') }
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -262,7 +278,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconMigration
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('device_ids','filter','name','target_cid') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
