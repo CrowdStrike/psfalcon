@@ -49,7 +49,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBehavior
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','sort')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -116,7 +123,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIncident
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','sort')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -168,7 +182,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScore
     [Parameter(ParameterSetName='/incidents/combined/crowdscores/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconIncidentAction {
@@ -223,9 +243,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconIncidentAction
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/incidents/entities/incident-actions/v1:post'
+      Format = @{
+        Body = @{
+          action_parameters = @('name','value')
+          root = @('ids')
+        }
+        Query = @('overwrite_detects','update_detects')
+      }
       Max = 1000
     }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
