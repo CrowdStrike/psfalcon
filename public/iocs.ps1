@@ -101,9 +101,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoc
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/iocs/entities/indicators/v1:patch'
+      Format = @{
+        Body = @{
+          root = @('comment')
+          indicators = @('action','applied_globally','description','expiration','host_groups','id','metadata',
+            'mobile_action','platforms','severity','source','tags')
+        }
+        Query = @('ignore_warnings','retrodetects')
+      }
       Max = 2000
     }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -206,7 +213,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoc
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','from_parent','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -253,7 +264,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocAction
     [Parameter(ParameterSetName='/iocs/queries/actions/v1:get')]
     [switch]$All
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconIocPlatform {
@@ -280,7 +297,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocPlatform
     [Parameter(ParameterSetName='/iocs/queries/platforms/v1:get')]
     [switch]$All
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('limit','offset') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconIocSeverity {
@@ -307,7 +330,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocSeverity
     [Parameter(ParameterSetName='/iocs/queries/severities/v1:get')]
     [switch]$All
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('limit','offset') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconIocType {
@@ -334,7 +363,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIocType
     [Parameter(ParameterSetName='/iocs/queries/ioc-types/v1:get')]
     [switch]$All
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('limit','offset') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconIoc {
@@ -438,9 +473,16 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoc
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/iocs/entities/indicators/v1:post'
+      Format = @{
+        Body = @{
+          root = @('comment')
+          indicators = @('action','applied_globally','description','expiration','host_groups','metadata',
+            'mobile_action','platforms','severity','source','tags','type','value')
+        }
+        Query = @('ignore_warnings','retrodetects')
+      }
       Max = 2000
     }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
