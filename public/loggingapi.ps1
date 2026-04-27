@@ -15,7 +15,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundryRepository
     [Alias('check_test_data')]
     [boolean]$CheckTestData
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('check_test_data') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconFoundrySearch {
@@ -68,7 +74,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundrySearch
     [Parameter(ParameterSetName='/loggingapi/entities/saved-searches/execute/v1:get')]
     [string]$Offset
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Query = @('app_id','infer_json_types','job_id','job_status_only','limit','match_response_schema',
+          'metadata','offset')
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconFoundryView {
@@ -88,6 +103,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFoundryView
     [Alias('check_test_data')]
     [boolean]$CheckTestData
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('check_test_data') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
