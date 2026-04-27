@@ -25,7 +25,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconItHostGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','host_group_ids','policy_id') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -391,7 +395,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTaskGroup
     [Alias('remove_assigned_user_ids')]
     [string[]]$RemoveUserId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('access_type','add_assigned_user_group_ids','add_assigned_user_ids','add_task_ids',
+            'description','name','remove_assigned_user_group_ids','remove_assigned_user_ids','remove_task_ids')
+        }
+        Query = @('id')
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconItUserGroup {
@@ -434,7 +450,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItUserGroup
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('add_user_ids','description','name','remove_user_ids') }
+        Query = @('id')
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconItFileTask {
@@ -481,7 +506,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItFileTask
     [Parameter(ParameterSetName='/it-automation/combined/associated-tasks/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','id','limit','offset','sort') }
+      Max = 500
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconItHostExecution {
@@ -533,7 +565,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItHostExecution
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -596,7 +632,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItPolicy
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset','platform','sort') }
+      Max = 500
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -668,7 +709,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItScheduledTask
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+      Max = 500
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -739,7 +785,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTask
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+      Max = 500
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -810,7 +861,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskExecution
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+      Max = 500
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -869,7 +925,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskExecutionSearch
     [Parameter(ParameterSetName='/it-automation/entities/task-execution-results/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconItTaskGroup {
@@ -930,7 +992,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItTaskGroup
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+      Max = 500
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -995,7 +1062,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconItUserGroup
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -1415,7 +1486,17 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTaskGroup
     [Alias('assigned_user_ids')]
     [string[]]$UserId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('access_type','assigned_user_group_ids','assigned_user_ids','description','name','task_ids')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconItUserGroup {
@@ -1441,7 +1522,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItUserGroup
     [string]$Description
     
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Redo-FalconItTaskExecution {
@@ -1469,7 +1556,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconItTaskExecution
     [Alias('task_execution_id')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('run_type','task_execution_id') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconItHostGroup {
@@ -1499,7 +1592,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItHostGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','host_group_ids','policy_id') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1531,7 +1628,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItPolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1563,7 +1664,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItScheduledTask
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1594,7 +1699,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTask
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1625,7 +1734,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTaskGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1656,7 +1769,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItUserGroup
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1706,7 +1823,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Search-FalconItTaskExecution
     [Alias('task_execution_id')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('filter_expressions','group_by_fields','search_end','search_start','task_execution_id')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Set-FalconItPolicyPrecedence {
@@ -1735,7 +1862,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconItPolicyPrecedence
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('platform')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1766,6 +1900,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconItTaskExecution
     [Alias('task_execution_id')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('task_execution_id') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
