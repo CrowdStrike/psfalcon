@@ -17,7 +17,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuery
     [Alias('ids')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
+  }
   process {
     $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
     if ($Request.resources) {
@@ -62,7 +68,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMalQuerySample
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -94,7 +104,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Group-FalconMalQuerySample
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('samples') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -242,17 +256,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconMalQuerySample
     [switch]$Force
   )
   begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = if ($PSBoundParameters.Id -match '^[A-Fa-f0-9]{64}$') {
-        '/malquery/entities/download-files/v1:get'
-      } else {
-        '/malquery/entities/samples-fetch/v1:get'
+    $Param = if ($PSBoundParameters.Id -match '^[A-Fa-f0-9]{64}$') {
+      @{
+        Command = $MyInvocation.MyCommand.Name
+        Endpoint = '/malquery/entities/download-files/v1:get'
+        Format = @{ Query = @('ids') }
+        Headers = @{ Accept = 'application/octet-stream' }
       }
-      Headers = if ($PSBoundParameters.Id -match '^[A-Fa-f0-9]{64}$') {
-        @{ Accept = 'application/octet-stream' }
-      } else {
-        @{ Accept = 'application/zip' }
+    } else {
+      @{
+        Command = $MyInvocation.MyCommand.Name
+        Endpoint = '/malquery/entities/samples-fetch/v1:get'
+        Format = @{ Query = @('ids') }
+        Headers = @{ Accept = 'application/zip' }
       }
     }
   }
