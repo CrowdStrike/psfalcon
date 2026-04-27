@@ -535,7 +535,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallSetting
     if ($PSCmdlet.ShouldProcess('Edit-FalconFirewallSetting','Get-FalconFirewallPolicy')) {
       @($Format.Body.root).Where({$_ -ne 'policy_id'}).foreach{
         # When not provided, add required fields using existing policy settings
-        if (!$PSBoundParameters.$_) {
+        if ($null -eq $PSBoundParameters.$_) {
           if (!$Existing) { $Existing = Get-FalconFirewallSetting -Id $Id -EA 0 }
           if ($Existing) { $PSBoundParameters[$_] = $Existing.$_ }
         }

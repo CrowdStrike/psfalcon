@@ -50,7 +50,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaGroup
   process {
     @($Param.Format.Body.root).Where({$_ -ne 'id'}).foreach{
       # When not provided, add required fields using existing policy settings
-      if (!$PSBoundParameters.$_) {
+      if ($null -eq $PSBoundParameters.$_) {
         if (!$Existing) { $Existing = Get-FalconIoaGroup -Id $PSBoundParameters.Id -EA 0 }
         if ($Existing) {
           $Value = if ($_ -eq 'rulegroup_version') { $Existing.version } else { $Existing.$_ }
