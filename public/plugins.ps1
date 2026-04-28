@@ -28,6 +28,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowIntegration
     [Parameter(ParameterSetName='/plugins/combined/configs/v1:get')]
     [int32]$Offset
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
