@@ -98,7 +98,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScan
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -196,6 +200,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanFile
       } else {
         $PSCmdlet.ParameterSetName
       }
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
@@ -268,7 +273,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScanHost
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -340,7 +349,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconScheduledScan
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -470,8 +483,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconScheduledScan
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('cloud_ml_level_detection','cloud_ml_level_prevention','cloud_pup_adware_level_detection',
+            'cloud_pup_adware_level_prevention','cpu_priority','description','endpoint_notification','file_paths',
+            'host_groups','initiated_from','max_duration','max_file_size','pause_duration','quarantine',
+            'scan_exclusions','scan_inclusions','sensor_ml_level_detection','sensor_ml_level_prevention')
+          schedule = @('ignored_by_channelfile','interval','start_timestamp')
+        }
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -512,7 +536,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScheduledScan
     [string]$Filter
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/ods/entities/scheduled-scans/v1:delete' }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/ods/entities/scheduled-scans/v1:delete'
+      Format = @{ Query = @('filter','ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -635,7 +663,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Start-FalconScan
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('cloud_ml_level_detection','cloud_ml_level_prevention','cloud_pup_adware_level_detection',
+            'cloud_pup_adware_level_prevention','cpu_priority','description','endpoint_notification','file_paths',
+            'host_groups','hosts','initiated_from','max_duration','pause_duration','quarantine','scan_exclusions',
+            'scan_inclusions','sensor_ml_level_detection','sensor_ml_level_prevention')
+        }
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -675,7 +714,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Stop-FalconScan
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
