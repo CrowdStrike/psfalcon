@@ -35,8 +35,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContentPolicy
     [object]$Setting
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/content-update/v1:patch' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/content-update/v1:patch'
+      Format = @{ Body = @{ resources = @('description','id','name','settings') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -118,7 +121,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentPolicy
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -186,7 +193,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentPolicyMember
     [Parameter(ParameterSetName='/policy/queries/content-update-members/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','id','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContentVersion {
@@ -213,7 +226,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContentVersion
     [ValidateSet('deployed_timestamp.asc','deployed_timestamp.desc',IgnoreCase=$false)]
     [string]$Sort
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('category','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconContentPolicyAction {
@@ -251,7 +270,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContentPolicyAction
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('action_name'); Body = @{ root = @('ids','action_parameters') }}
+      Format = @{
+        Body = @{ root = @('ids','action_parameters') }
+        Query = @('action_name')
+      }
     }
     $Message = $Param.Command,("$(if ($GroupId) { $Name,$GroupId -join ' ' } else { $Name })") -join ': '
   }
@@ -299,8 +321,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContentPolicy
     [object]$Setting
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/content-update/v1:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/content-update/v1:post'
+      Format = @{ Body = @{ resources = @('description','name','settings') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -343,7 +368,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContentPolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -376,6 +405,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconContentPrecedence
     [Alias('ids')]
     [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
