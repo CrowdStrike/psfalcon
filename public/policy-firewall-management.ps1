@@ -30,8 +30,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallPolicy
     [string]$Description
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/firewall/v1:patch' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/firewall/v1:patch'
+      Format = @{ Body = @{ resources = @('description','id','name') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -120,7 +123,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicy
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -194,7 +201,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconFirewallPolicyMember
     [Parameter(ParameterSetName='/policy/queries/firewall-members/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','id','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconFirewallPolicyAction {
@@ -276,8 +289,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconFirewallPolicy
     [string]$Description
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/firewall/v1:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/firewall/v1:post'
+      Format = @{ Body = @{ resources = @('clone_id','description','name','platform_name') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -320,7 +336,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallPolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -358,6 +378,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconFirewallPrecedence
     [Alias('ids')]
     [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids','platform_name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
