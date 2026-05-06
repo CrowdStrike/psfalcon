@@ -117,7 +117,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
     [ValidatePattern('^([a-fA-F0-9]{32}|all)$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('cl_regex','comment','description','detection_json','groups','id','ifn_regex','name',
+            'pattern_id','pattern_name')
+        }
+      }
+    }
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Edit-FalconIoaExclusion','Test-GroupId')) {
       if ($PSBoundParameters.GroupId) {
@@ -195,7 +206,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('cl_regex','filter','ids','ifn_regex','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -269,7 +284,18 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconIoaExclusion
       Position=9)]
     [string]$Comment
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          root = @('cl_regex','comment','description','detection_json','groups','ifn_regex','name','pattern_id',
+            'pattern_name')
+        }
+      }
+    }
+  }
   process {
     # Filter to 'id' if supplied with 'detailed' objects
     if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
@@ -310,7 +336,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('comment','ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
