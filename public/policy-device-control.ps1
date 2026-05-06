@@ -37,8 +37,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlClass
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/policy/entities/device-control-classes/v1:patch'
+      Format = @{ Body = @{ policies = @('bluetooth_classes','id','usb_classes') }}
     }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -169,8 +169,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconDeviceControlPolicy
     [string]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/device-control/v2:patch' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/device-control/v2:patch'
+      Format = @{
+        Body = @{ policies = @('bluetooth_settings','description','id','name','propagated','usb_settings') }
+      }
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -209,7 +214,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlNotification
   [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control-default-settings/v1:get',
     SupportsShouldProcess)]
   param()
-  process {Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Get-FalconDeviceControlPolicy {
 <#
@@ -271,7 +276,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicy
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -341,7 +350,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconDeviceControlPolicyMember
     [Parameter(ParameterSetName='/policy/queries/device-control-members/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','id','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconDeviceControlPolicyAction {
@@ -437,8 +452,15 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconDeviceControlPolicy
     [object]$BluetoothSetting
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/device-control/v2:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/device-control/v2:post'
+      Format = @{
+        Body = @{
+          policies = @('bluetooth_settings','clone_id','description','name','platform_name','usb_settings')
+        }
+      }
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -481,7 +503,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -520,6 +546,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconDeviceControlPrecedence
     [Alias('ids')]
     [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids','platform_name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
