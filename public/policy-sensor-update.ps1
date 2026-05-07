@@ -37,8 +37,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSensorUpdatePolicy
     [object]$Setting
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/sensor-update/v2:patch' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/sensor-update/v2:patch'
+      Format = @{ Body = @{ resources = @('description','id','name','settings') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -83,7 +86,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconBuild
     [ValidateSet('early_adopter','prod',IgnoreCase=$false)]
     [string[]]$Stage
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('platform','stage') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconKernel {
@@ -96,8 +105,6 @@ Requires 'Sensor update policies: Read'.
 Return values for a specific field
 .PARAMETER Filter
 Falcon Query Language expression to limit results
-.PARAMETER Sort
-Property and direction to sort results
 .PARAMETER Limit
 Maximum number of results per request
 .PARAMETER Offset
@@ -120,11 +127,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconKernel
     [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{distinct-field}/v1:get',Position=2)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{distinct-field}/v1:get',Position=3)]
-    [ValidateSet('architecture.asc','architecture.desc','distro.asc','distro.desc','distro_version.asc',
-      'distro_version.desc','flavor.asc','flavor.desc','release.asc','release.desc','vendor.asc',
-      'vendor.desc','version.asc','version.desc',IgnoreCase=$false)]
-    [string]$Sort,
     [Parameter(ParameterSetName='/policy/combined/sensor-update-kernels/v1:get',Position=2)]
     [Parameter(ParameterSetName='/policy/queries/sensor-update-kernels/{distinct-field}/v1:get',Position=4)]
     [ValidateRange(1,500)]
@@ -147,6 +149,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconKernel
       } else {
         $PSCmdlet.ParameterSetName
       }
+      Format = @{ Query = @('distinct-field','filter','limit','offset') }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -217,7 +220,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicy
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -287,7 +294,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorUpdatePolicyMember
     [Parameter(ParameterSetName='/policy/queries/sensor-update-members/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','id','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconUninstallToken {
@@ -322,7 +335,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUninstallToken
     [string]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('audit_message','device_id') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -430,8 +447,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSensorUpdatePolicy
     [object]$Setting
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/sensor-update/v2:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/sensor-update/v2:post'
+      Format = @{ Body = @{ resources = @('description','name','platform_name','settings') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -481,7 +501,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorUpdatePolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -520,6 +544,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorUpdatePrecedence
     [Alias('ids')]
     [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids','platform_name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
