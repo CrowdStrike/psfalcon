@@ -6,6 +6,9 @@ Create an archive containing Falcon configuration files
 Uses various PSFalcon commands to gather and export groups, policies and exclusions as a collection of Json files
 within a zip archive. The exported files can be used with 'Import-FalconConfig' to restore configurations to your
 existing CID or create them in another CID.
+
+Requires 'Read' permission for the items you wish to export, plus 'Sensor Download: Read' to filter out items
+from other CIDs.
 .PARAMETER Select
 Selected items to export from your current CID, or leave unspecified to export all available items
 .PARAMETER Force
@@ -134,7 +137,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         }
         try {
           # Export results to json file and output created file name
-          ConvertTo-Json @($Config) -Depth 32 | Out-File $ConfigFile -Append
+          if ($Config.cid) {
+            # Filter by SourceCid
+            ConvertTo-Json @($Config).Where({$_.cid -eq $SourceCid}) -Depth 32 | Out-File $ConfigFile -Append
+          } elseif ($Config.customer_id) {
+            # Filter by SourceCid
+            ConvertTo-Json @($Config).Where({$_.customer_id -eq $SourceCid}) -Depth 32 |
+              Out-File $ConfigFile -Append
+          } else {
+            ConvertTo-Json @($Config) -Depth 32 | Out-File $ConfigFile -Append
+          }
           $ConfigFile
         } catch {
           throw "Unable to write to '$((Get-Location).Path)'. Try 'Export-FalconConfig' in a new location."
@@ -144,49 +156,56 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
     # Get current location and set output archive path
     $Location = (Get-Location).Path
     $ExportFile = Join-Path $Location "FalconConfig_$((Get-Date -Format FileDateTime) -replace '\d{4}$',$null).zip"
+    [string]$SourceCid = try {
+      Confirm-CidValue (Get-FalconCcid -EA 0)
+    } catch {
+      throw "Failed to retrieve CID. Verify 'Sensor Download: Read' permission."
+    }
   }
   process {
-    if (!$Select) {
-      # Use items in 'ValidateSet' when not provided
-      [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({$_.Name -eq
-        'ExportItem'}).Parameters.Where({$_.Name -eq 'Select'}).Attributes.ValidValues).foreach{ $_ }
-    }
-    $OutPath = Test-OutFile $ExportFile
-    if ($OutPath.Category -eq 'WriteError' -and !$Force) {
-      Write-Error @OutPath
-    } else {
-      $AddList = @{}
-      [System.Collections.Generic.List[string]]$JsonFiles = @()
-      foreach ($String in $Select) {
-        # Create Json export and capture file name
-        @(Get-ItemContent $String).foreach{ $JsonFiles.Add($_) }
+    if ($SourceCid) {
+      if (!$Select) {
+        # Use items in 'ValidateSet' when not provided
+        [string[]]$Select = @((Get-Command $MyInvocation.MyCommand.Name).ParameterSets.Where({$_.Name -eq
+          'ExportItem'}).Parameters.Where({$_.Name -eq 'Select'}).Attributes.ValidValues).foreach{ $_ }
       }
-      if ($JsonFiles -and $AddList.GetEnumerator().Where({$_.Value})) {
-        do {
-          foreach ($p in @($AddList.GetEnumerator().Where({$_.Value}) | Select-Object -First 1)) {
-            # Retrieve assigned groups when not added to 'Select'
-            $JsonFiles.Add((Get-ItemContent $p.Key $p.Value))
-            $AddList.Remove($p.Key)
-          }
-        } while (@($AddList.GetEnumerator()).Where({$_.Value}))
-      }
-      if ($JsonFiles -and $PSCmdlet.ShouldProcess($ExportFile,'Compress-Archive')) {
-        # Archive Json exports with content and remove them when complete
-        $Param = @{
-          Path = @(Get-ChildItem).Where({$JsonFiles -contains $_.FullName -and $_.Length -gt 0}).FullName
-          DestinationPath = $ExportFile
-          Force = $Force
+      $OutPath = Test-OutFile $ExportFile
+      if ($OutPath.Category -eq 'WriteError' -and !$Force) {
+        Write-Error @OutPath
+      } else {
+        $AddList = @{}
+        [System.Collections.Generic.List[string]]$JsonFiles = @()
+        foreach ($String in $Select) {
+          # Create Json export and capture file name
+          @(Get-ItemContent $String).Where({!$_.cid -and !$_.customer_id}).foreach{ $JsonFiles.Add($_) }
         }
-        Compress-Archive @Param
-        @($JsonFiles).foreach{
-          if (Test-Path $_) {
-            Write-Log 'Export-FalconConfig' "Removing '$_'"
-            Remove-Item $_ -Force
+        if ($JsonFiles -and $AddList.GetEnumerator().Where({$_.Value})) {
+          do {
+            foreach ($p in @($AddList.GetEnumerator().Where({$_.Value}) | Select-Object -First 1)) {
+              # Retrieve assigned groups when not added to 'Select'
+              $JsonFiles.Add((Get-ItemContent $p.Key $p.Value))
+              $AddList.Remove($p.Key)
+            }
+          } while (@($AddList.GetEnumerator()).Where({$_.Value}))
+        }
+        if ($JsonFiles -and $PSCmdlet.ShouldProcess($ExportFile,'Compress-Archive')) {
+          # Archive Json exports with content and remove them when complete
+          $Param = @{
+            Path = @(Get-ChildItem).Where({$JsonFiles -contains $_.FullName -and $_.Length -gt 0}).FullName
+            DestinationPath = $ExportFile
+            Force = $Force
+          }
+          Compress-Archive @Param
+          @($JsonFiles).foreach{
+            if (Test-Path $_) {
+              Write-Log 'Export-FalconConfig' "Removing '$_'"
+              Remove-Item $_ -Force
+            }
           }
         }
+        # Display created archive
+        if (Test-Path $ExportFile) { Get-ChildItem $ExportFile | Select-Object FullName,Length,LastWriteTime }
       }
-      # Display created archive
-      if (Test-Path $ExportFile) { Get-ChildItem $ExportFile | Select-Object FullName,Length,LastWriteTime }
     }
   }
 }
