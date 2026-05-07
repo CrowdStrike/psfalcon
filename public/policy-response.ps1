@@ -35,8 +35,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconResponsePolicy
     [object[]]$Setting
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/response/v1:patch' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/response/v1:patch'
+      Format = @{ Body = @{ resources = @('description','id','name','settings') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -129,7 +132,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicy
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -199,7 +206,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconResponsePolicyMember
     [Parameter(ParameterSetName='/policy/queries/response-members/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','id','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconResponsePolicyAction {
@@ -286,8 +299,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconResponsePolicy
     [object[]]$Setting
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/policy/entities/response/v1:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/policy/entities/response/v1:post'
+      Format = @{ Body = @{ resources = @('clone_id','description','name','platform_name','settings') }}
+    }
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
@@ -334,7 +350,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconResponsePolicy
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -372,6 +392,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconResponsePrecedence
     [Alias('ids')]
     [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids','platform_name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
