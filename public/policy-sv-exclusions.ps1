@@ -38,7 +38,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconSvExclusion
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('comment','groups','id','is_descendant_process','value') }}
+    }
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Edit-FalconSvExclusion','Test-GroupId')) {
       if ($PSBoundParameters.GroupId) {
@@ -105,7 +111,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSvExclusion
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -152,7 +162,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSvExclusion
       Position=4)]
     [string]$Comment
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('comment','groups','is_descendant_process','value') }}
+    }
+  }
   process {
     # Filter to 'id' if supplied with 'detailed' objects
     if ($PSBoundParameters.GroupId.id) { [string[]]$PSBoundParameters.GroupId = $PSBoundParameters.GroupId.id }
@@ -187,7 +203,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSvExclusion
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('comment','ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
