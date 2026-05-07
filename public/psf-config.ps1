@@ -2505,7 +2505,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
         }
         if (($Cid | Measure-Object).Count -gt 1) {
           # Make no changes when more than one matching policy is found
-          Add-Result Ignored $m $p.Key -Comment ('Multiple {0} named "{1}" present' -f $m.platform_name,$m.name)
+          Add-Result Ignored $m $p.Key -Comment ('Multiple {0} {1} named "{2}" present' -f $m.platform_name,
+            $p.Key,$m.name)
         } elseif ($m -and $Cid) {
           # Modify policy by type
           Edit-Policy $m $p.Key $Cid
