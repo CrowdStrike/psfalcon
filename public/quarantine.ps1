@@ -56,7 +56,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconQuarantine
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','q','sort')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -111,7 +118,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconQuarantineAction
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 500 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','comment','filter','ids','q') }}
+      Max = 500
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -142,6 +154,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconQuarantineAction
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
