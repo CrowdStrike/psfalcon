@@ -1,4 +1,27 @@
-[string[]]$ExcludeCountType = 'find-by-runtimeversion'
+# Valid Type values for each Get-FalconContainerCount Resource
+$CountType = @{
+  clusters = @('count','count-by-date','count-by-kubernetes-version','count-by-status')
+  'container-alerts' = @('count','count-by-severity')
+  'container-compliance' = @('compliance-by-clusters','compliance-by-rules','failed-containers-by-rules',
+    'failed-containers-count-by-severity','failed-images-by-rules','failed-images-count-by-severity',
+    'failed-rules-by-clusters','failed-rules-by-images','failed-rules-count-by-severity','rules-by-status')
+  containers = @('count','count-by-date','count-by-registry','count-by-zero-day','count-vulnerable-images',
+    'group-by-managed','image-detections-count-by-date','images-by-state','sensor-coverage',
+    'vulnerability-count-by-severity')
+  deployments = @('count','count-by-date')
+  detections = @('count','count-by-severity','count-by-type')
+  'drift-indicators' = @('count','count-by-date')
+  images = @('assessment-history','count','count-by-distinct','count-by-os-distribution','count-by-state',
+    'most-used')
+  'kubernetes-ioms' = @('count','count-by-date')
+  namespaces = @('count','count-by-date')
+  nodes = @('count','count-by-cloud','count-by-container-engine-version','count-by-date')
+  packages = @('count-by-zero-day')
+  pods = @('count','count-by-date')
+  'unidentified-containers' = @('count','count-by-date')
+  vulnerabilities = @('count','count-by-actively-exploited','count-by-cps-rating','count-by-cvss-score',
+    'count-by-severity')
+}
 function Edit-FalconContainerPolicy {
 <#
 .SYNOPSIS
@@ -356,82 +379,71 @@ function Get-FalconContainerCount {
 List resource counts from Falcon Cloud Security
 .DESCRIPTION
 Requires 'Falcon Container Image: Read'.
+.PARAMETER Resource
+Falcon Cloud Security resource to count
+.PARAMETER Type
+Retrieve specific counts by type
 .PARAMETER Filter
 Falcon Query Language expression to limit results
-.PARAMETER Resource
-Falcon Cloud Security resource to count [default: containers]
-.PARAMETER Type
-Retrieve specific counts by type [default: count]
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
 #>
   [CmdletBinding(DefaultParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',
     SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=1)]
-    [ValidateScript({Test-FqlStatement $_})]
-    [string]$Filter,
-    [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Mandatory,Position=1)]
+    [ValidateSet('clusters','container-alerts','container-compliance','containers','deployments',
+      'detections','drift-indicators','images','kubernetes-ioms','namespaces','nodes','packages','pods',
+      'unidentified-containers','vulnerabilities')]
     [string]$Resource,
+    [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Mandatory,Position=2)]
+    [ValidateSet('assessment-history','compliance-by-clusters','compliance-by-rules','count',
+      'count-by-actively-exploited','count-by-cloud','count-by-container-engine-version','count-by-cps-rating',
+      'count-by-cvss-score','count-by-date','count-by-distinct','count-by-kubernetes-version',
+      'count-by-os-distribution','count-by-registry','count-by-severity','count-by-state','count-by-status',
+      'count-by-type','count-by-zero-day','count-vulnerable-images','failed-containers-by-rules',
+      'failed-containers-count-by-severity','failed-images-by-rules','failed-images-count-by-severity',
+      'failed-rules-by-clusters','failed-rules-by-images','failed-rules-count-by-severity','group-by-managed',
+      'image-detections-count-by-date','images-by-state','most-used','rules-by-status','sensor-coverage',
+      'vulnerability-count-by-severity')]
+    [ValidateScript({
+      if ($PSBoundParameters.Resource -and $CountType.($PSBoundParameters.Resource) -notcontains $_) {
+        # Error if 'Type' is not in CountType.Valid list
+        throw (('The argument "{0}" does not belong to the set "{1}" specified for the "{2}" resource value. Sup' +
+          'ply an argument that is in the set and then try the command again.') -f $_,
+          ($CountType.($PSBoundParameters.Resource) -join ','),$PSBoundParameters.Resource)
+      } else {
+        $true
+      }
+    })]
+    [string]$Type,
     [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=3)]
-    [string]$Type
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter
   )
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
+      Endpoint = if ($PSBoundParameters.Resource -eq 'container-compliance') {
+        # Switch to /container-compliance/ API
+        $PSCmdlet.ParameterSetName -replace '-security/','-compliance/' -replace '\{resource\}/',
+          $null -replace '\{type\}',$PSBoundParameters.Type -replace '/v1:','/v2:'
+      } else {
+        # Update target API endpoint using 'Resource' and 'Type'
+        $PSCmdlet.ParameterSetName -replace '\{resource\}',$PSBoundParameters.Resource -replace '\{type\}',
+          $PSBoundParameters.Type
+      }
+      Format = @{ Query = @('filter','limit','under_assessment') }
     }
   }
   process {
-    if (!$PSBoundParameters.Resource) { $PSBoundParameters['Resource'] = 'containers' }
-    if (!$PSBoundParameters.Type) { $PSBoundParameters['Type'] = 'count' }
-    if ($Script:Falcon.Format) {
-      # Determine valid 'Resource' values using 'Format.json'
-      [string[]]$ValidResource = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
-        $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
-      }).foreach{
-        if ($_ -match 'container-compliance') {
-          'container-compliance'
-        } else {
-          @($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[0]
-        }
-      } | Select-Object -Unique | Sort-Object
-      if ($ValidResource -and $ValidResource -notcontains $PSBoundParameters.Resource) {
-        # Error if 'Resource' is not in ValidResource list
-        throw 'Invalid "Resource" value. [Accepted: {1}]' -f $PSBoundParameters.Resource,
-          ($ValidResource -join ', ')
-      }
-      # Determine valid Type' values using 'Format.json'
-      [string]$TypePattern = if ($PSBoundParameters.Resource -eq 'container-compliance') {
-        '/{0}/aggregates/[\w-]+/v\d' -f $PSBoundParameters.Resource
-      } else {
-        '/container-security/aggregates/{0}/[\w-]+/v\d' -f $PSBoundParameters.Resource
-      }
-      [string[]]$ValidType = @($Script:Falcon.Format.PSObject.Properties.Name).Where({
-      $_ -match $TypePattern}).foreach{
-        if ($PSBoundParameters.Resource -eq 'container-compliance') {
-          $_ -replace '(/container-compliance/aggregates/|/v\d)',$null
-        } else {
-          @($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[1] | Where-Object {
-            $ExcludeCountType -notcontains $_ }
-        }
-      }
-      if ($ValidType -and $ValidType -notcontains $PSBoundParameters.Type) {
-        # Error if 'Type' is not in ValidType list
-        throw 'Invalid "Type" value for "{0}". [Accepted: {1}]' -f $PSBoundParameters.Resource,
-          ($ValidType -join ', ')
-      }
+    if ($CountType.($PSBoundParameters.Resource) -notcontains $PSBoundParameters.Type) {
+      # Error if 'Type' is not in CountType.Valid list and 'Resource' was provided out of position
+      throw (('The argument "{0}" does not belong to the set "{1}" specified for the "{2}" resource value. Sup' +
+        'ply an argument that is in the set and then try the command again.') -f $PSBoundParameters.Type,
+        ($CountType.($PSBoundParameters.Resource) -join ','),$PSBoundParameters.Resource)
     }
-    $Param.Endpoint = if ($PSBoundParameters.Resource -eq 'container-compliance') {
-      # Switch to /container-compliance/ API
-      $Param.Endpoint -replace '-security/','-compliance/' -replace '\{resource\}/',
-        $null -replace '\{type\}',$PSBoundParameters.Type -replace '/v1:','/v2:'
-    } else {
-      # Update target API endpoint using 'Resource' and 'Type'
-      $Param.Endpoint -replace '\{resource\}',$PSBoundParameters.Resource -replace '\{type\}',
-        $PSBoundParameters.Type
-    }
-    # Remove 'resource' and 'type' and perform request
+    # Remove 'Resource' and 'Type' and perform request
     @('resource','type').foreach{ [void]$PSBoundParameters.Remove($_) }
     $Request = Invoke-Falcon @Param -UserInput $PSBoundParameters
     if ($Request -and $Request.buckets) {
@@ -1575,41 +1587,5 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconRegistryCredential
     } else {
       throw "No registry credential available. Try 'Request-FalconRegistryCredential'."
     }
-  }
-}
-Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Resource -ScriptBlock {
-  if ($Script:Falcon.Format) {
-    # Add 'Resource' values to Get-FalconContainerCount using 'format.json'
-    $List = [System.Collections.Generic.List[string]]@()
-    @(@($Script:Falcon.Format.PSObject.Properties.Name).Where({
-      $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
-    }).foreach{
-      if ($_ -match 'container-compliance') {
-        'container-compliance'
-      } else {
-        ($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[0]
-      }
-    } | Select-Object -Unique).foreach{
-      $List.Add($_)
-    }
-    $List | Sort-Object
-  }
-}
-Register-ArgumentCompleter -CommandName Get-FalconContainerCount -ParameterName Type -ScriptBlock {
-  if ($Script:Falcon.Format) {
-    # Add 'Type' values to Get-FalconContainerCount using 'Format.json'
-    $List = [System.Collections.Generic.List[string]]@()
-    @(@($Script:Falcon.Format.PSObject.Properties.Name).Where({
-      $_ -match '/container-(compliance|security)/aggregates/([\w-]+/)?[\w-]+/v\d'
-    }).foreach{
-      if ($_ -match 'container-compliance') {
-        $_ -replace '(/container-compliance/aggregates/|/v\d)',$null
-      } else {
-        ($_ -replace '(/container-security/aggregates/|/v\d)',$null -split '/',2)[1]
-      }
-    } | Select-Object -Unique).Where({$ExcludeCountType -notcontains $_}).foreach{
-      $List.Add($_)
-    }
-    $List | Sort-Object
   }
 }
