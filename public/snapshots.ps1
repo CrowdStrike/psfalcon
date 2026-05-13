@@ -47,7 +47,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshot
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+      Max = 100
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -93,7 +98,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSnapshotScan
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -146,7 +155,18 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSnapshotAwsAccount
     [Alias('processing_account')]
     [string]$ProcessingAccount
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          aws_accounts = @('account_number','batch_regions','iam_external_id','iam_role_arn','kms_alias',
+            'processing_account')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconSnapshotScan {
@@ -184,6 +204,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconSnapshotScan
     [Alias('asset_identifier')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('account_id','asset_identifier','cloud_provider','region') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
