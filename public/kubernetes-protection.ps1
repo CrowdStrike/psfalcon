@@ -23,7 +23,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAwsAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','region') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -60,7 +64,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerAzureAccount
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('client_id','id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerAccount {
@@ -116,7 +126,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAccount
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('cluster_service','cluster_status','ids','limit','locations','offset') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -177,7 +191,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAwsAccount
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','is_horizon_acct','limit','offset','status') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -243,7 +261,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureAccount
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','is_horizon_acct','limit','offset','status','subscription_id') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -292,7 +314,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureConfig
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -330,7 +356,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureScript
     [Alias('subscription_id')]
     [string[]]$SubscriptionId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id','subscription_id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerAzureTenant {
@@ -375,7 +407,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAzureTenant
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset','status') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -409,7 +445,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCloud
     [string[]]$Cloud
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('clouds') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Cloud) { @($Cloud).foreach{ $List.Add($_) }}}
@@ -453,7 +493,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconContainerScan
     [Alias('scan_type')]
     [string]$ScanType
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('scan_type') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerAwsAccount {
@@ -480,7 +526,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAwsAccount
     [Alias('account_id')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('account_id','region') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerAzureAccount {
@@ -508,7 +560,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerAzureAccount
     [Alias('tenant_id')]
     [string]$TenantId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('subscription_id','tenant_id') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerKey {
@@ -562,9 +620,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconContainerYaml
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/yaml' }
-      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      Format = @{
+        Outfile = 'path'
+        Query = @('cluster_name','is_self_managed_cluster')
+      }
     }
-    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'yaml'
@@ -601,7 +661,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAwsAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -633,7 +697,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAzureAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
