@@ -96,7 +96,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAwsAccount
     [Alias('falcon_client_id')]
     [string]$ClientId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('account_id','behavior_assessment_enabled','cloudtrail_region','deployment_method',
+            'dspm_enabled','dspm_role','environment','falcon_client_id','iam_role_arn','remediation_region',
+            'remediation_tou_accepted','root_stack_id','sensor_management_enabled','target_ous')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCloudAwsAccount {
@@ -176,7 +188,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAwsAccount
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Query = @('cspm_lite','group_by','iam_role_arns','ids','limit','migrated','offset','organization-ids',
+          'scan-type','status')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -310,7 +329,19 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAwsAccount
     [Alias('falcon_client_id')]
     [string]$ClientId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('account_id','account_type','behavior_assessment_enabled','cloudtrail_region',
+            'deployment_method','dspm_enabled','dspm_role','falcon_client_id','iam_role_arn','is_master',
+            'organization_id','root_stack_id','sensor_management_enabled','target_ous','use_existing_cloudtrail')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconCloudAwsScript {
@@ -409,9 +440,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAwsScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      Format = @{
+        Outfile = 'path'
+        Query = @('account_type','accounts','aws_profile','behavior_assessment_enabled','custom_role_name',
+          'dspm_enabled','dspm_regions','dspm_role','ids','organization_id','sensor_management_enabled','template',
+          'use_existing_cloudtrail')
+      }
     }
-    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
@@ -458,6 +493,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAwsAccount
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = '/cloud-connect-cspm-aws/entities/account/v1:delete'
+      Format = @{ Query = @('ids','organization-ids') }
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
