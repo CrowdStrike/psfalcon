@@ -53,7 +53,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconTailoredEvent
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 10000 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','q','sort')
+      }
+      Max = 10000
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -121,7 +129,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconTailoredRule
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 10000 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','q','sort')
+      }
+      Max = 10000
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
