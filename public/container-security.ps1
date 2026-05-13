@@ -433,7 +433,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
         $PSCmdlet.ParameterSetName -replace '\{resource\}',$PSBoundParameters.Resource -replace '\{type\}',
           $PSBoundParameters.Type
       }
-      Format = @{ Query = @('filter','limit','under_assessment') }
+      Format = @{ Query = @('filter') }
     }
   }
   process {
