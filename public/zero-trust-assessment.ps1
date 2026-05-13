@@ -49,7 +49,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconZta
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','ids','limit','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
