@@ -44,7 +44,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicy
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('description','is_enabled','name','policy_data') }; Query = @('id') }
+      Format = @{
+        Body = @{ root = @('description','is_enabled','name','policy_data') }
+        Query = @('id')
+      }
     }
   }
   process {
@@ -93,7 +96,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconContainerPolicyGroup
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('description','name','policy_group_data') }; Query = @('id') }
+      Format = @{
+        Body = @{ root = @('description','name','policy_group_data') }
+        Query = @('id')
+      }
     }
   }
   process {
@@ -190,7 +196,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainer
     [Parameter(ParameterSetName='/container-security/combined/containers/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerAlert {
@@ -231,7 +243,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAlert
     [Parameter(ParameterSetName='/container-security/combined/container-alerts/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerAssessment {
@@ -277,7 +295,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerAssessment
     [Parameter(ParameterSetName='/container-security/combined/image-assessment/images/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerCluster {
@@ -317,7 +341,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCluster
     [Parameter(ParameterSetName='/container-security/combined/clusters/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerCount {
@@ -346,7 +376,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerCount
     [Parameter(ParameterSetName='/container-security/aggregates/{resource}/{type}/v1:get',Position=3)]
     [string]$Type
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName } }
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+    }
+  }
   process {
     if (!$PSBoundParameters.Resource) { $PSBoundParameters['Resource'] = 'containers' }
     if (!$PSBoundParameters.Type) { $PSBoundParameters['Type'] = 'count' }
@@ -448,7 +483,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDeployment
     [Parameter(ParameterSetName='/container-security/combined/deployments/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerDetection {
@@ -496,7 +537,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDetection
     [Parameter(ParameterSetName='/container-security/queries/detections/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerDriftIndicator {
@@ -552,7 +599,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerDriftIndicator
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -614,7 +665,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerImage
     [Parameter(ParameterSetName='/container-security/combined/images/detail/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort','with_config') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerIom {
@@ -670,7 +727,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerIom
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -721,7 +782,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerNode
     [Parameter(ParameterSetName='/container-security/combined/nodes/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerPackage {
@@ -768,7 +835,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPackage
     [Parameter(ParameterSetName='/container-security/combined/packages/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','only_zero_day_affected','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerPod {
@@ -808,7 +881,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPod
     [Parameter(ParameterSetName='/container-security/combined/pods/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconContainerPolicy {
@@ -823,8 +902,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPolicy
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policies/v1:get',
     SupportsShouldProcess)]
   param()
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Get-FalconContainerPolicyExclusion {
 <#
@@ -838,8 +916,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPolicyExclusion
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-exclusions/v1:get',
     SupportsShouldProcess)]
   param()
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Get-FalconContainerPolicyGroup {
 <#
@@ -853,8 +930,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerPolicyGroup
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:get',
     SupportsShouldProcess)]
   param()
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
-  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  process { Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $PSCmdlet.ParameterSetName }
 }
 function Get-FalconContainerRegistry {
 <#
@@ -901,7 +977,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerRegistry
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -999,7 +1079,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconContainerVulnerability
     [Parameter(ParameterSetName='/container-security/combined/vulnerabilities/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('cve_id','filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerImage {
@@ -1036,7 +1122,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerImage
     [Parameter(ParameterSetName='/container-security/entities/base-images/v1:post',Mandatory,Position=5)]
     [string]$Tag
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ base_images = @('image_digest','image_id','registry','repository','tag') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerPolicy {
@@ -1062,7 +1154,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconContainerPolicy
       Position=2)]
     [string]$Description
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('description','name') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconContainerPolicyExclusion {
@@ -1211,7 +1309,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerImage
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1241,7 +1343,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicy
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconContainerPolicyGroup {
@@ -1263,7 +1371,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicyGroup
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Remove-FalconContainerRegistry {
@@ -1287,7 +1401,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerRegistry
     [string]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+      Max = 100
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -1418,7 +1537,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconContainerPolicyPrecedence
     [Alias('precedence')]
     [string[]]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('precedence') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Show-FalconRegistryCredential {
