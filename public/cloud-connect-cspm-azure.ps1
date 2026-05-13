@@ -34,7 +34,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudAzureAccount
     [Alias('tenant-id','tenant_id')]
     [string]$TenantId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id','subscription_id','tenant-id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCloudAzureAccount {
@@ -97,7 +103,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAzureAccount
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('cspm_lite','ids','limit','offset','scan-type','status','tenant_ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -141,7 +151,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAzureCertificate
     [Alias('tenant_id')]
     [string[]]$TenantId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('tenant_id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCloudAzureGroup {
@@ -171,7 +187,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudAzureGroup
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:get')]
     [int32]$Offset
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('limit','offset','tenant_ids') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconCloudAzureAccount {
@@ -222,7 +244,18 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAzureAccount
     [Alias('years_valid')]
     [int]$YearsValid
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('account_type','client_id','default_subscription','subscription_id','tenant_id',
+            'years_valid')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconCloudAzureGroup {
@@ -250,7 +283,13 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudAzureGroup
     [Alias('tenant_id')]
     [string]$TenantId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('default_subscription_id','tenant_id') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconCloudAzureScript {
@@ -309,9 +348,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudAzureScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      Format = @{
+        Outfile = 'path'
+        Query = @('account_type','azure_management_group','subscription_ids','template','tenant-id')
+      }
     }
-    $Param.Format['Outfile'] = 'path'
   }
   process {
     $PSBoundParameters.Path = Assert-Extension $PSBoundParameters.Path 'sh'
@@ -360,7 +401,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAzureAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','retain_tenant','tenant_ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -391,6 +436,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAzureGroup
     [Alias('tenant_ids')]
     [string[]]$TenantId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('tenant_ids') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
