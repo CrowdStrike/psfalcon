@@ -52,7 +52,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconThreatGraphEdge
     [Parameter(ParameterSetName='/threatgraph/combined/edges/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('direction','edge_type','ids','limit','nano','offset','scope') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconThreatGraphIndicator {
@@ -97,7 +103,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconThreatGraphIndicator
     [Parameter(ParameterSetName='/threatgraph/combined/ran-on/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('limit','nano','offset','type','value') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconThreatGraphVertex {
@@ -167,7 +179,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconThreatGraphVertex
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName -replace '{vertex-type}',$PSBoundParameters.VertexType
-      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','nano','scope','vertex-type') }
       Max = 100
     }
     [System.Collections.Generic.List[string]]$List = @()
