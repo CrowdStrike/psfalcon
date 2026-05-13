@@ -35,9 +35,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconWorkflow
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/yaml' }
+      Format = @{
+        Outfile = 'path'
+        Query = @('id','sanitize')
+      }
     }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
-    $Param.Format['Outfile'] = 'path'
   }
   process {
     if (!$PSBoundParameters.Path) {
@@ -112,7 +114,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflow
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -171,7 +177,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowAction
     [Parameter(ParameterSetName='/workflows/combined/activity-content/v1:get')]
     [switch]$Total
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','limit','offset','sort') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconWorkflowInput {
@@ -194,7 +206,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconWorkflowInput
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -287,6 +303,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconWorkflow
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ ContentType = 'multipart/form-data' }
+      Format = @{ Formdata = @('data_file','name','validate_only') }
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -344,8 +361,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconWorkflow
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = '/workflows/entities/execute/v1:post' }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = '/workflows/entities/execute/v1:post'
+      Format = @{
+        Body = @{ root = @() }
+        Query = @('definition_id','depth','execution_cid','key','name','source_event_url')
+      }
+    }
   }
   process {
     if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
@@ -372,7 +395,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconWorkflow
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('action_name')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
