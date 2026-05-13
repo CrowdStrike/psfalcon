@@ -25,7 +25,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudGcpAccount
     [Alias('service_account')]
     [object]$ServiceAccount
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('environment','parent_id','service_account') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Edit-FalconCloudGcpServiceAccount {
@@ -76,7 +82,18 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconCloudGcpServiceAccount
     [Alias('private_key')]
     [string]$PrivateKey
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('client_email','client_id','private_key','private_key_id','project_id',
+            'service_account_conditions','service_account_id')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconCloudGcpAccount {
@@ -134,7 +151,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudGcpAccount
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids','limit','offset','parent_type','scan-type','sort','status') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -163,7 +184,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCloudGcpServiceAccount
       ValueFromPipelineByPropertyName,ValueFromPipeline,Mandatory,Position=1)]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Invoke-FalconCloudGcpHealthCheck {
@@ -184,7 +211,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconCloudGcpHealthCheck
     [Alias('parent_id')]
     [string]$ParentId
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ resources = @('parent_id') }}
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function New-FalconCloudGcpAccount {
@@ -244,7 +277,18 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconCloudGcpAccount
     [Alias('private_key')]
     [string]$PrivateKey
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('client_email','client_id','parent_id','parent_type','private_key','private_key_id',
+            'project_id','service_account_conditions','service_account_id')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconCloudGcpScript {
@@ -287,9 +331,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconCloudGcpScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      Format = @{
+        Outfile = 'path'
+        Query = @('ids','parent_type')
+      }
     }
-    $Param.Format['Outfile'] = 'path'
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -328,7 +374,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudGcpAccount
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -394,6 +444,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Test-FalconCloudGcpServiceAccount
     [Alias('private_key')]
     [string]$PrivateKey
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          resources = @('client_email','client_id','private_key','private_key_id','project_id',
+            'service_account_conditions','service_account_id')
+        }
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
