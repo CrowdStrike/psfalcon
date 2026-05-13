@@ -36,7 +36,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
     [string]$ExpiresAt
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','cid','expires_at','role_ids','uuid') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -81,7 +85,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
     [Alias('user_uuid','uuid')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('first_name','last_name') }
+        Query = @('user_uuid')
+      }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Get-FalconRole {
@@ -152,7 +165,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('action','cid','direct_only','filter','limit','offset','sort','user_uuid')
+      }
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process {
@@ -245,7 +265,15 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     [switch]$Total
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName; Max = 100 }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','sort')
+      }
+      Max = 100
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -369,7 +397,16 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
     [Alias('validate_only')]
     [boolean]$ValidateOnly
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('cid','first_name','last_name','password','uid') }
+        Query = @('validate_only')
+      }
+    }
+  }
   process {
     if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
@@ -407,7 +444,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
     [string[]]$Id
   )
   begin {
-    $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('action','cid','expires_at','role_ids','uuid') }}
+    }
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
@@ -442,7 +483,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
     [Alias('user_uuid','uuid')]
     [string]$Id
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('user_uuid') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 @('Add-FalconRole','Get-FalconRole','Remove-FalconRole').foreach{
