@@ -106,7 +106,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconStream
     [ValidateSet('json','flatjson',IgnoreCase=$false)]
     [string]$Format
   )
-  begin { $Param = @{ Command = $MyInvocation.MyCommand.Name; Endpoint = $PSCmdlet.ParameterSetName }}
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('appId','format') }
+    }
+  }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
 function Receive-FalconInstaller {
@@ -143,9 +149,11 @@ https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconInstaller
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Headers = @{ Accept = 'application/octet-stream' }
-      Format = Get-EndpointFormat $PSCmdlet.ParameterSetName
+      Format = @{
+        Outfile = 'path'
+        Query = @('id')
+      }
     }
-    $Param.Format['Outfile'] = 'path'
   }
   process {
     $OutPath = Test-OutFile $PSBoundParameters.Path
@@ -184,10 +192,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Update-FalconStream
        Position=2)]
     [int32]$Partition
   )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName -replace '{partition}',$PSBoundParameters.Partition
+      Format = @{ Query = @('action_name','appId','partition') }
+    }
+  }
   process {
-    $Endpoint = $PSCmdlet.ParameterSetName -replace '{partition}',$PSBoundParameters.Partition
-    [void]$PSBoundParameters.Remove('Partition')
     $PSBoundParameters['action_name'] = 'refresh_active_stream_session'
-    Invoke-Falcon -Command $MyInvocation.MyCommand.Name -Endpoint $Endpoint -UserInput $PSBoundParameters
+    [void]$PSBoundParameters.Remove('Partition')
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
