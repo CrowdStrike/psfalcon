@@ -44,6 +44,7 @@
     'Edit-FalconNgsCaseNotificationGroup'
     'Edit-FalconNgsCaseSla'
     'Edit-FalconNgsCaseTemplate'
+    'Get-FalconNgsCaseAccessTag'
     'Get-FalconNgsCaseField'
     'Get-FalconNgsCaseNotificationGroup'
     'Get-FalconNgsCaseSla'

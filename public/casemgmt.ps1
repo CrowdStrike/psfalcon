@@ -142,6 +142,65 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsCaseTemplate
     Invoke-Falcon @Param -UserInput $PSBoundParameters
   }
 }
+function Get-FalconNgsCaseAccessTag {
+<#
+.SYNOPSIS
+Search for Falcon NGSIEM case access tags
+.DESCRIPTION
+Requires 'Case Templates: Read'.
+.PARAMETER Id
+Access tag identifier
+.PARAMETER WithHasAccess
+Evaluate FGAC and return has_access property
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconNgsCaseAccessTag
+#>
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/queries/access-tags/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/casemgmt/entities/access-tags/v1:get',Mandatory,ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/casemgmt/entities/access-tags/v1:get',Position=2)]
+    [Alias('with_has_access')]
+    [boolean]$WithHasAccess,
+    [Parameter(ParameterSetName='/casemgmt/queries/access-tags/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/casemgmt/queries/access-tags/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/casemgmt/queries/access-tags/v1:get',Position=3)]
+    [ValidateRange(1,200)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/casemgmt/queries/access-tags/v1:get')]
+    [string]$After
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','ids','limit','sort','with_has_access') }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Get-FalconNgsCaseField {
 <#
 .SYNOPSIS
