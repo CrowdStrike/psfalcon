@@ -171,7 +171,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconAlertAction
       }
       Max = 1000
     }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[string]]$List = @()
   }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
