@@ -194,7 +194,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconFirewallGroup
         Query = @('comment')
       }
     }
-    $Param['Format'] = Get-EndpointFormat $Param.Endpoint
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
   }
   process {
