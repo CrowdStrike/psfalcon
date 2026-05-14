@@ -150,10 +150,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
             )
           )
         }
-        [string]$FormatPath = Join-Path (Show-FalconModule).ModulePath (Join-Path format format.json)
-        if ((Test-Path $FormatPath) -eq $false) { throw "Unable to find 'format.json'." }
-        $Script:Falcon.Add('Format',((Get-Content $FormatPath | ConvertFrom-Json)))
-        if ($Script:Falcon.Format) { Write-Log 'Request-FalconToken' "Loaded 'format.json'." }
       } catch {
         throw $_
       }
