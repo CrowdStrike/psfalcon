@@ -61,7 +61,6 @@
     'Get-FalconCloudAwsAccount'
     'Get-FalconCloudAwsLink'
     'New-FalconCloudAwsAccount'
-    'Receive-FalconCloudAwsScript'
     'Remove-FalconCloudAwsAccount'
 
     # cloud-connect-cspm-azure
