@@ -221,7 +221,6 @@
     'Get-FalconCompleteBlocklist'
     'Get-FalconCompleteCollection'
     'Get-FalconCompleteEscalation'
-    'Get-FalconCompleteIncident'
     'Get-FalconCompleteRemediation'
 
     # falconx
