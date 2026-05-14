@@ -9,25 +9,25 @@ Notification group name
 .PARAMETER Description
 Notification group description
 .PARAMETER Channel
-Objects containing 'channels' properties ('channel_id', 'channel_name', 'recipients', 'type')
+Objects containing 'channels' properties ('config_id', 'config_name', 'params', 'type')
 .PARAMETER Id
 Notification group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsCaseNotificationGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v1:patch',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v2:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:patch',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:patch',ValueFromPipelineByPropertyName,
       Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:patch',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:patch',ValueFromPipelineByPropertyName,
       Position=2)]
     [string]$Description,
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:patch',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:patch',ValueFromPipelineByPropertyName,
       Position=3)]
     [Alias('channels')]
     [object[]]$Channel,
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:patch',Mandatory,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:patch',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=4)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
@@ -484,19 +484,19 @@ Notification group name
 .PARAMETER Description
 Notification group description
 .PARAMETER Channel
-Objects containing 'channels' properties ('channel_id', 'channel_name', 'recipients', 'type')
+Objects containing 'channels' properties ('config_id', 'config_name', 'params', 'type')
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconNgsCaseNotificationGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v1:post',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v2:post',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:post',Mandatory,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
     [string]$Name,
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:post',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:post',ValueFromPipelineByPropertyName,
       Position=2)]
     [string]$Description,
-    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v1:post',ValueFromPipelineByPropertyName,
+    [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:post',ValueFromPipelineByPropertyName,
       Position=3)]
     [Alias('channels')]
     [object[]]$Channel
