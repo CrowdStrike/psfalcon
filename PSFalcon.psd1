@@ -493,12 +493,15 @@
     # ngsiem
     'Edit-FalconNgsDataConnection'
     'Edit-FalconNgsDataConnectionStatus'
+    'Edit-FalconNgsDataConnectorConfig'
     'Get-FalconNgsDataConnection'
     'Get-FalconNgsDataConnectionToken'
     'Get-FalconNgsDataConnector'
     'Get-FalconNgsDataConnectorConfig'
     'New-FalconNgsDataConnection'
+    'New-FalconNgsDataConnectorConfig'
     'Remove-FalconNgsDataConnection'
+    'Remove-FalconNgsDataConnectorConfig'
     'Reset-FalconNgsDataConnectionToken'
 
     # oauth2

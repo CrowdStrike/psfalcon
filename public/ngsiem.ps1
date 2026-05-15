@@ -104,6 +104,55 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsDataConnectionStatus
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Edit-FalconNgsDataConnectorConfig {
+<#
+.SYNOPSIS
+Edit a Falcon NGSIEM data connector configuration
+.DESCRIPTION
+Requires 'NGSIEM Data Connections API: Write'.
+.PARAMETER Id
+Data connector configuration identifier
+.PARAMETER ConnectorId
+Data connector identifier
+.PARAMETER Config
+Object containing configuration properties ('auth', 'name', 'params')
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconNgsDataConnectorConfig
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem/entities/connectors/configs/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('ids')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('connector_id')]
+    [string]$ConnectorId,
+    [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,Position=3)]
+    [object]$Config
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          config = @('auth','name','params')
+          root = @('connector_id')
+        }
+        Query = @('ids')
+      }
+    }
+  }
+  process {
+    $PSBoundParameters.Config = [PSCustomObject]$PSBoundParameters.Config | Select-Object $Param.Format.Body.config
+    $Param.Format.Body.root += 'config'
+    [void]$Param.Format.Body.Remove('config')
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Get-FalconNgsDataConnection {
 <#
 .SYNOPSIS
@@ -368,6 +417,48 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconNgsDataConnection
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function New-FalconNgsDataConnectorConfig {
+<#
+.SYNOPSIS
+Create a Falcon NGSIEM data connector configuration
+.DESCRIPTION
+Requires 'NGSIEM Data Connections API: Write'.
+.PARAMETER ConnectorId
+Data connector identifier
+.PARAMETER Config
+Object containing configuration properties ('auth', 'name', 'params')
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconNgsDataConnectorConfig
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem/entities/connectors/configs/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('connector_id')]
+    [string]$ConnectorId,
+    [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [object]$Config
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{
+          config = @('auth','name','params')
+          root = @('connector_id')
+        }
+      }
+    }
+  }
+  process {
+    $PSBoundParameters.Config = [PSCustomObject]$PSBoundParameters.Config | Select-Object $Param.Format.Body.config
+    $Param.Format.Body.root += 'config'
+    [void]$Param.Format.Body.Remove('config')
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function Remove-FalconNgsDataConnection {
 <#
 .SYNOPSIS
@@ -395,6 +486,44 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsDataConnection
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Remove-FalconNgsDataConnectorConfig {
+<#
+.SYNOPSIS
+Delete a Falcon NGSIEM data connector configuration
+.DESCRIPTION
+Requires 'NGSIEM Data Connections API: Write'.
+.PARAMETER Id
+Data connector configuration identifier
+.PARAMETER ConnectorId
+Data connector identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsDataConnectorConfig
+#>
+  [CmdletBinding(DefaultParameterSetName='/ngsiem/entities/connectors/configs/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('connector_id')]
+    [string]$ConnectorId
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('connector_id','ids') }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) { $PSBoundParameters['Id'] = @($List) }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
 }
 function Reset-FalconNgsDataConnectionToken {
 <#
