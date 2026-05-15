@@ -130,18 +130,18 @@ Overwrite an existing file when present
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Receive-FalconInstaller
 #>
-  [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v2:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/sensors/entities/download-installer/v3:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/sensors/entities/download-installer/v2:get',Mandatory,
+    [Parameter(ParameterSetName='/sensors/entities/download-installer/v3:get',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
     [Alias('name')]
     [string]$Path,
-    [Parameter(ParameterSetName='/sensors/entities/download-installer/v2:get',Mandatory,
+    [Parameter(ParameterSetName='/sensors/entities/download-installer/v3:get',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
     [Alias('sha256')]
     [string]$Id,
-    [Parameter(ParameterSetName='/sensors/entities/download-installer/v2:get')]
+    [Parameter(ParameterSetName='/sensors/entities/download-installer/v3:get')]
     [switch]$Force
   )
   begin {
