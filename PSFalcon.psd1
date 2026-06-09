@@ -751,12 +751,19 @@
     'Get-FalconTailoredRule'
 
     # user-management
+    'Add-FalconProfileGroupMember'
     'Add-FalconRole'
+    'Edit-FalconProfileGroup'
     'Edit-FalconUser'
+    'Get-FalconProfileGroup'
+    'Get-FalconProfileGroupMember'
     'Get-FalconRole'
     'Get-FalconUser'
     'Invoke-FalconUserAction'
+    'New-FalconProfileGroup'
     'New-FalconUser'
+    'Remove-FalconProfileGroup'
+    'Remove-FalconProfileGroupMember'
     'Remove-FalconRole'
     'Remove-FalconUser'
 

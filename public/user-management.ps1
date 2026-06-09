@@ -1,3 +1,57 @@
+function Add-FalconProfileGroupMember {
+<#
+.SYNOPSIS
+Add users to profile groups
+.DESCRIPTION
+Requires 'User management: Write'.
+.PARAMETER Uuid
+User identifier
+.PARAMETER Id
+Profile group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Add-FalconProfileGroupMember
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/group-users-actions/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/group-users-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('user_uuid','user_uuids')]
+    [string[]]$Uuid,
+    [Parameter(ParameterSetName='/user-management/entities/group-users-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('ids','group_id','group_ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('action_parameters','filter','ids') }
+        Query = @('action_name')
+      }
+    }
+    [System.Collections.Generic.List[string]]$IdList = @()
+    [System.Collections.Generic.List[PSCustomObject]]$ApList = @()
+  }
+  process {
+    if ($Uuid) { @($Uuid).foreach{ $ApList.Add(([PSCustomObject]@{ name = 'user_uuid'; value = $_ })) }}
+    if ($Id) { @($Id).foreach{ $IdList.Add($_ ) }}
+  }
+  end {
+    if ($ApList -and $IdList) {
+      $PSBoundParameters['action_name'] = 'add_users'
+      $PSBoundParameters['Id'] = @($IdList)
+      for ($i=0;$i -lt $ApList.Count;$i+=100) {
+        # Submit in groups of 100 users
+        $PSBoundParameters['action_parameters'] = @($ApList[$i..($i+99)])
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
+  }
+}
 function Add-FalconRole {
 <#
 .SYNOPSIS
@@ -56,6 +110,47 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
     }
   }
 }
+function Edit-FalconProfileGroup {
+<#
+.SYNOPSIS
+Modify a profile group
+.DESCRIPTION
+Requires 'User management: Write'.
+.PARAMETER Id
+Profile group identifier
+.PARAMETER Name
+Profile group name
+.PARAMETER Description
+Profile group description
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconProfileGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/groups/v1:patch',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/groups/v1:patch',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('group_id')]
+    [string]$Id,
+    [Parameter(ParameterSetName='/user-management/entities/groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/user-management/entities/groups/v1:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [string]$Description
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('description','name') }
+        Query = @('id')
+      }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Edit-FalconUser {
 <#
 .SYNOPSIS
@@ -96,6 +191,122 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconProfileGroup {
+<#
+.SYNOPSIS
+Search for Falcon profile groups
+.DESCRIPTION
+Requires 'User management: Read'.
+.PARAMETER Id
+Profile group identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconProfileGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/queries/groups/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/groups/GET/v1:post',ValueFromPipelineByPropertyName,
+      ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/queries/groups/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/user-management/queries/groups/v1:get',Position=2)]
+    [ValidateSet('name|asc','name|desc','member_count|asc','member_count|desc','updated_at|asc','updated_at|desc')]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/user-management/queries/groups/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/user-management/queries/groups/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/user-management/queries/groups/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/user-management/queries/groups/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/user-management/queries/groups/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','sort')
+      }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      $Param['Max'] = 500
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+    
+  }
+}
+function Get-FalconProfileGroupMember {
+<#
+.SYNOPSIS
+List members of a profile group, or profile groups assigned to users
+.DESCRIPTION
+Requires 'User management: Read'.
+.PARAMETER Id
+Profile group identifier
+.PARAMETER Uuid
+User identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconProfileGroupMember
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/group-users/GET/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/group-users/GET/v1:post',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/entities/user-groups/GET/v1:post')]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [string[]]$Uuid
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') } }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} elseif ($Uuid) { @($Uuid).foreach{ $List.Add($_) }}
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
 }
 function Get-FalconRole {
 <#
@@ -346,6 +557,46 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
     }
   }
 }
+function New-FalconProfileGroup {
+<#
+.SYNOPSIS
+Create a profile group
+.DESCRIPTION
+Requires 'User management: Write'.
+.PARAMETER Name
+Profile group name
+.PARAMETER Description
+Profile group description
+.PARAMETER Cid
+Destination CID, when creating a profile group in a Flight Control environment
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/New-FalconProfileGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/groups/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/groups/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/user-management/entities/groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=2)]
+    [string]$Description,
+    [Parameter(ParameterSetName='/user-management/entities/groups/v1:post',ValueFromPipelineByPropertyName,
+      Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
+    [string]$Cid
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('cid','description','name') } }
+    }
+  }
+  process {
+    if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
+    Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
 function New-FalconUser {
 <#
 .SYNOPSIS
@@ -410,6 +661,95 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
   process {
     if ($PSBoundParameters.Cid) { $PSBoundParameters.Cid = Confirm-CidValue $PSBoundParameters.Cid }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
+  }
+}
+function Remove-FalconProfileGroup {
+<#
+.SYNOPSIS
+Delete profile groups
+.DESCRIPTION
+Requires 'User management: Write'.
+.PARAMETER Id
+Profile group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconProfileGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/groups/v1:delete',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/groups/v1:delete',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids','group_id','group_ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('ids') }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Remove-FalconProfileGroupMember {
+<#
+.SYNOPSIS
+Remove users from profile groups
+.DESCRIPTION
+Requires 'User management: Write'.
+.PARAMETER Uuid
+User identifier
+.PARAMETER Id
+Profile group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconProfileGroupMember
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/group-users-actions/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/group-users-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=1)]
+    [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
+    [Alias('user_uuid','user_uuids')]
+    [string[]]$Uuid,
+    [Parameter(ParameterSetName='/user-management/entities/group-users-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('ids','group_id','group_ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('action_parameters','filter','ids') }
+        Query = @('action_name')
+      }
+    }
+    [System.Collections.Generic.List[string]]$IdList = @()
+    [System.Collections.Generic.List[PSCustomObject]]$ApList = @()
+  }
+  process {
+    if ($Uuid) { @($Uuid).foreach{ $ApList.Add(([PSCustomObject]@{ name = 'user_uuid'; value = $_ })) }}
+    if ($Id) { @($Id).foreach{ $IdList.Add($_ ) }}
+  }
+  end {
+    if ($ApList -and $IdList) {
+      $PSBoundParameters['action_name'] = 'remove_users'
+      $PSBoundParameters['Id'] = @($IdList)
+      for ($i=0;$i -lt $ApList.Count;$i+=100) {
+        # Submit in groups of 100 users
+        $PSBoundParameters['action_parameters'] = @($ApList[$i..($i+99)])
+        Invoke-Falcon @Param -UserInput $PSBoundParameters
+      }
+    }
   }
 }
 function Remove-FalconRole {
