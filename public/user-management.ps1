@@ -529,7 +529,7 @@ associated fine grained access objects to/from a profile group with the 'add_fga
 .PARAMETER Name
 Action to perform
 .PARAMETER ActionParameter
-Hashtable containing 'action_parameters' key value pairs, including destination CID
+PSCustomObject containing 'name' and 'value', including target CID
 .PARAMETER Id
 Profile group identifier
 .LINK
@@ -545,7 +545,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconProfileGroupAction
     [Parameter(ParameterSetName='/user-management/entities/group-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
     [Alias('action_parameters')]
-    [hashtable[]]$ActionParameter,
+    [PSCustomObject[]]$ActionParameter,
     [Parameter(ParameterSetName='/user-management/entities/group-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValuefromPipeline,Position=3)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
