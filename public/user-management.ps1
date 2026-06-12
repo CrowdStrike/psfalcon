@@ -21,6 +21,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconProfileGroupMember
     [string[]]$Uuid,
     [Parameter(ParameterSetName='/user-management/entities/group-users-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids','group_id','group_ids')]
     [string[]]$Id
   )
@@ -515,6 +516,61 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     }
   }
 }
+function Invoke-FalconProfileGroupAction {
+<#
+.SYNOPSIS
+Perform actions on profile groups
+.DESCRIPTION
+Requires 'User management: Write'.
+
+The values 'all_hosts', 'all_asset_groups', or 'all_access_scopes' can be used to assign or remove all
+associated fine grained access objects to/from a profile group with the 'add_fga_objects' or
+'remove_fga_objects' action.
+.PARAMETER Name
+Action to perform
+.PARAMETER ActionParameter
+Hashtable containing 'action_parameters' key value pairs, including destination CID
+.PARAMETER Id
+Profile group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconProfileGroupAction
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/group-actions/v1:post',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/group-actions/v1:post',Mandatory,Position=1)]
+    [ValidateSet('add_roles','remove_roles','add_user_groups','remove_user_groups','add_fga_objects',
+      'remove_fga_objects',IgnoreCase=$false)]
+    [Alias('action_name')]
+    [string]$Name,
+    [Parameter(ParameterSetName='/user-management/entities/group-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=2)]
+    [Alias('action_parameters')]
+    [hashtable[]]$ActionParameter,
+    [Parameter(ParameterSetName='/user-management/entities/group-actions/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,ValuefromPipeline,Position=3)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('action_parameters','filter','ids') }
+        Query = @('action_name')
+      }
+    }
+  }
+  process {
+    if ($PSBoundParameters.ActionParameter.Count -gt 100) {
+      # Prevent more than 100 'action_parameters' values from being submitted at once
+      throw "A maximum of 100 'action_parameters' can be submitted per request."
+    } else {
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Invoke-FalconUserAction {
 <#
 .SYNOPSIS
@@ -721,6 +777,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconProfileGroupMember
     [string[]]$Uuid,
     [Parameter(ParameterSetName='/user-management/entities/group-users-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=2)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids','group_id','group_ids')]
     [string[]]$Id
   )
