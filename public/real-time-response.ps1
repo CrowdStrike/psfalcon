@@ -188,6 +188,14 @@ Permission level [public: 'Administrators' and 'Active Responders', group: 'Admi
 Script name
 .PARAMETER Description
 Script description
+.PARAMETER ShareWithWorkflow
+Share script with Fusion SOAR workflows
+.PARAMETER IsDisruptive
+Indicate that script is potentially disruptive
+.PARAMETER InputSchema
+Input schema, when using script with Fusion SOAR workflows
+.PARAMETER OutputSchema
+Output schema, when using script with Fusion SOAR workflows
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Path
@@ -199,32 +207,48 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
 #>
   [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v2:patch',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
+    [string]$Name,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=2)]
     [ValidateSet('windows','mac','linux',IgnoreCase=$false)]
     [string[]]$Platform,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
-      ValueFromPipelineByPropertyName,Position=2)]
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=3)]
     [ValidateSet('private','group','public',IgnoreCase=$false)]
     [Alias('permission_type')]
     [string]$PermissionType,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
-      ValueFromPipelineByPropertyName,Position=3)]
-    [string]$Name,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
-      ValueFromPipelineByPropertyName,Position=4)]
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=4)]
     [string]$Description,
-    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',
-      ValueFromPipelineByPropertyName,Position=5)]
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
+    [Alias('share_with_workflow')]
+    [boolean]$ShareWithWorkflow,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('workflow_is_disruptive')]
+    [boolean]$IsDisruptive,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('workflow_input_schema')]
+    [string]$InputSchema,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('workflow_output_schema')]
+    [string]$OutputSchema,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',ValueFromPipelineByPropertyName,
+      Position=9)]
     [ValidateLength(1,4096)]
     [Alias('comments_for_audit_log')]
     [string]$Comment,
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=6)]
+      ValueFromPipelineByPropertyName,Position=10)]
     [Alias('content','FullName')]
     [string]$Path,
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:patch',Mandatory,
-      ValueFromPipelineByPropertyName,Position=7)]
+      ValueFromPipelineByPropertyName,Position=11)]
     [ValidatePattern('^[a-fA-F0-9]{32}_[a-fA-F0-9]{32}$')]
     [string]$Id
   )
@@ -233,7 +257,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
-        Formdata = @('comments_for_audit_log','content','description','id','name','permission_type','platform')
+        Formdata = @('comments_for_audit_log','content','description','id','name','permission_type','platform',
+          'share_with_workflow','workflow_input_schema','workflow_is_disruptive','workflow_output_schema')
       }
       Headers = @{ ContentType = 'multipart/form-data' }
     }
@@ -1359,6 +1384,14 @@ Permission level [public: 'Administrators' and 'Active Responders', group: 'Admi
 Script name
 .PARAMETER Description
 Script description
+.PARAMETER ShareWithWorkflow
+Share script with Fusion SOAR workflows
+.PARAMETER IsDisruptive
+Indicate that script is potentially disruptive
+.PARAMETER InputSchema
+Input schema, when using script with Fusion SOAR workflows
+.PARAMETER OutputSchema
+Output schema, when using script with Fusion SOAR workflows
 .PARAMETER Comment
 Audit log comment
 .PARAMETER Path
@@ -1386,11 +1419,27 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
     [string]$Description,
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
       Position=5)]
+    [Alias('share_with_workflow')]
+    [boolean]$ShareWithWorkflow,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
+      Position=6)]
+    [Alias('workflow_is_disruptive')]
+    [boolean]$IsDisruptive,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
+      Position=7)]
+    [Alias('workflow_input_schema')]
+    [string]$InputSchema,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
+      Position=8)]
+    [Alias('workflow_output_schema')]
+    [string]$OutputSchema,
+    [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',ValueFromPipelineByPropertyName,
+      Position=9)]
     [ValidateLength(1,4096)]
     [Alias('comments_for_audit_log')]
     [string]$Comment,
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v2:post',Mandatory,
-      ValueFromPipelineByPropertyName,Position=6)]
+      ValueFromPipelineByPropertyName,Position=10)]
     [Alias('content','FullName')]
     [string]$Path
   )
@@ -1399,7 +1448,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconScript
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
-        Formdata = @('comments_for_audit_log','content','description','name','permission_type','platform')
+        Formdata = @('comments_for_audit_log','content','description','name','permission_type','platform',
+          'share_with_workflow','workflow_is_disruptive','workflow_input_schema','workflow_output_schema')
       }
       Headers = @{ ContentType = 'multipart/form-data' }
     }
