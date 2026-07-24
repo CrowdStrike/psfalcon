@@ -467,6 +467,13 @@
     'Remove-FalconUserGroup'
     'Remove-FalconUserGroupMember'
 
+    # netscan
+    'Get-FalconEmNetwork'
+    'Get-FalconEmScan'
+    'Get-FalconEmScanRun'
+    'Get-FalconEmTemplate'
+    'Get-FalconEmZone'
+
     # ngsiem-content
     'Edit-FalconNgsParser'
     'Get-FalconNgsDashboard'
