@@ -317,12 +317,6 @@
     # image-assessment
     'Get-FalconContainerVulnerability'
 
-    # incidents
-    'Get-FalconBehavior'
-    'Get-FalconIncident'
-    'Get-FalconScore'
-    'Invoke-FalconIncidentAction'
-
     # indicators
     'Get-FalconIocHost'
     'Get-FalconIocProcess'
