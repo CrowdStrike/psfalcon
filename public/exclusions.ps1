@@ -179,6 +179,109 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCertificateExclusion
     }
   }
 }
+function Get-FalconIoaExclusion {
+<#
+.SYNOPSIS
+Search for Indicator of Attack exclusions
+.DESCRIPTION
+Requires 'IOA exclusions: Read'.
+.PARAMETER Id
+Exclusion identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER IfnRegex
+Filter by Image Filename RegEx pattern
+.PARAMETER ClRegex
+Filter by Command Line RegEx pattern
+.PARAMETER ParentIfnRegex
+Filter by parent process Image Filename RegEx pattern
+.PARAMETER ParentClRegex
+Filter by parent process Command Line RegEx pattern
+.PARAMETER GrandparentIfnRegex
+Filter by grandparent process Image Filename RegEx pattern
+.PARAMETER GrandparentClRegex
+Filter by grandparent process Command Line RegEx pattern
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
+#>
+  [CmdletBinding(DefaultParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/exclusions/entities/ss-ioa-exclusions/v2:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [ValidatePattern('^[a-fA-F0-9]{32}$')]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=2)]
+    [Alias('ifn_regex')]
+    [string]$IfnRegex,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=3)]
+    [Alias('cl_regex')]
+    [string]$ClRegex,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=4)]
+    [Alias('parent_ifn_regex')]
+    [string]$ParentIfnRegex,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=5)]
+    [Alias('parent_cl_regex')]
+    [string]$ParentClRegex,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=6)]
+    [Alias('grandparent_ifn_regex')]
+    [string]$GrandparentIfnRegex,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=7)]
+    [Alias('grandparent_cl_regex')]
+    [string]$GrandparentClRegex,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=8)]
+    [ValidateSet('created_by.asc','created_by.desc','last_modified.asc','last_modified.desc','modified_by.asc',
+      'modified_by.desc','name.asc','name.desc','pattern_id.asc','pattern_id.desc','pattern_name.asc',
+      'pattern_name.desc',IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get',Position=9)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/exclusions/queries/ss-ioa-exclusions/v2:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Query = @('cl_regex','filter','grandparent_cl_regex','grandparent_ifn_regex','ids','ifn_regex','limit',
+          'offset','parent_cl_regex','parent_ifn_regex','sort')
+      }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function New-FalconCertificateExclusion {
 <#
 .SYNOPSIS

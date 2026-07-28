@@ -212,6 +212,7 @@
     'Edit-FalconCertificateExclusion'
     'Get-FalconCertificate'
     'Get-FalconCertificateExclusion'
+    'Get-FalconIoaExclusion'
     'New-FalconCertificateExclusion'
     'Remove-FalconCertificateExclusion'
 
@@ -558,7 +559,6 @@
     # policy-ioa-exclusions
     'ConvertTo-FalconIoaExclusion'
     'Edit-FalconIoaExclusion'
-    'Get-FalconIoaExclusion'
     'New-FalconIoaExclusion'
     'Remove-FalconIoaExclusion'
 

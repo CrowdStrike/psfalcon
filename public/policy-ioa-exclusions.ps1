@@ -37,7 +37,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconIoaExclusion
           pattern_name = $Obj.display_name
           cl_regex = [regex]::Escape($Obj.cmdline) -replace '(\\ {1,})+','\s+'
           ifn_regex = [regex]::Escape($Obj.filepath) -replace '\\\\Device\\\\HarddiskVolume\d+','.*'
-          groups = if ($Obj.device.groups) { $Obj.device.groups } else { 'all' }
+          host_groups = if ($Obj.device.groups) { $Obj.device.groups } else { 'all' }
         }
       }
     }
@@ -140,87 +140,6 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconIoaExclusion
       }
     }
     Invoke-Falcon @Param -UserInput $PSBoundParameters
-  }
-}
-function Get-FalconIoaExclusion {
-<#
-.SYNOPSIS
-Search for Indicator of Attack exclusions
-.DESCRIPTION
-Requires 'IOA Exclusions: Read'.
-.PARAMETER Id
-Exclusion identifier
-.PARAMETER Filter
-Falcon Query Language expression to limit results
-.PARAMETER Sort
-Property and direction to sort results
-.PARAMETER Limit
-Maximum number of results per request
-.PARAMETER IfnRegex
-Filter by Image Filename RegEx pattern
-.PARAMETER ClRegex
-Filter by Command Line RegEx pattern
-.PARAMETER Offset
-Position to begin retrieving results
-.PARAMETER Detailed
-Retrieve detailed information
-.PARAMETER All
-Repeat requests until all available results are retrieved
-.PARAMETER Total
-Display total result count instead of results
-.LINK
-https://github.com/crowdstrike/psfalcon/wiki/Get-FalconIoaExclusion
-#>
-  [CmdletBinding(DefaultParameterSetName='/policy/queries/ioa-exclusions/v1:get',SupportsShouldProcess)]
-  param(
-    [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:get',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline)]
-    [ValidatePattern('^[a-fA-F0-9]{32}$')]
-    [Alias('ids')]
-    [string[]]$Id,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=1)]
-    [ValidateScript({Test-FqlStatement $_})]
-    [string]$Filter,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=2)]
-    [ValidateSet('applied_globally.asc','applied_globally.desc','created_by.asc','created_by.desc',
-      'created_on.asc','created_on.desc','last_modified.asc','last_modified.desc','modified_by.asc',
-      'modified_by.desc','name.asc','name.desc','pattern_id.asc','pattern_id.desc','pattern_name.asc',
-      'pattern_name.desc',IgnoreCase=$false)]
-    [string]$Sort,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=3)]
-    [ValidateRange(1,500)]
-    [int32]$Limit,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=4)]
-    [Alias('ifn_regex')]
-    [string]$IfnRegex,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get',Position=5)]
-    [Alias('cl_regex')]
-    [string]$ClRegex,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
-    [int32]$Offset,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
-    [switch]$Detailed,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
-    [switch]$All,
-    [Parameter(ParameterSetName='/policy/queries/ioa-exclusions/v1:get')]
-    [switch]$Total
-  )
-  begin {
-    $Param = @{
-      Command = $MyInvocation.MyCommand.Name
-      Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('cl_regex','filter','ids','ifn_regex','limit','offset','sort') }
-    }
-    [System.Collections.Generic.List[string]]$List = @()
-  }
-  process {
-    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
-  }
-  end {
-    if ($List) {
-      $PSBoundParameters['Id'] = @($List)
-      Invoke-Falcon @Param -UserInput $PSBoundParameters
-    }
   }
 }
 function New-FalconIoaExclusion {
