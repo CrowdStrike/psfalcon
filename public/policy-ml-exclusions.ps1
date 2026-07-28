@@ -170,7 +170,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconMlExclusion
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Query = @('filter','limit','offset','sort') }
+      Format = @{ Query = @('filter','ids','limit','offset','sort') }
     }
     [System.Collections.Generic.List[string]]$List = @()
   }
