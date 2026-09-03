@@ -242,6 +242,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
         }
       }
     }
+    if ($PSBoundParameters.All -and !$PSBoundParameters.Limit) {
+      # Add default limit when 'All' is used
+      $PSBoundParameters['Limit'] = 10000
+    }
     if ($PSBoundParameters.Limit -and $PSBoundParameters.Limit -gt 5000) {
       if ($PSCmdlet.ParameterSetName -notmatch '/devices/combined/devices(-hidden)?/v1:get') {
         # Set 'limit' to max of 5,000 if not using /devices/combined/ endpoint
