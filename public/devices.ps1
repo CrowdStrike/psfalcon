@@ -125,7 +125,7 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
 #>
-  [CmdletBinding(DefaultParameterSetName='/devices/queries/devices-scroll/v1:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/devices/combined/devices/v1:get',SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/devices/entities/devices/v2:post',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline)]
@@ -138,15 +138,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=1)]
-    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=1)]
     [Parameter(ParameterSetName='/devices/combined/devices/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=1)]
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=2)]
-    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=2)]
     [Parameter(ParameterSetName='/devices/combined/devices/v1:get',Position=2)]
+    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=2)]
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get',Position=2)]
     [ValidateSet('device_id.asc','device_id.desc','agent_load_flags.asc','agent_load_flags.desc',
       'agent_version.asc','agent_version.desc','bios_manufacturer.asc','bios_manufacturer.desc',
@@ -166,15 +164,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
       'site_name.desc','status.asc','status.desc','system_manufacturer.asc','system_manufacturer.desc',
       'system_product_name.asc','system_product_name.desc',IgnoreCase=$false)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=3)]
-    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=3)]
     [Parameter(ParameterSetName='/devices/combined/devices/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=3)]
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get',Position=3)]
     [ValidateRange(1,10000)]
     [int32]$Limit,
-    [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get',Position=4)]
-    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=4)]
     [Parameter(ParameterSetName='/devices/combined/devices/v1:get',Position=4)]
+    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Position=4)]
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get',Position=4)]
     [ValidateSet('content_state','group_names','login_history','network_history','online_state','policy_names',
       'zero_trust_assessment',IgnoreCase=$false)]
@@ -183,9 +179,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get',Position=5)]
     [Alias('fields')]
     [string[]]$Field,
-    [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get')]
-    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get')]
     [Parameter(ParameterSetName='/devices/combined/devices/v1:get')]
+    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get')]
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get')]
     [string]$Offset,
     [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get',Mandatory)]
@@ -197,15 +192,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconHost
     [switch]$Network,
     [Parameter(ParameterSetName='/devices/entities/online-state/v1:get',Mandatory)]
     [switch]$State,
-    [Parameter(ParameterSetName='/devices/combined/devices/v1:get',Mandatory)]
+    [Parameter(ParameterSetName='/devices/combined/devices/v1:get')]
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get',Mandatory)]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get')]
-    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get')]
     [Parameter(ParameterSetName='/devices/combined/devices/v1:get')]
+    [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get')]
     [Parameter(ParameterSetName='/devices/combined/devices-hidden/v1:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/devices/queries/devices-scroll/v1:get')]
+    [Parameter(ParameterSetName='/devices/combined/devices/v1:get')]
     [Parameter(ParameterSetName='/devices/queries/devices-hidden/v1:get')]
     [switch]$Total
   )
