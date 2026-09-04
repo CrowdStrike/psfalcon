@@ -273,6 +273,12 @@
     'Set-FalconFileVantageRulePrecedence'
     'Set-FalconFileVantageRuleGroupPrecedence'
 
+    # forensics
+    'Get-FalconForensicsCollection'
+    'Get-FalconForensicsCollector'
+    'Get-FalconForensicsConfiguration'
+    'Get-FalconForensicsTemplate'
+
     # fwmgr
     'Compare-FalconFirewallLocation'
     'Edit-FalconFirewallGroup'
