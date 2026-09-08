@@ -449,8 +449,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
     [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=2)]
-    [ValidateSet('first_name|asc','first_name|desc','last_name|asc','last_name|desc','name|asc','name|desc',
-      'uid|asc','uid|desc',IgnoreCase=$false)]
+    [ValidateSet('first_name|asc','first_name|desc','last_login_at|asc','last_login_at|desc','last_name|asc',
+      'last_name|desc','name|asc','name|desc','uid|asc','uid|desc',IgnoreCase=$false)]
     [string]$Sort,
     [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=3)]
     [ValidateRange(1,500)]
