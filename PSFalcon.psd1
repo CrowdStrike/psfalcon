@@ -311,6 +311,7 @@
     'Remove-FalconMigration'
 
     # hunting
+    'Get-FalconCaoHuntingGuide'
     'Get-FalconCaoQuery'
     'Receive-FalconCaoQueryArchive'
 
@@ -331,6 +332,7 @@
     # intel
     'Get-FalconActor'
     'Get-FalconAttck'
+    'Get-FalconCaoIncident'
     'Get-FalconCve'
     'Get-FalconIndicator'
     'Get-FalconIntel'

@@ -1,3 +1,74 @@
+function Get-FalconCaoHuntingGuide {
+<#
+.SYNOPSIS
+Search for Falcon Counter Adversary Operations hunting guides
+.DESCRIPTION
+Requires 'CAO Hunting: Read'.
+.PARAMETER Id
+Hunting guide identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Query
+Perform a generic substring search across available fields
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconCaoHuntingGuide
+#>
+  [CmdletBinding(DefaultParameterSetName='/hunting/queries/hunting-guides/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/hunting/entities/hunting-guides/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=0)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get',Position=2)]
+    [Alias('q')]
+    [string]$Query,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get',Position=3)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get',Position=4)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get')]
+    [string]$Offset,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/hunting/queries/hunting-guides/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('filter','ids','limit','offset','q','sort') }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Get-FalconCaoQuery {
 <#
 .SYNOPSIS
