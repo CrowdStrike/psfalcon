@@ -172,6 +172,13 @@ Monitor only for breach data.  Must be accompanied by BreachMonitoring: True.
 Monitor for substring matches. Only available for the 'Typosquatting' topic.
 .PARAMETER MatchOnTsqResultType
 Monitor for basedomains and/or subdomains. Only available for the 'Typosquatting' topic.
+.PARAMETER PirId
+PIR identifier associated with the rule
+.PARAMETER ExposedDataMatchType
+Type of exposed data match
+.PARAMETER TsqMatchEditDistance
+Edit distance, used with the loosely matched filter operator (~) in Typosquatting topic rules. Not permitted
+with other rule topics and/or operators.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
@@ -208,7 +215,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
     [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=9)]
     [Alias('match_on_tsq_result_types')]
     [ValidateSet('basedomains','subdomains',IgnoreCase=$false)]
-    [string[]]$MatchOnTsqResultType
+    [string[]]$MatchOnTsqResultType,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=12)]
+    [Alias('pir_ids')]
+    [string[]]$PirId,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=13)]
+    [Alias('exposed_data_match_type')]
+    [string]$ExposedDataMatchType,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=14)]
+    [ValidateSet('1','2','auto',IgnoreCase=$false)]
+    [Alias('tsq_match_edit_distance')]
+    [string]$TsqMatchEditDistance
   )
   begin {
     $Param = @{
@@ -216,8 +233,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
       Endpoint = '/recon/entities/rules/v1:patch'
       Format = @{
         Body = @{
-          root = @('breach_monitor_only','breach_monitoring_enabled','filter','id','match_on_tsq_result_types',
-            'name','permissions','priority','substring_matching_enabled')
+          root = @('breach_monitor_only','breach_monitoring_enabled','exposed_data_match_type','filter','id',
+            'match_on_tsq_result_types','name','permissions','pir_ids','priority','substring_matching_enabled',
+            'tsq_match_edit_distance')
         }
       }
     }
@@ -600,6 +618,8 @@ Requires 'Monitoring rules (Falcon Intelligence Recon): Read'.
 Monitoring rule topic
 .PARAMETER Filter
 Monitoring rule filter
+.PARAMETER LookbackDays
+Number of days to search
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRulePreview
 #>
@@ -609,13 +629,16 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconReconRulePreview
     [string]$Topic,
     [Parameter(ParameterSetName='/recon/aggregates/rules-preview/GET/v1:post',Mandatory,Position=2)]
     [ValidateScript({Test-FqlStatement $_})]
-    [string]$Filter
+    [string]$Filter,
+    [Parameter(ParameterSetName='/recon/aggregates/rules-preview/GET/v1:post',Position=3)]
+    [Alias('lookback_days')]
+    [int32]$LookbackDays
   )
   begin {
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('filter','topic') }}
+      Format = @{ Body = @{ root = @('filter','lookback_days','topic') }}
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
@@ -788,9 +811,16 @@ Monitor for substring matches. Only available for the 'Typosquatting' topic.
 .PARAMETER MatchOnTsqResultType
 Monitor for basedomains and/or subdomains. Only available for the 'Typosquatting' topic.
 .PARAMETER LookbackPeriod
-The duration for which the rule will look back in the past at the first run
+The duration (in nanoseconds) the rule will look back in the past at the first run
 .PARAMETER OriginatingTemplateId
 Identifier of originating rule template, if based on one
+.PARAMETER PirId
+PIR identifier associated with the rule
+.PARAMETER ExposedDataMatchType
+Type of exposed data match
+.PARAMETER TsqMatchEditDistance
+Edit distance, used with the loosely matched filter operator (~) in Typosquatting topic rules. Not permitted
+with other rule topics and/or operators.
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
@@ -804,7 +834,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [string]$Name,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Mandatory,Position=2)]
     [ValidateSet('SA_ALIAS','SA_AUTHOR','SA_BIN','SA_BRAND_PRODUCT','SA_CUSTOM','SA_CVE','SA_DOMAIN',
-      'SA_EMAIL','SA_IP','SA_THIRD_PARTY','SA_VIP',IgnoreCase=$false)]
+      'SA_EMAIL','SA_IP','SA_THIRD_PARTY','SA_TYPOSQUATTING','SA_VIP',IgnoreCase=$false)]
     [string]$Topic,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Mandatory,Position=3)]
     [ValidateScript({Test-FqlStatement $_})]
@@ -830,11 +860,22 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [ValidateSet('basedomains','subdomains',IgnoreCase=$false)]
     [string[]]$MatchOnTsqResultType,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=10)]
+    [ValidateSet('604800000000000','2592000000000000','15552000000000000','31536000000000000')]
     [Alias('lookback_period')]
     [int64]$LookbackPeriod,
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=11)]
     [Alias('originating_template_id')]
-    [string]$OriginatingTemplateId
+    [string]$OriginatingTemplateId,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=12)]
+    [Alias('pir_ids')]
+    [string[]]$PirId,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=13)]
+    [Alias('exposed_data_match_type')]
+    [string]$ExposedDataMatchType,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=14)]
+    [ValidateSet('1','2','auto',IgnoreCase=$false)]
+    [Alias('tsq_match_edit_distance')]
+    [string]$TsqMatchEditDistance
   )
   begin {
     $Param = @{
@@ -842,9 +883,9 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
       Endpoint = '/recon/entities/rules/v1:post'
       Format = @{
         Body = @{
-          root = @('breach_monitor_only','breach_monitoring_enabled','filter','lookback_period',
-            'match_on_tsq_result_types','name','originating_template_id','permissions','priority',
-            'substring_matching_enabled','topic')
+          root = @('breach_monitor_only','breach_monitoring_enabled','exposed_data_match_type','filter',
+            'lookback_period','match_on_tsq_result_types','name','originating_template_id','permissions','pir_ids',
+            'priority','substring_matching_enabled','topic','tsq_match_edit_distance')
         }
       }
     }
