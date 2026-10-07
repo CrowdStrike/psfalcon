@@ -1,7 +1,7 @@
 function Get-FalconInstalledPatch {
 <#
 .SYNOPSIS
-Search for Falcon Spotlight installed patches
+Search for installed patches within Falcon Exposure Management
 .DESCRIPTION
 Requires 'Vulnerabilities: Read'.
 .PARAMETER Filter
@@ -45,10 +45,70 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconInstalledPatch
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Get-FalconKnownVulnerability {
+<#
+.SYNOPSIS
+Search for vulnerabilities known by Falcon Exposure Management
+.DESCRIPTION
+Requires 'Risk Platform - Risk: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER RiskProvider
+Risk provider
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconKnownVulnerability
+#>
+  [CmdletBinding(DefaultParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get',Position=2)]
+    [ValidateSet('N','S',IgnoreCase=$false)]
+    [Alias('risk_provider')]
+    [string[]]$RiskProvider,
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get',Position=3)]
+    [ValidateSet('created_timestamp|asc','created_timestamp|desc','updated_timestamp|asc','updated_timestamp|desc',
+      IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get',Position=4)]
+    [ValidateRange(1,400)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get')]
+    [string]$Offset,
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get')]
+    [string]$After,
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/spotlight/combined/vulnerability-metadata-external/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','limit','offset','risk_provider','sort') }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconRemediation {
 <#
 .SYNOPSIS
-Retrieve detail about remediations specified in a Falcon Spotlight vulnerability
+Retrieve remediation detail for a Falcon Exposure Management vulnerability
 .DESCRIPTION
 Requires 'Vulnerabilities: Read'.
 .PARAMETER Id
@@ -94,10 +154,70 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRemediation
     }
   }
 }
+function Get-FalconRiskProvider {
+<#
+.SYNOPSIS
+Search for the risk provider that covers a vulnerability known by Falcon Exposure Management
+.DESCRIPTION
+Requires 'Risk Platform - Risk: Read'.
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER RiskProvider
+Risk provider
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER After
+Pagination token to retrieve the next set of results
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRiskProvider
+#>
+  [CmdletBinding(DefaultParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get',Position=2)]
+    [Alias('risk_provider')]
+    [ValidateSet('N','S',IgnoreCase=$false)]
+    [string[]]$RiskProvider,
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get',Position=3)]
+    [ValidateSet('created_timestamp|asc','created_timestamp|desc','updated_timestamp|asc','updated_timestamp|desc',
+      IgnoreCase=$false)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get',Position=4)]
+    [ValidateRange(1,400)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get')]
+    [string]$Offset,
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get')]
+    [string]$After,
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/spotlight/combined/supported-evaluation-external/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('after','filter','limit','offset','risk_provider','sort') }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconVulnerability {
 <#
 .SYNOPSIS
-Search for Falcon Spotlight vulnerabilities
+Search for vulnerabilities reported by Falcon Exposure Management
 .DESCRIPTION
 Requires 'Vulnerabilities: Read'.
 .PARAMETER Id
@@ -159,7 +279,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconVulnerability
 function Get-FalconVulnerabilityLogic {
 <#
 .SYNOPSIS
-Search for Falcon Spotlight vulnerability evaluation logic
+Search for Falcon Exposure Management vulnerability evaluation logic
 .DESCRIPTION
 Requires 'Vulnerabilities: Read'.
 .PARAMETER Id

@@ -746,6 +746,8 @@
 
     # spotlight
     'Get-FalconInstalledPatch'
+    'Get-FalconKnownVulnerability'
+    'Get-FalconRiskProvider'
     'Get-FalconRemediation'
     'Get-FalconVulnerability'
     'Get-FalconVulnerabilityLogic'
