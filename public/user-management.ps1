@@ -1,7 +1,7 @@
 function Add-FalconProfileGroupMember {
 <#
 .SYNOPSIS
-Add users to profile groups
+Add users to Falcon profile groups
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER Uuid
@@ -56,7 +56,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconProfileGroupMember
 function Add-FalconRole {
 <#
 .SYNOPSIS
-Assign roles to users
+Assign roles to Falcon users
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER UserId
@@ -114,7 +114,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconRole
 function Edit-FalconProfileGroup {
 <#
 .SYNOPSIS
-Modify a profile group
+Modify a Falcon profile group
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER Id
@@ -192,6 +192,101 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconUser
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
+function Get-FalconPermission {
+<#
+.SYNOPSIS
+List permissions in your Falcon environment
+.DESCRIPTION
+Requires 'User management: Read'.
+.PARAMETER Id
+Permission identifier
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPermission
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/queries/permissions/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/permissions/GET/v1:post',
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/queries/permissions/v1:get',Position=1)]
+    [ValidateRange(1,5000)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/user-management/queries/permissions/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/user-management/queries/permissions/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/user-management/queries/permissions/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/user-management/queries/permissions/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('limit','offset')
+      }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
+function Get-FalconPermissionGroup {
+<#
+.SYNOPSIS
+Retrieve detailed information about Falcon permission groups
+.DESCRIPTION
+Requires 'User management: Read'.
+.PARAMETER Id
+Permission group identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconPermissionGroup
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/permission-groups/GET/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/permission-groups/GET/v1:post',
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [Alias('ids','permission_group_id')]
+    [string[]]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('ids') }}
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
 }
 function Get-FalconProfileGroup {
 <#
@@ -312,7 +407,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconProfileGroupMember
 function Get-FalconRole {
 <#
 .SYNOPSIS
-Search for user roles and assignments
+Search for Falcon user roles and assignments
 .DESCRIPTION
 Requires 'User management: Read'.
 .PARAMETER Id
@@ -346,34 +441,35 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
       ValueFromPipelineByPropertyName,ValueFromPipeline)]
     [Alias('ids','roles','role_id')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Mandatory)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get',Mandatory)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('user_uuid','uuid')]
     [string]$UserId,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=1)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get',Position=1)]
     [Parameter(ParameterSetName='/user-management/entities/roles/GET/v2:post',Position=2)]
     [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
     [ValidatePattern('^[a-fA-F0-9]{32}(-\w{2})?$')]
     [string]$Cid,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=2)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get',Position=2)]
     [Alias('direct_only')]
     [boolean]$DirectOnly,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=3)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get',Position=3)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=4)]
-    [ValidateSet('cid|asc','cid|desc','role_name|asc','role_name|desc','type|asc','type|desc',IgnoreCase=$false)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get',Position=4)]
+    [ValidateSet('cid|asc','cid|desc','expires_at|asc','expires_at|desc','role_name|asc','role_name|desc',
+      'type|asc','type|desc','user_uuid|asc','user_uuid|desc',IgnoreCase=$false)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get',Position=5)]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get',Position=5)]
     [ValidateRange(1,500)]
     [int]$Limit,
     [Parameter(ParameterSetName='/user-management/queries/roles/v1:get')]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get')]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get')]
     [string]$Offset,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get')]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/user-management/combined/user-roles/v2:get')]
+    [Parameter(ParameterSetName='/user-management/combined/user-roles/v3:get')]
     [switch]$Total
   )
   begin {
@@ -409,16 +505,45 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRole
     }
   }
 }
+function Get-FalconRolePermission {
+<#
+.SYNOPSIS
+List permissions assigned to a given Falcon role
+.DESCRIPTION
+Requires 'User management: Read'.
+.PARAMETER Id
+Role identifier
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconRolePermission
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/role-permissions/v1:get',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/role-permissions/v1:get',Mandatory,
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
+    [string]$Id
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Query = @('id') }
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
 function Get-FalconUser {
 <#
 .SYNOPSIS
-Search for users
+Search for Falcon users
 .DESCRIPTION
 Requires 'User management: Read'.
 .PARAMETER Id
 User identifier
 .PARAMETER Filter
 Falcon Query Language expression to limit results
+.PARAMETER UserType
+User type
 .PARAMETER Sort
 Property and direction to sort results
 .PARAMETER Limit
@@ -438,24 +563,30 @@ Display total result count instead of results
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
 #>
-  [CmdletBinding(DefaultParameterSetName='/user-management/queries/users/v1:get',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/user-management/queries/users/v2:get',SupportsShouldProcess)]
   param(
-    [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post',Mandatory,
+    [Parameter(ParameterSetName='/user-management/entities/users/GET/v2:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}$')]
     [Alias('ids','uuid')]
     [string[]]$Id,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=1)]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get',Position=1)]
     [ValidateScript({Test-FqlStatement $_})]
     [string]$Filter,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=2)]
-    [ValidateSet('first_name|asc','first_name|desc','last_login_at|asc','last_login_at|desc','last_name|asc',
-      'last_name|desc','name|asc','name|desc','uid|asc','uid|desc',IgnoreCase=$false)]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get',Position=2)]
+    [ValidateSet('internal','external',IgnoreCase=$false)]
+    [Alias('user_type')]
+    [string]$UserType,
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get',Position=3)]
+    [ValidateSet('cid_name|asc','cid_name|desc','created_at|asc','created_at|desc','first_name|asc',
+      'first_name|desc','has_temporary_roles|asc','has_temporary_roles|desc','last_login_at|asc',
+      'last_login_at|desc','last_name|asc','last_name|desc','name|asc','name|desc','status|asc','status|desc',
+      'temporarily_assigned_cids|asc','temporarily_assigned_cids|desc','uid|asc','uid|desc',IgnoreCase=$false)]
     [string]$Sort,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get',Position=3)]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get',Position=4)]
     [ValidateRange(1,500)]
     [int]$Limit,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get')]
     [int]$Offset,
     [Parameter(ParameterSetName='Username',Mandatory)]
     [ValidateScript({
@@ -463,17 +594,17 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     })]
     [Alias('uid','Usernames')]
     [string[]]$Username,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
-    [Parameter(ParameterSetName='/user-management/entities/users/GET/v1:post')]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get')]
+    [Parameter(ParameterSetName='/user-management/entities/users/GET/v2:post')]
     [Parameter(ParameterSetName='Username')]
     [ValidateSet('roles',IgnoreCase=$false)]
     [string[]]$Include,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get')]
     [Parameter(ParameterSetName='Username')]
     [switch]$Detailed,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get')]
     [switch]$All,
-    [Parameter(ParameterSetName='/user-management/queries/users/v1:get')]
+    [Parameter(ParameterSetName='/user-management/queries/users/v2:get')]
     [switch]$Total
   )
   begin {
@@ -482,7 +613,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
       Endpoint = $PSCmdlet.ParameterSetName
       Format = @{
         Body = @{ root = @('ids') }
-        Query = @('filter','limit','offset','sort')
+        Query = @('filter','limit','offset','sort','user_type')
       }
       Max = 100
     }
@@ -493,7 +624,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     if ($Username) {
       # Re-submit 'Username' values as filtered searches
       for ($i=0;$i -lt ($Username | Measure-Object).Count;$i+=100) {
-        [string]$Filter = ($Username[$i..($i+99)] | ForEach-Object { "uid:*'$_'" }) -join ','
+        [string]$Filter = (@($Username[$i..($i+99)]).foreach{ "uid:*'$_'" }) -join ','
         if ($Filter) {
           $Search = @{ Filter = $Filter }
           if ($Include) { $Search['Include'] = $Include }
@@ -519,7 +650,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
 function Invoke-FalconProfileGroupAction {
 <#
 .SYNOPSIS
-Perform actions on profile groups
+Perform actions on Falcon profile groups
 .DESCRIPTION
 Requires 'User management: Write'.
 
@@ -574,7 +705,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconProfileGroupAction
 function Invoke-FalconUserAction {
 <#
 .SYNOPSIS
-Perform an action on a user
+Perform an action on a Falcon user
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER Name
@@ -616,7 +747,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconUserAction
 function New-FalconProfileGroup {
 <#
 .SYNOPSIS
-Create a profile group
+Create a Falcon profile group
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER Name
@@ -656,7 +787,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconProfileGroup
 function New-FalconUser {
 <#
 .SYNOPSIS
-Create a user
+Create a Falcon user
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER Username
@@ -722,7 +853,7 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconUser
 function Remove-FalconProfileGroup {
 <#
 .SYNOPSIS
-Delete profile groups
+Delete Falcon profile groups
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER Id
@@ -812,7 +943,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconProfileGroupMember
 function Remove-FalconRole {
 <#
 .SYNOPSIS
-Remove roles from a user
+Remove roles from a Falcon user
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER UserId
@@ -864,7 +995,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
 function Remove-FalconUser {
 <#
 .SYNOPSIS
-Remove a user
+Remove a Falcon user
 .DESCRIPTION
 Requires 'User management: Write'.
 .PARAMETER Id
