@@ -647,6 +647,75 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUser
     }
   }
 }
+function Get-FalconUserInvitation {
+<#
+.SYNOPSIS
+Search for Falcon external user invitations
+.DESCRIPTION
+Requires 'User management: Read'.
+.PARAMETER Id
+User invitation identifier
+.PARAMETER Filter
+Falcon Query Language expression to limit results
+.PARAMETER Sort
+Property and direction to sort results
+.PARAMETER Limit
+Maximum number of results per request [default: 100]
+.PARAMETER Offset
+Position to begin retrieving results
+.PARAMETER Detailed
+Retrieve detailed information
+.PARAMETER All
+Repeat requests until all available results are retrieved
+.PARAMETER Total
+Display total result count instead of results
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Get-FalconUserInvitation
+#>
+  [CmdletBinding(DefaultParameterSetName='/user-management/queries/user-invitations/v1:get',SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/user-management/entities/user-invitations/GET/v1:post',
+      ValueFromPipelineByPropertyName,ValueFromPipeline)]
+    [Alias('ids')]
+    [string[]]$Id,
+    [Parameter(ParameterSetName='/user-management/queries/user-invitations/v1:get',Position=1)]
+    [ValidateScript({Test-FqlStatement $_})]
+    [string]$Filter,
+    [Parameter(ParameterSetName='/user-management/queries/user-invitations/v1:get',Position=2)]
+    [string]$Sort,
+    [Parameter(ParameterSetName='/user-management/queries/user-invitations/v1:get',Position=3)]
+    [ValidateRange(1,500)]
+    [int32]$Limit,
+    [Parameter(ParameterSetName='/user-management/queries/user-invitations/v1:get')]
+    [int32]$Offset,
+    [Parameter(ParameterSetName='/user-management/queries/user-invitations/v1:get')]
+    [switch]$Detailed,
+    [Parameter(ParameterSetName='/user-management/queries/user-invitations/v1:get')]
+    [switch]$All,
+    [Parameter(ParameterSetName='/user-management/queries/user-invitations/v1:get')]
+    [switch]$Total
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{
+        Body = @{ root = @('ids') }
+        Query = @('filter','limit','offset','sort')
+      }
+    }
+    [System.Collections.Generic.List[string]]$List = @()
+  }
+  process {
+    if ($Id) { @($Id).foreach{ $List.Add($_) }} else { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+  }
+  end {
+    if ($List) {
+      $PSBoundParameters['Id'] = @($List)
+      Invoke-Falcon @Param -UserInput $PSBoundParameters
+    }
+  }
+}
 function Invoke-FalconProfileGroupAction {
 <#
 .SYNOPSIS

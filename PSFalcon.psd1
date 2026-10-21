@@ -773,6 +773,7 @@
     'Get-FalconRole'
     'Get-FalconRolePermission'
     'Get-FalconUser'
+    'Get-FalconUserInvitation'
     'Invoke-FalconProfileGroupAction'
     'Invoke-FalconUserAction'
     'New-FalconProfileGroup'
