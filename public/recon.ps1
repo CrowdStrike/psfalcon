@@ -179,6 +179,10 @@ Type of exposed data match
 .PARAMETER TsqMatchEditDistance
 Edit distance, used with the loosely matched filter operator (~) in Typosquatting topic rules. Not permitted
 with other rule topics and/or operators.
+.PARAMETER AiSummaryThreshold
+The minimum risk score threshold at or above which AI summaries are generated for matches [default: 'auto']
+.PARAMETER Status
+Rule enablement status
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
 #>
@@ -225,7 +229,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
     [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=14)]
     [ValidateSet('1','2','auto',IgnoreCase=$false)]
     [Alias('tsq_match_edit_distance')]
-    [string]$TsqMatchEditDistance
+    [string]$TsqMatchEditDistance,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=15)]
+    [Alias('ai_summaries_risk_score_threshold')]
+    [ValidateSet('off','auto','low','medium','high','critical',IgnoreCase=$false)]
+    [string]$AiSummaryThreshold,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:patch',Position=16)]
+    [ValidateSet('active','inactive',IgnoreCase=$false)]
+    [string]$Status
   )
   begin {
     $Param = @{
@@ -233,9 +244,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconReconRule
       Endpoint = '/recon/entities/rules/v1:patch'
       Format = @{
         Body = @{
-          root = @('breach_monitor_only','breach_monitoring_enabled','exposed_data_match_type','filter','id',
-            'match_on_tsq_result_types','name','permissions','pir_ids','priority','substring_matching_enabled',
-            'tsq_match_edit_distance')
+          root = @('ai_summaries_risk_score_threshold','breach_monitor_only','breach_monitoring_enabled',
+            'exposed_data_match_type','filter','id','match_on_tsq_result_types','name','permissions','pir_ids',
+            'priority','status','substring_matching_enabled','tsq_match_edit_distance')
         }
       }
     }
@@ -821,6 +832,8 @@ Type of exposed data match
 .PARAMETER TsqMatchEditDistance
 Edit distance, used with the loosely matched filter operator (~) in Typosquatting topic rules. Not permitted
 with other rule topics and/or operators.
+.PARAMETER AiSummaryThreshold
+The minimum risk score threshold at or above which AI summaries are generated for matches [default: 'auto']
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
 #>
@@ -875,7 +888,11 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
     [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=14)]
     [ValidateSet('1','2','auto',IgnoreCase=$false)]
     [Alias('tsq_match_edit_distance')]
-    [string]$TsqMatchEditDistance
+    [string]$TsqMatchEditDistance,
+    [Parameter(ParameterSetName='/recon/entities/rules/v1:post',Position=15)]
+    [Alias('ai_summaries_risk_score_threshold')]
+    [ValidateSet('off','auto','low','medium','high','critical')]
+    [string]$AiSummaryThreshold
   )
   begin {
     $Param = @{
@@ -883,9 +900,10 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconReconRule
       Endpoint = '/recon/entities/rules/v1:post'
       Format = @{
         Body = @{
-          root = @('breach_monitor_only','breach_monitoring_enabled','exposed_data_match_type','filter',
-            'lookback_period','match_on_tsq_result_types','name','originating_template_id','permissions','pir_ids',
-            'priority','substring_matching_enabled','topic','tsq_match_edit_distance')
+          root = @('ai_summaries_risk_score_threshold','breach_monitor_only','breach_monitoring_enabled',
+            'exposed_data_match_type','filter','lookback_period','match_on_tsq_result_types','name',
+            'originating_template_id','permissions','pir_ids','priority','substring_matching_enabled','topic',
+            'tsq_match_edit_distance')
         }
       }
     }
