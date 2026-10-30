@@ -45,14 +45,14 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
     [ValidatePattern('^\w{40}$')]
     [string]$ClientSecret,
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=3)]
-    [ValidateSet('eu-1','us-1','us-2','us-gov-1','us-gov-2',IgnoreCase=$false)]
+    [ValidateSet('eu-1','us-1','us-2','us-3','us-gov-1','us-gov-2',IgnoreCase=$false)]
     [string]$Cloud,
     [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=3)]
     [string]$CustomUrl,
     [Parameter(ParameterSetName='/oauth2/token:post',ValueFromPipelineByPropertyName,Position=3)]
     [ValidateSet('https://api.crowdstrike.com','https://api.us-2.crowdstrike.com',
-      'https://api.laggar.gcw.crowdstrike.com','https://api.us-gov-2.crowdstrike.mil',
-      'https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
+      'https://api.us-3.crowdstrike.com','https://api.laggar.gcw.crowdstrike.com',
+      'https://api.us-gov-2.crowdstrike.mil','https://api.eu-1.crowdstrike.com',IgnoreCase=$false)]
     [string]$Hostname,
     [Parameter(ParameterSetName='Cloud',ValueFromPipelineByPropertyName,Position=4)]
     [Parameter(ParameterSetName='Custom',ValueFromPipelineByPropertyName,Position=4)]
@@ -113,6 +113,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
         'eu-1' { 'https://api.eu-1.crowdstrike.com' }
         'us-1' { 'https://api.crowdstrike.com' }
         'us-2' { 'https://api.us-2.crowdstrike.com' }
+        'us-3' { 'https://api.us-3.crowdstrike.com' }
         'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
         'us-gov-2' { 'https://api.us-gov-2.crowdstrike.mil' }
       }
@@ -180,6 +181,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconToken
             'eu-1' { 'https://api.eu-1.crowdstrike.com' }
             'us-1' { 'https://api.crowdstrike.com' }
             'us-2' { 'https://api.us-2.crowdstrike.com' }
+            'us-3' { 'https://api.us-3.crowdstrike.com' }
             'us-gov-1' { 'https://api.laggar.gcw.crowdstrike.com' }
             'us-gov-2' { 'https://api.us-gov-2.crowdstrike.mil' }
           }

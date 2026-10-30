@@ -1498,6 +1498,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Request-FalconRegistryCredential
         'eu-1' { 'eu-1' }
         'laggar\.gcw' { 'us-gov-1' }
         'us-2' { 'us-2' }
+        'us-3' { 'us-3' }
         default { 'us-1' }
       }
       $SensorType = if ($PSBoundParameters.SensorType) {
