@@ -99,6 +99,8 @@ Requires 'IT Automation - Task Executions: Write'.
 Scheduled task identifier
 .PARAMETER Target
 Falcon Query Language expression to define target hosts
+.PARAMETER ScheduleName
+Scheduled task name
 .PARAMETER Schedule
 Key/value pairs to define task scheduling
 .PARAMETER Enabled
@@ -131,35 +133,39 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItScheduledTask
     [string]$Target,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
       Position=3)]
-    [object]$Schedule,
+    [Alias('schedule_name')]
+    [string]$ScheduleName,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
       Position=4)]
+    [object]$Schedule,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=5)]
     [Alias('is_active')]
     [boolean]$Enabled,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=5)]
+      Position=6)]
     [Alias('trigger_condition')]
     [object[]]$Trigger,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=6)]
+      Position=7)]
     [Alias('execution_args')]
     [object]$ExecutionArg,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=7)]
+      Position=8)]
     [Alias('discover_offline_hosts')]
     [boolean]$DiscoverOffline,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=8)]
+      Position=9)]
     [Alias('discover_new_hosts')]
     [boolean]$DiscoverNew,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=9)]
+      Position=10)]
     [object]$Guardrail,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=10)]
+      Position=11)]
     [boolean]$Distribute,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:patch',ValueFromPipelineByPropertyName,
-      Position=11)]
+      Position=12)]
     [Alias('expiration_interval')]
     [string]$ExpirationInterval
   )
@@ -170,7 +176,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItScheduledTask
       Format = @{
         Body = @{
           root = @('discover_new_hosts','discover_offline_hosts','distribute','execution_args',
-            'expiration_interval','guardrails','is_active','schedule','target','trigger_condition')
+            'expiration_interval','guardrails','is_active','schedule','schedule_name','target','trigger_condition')
         }
         Query = @('id')
       }
@@ -221,6 +227,8 @@ User group identifier to remove
 User identifier to remove
 .PARAMETER OutputParser
 Column and delimiter values to parse result output
+.PARAMETER RowsParserConfig
+Configuration for parsing script output into multiple rows
 .PARAMETER Id
 Task identifier
 .LINK
@@ -301,8 +309,12 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTask
       Position=18)]
     [Alias('output_parser_config')]
     [object]$OutputParser,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',ValueFromPipelineByPropertyName,
+      Position=19)]
+    [Alias('rows_parser_config')]
+    [object]$RowsParserConfig,
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:patch',Mandatory,
-      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=19)]
+      ValueFromPipelineByPropertyName,ValueFromPipeline,Position=20)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
@@ -314,8 +326,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Edit-FalconItTask
         Body = @{
           root = @('access_type','add_assigned_user_group_ids','add_assigned_user_ids','composite_query',
             'description','name','os_query','output_parser_config','queries','remediations',
-            'remove_assigned_user_group_ids','remove_assigned_user_ids','target','task_group_id','task_parameters',
-            'task_type','trigger_condition','verification_condition')
+            'remove_assigned_user_group_ids','remove_assigned_user_ids','rows_parser_config','target',
+            'task_group_id','task_parameters','task_type','trigger_condition','verification_condition')
         }
         Query = @('id')
       }
@@ -1243,6 +1255,8 @@ Requires 'IT Automation - Task Executions: Write'.
 Task identifier
 .PARAMETER Target
 Falcon Query Language expression to define target hosts
+.PARAMETER ScheduleName
+Scheduled task name
 .PARAMETER Schedule
 Key/value pairs to define task scheduling
 .PARAMETER Enabled
@@ -1276,35 +1290,39 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItScheduledTask
     [string]$Target,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=3)]
-    [object]$Schedule,
+    [Alias('schedule_name')]
+    [string]$ScheduleName,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=4)]
+    [object]$Schedule,
+    [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',Mandatory,
+      ValueFromPipelineByPropertyName,Position=5)]
     [Alias('is_active')]
     [boolean]$Enabled,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=5)]
+      Position=6)]
     [Alias('trigger_condition')]
     [object[]]$Trigger,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=6)]
+      Position=7)]
     [Alias('execution_args')]
     [object]$ExecutionArg,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=7)]
+      Position=8)]
     [Alias('discover_offline_hosts')]
     [boolean]$DiscoverOffline,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=8)]
+      Position=9)]
     [Alias('discover_new_hosts')]
     [boolean]$DiscoverNew,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=9)]
+      Position=10)]
     [object]$Guardrail,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=10)]
+      Position=11)]
     [boolean]$Distribute,
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:post',ValueFromPipelineByPropertyName,
-      Position=11)]
+      Position=12)]
     [Alias('expiration_interval')]
     [string]$ExpirationInterval
   )
@@ -1315,7 +1333,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItScheduledTask
       Format = @{
         Body = @{
           root = @('discover_new_hosts','discover_offline_hosts','distribute','execution_args',
-            'expiration_interval','guardrails','is_active','schedule','target','task_id','trigger_condition')
+            'expiration_interval','guardrails','is_active','schedule','schedule_name','target','task_id',
+            'trigger_condition')
         }
       }
     }
@@ -1361,6 +1380,8 @@ User group identifier (for 'Shared' AccessType)
 User identifier (for 'Shared' AccessType)
 .PARAMETER OutputParser
 Column and delimiter values to parse result output
+.PARAMETER RowsParserConfig
+Configuration for parsing script output into multiple rows
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
 #>
@@ -1432,7 +1453,12 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
       Position=16)]
     [Alias('output_parser_config')]
-    [object]$OutputParser
+    [object]$OutputParser,
+    [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:post',ValueFromPipelineByPropertyName,
+      Position=17)]
+    [Alias('rows_parser_config')]
+    [object]$RowsParserConfig
+
   )
   begin {
     $Param = @{
@@ -1441,8 +1467,8 @@ https://github.com/crowdstrike/psfalcon/wiki/New-FalconItTask
       Format = @{
         Body = @{
           root = @('access_type','assigned_user_group_ids','assigned_user_ids','composite_query','description',
-            'name','os_query','output_parser_config','queries','remediations','target','task_group_id',
-            'task_parameters','task_type','trigger_condition','verification_condition')
+            'name','os_query','output_parser_config','queries','remediations','rows_parser_config','target',
+            'task_group_id','task_parameters','task_type','trigger_condition','verification_condition')
         }
       }
     }
@@ -1558,8 +1584,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconItTaskExecution
     SupportsShouldProcess)]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/task-execution-rerun/v1:post',Mandatory,Position=1)]
-    [ValidateSet('failed','hosts','offline','target',IgnoreCase=$false)]
-    [Alias('run_type')]
+    [ValidateSet('hosts','failed','offline','target','completed','canceled','expired',IgnoreCase=$false)]
+    [Alias('run_types')]
     [string]$RunType,
     [Parameter(ParameterSetName='/it-automation/entities/task-execution-rerun/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=2)]
@@ -1570,7 +1596,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Redo-FalconItTaskExecution
     $Param = @{
       Command = $MyInvocation.MyCommand.Name
       Endpoint = $PSCmdlet.ParameterSetName
-      Format = @{ Body = @{ root = @('run_type','task_execution_id') }}
+      Format = @{ Body = @{ root = @('run_types','task_execution_id') }}
     }
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
