@@ -825,8 +825,19 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
           'rule_ids','rules'
         }
         'Ioc' {
-          'id','type','value','platforms','severity','deleted','expiration','action','mobile_action','tags',
-          'applied_globally','host_groups'
+          'id','type','value','platforms','severity','deleted','action','mobile_action','tags','applied_globally',
+          'host_groups',@{
+            l='expiration'
+            e={
+              # Remove partial seconds for 'expiration' and force [string] type
+              if ($_.expiration -is [datetime]) {
+                [Xml.XmlConvert]::ToString($_.expiration,
+                  [Xml.XmlDateTimeSerializationMode]::Utc) -replace '\.\d+Z$','Z'
+              } else {
+                [string]$_.expiration -replace '\.\d+Z$','Z'
+              }
+            }
+          }
         }
         'MlExclusion' {
           'id','value','applied_globally','excluded_from',@{l='groups';e={$_.groups | Select-Object id,name}},
@@ -2443,8 +2454,8 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
             } elseif ($i.type -and $i.value) {
               # Capture result and remove individual Ioc from remaining import list
               Add-Result Created $i $p.Key
-              $p.Value.Import = @($p.Value.Import).Where({$_.type -ne $i.type -and $_.value -ne $i.value})
             }
+            $p.Value.Import = @($p.Value.Import).Where({$_.type -ne $i.type -and $_.value -ne $i.value})
           }
           if ($Fail) {
             @($p.Value.Import).foreach{
