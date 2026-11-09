@@ -606,6 +606,7 @@
     'New-FalconSensorUpdatePolicy'
     'Remove-FalconSensorUpdatePolicy'
     'Set-FalconSensorUpdatePrecedence'
+    'Update-FalconUninstallToken'
 
     # policy-sv-exclusions
     'Edit-FalconSvExclusion'

@@ -553,3 +553,30 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorUpdatePrecedence
   }
   process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
 }
+function Update-FalconUninstallToken {
+<#
+.SYNOPSIS
+Generate a new Falcon maintenance token
+.DESCRIPTION
+Requires 'Bulk uninstallation token: Write'.
+.PARAMETER AuditMessage
+Audit log comment
+.LINK
+https://github.com/crowdstrike/psfalcon/wiki/Update-FalconUninstallToken
+#>
+  [CmdletBinding(DefaultParameterSetName='/policy/combined/increment-uninstall-token/v1:post',
+    SupportsShouldProcess)]
+  param(
+    [Parameter(ParameterSetName='/policy/combined/increment-uninstall-token/v1:post',Mandatory,Position=1)]
+    [Alias('audit_message')]
+    [string]$AuditMessage
+  )
+  begin {
+    $Param = @{
+      Command = $MyInvocation.MyCommand.Name
+      Endpoint = $PSCmdlet.ParameterSetName
+      Format = @{ Body = @{ root = @('audit_message') }}
+    }
+  }
+  process { Invoke-Falcon @Param -UserInput $PSBoundParameters }
+}
