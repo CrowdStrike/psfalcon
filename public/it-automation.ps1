@@ -1112,6 +1112,10 @@ Distribute task
 Specifies columns and delimiter for parsing script execution results
 .PARAMETER ExpirationInterval
 Interval before task expires. Once expired, new and offline hosts won't be targeted
+.PARAMETER RowsParserConfig
+Configuration for parsing script output into multiple rows
+.PARAMETER ScheduledTaskId
+Existing scheduled task identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
 #>
@@ -1160,7 +1164,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
     [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=10)]
     [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=9)]
     [Alias('expiration_interval')]
-    [string]$ExpirationInterval
+    [string]$ExpirationInterval,
+    [Parameter(ParameterSetName='/it-automation/entities/live-query-execution/v1:post',Position=11)]
+    [Alias('rows_parser_config')]
+    [object]$RowsParserConfig,
+    [Parameter(ParameterSetName='/it-automation/entities/task-executions/v1:post',Position=10)]
+    [Alias('scheduled_task_id')]
+    [string]$ScheduledTaskId
   )
   begin {
     $Param = @{
@@ -1170,10 +1180,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Invoke-FalconItTask
         Body = @{
           root = if ($PSCmdlet.ParameterSetName -match 'live-query-execution') {
             @('composite_query','discover_new_hosts','discover_offline_hosts','distribute','expiration_interval',
-              'guardrails','osquery','output_parser_config','target','queries')
+              'guardrails','osquery','output_parser_config','target','queries','rows_parser_config')
           } else {
             @('discover_new_hosts','discover_offline_hosts','distribute','execution_args','expiration_interval',
-              'guardrails','target','task_id','trigger_condition')
+              'guardrails','scheduled_task_id','target','task_id','trigger_condition')
           }
         }
       }
