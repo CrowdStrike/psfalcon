@@ -117,6 +117,13 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
       } else {
         & "Get-Falcon$String" @Param 2>$null
       }
+      # Scope records before they can contribute dependencies or assigned-rule requests.
+      # Inspect each record: absent properties on a collection can yield null arrays.
+      if (@($Config).Where({$_.cid}).Count) {
+        [PSCustomObject[]]$Config = @($Config).Where({$_.cid -eq $SourceCid})
+      } elseif (@($Config).Where({$_.customer_id}).Count) {
+        [PSCustomObject[]]$Config = @($Config).Where({$_.customer_id -eq $SourceCid})
+      }
       if ($Config -and $Id) {
         # Filter export to specific objects by 'Property'
         $Property = if ($String -eq 'FirewallRule') { 'family' } else { 'id' }
@@ -137,16 +144,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
         }
         try {
           # Export results to json file and output created file name
-          if ($Config.cid) {
-            # Filter by SourceCid
-            ConvertTo-Json @($Config).Where({$_.cid -eq $SourceCid}) -Depth 32 | Out-File $ConfigFile -Append
-          } elseif ($Config.customer_id) {
-            # Filter by SourceCid
-            ConvertTo-Json @($Config).Where({$_.customer_id -eq $SourceCid}) -Depth 32 |
-              Out-File $ConfigFile -Append
-          } else {
-            ConvertTo-Json @($Config) -Depth 32 | Out-File $ConfigFile -Append
-          }
+          ConvertTo-Json @($Config) -Depth 32 | Out-File $ConfigFile -Append
           $ConfigFile
         } catch {
           throw "Unable to write to '$((Get-Location).Path)'. Try 'Export-FalconConfig' in a new location."
